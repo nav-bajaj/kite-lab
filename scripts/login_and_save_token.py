@@ -64,11 +64,14 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         else:
             self.send_response(404); self.end_headers()
 
+class ReusableTCPServer(socketserver.TCPServer):
+    allow_reuse_address = True
+
 def serve():
     url = urllib.parse.urlparse(REDIRECT_URI)
     host = url.hostname or "localhost"
     port = url.port or 8000
-    with socketserver.TCPServer((host, port), Handler) as httpd:
+    with ReusableTCPServer((host, port), Handler) as httpd:
         print(f"Listening on {host}:{port} for redirect ...")
         httpd.serve_forever()
 
