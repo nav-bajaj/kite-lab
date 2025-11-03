@@ -12,6 +12,13 @@ if not (API_KEY and API_SECRET and REDIRECT_URI):
     print("Missing .env values. Set API_KEY, API_SECRET, REDIRECT_URI")
     sys.exit(1)
 
+# Helper function to serialize datetime objects in JSON
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default json code"""
+    if hasattr(obj, 'isoformat'):
+        return obj.isoformat()
+    raise TypeError(f"Type {type(obj)} not serializable")
+
 kite = KiteConnect(api_key=API_KEY)
 login_url = kite.login_url()  # official method from the Python SDK
 print("\nOpen this URL to login:\n", login_url, "\n")
@@ -43,7 +50,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                     f.write(access_token)
                 # Optional: keep full session json if you want
                 with open("session.json", "w") as f:
-                    json.dump(data, f, indent=2)
+                    json.dump(data, f, indent=2, default=json_serial)
 
                 msg = f"Success! access_token saved to access_token.txt"
                 print(msg)

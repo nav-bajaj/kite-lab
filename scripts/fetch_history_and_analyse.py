@@ -23,7 +23,8 @@ def fetch_history(symbol, start, end, interval="day", exchange="NSE", oi=False):
     end   = pd.Timestamp(end)
 
     # Conservative chunking (minute data often requires small windows).
-    chunk_days = 30 if interval != "day" else 3650
+    # Zerodha API limit: max 2000 days for daily data, use 1900 to be safe
+    chunk_days = 30 if interval != "day" else 1900
     frames = []
     cur = start
     while cur < end:
