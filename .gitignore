@@ -15,8 +15,12 @@ access_token.txt
 session.json
 
 # Data files
-data/
+data/*
+!data/static/
+!data/static/**
 *.csv
+!data/static/*.csv
+!data/static/*.md
 
 # IDE
 .vscode/

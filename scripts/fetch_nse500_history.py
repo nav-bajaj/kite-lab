@@ -8,19 +8,23 @@ from history_utils import (
 )
 
 
+UNIVERSE_CSV = "data/static/nse500_universe.csv"
+
+
 def main():
     kite = init_kite_client()
-    symbols = load_symbols("ind_niftynext50list.csv")
+    symbols = load_symbols(UNIVERSE_CSV)
     if not symbols:
-        print("No symbols found in ind_niftynext50list.csv")
+        print(f"No symbols found in {UNIVERSE_CSV}")
         return
-    today = dt.date.today()
 
+    today = dt.date.today()
     configs = default_configs(
         today=today,
-        daily_dir="next50_data",
-        hourly_dir="next50_data_hourly",
+        daily_dir="nse500_data",
+        hourly_dir="nse500_data_hourly",
     )
+
     failures = download_batches(kite, symbols, configs)
     if failures:
         print("\nSummary of failures:")

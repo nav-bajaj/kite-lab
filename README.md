@@ -28,10 +28,15 @@ kite-lab/
         cache_instruments.py         # Fetch and cache tradable instruments
         fetch_history_and_analyse.py # Historical data and technical analysis
         fetch_next50_history.py      # Batch downloader for Nifty Next 50 (daily/hourly cached)
+        fetch_nse500_history.py      # Batch downloader for NSE 500 universe (daily/hourly cached)
+        update_prices.py             # Generic updater using data_pipeline modules
         utils.py                     # Helper utilities for token lookup
+    data_pipeline/                   # Reusable components for symbols, prices, and storage
     data/                            # Market data and analysis outputs (not tracked)
     next50_data/                     # Daily cache for Nifty Next 50 (gitignored)
     next50_data_hourly/              # Hourly cache for Nifty Next 50 (gitignored)
+    nse500_data/                     # Daily cache for NSE 500 (gitignored)
+    nse500_data_hourly/              # Hourly cache for NSE 500 (gitignored)
     .env                             # API credentials (not tracked)
 ```
 
@@ -110,6 +115,28 @@ This script uses `ind_niftynext50list.csv` to download or incrementally update:
 - Hourly candles (last 90 days) in `next50_data_hourly/`
 
 Re-run it anytime to keep both datasets fresh.
+
+### 5. Download NSE 500 caches
+
+```bash
+python scripts/fetch_nse500_history.py
+```
+
+This uses `data/static/nse500_universe.csv` as the universe source and mirrors the incremental daily/hourly caching used for the Next 50 script:
+- Daily candles saved under `nse500_data/`
+- Hourly candles (last 90 days) saved under `nse500_data_hourly/`
+
+Ensure `data/static/nse500_universe.csv` stays current before running large backfills.
+
+### 6. Run generic price updater
+
+`data_pipeline` modules power a flexible updater for custom universes:
+
+```bash
+python scripts/update_prices.py --symbols INFY TCS HDFCBANK --daily-dir custom_data
+```
+
+This reuses incremental caching and writes each symbol to `custom_data/<SYMBOL>_day.csv`.
 
 ## Requirements
 
