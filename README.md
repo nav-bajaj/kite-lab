@@ -29,6 +29,9 @@ kite-lab/
         fetch_history_and_analyse.py # Historical data and technical analysis
         fetch_next50_history.py      # Batch downloader for Nifty Next 50 (daily/hourly cached)
         fetch_nse500_history.py      # Batch downloader for NSE 500 universe (daily/hourly cached)
+        compute_benchmark.py         # Maintain Nifty 100 benchmark series
+        build_momentum_signals.py    # Generate weekly momentum rankings
+        run_daily_pipeline.py        # Orchestrate daily refresh tasks
         update_prices.py             # Generic updater using data_pipeline modules
         utils.py                     # Helper utilities for token lookup
     data_pipeline/                   # Reusable components for symbols, prices, and storage
@@ -137,6 +140,30 @@ python scripts/update_prices.py --symbols INFY TCS HDFCBANK --daily-dir custom_d
 ```
 
 This reuses incremental caching and writes each symbol to `custom_data/<SYMBOL>_day.csv`.
+
+### 7. Refresh Nifty 100 benchmark
+
+```bash
+python scripts/compute_benchmark.py
+```
+
+This keeps `data/benchmarks/nifty100.csv` updated with daily closes, returns, and cumulative performance for the benchmark used in momentum comparisons.
+
+### 8. Build weekly momentum rankings
+
+```bash
+python scripts/build_momentum_signals.py --prices-dir nse500_data --output data/momentum/top25_signals.csv
+```
+
+The script merges NSE 500 price histories, applies a 1-month skip, computes 6M/3M volatility-normalized returns, and exports the top 25 symbols for each weekly rebalance.
+
+### 9. Run the full daily pipeline
+
+```bash
+python scripts/run_daily_pipeline.py --with-login
+```
+
+`--with-login` launches the Kite login workflow first; omit it for routine runs when a fresh access token already exists. Use `--dry-run` to see the command sequence without executing it. The pipeline sequentially refreshes NSE 500 data, updates the Nifty 100 benchmark, and rebuilds the momentum rankings.
 
 ## Requirements
 
