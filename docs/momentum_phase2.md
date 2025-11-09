@@ -25,4 +25,11 @@ This document tracks the work required to deliver the weekly momentum portfolio 
 - [ ] Create automated checks for missing data or extreme returns in the momentum signal file
 - [ ] Document runbooks for data refresh, signal generation, and backtest execution
 
+### Reporting Enhancements
+- [ ] Replace the placeholder HTML report with a robust dashboard (sections for performance summary, peaks/lows, best/worst contributors, turnover)
+- [ ] Integrate a richer charting library (matplotlib already available; consider Plotly or Altair for interactive visuals)
+- [ ] Catalog required visuals: normalized equity curves, rolling drawdown, rolling returns, contribution bar charts, cumulative turnover
+- [ ] Add tables highlighting top/bottom stocks per period, biggest gainers/losers, and streaks
+- [ ] Ensure reports capture metadata (strategy params, run timestamp, data range) for auditability
+
 Update this checklist as tasks move from planning to completion.
