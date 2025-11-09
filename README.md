@@ -32,6 +32,8 @@ kite-lab/
         compute_benchmark.py         # Maintain Nifty 100 benchmark series
         build_momentum_signals.py    # Generate weekly momentum rankings
         run_daily_pipeline.py        # Orchestrate daily refresh tasks
+        backtest_momentum.py         # Simulate weekly momentum portfolio
+        report_backtest.py           # Generate HTML summaries for backtests
         update_prices.py             # Generic updater using data_pipeline modules
         utils.py                     # Helper utilities for token lookup
     data_pipeline/                   # Reusable components for symbols, prices, and storage
@@ -175,6 +177,16 @@ python scripts/backtest_momentum.py --prices-dir nse500_data \
 ```
 
 The backtester uses the weekly top-25 rankings, trades only when holdings change, prices fills at `OHLC/4` with 20 bps slippage, and writes equity and trade logs to `data/backtests/`.
+
+### 11. Generate an HTML performance report
+
+```bash
+python scripts/report_backtest.py --equity data/backtests/momentum_equity.csv \
+       --trades data/backtests/momentum_trades.csv \
+       --output data/backtests/report.html
+```
+
+This summarizes portfolio vs benchmark performance, trailing returns, and recent trades. If `matplotlib` is unavailable, the report omits the chart but still includes tables.
 
 ## Requirements
 
