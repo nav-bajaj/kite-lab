@@ -165,6 +165,17 @@ python scripts/run_daily_pipeline.py --with-login
 
 `--with-login` launches the Kite login workflow first; omit it for routine runs when a fresh access token already exists. Use `--dry-run` to see the command sequence without executing it. The pipeline sequentially refreshes NSE 500 data, updates the Nifty 100 benchmark, and rebuilds the momentum rankings.
 
+### 10. Backtest the momentum strategy
+
+```bash
+python scripts/backtest_momentum.py --prices-dir nse500_data \
+       --signals data/momentum/top25_signals.csv \
+       --benchmark data/benchmarks/nifty100.csv \
+       --output-dir data/backtests
+```
+
+The backtester uses the weekly top-25 rankings, trades only when holdings change, prices fills at `OHLC/4` with 20 bps slippage, and writes equity and trade logs to `data/backtests/`.
+
 ## Requirements
 
 - Python 3.9+
