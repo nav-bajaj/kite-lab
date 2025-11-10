@@ -73,6 +73,9 @@ def run_backtest(prices_dir, signals_path, benchmark_path, output_dir, initial_c
     cash = initial_capital
     trade_records = []
     equity_records = []
+    turnover_records = []
+    peak_equity = initial_capital
+    drawdown_lock = False
 
     for date in calendar:
         close_row = close_panel.loc[date]
@@ -89,13 +92,24 @@ def run_backtest(prices_dir, signals_path, benchmark_path, output_dir, initial_c
                 continue
             portfolio_value += shares * price
 
+        peak_equity = max(peak_equity, portfolio_value)
+        drawdown = portfolio_value / peak_equity - 1
+        if drawdown <= -0.25:
+            drawdown_lock = True
+
         equity_records.append({
             "date": date,
             "portfolio_value": portfolio_value,
             "cash": cash,
             "invested": portfolio_value - cash,
             "benchmark": benchmark_price,
+            "drawdown": drawdown,
+            "drawdown_lock": drawdown_lock,
         })
+
+        if drawdown_lock:
+            holdings.clear()
+            continue
 
         if date not in rebalance_dates:
             continue
@@ -109,6 +123,7 @@ def run_backtest(prices_dir, signals_path, benchmark_path, output_dir, initial_c
         target_set = set(target_symbols)
 
         exits = [sym for sym in current_symbols if sym not in target_set]
+        rebalance_turnover = 0
         for sym in exits:
             shares = holdings.pop(sym)
             price = trade_panel.loc[date].get(sym)
@@ -119,14 +134,17 @@ def run_backtest(prices_dir, signals_path, benchmark_path, output_dir, initial_c
                 continue
             proceeds = shares * price * (1 - slippage)
             cash += proceeds
+            notional = shares * price
+            cost = notional * slippage
+            rebalance_turnover += abs(notional)
             trade_records.append({
                 "date": date,
                 "symbol": sym,
                 "side": "SELL",
                 "shares": shares,
                 "price": price,
-                "notional": shares * price,
-                "slippage": shares * price * slippage,
+                "notional": notional,
+                "slippage": cost,
                 "cash_after": cash,
             })
 
@@ -146,20 +164,30 @@ def run_backtest(prices_dir, signals_path, benchmark_path, output_dir, initial_c
                     continue
                 holdings[sym] = holdings.get(sym, 0) + shares
                 cash -= cost
+                notional = shares * price
+                rebalance_turnover += abs(notional)
                 trade_records.append({
                     "date": date,
                     "symbol": sym,
                     "side": "BUY",
                     "shares": shares,
                     "price": price,
-                    "notional": shares * price,
+                    "notional": notional,
                     "slippage": shares * price * slippage,
                     "cash_after": cash,
                 })
 
+        if rebalance_turnover:
+            turnover_records.append({
+                "date": date,
+                "turnover": rebalance_turnover,
+                "turnover_pct": rebalance_turnover / portfolio_value if portfolio_value else 0,
+            })
+
     output_dir.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(equity_records).to_csv(output_dir / "momentum_equity.csv", index=False)
     pd.DataFrame(trade_records).to_csv(output_dir / "momentum_trades.csv", index=False)
+    pd.DataFrame(turnover_records).to_csv(output_dir / "momentum_turnover.csv", index=False)
 
 
 def main():
