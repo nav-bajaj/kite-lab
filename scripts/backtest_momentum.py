@@ -52,8 +52,20 @@ def nearest_trading_day(target_date, calendar):
     return None
 
 
-def run_backtest(prices_dir, signals_path, benchmark_path, output_dir, initial_capital,
-                 top_n, slippage):
+def run_backtest(
+    prices_dir,
+    signals_path,
+    benchmark_path,
+    output_dir,
+    initial_capital,
+    top_n,
+    slippage,
+    scenario,
+    cooldown_weeks=1,
+    staged_step=0.25,
+    vol_lookback=63,
+    target_vol=0.15,
+):
     close_panel, trade_panel = load_price_panels(prices_dir)
     signals = load_signals(signals_path, top_n)
     benchmark = load_benchmark(benchmark_path)
@@ -75,7 +87,8 @@ def run_backtest(prices_dir, signals_path, benchmark_path, output_dir, initial_c
     equity_records = []
     turnover_records = []
     peak_equity = initial_capital
-    drawdown_lock = False
+    exposure = 1.0 if scenario != "vol_trigger" else 0.0
+    cooldown_counter = 0
 
     for date in calendar:
         close_row = close_panel.loc[date]
@@ -94,8 +107,22 @@ def run_backtest(prices_dir, signals_path, benchmark_path, output_dir, initial_c
 
         peak_equity = max(peak_equity, portfolio_value)
         drawdown = portfolio_value / peak_equity - 1
-        if drawdown <= -0.25:
-            drawdown_lock = True
+        drawdown_hit = drawdown <= -0.25
+
+        if scenario == "baseline":
+            pass
+        elif scenario == "cooldown":
+            if drawdown_hit and cooldown_counter == 0:
+                cooldown_counter = cooldown_weeks
+                exposure = 0.0
+            if cooldown_counter > 0 and date in rebalance_dates:
+                cooldown_counter -= 1
+                exposure = min(1.0, exposure + staged_step)
+        elif scenario == "vol_trigger":
+            realized_vol = close_panel.pct_change().rolling(vol_lookback).std().loc[date].mean()
+            if pd.isna(realized_vol) or realized_vol == 0:
+                realized_vol = target_vol
+            exposure = min(1.0, target_vol / realized_vol)
 
         equity_records.append({
             "date": date,
@@ -104,12 +131,8 @@ def run_backtest(prices_dir, signals_path, benchmark_path, output_dir, initial_c
             "invested": portfolio_value - cash,
             "benchmark": benchmark_price,
             "drawdown": drawdown,
-            "drawdown_lock": drawdown_lock,
+            "exposure": exposure,
         })
-
-        if drawdown_lock:
-            holdings.clear()
-            continue
 
         if date not in rebalance_dates:
             continue
@@ -119,6 +142,9 @@ def run_backtest(prices_dir, signals_path, benchmark_path, output_dir, initial_c
             continue
 
         target_symbols = target_symbols[:top_n]
+        if exposure <= 0:
+            holdings.clear()
+            continue
         current_symbols = set(holdings.keys())
         target_set = set(target_symbols)
 
@@ -150,7 +176,10 @@ def run_backtest(prices_dir, signals_path, benchmark_path, output_dir, initial_c
 
         entrants = [sym for sym in target_symbols if sym not in holdings]
         if entrants:
-            allocation = cash / len(entrants)
+            target_cash = cash + sum(close_row.get(sym, last_prices.get(sym, 0)) * qty for sym, qty in holdings.items())
+            deploy_cash = target_cash * exposure - (target_cash - cash)
+            deploy_cash = max(0, deploy_cash)
+            allocation = deploy_cash / len(entrants) if entrants else 0
             for sym in entrants:
                 price = trade_panel.loc[date].get(sym)
                 if pd.isna(price):
@@ -199,6 +228,11 @@ def main():
     parser.add_argument("--initial-capital", type=float, default=1_000_000)
     parser.add_argument("--top-n", type=int, default=25)
     parser.add_argument("--slippage", type=float, default=0.002)
+    parser.add_argument("--scenario", choices=["baseline", "cooldown", "vol_trigger"], default="baseline")
+    parser.add_argument("--cooldown-weeks", type=int, default=1)
+    parser.add_argument("--staged-step", type=float, default=0.25)
+    parser.add_argument("--vol-lookback", type=int, default=63)
+    parser.add_argument("--target-vol", type=float, default=0.15)
     args = parser.parse_args()
 
     run_backtest(
@@ -209,6 +243,11 @@ def main():
         args.initial_capital,
         args.top_n,
         args.slippage,
+        args.scenario,
+        cooldown_weeks=args.cooldown_weeks,
+        staged_step=args.staged_step,
+        vol_lookback=args.vol_lookback,
+        target_vol=args.target_vol,
     )
 
 
