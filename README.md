@@ -33,7 +33,7 @@ kite-lab/
         build_momentum_signals.py    # Generate weekly momentum rankings
         run_daily_pipeline.py        # Orchestrate daily refresh tasks
         backtest_momentum.py         # Simulate weekly momentum portfolio
-        report_backtest.py           # Generate HTML summaries for backtests
+        report_backtests.py          # Compare multiple backtest scenarios
         update_prices.py             # Generic updater using data_pipeline modules
         utils.py                     # Helper utilities for token lookup
     data_pipeline/                   # Reusable components for symbols, prices, and storage
@@ -178,15 +178,15 @@ python scripts/backtest_momentum.py --prices-dir nse500_data \
 
 The backtester uses the weekly top-25 rankings, trades only when holdings change, prices fills at `OHLC/4` with 20 bps slippage, and writes equity and trade logs to `data/backtests/`.
 
-### 11. Generate an HTML performance report
+### 11. Generate an HTML comparison report
 
 ```bash
-python scripts/report_backtest.py --equity data/backtests/momentum_equity.csv \
-       --trades data/backtests/momentum_trades.csv \
+python scripts/report_backtests.py --runs data/backtests/baseline \
+       data/backtests/cooldown data/backtests/voltrigger \
        --output data/backtests/report.html
 ```
 
-This summarizes portfolio vs benchmark performance, trailing returns, and recent trades. If `matplotlib` is unavailable, the report omits the chart but still includes tables.
+The report compares every scenario (baseline/cooldown/vol-trigger) with summary metrics, charts, trailing returns, and top/bottom contributors based on realized PnL. Charts require `matplotlib`; if unavailable, tables are still produced.
 
 ## Requirements
 

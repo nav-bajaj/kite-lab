@@ -214,10 +214,19 @@ def run_backtest(
                 "turnover_pct": rebalance_turnover / portfolio_value if portfolio_value else 0,
             })
 
+    equity_df = pd.DataFrame(equity_records)
+    trades_df = pd.DataFrame(trade_records)
+    turnover_df = pd.DataFrame(turnover_records)
+
+    if not trades_df.empty:
+        first_trade = trades_df["date"].min()
+        equity_df = equity_df[equity_df["date"] >= first_trade]
+        turnover_df = turnover_df[turnover_df["date"] >= first_trade]
+
     output_dir.mkdir(parents=True, exist_ok=True)
-    pd.DataFrame(equity_records).to_csv(output_dir / "momentum_equity.csv", index=False)
-    pd.DataFrame(trade_records).to_csv(output_dir / "momentum_trades.csv", index=False)
-    pd.DataFrame(turnover_records).to_csv(output_dir / "momentum_turnover.csv", index=False)
+    equity_df.to_csv(output_dir / "momentum_equity.csv", index=False)
+    trades_df.to_csv(output_dir / "momentum_trades.csv", index=False)
+    turnover_df.to_csv(output_dir / "momentum_turnover.csv", index=False)
 
 
 def main():
