@@ -17,15 +17,17 @@ def main():
     errors = []
     warnings = []
 
+    score_cols = [c for c in df.columns if c.startswith("score_")]
     grouped = df.groupby("date")
     for date, group in grouped:
         if len(group) > args.top_n:
             errors.append(f"{date.date()}: has {len(group)} entries > top_n")
         if group["symbol"].duplicated().any():
             errors.append(f"{date.date()}: duplicate symbols detected")
-        missing_scores = group[["score_12m", "score_6m", "score_3m"]].isna().sum().sum()
-        if missing_scores:
-            warnings.append(f"{date.date()}: {missing_scores} score cells missing")
+        if score_cols:
+            missing_scores = group[score_cols].isna().sum().sum()
+            if missing_scores:
+                warnings.append(f"{date.date()}: {missing_scores} score cells missing")
 
     if errors:
         print("Errors:")

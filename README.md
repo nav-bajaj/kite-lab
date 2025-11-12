@@ -34,6 +34,7 @@ kite-lab/
         run_daily_pipeline.py        # Orchestrate daily refresh tasks
         backtest_momentum.py         # Simulate weekly momentum portfolio
         report_backtests.py          # Compare multiple backtest scenarios
+        run_backtest_scenarios.py    # Batch generator for signal/backtest permutations
         update_prices.py             # Generic updater using data_pipeline modules
         utils.py                     # Helper utilities for token lookup
     data_pipeline/                   # Reusable components for symbols, prices, and storage
@@ -187,6 +188,14 @@ python scripts/report_backtests.py --runs data/backtests/baseline \
 ```
 
 The report compares every scenario (baseline/cooldown/vol-trigger) with summary metrics, charts, trailing returns, and top/bottom contributors based on realized PnL. Charts require `matplotlib`; if unavailable, tables are still produced.
+
+### 12. Run all signal/skip/scenario permutations
+
+```bash
+python scripts/run_backtest_scenarios.py
+```
+
+This builds six signal variants (3M/6M/12M momentum × skip vs no-skip) and runs each through the three exposure schemes (baseline, cooldown, volatility trigger) for a total of 18 backtests, then regenerates the comparison report.
 
 ## Requirements
 
