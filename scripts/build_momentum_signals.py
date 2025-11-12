@@ -71,7 +71,7 @@ def compute_scores(prices: pd.DataFrame, skip_days: int, lookback_12m: int, look
 
 def derive_rebalance_dates(index: pd.Index) -> pd.Index:
     calendar = pd.Series(index=index, data=index)
-    weekly = calendar.resample("W-FRI").last().dropna()
+    weekly = calendar.resample("W-THU").last().dropna()
     return pd.Index(weekly)
 
 

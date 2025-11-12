@@ -42,11 +42,12 @@ def load_benchmark(path: Path):
     return df["close"].ffill()
 
 
-def nearest_trading_day(target_date, calendar):
-    if target_date in calendar:
-        return target_date
-    for offset in [1, 2]:
-        candidate = target_date - pd.Timedelta(days=offset)
+def map_signal_to_trade(signal_date, calendar):
+    preferred = signal_date + pd.Timedelta(days=1)
+    if preferred in calendar:
+        return preferred
+    for offset in [0, -1, -2]:
+        candidate = signal_date + pd.Timedelta(days=offset)
         if candidate in calendar:
             return candidate
     return None
@@ -74,7 +75,7 @@ def run_backtest(
 
     schedule = {}
     for signal_date, symbols in signals.items():
-        trade_date = nearest_trading_day(signal_date, calendar)
+        trade_date = map_signal_to_trade(signal_date, calendar)
         if trade_date is not None:
             schedule[pd.Timestamp(trade_date)] = symbols
 
