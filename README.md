@@ -195,7 +195,20 @@ The report compares every scenario (baseline/cooldown/vol-trigger) with summary 
 python scripts/run_backtest_scenarios.py
 ```
 
-This builds six signal variants (3M/6M/12M momentum × skip vs no-skip) and runs each through the three exposure schemes (baseline, cooldown, volatility trigger) for a total of 18 backtests, then regenerates the comparison report.
+This builds three signal variants (3M/6M/12M momentum without the skip-month window) and runs each through the three exposure schemes (baseline, cooldown, volatility trigger), then regenerates the comparison report.
+
+### 13. Run experiments on random universes
+
+```bash
+python scripts/sample_universe.py --size 250 --seed 123 --output experiments/random_run/universe.csv
+python scripts/run_backtest_scenarios.py \
+    --universe-file experiments/random_run/universe.csv \
+    --signals-dir experiments/random_run/signals \
+    --output-root experiments/random_run/backtests \
+    --label-prefix rand_
+```
+
+This samples 250 tickers from the NSE 500, rebuilds the momentum signals only for that subset, runs the three exposure schemes, and writes a dedicated comparison report under `experiments/random_run/backtests/report.html`.
 
 ## Requirements
 

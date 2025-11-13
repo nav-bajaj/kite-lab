@@ -4,16 +4,19 @@ import sys
 
 import numpy as np
 import pandas as pd
+from typing import Optional, Set
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))
 
 
-def load_price_panel(data_dir: Path) -> pd.DataFrame:
+def load_price_panel(data_dir: Path, universe: Optional[Set[str]] = None) -> pd.DataFrame:
     series = []
     for csv_path in sorted(data_dir.glob("*_day.csv")):
         symbol = csv_path.name.replace("_day.csv", "")
+        if universe and symbol not in universe:
+            continue
         df = pd.read_csv(csv_path, parse_dates=["date"])
         if df.empty or "close" not in df.columns:
             continue
@@ -104,9 +107,17 @@ def main():
         help="Momentum lookback windows in months",
     )
     parser.add_argument("--top-n", type=int, default=25)
+    parser.add_argument("--universe-file", type=Path, help="CSV with Symbol column to limit universe")
     args = parser.parse_args()
 
-    prices = load_price_panel(args.prices_dir)
+    universe = None
+    if args.universe_file:
+        df_uni = pd.read_csv(args.universe_file)
+        if "Symbol" not in df_uni.columns:
+            raise SystemExit("Universe file must contain a Symbol column")
+        universe = set(df_uni["Symbol"].astype(str).str.strip())
+
+    prices = load_price_panel(args.prices_dir, universe)
     lookback_map = {"12": 252, "6": 126, "3": 63}
     selected = {lbl: lookback_map[lbl] for lbl in args.lookbacks}
     scores = compute_scores(prices, args.skip_days, selected)

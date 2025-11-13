@@ -2,6 +2,7 @@ import argparse
 import subprocess
 import sys
 from pathlib import Path
+from datetime import datetime
 
 
 LOOKBACK_CONFIGS = {
@@ -11,7 +12,6 @@ LOOKBACK_CONFIGS = {
 }
 
 SKIP_CONFIGS = {
-    "skip": 21,
     "noskip": 0,
 }
 
@@ -35,14 +35,20 @@ def run(cmd, dry_run=False):
 def main():
     parser = argparse.ArgumentParser(description="Run multiple momentum backtest scenarios")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--universe-file", type=Path, help="Optional CSV with Symbol column")
+    parser.add_argument("--signals-dir", type=Path, default=Path("data/momentum"))
+    parser.add_argument("--output-root", type=Path, default=Path("data/backtests"))
+    parser.add_argument("--label-prefix", default="")
     args = parser.parse_args()
 
     runs = []
 
     for lb_label, lb_values in LOOKBACK_CONFIGS.items():
         for skip_label, skip_days in SKIP_CONFIGS.items():
-            signal_name = f"signals_{lb_label}_{skip_label}.csv"
-            signal_path = Path("data/momentum") / signal_name
+            name_prefix = f"{args.label_prefix}{lb_label}_{skip_label}"
+            signal_name = f"signals_{name_prefix}.csv"
+            signal_path = args.signals_dir / signal_name
+            signal_path.parent.mkdir(parents=True, exist_ok=True)
             # Build signals
             cmd = [
                 sys.executable,
@@ -56,6 +62,8 @@ def main():
                 "--lookbacks",
                 *lb_values,
             ]
+            if args.universe_file:
+                cmd += ["--universe-file", str(args.universe_file)]
             run(cmd, args.dry_run)
 
             run([
@@ -66,7 +74,7 @@ def main():
             ], args.dry_run)
 
             for scenario, scenario_flags in SCENARIOS.items():
-                run_dir = Path("data/backtests") / f"{lb_label}_{skip_label}_{scenario}"
+                run_dir = args.output_root / f"{name_prefix}_{scenario}"
                 run_dir.mkdir(parents=True, exist_ok=True)
                 cmd = [
                     sys.executable,
@@ -90,14 +98,16 @@ def main():
                 runs.append(str(run_dir))
 
     # Generate comparison report
-    run([
-        sys.executable,
-        "scripts/report_backtests.py",
-        "--runs",
-        *runs,
-        "--output",
-        "data/backtests/report.html",
-    ], args.dry_run)
+    if runs:
+        report_path = args.output_root / "report.html"
+        run([
+            sys.executable,
+            "scripts/report_backtests.py",
+            "--runs",
+            *runs,
+            "--output",
+            str(report_path),
+        ], args.dry_run)
 
 
 if __name__ == "__main__":
