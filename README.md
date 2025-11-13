@@ -35,6 +35,8 @@ kite-lab/
         backtest_momentum.py         # Simulate weekly momentum portfolio
         report_backtests.py          # Compare multiple backtest scenarios
         run_backtest_scenarios.py    # Batch generator for signal/backtest permutations
+        run_monte_carlo.py          # Monte Carlo sampler for parameter search
+        sample_universe.py          # Sample random subsets of NSE 500
         update_prices.py             # Generic updater using data_pipeline modules
         utils.py                     # Helper utilities for token lookup
     data_pipeline/                   # Reusable components for symbols, prices, and storage
@@ -209,6 +211,14 @@ python scripts/run_backtest_scenarios.py \
 ```
 
 This samples 250 tickers from the NSE 500, rebuilds the momentum signals only for that subset, runs the three exposure schemes, and writes a dedicated comparison report under `experiments/random_run/backtests/report.html`.
+
+### 14. Monte Carlo parameter search
+
+```bash
+python scripts/run_monte_carlo.py --runs 20 --topn-min 15 --topn-max 30 --seed 123
+```
+
+This randomly samples lookback combinations, Top-N sizes, and exposure scenarios (baseline/cooldown/vol-trigger). Each configuration builds fresh signals (no skip window), runs a backtest, logs metrics to `experiments/monte_<timestamp>/summary.csv`, and generates a consolidated report covering all runs. Use `--universe-file` to constrain the sample to a custom stock list.
 
 ## Requirements
 
