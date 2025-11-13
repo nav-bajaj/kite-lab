@@ -177,13 +177,27 @@ def build_report(run_paths, output_path: Path):
                 "Max Drawdown": format_percent(m["max_dd"]),
             }
         )
-    summary_html = pd.DataFrame(summary_rows).to_html(index=False, escape=False)
+    summary_df = pd.DataFrame(summary_rows)
+    summary_html = summary_df.to_html(index=False, escape=False)
+
+    ranking_df = summary_df.copy()
+    def score(row):
+        sharpe = float(row["Sharpe"]) if row["Sharpe"] not in ("-", None) else -1e9
+        cagr = float(row["CAGR"].strip('%')) / 100 if row["CAGR"] not in ("-", None) else -1e9
+        max_dd = float(row["Max Drawdown"].strip('%').replace('--','-')) / 100 if row["Max Drawdown"] not in ("-", None) else 0
+        penalty = 1 if max_dd < -0.3 else 0
+        return sharpe - penalty + cagr * 0.1
+    ranking_df["Score"] = ranking_df.apply(score, axis=1)
+    ranking_df.sort_values("Score", ascending=False, inplace=True)
+    ranking_df.insert(0, "Rank", range(1, len(ranking_df) + 1))
+    ranking_html = ranking_df.to_html(index=False, escape=False)
 
     sections = []
     for entry in analyses:
         m = entry["metrics"]
         label = m["label"]
         date_range = f"{entry['date_range'][0].date()} → {entry['date_range'][1].date()}"
+        config_html = f"<p><strong>Settings:</strong> lookbacks={m.get('lookbacks','n/a')}, top_n={m.get('top_n','n/a')}, scenario={m.get('scenario','n/a')}</p>"
 
         periods_df = pd.DataFrame(
             [
@@ -216,6 +230,7 @@ def build_report(run_paths, output_path: Path):
             f"""
             <section>
                 <h2>{label} ({date_range})</h2>
+                {config_html}
                 <div>{chart_html}</div>
                 <h3>Trailing Returns</h3>
                 {period_html}
