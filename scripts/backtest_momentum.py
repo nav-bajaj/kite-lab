@@ -28,11 +28,22 @@ def load_price_panels(prices_dir: Path):
     return close_panel, trade_panel
 
 
-def load_signals(path: Path, top_n: int):
+def load_signals(path: Path, top_n: int, exit_buffer: int = 0):
     df = pd.read_csv(path, parse_dates=["date"])
-    df = df[df["rank"] <= top_n]
-    grouped = df.groupby("date")["symbol"].apply(list)
-    return grouped
+    entry_df = df[df["rank"] <= top_n]
+    entry_grouped = entry_df.groupby("date")["symbol"].apply(list)
+
+    exit_threshold = top_n + exit_buffer
+    exit_df = df[df["rank"] <= exit_threshold]
+    rank_map_by_date = {}
+    for date, group in exit_df.groupby("date"):
+        rank_map_by_date[pd.Timestamp(date)] = dict(zip(group["symbol"], group["rank"]))
+
+    max_rank = df["rank"].max()
+    if exit_threshold > max_rank:
+        print(f"Warning: exit threshold ({exit_threshold}) exceeds max rank in signals ({max_rank}). Missing ranks will be treated as inf.")
+
+    return entry_grouped, rank_map_by_date, df
 
 
 def load_benchmark(path: Path):
@@ -66,15 +77,17 @@ def run_backtest(
     staged_step=0.25,
     vol_lookback=63,
     target_vol=0.15,
+    exit_buffer=0,
+    pnl_hold_threshold=None,
 ):
     close_panel, trade_panel = load_price_panels(prices_dir)
-    signals = load_signals(signals_path, top_n)
+    entry_signals, rank_map_by_date, _signals_df = load_signals(signals_path, top_n, exit_buffer)
     benchmark = load_benchmark(benchmark_path)
     calendar = close_panel.index
     benchmark_aligned = benchmark.reindex(calendar).ffill()
 
     schedule = {}
-    for signal_date, symbols in signals.items():
+    for signal_date, symbols in entry_signals.items():
         trade_date = map_signal_to_trade(signal_date, calendar)
         if trade_date is not None:
             schedule[pd.Timestamp(trade_date)] = symbols
@@ -82,6 +95,7 @@ def run_backtest(
     rebalance_dates = sorted(schedule.keys())
 
     holdings = {}
+    cost_basis = {}
     last_prices = {}
     cash = initial_capital
     trade_records = []
@@ -149,7 +163,26 @@ def run_backtest(
         current_symbols = set(holdings.keys())
         target_set = set(target_symbols)
 
-        exits = [sym for sym in current_symbols if sym not in target_set]
+        exit_threshold = top_n + exit_buffer
+        current_ranks = rank_map_by_date.get(date, {})
+        exits = []
+        for sym in current_symbols:
+            if sym in target_set:
+                continue
+            rank = current_ranks.get(sym, float("inf"))
+            price_for_pnl = trade_panel.loc[date].get(sym)
+            if pd.isna(price_for_pnl):
+                price_for_pnl = close_row.get(sym)
+            pnl_pct = None
+            if price_for_pnl is not None and not pd.isna(price_for_pnl):
+                avg_cost = cost_basis.get(sym, 0) / holdings.get(sym, 1)
+                if avg_cost > 0:
+                    pnl_pct = price_for_pnl / avg_cost - 1
+            should_exit = rank > exit_threshold
+            if pnl_hold_threshold is not None and should_exit and pnl_pct is not None and pnl_pct > pnl_hold_threshold:
+                should_exit = False
+            if should_exit:
+                exits.append(sym)
         rebalance_turnover = 0
         for sym in exits:
             shares = holdings.pop(sym)
@@ -161,6 +194,10 @@ def run_backtest(
                 continue
             proceeds = shares * price * (1 - slippage)
             cash += proceeds
+            avg_cost = cost_basis.get(sym, 0) / shares if shares else 0
+            cost_basis[sym] = cost_basis.get(sym, 0) - avg_cost * shares
+            if holdings.get(sym, 0) == 0:
+                cost_basis.pop(sym, None)
             notional = shares * price
             cost = notional * slippage
             rebalance_turnover += abs(notional)
@@ -193,6 +230,7 @@ def run_backtest(
                 if cost > cash:
                     continue
                 holdings[sym] = holdings.get(sym, 0) + shares
+                cost_basis[sym] = cost_basis.get(sym, 0) + cost
                 cash -= cost
                 notional = shares * price
                 rebalance_turnover += abs(notional)
@@ -243,6 +281,8 @@ def main():
     parser.add_argument("--staged-step", type=float, default=0.25)
     parser.add_argument("--vol-lookback", type=int, default=63)
     parser.add_argument("--target-vol", type=float, default=0.15)
+    parser.add_argument("--exit-buffer", type=int, default=0, help="Allow exits only when rank exceeds top_n + buffer (hysteresis)")
+    parser.add_argument("--pnl-hold-threshold", type=float, help="If set, defer exit when rank is outside band but unrealized PnL > threshold (e.g., 0.05 for +5%)")
     args = parser.parse_args()
 
     run_backtest(
@@ -258,6 +298,8 @@ def main():
         staged_step=args.staged_step,
         vol_lookback=args.vol_lookback,
         target_vol=args.target_vol,
+        exit_buffer=args.exit_buffer,
+        pnl_hold_threshold=args.pnl_hold_threshold,
     )
 
 

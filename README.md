@@ -218,6 +218,25 @@ This samples 250 tickers from the NSE 500, rebuilds the momentum signals only fo
 python scripts/run_monte_carlo.py --runs 20 --topn-min 15 --topn-max 30 --seed 123
 ```
 
+### 15. Churn experiments (hysteresis / PnL hold)
+
+```bash
+python scripts/run_churn_experiments.py \
+  --prices-dir nse500_data \
+  --benchmark data/benchmarks/nifty100.csv \
+  --sample-size 250 --seed 42 \
+  --top-n 25 --exit-buffer 10 --pnl-hold-threshold 0.05
+```
+
+This samples 250 symbols from the universe, builds L6 signals with extra depth, runs three backtests (baseline, hysteresis, hysteresis+PnL hold), and writes a comparison report to `data/backtests/report.html`. Tune `--exit-buffer` and `--pnl-hold-threshold` to adjust churn sensitivity.
+
+Settings worth tweaking:
+- `--sample-size` / `--seed`: reproducible subsample of the NSE500 universe for quicker iteration.
+- `--lookbacks` / `--skip-days`: momentum window (months) and skip period; default is L6 no-skip.
+- `--top-n`: target portfolio size; `--exit-buffer` adds a lower-priority band for exits (e.g., top 25 enter, only exit if rank > 35).
+- `--pnl-hold-threshold`: keep a position even if its rank falls outside the band while unrealized PnL is above this level (e.g., 0.05 = +5%).
+- `--benchmark`: comparison series for performance metrics and charts.
+
 This randomly samples lookback combinations, Top-N sizes, and exposure scenarios (baseline/cooldown/vol-trigger). Each configuration builds fresh signals (no skip window), runs a backtest, logs metrics to `experiments/monte_<timestamp>/summary.csv`, and generates a consolidated report covering all runs. Use `--universe-file` to constrain the sample to a custom stock list.
 
 ## Requirements
