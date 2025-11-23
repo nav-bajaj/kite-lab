@@ -48,4 +48,20 @@ This document tracks the incremental build-out of the NSE 500 momentum strategy 
 - [ ] Multi-frequency momentum composites (daily vs. weekly inputs)
 - [ ] Live signal export connectors (broker API, Slack alerts)
 
+## Branch Plan — dev-6 (L6-focused momentum engine)
+- [ ] Lock primary ranking to L6 (6-month lookback) with configurable skip window; document rationale and defaults
+- [ ] Tune volatility adjustment (z-score/vol divider) for L6 and add sensitivity tests vs. turnover/drawdown
+- [ ] Sharpen rebalance logic: staged deployment, cooldown thresholds, and vol-trigger parameters calibrated on recent data
+- [ ] Expand metrics: hit-rate by quintile, average holding period, turnover vs. cost drag, drawdown depth/recovery stats
+- [ ] Add experiment scripts for L6 hyperparameters (grid + Monte Carlo) with summaries and saved configs
+- [ ] Validation: regression harness comparing L6 outputs to frozen baseline snapshots; alert on drift
+
+## Branch Plan — ui-1 (dashboard/control plane)
+- [ ] Define a thin service/API layer to trigger existing CLI workflows (login, cache instruments, fetch NSE500, build signals, backtest, report)
+- [ ] Design one-page dashboard with sections: daily ops (buttons for each step), backtest launcher, report viewer/download, data directory quick links
+- [ ] Implement backend endpoints or command runner that stream logs/status to UI and handle long-running jobs
+- [ ] Add job history + status cards (last run, duration, success/failure, log link) and basic auth/config management
+- [ ] Wire UI controls to generate/download latest `report.html`, view momentum signals, and inspect recent equity curves
+- [ ] Package front end (SPA or lightweight server-rendered page) with dev/prod build steps and README instructions
+
 Use this checklist to drive future sessions. Update statuses and add detail as work progresses.
