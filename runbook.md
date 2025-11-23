@@ -1,0 +1,51 @@
+# Runbook
+
+Quick reference for the CLI scripts in this repo. Assumes `.env` has `API_KEY`, `API_SECRET`, `REDIRECT_URI`, and you have a fresh `access_token.txt` (run login first).
+
+## Authentication & instruments
+- `python scripts/login_and_save_token.py`
+  - Opens browser for Kite login; auto-writes `access_token.txt` and `session.json`.
+  - No flags.
+- `python scripts/cache_instruments.py`
+  - Refreshes `data/instruments_full.csv` from Kite instruments API.
+  - No flags (run after login).
+
+## Data collection
+- `python scripts/fetch_nse500_history.py`
+  - Pulls daily + last-90d hourly OHLC for NSE 500 into `nse500_data/` and `nse500_data_hourly/`.
+  - No flags.
+- `python scripts/fetch_next50_history.py`
+  - Same as above for Nifty Next 50; uses `ind_niftynext50list.csv`.
+  - No flags.
+- `python scripts/update_prices.py --symbols INFY TCS --daily-dir nse500_data --interval day`
+  - Incrementally updates given symbols from 2020-01-01 to today.
+  - Flags: `--symbols` (required, space-separated), `--daily-dir` (default `nse500_data`), `--interval` (default `day`, supports intraday like `60minute`).
+- `python scripts/compute_benchmark.py`
+  - Updates `data/benchmarks/nifty100.csv` with close/return/cumret series for NIFTY 100.
+  - No flags.
+
+## Signal building & QA
+- `python scripts/build_momentum_signals.py --prices-dir nse500_data --output data/momentum/top25_signals.csv --skip-days 21 --lookbacks 12 6 3 --top-n 25 [--universe-file path.csv]`
+  - Builds weekly momentum rankings; lookbacks are months mapped to trading days.
+  - Flags: `--prices-dir` (default `nse500_data`), `--output` (default `data/momentum/top25_signals.csv`), `--skip-days` (default 21), `--lookbacks` (choices 3/6/12, default `12 6 3`), `--top-n` (default 25), `--universe-file` (CSV with `Symbol` column to filter universe).
+- `python scripts/validate_signals.py --signals data/momentum/top25_signals.csv --top-n 25`
+  - Checks ranking file for duplicates, excess rows per date, missing scores.
+  - Flags: `--signals` (default `data/momentum/top25_signals.csv`), `--top-n` (default 25).
+
+## Backtesting & reporting
+- `python scripts/backtest_momentum.py --prices-dir nse500_data --signals data/momentum/top25_signals.csv --benchmark data/benchmarks/nifty100.csv --output-dir data/backtests --initial-capital 1000000 --top-n 25 --slippage 0.002 --scenario {baseline,cooldown,vol_trigger} [--cooldown-weeks 1] [--staged-step 0.25] [--vol-lookback 63] [--target-vol 0.15]`
+  - Runs a momentum portfolio backtest with optional drawdown cooldown or volatility targeting.
+- `python scripts/run_backtest_scenarios.py [--dry-run] [--universe-file path.csv] [--signals-dir data/momentum] [--output-root data/backtests] [--label-prefix prefix_]`
+  - Generates signals for preset lookbacks/skip configs, runs all three scenarios, and writes a consolidated report.
+- `python scripts/run_monte_carlo.py --runs 10 --topn-min 15 --topn-max 30 [--lookback-sets 12,6,3 6,3 ...] [--scenarios baseline cooldown voltrigger] [--universe-file path.csv] [--output-root experiments] [--dry-run] [--seed 42]`
+  - Randomly samples lookback sets/top-N/scenarios; builds signals, validates, backtests, and summarizes to `experiments/monte_*`.
+- `python scripts/report_backtests.py --runs data/backtests/run1 data/backtests/run2 --output data/backtests/report.html`
+  - Merges multiple backtest folders into a single HTML report (charts require matplotlib installed).
+
+## Utilities
+- `python scripts/run_daily_pipeline.py [--with-login] [--dry-run]`
+  - Chains login (optional) → fetch NSE500 → compute benchmark → build signals.
+- `python scripts/sample_universe.py --source data/static/nse500_universe.csv --size 250 --seed 42 --output data/static/sample.csv`
+  - Samples a subset of the NSE 500 list for experiments.
+- `python scripts/fetch_history_and_analyse.py`
+  - One-off demo for a single symbol; edit constants inside for symbol/dates/interval. Writes CSV and MA/cumret plots.
