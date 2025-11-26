@@ -34,9 +34,9 @@ kite-lab/
         run_daily_pipeline.py        # Orchestrate daily refresh tasks
         backtest_momentum.py         # Simulate weekly momentum portfolio
         report_backtests.py          # Compare multiple backtest scenarios
-        run_backtest_scenarios.py    # Batch generator for signal/backtest permutations
-        run_monte_carlo.py          # Monte Carlo sampler for parameter search
-        sample_universe.py          # Sample random subsets of NSE 500
+        run_l6_grid.py               # L6 grid search (skip/vol-floor/top-N/exit-buffer)
+        run_l6_monte_carlo.py        # L6 Monte Carlo (baseline/hysteresis/PnL-hold)
+        sample_universe.py           # Sample random subsets of NSE 500
         update_prices.py             # Generic updater using data_pipeline modules
         utils.py                     # Helper utilities for token lookup
     data_pipeline/                   # Reusable components for symbols, prices, and storage
@@ -191,53 +191,19 @@ python scripts/report_backtests.py --runs data/backtests/baseline \
 
 The report compares every scenario (baseline/cooldown/vol-trigger) with summary metrics, charts, trailing returns, and top/bottom contributors based on realized PnL. Charts require `matplotlib`; if unavailable, tables are still produced.
 
-### 12. Run all signal/skip/scenario permutations
+### 12. L6 grid search (skip / vol floor / top-N / exit buffer)
 
 ```bash
-python scripts/run_backtest_scenarios.py
+python scripts/run_l6_grid.py --skip-days 21 10 0 --vol-floor 0.0005 0.001 --top-n 25 20 --exit-buffer 0 5 --scenarios baseline cooldown --limit 10
 ```
 
-This builds three signal variants (3M/6M/12M momentum without the skip-month window) and runs each through the three exposure schemes (baseline, cooldown, volatility trigger), then regenerates the comparison report.
-
-### 13. Run experiments on random universes
+### 13. L6 Monte Carlo (baseline / hysteresis / PnL-hold)
 
 ```bash
-python scripts/sample_universe.py --size 250 --seed 123 --output experiments/random_run/universe.csv
-python scripts/run_backtest_scenarios.py \
-    --universe-file experiments/random_run/universe.csv \
-    --signals-dir experiments/random_run/signals \
-    --output-root experiments/random_run/backtests \
-    --label-prefix rand_
+python scripts/run_l6_monte_carlo.py --runs 20 --sample-size 250 --topn-min 20 --topn-max 30 --skip-days 0 10 21 --exit-buffers 0 5 10 --pnl-hold 0.05 0.1 --vol-floor 0.0005 0.001
 ```
 
-This samples 250 tickers from the NSE 500, rebuilds the momentum signals only for that subset, runs the three exposure schemes, and writes a dedicated comparison report under `experiments/random_run/backtests/report.html`.
-
-### 14. Monte Carlo parameter search
-
-```bash
-python scripts/run_monte_carlo.py --runs 20 --topn-min 15 --topn-max 30 --seed 123
-```
-
-### 15. Churn experiments (hysteresis / PnL hold)
-
-```bash
-python scripts/run_churn_experiments.py \
-  --prices-dir nse500_data \
-  --benchmark data/benchmarks/nifty100.csv \
-  --sample-size 250 --seed 42 \
-  --top-n 25 --exit-buffer 10 --pnl-hold-threshold 0.05
-```
-
-This samples 250 symbols from the universe, builds L6 signals with extra depth, runs three backtests (baseline, hysteresis, hysteresis+PnL hold), and writes a comparison report to `data/backtests/report.html`. Tune `--exit-buffer` and `--pnl-hold-threshold` to adjust churn sensitivity.
-
-Settings worth tweaking:
-- `--sample-size` / `--seed`: reproducible subsample of the NSE500 universe for quicker iteration.
-- `--lookbacks` / `--skip-days`: momentum window (months) and skip period; default is L6 no-skip.
-- `--top-n`: target portfolio size; `--exit-buffer` adds a lower-priority band for exits (e.g., top 25 enter, only exit if rank > 35).
-- `--pnl-hold-threshold`: keep a position even if its rank falls outside the band while unrealized PnL is above this level (e.g., 0.05 = +5%).
-- `--benchmark`: comparison series for performance metrics and charts.
-
-This randomly samples lookback combinations, Top-N sizes, and exposure scenarios (baseline/cooldown/vol-trigger). Each configuration builds fresh signals (no skip window), runs a backtest, logs metrics to `experiments/monte_<timestamp>/summary.csv`, and generates a consolidated report covering all runs. Use `--universe-file` to constrain the sample to a custom stock list.
+Each run samples a sub-universe, builds L6 signals (depth = top_n + exit_buffer), and runs three scenarios: baseline, hysteresis (exit buffer), and PnL-hold. Results are saved under `experiments/l6_mc_*` with `summary.csv` ranked by CAGR and `report.html`.
 
 ## Requirements
 

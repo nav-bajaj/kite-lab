@@ -202,19 +202,19 @@ def build_report(run_paths, output_path: Path):
             }
         )
     summary_df = pd.DataFrame(summary_rows)
+    # Rank by CAGR
+    def extract_cagr(val):
+        try:
+            return float(val.strip("%")) / 100
+        except Exception:
+            return -1e9
+    summary_df["CAGR_numeric"] = summary_df["CAGR"].apply(extract_cagr)
+    summary_df.sort_values("CAGR_numeric", ascending=False, inplace=True)
+    summary_df.insert(0, "Rank", range(1, len(summary_df) + 1))
+    summary_df.drop(columns=["CAGR_numeric"], inplace=True)
     summary_html = summary_df.to_html(index=False, escape=False)
 
-    ranking_df = summary_df.copy()
-    def score(row):
-        sharpe = float(row["Sharpe"]) if row["Sharpe"] not in ("-", None) else -1e9
-        cagr = float(row["CAGR"].strip('%')) / 100 if row["CAGR"] not in ("-", None) else -1e9
-        max_dd = float(row["Max Drawdown"].strip('%').replace('--','-')) / 100 if row["Max Drawdown"] not in ("-", None) else 0
-        penalty = 1 if max_dd < -0.3 else 0
-        return sharpe - penalty + cagr * 0.1
-    ranking_df["Score"] = ranking_df.apply(score, axis=1)
-    ranking_df.sort_values("Score", ascending=False, inplace=True)
-    ranking_df.insert(0, "Rank", range(1, len(ranking_df) + 1))
-    ranking_html = ranking_df.to_html(index=False, escape=False)
+    ranking_html = ""  # Ranking already reflected in summary by CAGR
 
     sections = []
     for entry in analyses:
