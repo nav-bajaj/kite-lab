@@ -56,6 +56,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 print(msg)
                 self.send_response(200); self.end_headers()
                 self.wfile.write(msg.encode())
+                shutdown_event.set()
             except Exception as e:
                 print("Token exchange failed:", e)
                 self.send_response(500); self.end_headers()
@@ -67,17 +68,28 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 class ReusableTCPServer(socketserver.TCPServer):
     allow_reuse_address = True
 
+shutdown_event = threading.Event()
+httpd = None
+
+
 def serve():
     url = urllib.parse.urlparse(REDIRECT_URI)
     host = url.hostname or "localhost"
     port = url.port or 8000
-    with ReusableTCPServer((host, port), Handler) as httpd:
+    global httpd
+    with ReusableTCPServer((host, port), Handler) as srv:
+        httpd = srv
         print(f"Listening on {host}:{port} for redirect ...")
-        httpd.serve_forever()
+        srv.serve_forever()
+
 
 t = threading.Thread(target=serve, daemon=True)
 t.start()
 
-# Keep process alive for a few minutes while you log in
-for i in range(600):
-    time.sleep(1)
+# Keep process alive for a few minutes while you log in, but exit once token is saved
+if not shutdown_event.wait(timeout=600):
+    print("Timed out waiting for login.")
+else:
+    print("Login complete, shutting down server.")
+    if httpd:
+        httpd.shutdown()
