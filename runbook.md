@@ -44,6 +44,8 @@ Quick reference for the CLI scripts in this repo. Assumes `.env` has `API_KEY`, 
   - L6-only Monte Carlo: samples skip window, exit buffer, PnL-hold threshold, top-N, and volatility floor; builds sampled-universe signals and runs baseline vs hysteresis vs PnL-hold backtests. Writes `summary.csv` and `report.html` under `experiments/l6_mc_*`.
 - `python scripts/run_l6_grid.py [--skip-days 21 10 0] [--vol-floor 0.0005 0.001] [--top-n 25 20] [--exit-buffer 0 5] [--scenarios baseline cooldown] [--limit 10]`
   - Grid search focused on L6 (6-month) signals; varies skip window, volatility floor, top-N, exit buffer, and scenario. Saves signals, backtests, and `summary.csv` under `experiments/l6_grid_*`.
+- `python scripts/run_rebalance_sensitivity.py --signals data/momentum/top25_signals.csv --exit-buffers 0 5 10 --pnl-hold 0.05 0.1 --cooldown-weeks 1 2 --staged-steps 0.25 0.5 --vol-targets 0.15 0.2 --vol-lookbacks 63`
+  - Sweeps rebalance knobs (exit buffer, PnL-hold, cooldown staging, vol-trigger targets) for baseline/cooldown/vol-trigger scenarios. Saves ranked `summary.csv` and `report.html` under `experiments/rebalance_*`.
 - `python scripts/report_backtests.py --runs data/backtests/run1 data/backtests/run2 --output data/backtests/report.html`
   - Merges multiple backtest folders into a single HTML report (charts require matplotlib installed).
 - (removed) `run_churn_experiments.py` — churn variants now covered via `run_l6_monte_carlo.py` (baseline / hysteresis / PnL-hold).

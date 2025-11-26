@@ -36,7 +36,7 @@ def row_zscore(df: pd.DataFrame) -> pd.DataFrame:
     return df.sub(mean, axis=0).div(std, axis=0)
 
 
-def compute_scores(prices: pd.DataFrame, skip_days: int, lookbacks: dict, vol_floor: float):
+def compute_scores(prices: pd.DataFrame, skip_days: int, lookbacks: dict, vol_floor: float, vol_power: float):
     prices = prices.sort_index()
     returns = prices.pct_change()
     past_prices = prices.shift(skip_days)
@@ -49,7 +49,8 @@ def compute_scores(prices: pd.DataFrame, skip_days: int, lookbacks: dict, vol_fl
         vol = returns.shift(skip_days).rolling(window).std()
         if vol_floor is not None:
             vol = vol.clip(lower=vol_floor)
-        score = mom / vol
+        denom = vol.pow(vol_power) if vol_power is not None else vol
+        score = mom / denom
         z = row_zscore(score)
         zscores.append(z)
         metrics[f"score_{label}"] = z
@@ -116,6 +117,12 @@ def main():
         default=0.0005,
         help="Lower bound for realized vol to avoid inflating scores when vol is near-zero",
     )
+    parser.add_argument(
+        "--vol-power",
+        type=float,
+        default=1.0,
+        help="Exponent applied to volatility in the divisor (e.g., 0.5 for sqrt vol, 1.0 for raw vol)",
+    )
     args = parser.parse_args()
 
     universe = None
@@ -128,7 +135,7 @@ def main():
     prices = load_price_panel(args.prices_dir, universe)
     lookback_map = {"12": 252, "6": 126, "3": 63}
     selected = {lbl: lookback_map[lbl] for lbl in args.lookbacks}
-    scores = compute_scores(prices, args.skip_days, selected, vol_floor=args.vol_floor)
+    scores = compute_scores(prices, args.skip_days, selected, vol_floor=args.vol_floor, vol_power=args.vol_power)
     build_rankings(scores, args.top_n, Path(args.output), selected)
 
 

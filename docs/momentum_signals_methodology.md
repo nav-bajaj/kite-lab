@@ -16,7 +16,7 @@ For each symbol `s` and date `t`:
    - `σ6  = max(std(returns_{t-21-126 : t-21}), ε)` (default ε = 0.0005)
    - Optional: `σ12`, `σ3` when those horizons are enabled.
 3. **Risk-adjusted scores**
-   - `S6 = R6 / σ6` (and `S12`, `S3` if enabled)
+   - `S6 = R6 / σ6^p` where `p` is a volatility exponent (default 1.0; use 0.5 for sqrt-vol scaling). Optional `S12` / `S3` match their windows.
 4. **Cross-sectional normalization**
    - For each date, z-score each enabled score across all symbols to make them comparable.
 5. **Composite score**
