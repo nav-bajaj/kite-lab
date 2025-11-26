@@ -30,15 +30,20 @@ Quick reference for the CLI scripts in this repo. Assumes `.env` has `API_KEY`, 
   - Flags: `--prices-dir` (default `nse500_data`), `--output` (default `data/momentum/top25_signals.csv`), `--skip-days` (default 21), `--lookbacks` (choices 3/6/12, default `12 6 3`), `--top-n` (default 25), `--universe-file` (CSV with `Symbol` column to filter universe).
 - `python scripts/validate_signals.py --signals data/momentum/top25_signals.csv --top-n 25`
   - Checks ranking file for duplicates, excess rows per date, missing scores.
+- `python scripts/compare_signals_baseline.py --baseline data/momentum/signals_L6_noskip.csv --candidate data/momentum/top25_signals.csv --top-n 25`
+  - Compares a candidate signal file to a frozen baseline snapshot; reports overlap and rank drift, optionally writes a CSV summary.
   - Flags: `--signals` (default `data/momentum/top25_signals.csv`), `--top-n` (default 25).
 
 ## Backtesting & reporting
 - `python scripts/backtest_momentum.py --prices-dir nse500_data --signals data/momentum/top25_signals.csv --benchmark data/benchmarks/nifty100.csv --output-dir data/backtests --initial-capital 1000000 --top-n 25 --slippage 0.002 --scenario {baseline,cooldown,vol_trigger} [--cooldown-weeks 1] [--staged-step 0.25] [--vol-lookback 63] [--target-vol 0.15] [--exit-buffer 10] [--pnl-hold-threshold 0.05]`
   - Runs a momentum portfolio backtest with optional drawdown cooldown or volatility targeting. `--exit-buffer` adds hysteresis to exits (requires signals containing ranks up to `top_n + buffer`), and `--pnl-hold-threshold` defers exits while unrealized PnL exceeds the threshold.
+  - Outputs include equity/trade/turnover CSVs plus `momentum_metrics.csv` (CAGR, drawdown depth/duration, turnover, cost drag, holding period, hit-rate by quintile, trade counts and avg trades per week/month/year).
 - `python scripts/run_backtest_scenarios.py [--dry-run] [--universe-file path.csv] [--signals-dir data/momentum] [--output-root data/backtests] [--label-prefix prefix_]`
   - Generates signals for preset lookbacks/skip configs, runs all three scenarios, and writes a consolidated report.
 - `python scripts/run_monte_carlo.py --runs 10 --topn-min 15 --topn-max 30 [--lookback-sets 12,6,3 6,3 ...] [--scenarios baseline cooldown voltrigger] [--universe-file path.csv] [--output-root experiments] [--dry-run] [--seed 42]`
   - Randomly samples lookback sets/top-N/scenarios; builds signals, validates, backtests, and summarizes to `experiments/monte_*`.
+- `python scripts/run_l6_grid.py [--skip-days 21 10 0] [--vol-floor 0.0005 0.001] [--top-n 25 20] [--exit-buffer 0 5] [--scenarios baseline cooldown] [--limit 10]`
+  - Grid search focused on L6 (6-month) signals; varies skip window, volatility floor, top-N, exit buffer, and scenario. Saves signals, backtests, and `summary.csv` under `experiments/l6_grid_*`.
 - `python scripts/report_backtests.py --runs data/backtests/run1 data/backtests/run2 --output data/backtests/report.html`
   - Merges multiple backtest folders into a single HTML report (charts require matplotlib installed).
 - `python scripts/run_churn_experiments.py --prices-dir nse500_data --benchmark data/benchmarks/nifty100.csv --sample-size 250 --seed 42 --top-n 25 --exit-buffer 10 --pnl-hold-threshold 0.05`

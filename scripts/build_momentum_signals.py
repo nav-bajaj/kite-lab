@@ -36,7 +36,7 @@ def row_zscore(df: pd.DataFrame) -> pd.DataFrame:
     return df.sub(mean, axis=0).div(std, axis=0)
 
 
-def compute_scores(prices: pd.DataFrame, skip_days: int, lookbacks: dict):
+def compute_scores(prices: pd.DataFrame, skip_days: int, lookbacks: dict, vol_floor: float):
     prices = prices.sort_index()
     returns = prices.pct_change()
     past_prices = prices.shift(skip_days)
@@ -47,6 +47,8 @@ def compute_scores(prices: pd.DataFrame, skip_days: int, lookbacks: dict):
     for label, window in lookbacks.items():
         mom = past_prices / past_prices.shift(window) - 1
         vol = returns.shift(skip_days).rolling(window).std()
+        if vol_floor is not None:
+            vol = vol.clip(lower=vol_floor)
         score = mom / vol
         z = row_zscore(score)
         zscores.append(z)
@@ -98,16 +100,22 @@ def main():
     parser = argparse.ArgumentParser(description="Build momentum rankings for NSE 500")
     parser.add_argument("--prices-dir", default="nse500_data", type=Path)
     parser.add_argument("--output", default=Path("data/momentum/top25_signals.csv"), type=Path)
-    parser.add_argument("--skip-days", type=int, default=21)
+    parser.add_argument("--skip-days", type=int, default=21, help="Skip window before measuring momentum (trading days)")
     parser.add_argument(
         "--lookbacks",
         nargs="+",
         choices=["3", "6", "12"],
-        default=["12", "6", "3"],
-        help="Momentum lookback windows in months",
+        default=["6"],
+        help="Momentum lookback windows in months (default L6 focus)",
     )
     parser.add_argument("--top-n", type=int, default=25)
     parser.add_argument("--universe-file", type=Path, help="CSV with Symbol column to limit universe")
+    parser.add_argument(
+        "--vol-floor",
+        type=float,
+        default=0.0005,
+        help="Lower bound for realized vol to avoid inflating scores when vol is near-zero",
+    )
     args = parser.parse_args()
 
     universe = None
@@ -120,7 +128,7 @@ def main():
     prices = load_price_panel(args.prices_dir, universe)
     lookback_map = {"12": 252, "6": 126, "3": 63}
     selected = {lbl: lookback_map[lbl] for lbl in args.lookbacks}
-    scores = compute_scores(prices, args.skip_days, selected)
+    scores = compute_scores(prices, args.skip_days, selected, vol_floor=args.vol_floor)
     build_rankings(scores, args.top_n, Path(args.output), selected)
 
 

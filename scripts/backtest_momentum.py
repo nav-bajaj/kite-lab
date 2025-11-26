@@ -64,6 +64,97 @@ def map_signal_to_trade(signal_date, calendar):
     return None
 
 
+def longest_drawdown_duration(drawdown_series: pd.Series) -> int:
+    longest = 0
+    current = 0
+    for val in drawdown_series:
+        if val < 0:
+            current += 1
+            longest = max(longest, current)
+        else:
+            current = 0
+    return longest
+
+
+def summarise_metrics(
+    equity_df: pd.DataFrame,
+    trades_df: pd.DataFrame,
+    turnover_df: pd.DataFrame,
+    exit_records: list,
+    initial_capital: float,
+    top_n: int,
+):
+    if equity_df.empty:
+        return pd.DataFrame()
+
+    start_val = equity_df["portfolio_value"].iloc[0]
+    end_val = equity_df["portfolio_value"].iloc[-1]
+    total_return = end_val / start_val - 1
+
+    start_date = equity_df["date"].iloc[0]
+    end_date = equity_df["date"].iloc[-1]
+    years = max((end_date - start_date).days / 365.25, 1e-6)
+    cagr = (1 + total_return) ** (1 / years) - 1
+
+    max_dd = equity_df["drawdown"].min()
+    dd_duration = longest_drawdown_duration(equity_df["drawdown"].values)
+
+    turnover_stats = {"avg_turnover_pct": None, "max_turnover_pct": None, "annualized_turnover": None}
+    if not turnover_df.empty:
+        turnover_stats["avg_turnover_pct"] = turnover_df["turnover_pct"].mean()
+        turnover_stats["max_turnover_pct"] = turnover_df["turnover_pct"].max()
+        total_turnover = turnover_df["turnover"].sum()
+        turnover_stats["annualized_turnover"] = total_turnover / initial_capital / years if years > 0 else None
+
+    cost_drag = trades_df["slippage"].sum() / initial_capital if not trades_df.empty else 0
+
+    hit_rates = {"hit_rate_overall": None}
+    hold_stats = {"avg_holding_days": None, "median_holding_days": None}
+    if exit_records:
+        exit_df = pd.DataFrame(exit_records)
+        hit_rates["hit_rate_overall"] = (exit_df["pnl_pct"] > 0).mean()
+        hold_stats["avg_holding_days"] = exit_df["holding_days"].mean()
+        hold_stats["median_holding_days"] = exit_df["holding_days"].median()
+
+        # Hit-rate by entry-rank quintile
+        bins = [0, *(i * top_n / 5 for i in range(1, 5)), top_n + 1]
+        labels = [f"q{i}" for i in range(1, 6)]
+        exit_df["rank_quintile"] = pd.cut(exit_df["entry_rank"], bins=bins, labels=labels, include_lowest=True)
+        for label, grp in exit_df.groupby("rank_quintile"):
+            hit_rates[f"hit_rate_{label}"] = (grp["pnl_pct"] > 0).mean()
+
+    trade_counts = {
+        "trades_total": len(trades_df),
+        "buys": len(trades_df[trades_df["side"] == "BUY"]),
+        "sells": len(trades_df[trades_df["side"] == "SELL"]),
+        "trades_per_week": None,
+        "trades_per_month": None,
+        "trades_per_year": None,
+    }
+    if not trades_df.empty:
+        weeks = len(pd.period_range(start_date, end_date, freq="W")) or 1
+        months = len(pd.period_range(start_date, end_date, freq="M")) or 1
+        years_count = len(pd.period_range(start_date, end_date, freq="Y")) or 1
+        trade_counts["trades_per_week"] = trade_counts["trades_total"] / weeks
+        trade_counts["trades_per_month"] = trade_counts["trades_total"] / months
+        trade_counts["trades_per_year"] = trade_counts["trades_total"] / years_count
+
+    metrics = {
+        "start": start_date,
+        "end": end_date,
+        "total_return": total_return,
+        "cagr": cagr,
+        "max_drawdown": max_dd,
+        "max_drawdown_duration_days": dd_duration,
+        "cost_drag_pct": cost_drag,
+        **turnover_stats,
+        **hold_stats,
+        **hit_rates,
+        **trade_counts,
+    }
+    return pd.DataFrame([metrics])
+
+
 def run_backtest(
     prices_dir,
     signals_path,
@@ -97,10 +188,12 @@ def run_backtest(
     holdings = {}
     cost_basis = {}
     last_prices = {}
+    entry_meta = {}
     cash = initial_capital
     trade_records = []
     equity_records = []
     turnover_records = []
+    exit_records = []
     peak_equity = initial_capital
     exposure = 1.0 if scenario != "vol_trigger" else 0.0
     cooldown_counter = 0
@@ -159,6 +252,8 @@ def run_backtest(
         target_symbols = target_symbols[:top_n]
         if exposure <= 0:
             holdings.clear()
+            cost_basis.clear()
+            entry_meta.clear()
             continue
         current_symbols = set(holdings.keys())
         target_set = set(target_symbols)
@@ -198,6 +293,18 @@ def run_backtest(
             cost_basis[sym] = cost_basis.get(sym, 0) - avg_cost * shares
             if holdings.get(sym, 0) == 0:
                 cost_basis.pop(sym, None)
+                meta = entry_meta.pop(sym, {"date": date, "rank": None})
+                pnl_pct = price / avg_cost - 1 if avg_cost else None
+                exit_records.append(
+                    {
+                        "symbol": sym,
+                        "entry_date": meta.get("date"),
+                        "exit_date": date,
+                        "entry_rank": meta.get("rank"),
+                        "holding_days": (date - meta.get("date")).days if meta.get("date") is not None else None,
+                        "pnl_pct": pnl_pct,
+                    }
+                )
             notional = shares * price
             cost = notional * slippage
             rebalance_turnover += abs(notional)
@@ -231,6 +338,7 @@ def run_backtest(
                     continue
                 holdings[sym] = holdings.get(sym, 0) + shares
                 cost_basis[sym] = cost_basis.get(sym, 0) + cost
+                entry_meta[sym] = {"date": date, "rank": current_ranks.get(sym)}
                 cash -= cost
                 notional = shares * price
                 rebalance_turnover += abs(notional)
@@ -265,6 +373,9 @@ def run_backtest(
     equity_df.to_csv(output_dir / "momentum_equity.csv", index=False)
     trades_df.to_csv(output_dir / "momentum_trades.csv", index=False)
     turnover_df.to_csv(output_dir / "momentum_turnover.csv", index=False)
+    metrics_df = summarise_metrics(equity_df, trades_df, turnover_df, exit_records, initial_capital, top_n)
+    if not metrics_df.empty:
+        metrics_df.to_csv(output_dir / "momentum_metrics.csv", index=False)
 
 
 def main():

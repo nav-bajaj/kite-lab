@@ -30,6 +30,15 @@ def load_trades(path: Path) -> pd.DataFrame:
     return df.sort_values("date")
 
 
+def load_metrics(path: Path) -> dict:
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if df.empty:
+        return {}
+    return df.iloc[0].to_dict()
+
+
 def annualized_return(values: pd.Series, dates: pd.Series) -> float:
     total_return = values.iloc[-1] / values.iloc[0] - 1
     days = (dates.iloc[-1] - dates.iloc[0]).days
@@ -115,9 +124,16 @@ def format_percent(value):
     return f"{value:.2%}"
 
 
+def format_number(value, decimals=1):
+    if value is None or pd.isna(value):
+        return "-"
+    return f"{value:.{decimals}f}"
+
+
 def analyze_run(run_path: Path, label: str):
     equity = load_equity(run_path / "momentum_equity.csv")
     trades = load_trades(run_path / "momentum_trades.csv")
+    metrics_file = load_metrics(run_path / "momentum_metrics.csv")
 
     metrics = {
         "label": label,
@@ -132,6 +148,9 @@ def analyze_run(run_path: Path, label: str):
     metrics["sharpe"] = (
         (metrics["cagr"] or 0) / metrics["vol"] if metrics["vol"] not in (0, None) else np.nan
     )
+
+    # merge extended metrics if available
+    metrics.update({k: v for k, v in metrics_file.items() if k not in metrics})
 
     periods = {}
     for label_per, days in [("1M", 30), ("3M", 90), ("6M", 180), ("1Y", 365)]:
@@ -153,6 +172,7 @@ def analyze_run(run_path: Path, label: str):
         "worst": worst,
         "recent_trades": trades.tail(30),
         "date_range": (equity["date"].iloc[0], equity["date"].iloc[-1]),
+        "metrics_file": metrics_file,
     }
 
 
@@ -175,6 +195,10 @@ def build_report(run_paths, output_path: Path):
                 "Volatility": format_percent(m["vol"]),
                 "Sharpe": f"{m['sharpe']:.2f}" if not pd.isna(m["sharpe"]) else "-",
                 "Max Drawdown": format_percent(m["max_dd"]),
+                "Trades/Week": format_number(m.get("trades_per_week")),
+                "Trades/Month": format_number(m.get("trades_per_month")),
+                "Trades/Year": format_number(m.get("trades_per_year")),
+                "Avg Turnover %": format_percent(m.get("avg_turnover_pct")),
             }
         )
     summary_df = pd.DataFrame(summary_rows)
@@ -198,6 +222,30 @@ def build_report(run_paths, output_path: Path):
         label = m["label"]
         date_range = f"{entry['date_range'][0].date()} → {entry['date_range'][1].date()}"
         config_html = f"<p><strong>Settings:</strong> lookbacks={m.get('lookbacks','n/a')}, top_n={m.get('top_n','n/a')}, scenario={m.get('scenario','n/a')}</p>"
+        metrics_detail = entry.get("metrics_file", {})
+        if metrics_detail:
+            metrics_table = pd.DataFrame(
+                [
+                    {"Metric": "Trades (total)", "Value": format_number(metrics_detail.get("trades_total"), 0)},
+                    {"Metric": "Trades per week", "Value": format_number(metrics_detail.get("trades_per_week"))},
+                    {"Metric": "Trades per month", "Value": format_number(metrics_detail.get("trades_per_month"))},
+                    {"Metric": "Trades per year", "Value": format_number(metrics_detail.get("trades_per_year"))},
+                    {"Metric": "Avg turnover %", "Value": format_percent(metrics_detail.get("avg_turnover_pct"))},
+                    {"Metric": "Max turnover %", "Value": format_percent(metrics_detail.get("max_turnover_pct"))},
+                    {"Metric": "Cost drag %", "Value": format_percent(metrics_detail.get("cost_drag_pct"))},
+                    {"Metric": "Max DD duration (days)", "Value": format_number(metrics_detail.get("max_drawdown_duration_days"), 0)},
+                    {"Metric": "Avg holding days", "Value": format_number(metrics_detail.get("avg_holding_days"), 1)},
+                    {"Metric": "Median holding days", "Value": format_number(metrics_detail.get("median_holding_days"), 1)},
+                    {"Metric": "Hit-rate overall", "Value": format_percent(metrics_detail.get("hit_rate_overall"))},
+                    {"Metric": "Hit-rate q1", "Value": format_percent(metrics_detail.get("hit_rate_q1"))},
+                    {"Metric": "Hit-rate q2", "Value": format_percent(metrics_detail.get("hit_rate_q2"))},
+                    {"Metric": "Hit-rate q3", "Value": format_percent(metrics_detail.get("hit_rate_q3"))},
+                    {"Metric": "Hit-rate q4", "Value": format_percent(metrics_detail.get("hit_rate_q4"))},
+                    {"Metric": "Hit-rate q5", "Value": format_percent(metrics_detail.get("hit_rate_q5"))},
+                ]
+            ).to_html(index=False, escape=False)
+        else:
+            metrics_table = "<p>No metrics file found.</p>"
 
         periods_df = pd.DataFrame(
             [
@@ -234,6 +282,8 @@ def build_report(run_paths, output_path: Path):
                 <div>{chart_html}</div>
                 <h3>Trailing Returns</h3>
                 {period_html}
+                <h3>Portfolio Stats</h3>
+                {metrics_table}
                 <h3>Top 5 Contributors</h3>
                 {best_html}
                 <h3>Bottom 5 Contributors</h3>

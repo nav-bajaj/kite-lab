@@ -49,12 +49,12 @@ This document tracks the incremental build-out of the NSE 500 momentum strategy 
 - [ ] Live signal export connectors (broker API, Slack alerts)
 
 ## Branch Plan — dev-6 (L6-focused momentum engine)
-- [ ] Lock primary ranking to L6 (6-month lookback) with configurable skip window; document rationale and defaults
+- [x] Lock primary ranking to L6 (6-month lookback) with configurable skip window; document rationale and defaults
 - [ ] Tune volatility adjustment (z-score/vol divider) for L6 and add sensitivity tests vs. turnover/drawdown
 - [ ] Sharpen rebalance logic: staged deployment, cooldown thresholds, and vol-trigger parameters calibrated on recent data
-- [ ] Expand metrics: hit-rate by quintile, average holding period, turnover vs. cost drag, drawdown depth/recovery stats
-- [ ] Add experiment scripts for L6 hyperparameters (grid + Monte Carlo) with summaries and saved configs
-- [ ] Validation: regression harness comparing L6 outputs to frozen baseline snapshots; alert on drift
+- [x] Expand metrics: hit-rate by quintile, average holding period, turnover vs. cost drag, drawdown depth/recovery stats
+- [x] Add experiment scripts for L6 hyperparameters (grid + Monte Carlo) with summaries and saved configs
+- [x] Validation: regression harness comparing L6 outputs to frozen baseline snapshots; alert on drift
 
 ## Branch Plan — ui-1 (dashboard/control plane)
 - [ ] Define a thin service/API layer to trigger existing CLI workflows (login, cache instruments, fetch NSE500, build signals, backtest, report)
