@@ -4,75 +4,116 @@
   <meta charset="utf-8">
   <title>Momentum Control Panel</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f5f7fb; color: #1f2d3d; }
-    h1 { margin-bottom: 4px; }
-    .subtitle { color: #4b5563; margin-top: 0; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 16px; }
-    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-    button { background: #2563eb; color: #fff; border: none; border-radius: 6px; padding: 8px 10px; cursor: pointer; font-weight: 600; }
-    button:hover { background: #1d4ed8; }
-    button:disabled { background: #9ca3af; cursor: not-allowed; }
-    .jobs { max-height: 300px; overflow-y: auto; }
-    .job { padding: 8px; border-bottom: 1px solid #e5e7eb; }
-    .job:last-child { border-bottom: none; }
-    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; }
-    .status-running { background: #fff7ed; color: #c2410c; }
-    .status-completed { background: #ecfdf3; color: #15803d; }
-    .status-failed, .status-error { background: #fef2f2; color: #b91c1c; }
-    .status-queued { background: #e0f2fe; color: #0369a1; }
-    pre { background: #0b1220; color: #e5e7eb; padding: 12px; border-radius: 8px; max-height: 320px; overflow: auto; font-size: 13px; }
-    .flex { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    a { color: #2563eb; text-decoration: none; }
+    :root {
+      --bg: #0c111d;
+      --panel: rgba(255,255,255,0.06);
+      --panel-border: rgba(255,255,255,0.08);
+      --text: #e8ecf5;
+      --muted: #9aa5c4;
+      --accent: #6f8bff;
+      --accent-2: #c084fc;
+      --badge-ok: #22c55e;
+      --badge-warn: #f97316;
+      --badge-err: #ef4444;
+      --card-radius: 14px;
+      --shadow: 0 12px 40px rgba(0,0,0,0.35);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: "Inter", "SF Pro Text", system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(111,139,255,0.16), transparent 35%),
+                  radial-gradient(circle at 80% 0%, rgba(192,132,252,0.18), transparent 30%),
+                  var(--bg);
+      color: var(--text);
+    }
+    h1 { margin: 0 0 6px 0; font-size: 28px; }
+    .subtitle { color: var(--muted); margin: 0 0 20px 0; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--card-radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
+    }
+    .card h3 { margin: 0 0 6px 0; }
+    .muted { color: var(--muted); font-size: 13px; }
+    .script-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .arg { margin-bottom: 8px; }
+    .arg label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+    .arg input { width: 100%; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--panel-border); background: rgba(255,255,255,0.04); color: var(--text); }
+    button {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #0b1020;
+      border: none;
+      border-radius: 10px;
+      padding: 9px 12px;
+      cursor: pointer;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(111,139,255,0.35);
+    }
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+    .jobs { max-height: 320px; overflow-y: auto; }
+    .job { padding: 10px 0; border-bottom: 1px solid var(--panel-border); }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .status-running { background: rgba(249,115,22,0.15); color: #fb923c; }
+    .status-completed { background: rgba(34,197,94,0.15); color: var(--badge-ok); }
+    .status-failed, .status-error { background: rgba(239,68,68,0.15); color: var(--badge-err); }
+    .status-queued { background: rgba(111,139,255,0.15); color: var(--accent); }
+    pre { background: #0b1020; color: #e5e7eb; padding: 12px; border-radius: 10px; max-height: 320px; overflow: auto; font-size: 13px; }
+    a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
-    .links { display: flex; gap: 10px; flex-wrap: wrap; }
+    .links { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+    .pill { display: inline-block; padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid var(--panel-border); font-size: 12px; color: var(--muted); }
+    .cmd-line { font-family: "JetBrains Mono", "SFMono-Regular", monospace; font-size: 12px; color: var(--muted); margin-top: 6px; white-space: pre-wrap; }
   </style>
 </head>
 <body>
   <h1>Momentum Control Panel</h1>
-  <p class="subtitle">Run daily tasks, build signals, and generate reports from one page.</p>
+  <p class="subtitle">Launch scripts, review jobs, and jump to reports. Styled with the new design ideas palette.</p>
 
   <div class="card">
-    <h3 style="margin:0 0 8px 0;">Run a Script</h3>
-    <div class="flex" style="gap:12px; align-items:flex-start;">
-      <div>
-        <label style="font-size:12px; color:#4b5563;">Select script</label><br>
-        <select id="command-select" style="min-width:240px; padding:6px; border:1px solid #e5e7eb; border-radius:6px;"></select>
-      </div>
-      <div style="flex:1;">
-        <div id="command-desc" style="color:#4b5563; margin-bottom:8px;"></div>
-        <div id="args-form"></div>
-        <button id="run-btn">Run</button>
-        <div id="cmd-preview" style="margin-top:6px; font-size:12px; color:#6b7280;"></div>
-      </div>
-    </div>
+    <h3>Scripts</h3>
+    <p class="muted" style="margin-bottom:10px;">Each card mirrors a CLI script. Fill args (or leave defaults) and run.</p>
+    <div class="script-grid" id="command-grid"></div>
   </div>
 
   <div class="grid">
     <div class="card">
-      <div class="flex" style="justify-content: space-between;">
-        <h3 style="margin:0;">Job Activity</h3>
+      <div style="display:flex; justify-content: space-between; align-items:center;">
+        <div>
+          <h3 style="margin:0;">Job Activity</h3>
+          <div class="muted">Recent runs with timestamps and args.</div>
+        </div>
         <button id="refresh-jobs">Refresh</button>
       </div>
       <div class="jobs" id="jobs"></div>
     </div>
 
     <div class="card">
-      <div class="flex" style="justify-content: space-between;">
-        <h3 style="margin:0;">Logs</h3>
-        <select id="log-select"></select>
+      <div style="display:flex; justify-content: space-between; align-items:center;">
+        <div>
+          <h3 style="margin:0;">Logs</h3>
+          <div class="muted">Pick a job to view its output.</div>
+        </div>
+        <select id="log-select" style="padding:8px; border-radius:8px; border:1px solid var(--panel-border); background: rgba(255,255,255,0.04); color: var(--text);"></select>
       </div>
       <pre id="log-viewer">Select a job to view logs.</pre>
     </div>
   </div>
 
   <div class="card">
-    <h3 style="margin:0;">Reports & Data</h3>
+    <h3 style="margin:0 0 6px 0;">Quick Links</h3>
     <div class="links">
-      <a href="/data/backtests/report.html" target="_blank">Latest Backtest Report (if present)</a>
-      <a href="/experiments" target="_blank">Experiments folder</a>
-      <a href="/data/momentum/top25_signals.csv" target="_blank">Momentum Signals</a>
-      <a href="/data/benchmarks/nifty100.csv" target="_blank">Benchmark Series</a>
-      <a href="/data/backtests" target="_blank">Backtest outputs folder</a>
+      <a href="/data/backtests/report.html" target="_blank" class="pill">Latest Backtest Report</a>
+      <a href="/experiments" target="_blank" class="pill">Experiments Folder</a>
+      <a href="/data/momentum/top25_signals.csv" target="_blank" class="pill">Momentum Signals CSV</a>
+      <a href="/data/benchmarks/nifty100.csv" target="_blank" class="pill">Benchmark Series</a>
+      <a href="/data/backtests" target="_blank" class="pill">Backtest Outputs</a>
     </div>
   </div>
 
@@ -87,47 +128,46 @@
     async function loadCommands() {
       const data = await fetchJSON('/api/commands');
       commands = data.commands;
-      const select = document.getElementById('command-select');
-      select.innerHTML = '';
+      const grid = document.getElementById('command-grid');
+      grid.innerHTML = '';
       commands.forEach(cmd => {
-        const opt = document.createElement('option');
-        opt.value = cmd.key;
-        opt.textContent = cmd.label;
-        select.appendChild(opt);
-      });
-      select.addEventListener('change', () => renderCommand(select.value));
-      renderCommand(commands[0]?.key);
-    }
-
-    function renderCommand(key) {
-      const cmd = commands.find(c => c.key === key);
-      if (!cmd) return;
-      document.getElementById('command-desc').textContent = cmd.description;
-      document.getElementById('cmd-preview').textContent = cmd.cmd;
-      const form = document.getElementById('args-form');
-      form.innerHTML = '';
-      (cmd.args || []).forEach(arg => {
-        const wrapper = document.createElement('div');
-        wrapper.style.marginBottom = '6px';
-        wrapper.innerHTML = `
-          <label style="display:block; font-size:12px; color:#4b5563; margin-bottom:2px;">
-            ${arg.flag} — ${arg.help}
-          </label>
-          <input type="text" data-flag="${arg.flag}" value="${arg.placeholder || ''}" style="width:100%; padding:6px; border:1px solid #e5e7eb; border-radius:6px;">
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div style="display:flex; justify-content: space-between; align-items:center; gap:8px; margin-bottom:6px;">
+            <div>
+              <div class="pill" style="margin-bottom:6px;">${cmd.key}</div>
+              <h3 style="margin:0;">${cmd.label}</h3>
+              <div class="muted">${cmd.description}</div>
+            </div>
+            <button data-cmd="${cmd.key}">Run</button>
+          </div>
+          <div class="args"></div>
+          <div class="cmd-line">${cmd.cmd}</div>
         `;
-        form.appendChild(wrapper);
-      });
-      document.getElementById('run-btn').onclick = () => {
-        const args = [];
+        const argsDiv = card.querySelector('.args');
         (cmd.args || []).forEach(arg => {
-          const input = form.querySelector(`input[data-flag="${arg.flag}"]`);
-          const val = (input.value || "").trim();
-          if (!val) return;
-          const parts = val.split(/\s+/).filter(Boolean);
-          args.push(arg.flag, ...parts);
+          const wrap = document.createElement('div');
+          wrap.className = 'arg';
+          wrap.innerHTML = `
+            <label>${arg.flag} — ${arg.help}</label>
+            <input type="text" data-flag="${arg.flag}" value="${arg.placeholder || ''}">
+          `;
+          argsDiv.appendChild(wrap);
         });
-        startJob(cmd.key, args);
-      };
+        card.querySelector('button').addEventListener('click', () => {
+          const args = [];
+          (cmd.args || []).forEach(arg => {
+            const input = card.querySelector(`input[data-flag="${arg.flag}"]`);
+            const val = (input.value || '').trim();
+            if (!val) return;
+            const parts = val.split(/\s+/).filter(Boolean);
+            args.push(arg.flag, ...parts);
+          });
+          startJob(cmd.key, args);
+        });
+        grid.appendChild(card);
+      });
     }
 
     async function startJob(command, args=[]) {
