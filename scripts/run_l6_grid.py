@@ -83,6 +83,7 @@ def main():
     grid = itertools.product(args.skip_days, args.vol_floor, args.top_n, args.exit_buffer, args.scenarios)
 
     summary_rows = []
+    run_paths = []
     for idx, (skip_days, vol_floor, top_n, exit_buf, scenario) in enumerate(grid, start=1):
         if args.limit and idx > args.limit:
             break
@@ -141,6 +142,7 @@ def main():
             str(exit_buf),
         ] + SCENARIOS[scenario]
         run(cmd, args.dry_run)
+        run_paths.append(str(run_dir))
 
         if not args.dry_run:
             metrics = analyze_backtest(run_dir)
@@ -160,6 +162,21 @@ def main():
         summary_path = exp_dir / "summary.csv"
         pd.DataFrame(summary_rows).to_csv(summary_path, index=False)
         print(f"Saved summary to {summary_path}")
+
+    if run_paths:
+        report_path = exp_dir / "report.html"
+        run(
+            [
+                sys.executable,
+                "scripts/report_backtests.py",
+                "--runs",
+                *run_paths,
+                "--output",
+                str(report_path),
+            ],
+            args.dry_run,
+        )
+        print(f"Saved report to {report_path}")
 
     print(f"Experiment directory: {exp_dir}")
 
