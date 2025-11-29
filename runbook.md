@@ -25,8 +25,8 @@ Quick reference for the CLI scripts in this repo. Assumes `.env` has `API_KEY`, 
   - No flags.
 
 ## Signal building & QA
-- `python scripts/build_momentum_signals.py --prices-dir nse500_data --output data/momentum/top25_signals.csv --skip-days 21 --lookbacks 6 --top-n 25 --vol-floor 0.0005 --vol-power 1.0 [--universe-file path.csv]`
-  - Builds weekly momentum rankings (default L6). Flags: lookbacks (3/6/12), skip window, top-N, vol floor, vol exponent, optional universe filter.
+- `python scripts/build_momentum_signals.py --prices-dir nse500_data --output data/momentum/top25_signals.csv --skip-days 0 --lookbacks 6 --top-n 25 --vol-floor 0.0005 --vol-power 1.0 [--universe-file path.csv]`
+  - Builds weekly momentum rankings (default L6, no skip). Flags: lookbacks (3/6/12), optional skip window, top-N, vol floor, vol exponent, optional universe filter.
 - `python scripts/validate_signals.py --signals data/momentum/top25_signals.csv --top-n 25`
   - Checks ranking file for duplicates, excess rows per date, missing scores.
 - `python scripts/compare_signals_baseline.py --baseline data/momentum/signals_L6_noskip.csv --candidate data/momentum/top25_signals.csv --top-n 25`
@@ -38,10 +38,10 @@ Quick reference for the CLI scripts in this repo. Assumes `.env` has `API_KEY`, 
   - Outputs include equity/trade/turnover CSVs plus `momentum_metrics.csv` (CAGR, drawdown depth/duration, turnover, cost drag, holding period, hit-rate by quintile, trade counts and avg trades per week/month/year).
 - (removed) `run_backtest_scenarios.py` — superseded by the L6 grid/MC runners.
 - (removed) `run_monte_carlo.py` — superseded by the L6-only Monte Carlo runner.
-- `python scripts/run_l6_monte_carlo.py --runs 20 --sample-size 250 --topn-min 20 --topn-max 30 --skip-days 0 10 21 --exit-buffers 0 5 10 --pnl-hold 0.05 0.1 --vol-floor 0.0005 0.001 [--dry-run]`
-  - L6-only Monte Carlo: samples skip window, exit buffer, PnL-hold threshold, top-N, and volatility floor; builds sampled-universe signals and runs baseline vs hysteresis vs PnL-hold backtests. Writes `summary.csv` and `report.html` under `experiments/l6_mc_*`.
-- `python scripts/run_l6_grid.py [--skip-days 21 10 0] [--vol-floor 0.0005 0.001] [--top-n 25 20] [--exit-buffer 0 5] [--scenarios baseline cooldown] [--limit 10]`
-  - Grid search focused on L6 (6-month) signals; varies skip window, volatility floor, top-N, exit buffer, and scenario. Saves signals, backtests, and `summary.csv` under `experiments/l6_grid_*`.
+- `python scripts/run_l6_monte_carlo.py --runs 20 --sample-size 250 --topn-min 20 --topn-max 30 --skip-days 0 --exit-buffers 0 5 10 --pnl-hold 0.05 0.1 --vol-floor 0.0005 0.001 [--dry-run]`
+  - L6-only Monte Carlo: samples exit buffer, PnL-hold threshold, top-N, and volatility floor (skip default 0); builds sampled-universe signals and runs baseline vs hysteresis vs PnL-hold backtests. Writes `summary.csv` and `report.html` under `experiments/l6_mc_*`.
+- `python scripts/run_l6_grid.py [--skip-days 0] [--vol-floor 0.0005 0.001] [--top-n 25 20] [--exit-buffer 0 5] [--scenarios baseline cooldown] [--limit 10]`
+  - Grid search focused on L6 (6-month) signals; varies volatility floor, top-N, exit buffer, and scenario (skip default 0). Saves signals, backtests, `summary.csv`, and `report.html` under `experiments/l6_grid_*`.
 - `python scripts/run_rebalance_sensitivity.py --signals data/momentum/top25_signals.csv --exit-buffers 0 5 10 --pnl-hold 0.05 0.1 --cooldown-weeks 1 2 --staged-steps 0.25 0.5 --vol-targets 0.15 0.2 --vol-lookbacks 63`
   - Sweeps rebalance knobs (exit buffer, PnL-hold, cooldown staging, vol-trigger targets) for baseline/cooldown/vol-trigger scenarios. Saves ranked `summary.csv` and `report.html` under `experiments/rebalance_*`.
 - `python scripts/report_backtests.py --runs data/backtests/run1 data/backtests/run2 --output data/backtests/report.html`

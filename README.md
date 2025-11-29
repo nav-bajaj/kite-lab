@@ -36,7 +36,7 @@ kite-lab/
         run_daily_pipeline.py        # Orchestrate daily refresh tasks
         backtest_momentum.py         # Simulate weekly momentum portfolio
         report_backtests.py          # Compare multiple backtest scenarios
-        run_l6_grid.py               # L6 grid search (skip/vol-floor/top-N/exit-buffer)
+        run_l6_grid.py               # L6 grid search (vol-floor/top-N/exit-buffer)
         run_l6_monte_carlo.py        # L6 Monte Carlo (baseline/hysteresis/PnL-hold)
         run_rebalance_sensitivity.py # Sweep exit buffer / PnL-hold / cooldown / vol-trigger knobs
         sample_universe.py           # Sample random subsets of NSE 500
@@ -163,7 +163,7 @@ This keeps `data/benchmarks/nifty100.csv` updated with daily closes, returns, an
 python scripts/build_momentum_signals.py --prices-dir nse500_data --output data/momentum/top25_signals.csv
 ```
 
-The script merges NSE 500 price histories, applies a 1-month skip, computes 6M/3M volatility-normalized returns, and exports the top 25 symbols for each weekly rebalance.
+The script merges NSE 500 price histories, computes 6M/3M volatility-normalized returns (no skip by default), and exports the top 25 symbols for each weekly rebalance.
 
 ### 9. Run the full daily pipeline
 
@@ -194,16 +194,16 @@ python scripts/report_backtests.py --runs data/backtests/baseline \
 
 The report compares every scenario (baseline/cooldown/vol-trigger) with summary metrics, charts, trailing returns, and top/bottom contributors based on realized PnL. Charts require `matplotlib`; if unavailable, tables are still produced.
 
-### 12. L6 grid search (skip / vol floor / top-N / exit buffer)
+### 12. L6 grid search (vol floor / top-N / exit buffer)
 
 ```bash
-python scripts/run_l6_grid.py --skip-days 21 10 0 --vol-floor 0.0005 0.001 --top-n 25 20 --exit-buffer 0 5 --scenarios baseline cooldown --limit 10
+python scripts/run_l6_grid.py --skip-days 0 --vol-floor 0.0005 0.001 --top-n 25 20 --exit-buffer 0 5 --scenarios baseline cooldown --limit 10
 ```
 
 ### 13. L6 Monte Carlo (baseline / hysteresis / PnL-hold)
 
 ```bash
-python scripts/run_l6_monte_carlo.py --runs 20 --sample-size 250 --topn-min 20 --topn-max 30 --skip-days 0 10 21 --exit-buffers 0 5 10 --pnl-hold 0.05 0.1 --vol-floor 0.0005 0.001
+python scripts/run_l6_monte_carlo.py --runs 20 --sample-size 250 --topn-min 20 --topn-max 30 --skip-days 0 --exit-buffers 0 5 10 --pnl-hold 0.05 0.1 --vol-floor 0.0005 0.001
 ```
 
 Each run samples a sub-universe, builds L6 signals (depth = top_n + exit_buffer), and runs three scenarios: baseline, hysteresis (exit buffer), and PnL-hold. Results are saved under `experiments/l6_mc_*` with `summary.csv` ranked by CAGR and `report.html`.
@@ -237,7 +237,7 @@ Sweeps exit buffer / PnL-hold / cooldown staging / vol-trigger settings across b
 - Inputs: daily close prices from `nse500_data/`; merged into a `date × symbol` panel, sorted chronologically.
 - Skip window: default 21 trading days (configurable) to reduce short-term mean reversion.
 - Returns: default L6 (6-month) `R6 = P_{t-21} / P_{t-21-126} - 1`; optional L12/L3 via CLI.
-- Volatility: realized vol on the same window with the skip; floored (default ε=0.0005) to avoid exploding scores; optionally scaled with a volatility exponent (`--vol-power`, default 1.0; use 0.5 for sqrt-vol).
+- Volatility: realized vol on the same window; floored (default ε=0.0005) to avoid exploding scores; optionally scaled with a volatility exponent (`--vol-power`, default 1.0; use 0.5 for sqrt-vol).
 - Scores: risk-adjusted `S = R / vol^p`, then cross-sectional z-score per date; composite is the average of enabled horizons (default just Z6).
 - Ranking: rebalance on the last trading day of each week (`W-FRI`), keep top-N (default 25), write to `data/momentum/top25_signals.csv` with component scores, returns, and vols.
 

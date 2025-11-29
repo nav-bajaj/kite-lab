@@ -59,7 +59,7 @@ def analyze_backtest(run_dir: Path) -> dict:
 
 def main():
     parser = argparse.ArgumentParser(description="Grid search for L6 momentum hyperparameters")
-    parser.add_argument("--skip-days", nargs="+", type=int, default=[21, 10, 0])
+    parser.add_argument("--skip-days", nargs="+", type=int, default=[0])
     parser.add_argument("--vol-floor", nargs="+", type=float, default=[0.0005, 0.001])
     parser.add_argument("--top-n", nargs="+", type=int, default=[25, 20])
     parser.add_argument("--exit-buffer", nargs="+", type=int, default=[0, 5])

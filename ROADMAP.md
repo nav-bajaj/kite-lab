@@ -16,7 +16,7 @@ This document tracks the incremental build-out of the NSE 500 momentum strategy 
 - [x] Unit tests covering resolver, client error paths, and incremental merge logic
 
 ## Phase 2 — Momentum Engine
-- [x] Implement configurable momentum ranking (e.g., 12M/6M/3M with skip window, volatility-adjusted scores)
+- [x] Implement configurable momentum ranking (e.g., 12M/6M/3M with optional skip, volatility-adjusted scores)
 - [ ] Introduce liquidity filters and tradability checks
 - [ ] Develop weekly rebalance scheduler based on Indian trading calendar (audit against actual trading days)
 - [ ] Produce holdings selection limited to top 20 names with turnover reporting and audit trail

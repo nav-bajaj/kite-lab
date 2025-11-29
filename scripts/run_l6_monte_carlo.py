@@ -47,7 +47,7 @@ def main():
     parser.add_argument("--sample-size", type=int, default=250)
     parser.add_argument("--topn-min", type=int, default=20)
     parser.add_argument("--topn-max", type=int, default=30)
-    parser.add_argument("--skip-days", nargs="+", type=int, default=[0, 10, 21])
+    parser.add_argument("--skip-days", nargs="+", type=int, default=[0])
     parser.add_argument("--exit-buffers", nargs="+", type=int, default=[0, 5, 10])
     parser.add_argument("--pnl-hold", nargs="+", type=float, default=[0.05, 0.1])
     parser.add_argument("--vol-floor", nargs="+", type=float, default=[0.0005, 0.001])
