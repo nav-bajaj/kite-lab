@@ -16,17 +16,19 @@ This document tracks the incremental build-out of the NSE 500 momentum strategy 
 - [x] Unit tests covering resolver, client error paths, and incremental merge logic
 
 ## Phase 2 — Momentum Engine
-- [ ] Implement configurable momentum ranking (e.g., 12M/6M lookback with 1M skip, volatility-adjusted scores)
+- [x] Implement configurable momentum ranking (e.g., 12M/6M/3M with skip window, volatility-adjusted scores)
 - [ ] Introduce liquidity filters and tradability checks
-- [ ] Develop weekly rebalance scheduler based on Indian trading calendar
-- [ ] Produce holdings selection limited to top 20 names with turnover reporting
+- [ ] Develop weekly rebalance scheduler based on Indian trading calendar (audit against actual trading days)
+- [ ] Produce holdings selection limited to top 20 names with turnover reporting and audit trail
 - [ ] Integration test using fixture data to validate rankings & rebalance output
+- [ ] Store historical rankings and metadata for auditability; add checks comparing benchmark returns to external references
 
 ## Phase 3 — Risk Management & Benchmarking
 - [ ] Simulate equity curve with 25% max drawdown enforcement (move to cash or reduce exposure)
 - [ ] Capture benchmark comparison metrics (active return, information ratio, tracking error)
 - [ ] Support configurable transaction costs & slippage placeholders
-- [ ] Generate performance reports (tables + charts) saved to `reports/`
+- [ ] Generate performance reports (tables + charts) saved to `reports/` with metadata (params, data range, run timestamp)
+- [ ] Expand visuals: normalized equity curves, rolling drawdown/returns, contribution bars, turnover over time; tables for top/bottom contributors and streaks
 - [ ] Tests confirming drawdown guard triggers and benchmark stats correctness
 
 ## Phase 3.5 — Technical Analysis Toolkit
@@ -50,7 +52,7 @@ This document tracks the incremental build-out of the NSE 500 momentum strategy 
 
 ## Branch Plan — dev-6 (L6-focused momentum engine)
 - [x] Lock primary ranking to L6 (6-month lookback) with configurable skip window; document rationale and defaults
-- [ ] Tune volatility adjustment (z-score/vol divider) for L6 and add sensitivity tests vs. turnover/drawdown
+- [x] Tune volatility adjustment (z-score/vol divider) for L6 and add sensitivity tests vs. turnover/drawdown
 - [ ] Sharpen rebalance logic: staged deployment, cooldown thresholds, and vol-trigger parameters calibrated on recent data
 - [x] Expand metrics: hit-rate by quintile, average holding period, turnover vs. cost drag, drawdown depth/recovery stats
 - [x] Add experiment scripts for L6 hyperparameters (grid + Monte Carlo) with summaries and saved configs

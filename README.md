@@ -31,11 +31,14 @@ kite-lab/
         fetch_nse500_history.py      # Batch downloader for NSE 500 universe (daily/hourly cached)
         compute_benchmark.py         # Maintain Nifty 100 benchmark series
         build_momentum_signals.py    # Generate weekly momentum rankings
+        validate_signals.py          # QA checks for signal file shape/duplicates
+        compare_signals_baseline.py  # Drift check vs frozen baseline signals
         run_daily_pipeline.py        # Orchestrate daily refresh tasks
         backtest_momentum.py         # Simulate weekly momentum portfolio
         report_backtests.py          # Compare multiple backtest scenarios
         run_l6_grid.py               # L6 grid search (skip/vol-floor/top-N/exit-buffer)
         run_l6_monte_carlo.py        # L6 Monte Carlo (baseline/hysteresis/PnL-hold)
+        run_rebalance_sensitivity.py # Sweep exit buffer / PnL-hold / cooldown / vol-trigger knobs
         sample_universe.py           # Sample random subsets of NSE 500
         update_prices.py             # Generic updater using data_pipeline modules
         utils.py                     # Helper utilities for token lookup
@@ -204,6 +207,39 @@ python scripts/run_l6_monte_carlo.py --runs 20 --sample-size 250 --topn-min 20 -
 ```
 
 Each run samples a sub-universe, builds L6 signals (depth = top_n + exit_buffer), and runs three scenarios: baseline, hysteresis (exit buffer), and PnL-hold. Results are saved under `experiments/l6_mc_*` with `summary.csv` ranked by CAGR and `report.html`.
+
+### 14. Validate signals
+
+```bash
+python scripts/validate_signals.py --signals data/momentum/top25_signals.csv --top-n 25
+```
+
+Checks for duplicates, missing ranks, or row overflows per date.
+
+### 15. Compare signals vs baseline
+
+```bash
+python scripts/compare_signals_baseline.py --baseline data/momentum/signals_L6_noskip.csv --candidate data/momentum/top25_signals.csv --top-n 25 --output data/momentum/compare.csv
+```
+
+Reports overlap ratios and rank drift relative to a frozen snapshot.
+
+### 16. Rebalance sensitivity (turnover/drawdown tuning)
+
+```bash
+python scripts/run_rebalance_sensitivity.py --signals data/momentum/top25_signals.csv --exit-buffers 0 5 10 --pnl-hold 0.05 0.1 --cooldown-weeks 1 2 --staged-steps 0.25 0.5 --vol-targets 0.15 0.2 --vol-lookbacks 63
+```
+
+Sweeps exit buffer / PnL-hold / cooldown staging / vol-trigger settings across baseline, cooldown, and vol-trigger scenarios. Saves `summary.csv` and `report.html` under `experiments/rebalance_*`.
+
+## Momentum signal methodology (summary)
+
+- Inputs: daily close prices from `nse500_data/`; merged into a `date × symbol` panel, sorted chronologically.
+- Skip window: default 21 trading days (configurable) to reduce short-term mean reversion.
+- Returns: default L6 (6-month) `R6 = P_{t-21} / P_{t-21-126} - 1`; optional L12/L3 via CLI.
+- Volatility: realized vol on the same window with the skip; floored (default ε=0.0005) to avoid exploding scores; optionally scaled with a volatility exponent (`--vol-power`, default 1.0; use 0.5 for sqrt-vol).
+- Scores: risk-adjusted `S = R / vol^p`, then cross-sectional z-score per date; composite is the average of enabled horizons (default just Z6).
+- Ranking: rebalance on the last trading day of each week (`W-FRI`), keep top-N (default 25), write to `data/momentum/top25_signals.csv` with component scores, returns, and vols.
 
 ## Requirements
 

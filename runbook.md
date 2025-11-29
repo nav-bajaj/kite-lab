@@ -25,14 +25,12 @@ Quick reference for the CLI scripts in this repo. Assumes `.env` has `API_KEY`, 
   - No flags.
 
 ## Signal building & QA
-- `python scripts/build_momentum_signals.py --prices-dir nse500_data --output data/momentum/top25_signals.csv --skip-days 21 --lookbacks 12 6 3 --top-n 25 [--universe-file path.csv]`
-  - Builds weekly momentum rankings; lookbacks are months mapped to trading days.
-  - Flags: `--prices-dir` (default `nse500_data`), `--output` (default `data/momentum/top25_signals.csv`), `--skip-days` (default 21), `--lookbacks` (choices 3/6/12, default `12 6 3`), `--top-n` (default 25), `--universe-file` (CSV with `Symbol` column to filter universe).
+- `python scripts/build_momentum_signals.py --prices-dir nse500_data --output data/momentum/top25_signals.csv --skip-days 21 --lookbacks 6 --top-n 25 --vol-floor 0.0005 --vol-power 1.0 [--universe-file path.csv]`
+  - Builds weekly momentum rankings (default L6). Flags: lookbacks (3/6/12), skip window, top-N, vol floor, vol exponent, optional universe filter.
 - `python scripts/validate_signals.py --signals data/momentum/top25_signals.csv --top-n 25`
   - Checks ranking file for duplicates, excess rows per date, missing scores.
 - `python scripts/compare_signals_baseline.py --baseline data/momentum/signals_L6_noskip.csv --candidate data/momentum/top25_signals.csv --top-n 25`
   - Compares a candidate signal file to a frozen baseline snapshot; reports overlap and rank drift, optionally writes a CSV summary.
-  - Flags: `--signals` (default `data/momentum/top25_signals.csv`), `--top-n` (default 25).
 
 ## Backtesting & reporting
 - `python scripts/backtest_momentum.py --prices-dir nse500_data --signals data/momentum/top25_signals.csv --benchmark data/benchmarks/nifty100.csv --output-dir data/backtests --initial-capital 1000000 --top-n 25 --slippage 0.002 --scenario {baseline,cooldown,vol_trigger} [--cooldown-weeks 1] [--staged-step 0.25] [--vol-lookback 63] [--target-vol 0.15] [--exit-buffer 10] [--pnl-hold-threshold 0.05]`
