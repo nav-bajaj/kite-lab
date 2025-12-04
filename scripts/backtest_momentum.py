@@ -363,6 +363,7 @@ def run_backtest(
     equity_df = pd.DataFrame(equity_records)
     trades_df = pd.DataFrame(trade_records)
     turnover_df = pd.DataFrame(turnover_records)
+    holdings_records = []
 
     if not trades_df.empty:
         first_trade = trades_df["date"].min()
@@ -376,6 +377,35 @@ def run_backtest(
     metrics_df = summarise_metrics(equity_df, trades_df, turnover_df, exit_records, initial_capital, top_n)
     if not metrics_df.empty:
         metrics_df.to_csv(output_dir / "momentum_metrics.csv", index=False)
+    # Snapshot current portfolio
+    if holdings:
+        final_value = equity_df["portfolio_value"].iloc[-1] if not equity_df.empty else None
+        last_date = calendar[-1]
+        for sym, shares in holdings.items():
+            price = last_prices.get(sym)
+            if pd.isna(price) or price is None:
+                price = close_panel.iloc[-1].get(sym)
+            avg_cost = cost_basis.get(sym, 0) / shares if shares else 0
+            notional = price * shares if price and not pd.isna(price) else None
+            pnl_pct = price / avg_cost - 1 if avg_cost and price and not pd.isna(price) else None
+            meta = entry_meta.get(sym, {})
+            entry_date = meta.get("date")
+            holding_days = (last_date - entry_date).days if entry_date is not None else None
+            contribution_pct = (notional / final_value) if final_value and notional is not None else None
+            holdings_records.append({
+                "symbol": sym,
+                "shares": shares,
+                "avg_cost": avg_cost,
+                "entry_date": entry_date,
+                "entry_rank": meta.get("rank"),
+                "holding_days": holding_days,
+                "last_price": price,
+                "pnl_pct": pnl_pct,
+                "notional": notional,
+                "contribution_pct": contribution_pct,
+            })
+        if holdings_records:
+            pd.DataFrame(holdings_records).to_csv(output_dir / "momentum_holdings.csv", index=False)
 
 
 def main():

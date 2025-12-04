@@ -39,6 +39,15 @@ def load_metrics(path: Path) -> dict:
     return df.iloc[0].to_dict()
 
 
+def load_holdings(path: Path) -> pd.DataFrame:
+    if not path.exists():
+        return pd.DataFrame()
+    df = pd.read_csv(path, parse_dates=["entry_date"])
+    if "contribution_pct" in df.columns:
+        df = df.sort_values("contribution_pct", ascending=False)
+    return df
+
+
 def annualized_return(values: pd.Series, dates: pd.Series) -> float:
     total_return = values.iloc[-1] / values.iloc[0] - 1
     days = (dates.iloc[-1] - dates.iloc[0]).days
@@ -134,6 +143,7 @@ def analyze_run(run_path: Path, label: str):
     equity = load_equity(run_path / "momentum_equity.csv")
     trades = load_trades(run_path / "momentum_trades.csv")
     metrics_file = load_metrics(run_path / "momentum_metrics.csv")
+    holdings = load_holdings(run_path / "momentum_holdings.csv")
 
     metrics = {
         "label": label,
@@ -159,10 +169,16 @@ def analyze_run(run_path: Path, label: str):
             "benchmark": trailing_return(equity["benchmark"], equity["date"], days),
         }
 
-    chart = generate_equity_chart(equity)
-    symbol_pnl = compute_symbol_pnl(trades)
-    best = symbol_pnl.head(5)
-    worst = symbol_pnl.tail(5).iloc[::-1] if not symbol_pnl.empty else symbol_pnl
+        chart = generate_equity_chart(equity)
+        symbol_pnl = compute_symbol_pnl(trades)
+        best = symbol_pnl.head(5)
+        worst = symbol_pnl.tail(5).iloc[::-1] if not symbol_pnl.empty else symbol_pnl
+        holdings_df = entry.get("holdings", pd.DataFrame())
+        holdings_html = (
+            holdings_df.to_html(index=False, float_format=lambda x: f"{x:.2%}" if isinstance(x, float) and abs(x) < 5 else f"{x:.4f}" if isinstance(x, float) else x)
+            if not holdings_df.empty
+            else "<p>No current holdings.</p>"
+        )
 
     return {
         "metrics": metrics,
@@ -173,6 +189,7 @@ def analyze_run(run_path: Path, label: str):
         "recent_trades": trades.tail(30),
         "date_range": (equity["date"].iloc[0], equity["date"].iloc[-1]),
         "metrics_file": metrics_file,
+        "holdings": holdings,
     }
 
 
@@ -284,6 +301,8 @@ def build_report(run_paths, output_path: Path):
                 {period_html}
                 <h3>Portfolio Stats</h3>
                 {metrics_table}
+                <h3>Current Holdings</h3>
+                {holdings_html}
                 <h3>Top 5 Contributors</h3>
                 {best_html}
                 <h3>Bottom 5 Contributors</h3>
