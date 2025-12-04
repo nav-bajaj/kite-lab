@@ -169,16 +169,10 @@ def analyze_run(run_path: Path, label: str):
             "benchmark": trailing_return(equity["benchmark"], equity["date"], days),
         }
 
-        chart = generate_equity_chart(equity)
-        symbol_pnl = compute_symbol_pnl(trades)
-        best = symbol_pnl.head(5)
-        worst = symbol_pnl.tail(5).iloc[::-1] if not symbol_pnl.empty else symbol_pnl
-        holdings_df = entry.get("holdings", pd.DataFrame())
-        holdings_html = (
-            holdings_df.to_html(index=False, float_format=lambda x: f"{x:.2%}" if isinstance(x, float) and abs(x) < 5 else f"{x:.4f}" if isinstance(x, float) else x)
-            if not holdings_df.empty
-            else "<p>No current holdings.</p>"
-        )
+    chart = generate_equity_chart(equity)
+    symbol_pnl = compute_symbol_pnl(trades)
+    best = symbol_pnl.head(5)
+    worst = symbol_pnl.tail(5).iloc[::-1] if not symbol_pnl.empty else symbol_pnl
 
     return {
         "metrics": metrics,
@@ -289,6 +283,16 @@ def build_report(run_paths, output_path: Path):
             f'<img src="data:image/png;base64,{entry["chart"]}" alt="{label} chart" />'
             if entry["chart"]
             else "<p>Chart unavailable (matplotlib missing).</p>"
+        )
+        holdings_df = entry.get("holdings", pd.DataFrame())
+        def _fmt(val):
+            if isinstance(val, float):
+                return f"{val:.2%}" if abs(val) < 5 else f"{val:.4f}"
+            return val
+        holdings_html = (
+            holdings_df.to_html(index=False, justify="center", border=1, classes="holdings", formatters={col: _fmt for col in holdings_df.columns})
+            if not holdings_df.empty
+            else "<p>No current holdings.</p>"
         )
 
         sections.append(
