@@ -285,15 +285,29 @@ def build_report(run_paths, output_path: Path):
             else "<p>Chart unavailable (matplotlib missing).</p>"
         )
         holdings_df = entry.get("holdings", pd.DataFrame())
-        def _fmt(val):
-            if isinstance(val, float):
-                return f"{val:.2%}" if abs(val) < 5 else f"{val:.4f}"
-            return val
-        holdings_html = (
-            holdings_df.to_html(index=False, justify="center", border=1, classes="holdings", formatters={col: _fmt for col in holdings_df.columns})
-            if not holdings_df.empty
-            else "<p>No current holdings.</p>"
-        )
+        holdings_html = "<p>No current holdings.</p>"
+        if not holdings_df.empty:
+            dfh = holdings_df.copy()
+            for col in dfh.columns:
+                if "date" in col and pd.api.types.is_datetime64_any_dtype(dfh[col]):
+                    dfh[col] = dfh[col].dt.date.astype(str)
+            percent_cols = {"pnl_pct", "contribution_pct"}
+            money_cols = {"avg_cost", "last_price", "notional"}
+            int_cols = {"shares", "entry_rank", "holding_days"}
+
+            def _fmt_val(col, val):
+                if pd.isna(val):
+                    return ""
+                if col in percent_cols:
+                    return f"{val:.2%}"
+                if col in money_cols:
+                    return f"{val:.2f}"
+                if col in int_cols:
+                    return f"{int(round(val))}"
+                return val
+
+            fmt = {col: (lambda v, c=col: _fmt_val(c, v)) for col in dfh.columns}
+            holdings_html = dfh.to_html(index=False, justify="center", border=1, classes="holdings", formatters=fmt)
 
         sections.append(
             f"""
