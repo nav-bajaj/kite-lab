@@ -68,17 +68,18 @@ def main():
     summary_rows = []
     all_run_dirs = []
 
+    # Single universe sample for all runs
+    universe_sample_path = signals_dir / "fixed_universe.csv"
+    sample_universe(args.universe_file, args.sample_size, args.seed, universe_sample_path)
+
     for i in range(1, args.runs + 1):
         top_n = random.randint(args.topn_min, args.topn_max)
         skip_days = random.choice(args.skip_days)
         exit_buffer = random.choice(args.exit_buffers)
         pnl_hold = random.choice(args.pnl_hold)
         vol_floor = random.choice(args.vol_floor)
-        sample_seed = args.seed + i
 
         label = f"run{i:03d}_sd{skip_days}_buf{exit_buffer}_pnl{pnl_hold}_top{top_n}"
-        universe_sample_path = signals_dir / f"{label}_universe.csv"
-        sample_universe(args.universe_file, args.sample_size, sample_seed, universe_sample_path)
 
         signal_path = signals_dir / f"{label}_signals.csv"
         build_top_n = top_n + exit_buffer
