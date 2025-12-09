@@ -16,11 +16,38 @@ This document tracks the incremental build-out of the NSE 500 momentum strategy 
 - [x] Unit tests covering resolver, client error paths, and incremental merge logic
 
 ## Phase 2 — Momentum Engine
-- [ ] Implement configurable momentum ranking (e.g., 12M/6M lookback with 1M skip, volatility-adjusted scores)
+- [x] Implement configurable momentum ranking (12M/6M/3M lookback with 1M skip, volatility-adjusted scores)
+- [x] Develop weekly rebalance scheduler based on Indian trading calendar
+- [x] Produce holdings selection (top 25 default) with turnover reporting
+- [x] Store historical rankings and metadata for auditability
 - [ ] Introduce liquidity filters and tradability checks
-- [ ] Develop weekly rebalance scheduler based on Indian trading calendar
-- [ ] Produce holdings selection limited to top 20 names with turnover reporting
 - [ ] Integration test using fixture data to validate rankings & rebalance output
+
+### Data Preparation
+- [x] `scripts/compute_benchmark.py` for daily Nifty 100 benchmark updates (`data/benchmarks/nifty100.csv`)
+- [x] NSE 500 daily caches maintained via `scripts/fetch_nse500_history.py`
+- [ ] Add validation step comparing benchmark returns against external references (spot checks)
+
+### Signal Construction
+- [x] `scripts/build_momentum_signals.py` produces weekly top-25 lists
+- [x] Experiment with lookback parameters (12M/6M/3M) and alternate weighting schemes
+- [ ] Integrate technical indicators (EMA slope, RSI) as optional filters once the toolkit is ready (Phase 3.5)
+
+### Backtesting Engine
+- [x] Weekly rebalance simulator with equal-weight and volatility-weight options
+- [x] Transaction cost and slippage modeling (20 bps default)
+- [x] Record turnover, exposure, and tracking error relative to Nifty 100
+- [ ] Enforce 25% max drawdown guard (shift to cash when triggered) — defer to Phase 3
+
+### Reporting & QA
+- [x] Generate benchmark vs strategy performance charts and tables
+- [x] Rich HTML reports with performance summary, peaks/lows, best/worst contributors, turnover
+- [x] Matplotlib-based charting (normalized equity curves, rolling drawdown, rolling returns, contribution bars)
+- [x] Reports capture metadata (strategy params, run timestamp, data range) for auditability
+- [x] Catalog top/bottom stocks per period, biggest gainers/losers
+- [ ] Add unit tests for ranking logic, rebalance outputs
+- [ ] Create automated checks for missing data or extreme returns in the momentum signal file
+- [ ] Document runbooks for data refresh, signal generation, and backtest execution
 
 ## Phase 3 — Risk Management & Benchmarking
 - [ ] Simulate equity curve with 25% max drawdown enforcement (move to cash or reduce exposure)

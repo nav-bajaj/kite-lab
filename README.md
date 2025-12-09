@@ -205,6 +205,46 @@ python scripts/run_l6_monte_carlo.py --runs 20 --sample-size 250 --topn-min 20 -
 
 Each run samples a sub-universe, builds L6 signals (depth = top_n + exit_buffer), and runs three scenarios: baseline, hysteresis (exit buffer), and PnL-hold. Results are saved under `experiments/l6_mc_*` with `summary.csv` ranked by CAGR and `report.html`.
 
+## Momentum Strategy Methodology
+
+The momentum signal generation implemented in `scripts/build_momentum_signals.py` follows a structured approach:
+
+### Data Inputs
+- Daily close prices for the NSE 500 universe (CSV files in `nse500_data/`)
+- Prices are merged into a single `date × symbol` panel and sorted chronologically
+- A 21-trading-day "skip window" (≈1 month, configurable) is applied to reduce short-term mean reversion effects
+
+### Momentum Metrics
+
+For each symbol and date:
+
+1. **Price relatives**
+   - Default focus: L6 return `R6 = P_{t-21} / P_{t-21-126} - 1` (6-month lookback)
+   - Optional variants: 12M `R12 = P_{t-21} / P_{t-21-252} - 1`, 3M `R3 = P_{t-21} / P_{t-21-63} - 1`
+
+2. **Volatility estimates** use daily returns (with the same 21-day skip) over matching windows, floored at epsilon to avoid exploding scores:
+   - `σ6 = max(std(returns_{t-21-126 : t-21}), ε)` (default ε = 0.0005)
+   - Optional: `σ12`, `σ3` when those horizons are enabled
+
+3. **Risk-adjusted scores**
+   - `S6 = R6 / σ6^p` where `p` is a volatility exponent (default 1.0; use 0.5 for sqrt-vol scaling)
+   - Optional `S12` / `S3` match their windows
+
+4. **Cross-sectional normalization**
+   - For each date, z-score each enabled score across all symbols to make them comparable
+
+5. **Composite score**
+   - Default: `Composite = Z6`
+   - If multiple horizons are enabled: average of all enabled z-scored horizons
+
+### Ranking & Output
+- Rebalance dates: last trading day of each week (`W-FRI` schedule)
+- On each rebalance date, rank symbols by composite score (descending) and keep the top 25
+- Output columns per row: date, rank, symbol, composite score, component scores (`score_12m/6m/3m`), raw returns (`mom_12m/6m/3m`), and vol estimates (`vol_12m/6m/3m`)
+- Results are saved to `data/momentum/top25_signals.csv` for downstream consumption by the backtest engine
+
+When modifying parameters (lookbacks, weights, skip length) or adding filters (RSI, EMA slope), update the script and configuration documentation accordingly.
+
 ## Requirements
 
 - Python 3.9+
