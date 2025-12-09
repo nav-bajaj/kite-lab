@@ -382,12 +382,12 @@ def run_backtest(
         final_value = equity_df["portfolio_value"].iloc[-1] if not equity_df.empty else None
         last_date = calendar[-1]
         for sym, shares in holdings.items():
-            price = last_prices.get(sym)
-            if pd.isna(price) or price is None:
-                price = close_panel.iloc[-1].get(sym)
+            # Use the latest actual close in the panel (no forward fill past the last known date)
+            series = close_panel[sym].dropna()
+            price = series.iloc[-1] if not series.empty else None
             avg_cost = cost_basis.get(sym, 0) / shares if shares else 0
-            notional = price * shares if price and not pd.isna(price) else None
-            pnl_pct = price / avg_cost - 1 if avg_cost and price and not pd.isna(price) else None
+            notional = price * shares if price is not None and not pd.isna(price) else None
+            pnl_pct = price / avg_cost - 1 if avg_cost and price is not None and not pd.isna(price) else None
             meta = entry_meta.get(sym, {})
             entry_date = meta.get("date")
             holding_days = (last_date - entry_date).days if entry_date is not None else None
