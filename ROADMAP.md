@@ -77,11 +77,17 @@ This document tracks the incremental build-out of the NSE 500 momentum strategy 
 
 ## Branch Plan — dev-6 (L6-focused momentum engine)
 - [x] Lock primary ranking to L6 (6-month lookback) with configurable skip window; document rationale and defaults
-- [ ] Tune volatility adjustment (z-score/vol divider) for L6 and add sensitivity tests vs. turnover/drawdown
-- [ ] Sharpen rebalance logic: staged deployment, cooldown thresholds, and vol-trigger parameters calibrated on recent data
+- [x] Tune volatility adjustment (z-score/vol divider) for L6 and add sensitivity tests vs. turnover/drawdown
+- [x] Sharpen rebalance logic: staged deployment, cooldown thresholds, and vol-trigger parameters calibrated on recent data
 - [x] Expand metrics: hit-rate by quintile, average holding period, turnover vs. cost drag, drawdown depth/recovery stats
 - [x] Add experiment scripts for L6 hyperparameters (grid + Monte Carlo) with summaries and saved configs
 - [x] Validation: regression harness comparing L6 outputs to frozen baseline snapshots; alert on drift
+
+## Branch Plan — dev-2-cc (Volatility tuning improvements)
+- [x] Create comprehensive volatility tuning guide (VOLATILITY_TUNING_GUIDE.md) explaining all knobs in plain terms
+- [x] Add scenario selection to L6 Monte Carlo (--scenarios flag) to run specific strategies only
+- [x] Create run_l6_monte_carlo_no_volfloor.py variant for testing with fixed vol-floor parameter
+- [x] Document mental models and testing strategies for parameter optimization
 
 ## Branch Plan — ui-1 (dashboard/control plane)
 - [ ] Define a thin service/API layer to trigger existing CLI workflows (login, cache instruments, fetch NSE500, build signals, backtest, report)

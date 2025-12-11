@@ -205,6 +205,23 @@ python scripts/run_l6_monte_carlo.py --runs 20 --sample-size 250 --topn-min 20 -
 
 Each run samples a sub-universe, builds L6 signals (depth = top_n + exit_buffer), and runs three scenarios: baseline, hysteresis (exit buffer), and PnL-hold. Results are saved under `experiments/l6_mc_*` with `summary.csv` ranked by CAGR and `report.html`.
 
+To run specific scenarios only:
+```bash
+# Run only hysteresis scenario
+python scripts/run_l6_monte_carlo.py --scenarios hyst --runs 20
+
+# Run baseline and hysteresis
+python scripts/run_l6_monte_carlo.py --scenarios baseline hyst --runs 20
+```
+
+### 14. L6 Monte Carlo without vol-floor variation
+
+```bash
+python scripts/run_l6_monte_carlo_no_volfloor.py --runs 20 --sample-size 250 --topn-min 20 --topn-max 30 --skip-days 0 10 21 --exit-buffers 0 5 10 --pnl-hold 0.05 0.1
+```
+
+This variant uses a fixed vol-floor (default 0.0005) to isolate the impact of other parameters. Results are saved under `experiments/l6_mc_no_volfloor_*`.
+
 ## Momentum Strategy Methodology
 
 The momentum signal generation implemented in `scripts/build_momentum_signals.py` follows a structured approach:

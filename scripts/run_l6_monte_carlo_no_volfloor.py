@@ -39,7 +39,9 @@ def load_metrics(metrics_path: Path) -> dict:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Monte Carlo for L6 momentum (baseline, hysteresis, PnL-hold)")
+    parser = argparse.ArgumentParser(
+        description="Monte Carlo for L6 momentum without vol-floor parameter (uses default 0.0005)"
+    )
     parser.add_argument("--runs", type=int, default=20)
     parser.add_argument("--prices-dir", type=Path, default=Path("nse500_data"))
     parser.add_argument("--benchmark", type=Path, default=Path("data/benchmarks/nifty100.csv"))
@@ -50,14 +52,6 @@ def main():
     parser.add_argument("--skip-days", nargs="+", type=int, default=[0, 10, 21])
     parser.add_argument("--exit-buffers", nargs="+", type=int, default=[0, 5, 10])
     parser.add_argument("--pnl-hold", nargs="+", type=float, default=[0.05, 0.1])
-    parser.add_argument("--vol-floor", nargs="+", type=float, default=[0.0005, 0.001])
-    parser.add_argument(
-        "--scenarios",
-        nargs="+",
-        choices=["baseline", "hyst", "pnl_hold"],
-        default=["baseline", "hyst", "pnl_hold"],
-        help="Which scenarios to run (default: all three)",
-    )
     parser.add_argument("--output-root", type=Path, default=Path("experiments"))
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--dry-run", action="store_true")
@@ -65,7 +59,7 @@ def main():
 
     random.seed(args.seed)
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-    exp_dir = args.output_root / f"l6_mc_{timestamp}"
+    exp_dir = args.output_root / f"l6_mc_no_volfloor_{timestamp}"
     signals_dir = exp_dir / "signals"
     runs_dir = exp_dir / "backtests"
     exp_dir.mkdir(parents=True, exist_ok=True)
@@ -84,12 +78,12 @@ def main():
         skip_days = random.choice(args.skip_days)
         exit_buffer = random.choice(args.exit_buffers)
         pnl_hold = random.choice(args.pnl_hold)
-        vol_floor = random.choice(args.vol_floor)
 
         label = f"run{i:03d}_sd{skip_days}_buf{exit_buffer}_pnl{pnl_hold}_top{top_n}"
 
         signal_path = signals_dir / f"{label}_signals.csv"
         build_top_n = top_n + exit_buffer
+        # Note: --vol-floor omitted, uses default from build_momentum_signals.py (0.0005)
         cmd = [
             sys.executable,
             "scripts/build_momentum_signals.py",
@@ -103,8 +97,6 @@ def main():
             "6",
             "--top-n",
             str(build_top_n),
-            "--vol-floor",
-            str(vol_floor),
             "--universe-file",
             str(universe_sample_path),
         ]
@@ -121,13 +113,11 @@ def main():
             args.dry_run,
         )
 
-        all_scenarios = {
-            "baseline": (0, None),
-            "hyst": (exit_buffer, None),
-            "pnl_hold": (exit_buffer, pnl_hold),
-        }
-
-        scenarios = [(name, *params) for name, params in all_scenarios.items() if name in args.scenarios]
+        scenarios = [
+            ("baseline", 0, None),
+            ("hyst", exit_buffer, None),
+            ("pnl_hold", exit_buffer, pnl_hold),
+        ]
 
         for scenario_label, scenario_exit_buf, pnl_threshold in scenarios:
             run_dir = runs_dir / f"{label}_{scenario_label}"
@@ -169,7 +159,6 @@ def main():
                         "skip_days": skip_days,
                         "exit_buffer": scenario_exit_buf,
                         "pnl_hold": pnl_threshold,
-                        "vol_floor": vol_floor,
                         "sample_size": args.sample_size,
                     }
                 )

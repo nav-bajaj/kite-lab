@@ -40,8 +40,11 @@ Quick reference for the CLI scripts in this repo. Assumes `.env` has `API_KEY`, 
   - Outputs include equity/trade/turnover CSVs plus `momentum_metrics.csv` (CAGR, drawdown depth/duration, turnover, cost drag, holding period, hit-rate by quintile, trade counts and avg trades per week/month/year).
 - (removed) `run_backtest_scenarios.py` — superseded by the L6 grid/MC runners.
 - (removed) `run_monte_carlo.py` — superseded by the L6-only Monte Carlo runner.
-- `python scripts/run_l6_monte_carlo.py --runs 20 --sample-size 250 --topn-min 20 --topn-max 30 --skip-days 0 10 21 --exit-buffers 0 5 10 --pnl-hold 0.05 0.1 --vol-floor 0.0005 0.001 [--dry-run]`
+- `python scripts/run_l6_monte_carlo.py --runs 20 --sample-size 250 --topn-min 20 --topn-max 30 --skip-days 0 10 21 --exit-buffers 0 5 10 --pnl-hold 0.05 0.1 --vol-floor 0.0005 0.001 [--scenarios baseline hyst pnl_hold] [--dry-run]`
   - L6-only Monte Carlo: samples skip window, exit buffer, PnL-hold threshold, top-N, and volatility floor; builds sampled-universe signals and runs baseline vs hysteresis vs PnL-hold backtests. Writes `summary.csv` and `report.html` under `experiments/l6_mc_*`.
+  - Use `--scenarios` to run only specific scenarios (e.g., `--scenarios hyst` for hysteresis only).
+- `python scripts/run_l6_monte_carlo_no_volfloor.py --runs 20 --sample-size 250 --topn-min 20 --topn-max 30 --skip-days 0 10 21 --exit-buffers 0 5 10 --pnl-hold 0.05 0.1 [--scenarios baseline hyst pnl_hold] [--dry-run]`
+  - Same as above but uses a fixed vol-floor (0.0005) to isolate impact of other parameters. Results saved under `experiments/l6_mc_no_volfloor_*`.
 - `python scripts/run_l6_grid.py [--skip-days 21 10 0] [--vol-floor 0.0005 0.001] [--top-n 25 20] [--exit-buffer 0 5] [--scenarios baseline cooldown] [--limit 10]`
   - Grid search focused on L6 (6-month) signals; varies skip window, volatility floor, top-N, exit buffer, and scenario. Saves signals, backtests, and `summary.csv` under `experiments/l6_grid_*`.
 - `python scripts/run_rebalance_sensitivity.py --signals data/momentum/top25_signals.csv --exit-buffers 0 5 10 --pnl-hold 0.05 0.1 --cooldown-weeks 1 2 --staged-steps 0.25 0.5 --vol-targets 0.15 0.2 --vol-lookbacks 63`
