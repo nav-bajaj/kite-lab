@@ -57,11 +57,12 @@ This document tracks the incremental build-out of the NSE 500 momentum strategy 
 - [ ] Tests confirming drawdown guard triggers and benchmark stats correctness
 
 ## Phase 3.5 — Technical Analysis Toolkit
-- [ ] Implement modular library for common indicators (EMA, RSI, MACD, ATR)
-- [ ] Provide vectorized functions compatible with pandas & backtest engine
-- [ ] Allow indicator configuration via strategy parameters (lookbacks, thresholds)
-- [ ] Add unit tests comparing against reference calculations (e.g., TA-Lib samples)
-- [ ] Integrate selected indicators into momentum ranking experiments (e.g., filter by RSI, volatility measures)
+- [x] Implement modular library for common indicators (EMA, RSI, MACD, ATR)
+- [x] Provide vectorized functions compatible with pandas & backtest engine
+- [x] Allow indicator configuration via strategy parameters (lookbacks, thresholds)
+- [x] Add unit tests comparing against reference calculations (24 tests, all passing)
+- [x] Integrate selected indicators into momentum ranking experiments (TA filter variants)
+- [ ] Analyze experiment results to determine if TA filters improve risk-adjusted returns
 
 ## Phase 4 — Validation & Tooling
 - [ ] End-to-end regression test (mini backtest) covering data load → rebalance → reporting
@@ -88,6 +89,17 @@ This document tracks the incremental build-out of the NSE 500 momentum strategy 
 - [x] Add scenario selection to L6 Monte Carlo (--scenarios flag) to run specific strategies only
 - [x] Create run_l6_monte_carlo_no_volfloor.py variant for testing with fixed vol-floor parameter
 - [x] Document mental models and testing strategies for parameter optimization
+
+## Branch Plan — dev-3-cc (Technical Analysis Toolkit - Phase 3.5)
+- [x] Create ta_indicators.py module with 10+ indicators (EMA, SMA, RSI, MACD, ATR, Bollinger, Stochastic, ADX, Williams %R, ROC)
+- [x] Implement utility functions for crossovers and threshold checks
+- [x] Add comprehensive unit tests (24 tests covering all indicators and edge cases)
+- [x] Create build_momentum_signals_with_ta.py for TA-filtered signal generation
+- [x] Implement 9 TA filter variants (none, RSI neutral/bullish, trend EMA20/50, ADX, MACD, combined conservative/aggressive)
+- [x] Create run_ta_filter_experiments.py for systematic filter testing
+- [x] Update documentation (README with TA toolkit section, usage examples, ROADMAP Phase 3.5)
+- [ ] Run initial experiments to validate TA filter effectiveness
+- [ ] Analyze results and document findings
 
 ## Branch Plan — ui-1 (dashboard/control plane)
 - [ ] Define a thin service/API layer to trigger existing CLI workflows (login, cache instruments, fetch NSE500, build signals, backtest, report)

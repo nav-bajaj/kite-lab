@@ -53,6 +53,12 @@ Quick reference for the CLI scripts in this repo. Assumes `.env` has `API_KEY`, 
   - Merges multiple backtest folders into a single HTML report (charts require matplotlib installed).
 - (removed) `run_churn_experiments.py` — churn variants now covered via `run_l6_monte_carlo.py` (baseline / hysteresis / PnL-hold).
 
+## Technical Analysis Experiments
+- `python scripts/build_momentum_signals_with_ta.py --ta-filter {none|rsi_neutral|rsi_bullish|trend_ema20|trend_ema50|adx_trending|macd_positive|combined_conservative|combined_aggressive} --output data/momentum/signals_ta.csv`
+  - Builds L6 momentum signals with optional TA filters. Available filters test whether RSI, trend-following (EMA), ADX, or MACD improve stock selection.
+- `python scripts/run_ta_filter_experiments.py --runs 10 --sample-size 250 [--dry-run]`
+  - Systematically tests all TA filters (9 variants) against baseline. Generates summary showing average CAGR, drawdown, turnover, and hit-rate by filter type. Results saved under `experiments/ta_filters_*`.
+
 ## Utilities
 - `python scripts/run_daily_pipeline.py [--with-login] [--dry-run]`
   - Chains login (optional) → fetch NSE500 → compute benchmark → build signals.

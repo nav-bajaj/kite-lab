@@ -222,6 +222,29 @@ python scripts/run_l6_monte_carlo_no_volfloor.py --runs 20 --sample-size 250 --t
 
 This variant uses a fixed vol-floor (default 0.0005) to isolate the impact of other parameters. Results are saved under `experiments/l6_mc_no_volfloor_*`.
 
+### 15. Build momentum signals with TA filters
+
+```bash
+python scripts/build_momentum_signals_with_ta.py --ta-filter rsi_neutral --output data/momentum/signals_rsi.csv
+```
+
+Test whether technical analysis filters improve momentum strategy performance. Available filters:
+- `none`: Baseline (no filter)
+- `rsi_neutral`: Exclude RSI < 30 or > 70
+- `rsi_bullish`: Require RSI > 50
+- `trend_ema20/ema50`: Require price above EMA
+- `adx_trending`: Require ADX > 25
+- `macd_positive`: Require MACD histogram > 0
+- `combined_conservative/aggressive`: Multiple filters
+
+### 16. Run TA filter experiments
+
+```bash
+python scripts/run_ta_filter_experiments.py --runs 10 --sample-size 250
+```
+
+Systematically tests all TA filters against baseline L6 momentum. Results show average performance by filter type in `experiments/ta_filters_*/summary_by_filter.csv`.
+
 ## Momentum Strategy Methodology
 
 The momentum signal generation implemented in `scripts/build_momentum_signals.py` follows a structured approach:
@@ -261,6 +284,31 @@ For each symbol and date:
 - Results are saved to `data/momentum/top25_signals.csv` for downstream consumption by the backtest engine
 
 When modifying parameters (lookbacks, weights, skip length) or adding filters (RSI, EMA slope), update the script and configuration documentation accordingly.
+
+## Technical Analysis Toolkit
+
+The `ta_indicators.py` module provides vectorized, pandas-compatible technical indicators:
+
+**Trend Indicators:**
+- `ema()`, `sma()`: Moving averages
+- `macd()`: Moving Average Convergence Divergence
+- `adx()`: Average Directional Index (trend strength)
+
+**Momentum Indicators:**
+- `rsi()`: Relative Strength Index (0-100)
+- `momentum()`, `roc()`: Rate of change
+- `stochastic_oscillator()`: %K and %D
+- `williams_r()`: Williams %R
+
+**Volatility Indicators:**
+- `atr()`: Average True Range
+- `bollinger_bands()`: Volatility bands
+
+**Utility Functions:**
+- `crossover()`, `crossunder()`: Detect signal crossings
+- `above()`, `below()`: Check position relative to threshold
+
+All functions operate on pandas Series/DataFrames and return the same shape. See `tests/test_ta_indicators.py` for usage examples.
 
 ## Requirements
 
