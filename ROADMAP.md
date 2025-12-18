@@ -101,6 +101,15 @@ This document tracks the incremental build-out of the NSE 500 momentum strategy 
 - [ ] Run initial experiments to validate TA filter effectiveness
 - [ ] Analyze results and document findings
 
+## Branch Plan — dev-4-cc (Lookback Period & Rebalance Frequency Optimization)
+- [x] Create build_momentum_signals_flexible.py with configurable lookback (6/9/12 months) and rebalance frequency (1/2/3/4 weeks)
+- [x] Implement derive_rebalance_dates() supporting weekly, bi-weekly, tri-weekly, and monthly rebalancing
+- [x] Create run_lookback_rebalance_mc.py for systematic testing of lookback × rebalance combinations
+- [x] Add aggregated analysis by lookback period, rebalance frequency, and their combinations
+- [x] Update documentation (README, runbook with new experiment runner)
+- [ ] Run experiments to find optimal lookback/rebalance configuration
+- [ ] Analyze impact of rebalance frequency on turnover, CAGR, and risk-adjusted returns
+
 ## Branch Plan — ui-1 (dashboard/control plane)
 - [ ] Define a thin service/API layer to trigger existing CLI workflows (login, cache instruments, fetch NSE500, build signals, backtest, report)
 - [ ] Design one-page dashboard with sections: daily ops (buttons for each step), backtest launcher, report viewer/download, data directory quick links

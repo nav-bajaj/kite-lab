@@ -59,6 +59,12 @@ Quick reference for the CLI scripts in this repo. Assumes `.env` has `API_KEY`, 
 - `python scripts/run_ta_filter_experiments.py --runs 10 --sample-size 250 [--dry-run]`
   - Systematically tests all TA filters (9 variants) against baseline. Generates summary showing average CAGR, drawdown, turnover, and hit-rate by filter type. Results saved under `experiments/ta_filters_*`.
 
+## Lookback & Rebalance Frequency Experiments
+- `python scripts/build_momentum_signals_flexible.py --lookback-months {6|9|12} --rebalance-weeks {1|2|3|4} --output data/momentum/signals.csv`
+  - Builds momentum signals with configurable lookback period (6/9/12 months) and rebalance frequency (1-4 weeks). Supports all standard parameters (skip-days, top-n, vol-floor).
+- `python scripts/run_lookback_rebalance_mc.py --runs 20 --sample-size 250 --lookback-months 6 9 12 --rebalance-weeks 1 2 3 4 [--dry-run]`
+  - Monte Carlo testing of lookback period × rebalance frequency combinations. Samples top-N, exit-buffer, and PnL-hold per run. Generates aggregated statistics by lookback, rebalance, and their combinations. Results saved under `experiments/lookback_rebal_mc_*`.
+
 ## Utilities
 - `python scripts/run_daily_pipeline.py [--with-login] [--dry-run]`
   - Chains login (optional) → fetch NSE500 → compute benchmark → build signals.

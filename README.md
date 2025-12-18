@@ -245,6 +245,14 @@ python scripts/run_ta_filter_experiments.py --runs 10 --sample-size 250
 
 Systematically tests all TA filters against baseline L6 momentum. Results show average performance by filter type in `experiments/ta_filters_*/summary_by_filter.csv`.
 
+### 17. Lookback and Rebalance Frequency Monte Carlo
+
+```bash
+python scripts/run_lookback_rebalance_mc.py --runs 20 --sample-size 250 --lookback-months 6 9 12 --rebalance-weeks 1 2 3 4
+```
+
+Tests combinations of lookback periods (6, 9, 12 months) and rebalance frequencies (1-4 weeks). Each run samples top-N, exit-buffer, and PnL-hold parameters. Results include aggregated statistics by lookback period, rebalance frequency, and their combinations in `experiments/lookback_rebal_mc_*/summary_by_config.csv`.
+
 ## Momentum Strategy Methodology
 
 The momentum signal generation implemented in `scripts/build_momentum_signals.py` follows a structured approach:
