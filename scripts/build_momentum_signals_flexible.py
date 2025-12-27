@@ -80,7 +80,7 @@ def derive_rebalance_dates(index: pd.Index, rebalance_weeks: int) -> pd.Index:
 
     Args:
         index: DatetimeIndex of trading days
-        rebalance_weeks: Rebalance every N weeks (1, 2, 3, or 4)
+        rebalance_weeks: Rebalance every N weeks (1-12)
 
     Returns:
         DatetimeIndex of rebalance dates
@@ -90,20 +90,19 @@ def derive_rebalance_dates(index: pd.Index, rebalance_weeks: int) -> pd.Index:
     if rebalance_weeks == 1:
         # Weekly on Thursday
         rebal = calendar.resample("W-THU").last().dropna()
-    elif rebalance_weeks == 2:
-        # Bi-weekly (every 2 weeks)
-        # Use business month end as anchor, then sample every 2 weeks
+    elif rebalance_weeks <= 3:
+        # 2-3 weeks: sample every Nth week
         weekly = calendar.resample("W-THU").last().dropna()
-        rebal = weekly.iloc[::2]  # Take every 2nd week
-    elif rebalance_weeks == 3:
-        # Every 3 weeks
-        weekly = calendar.resample("W-THU").last().dropna()
-        rebal = weekly.iloc[::3]  # Take every 3rd week
+        rebal = weekly.iloc[::rebalance_weeks]
     elif rebalance_weeks == 4:
         # Monthly (every 4 weeks, approximately)
         rebal = calendar.resample("ME").last().dropna()
+    elif rebalance_weeks <= 12:
+        # 5-12 weeks: sample every Nth week
+        weekly = calendar.resample("W-THU").last().dropna()
+        rebal = weekly.iloc[::rebalance_weeks]
     else:
-        raise ValueError(f"Unsupported rebalance_weeks: {rebalance_weeks}")
+        raise ValueError(f"Unsupported rebalance_weeks: {rebalance_weeks} (must be 1-12)")
 
     return pd.Index(rebal)
 
@@ -165,15 +164,13 @@ def main():
         "--lookback-months",
         type=int,
         default=6,
-        choices=[6, 9, 12],
-        help="Momentum lookback period in months"
+        help="Momentum lookback period in months (1-12)"
     )
     parser.add_argument(
         "--rebalance-weeks",
         type=int,
         default=1,
-        choices=[1, 2, 3, 4],
-        help="Rebalance frequency in weeks (1=weekly, 4=monthly)"
+        help="Rebalance frequency in weeks (1-12, 1=weekly, 4≈monthly)"
     )
     parser.add_argument("--top-n", type=int, default=25)
     parser.add_argument("--universe-file", type=Path, help="CSV with Symbol column to limit universe")

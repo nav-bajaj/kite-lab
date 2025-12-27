@@ -69,16 +69,14 @@ def main():
         nargs="+",
         type=int,
         default=[6, 9, 12],
-        choices=[6, 9, 12],
-        help="Lookback periods to test (months)"
+        help="Lookback periods to test (months, 1-12)"
     )
     parser.add_argument(
         "--rebalance-weeks",
         nargs="+",
         type=int,
         default=[1, 2, 3, 4],
-        choices=[1, 2, 3, 4],
-        help="Rebalance frequencies to test (weeks)"
+        help="Rebalance frequencies to test (weeks, 1-12)"
     )
     parser.add_argument("--skip-days", type=int, default=21, help="Skip window (fixed)")
     parser.add_argument("--exit-buffers", nargs="+", type=int, default=[0, 5, 10])
