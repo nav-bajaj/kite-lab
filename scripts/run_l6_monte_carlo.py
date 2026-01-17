@@ -51,6 +51,8 @@ def main():
     parser.add_argument("--exit-buffers", nargs="+", type=int, default=[0, 5, 10])
     parser.add_argument("--pnl-hold", nargs="+", type=float, default=[0.05, 0.1])
     parser.add_argument("--vol-floor", nargs="+", type=float, default=[0.0005, 0.001])
+    parser.add_argument("--lookback-months", type=int, default=6)
+    parser.add_argument("--rebalance-weeks", type=int, default=1)
     parser.add_argument(
         "--scenarios",
         nargs="+",
@@ -86,21 +88,26 @@ def main():
         pnl_hold = random.choice(args.pnl_hold)
         vol_floor = random.choice(args.vol_floor)
 
-        label = f"run{i:03d}_sd{skip_days}_buf{exit_buffer}_pnl{pnl_hold}_top{top_n}"
+        label = (
+            f"run{i:03d}_sd{skip_days}_buf{exit_buffer}_pnl{pnl_hold}_"
+            f"top{top_n}_lb{args.lookback_months}m_rb{args.rebalance_weeks}w"
+        )
 
         signal_path = signals_dir / f"{label}_signals.csv"
         build_top_n = top_n + exit_buffer
         cmd = [
             sys.executable,
-            "scripts/build_momentum_signals.py",
+            "scripts/build_momentum_signals_flexible.py",
             "--prices-dir",
             str(args.prices_dir),
             "--output",
             str(signal_path),
             "--skip-days",
             str(skip_days),
-            "--lookbacks",
-            "6",
+            "--lookback-months",
+            str(args.lookback_months),
+            "--rebalance-weeks",
+            str(args.rebalance_weeks),
             "--top-n",
             str(build_top_n),
             "--vol-floor",
@@ -170,6 +177,8 @@ def main():
                         "exit_buffer": scenario_exit_buf,
                         "pnl_hold": pnl_threshold,
                         "vol_floor": vol_floor,
+                        "lookback_months": args.lookback_months,
+                        "rebalance_weeks": args.rebalance_weeks,
                         "sample_size": args.sample_size,
                     }
                 )

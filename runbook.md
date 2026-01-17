@@ -34,6 +34,13 @@ Quick reference for the CLI scripts in this repo. Assumes `.env` has `API_KEY`, 
   - Compares a candidate signal file to a frozen baseline snapshot; reports overlap and rank drift, optionally writes a CSV summary.
   - Flags: `--signals` (default `data/momentum/top25_signals.csv`), `--top-n` (default 25).
 
+## Final momentum portfolio (current)
+- `data/static/final_top24_signals.csv`
+  - L6 weekly signals using the current chosen settings (skip-days 0, vol-floor 0.2, top-n 24).
+- `data/static/final_portfolio_24.csv`
+  - Latest 24-stock holdings snapshot from the final signals file.
+- Source experiment: `experiments/l6_mc_20260117172537/report.html` (baseline, sample-size 500, exit-buffer 0, pnl-hold 0).
+
 ## Backtesting & reporting
 - `python scripts/backtest_momentum.py --prices-dir nse500_data --signals data/momentum/top25_signals.csv --benchmark data/benchmarks/nifty100.csv --output-dir data/backtests --initial-capital 1000000 --top-n 25 --slippage 0.002 --scenario {baseline,cooldown,vol_trigger} [--cooldown-weeks 1] [--staged-step 0.25] [--vol-lookback 63] [--target-vol 0.15] [--exit-buffer 10] [--pnl-hold-threshold 0.05]`
   - Runs a momentum portfolio backtest with optional drawdown cooldown or volatility targeting. `--exit-buffer` adds hysteresis to exits (requires signals containing ranks up to `top_n + buffer`), and `--pnl-hold-threshold` defers exits while unrealized PnL exceeds the threshold.
