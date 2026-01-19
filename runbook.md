@@ -43,7 +43,7 @@ Quick reference for the CLI scripts in this repo. Assumes `.env` has `API_KEY`, 
 - `python scripts/run_final_momentum_portfolio.py`
   - Daily final-portfolio generator: rebuilds L6 weekly signals, writes a dated snapshot, and (on Thursday) generates a changes report plus (on Friday) an orders file.
   - Writes a run folder under `experiments/final_portfolio/` (report, signals, snapshots, changes) and updates `data/static/final_portfolio_24.csv`.
-  - Generates `report.html` using the same backtest engine + report format as Monte Carlo/backtests, plus a richer `report_rich.html`.
+  - Generates `report.html` using the same backtest engine + report format as Monte Carlo/backtests.
   - Use `--with-data` to refresh NSE500 prices + benchmark, and `--with-login` to login before data refresh.
 - `python scripts/report_final_portfolio.py`
   - Generates the final portfolio HTML report (performance, PnL, winners/losers, volatility, rank history, benchmarks).

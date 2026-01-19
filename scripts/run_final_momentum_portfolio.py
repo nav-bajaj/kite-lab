@@ -326,24 +326,8 @@ def main():
     run_command(report_cmd, args.dry_run)
     print(f"Saved report to {report_output}")
 
-    report_cmd = [
-        sys.executable,
-        "scripts/report_final_portfolio.py",
-        "--signals",
-        str(signals_output),
-        "--prices-dir",
-        str(args.prices_dir),
-        "--benchmarks-dir",
-        "data/benchmarks",
-        "--output",
-        str(report_output),
-        "--top-n",
-        str(args.top_n),
-    ]
-    rich_report_output = report_output.with_name("report_rich.html")
-    report_cmd[report_cmd.index("--output") + 1] = str(rich_report_output)
-    run_command(report_cmd, args.dry_run)
-    print(f"Saved rich report to {rich_report_output}")
+    # Rich report generation is intentionally disabled for now; keep the backtest-style report
+    # as the single source of truth for comparisons with Monte Carlo/backtests.
 
     latest_holdings = {row["symbol"]: int(row["rank"]) for row in latest_rows}
     prior_snapshot = find_previous_snapshot(snapshot_dir, snapshot_path)
