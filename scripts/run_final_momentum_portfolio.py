@@ -2,7 +2,7 @@ import argparse
 import csv
 import subprocess
 import sys
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 
@@ -46,6 +46,47 @@ def parse_latest_signals(signals_path: Path):
         raise SystemExit(f"No rows found in {signals_path}")
     rows.sort(key=lambda r: int(r["rank"]))
     return max_date, rows
+
+
+def last_completed_week_end(today: date, week_end_weekday: int) -> date:
+    """
+    Return the last completed week-end boundary for a weekly period ending on `week_end_weekday`.
+
+    This mirrors the behavior of resampling with e.g. `W-THU`, but avoids including the in-progress
+    (partial) current week when `today` is before the week end.
+    """
+    if week_end_weekday < 0 or week_end_weekday > 6:
+        raise ValueError(f"Invalid weekday: {week_end_weekday}")
+    days_to_end = (week_end_weekday - today.weekday()) % 7
+    period_end = today + timedelta(days=days_to_end)
+    if today < period_end:
+        return period_end - timedelta(days=7)
+    return period_end
+
+
+def filter_signals_to_completed_periods(signals_path: Path, output_path: Path, today: date) -> Path:
+    """
+    Drop any signals that fall into the current in-progress weekly period (W-THU),
+    which would otherwise produce an early rebalance/trade when run mid-week (e.g. Monday).
+    """
+    cutoff = last_completed_week_end(today, WEEKDAYS["thursday"]).isoformat()
+    with signals_path.open(newline="") as handle:
+        reader = csv.DictReader(handle)
+        fieldnames = reader.fieldnames
+        if not fieldnames:
+            raise SystemExit(f"Signals file missing header: {signals_path}")
+        rows = [row for row in reader if row.get("date") and row["date"] <= cutoff]
+    if not rows:
+        raise SystemExit(
+            f"No completed-period signals found in {signals_path} with cutoff {cutoff}; "
+            "check price data coverage and signal generation."
+        )
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with output_path.open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+    return output_path
 
 
 def write_snapshot(rows, snapshot_path: Path):
@@ -268,7 +309,10 @@ def main():
         print("[dry-run] skipped snapshot generation")
         return
 
-    latest_date, latest_rows = parse_latest_signals(signals_output)
+    effective_signals_output = output_dir / "signals" / "final_top24_signals_completed.csv"
+    effective_signals_output = filter_signals_to_completed_periods(signals_output, effective_signals_output, today)
+
+    latest_date, latest_rows = parse_latest_signals(effective_signals_output)
     snapshot_dir = output_dir / "snapshots"
     snapshot_path = snapshot_dir / f"portfolio_{latest_date}.csv"
     write_snapshot(latest_rows, snapshot_path)
@@ -281,7 +325,7 @@ def main():
             sys.executable,
             "scripts/validate_signals.py",
             "--signals",
-            str(signals_output),
+            str(effective_signals_output),
             "--top-n",
             str(args.top_n),
         ],
@@ -296,7 +340,7 @@ def main():
             "--prices-dir",
             str(args.prices_dir),
             "--signals",
-            str(signals_output),
+            str(effective_signals_output),
             "--benchmark",
             str(args.benchmark),
             "--output-dir",
