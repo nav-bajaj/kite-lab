@@ -20,11 +20,15 @@ data/*
 !data/static/**
 !data/final_portfolio/
 !data/final_portfolio/**
+!experiments/final_portfolio/
+!experiments/final_portfolio/**
 *.csv
 !data/static/*.csv
 !data/static/*.md
 !data/final_portfolio/*.csv
 !data/final_portfolio/*.md
+!experiments/final_portfolio/**/*.csv
+!experiments/final_portfolio/**/*.html
 
 # IDE
 .vscode/
