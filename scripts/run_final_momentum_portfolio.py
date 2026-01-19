@@ -89,13 +89,42 @@ def filter_signals_to_completed_periods(signals_path: Path, output_path: Path, t
     return output_path
 
 
+def next_trading_day(signal_date: date, calendar_dates) -> date:
+    """
+    Pick the next available trading day strictly after `signal_date`.
+    Falls back to `signal_date` if no later date exists in the calendar.
+    """
+    for d in calendar_dates:
+        if d > signal_date:
+            return d
+    return signal_date
+
+
+def load_trading_calendar_from_benchmark(benchmark_path: Path):
+    dates = []
+    with benchmark_path.open(newline="") as handle:
+        reader = csv.DictReader(handle)
+        for row in reader:
+            d = row.get("date")
+            if not d:
+                continue
+            try:
+                dates.append(datetime.strptime(d, "%Y-%m-%d").date())
+            except ValueError:
+                continue
+    dates = sorted(set(dates))
+    if not dates:
+        raise SystemExit(f"No dates found in benchmark file: {benchmark_path}")
+    return dates
+
+
 def write_snapshot(rows, snapshot_path: Path):
     snapshot_path.parent.mkdir(parents=True, exist_ok=True)
     with snapshot_path.open("w", newline="") as handle:
         writer = csv.writer(handle)
-        writer.writerow(["date", "rank", "symbol", "score"])
+        writer.writerow(["date", "signal_date", "rank", "symbol", "score"])
         for row in rows:
-            writer.writerow([row["date"], row["rank"], row["symbol"], row.get("score", "")])
+            writer.writerow([row.get("_as_of_date", row["date"]), row["date"], row["rank"], row["symbol"], row.get("score", "")])
 
 
 def load_snapshot(snapshot_path: Path):
@@ -312,9 +341,16 @@ def main():
     effective_signals_output = output_dir / "signals" / "final_top24_signals_completed.csv"
     effective_signals_output = filter_signals_to_completed_periods(signals_output, effective_signals_output, today)
 
-    latest_date, latest_rows = parse_latest_signals(effective_signals_output)
+    signal_date_str, latest_rows = parse_latest_signals(effective_signals_output)
+    signal_date = datetime.strptime(signal_date_str, "%Y-%m-%d").date()
+    calendar_dates = load_trading_calendar_from_benchmark(args.benchmark)
+    order_date = next_trading_day(signal_date, calendar_dates)
+    as_of_date_str = order_date.isoformat()
+    for row in latest_rows:
+        row["_as_of_date"] = as_of_date_str
+
     snapshot_dir = output_dir / "snapshots"
-    snapshot_path = snapshot_dir / f"portfolio_{latest_date}.csv"
+    snapshot_path = snapshot_dir / f"portfolio_{as_of_date_str}.csv"
     write_snapshot(latest_rows, snapshot_path)
     write_snapshot(latest_rows, args.latest_output)
     print(f"Saved latest portfolio snapshot to {snapshot_path}")
