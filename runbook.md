@@ -40,6 +40,10 @@ Quick reference for the CLI scripts in this repo. Assumes `.env` has `API_KEY`, 
 - `data/static/final_portfolio_24.csv`
   - Latest 24-stock holdings snapshot from the final signals file.
 - Source experiment: `experiments/l6_mc_20260117172537/report.html` (baseline, sample-size 500, exit-buffer 0, pnl-hold 0).
+- `python scripts/run_final_momentum_portfolio.py`
+  - Daily final-portfolio generator: rebuilds L6 weekly signals, writes a dated snapshot, and (on Thursday) generates a changes report plus (on Friday) an orders file.
+  - Outputs to `data/daily/final_portfolio/` by default, and updates `data/static/final_portfolio_24.csv`.
+  - Use `--with-data` to refresh NSE500 prices + benchmark, and `--with-login` to login before data refresh.
 
 ## Backtesting & reporting
 - `python scripts/backtest_momentum.py --prices-dir nse500_data --signals data/momentum/top25_signals.csv --benchmark data/benchmarks/nifty100.csv --output-dir data/backtests --initial-capital 1000000 --top-n 25 --slippage 0.002 --scenario {baseline,cooldown,vol_trigger} [--cooldown-weeks 1] [--staged-step 0.25] [--vol-lookback 63] [--target-vol 0.15] [--exit-buffer 10] [--pnl-hold-threshold 0.05]`
