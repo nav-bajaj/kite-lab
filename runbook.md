@@ -35,14 +35,14 @@ Quick reference for the CLI scripts in this repo. Assumes `.env` has `API_KEY`, 
   - Flags: `--signals` (default `data/momentum/top25_signals.csv`), `--top-n` (default 25).
 
 ## Final momentum portfolio (current)
-- `data/static/final_top24_signals.csv`
+- `data/final_portfolio/final_top24_signals.csv`
   - L6 weekly signals using the current chosen settings (skip-days 0, vol-floor 0.2, top-n 24).
-- `data/static/final_portfolio_24.csv`
+- `data/final_portfolio/final_portfolio_24.csv`
   - Latest 24-stock holdings snapshot from the final signals file.
 - Source experiment: `experiments/l6_mc_20260117172537/report.html` (baseline, sample-size 500, exit-buffer 0, pnl-hold 0).
 - `python scripts/run_final_momentum_portfolio.py`
   - Daily final-portfolio generator: rebuilds L6 weekly signals, writes a dated snapshot, and (on Thursday) generates a changes report plus (on Friday) an orders file.
-  - Writes a run folder under `experiments/final_portfolio/` (report, signals, snapshots, changes) and updates `data/static/final_portfolio_24.csv`.
+  - Writes a run folder under `experiments/final_portfolio/` (report, signals, snapshots, changes) and publishes the latest signals/holdings to `data/final_portfolio/`.
   - Generates `report.html` using the same backtest engine + report format as Monte Carlo/backtests.
   - Use `--with-data` to refresh NSE500 prices + benchmark, and `--with-login` to login before data refresh.
 - `python scripts/report_final_portfolio.py`

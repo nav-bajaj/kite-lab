@@ -540,10 +540,10 @@ def build_report(signals_path: Path, prices_dir: Path, benchmarks_dir: Path, out
 
 def main():
     parser = argparse.ArgumentParser(description="Generate the final momentum portfolio report")
-    parser.add_argument("--signals", type=Path, default=Path("data/static/final_top24_signals.csv"))
+    parser.add_argument("--signals", type=Path, default=Path("data/final_portfolio/final_top24_signals.csv"))
     parser.add_argument("--prices-dir", type=Path, default=Path("nse500_data"))
     parser.add_argument("--benchmarks-dir", type=Path, default=Path("data/benchmarks"))
-    parser.add_argument("--output", type=Path, default=Path("data/daily/final_portfolio/report.html"))
+    parser.add_argument("--output", type=Path, default=Path("experiments/final_portfolio/report_rich.html"))
     parser.add_argument("--top-n", type=int, default=24)
     args = parser.parse_args()
 

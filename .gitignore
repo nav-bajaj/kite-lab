@@ -18,9 +18,13 @@ session.json
 data/*
 !data/static/
 !data/static/**
+!data/final_portfolio/
+!data/final_portfolio/**
 *.csv
 !data/static/*.csv
 !data/static/*.md
+!data/final_portfolio/*.csv
+!data/final_portfolio/*.md
 
 # IDE
 .vscode/

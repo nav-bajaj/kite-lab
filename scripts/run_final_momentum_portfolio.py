@@ -258,7 +258,8 @@ def main():
     parser.add_argument("--output-root", type=Path, default=Path("experiments/final_portfolio"))
     parser.add_argument("--run-label", help="Override run folder label (default: timestamp)")
     parser.add_argument("--signals-output", type=Path, help="Override signals output path")
-    parser.add_argument("--latest-output", type=Path, default=Path("data/static/final_portfolio_24.csv"))
+    parser.add_argument("--publish-signals", type=Path, default=Path("data/final_portfolio/final_top24_signals.csv"))
+    parser.add_argument("--latest-output", type=Path, default=Path("data/final_portfolio/final_portfolio_24.csv"))
     parser.add_argument("--output-dir", type=Path, help="Override output folder for snapshots/reports")
     parser.add_argument("--report-output", type=Path, help="Override report output path")
     parser.add_argument("--initial-capital", type=float, default=1_000_000)
@@ -340,6 +341,9 @@ def main():
 
     effective_signals_output = output_dir / "signals" / "final_top24_signals_completed.csv"
     effective_signals_output = filter_signals_to_completed_periods(signals_output, effective_signals_output, today)
+
+    args.publish_signals.parent.mkdir(parents=True, exist_ok=True)
+    args.publish_signals.write_text(effective_signals_output.read_text())
 
     signal_date_str, latest_rows = parse_latest_signals(effective_signals_output)
     signal_date = datetime.strptime(signal_date_str, "%Y-%m-%d").date()
