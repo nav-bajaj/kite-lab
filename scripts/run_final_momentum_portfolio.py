@@ -183,10 +183,16 @@ def find_latest_change(changes_dir: Path):
 def main():
     parser = argparse.ArgumentParser(description="Daily final momentum portfolio generator")
     parser.add_argument("--prices-dir", type=Path, default=Path("nse500_data"))
+    parser.add_argument("--benchmark", type=Path, default=Path("data/benchmarks/nifty100.csv"))
     parser.add_argument("--universe-file", type=Path, default=Path("data/static/nse500_universe.csv"))
-    parser.add_argument("--signals-output", type=Path, default=Path("data/static/final_top24_signals.csv"))
+    parser.add_argument("--output-root", type=Path, default=Path("experiments/final_portfolio"))
+    parser.add_argument("--run-label", help="Override run folder label (default: timestamp)")
+    parser.add_argument("--signals-output", type=Path, help="Override signals output path")
     parser.add_argument("--latest-output", type=Path, default=Path("data/static/final_portfolio_24.csv"))
-    parser.add_argument("--output-dir", type=Path, default=Path("data/daily/final_portfolio"))
+    parser.add_argument("--output-dir", type=Path, help="Override output folder for snapshots/reports")
+    parser.add_argument("--report-output", type=Path, help="Override report output path")
+    parser.add_argument("--initial-capital", type=float, default=1_000_000)
+    parser.add_argument("--slippage", type=float, default=0.002)
     parser.add_argument("--lookback-months", type=int, default=6)
     parser.add_argument("--rebalance-weeks", type=int, default=1)
     parser.add_argument("--skip-days", type=int, default=0)
@@ -219,6 +225,14 @@ def main():
     else:
         today = date.today()
 
+    run_label = args.run_label or datetime.now().strftime("%Y%m%d%H%M%S")
+    run_dir = args.output_root / f"final_portfolio_{run_label}"
+    signals_output = args.signals_output or (run_dir / "signals" / "final_top24_signals.csv")
+    output_dir = args.output_dir or run_dir
+    report_output = args.report_output or (run_dir / "report.html")
+
+    run_dir.mkdir(parents=True, exist_ok=True)
+
     if args.with_login:
         args.with_data = True
         run_command([sys.executable, "scripts/login_and_save_token.py"], args.dry_run)
@@ -232,7 +246,7 @@ def main():
         "--prices-dir",
         str(args.prices_dir),
         "--output",
-        str(args.signals_output),
+        str(signals_output),
         "--skip-days",
         str(args.skip_days),
         "--lookback-months",
@@ -254,13 +268,82 @@ def main():
         print("[dry-run] skipped snapshot generation")
         return
 
-    latest_date, latest_rows = parse_latest_signals(args.signals_output)
-    snapshot_dir = args.output_dir / "snapshots"
+    latest_date, latest_rows = parse_latest_signals(signals_output)
+    snapshot_dir = output_dir / "snapshots"
     snapshot_path = snapshot_dir / f"portfolio_{latest_date}.csv"
     write_snapshot(latest_rows, snapshot_path)
     write_snapshot(latest_rows, args.latest_output)
     print(f"Saved latest portfolio snapshot to {snapshot_path}")
     print(f"Updated latest holdings to {args.latest_output}")
+
+    run_command(
+        [
+            sys.executable,
+            "scripts/validate_signals.py",
+            "--signals",
+            str(signals_output),
+            "--top-n",
+            str(args.top_n),
+        ],
+        args.dry_run,
+    )
+
+    backtest_dir = output_dir / "backtests" / "baseline"
+    run_command(
+        [
+            sys.executable,
+            "scripts/backtest_momentum.py",
+            "--prices-dir",
+            str(args.prices_dir),
+            "--signals",
+            str(signals_output),
+            "--benchmark",
+            str(args.benchmark),
+            "--output-dir",
+            str(backtest_dir),
+            "--initial-capital",
+            str(args.initial_capital),
+            "--top-n",
+            str(args.top_n),
+            "--slippage",
+            str(args.slippage),
+            "--scenario",
+            "baseline",
+            "--exit-buffer",
+            "0",
+        ],
+        args.dry_run,
+    )
+
+    report_cmd = [
+        sys.executable,
+        "scripts/report_backtests.py",
+        "--runs",
+        str(backtest_dir),
+        "--output",
+        str(report_output),
+    ]
+    run_command(report_cmd, args.dry_run)
+    print(f"Saved report to {report_output}")
+
+    report_cmd = [
+        sys.executable,
+        "scripts/report_final_portfolio.py",
+        "--signals",
+        str(signals_output),
+        "--prices-dir",
+        str(args.prices_dir),
+        "--benchmarks-dir",
+        "data/benchmarks",
+        "--output",
+        str(report_output),
+        "--top-n",
+        str(args.top_n),
+    ]
+    rich_report_output = report_output.with_name("report_rich.html")
+    report_cmd[report_cmd.index("--output") + 1] = str(rich_report_output)
+    run_command(report_cmd, args.dry_run)
+    print(f"Saved rich report to {rich_report_output}")
 
     latest_holdings = {row["symbol"]: int(row["rank"]) for row in latest_rows}
     prior_snapshot = find_previous_snapshot(snapshot_dir, snapshot_path)
@@ -273,7 +356,7 @@ def main():
     is_rebalance_day = today.weekday() == WEEKDAYS[args.rebalance_weekday.lower()]
     if is_rebalance_day:
         changes = compute_changes(prior_holdings, latest_holdings)
-        changes_dir = args.output_dir / "rebalance"
+        changes_dir = output_dir / "rebalance"
         changes_csv = changes_dir / f"changes_{today.isoformat()}.csv"
         report_path = changes_dir / f"changes_{today.isoformat()}.md"
         write_changes_csv(changes_csv, changes, prior_holdings, latest_holdings)
@@ -292,12 +375,12 @@ def main():
 
     is_order_day = today.weekday() == WEEKDAYS[args.order_weekday.lower()]
     if is_order_day:
-        changes_dir = args.output_dir / "rebalance"
+        changes_dir = output_dir / "rebalance"
         latest_change = find_latest_change(changes_dir)
         if not latest_change:
             print("No rebalance changes found for order day.")
             return
-        orders_dir = args.output_dir / "orders"
+        orders_dir = output_dir / "orders"
         orders_path = orders_dir / f"orders_{today.isoformat()}.csv"
         orders_dir.mkdir(parents=True, exist_ok=True)
         with latest_change.open(newline="") as handle:
