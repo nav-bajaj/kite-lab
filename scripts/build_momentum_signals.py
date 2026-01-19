@@ -101,7 +101,7 @@ def main():
     parser = argparse.ArgumentParser(description="Build momentum rankings for NSE 500")
     parser.add_argument("--prices-dir", default="nse500_data", type=Path)
     parser.add_argument("--output", default=Path("data/momentum/top25_signals.csv"), type=Path)
-    parser.add_argument("--skip-days", type=int, default=21, help="Skip window before measuring momentum (trading days)")
+    parser.add_argument("--skip-days", type=int, default=0, help="Skip window before measuring momentum (trading days)")
     parser.add_argument(
         "--lookbacks",
         nargs="+",

@@ -239,7 +239,7 @@ def main():
     parser = argparse.ArgumentParser(description="Build L6 momentum rankings with TA filters")
     parser.add_argument("--prices-dir", default="nse500_data", type=Path)
     parser.add_argument("--output", default=Path("data/momentum/top25_signals_ta.csv"), type=Path)
-    parser.add_argument("--skip-days", type=int, default=21)
+    parser.add_argument("--skip-days", type=int, default=0)
     parser.add_argument("--lookback-months", type=int, default=6, choices=[3, 6, 12])
     parser.add_argument("--top-n", type=int, default=25)
     parser.add_argument("--universe-file", type=Path, help="CSV with Symbol column to limit universe")

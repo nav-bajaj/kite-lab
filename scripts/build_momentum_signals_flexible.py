@@ -159,7 +159,7 @@ def main():
     parser = argparse.ArgumentParser(description="Build momentum rankings with flexible lookback/rebalance")
     parser.add_argument("--prices-dir", default="nse500_data", type=Path)
     parser.add_argument("--output", default=Path("data/momentum/signals_flexible.csv"), type=Path)
-    parser.add_argument("--skip-days", type=int, default=21)
+    parser.add_argument("--skip-days", type=int, default=0)
     parser.add_argument(
         "--lookback-months",
         type=int,
