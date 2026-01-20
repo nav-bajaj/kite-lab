@@ -246,6 +246,205 @@ def trailing_return(values: pd.Series, dates: pd.Series, days: int) -> float:
     return subset.iloc[-1] / subset.iloc[0] - 1
 
 
+def compute_rolling_sharpe(returns: pd.Series, window: int, risk_free_rate: float = 0.0) -> pd.Series:
+    """Compute rolling Sharpe ratio over a window of days"""
+    if len(returns) < window:
+        return pd.Series(index=returns.index, dtype=float)
+
+    excess_returns = returns - risk_free_rate / 252
+    rolling_mean = excess_returns.rolling(window=window, min_periods=window).mean()
+    rolling_std = excess_returns.rolling(window=window, min_periods=window).std()
+
+    sharpe = (rolling_mean / rolling_std) * np.sqrt(252)
+    return sharpe
+
+
+def compute_rolling_volatility(returns: pd.Series, window: int) -> pd.Series:
+    """Compute rolling annualized volatility over a window of days"""
+    if len(returns) < window:
+        return pd.Series(index=returns.index, dtype=float)
+
+    rolling_std = returns.rolling(window=window, min_periods=window).std()
+    rolling_vol = rolling_std * np.sqrt(252)
+    return rolling_vol
+
+
+def compute_rolling_beta(portfolio_returns: pd.Series, benchmark_returns: pd.Series, window: int) -> pd.Series:
+    """Compute rolling beta vs benchmark over a window of days"""
+    if len(portfolio_returns) < window or len(benchmark_returns) < window:
+        return pd.Series(index=portfolio_returns.index, dtype=float)
+
+    # Align the series
+    aligned = pd.DataFrame({
+        'portfolio': portfolio_returns,
+        'benchmark': benchmark_returns
+    }).dropna()
+
+    if len(aligned) < window:
+        return pd.Series(index=portfolio_returns.index, dtype=float)
+
+    # Calculate rolling covariance and variance
+    rolling_cov = aligned['portfolio'].rolling(window=window, min_periods=window).cov(aligned['benchmark'])
+    rolling_var = aligned['benchmark'].rolling(window=window, min_periods=window).var()
+
+    beta = rolling_cov / rolling_var
+    return beta
+
+
+def compute_rolling_correlation(portfolio_returns: pd.Series, benchmark_returns: pd.Series, window: int) -> pd.Series:
+    """Compute rolling correlation vs benchmark over a window of days"""
+    if len(portfolio_returns) < window or len(benchmark_returns) < window:
+        return pd.Series(index=portfolio_returns.index, dtype=float)
+
+    # Align the series
+    aligned = pd.DataFrame({
+        'portfolio': portfolio_returns,
+        'benchmark': benchmark_returns
+    }).dropna()
+
+    if len(aligned) < window:
+        return pd.Series(index=portfolio_returns.index, dtype=float)
+
+    rolling_corr = aligned['portfolio'].rolling(window=window, min_periods=window).corr(aligned['benchmark'])
+    return rolling_corr
+
+
+def compute_rolling_max_drawdown(values: pd.Series, window: int) -> pd.Series:
+    """Compute rolling maximum drawdown over a window of days"""
+    if len(values) < window:
+        return pd.Series(index=values.index, dtype=float)
+
+    def max_dd_window(window_values):
+        if len(window_values) == 0:
+            return np.nan
+        running_max = window_values.cummax()
+        drawdown = window_values / running_max - 1
+        return drawdown.min()
+
+    rolling_dd = values.rolling(window=window, min_periods=window).apply(max_dd_window, raw=False)
+    return rolling_dd
+
+
+def generate_rolling_metrics_charts(equity: pd.DataFrame) -> dict:
+    """Generate charts for various rolling metrics"""
+    if plt is None:
+        return {}
+
+    portfolio_returns = equity["portfolio_return"].dropna()
+    benchmark_returns = equity["benchmark_return"].dropna()
+    portfolio_values = equity["portfolio_value"]
+    dates = equity["date"]
+
+    # Compute rolling metrics
+    rolling_sharpe_126 = compute_rolling_sharpe(portfolio_returns, window=126)  # ~6 months
+    rolling_vol_30 = compute_rolling_volatility(portfolio_returns, window=30)
+    rolling_vol_60 = compute_rolling_volatility(portfolio_returns, window=60)
+    rolling_vol_90 = compute_rolling_volatility(portfolio_returns, window=90)
+    rolling_beta_126 = compute_rolling_beta(portfolio_returns, benchmark_returns, window=126)
+    rolling_corr_126 = compute_rolling_correlation(portfolio_returns, benchmark_returns, window=126)
+    rolling_dd_252 = compute_rolling_max_drawdown(portfolio_values, window=252)  # 1 year
+
+    charts = {}
+
+    # Chart 1: Rolling Sharpe Ratio
+    fig, ax = plt.subplots(figsize=(10, 4))
+    ax.plot(dates, rolling_sharpe_126, label='6-Month Rolling Sharpe', linewidth=1.5)
+    ax.axhline(y=0, color='gray', linestyle='--', alpha=0.5)
+    ax.axhline(y=1, color='green', linestyle='--', alpha=0.3, label='Sharpe = 1.0')
+    ax.set_ylabel('Sharpe Ratio')
+    ax.set_xlabel('Date')
+    ax.set_title('Rolling Sharpe Ratio (6-Month Window)')
+    ax.legend()
+    ax.grid(alpha=0.3)
+    buf = io.BytesIO()
+    fig.tight_layout()
+    fig.savefig(buf, format="png", dpi=100)
+    plt.close(fig)
+    charts['sharpe'] = base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    # Chart 2: Rolling Volatility (multiple windows)
+    fig, ax = plt.subplots(figsize=(10, 4))
+    ax.plot(dates, rolling_vol_30 * 100, label='30-Day', alpha=0.7, linewidth=1)
+    ax.plot(dates, rolling_vol_60 * 100, label='60-Day', alpha=0.7, linewidth=1)
+    ax.plot(dates, rolling_vol_90 * 100, label='90-Day', alpha=0.7, linewidth=1.5)
+    ax.set_ylabel('Annualized Volatility (%)')
+    ax.set_xlabel('Date')
+    ax.set_title('Rolling Volatility (Multiple Windows)')
+    ax.legend()
+    ax.grid(alpha=0.3)
+    buf = io.BytesIO()
+    fig.tight_layout()
+    fig.savefig(buf, format="png", dpi=100)
+    plt.close(fig)
+    charts['volatility'] = base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    # Chart 3: Rolling Beta
+    fig, ax = plt.subplots(figsize=(10, 4))
+    ax.plot(dates, rolling_beta_126, label='6-Month Rolling Beta', linewidth=1.5, color='purple')
+    ax.axhline(y=1, color='gray', linestyle='--', alpha=0.5, label='Beta = 1.0')
+    ax.set_ylabel('Beta')
+    ax.set_xlabel('Date')
+    ax.set_title('Rolling Beta vs Benchmark (6-Month Window)')
+    ax.legend()
+    ax.grid(alpha=0.3)
+    buf = io.BytesIO()
+    fig.tight_layout()
+    fig.savefig(buf, format="png", dpi=100)
+    plt.close(fig)
+    charts['beta'] = base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    # Chart 4: Rolling Correlation
+    fig, ax = plt.subplots(figsize=(10, 4))
+    ax.plot(dates, rolling_corr_126, label='6-Month Rolling Correlation', linewidth=1.5, color='orange')
+    ax.axhline(y=0, color='gray', linestyle='--', alpha=0.5)
+    ax.set_ylabel('Correlation')
+    ax.set_xlabel('Date')
+    ax.set_title('Rolling Correlation vs Benchmark (6-Month Window)')
+    ax.set_ylim(-1, 1)
+    ax.legend()
+    ax.grid(alpha=0.3)
+    buf = io.BytesIO()
+    fig.tight_layout()
+    fig.savefig(buf, format="png", dpi=100)
+    plt.close(fig)
+    charts['correlation'] = base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    # Chart 5: Rolling Max Drawdown
+    fig, ax = plt.subplots(figsize=(10, 4))
+    ax.plot(dates, rolling_dd_252 * 100, label='1-Year Rolling Max DD', linewidth=1.5, color='red')
+    ax.set_ylabel('Max Drawdown (%)')
+    ax.set_xlabel('Date')
+    ax.set_title('Rolling Maximum Drawdown (1-Year Window)')
+    ax.legend()
+    ax.grid(alpha=0.3)
+    buf = io.BytesIO()
+    fig.tight_layout()
+    fig.savefig(buf, format="png", dpi=100)
+    plt.close(fig)
+    charts['rolling_dd'] = base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    # Compute summary statistics for rolling metrics
+    stats = {
+        'avg_sharpe_6m': rolling_sharpe_126.mean(),
+        'std_sharpe_6m': rolling_sharpe_126.std(),
+        'min_sharpe_6m': rolling_sharpe_126.min(),
+        'max_sharpe_6m': rolling_sharpe_126.max(),
+        'avg_vol_90d': rolling_vol_90.mean(),
+        'min_vol_90d': rolling_vol_90.min(),
+        'max_vol_90d': rolling_vol_90.max(),
+        'avg_beta_6m': rolling_beta_126.mean(),
+        'min_beta_6m': rolling_beta_126.min(),
+        'max_beta_6m': rolling_beta_126.max(),
+        'avg_corr_6m': rolling_corr_126.mean(),
+        'min_corr_6m': rolling_corr_126.min(),
+        'max_corr_6m': rolling_corr_126.max(),
+        'avg_rolling_dd_1y': rolling_dd_252.mean(),
+        'worst_rolling_dd_1y': rolling_dd_252.min(),
+    }
+
+    return {'charts': charts, 'stats': stats}
+
+
 def generate_equity_chart(df: pd.DataFrame) -> str:
     if plt is None:
         return ""
@@ -351,6 +550,9 @@ def analyze_run(run_path: Path, label: str):
     dd_stats = compute_drawdown_stats(dd_periods)
     dd_chart = generate_drawdown_chart(equity["portfolio_value"], equity["date"])
 
+    # Rolling metrics analysis
+    rolling_metrics = generate_rolling_metrics_charts(equity)
+
     return {
         "metrics": metrics,
         "periods": periods,
@@ -365,6 +567,7 @@ def analyze_run(run_path: Path, label: str):
         "current_drawdown": current_dd,
         "drawdown_stats": dd_stats,
         "drawdown_chart": dd_chart,
+        "rolling_metrics": rolling_metrics,
     }
 
 
@@ -547,6 +750,54 @@ def build_report(run_paths, output_path: Path):
         else:
             dd_periods_html = "<p>No significant drawdown periods identified.</p>"
 
+        # Build rolling metrics section
+        rolling_metrics = entry.get("rolling_metrics", {})
+        rolling_charts = rolling_metrics.get("charts", {})
+        rolling_stats = rolling_metrics.get("stats", {})
+
+        if rolling_charts:
+            rolling_sharpe_chart = f'<img src="data:image/png;base64,{rolling_charts["sharpe"]}" alt="Rolling Sharpe" />' if rolling_charts.get("sharpe") else ""
+            rolling_vol_chart = f'<img src="data:image/png;base64,{rolling_charts["volatility"]}" alt="Rolling Volatility" />' if rolling_charts.get("volatility") else ""
+            rolling_beta_chart = f'<img src="data:image/png;base64,{rolling_charts["beta"]}" alt="Rolling Beta" />' if rolling_charts.get("beta") else ""
+            rolling_corr_chart = f'<img src="data:image/png;base64,{rolling_charts["correlation"]}" alt="Rolling Correlation" />' if rolling_charts.get("correlation") else ""
+            rolling_dd_chart = f'<img src="data:image/png;base64,{rolling_charts["rolling_dd"]}" alt="Rolling Max DD" />' if rolling_charts.get("rolling_dd") else ""
+
+            # Rolling metrics summary table
+            rolling_stats_df = pd.DataFrame([
+                {"Metric": "Avg Rolling Sharpe (6M)", "Value": format_number(rolling_stats.get("avg_sharpe_6m", 0), 2)},
+                {"Metric": "Min Rolling Sharpe (6M)", "Value": format_number(rolling_stats.get("min_sharpe_6m", 0), 2)},
+                {"Metric": "Max Rolling Sharpe (6M)", "Value": format_number(rolling_stats.get("max_sharpe_6m", 0), 2)},
+                {"Metric": "Avg Rolling Vol (90D)", "Value": format_percent(rolling_stats.get("avg_vol_90d", 0))},
+                {"Metric": "Min Rolling Vol (90D)", "Value": format_percent(rolling_stats.get("min_vol_90d", 0))},
+                {"Metric": "Max Rolling Vol (90D)", "Value": format_percent(rolling_stats.get("max_vol_90d", 0))},
+                {"Metric": "Avg Rolling Beta (6M)", "Value": format_number(rolling_stats.get("avg_beta_6m", 0), 2)},
+                {"Metric": "Min Rolling Beta (6M)", "Value": format_number(rolling_stats.get("min_beta_6m", 0), 2)},
+                {"Metric": "Max Rolling Beta (6M)", "Value": format_number(rolling_stats.get("max_beta_6m", 0), 2)},
+                {"Metric": "Avg Rolling Correlation (6M)", "Value": format_number(rolling_stats.get("avg_corr_6m", 0), 2)},
+                {"Metric": "Avg Rolling Max DD (1Y)", "Value": format_percent(rolling_stats.get("avg_rolling_dd_1y", 0))},
+                {"Metric": "Worst Rolling Max DD (1Y)", "Value": format_percent(rolling_stats.get("worst_rolling_dd_1y", 0))},
+            ])
+            rolling_stats_html = rolling_stats_df.to_html(index=False, escape=False)
+
+            rolling_metrics_section = f"""
+                <h3>Rolling Metrics Analysis</h3>
+                <p>Analysis of performance stability and consistency over time using rolling windows.</p>
+                <h4>Rolling Sharpe Ratio</h4>
+                {rolling_sharpe_chart}
+                <h4>Rolling Volatility</h4>
+                {rolling_vol_chart}
+                <h4>Rolling Beta vs Benchmark</h4>
+                {rolling_beta_chart}
+                <h4>Rolling Correlation vs Benchmark</h4>
+                {rolling_corr_chart}
+                <h4>Rolling Maximum Drawdown</h4>
+                {rolling_dd_chart}
+                <h4>Rolling Metrics Summary</h4>
+                {rolling_stats_html}
+            """
+        else:
+            rolling_metrics_section = "<h3>Rolling Metrics Analysis</h3><p>Rolling metrics unavailable (matplotlib missing).</p>"
+
         sections.append(
             f"""
             <section>
@@ -561,6 +812,8 @@ def build_report(run_paths, output_path: Path):
                 {dd_summary_html}
                 <h4>Top 5 Worst Drawdown Periods</h4>
                 {dd_periods_html}
+
+                {rolling_metrics_section}
 
                 <h3>Trailing Returns</h3>
                 {period_html}
