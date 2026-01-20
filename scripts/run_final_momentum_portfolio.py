@@ -270,6 +270,9 @@ def main():
     parser.add_argument("--top-n", type=int, default=24)
     parser.add_argument("--vol-floor", type=float, default=0.2)
     parser.add_argument("--vol-power", type=float, default=1.0)
+    parser.add_argument("--min-entry-score", type=float, default=2.5, help="Minimum momentum score for entry (default: 2.5)")
+    parser.add_argument("--min-exit-score", type=float, default=1.5, help="Minimum momentum score to remain in position (default: 1.5)")
+    parser.add_argument("--score-rebalance-mode", choices=["full", "incremental"], default="incremental", help="Position sizing mode when using score filtering (default: incremental)")
     parser.add_argument("--rebalance-weekday", default="thursday")
     parser.add_argument("--order-weekday", default="friday")
     parser.add_argument(
@@ -395,6 +398,12 @@ def main():
             "baseline",
             "--exit-buffer",
             "0",
+            "--min-entry-score",
+            str(args.min_entry_score),
+            "--min-exit-score",
+            str(args.min_exit_score),
+            "--score-rebalance-mode",
+            args.score_rebalance_mode,
         ],
         args.dry_run,
     )
