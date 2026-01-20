@@ -203,7 +203,7 @@ def run_backtest(
         benchmark_price = benchmark_aligned.loc[date]
 
         portfolio_value = cash
-        for symbol, shares in list(holdings.items()):
+        for symbol, shares in sorted(holdings.items()):
             price = close_row.get(symbol)
             if pd.isna(price):
                 price = last_prices.get(symbol)
@@ -261,7 +261,7 @@ def run_backtest(
         exit_threshold = top_n + exit_buffer
         current_ranks = rank_map_by_date.get(date, {})
         exits = []
-        for sym in current_symbols:
+        for sym in sorted(current_symbols):
             if sym in target_set:
                 continue
             rank = current_ranks.get(sym, float("inf"))
