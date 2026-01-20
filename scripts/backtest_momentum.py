@@ -36,14 +36,17 @@ def load_signals(path: Path, top_n: int, exit_buffer: int = 0):
     exit_threshold = top_n + exit_buffer
     exit_df = df[df["rank"] <= exit_threshold]
     rank_map_by_date = {}
+    score_map_by_date = {}
     for date, group in exit_df.groupby("date"):
         rank_map_by_date[pd.Timestamp(date)] = dict(zip(group["symbol"], group["rank"]))
+        if "score" in group.columns:
+            score_map_by_date[pd.Timestamp(date)] = dict(zip(group["symbol"], group["score"]))
 
     max_rank = df["rank"].max()
     if exit_threshold > max_rank:
         print(f"Warning: exit threshold ({exit_threshold}) exceeds max rank in signals ({max_rank}). Missing ranks will be treated as inf.")
 
-    return entry_grouped, rank_map_by_date, df
+    return entry_grouped, rank_map_by_date, score_map_by_date, df
 
 
 def load_benchmark(path: Path):
@@ -170,9 +173,20 @@ def run_backtest(
     target_vol=0.15,
     exit_buffer=0,
     pnl_hold_threshold=None,
+    min_score=None,
+    score_rebalance_mode="full",
+    min_entry_score=None,
+    min_exit_score=None,
 ):
+    # Handle backward compatibility: if min_score is set but entry/exit not set, use min_score for both
+    if min_score is not None:
+        if min_entry_score is None:
+            min_entry_score = min_score
+        if min_exit_score is None:
+            min_exit_score = min_score
+
     close_panel, trade_panel = load_price_panels(prices_dir)
-    entry_signals, rank_map_by_date, _signals_df = load_signals(signals_path, top_n, exit_buffer)
+    entry_signals, rank_map_by_date, score_map_by_date, _signals_df = load_signals(signals_path, top_n, exit_buffer)
     benchmark = load_benchmark(benchmark_path)
     calendar = close_panel.index
     benchmark_aligned = benchmark.reindex(calendar).ffill()
@@ -250,6 +264,12 @@ def run_backtest(
             continue
 
         target_symbols = target_symbols[:top_n]
+
+        # Apply score filtering if min_entry_score is specified
+        current_scores = score_map_by_date.get(date, {})
+        if min_entry_score is not None and current_scores:
+            target_symbols = [sym for sym in target_symbols if current_scores.get(sym, 0) >= min_entry_score]
+
         if exposure <= 0:
             holdings.clear()
             cost_basis.clear()
@@ -265,6 +285,7 @@ def run_backtest(
             if sym in target_set:
                 continue
             rank = current_ranks.get(sym, float("inf"))
+            score = current_scores.get(sym, 0) if min_exit_score is not None else None
             price_for_pnl = trade_panel.loc[date].get(sym)
             if pd.isna(price_for_pnl):
                 price_for_pnl = close_row.get(sym)
@@ -274,6 +295,9 @@ def run_backtest(
                 if avg_cost > 0:
                     pnl_pct = price_for_pnl / avg_cost - 1
             should_exit = rank > exit_threshold
+            # Also exit if score falls below minimum exit threshold
+            if min_exit_score is not None and score is not None and score < min_exit_score:
+                should_exit = True
             if pnl_hold_threshold is not None and should_exit and pnl_pct is not None and pnl_pct > pnl_hold_threshold:
                 should_exit = False
             if should_exit:
@@ -320,7 +344,85 @@ def run_backtest(
             })
 
         entrants = [sym for sym in target_symbols if sym not in holdings]
-        if entrants:
+
+        # Handle position sizing based on rebalance mode (for score filtering)
+        if min_entry_score is not None and score_rebalance_mode == "full" and (entrants or len(target_symbols) != len(holdings)):
+            # Full rebalance mode: rebalance all holdings to equal weight
+            # Calculate total portfolio value
+            portfolio_val = cash
+            for sym, qty in sorted(holdings.items()):
+                price = close_row.get(sym, last_prices.get(sym, 0))
+                portfolio_val += price * qty
+
+            # Calculate target position size for each stock
+            num_positions = len(target_symbols)
+            if num_positions > 0:
+                target_per_stock = (portfolio_val * exposure) / num_positions
+
+                # Rebalance all target symbols
+                for sym in target_symbols:
+                    price = trade_panel.loc[date].get(sym)
+                    if pd.isna(price):
+                        price = close_row.get(sym)
+                    if pd.isna(price) or price <= 0:
+                        continue
+
+                    current_value = holdings.get(sym, 0) * price
+                    target_value = target_per_stock
+                    delta_value = target_value - current_value
+
+                    if abs(delta_value) < 1:  # Skip tiny adjustments
+                        continue
+
+                    if delta_value > 0:  # Buy
+                        shares_to_buy = delta_value / (price * (1 + slippage))
+                        cost = shares_to_buy * price * (1 + slippage)
+                        if cost > cash:
+                            shares_to_buy = cash / (price * (1 + slippage))
+                            cost = shares_to_buy * price * (1 + slippage)
+                        if shares_to_buy > 0:
+                            holdings[sym] = holdings.get(sym, 0) + shares_to_buy
+                            cost_basis[sym] = cost_basis.get(sym, 0) + cost
+                            if sym not in entry_meta:
+                                entry_meta[sym] = {"date": date, "rank": current_ranks.get(sym)}
+                            cash -= cost
+                            notional = shares_to_buy * price
+                            rebalance_turnover += abs(notional)
+                            trade_records.append({
+                                "date": date,
+                                "symbol": sym,
+                                "side": "BUY",
+                                "shares": shares_to_buy,
+                                "price": price,
+                                "notional": notional,
+                                "slippage": shares_to_buy * price * slippage,
+                                "cash_after": cash,
+                            })
+                    elif delta_value < 0:  # Sell
+                        shares_to_sell = min(-delta_value / price, holdings.get(sym, 0))
+                        if shares_to_sell > 0:
+                            proceeds = shares_to_sell * price * (1 - slippage)
+                            cash += proceeds
+                            holdings[sym] = holdings.get(sym, 0) - shares_to_sell
+                            avg_cost = cost_basis.get(sym, 0) / (holdings.get(sym, 0) + shares_to_sell)
+                            cost_basis[sym] = cost_basis.get(sym, 0) - avg_cost * shares_to_sell
+                            if holdings[sym] < 1e-6:
+                                holdings.pop(sym, None)
+                                cost_basis.pop(sym, None)
+                            notional = shares_to_sell * price
+                            rebalance_turnover += abs(notional)
+                            trade_records.append({
+                                "date": date,
+                                "symbol": sym,
+                                "side": "SELL",
+                                "shares": shares_to_sell,
+                                "price": price,
+                                "notional": notional,
+                                "slippage": shares_to_sell * price * slippage,
+                                "cash_after": cash,
+                            })
+        elif entrants:
+            # Incremental mode (default): only allocate to new entrants
             target_cash = cash + sum(close_row.get(sym, last_prices.get(sym, 0)) * qty for sym, qty in holdings.items())
             deploy_cash = target_cash * exposure - (target_cash - cash)
             deploy_cash = max(0, deploy_cash)
@@ -424,6 +526,10 @@ def main():
     parser.add_argument("--target-vol", type=float, default=0.15)
     parser.add_argument("--exit-buffer", type=int, default=0, help="Allow exits only when rank exceeds top_n + buffer (hysteresis)")
     parser.add_argument("--pnl-hold-threshold", type=float, help="If set, defer exit when rank is outside band but unrealized PnL > threshold (e.g., 0.05 for +5%)")
+    parser.add_argument("--min-score", type=float, help="Minimum momentum score required to enter/hold positions (e.g., 2.0) - deprecated, use --min-entry-score and --min-exit-score")
+    parser.add_argument("--min-entry-score", type=float, help="Minimum score required to enter a position (e.g., 2.5)")
+    parser.add_argument("--min-exit-score", type=float, help="Minimum score to remain in position; exit when below this (e.g., 1.5)")
+    parser.add_argument("--score-rebalance-mode", choices=["full", "incremental"], default="incremental", help="full: rebalance all holdings to equal weight; incremental: only allocate to new entrants")
     args = parser.parse_args()
 
     run_backtest(
@@ -441,6 +547,10 @@ def main():
         target_vol=args.target_vol,
         exit_buffer=args.exit_buffer,
         pnl_hold_threshold=args.pnl_hold_threshold,
+        min_score=args.min_score,
+        score_rebalance_mode=args.score_rebalance_mode,
+        min_entry_score=args.min_entry_score,
+        min_exit_score=args.min_exit_score,
     )
 
 

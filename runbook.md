@@ -67,6 +67,53 @@ Quick reference for the CLI scripts in this repo. Assumes `.env` has `API_KEY`, 
   - Merges multiple backtest folders into a single HTML report (charts require matplotlib installed).
 - (removed) `run_churn_experiments.py` — churn variants now covered via `run_l6_monte_carlo.py` (baseline / hysteresis / PnL-hold).
 
+## Score Filtering Experiments
+
+Score filtering adds momentum quality thresholds to improve returns and reduce churn. Instead of blindly taking the top-N ranked stocks, we filter by minimum momentum score.
+
+### Single Threshold Mode
+- `python scripts/backtest_momentum.py --min-score 2.5 --score-rebalance-mode incremental`
+  - Entry: score >= 2.5
+  - Exit: score < 2.5 (same threshold)
+  - Result: Higher CAGR but worse drawdown, moderate trade increase
+
+### Hysteresis Mode (Recommended) ✨
+- `python scripts/backtest_momentum.py --min-entry-score 2.5 --min-exit-score 1.5 --score-rebalance-mode incremental`
+  - Entry: score >= 2.5 (selective entry, high conviction only)
+  - Exit: score < 1.5 (patient exits, let winners run)
+  - The 1.0-point gap creates "stickiness" to prevent whipsawing
+  - **Results vs baseline:**
+    - +3.98% CAGR improvement (60.17% vs 56.19%)
+    - Similar drawdown (-28.60% vs -27.11%)
+    - 13% fewer trades (2,247 vs 2,569)
+    - Lower turnover (27.31% vs 29.64%)
+
+### Position Sizing Modes
+- `--score-rebalance-mode incremental` (default, recommended)
+  - Keeps existing positions at current values
+  - Only allocates cash to new entrants
+  - Lower turnover, fewer trades
+- `--score-rebalance-mode full`
+  - Rebalances ALL holdings to equal weight on each rebalance
+  - Much higher turnover (3.3x more trades)
+  - Better CAGR but excessive transaction costs in practice
+
+### Experiment Runner
+- `python scripts/run_score_filtered_portfolio.py`
+  - Automatically tests 3 scenarios:
+    1. Baseline (no filter)
+    2. Score filter with incremental allocation
+    3. Score filter with full rebalance
+  - Generates comparison report
+  - Results saved under `experiments/score_filtered_*/`
+
+### Recommendations
+Use **entry=2.5, exit=1.5, incremental mode** for best risk-adjusted returns:
+- Selective entry reduces exposure to marginal momentum stocks
+- Patient exits let winners compound longer
+- Hysteresis prevents unnecessary churn
+- Incremental allocation minimizes transaction costs
+
 ## Technical Analysis Experiments
 - `python scripts/build_momentum_signals_with_ta.py --ta-filter {none|rsi_neutral|rsi_bullish|trend_ema20|trend_ema50|adx_trending|macd_positive|combined_conservative|combined_aggressive} --output data/momentum/signals_ta.csv`
   - Builds L6 momentum signals with optional TA filters. Available filters test whether RSI, trend-following (EMA), ADX, or MACD improve stock selection.
