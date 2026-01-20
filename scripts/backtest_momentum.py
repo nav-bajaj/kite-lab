@@ -120,11 +120,14 @@ def summarise_metrics(
         hold_stats["median_holding_days"] = exit_df["holding_days"].median()
 
         # Hit-rate by entry-rank quintile
-        bins = [0, *(i * top_n / 5 for i in range(1, 5)), top_n + 1]
-        labels = [f"q{i}" for i in range(1, 6)]
-        exit_df["rank_quintile"] = pd.cut(exit_df["entry_rank"], bins=bins, labels=labels, include_lowest=True)
-        for label, grp in exit_df.groupby("rank_quintile"):
-            hit_rates[f"hit_rate_{label}"] = (grp["pnl_pct"] > 0).mean()
+        # Filter out rows with None entry_rank before binning
+        valid_exit_df = exit_df.dropna(subset=["entry_rank"])
+        if not valid_exit_df.empty and len(valid_exit_df) > 0:
+            bins = [0, *(i * top_n / 5 for i in range(1, 5)), top_n + 1]
+            labels = [f"q{i}" for i in range(1, 6)]
+            valid_exit_df["rank_quintile"] = pd.cut(valid_exit_df["entry_rank"], bins=bins, labels=labels, include_lowest=True)
+            for label, grp in valid_exit_df.groupby("rank_quintile"):
+                hit_rates[f"hit_rate_{label}"] = (grp["pnl_pct"] > 0).mean()
 
     trade_counts = {
         "trades_total": len(trades_df),

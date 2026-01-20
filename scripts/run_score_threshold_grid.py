@@ -16,7 +16,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def run_command(cmd, description):
+def run_command(cmd, description, critical=False):
     """Run a command and handle errors"""
     print(f"\n{'=' * 80}")
     print(f"{description}")
@@ -25,9 +25,13 @@ def run_command(cmd, description):
 
     result = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
     if result.returncode != 0:
-        print(f"ERROR: {description} failed with exit code {result.returncode}")
+        print(f"WARNING: {description} failed with exit code {result.returncode}")
         print(f"STDERR: {result.stderr}")
-        sys.exit(result.returncode)
+        if critical:
+            sys.exit(result.returncode)
+        else:
+            print("Continuing with other configurations...\n")
+            return None
     return result
 
 
@@ -167,7 +171,7 @@ def main():
 
             print(f"\n[{current_run}/{total_runs}] Testing: entry={entry_threshold}, exit={exit_threshold}")
 
-            run_command([
+            result = run_command([
                 sys.executable,
                 "scripts/backtest_momentum.py",
                 "--prices-dir", str(prices_dir),
@@ -181,9 +185,14 @@ def main():
                 "--min-entry-score", str(entry_threshold),
                 "--min-exit-score", str(exit_threshold),
                 "--score-rebalance-mode", "incremental",
-            ], f"Entry={entry_threshold}, Exit={exit_threshold}")
+            ], f"Entry={entry_threshold}, Exit={exit_threshold}", critical=False)
 
-            metrics = extract_metrics(config_dir)
+            # Only extract metrics if backtest succeeded
+            if result is not None:
+                metrics = extract_metrics(config_dir)
+            else:
+                metrics = None
+
             if metrics:
                 results.append({
                     "config": config_name,
@@ -209,25 +218,37 @@ def main():
         print(summary_df[["config", "entry_threshold", "exit_threshold", "cagr", "max_drawdown", "total_trades"]].head(5).to_string(index=False))
         print()
 
-    # Generate comparison report
-    if len(backtest_dirs) > 0:
+    # Generate comparison report (only for dirs with valid metrics)
+    valid_backtest_dirs = [d for d in backtest_dirs if (d / "momentum_metrics.csv").exists()]
+    if len(valid_backtest_dirs) > 0:
         print(f"\n{'=' * 80}")
         print("Generating comparison report")
         print(f"{'=' * 80}")
+        print(f"Including {len(valid_backtest_dirs)} valid configurations in report\n")
 
         run_command([
             sys.executable,
             "scripts/report_backtests.py",
-            "--runs"] + [str(d) for d in backtest_dirs] + [
+            "--runs"] + [str(d) for d in valid_backtest_dirs] + [
             "--output", str(experiment_dir / "comparison_report.html"),
-        ], "Comparison report")
+        ], "Comparison report", critical=True)
+    else:
+        print(f"\nWARNING: No valid backtest results to generate report")
 
     print(f"\n{'=' * 80}")
     print("GRID SEARCH COMPLETE")
     print(f"{'=' * 80}")
+    total_configs = len(args.entry_thresholds) * len(args.exit_thresholds)
+    successful_configs = len(results)
+    failed_configs = total_configs - successful_configs
+    print(f"\nConfigurations tested: {total_configs}")
+    print(f"  Successful: {successful_configs}")
+    print(f"  Failed: {failed_configs}")
     print(f"\nResults saved to: {experiment_dir}")
-    print(f"Summary CSV: {experiment_dir / 'summary.csv'}")
-    print(f"Report: {experiment_dir / 'comparison_report.html'}")
+    if results:
+        print(f"Summary CSV: {experiment_dir / 'summary.csv'}")
+    if len(valid_backtest_dirs) > 0:
+        print(f"Report: {experiment_dir / 'comparison_report.html'}")
 
     if results:
         best = summary_df.iloc[0]
