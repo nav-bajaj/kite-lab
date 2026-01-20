@@ -445,6 +445,154 @@ def generate_rolling_metrics_charts(equity: pd.DataFrame) -> dict:
     return {'charts': charts, 'stats': stats}
 
 
+def compute_monthly_returns(values: pd.Series, dates: pd.Series) -> pd.DataFrame:
+    """Compute monthly returns from daily portfolio values"""
+    df = pd.DataFrame({'date': dates, 'value': values})
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.set_index('date')
+
+    # Resample to month-end and compute returns
+    monthly = df['value'].resample('ME').last()
+    monthly_returns = monthly.pct_change()
+
+    # Create a dataframe with year, month, return
+    result = pd.DataFrame({
+        'year': monthly_returns.index.year,
+        'month': monthly_returns.index.month,
+        'return': monthly_returns.values
+    })
+
+    return result.dropna()
+
+
+def compute_quarterly_returns(values: pd.Series, dates: pd.Series) -> pd.DataFrame:
+    """Compute quarterly returns from daily portfolio values"""
+    df = pd.DataFrame({'date': dates, 'value': values})
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.set_index('date')
+
+    # Resample to quarter-end and compute returns
+    quarterly = df['value'].resample('QE').last()
+    quarterly_returns = quarterly.pct_change()
+
+    # Create a dataframe with year, quarter, return
+    result = pd.DataFrame({
+        'year': quarterly_returns.index.year,
+        'quarter': quarterly_returns.index.quarter,
+        'return': quarterly_returns.values
+    })
+
+    return result.dropna()
+
+
+def generate_monthly_heatmap(monthly_returns: pd.DataFrame) -> str:
+    """Generate monthly returns heatmap"""
+    if plt is None:
+        return ""
+
+    # Pivot to get years as rows, months as columns
+    heatmap_data = monthly_returns.pivot(index='year', columns='month', values='return')
+
+    # Ensure all months are present (1-12)
+    for month in range(1, 13):
+        if month not in heatmap_data.columns:
+            heatmap_data[month] = np.nan
+    heatmap_data = heatmap_data[sorted(heatmap_data.columns)]
+
+    # Create heatmap
+    fig, ax = plt.subplots(figsize=(12, max(4, len(heatmap_data) * 0.5)))
+
+    # Plot heatmap
+    im = ax.imshow(heatmap_data.values * 100, aspect='auto', cmap='RdYlGn',
+                   vmin=-20, vmax=20, interpolation='nearest')
+
+    # Set ticks
+    ax.set_xticks(np.arange(12))
+    ax.set_yticks(np.arange(len(heatmap_data)))
+
+    # Label with month names and years
+    month_names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    ax.set_xticklabels(month_names)
+    ax.set_yticklabels(heatmap_data.index)
+
+    # Rotate the tick labels
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+
+    # Add text annotations
+    for i in range(len(heatmap_data)):
+        for j in range(12):
+            value = heatmap_data.iloc[i, j]
+            if not np.isnan(value):
+                text = ax.text(j, i, f'{value*100:.1f}%',
+                             ha="center", va="center", color="black", fontsize=8)
+
+    # Add colorbar
+    cbar = plt.colorbar(im, ax=ax)
+    cbar.set_label('Monthly Return (%)', rotation=270, labelpad=15)
+
+    ax.set_title('Monthly Returns Heatmap')
+    ax.set_xlabel('Month')
+    ax.set_ylabel('Year')
+
+    buf = io.BytesIO()
+    fig.tight_layout()
+    fig.savefig(buf, format="png", dpi=100)
+    plt.close(fig)
+    return base64.b64encode(buf.getvalue()).decode("utf-8")
+
+
+def analyze_monthly_performance(monthly_returns: pd.DataFrame) -> dict:
+    """Analyze monthly performance patterns"""
+    if monthly_returns.empty:
+        return {
+            'avg_monthly_return': 0,
+            'monthly_win_rate': 0,
+            'best_month': {},
+            'worst_month': {},
+            'best_months_avg': {},
+            'worst_months_avg': {},
+            'seasonality': {}
+        }
+
+    # Overall statistics
+    avg_monthly = monthly_returns['return'].mean()
+    monthly_win_rate = (monthly_returns['return'] > 0).sum() / len(monthly_returns)
+
+    # Best and worst single months
+    best_idx = monthly_returns['return'].idxmax()
+    worst_idx = monthly_returns['return'].idxmin()
+
+    best_month = {
+        'year': int(monthly_returns.loc[best_idx, 'year']),
+        'month': int(monthly_returns.loc[best_idx, 'month']),
+        'return': monthly_returns.loc[best_idx, 'return']
+    }
+
+    worst_month = {
+        'year': int(monthly_returns.loc[worst_idx, 'year']),
+        'month': int(monthly_returns.loc[worst_idx, 'month']),
+        'return': monthly_returns.loc[worst_idx, 'return']
+    }
+
+    # Top 5 best and worst months
+    best_months = monthly_returns.nlargest(5, 'return')
+    worst_months = monthly_returns.nsmallest(5, 'return')
+
+    # Seasonality: average return by calendar month
+    seasonality = monthly_returns.groupby('month')['return'].agg(['mean', 'count']).to_dict('index')
+
+    return {
+        'avg_monthly_return': avg_monthly,
+        'monthly_win_rate': monthly_win_rate,
+        'best_month': best_month,
+        'worst_month': worst_month,
+        'best_months': best_months,
+        'worst_months': worst_months,
+        'seasonality': seasonality
+    }
+
+
 def generate_equity_chart(df: pd.DataFrame) -> str:
     if plt is None:
         return ""
@@ -553,6 +701,12 @@ def analyze_run(run_path: Path, label: str):
     # Rolling metrics analysis
     rolling_metrics = generate_rolling_metrics_charts(equity)
 
+    # Monthly and quarterly analysis
+    monthly_returns = compute_monthly_returns(equity["portfolio_value"], equity["date"])
+    quarterly_returns = compute_quarterly_returns(equity["portfolio_value"], equity["date"])
+    monthly_heatmap = generate_monthly_heatmap(monthly_returns)
+    monthly_analysis = analyze_monthly_performance(monthly_returns)
+
     return {
         "metrics": metrics,
         "periods": periods,
@@ -568,6 +722,10 @@ def analyze_run(run_path: Path, label: str):
         "drawdown_stats": dd_stats,
         "drawdown_chart": dd_chart,
         "rolling_metrics": rolling_metrics,
+        "monthly_returns": monthly_returns,
+        "quarterly_returns": quarterly_returns,
+        "monthly_heatmap": monthly_heatmap,
+        "monthly_analysis": monthly_analysis,
     }
 
 
@@ -798,6 +956,108 @@ def build_report(run_paths, output_path: Path):
         else:
             rolling_metrics_section = "<h3>Rolling Metrics Analysis</h3><p>Rolling metrics unavailable (matplotlib missing).</p>"
 
+        # Build calendar performance section
+        monthly_heatmap = entry.get("monthly_heatmap", "")
+        monthly_analysis = entry.get("monthly_analysis", {})
+        quarterly_returns = entry.get("quarterly_returns", pd.DataFrame())
+
+        if monthly_heatmap:
+            month_names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+            # Monthly heatmap chart
+            monthly_heatmap_html = f'<img src="data:image/png;base64,{monthly_heatmap}" alt="Monthly Returns Heatmap" />'
+
+            # Monthly statistics
+            avg_monthly = monthly_analysis.get('avg_monthly_return', 0)
+            monthly_win_rate = monthly_analysis.get('monthly_win_rate', 0)
+            best_month = monthly_analysis.get('best_month', {})
+            worst_month = monthly_analysis.get('worst_month', {})
+
+            monthly_stats_df = pd.DataFrame([
+                {"Metric": "Average Monthly Return", "Value": format_percent(avg_monthly)},
+                {"Metric": "Monthly Win Rate", "Value": format_percent(monthly_win_rate)},
+                {"Metric": "Best Month", "Value": f"{month_names[best_month.get('month', 1) - 1]} {best_month.get('year', '')} ({format_percent(best_month.get('return', 0))})"},
+                {"Metric": "Worst Month", "Value": f"{month_names[worst_month.get('month', 1) - 1]} {worst_month.get('year', '')} ({format_percent(worst_month.get('return', 0))})"},
+            ])
+            monthly_stats_html = monthly_stats_df.to_html(index=False, escape=False)
+
+            # Seasonality table (average return by calendar month)
+            seasonality = monthly_analysis.get('seasonality', {})
+            if seasonality:
+                seasonality_data = []
+                for month_num in range(1, 13):
+                    if month_num in seasonality:
+                        seasonality_data.append({
+                            "Month": month_names[month_num - 1],
+                            "Avg Return": format_percent(seasonality[month_num]['mean']),
+                            "Count": int(seasonality[month_num]['count'])
+                        })
+                seasonality_df = pd.DataFrame(seasonality_data)
+                seasonality_html = seasonality_df.to_html(index=False, escape=False)
+            else:
+                seasonality_html = "<p>Insufficient data for seasonality analysis.</p>"
+
+            # Quarterly returns table
+            if not quarterly_returns.empty:
+                quarterly_pivot = quarterly_returns.pivot(index='year', columns='quarter', values='return')
+                quarterly_data = []
+                for year in quarterly_pivot.index:
+                    row = {"Year": int(year)}
+                    for q in range(1, 5):
+                        if q in quarterly_pivot.columns:
+                            val = quarterly_pivot.loc[year, q]
+                            row[f"Q{q}"] = format_percent(val) if not pd.isna(val) else "-"
+                        else:
+                            row[f"Q{q}"] = "-"
+                    quarterly_data.append(row)
+                quarterly_df = pd.DataFrame(quarterly_data)
+                quarterly_html = quarterly_df.to_html(index=False, escape=False)
+            else:
+                quarterly_html = "<p>Insufficient data for quarterly analysis.</p>"
+
+            # Top 5 best and worst months
+            best_months = monthly_analysis.get('best_months', pd.DataFrame())
+            worst_months = monthly_analysis.get('worst_months', pd.DataFrame())
+
+            if not best_months.empty:
+                best_months_display = best_months.copy()
+                best_months_display['month_name'] = best_months_display['month'].apply(lambda x: month_names[int(x) - 1])
+                best_months_display['return'] = best_months_display['return'].apply(format_percent)
+                best_months_display = best_months_display[['year', 'month_name', 'return']]
+                best_months_display.columns = ['Year', 'Month', 'Return']
+                best_months_html = best_months_display.to_html(index=False, escape=False)
+            else:
+                best_months_html = "<p>No data.</p>"
+
+            if not worst_months.empty:
+                worst_months_display = worst_months.copy()
+                worst_months_display['month_name'] = worst_months_display['month'].apply(lambda x: month_names[int(x) - 1])
+                worst_months_display['return'] = worst_months_display['return'].apply(format_percent)
+                worst_months_display = worst_months_display[['year', 'month_name', 'return']]
+                worst_months_display.columns = ['Year', 'Month', 'Return']
+                worst_months_html = worst_months_display.to_html(index=False, escape=False)
+            else:
+                worst_months_html = "<p>No data.</p>"
+
+            calendar_section = f"""
+                <h3>Calendar Performance</h3>
+                <p>Visual representation of monthly and quarterly returns, plus seasonality analysis.</p>
+                <h4>Monthly Returns Heatmap</h4>
+                {monthly_heatmap_html}
+                <h4>Monthly Performance Summary</h4>
+                {monthly_stats_html}
+                <h4>Quarterly Returns</h4>
+                {quarterly_html}
+                <h4>Top 5 Best Months</h4>
+                {best_months_html}
+                <h4>Top 5 Worst Months</h4>
+                {worst_months_html}
+                <h4>Seasonality by Calendar Month</h4>
+                {seasonality_html}
+            """
+        else:
+            calendar_section = "<h3>Calendar Performance</h3><p>Calendar performance unavailable (matplotlib missing).</p>"
+
         sections.append(
             f"""
             <section>
@@ -814,6 +1074,8 @@ def build_report(run_paths, output_path: Path):
                 {dd_periods_html}
 
                 {rolling_metrics_section}
+
+                {calendar_section}
 
                 <h3>Trailing Returns</h3>
                 {period_html}
