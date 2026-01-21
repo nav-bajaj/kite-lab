@@ -36,21 +36,19 @@ This document outlines planned improvements to the final portfolio reporting sys
 
 ### High Priority (Core Risk & Performance)
 
-#### 1. Drawdown Analysis ✓
-**Why:** Users need to understand worst-case scenarios and risk exposure
+#### 1. Drawdown Analysis ✅ COMPLETED
+**Status:** Implemented and tested
 
-**Components:**
-- Drawdown chart showing all drawdowns over time
-- Top 5 worst drawdown periods with:
-  - Max depth
-  - Duration (start → trough → recovery)
-  - Recovery time
-- Current drawdown from peak (if underwater)
-- Time underwater (days since last peak)
-- Average drawdown duration
-- Recovery factor
+**Completed Components:**
+- ✅ Drawdown chart (dual-panel: equity curve + DD% timeline)
+- ✅ Top 5 worst drawdown periods table with recovery stats
+- ✅ Current underwater status with alert styling
+- ✅ Aggregate drawdown statistics (avg DD, duration, recovery factor)
+- ✅ Color-coded status boxes (green if at peak, yellow if underwater)
 
-**Output:** New section in report + chart
+**Implementation:** `report_backtests.py` - lines 69-236
+- Functions: `compute_drawdown_series()`, `identify_drawdown_periods()`, `get_current_drawdown_stats()`, `compute_drawdown_stats()`, `generate_drawdown_chart()`
+- Integrated into HTML report with full styling
 
 ---
 
@@ -96,7 +94,21 @@ This document outlines planned improvements to the final portfolio reporting sys
 
 ---
 
-#### 4. Rolling Metrics Charts ✓
+#### 4. Rolling Metrics Charts ✅ COMPLETED
+**Status:** Implemented and tested
+
+**Completed Components:**
+- ✅ Rolling Sharpe Ratio chart (6-month window)
+- ✅ Rolling Volatility chart (30/60/90 day overlays)
+- ✅ Rolling Beta vs Benchmark chart (6-month)
+- ✅ Rolling Correlation vs Benchmark chart (6-month)
+- ✅ Rolling Max Drawdown chart (1-year window)
+- ✅ Summary statistics table (avg, min, max for all metrics)
+
+**Implementation:** `report_backtests.py` - lines 249-445
+- Functions: `compute_rolling_sharpe()`, `compute_rolling_volatility()`, `compute_rolling_beta()`, `compute_rolling_correlation()`, `compute_rolling_max_drawdown()`, `generate_rolling_metrics_charts()`
+- 5 charts generated showing performance consistency over time
+
 **Why:** Show stability and consistency of performance over time
 
 **Components:**
@@ -172,17 +184,25 @@ This document outlines planned improvements to the final portfolio reporting sys
 
 ---
 
-#### 8. Monthly Returns Heatmap ✓
-**Why:** Visual pattern recognition and seasonality
+#### 8. Monthly Returns Heatmap ✅ COMPLETED
+**Status:** Implemented and tested
 
-**Components:**
-- Monthly returns heatmap (calendar-style)
-- Quarterly performance table
-- Best/worst months (all-time)
-- Average monthly return
-- Monthly win rate
-- Seasonality analysis (which months tend to outperform)
-- Year-over-year comparison
+**Completed Components:**
+- ✅ Monthly returns heatmap (calendar-style color-coded)
+- ✅ Quarterly performance table
+- ✅ Best/worst months (all-time)
+- ✅ Average monthly return
+- ✅ Monthly win rate
+- ✅ Seasonality analysis (which months tend to outperform)
+- ✅ Year-over-year comparison
+
+**Implementation:** `report_backtests.py` - lines 448-593
+- Functions: `compute_monthly_returns()`, `compute_quarterly_returns()`, `generate_monthly_heatmap()`, `analyze_monthly_performance()`
+- Color-coded heatmap using RdYlGn colormap (-20% to +20% range)
+- Quarterly summary table with annual comparison
+- Integrated into HTML report with full styling
+
+**Why:** Visual pattern recognition and seasonality
 
 **Output:** New "Calendar Performance" section + heatmap
 
@@ -211,21 +231,38 @@ This document outlines planned improvements to the final portfolio reporting sys
 
 ### Lower Priority (Enhanced Features)
 
-#### 10. Enhanced Current Holdings Table ✓
+#### 10. Enhanced Current Holdings Table ✅ COMPLETED
+**Status:** Implemented and tested
+
+**Completed Components:**
+- ✅ Unrealized PnL (absolute and %)
+- ✅ Position size (% of portfolio)
+- ✅ 10-day trailing performance box (aggregate summary)
+- ✅ 10-day portfolio return % and absolute PnL
+- ✅ 10-day benchmark return % for comparison
+- ✅ Day-by-day breakdown table (each of the 10 days)
+- ✅ Color-coded cells (green/red) for daily performance
+- ✅ Outperformance vs benchmark per day
+
+**Implementation:** `report_backtests.py` - lines 659-740
+- Functions: `enhance_holdings_table()`, `compute_trailing_performance()`
+- Aggregate 10-day summary box with color coding
+- Daily breakdown table showing each trading day individually
+- Portfolio vs benchmark comparison for each day
+- Integrated into HTML report with enhanced holdings table
+
 **Why:** More actionable information about current positions
 
 **Additions to current table:**
-- Momentum score trend (last 4 weeks) - sparkline or mini chart
-- Volatility rank vs portfolio average
-- Unrealized PnL (absolute and %)
-- Position size (% of portfolio)
-- Recent price action (7d, 14d, 30d returns)
-- Distance from entry/exit thresholds
-- ATR (Average True Range) - for stop-loss planning
-- Support/resistance levels (if available)
-- Days to next earnings (if metadata available)
+- Momentum score trend (last 4 weeks) - sparkline or mini chart (not yet implemented)
+- Volatility rank vs portfolio average (not yet implemented)
+- Recent price action (7d, 14d, 30d returns) (not yet implemented)
+- Distance from entry/exit thresholds (not yet implemented)
+- ATR (Average True Range) - for stop-loss planning (not yet implemented)
+- Support/resistance levels (if available) (not yet implemented)
+- Days to next earnings (if metadata available) (not yet implemented)
 
-**Output:** Much richer holdings table
+**Output:** Much richer holdings table with 10-day performance tracking
 
 ---
 
