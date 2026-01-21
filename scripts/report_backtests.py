@@ -656,11 +656,72 @@ def format_number(value, decimals=1):
     return f"{value:.{decimals}f}"
 
 
+def enhance_holdings_table(holdings: pd.DataFrame, equity: pd.DataFrame) -> pd.DataFrame:
+    """Enhance holdings table with additional computed metrics"""
+    if holdings.empty or equity.empty:
+        return holdings
+
+    enhanced = holdings.copy()
+
+    # Get latest portfolio value
+    latest_portfolio_value = equity["portfolio_value"].iloc[-1]
+
+    # Compute % of portfolio for each holding
+    if "notional" in enhanced.columns:
+        enhanced["portfolio_pct"] = (enhanced["notional"] / latest_portfolio_value) * 100
+
+    # Compute unrealized PnL (absolute)
+    if "pnl_pct" in enhanced.columns and "notional" in enhanced.columns and "shares" in enhanced.columns and "avg_cost" in enhanced.columns:
+        # Unrealized PnL = Current Value - Cost Basis
+        cost_basis = enhanced["shares"] * enhanced["avg_cost"]
+        enhanced["unrealized_pnl"] = enhanced["notional"] - cost_basis
+
+    # Sort by portfolio percentage (largest positions first)
+    if "portfolio_pct" in enhanced.columns:
+        enhanced = enhanced.sort_values("portfolio_pct", ascending=False)
+
+    return enhanced
+
+
+def compute_trailing_performance(equity: pd.DataFrame, days: int = 10) -> dict:
+    """Compute trailing N-day performance for portfolio and benchmark"""
+    if len(equity) < days:
+        return {
+            "portfolio_return_pct": 0,
+            "portfolio_pnl": 0,
+            "benchmark_return_pct": 0,
+            "days": 0
+        }
+
+    # Get last N days
+    portfolio_start = equity["portfolio_value"].iloc[-(days + 1)]
+    portfolio_end = equity["portfolio_value"].iloc[-1]
+    benchmark_start = equity["benchmark"].iloc[-(days + 1)]
+    benchmark_end = equity["benchmark"].iloc[-1]
+
+    portfolio_return_pct = (portfolio_end / portfolio_start - 1) if portfolio_start > 0 else 0
+    portfolio_pnl = portfolio_end - portfolio_start
+    benchmark_return_pct = (benchmark_end / benchmark_start - 1) if benchmark_start > 0 else 0
+
+    return {
+        "portfolio_return_pct": portfolio_return_pct,
+        "portfolio_pnl": portfolio_pnl,
+        "benchmark_return_pct": benchmark_return_pct,
+        "days": days
+    }
+
+
 def analyze_run(run_path: Path, label: str):
     equity = load_equity(run_path / "momentum_equity.csv")
     trades = load_trades(run_path / "momentum_trades.csv")
     metrics_file = load_metrics(run_path / "momentum_metrics.csv")
     holdings = load_holdings(run_path / "momentum_holdings.csv")
+
+    # Enhance holdings with additional metrics
+    holdings = enhance_holdings_table(holdings, equity)
+
+    # Compute 10-day trailing performance
+    trailing_10d = compute_trailing_performance(equity, days=10)
 
     metrics = {
         "label": label,
@@ -726,6 +787,7 @@ def analyze_run(run_path: Path, label: str):
         "quarterly_returns": quarterly_returns,
         "monthly_heatmap": monthly_heatmap,
         "monthly_analysis": monthly_analysis,
+        "trailing_10d": trailing_10d,
     }
 
 
@@ -828,13 +890,47 @@ def build_report(run_paths, output_path: Path):
         )
         holdings_df = entry.get("holdings", pd.DataFrame())
         holdings_html = "<p>No current holdings.</p>"
+        trailing_10d_html = ""
+
+        # Build 10-day performance summary
+        trailing_10d = entry.get("trailing_10d", {})
+        if trailing_10d:
+            portfolio_ret = trailing_10d.get("portfolio_return_pct", 0)
+            portfolio_pnl = trailing_10d.get("portfolio_pnl", 0)
+            benchmark_ret = trailing_10d.get("benchmark_return_pct", 0)
+            days = trailing_10d.get("days", 10)
+
+            # Color code based on performance
+            port_color = "green" if portfolio_ret >= 0 else "red"
+            bench_color = "green" if benchmark_ret >= 0 else "red"
+
+            trailing_10d_html = f"""
+            <div style="background-color: #f8f9fa; padding: 15px; border: 1px solid #dee2e6; margin: 10px 0; border-radius: 5px;">
+                <h4 style="margin-top: 0;">Trailing {days}-Day Performance</h4>
+                <table style="width: 100%; border: none;">
+                    <tr>
+                        <td style="border: none; padding: 5px;"><strong>Portfolio Return:</strong></td>
+                        <td style="border: none; padding: 5px; color: {port_color}; font-weight: bold;">{format_percent(portfolio_ret)}</td>
+                        <td style="border: none; padding: 5px;"><strong>Absolute PnL:</strong></td>
+                        <td style="border: none; padding: 5px; color: {port_color}; font-weight: bold;">{format_number(portfolio_pnl, 0)}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: none; padding: 5px;"><strong>Benchmark Return:</strong></td>
+                        <td style="border: none; padding: 5px; color: {bench_color}; font-weight: bold;">{format_percent(benchmark_ret)}</td>
+                        <td style="border: none; padding: 5px;"><strong>Outperformance:</strong></td>
+                        <td style="border: none; padding: 5px; font-weight: bold;">{format_percent(portfolio_ret - benchmark_ret)}</td>
+                    </tr>
+                </table>
+            </div>
+            """
+
         if not holdings_df.empty:
             dfh = holdings_df.copy()
             for col in dfh.columns:
                 if "date" in col and pd.api.types.is_datetime64_any_dtype(dfh[col]):
                     dfh[col] = dfh[col].dt.date.astype(str)
-            percent_cols = {"pnl_pct", "contribution_pct"}
-            money_cols = {"avg_cost", "last_price", "notional"}
+            percent_cols = {"pnl_pct", "contribution_pct", "portfolio_pct"}
+            money_cols = {"avg_cost", "last_price", "notional", "unrealized_pnl"}
             int_cols = {"shares", "entry_rank", "holding_days"}
 
             def _fmt_val(col, val):
@@ -1082,6 +1178,7 @@ def build_report(run_paths, output_path: Path):
                 <h3>Portfolio Stats</h3>
                 {metrics_table}
                 <h3>Current Holdings</h3>
+                {trailing_10d_html}
                 {holdings_html}
                 <h3>Top 5 Contributors</h3>
                 {best_html}
