@@ -253,6 +253,69 @@ python scripts/run_lookback_rebalance_mc.py --runs 20 --sample-size 250 --lookba
 
 Tests combinations of lookback periods (6, 9, 12 months) and rebalance frequencies (1-4 weeks). Each run samples top-N, exit-buffer, and PnL-hold parameters. Results include aggregated statistics by lookback period, rebalance frequency, and their combinations in `experiments/lookback_rebal_mc_*/summary_by_config.csv`.
 
+### 18. Final Momentum Portfolio (Production)
+
+```bash
+python scripts/run_final_momentum_portfolio.py --with-data --with-login
+```
+
+The final portfolio runner is the production-ready daily script that:
+- Rebuilds L6 weekly signals using optimal parameters (skip-days=0, vol-floor=0.2, top-n=24)
+- **Applies score filtering by default**: entry threshold 2.5, exit threshold 1.5, incremental allocation mode
+- Generates dated snapshots under `experiments/final_portfolio/`
+- Publishes latest signals to `data/final_portfolio/final_top24_signals.csv`
+- Publishes latest holdings to `data/final_portfolio/final_portfolio_24.csv`
+- On Thursdays: generates a changes report showing next rebalance trades
+- On Fridays: generates orders file for execution
+- Produces comprehensive HTML report with performance analytics
+
+**Score Filtering Benefits** (vs baseline):
+- +3.98% CAGR improvement (60.17% vs 56.19%)
+- Similar drawdown (-28.60% vs -27.11%)
+- 13% fewer trades (lower transaction costs)
+- Lower turnover (27.31% vs 29.64%)
+
+**Options:**
+- `--with-data`: Refresh NSE500 prices and benchmark before generating signals
+- `--with-login`: Login to Kite before data refresh
+- `--min-entry-score`: Override entry threshold (default: 2.5)
+- `--min-exit-score`: Override exit threshold (default: 1.5)
+- `--score-rebalance-mode`: Choose `incremental` (default, recommended) or `full` rebalance
+- `--dry-run`: Preview what would be executed without making changes
+
+To disable score filtering, set both thresholds to 0:
+```bash
+python scripts/run_final_momentum_portfolio.py --min-entry-score 0 --min-exit-score 0
+```
+
+### 19. Enhanced Portfolio Reporting
+
+The reporting system generates comprehensive HTML reports with advanced analytics:
+
+**Completed Features:**
+- **Drawdown Analysis**: Dual-panel chart showing equity curve and drawdown timeline, top 5 worst periods with recovery stats, current underwater status
+- **Rolling Metrics**: 6-month rolling Sharpe, multi-window volatility, rolling beta/correlation vs benchmark, 1-year rolling max drawdown
+- **Calendar Performance**: Monthly returns heatmap with color coding, quarterly performance table, seasonality analysis, best/worst months
+- **Enhanced Holdings Table**: 10-day trailing performance vs benchmark, day-by-day breakdown, unrealized PnL, position sizing
+
+**Planned Features** (see `REPORTING_IMPROVEMENTS.md` for details):
+- Score filtering metrics (filtered stocks, early exits, effectiveness analysis)
+- Detailed trade analytics (win rate by holding period, profit factor, best/worst trades)
+- Position-level insights (concentration risk, HHI, correlation matrix)
+- Comprehensive risk metrics (Sortino, Calmar, Alpha, Information Ratio, VaR, CVaR)
+- Rebalancing behavior analysis (turnover patterns, trade clustering, churn rate)
+- Enhanced benchmark comparison (relative strength, up/down capture ratios, tracking error)
+- Watch lists (stocks near entry/exit thresholds)
+- Forward-looking section (next rebalance preview, expected turnover)
+- System health indicators (data freshness, missing data warnings)
+
+Reports are generated automatically by:
+```bash
+python scripts/report_backtests.py --runs <backtest_dir> --output report.html
+```
+
+Charts require `matplotlib`; if unavailable, tables are still produced. Report size is typically 500-700KB with embedded PNG charts.
+
 ## Momentum Strategy Methodology
 
 The momentum signal generation implemented in `scripts/build_momentum_signals.py` follows a structured approach:
