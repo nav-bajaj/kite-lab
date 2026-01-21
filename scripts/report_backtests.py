@@ -690,24 +690,53 @@ def compute_trailing_performance(equity: pd.DataFrame, days: int = 10) -> dict:
             "portfolio_return_pct": 0,
             "portfolio_pnl": 0,
             "benchmark_return_pct": 0,
-            "days": 0
+            "days": 0,
+            "daily_data": pd.DataFrame()
         }
 
-    # Get last N days
-    portfolio_start = equity["portfolio_value"].iloc[-(days + 1)]
-    portfolio_end = equity["portfolio_value"].iloc[-1]
-    benchmark_start = equity["benchmark"].iloc[-(days + 1)]
-    benchmark_end = equity["benchmark"].iloc[-1]
+    # Get last N+1 days (need extra day for computing returns)
+    trailing_equity = equity.tail(days + 1).copy()
+
+    # Compute aggregate performance
+    portfolio_start = trailing_equity["portfolio_value"].iloc[0]
+    portfolio_end = trailing_equity["portfolio_value"].iloc[-1]
+    benchmark_start = trailing_equity["benchmark"].iloc[0]
+    benchmark_end = trailing_equity["benchmark"].iloc[-1]
 
     portfolio_return_pct = (portfolio_end / portfolio_start - 1) if portfolio_start > 0 else 0
     portfolio_pnl = portfolio_end - portfolio_start
     benchmark_return_pct = (benchmark_end / benchmark_start - 1) if benchmark_start > 0 else 0
 
+    # Compute daily returns for each day
+    daily_data = []
+    for i in range(1, len(trailing_equity)):
+        date = trailing_equity["date"].iloc[i]
+        port_prev = trailing_equity["portfolio_value"].iloc[i - 1]
+        port_curr = trailing_equity["portfolio_value"].iloc[i]
+        bench_prev = trailing_equity["benchmark"].iloc[i - 1]
+        bench_curr = trailing_equity["benchmark"].iloc[i]
+
+        port_daily_return = (port_curr / port_prev - 1) if port_prev > 0 else 0
+        port_daily_pnl = port_curr - port_prev
+        bench_daily_return = (bench_curr / bench_prev - 1) if bench_prev > 0 else 0
+        outperformance = port_daily_return - bench_daily_return
+
+        daily_data.append({
+            "date": date,
+            "portfolio_return": port_daily_return,
+            "portfolio_pnl": port_daily_pnl,
+            "benchmark_return": bench_daily_return,
+            "outperformance": outperformance
+        })
+
+    daily_df = pd.DataFrame(daily_data)
+
     return {
         "portfolio_return_pct": portfolio_return_pct,
         "portfolio_pnl": portfolio_pnl,
         "benchmark_return_pct": benchmark_return_pct,
-        "days": days
+        "days": days,
+        "daily_data": daily_df
     }
 
 
@@ -904,6 +933,45 @@ def build_report(run_paths, output_path: Path):
             port_color = "green" if portfolio_ret >= 0 else "red"
             bench_color = "green" if benchmark_ret >= 0 else "red"
 
+            # Build day-by-day table
+            daily_data = trailing_10d.get("daily_data", pd.DataFrame())
+            daily_table_html = ""
+            if not daily_data.empty:
+                daily_rows = []
+                for idx, row in daily_data.iterrows():
+                    date_str = row['date'].strftime('%Y-%m-%d') if hasattr(row['date'], 'strftime') else str(row['date'])
+                    port_ret_color = "green" if row['portfolio_return'] >= 0 else "red"
+                    bench_ret_color = "green" if row['benchmark_return'] >= 0 else "red"
+                    outperf_color = "green" if row['outperformance'] >= 0 else "red"
+
+                    daily_rows.append(f"""
+                        <tr>
+                            <td style="padding: 5px; text-align: center;">{date_str}</td>
+                            <td style="padding: 5px; text-align: right; color: {port_ret_color};">{format_percent(row['portfolio_return'])}</td>
+                            <td style="padding: 5px; text-align: right; color: {port_ret_color};">{format_number(row['portfolio_pnl'], 0)}</td>
+                            <td style="padding: 5px; text-align: right; color: {bench_ret_color};">{format_percent(row['benchmark_return'])}</td>
+                            <td style="padding: 5px; text-align: right; color: {outperf_color};">{format_percent(row['outperformance'])}</td>
+                        </tr>
+                    """)
+
+                daily_table_html = f"""
+                <h5 style="margin-top: 15px; margin-bottom: 10px;">Daily Breakdown</h5>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                    <thead>
+                        <tr style="background-color: #e9ecef;">
+                            <th style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">Date</th>
+                            <th style="padding: 8px; text-align: right; border: 1px solid #dee2e6;">Portfolio Return</th>
+                            <th style="padding: 8px; text-align: right; border: 1px solid #dee2e6;">Portfolio PnL</th>
+                            <th style="padding: 8px; text-align: right; border: 1px solid #dee2e6;">Benchmark Return</th>
+                            <th style="padding: 8px; text-align: right; border: 1px solid #dee2e6;">Outperformance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {''.join(daily_rows)}
+                    </tbody>
+                </table>
+                """
+
             trailing_10d_html = f"""
             <div style="background-color: #f8f9fa; padding: 15px; border: 1px solid #dee2e6; margin: 10px 0; border-radius: 5px;">
                 <h4 style="margin-top: 0;">Trailing {days}-Day Performance</h4>
@@ -921,6 +989,7 @@ def build_report(run_paths, output_path: Path):
                         <td style="border: none; padding: 5px; font-weight: bold;">{format_percent(portfolio_ret - benchmark_ret)}</td>
                     </tr>
                 </table>
+                {daily_table_html}
             </div>
             """
 
