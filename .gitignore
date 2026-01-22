@@ -52,3 +52,6 @@ Thumbs.db
 *.png
 *.jpg
 *.jpeg
+
+# Generated reports
+reports/

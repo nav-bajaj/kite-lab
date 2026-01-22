@@ -241,7 +241,32 @@ This generates a comprehensive HTML report comparing your portfolio performance 
 - Analyze correlation with global markets
 - Evaluate diversification opportunities
 
-### 16. L6 grid search (skip / vol floor / top-N / exit buffer)
+### 16. Analyze tax impact on returns (NEW)
+
+```bash
+python scripts/analyze_tax_impact.py \
+       --equity data/backtests/momentum_equity.csv \
+       --initial-capital 1000000 \
+       --tax-rate 0.25 \
+       --output reports/tax_impact.txt \
+       --chart reports/tax_impact_chart.png \
+       --csv reports/tax_impact_data.csv
+```
+
+Simulates the impact of **25% flat tax** on gains using **Indian Financial Year** (April 1 - March 31) taxation model:
+- Applies tax at end of each FY on realized gains
+- Deducts tax from portfolio and continues with post-tax amount
+- Generates year-by-year breakdown and total impact analysis
+- Shows how taxation reduces CAGR and final portfolio value
+
+**Key insights** for 60% CAGR strategy:
+- Post-tax CAGR: ~47% (13% reduction)
+- Tax drag on compounding: ~38%
+- Average annual tax: ₹400K on ₹1M initial capital
+
+**See**: `TAX_ANALYSIS_GUIDE.md` for detailed documentation, use cases, and interpretation guide.
+
+### 17. L6 grid search (skip / vol floor / top-N / exit buffer)
 
 ```bash
 python scripts/run_l6_grid.py --skip-days 21 10 0 --vol-floor 0.0005 0.001 --top-n 25 20 --exit-buffer 0 5 --scenarios baseline cooldown --limit 10
