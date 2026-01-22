@@ -30,6 +30,13 @@ data/*
 !experiments/final_portfolio/**/*.csv
 !experiments/final_portfolio/**/*.html
 
+# Historical data directories (large, regenerated daily)
+next50_data/
+next50_data_hourly/
+nse500_data/
+nse500_data_hourly/
+indices_data/
+
 # IDE
 .vscode/
 .idea/

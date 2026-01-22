@@ -5,6 +5,7 @@ import sys
 
 STEPS = [
     ("Refresh NSE 500 data", [sys.executable, "scripts/fetch_nse500_history.py"]),
+    ("Fetch indices data", [sys.executable, "scripts/fetch_indices_history.py"]),
     ("Update Nifty 100 benchmark", [sys.executable, "scripts/compute_benchmark.py"]),
     ("Build momentum rankings", [sys.executable, "scripts/build_momentum_signals.py"]),
 ]

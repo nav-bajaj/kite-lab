@@ -1,0 +1,39 @@
+instrument_token,exchange_token,tradingsymbol,name,exchange,category,description
+256265,1001,NIFTY 50,NIFTY 50,NSE,broad_market,India's flagship benchmark index
+260617,1018,NIFTY 100,NIFTY 100,NSE,broad_market,Top 100 companies by market cap
+268041,1047,NIFTY 500,NIFTY 500,NSE,broad_market,Broad market index (NSE 500)
+270857,1058,NIFTY NEXT 50,NIFTY NEXT 50,NSE,broad_market,Next 50 large cap companies after Nifty 50
+266249,1040,NIFTY MIDCAP 150,NIFTY MIDCAP 150,NSE,market_segment,Mid cap index (150 stocks)
+267273,1044,NIFTY SMLCAP 250,NIFTY SMLCAP 250,NSE,market_segment,Small cap index (250 stocks)
+289545,1131,NIFTY LARGEMID250,NIFTY LARGEMID250,NSE,market_segment,Large + Mid cap blend (250 stocks)
+290057,1133,NIFTY200MOMENTM30,NIFTY200MOMENTM30,NSE,factor_strategy,Momentum strategy from Nifty 200
+409609,1600,NIFTY500MOMENTM50,NIFTY500 MOMENTUM 50,NSE,factor_strategy,Momentum strategy from Nifty 500
+265993,1039,NIFTY ALPHA 50,NIFTY ALPHA 50,NSE,factor_strategy,Alpha factor based index
+272137,1063,NIFTY100 LOWVOL30,NIFTY100 LOWVOL30,NSE,factor_strategy,Low volatility stocks from Nifty 100
+260105,1016,NIFTY BANK,NIFTY BANK,NSE,sectoral,Banking sector index
+271113,1059,NIFTY PVT BANK,NIFTY PVT BANK,NSE,sectoral,Private sector banks
+262921,1027,NIFTY PSU BANK,NIFTY PSU BANK,NSE,sectoral,Public sector banks
+257801,1007,NIFTY FIN SERVICE,NIFTY FIN SERVICE,NSE,sectoral,Financial services sector
+259849,1015,NIFTY IT,NIFTY IT,NSE,sectoral,Information technology sector
+263433,1029,NIFTY AUTO,NIFTY AUTO,NSE,sectoral,Automobile sector
+262409,1025,NIFTY PHARMA,NIFTY PHARMA,NSE,sectoral,Pharmaceutical sector
+288521,1127,NIFTY HEALTHCARE,NIFTY HEALTHCARE,NSE,sectoral,Healthcare sector
+263689,1030,NIFTY METAL,NIFTY METAL,NSE,sectoral,Metals sector
+261641,1022,NIFTY ENERGY,NIFTY ENERGY,NSE,sectoral,Energy sector
+289033,1129,NIFTY OIL AND GAS,NIFTY OIL AND GAS,NSE,sectoral,Oil and gas sector
+261897,1023,NIFTY FMCG,NIFTY FMCG,NSE,sectoral,Fast moving consumer goods
+257545,1006,NIFTY CONSUMPTION,NIFTY CONSUMPTION,NSE,sectoral,Consumer sector
+288777,1128,NIFTY CONSR DURBL,NIFTY CONSR DURBL,NSE,sectoral,Consumer durables sector
+261129,1020,NIFTY REALTY,NIFTY REALTY,NSE,sectoral,Real estate sector
+261385,1021,NIFTY INFRA,NIFTY INFRA,NSE,sectoral,Infrastructure sector
+263945,1031,NIFTY MEDIA,NIFTY MEDIA,NSE,sectoral,Media and entertainment sector
+263177,1028,NIFTY SERV SECTOR,NIFTY SERV SECTOR,NSE,sectoral,Services sector
+257289,1005,NIFTY COMMODITIES,NIFTY COMMODITIES,NSE,sectoral,Commodities sector
+262153,1024,NIFTY MNC,NIFTY MNC,NSE,sectoral,Multinational corporations
+262665,1026,NIFTY PSE,NIFTY PSE,NSE,sectoral,Public sector enterprises
+268297,1048,NIFTY CPSE,NIFTY CPSE,NSE,sectoral,Central public sector enterprises
+401161,1567,US500,US 500,GLOBAL,global,S&P 500 index
+398857,1558,US100,US 100,GLOBAL,global,NASDAQ 100 index
+398601,1557,US30,US 30,GLOBAL,global,Dow Jones Industrial Average
+273417,1068,MCXGOLDEX,MCXGOLDEX,MCX,commodity,MCX Gold index
+294153,1149,MCXSILVDEX,MCXSILVDEX,MCX,commodity,MCX Silver index

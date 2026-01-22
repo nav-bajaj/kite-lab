@@ -29,22 +29,29 @@ kite-lab/
         fetch_history_and_analyse.py # Historical data and technical analysis
         fetch_next50_history.py      # Batch downloader for Nifty Next 50 (daily/hourly cached)
         fetch_nse500_history.py      # Batch downloader for NSE 500 universe (daily/hourly cached)
+        fetch_indices_history.py     # Fetch 38 tracked indices data (NEW)
         compute_benchmark.py         # Maintain Nifty 100 benchmark series
         build_momentum_signals.py    # Generate weekly momentum rankings
         run_daily_pipeline.py        # Orchestrate daily refresh tasks
         backtest_momentum.py         # Simulate weekly momentum portfolio
         report_backtests.py          # Compare multiple backtest scenarios
+        report_indices.py            # Compare portfolio vs all tracked indices (NEW)
         run_l6_grid.py               # L6 grid search (skip/vol-floor/top-N/exit-buffer)
         run_l6_monte_carlo.py        # L6 Monte Carlo (baseline/hysteresis/PnL-hold)
         sample_universe.py           # Sample random subsets of NSE 500
         update_prices.py             # Generic updater using data_pipeline modules
         utils.py                     # Helper utilities for token lookup
     data_pipeline/                   # Reusable components for symbols, prices, and storage
-    data/                            # Market data and analysis outputs (not tracked)
+    data/
+        static/
+            tracked_indices.csv      # List of 38 tracked indices (NEW)
+            README_INDICES.md        # Indices tracking documentation (NEW)
+        benchmarks/                  # Benchmark indices (e.g., Nifty 100)
     next50_data/                     # Daily cache for Nifty Next 50 (gitignored)
     next50_data_hourly/              # Hourly cache for Nifty Next 50 (gitignored)
     nse500_data/                     # Daily cache for NSE 500 (gitignored)
     nse500_data_hourly/              # Hourly cache for NSE 500 (gitignored)
+    indices_data/                    # Daily cache for 38 tracked indices (gitignored, NEW)
     .env                             # API credentials (not tracked)
 ```
 
@@ -154,7 +161,24 @@ python scripts/compute_benchmark.py
 
 This keeps `data/benchmarks/nifty100.csv` updated with daily closes, returns, and cumulative performance for the benchmark used in momentum comparisons.
 
-### 8. Build weekly momentum rankings
+### 8. Fetch tracked indices data (NEW)
+
+```bash
+python scripts/fetch_indices_history.py
+```
+
+This fetches daily historical data for **38 tracked indices** across multiple categories:
+- **Broad market**: Nifty 50, 100, 500, Next 50, Midcap, Smallcap
+- **Factor/Strategy**: Momentum, Alpha, Low Volatility indices
+- **Sectoral**: Banking, IT, Auto, Pharma, Energy, FMCG, etc. (23 sectors)
+- **Global**: S&P 500, NASDAQ, Dow Jones
+- **Commodity**: MCX Gold, Silver
+
+Data is saved to `indices_data/` directory and used for comprehensive portfolio benchmarking.
+
+**See**: `data/static/README_INDICES.md` for detailed documentation on tracked indices and usage.
+
+### 10. Build weekly momentum rankings
 
 ```bash
 python scripts/build_momentum_signals.py --prices-dir nse500_data --output data/momentum/top25_signals.csv
@@ -162,15 +186,19 @@ python scripts/build_momentum_signals.py --prices-dir nse500_data --output data/
 
 The script merges NSE 500 price histories, applies a 1-month skip, computes 6M/3M volatility-normalized returns, and exports the top 25 symbols for each weekly rebalance.
 
-### 9. Run the full daily pipeline
+### 11. Run the full daily pipeline
 
 ```bash
 python scripts/run_daily_pipeline.py --with-login
 ```
 
-`--with-login` launches the Kite login workflow first; omit it for routine runs when a fresh access token already exists. Use `--dry-run` to see the command sequence without executing it. The pipeline sequentially refreshes NSE 500 data, updates the Nifty 100 benchmark, and rebuilds the momentum rankings.
+`--with-login` launches the Kite login workflow first; omit it for routine runs when a fresh access token already exists. Use `--dry-run` to see the command sequence without executing it. The pipeline now sequentially:
+1. Refreshes NSE 500 data
+2. **Fetches indices data** (NEW)
+3. Updates the Nifty 100 benchmark
+4. Rebuilds the momentum rankings
 
-### 10. Backtest the momentum strategy
+### 13. Backtest the momentum strategy
 
 ```bash
 python scripts/backtest_momentum.py --prices-dir nse500_data \
@@ -181,7 +209,7 @@ python scripts/backtest_momentum.py --prices-dir nse500_data \
 
 The backtester uses the weekly top-25 rankings, trades only when holdings change, prices fills at `OHLC/4` with 20 bps slippage, and writes equity and trade logs to `data/backtests/`.
 
-### 11. Generate an HTML comparison report
+### 14. Generate backtest comparison report
 
 ```bash
 python scripts/report_backtests.py --runs data/backtests/baseline \
@@ -191,7 +219,29 @@ python scripts/report_backtests.py --runs data/backtests/baseline \
 
 The report compares every scenario (baseline/cooldown/vol-trigger) with summary metrics, charts, trailing returns, and top/bottom contributors based on realized PnL. Charts require `matplotlib`; if unavailable, tables are still produced.
 
-### 12. L6 grid search (skip / vol floor / top-N / exit buffer)
+### 15. Generate indices comparison report (NEW)
+
+```bash
+python scripts/report_indices.py \
+       --portfolio data/backtests/momentum_equity.csv \
+       --output reports/indices_comparison.html
+```
+
+This generates a comprehensive HTML report comparing your portfolio performance against all 38 tracked indices:
+- **Summary metrics**: CAGR, volatility, Sharpe ratio, max drawdown for all indices
+- **Correlation analysis**: How closely your portfolio correlates with each index
+- **Beta analysis**: Portfolio sensitivity to index movements
+- **Equity curves**: Normalized performance comparison (base 100)
+- **Category-wise analysis**: Separate sections for broad market, sectoral, factor, global, and commodity indices
+
+**Use cases**:
+- Benchmark against multiple market segments
+- Identify sector concentration risks
+- Compare vs other systematic strategies (momentum, low-vol)
+- Analyze correlation with global markets
+- Evaluate diversification opportunities
+
+### 16. L6 grid search (skip / vol floor / top-N / exit buffer)
 
 ```bash
 python scripts/run_l6_grid.py --skip-days 21 10 0 --vol-floor 0.0005 0.001 --top-n 25 20 --exit-buffer 0 5 --scenarios baseline cooldown --limit 10
