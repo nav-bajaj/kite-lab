@@ -130,23 +130,29 @@ This document outlines planned improvements to the final portfolio reporting sys
 
 ---
 
-#### 5. Position-Level Insights ✓
-**Why:** Understand portfolio concentration and individual position risk
+#### 5. Position-Level Insights ✅ COMPLETED
+**Status:** Implemented and tested
 
-**Components:**
-- Position sizing history chart (# of holdings over time)
-- Concentration risk:
-  - Herfindahl-Hirschman Index (HHI)
+**Completed Components:**
+- ✅ Position sizing history chart (# of holdings over time)
+- ✅ Concentration risk metrics:
+  - Herfindahl-Hirschman Index (HHI) with interpretation
   - Top 5 position concentration %
   - Gini coefficient
-- Average position size over time
-- Stock-level risk contribution:
-  - Each holding's contribution to portfolio volatility
-  - Marginal VaR per position
-- Position correlation matrix (current holdings)
-- Sector/industry exposure breakdown (if metadata available)
+- ✅ Average position size over time
+- ✅ HHI and Gini charts over time
+- ✅ Color-coded interpretation boxes (green/yellow/red based on concentration levels)
+- ✅ Equal-weight HHI comparison for context
 
-**Output:** New "Portfolio Structure" section + charts
+**Implementation:** `report_backtests.py` - lines 980-1188
+- Functions: `reconstruct_holdings_over_time()`, `compute_concentration_metrics()`, `analyze_position_sizing()`, `generate_position_sizing_charts()`
+- Two comprehensive charts showing portfolio size and concentration metrics evolution
+- Interpretation guidance for HHI and Gini values
+- Integrated into HTML report with full styling
+
+**Note:** Stock-level risk contribution, position correlation matrix, and sector exposure require additional price data and metadata not currently available in backtest output.
+
+**Output:** New "Portfolio Structure & Position Sizing" section with metrics table, interpretation box, and charts
 
 ---
 

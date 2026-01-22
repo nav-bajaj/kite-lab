@@ -976,6 +976,245 @@ def generate_trade_distribution_chart(round_trips: pd.DataFrame) -> str:
     return base64.b64encode(buf.getvalue()).decode("utf-8")
 
 
+# ============================================================================
+# Position-Level Insights
+# ============================================================================
+
+
+def reconstruct_holdings_over_time(trades: pd.DataFrame, equity: pd.DataFrame) -> pd.DataFrame:
+    """
+    Reconstruct the portfolio holdings on each date from trade history.
+
+    Returns DataFrame with columns: date, num_holdings, position_weights (dict)
+    """
+    if trades.empty or equity.empty:
+        return pd.DataFrame()
+
+    # Build position tracking
+    positions = {}  # symbol -> shares
+    holdings_history = []
+
+    for date in equity["date"]:
+        # Process all trades up to this date
+        day_trades = trades[trades["date"] <= date]
+
+        # Rebuild positions from scratch for each date
+        temp_positions = {}
+        for _, trade in day_trades.iterrows():
+            symbol = trade["symbol"]
+            if trade["side"] == "BUY":
+                temp_positions[symbol] = temp_positions.get(symbol, 0) + trade["shares"]
+            else:  # SELL
+                temp_positions[symbol] = temp_positions.get(symbol, 0) - trade["shares"]
+
+        # Clean up zero/negative positions
+        positions = {s: shares for s, shares in temp_positions.items() if shares > 0.001}
+
+        # Get portfolio value for this date
+        port_value = equity[equity["date"] == date]["portfolio_value"].iloc[0] if len(equity[equity["date"] == date]) > 0 else None
+
+        if port_value and port_value > 0:
+            # Calculate position weights (simplified - equal weight assumption)
+            num_positions = len(positions)
+            if num_positions > 0:
+                # We don't have individual position values, so approximate with equal weights
+                weights = {symbol: 1.0 / num_positions for symbol in positions}
+            else:
+                weights = {}
+        else:
+            weights = {}
+
+        holdings_history.append({
+            "date": date,
+            "num_holdings": len(positions),
+            "position_weights": weights
+        })
+
+    return pd.DataFrame(holdings_history)
+
+
+def compute_concentration_metrics(weights: dict) -> dict:
+    """
+    Compute concentration risk metrics from position weights.
+
+    Args:
+        weights: dict of {symbol: weight}
+
+    Returns:
+        dict with HHI, top_5_concentration, gini_coefficient
+    """
+    if not weights:
+        return {
+            "hhi": 0,
+            "top_5_concentration": 0,
+            "gini_coefficient": 0
+        }
+
+    values = np.array(list(weights.values()))
+
+    # Herfindahl-Hirschman Index (sum of squared weights)
+    hhi = np.sum(values ** 2)
+
+    # Top 5 concentration
+    sorted_values = np.sort(values)[::-1]
+    top_5_concentration = np.sum(sorted_values[:5])
+
+    # Gini coefficient (measure of inequality)
+    # Formula: (2 * sum(i * x_i)) / (n * sum(x_i)) - (n+1)/n
+    n = len(values)
+    sorted_values = np.sort(values)
+    cumsum = np.cumsum(sorted_values)
+    gini = (2 * np.sum((np.arange(1, n + 1)) * sorted_values)) / (n * cumsum[-1]) - (n + 1) / n
+
+    return {
+        "hhi": hhi,
+        "top_5_concentration": top_5_concentration,
+        "gini_coefficient": gini
+    }
+
+
+def analyze_position_sizing(trades: pd.DataFrame, equity: pd.DataFrame) -> dict:
+    """
+    Analyze position sizing and concentration over time.
+
+    Returns dict with:
+        - holdings_history: DataFrame with date, num_holdings, concentration metrics
+        - avg_num_holdings: float
+        - avg_position_size: float (as percentage)
+        - avg_hhi: float
+        - avg_gini: float
+    """
+    if trades.empty or equity.empty:
+        return {
+            "holdings_history": pd.DataFrame(),
+            "avg_num_holdings": 0,
+            "avg_position_size": 0,
+            "avg_hhi": 0,
+            "avg_gini": 0,
+            "avg_top5_concentration": 0
+        }
+
+    holdings_over_time = reconstruct_holdings_over_time(trades, equity)
+
+    if holdings_over_time.empty:
+        return {
+            "holdings_history": holdings_over_time,
+            "avg_num_holdings": 0,
+            "avg_position_size": 0,
+            "avg_hhi": 0,
+            "avg_gini": 0,
+            "avg_top5_concentration": 0
+        }
+
+    # Compute concentration metrics for each date
+    concentration_data = []
+    for _, row in holdings_over_time.iterrows():
+        metrics = compute_concentration_metrics(row["position_weights"])
+        concentration_data.append({
+            "date": row["date"],
+            "num_holdings": row["num_holdings"],
+            "hhi": metrics["hhi"],
+            "top_5_concentration": metrics["top_5_concentration"],
+            "gini_coefficient": metrics["gini_coefficient"]
+        })
+
+    holdings_history = pd.DataFrame(concentration_data)
+
+    # Compute averages
+    avg_num_holdings = holdings_history["num_holdings"].mean()
+    avg_position_size = (1.0 / avg_num_holdings * 100) if avg_num_holdings > 0 else 0
+    avg_hhi = holdings_history["hhi"].mean()
+    avg_gini = holdings_history["gini_coefficient"].mean()
+    avg_top5 = holdings_history["top_5_concentration"].mean()
+
+    return {
+        "holdings_history": holdings_history,
+        "avg_num_holdings": avg_num_holdings,
+        "avg_position_size": avg_position_size,
+        "avg_hhi": avg_hhi,
+        "avg_gini": avg_gini,
+        "avg_top5_concentration": avg_top5
+    }
+
+
+def generate_position_sizing_charts(position_analysis: dict) -> dict:
+    """
+    Generate charts for position sizing analysis.
+
+    Returns dict with base64-encoded chart images:
+        - holdings_count_chart: Number of holdings over time
+        - concentration_chart: HHI and Gini over time
+    """
+    if plt is None:
+        return {"holdings_count_chart": None, "concentration_chart": None}
+
+    holdings_history = position_analysis.get("holdings_history", pd.DataFrame())
+
+    if holdings_history.empty:
+        return {"holdings_count_chart": None, "concentration_chart": None}
+
+    charts = {}
+
+    # Chart 1: Number of holdings over time
+    fig, ax = plt.subplots(figsize=(12, 4))
+    ax.plot(holdings_history["date"], holdings_history["num_holdings"], color="#2196F3", linewidth=2)
+    ax.axhline(
+        y=position_analysis["avg_num_holdings"],
+        color="red",
+        linestyle="--",
+        label=f"Average: {position_analysis['avg_num_holdings']:.1f}"
+    )
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Number of Holdings")
+    ax.set_title("Portfolio Size Over Time")
+    ax.grid(True, alpha=0.3)
+    ax.legend()
+
+    buf = io.BytesIO()
+    fig.savefig(buf, format="png", dpi=100, bbox_inches="tight")
+    plt.close(fig)
+    buf.seek(0)
+    charts["holdings_count_chart"] = base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    # Chart 2: Concentration metrics over time
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8))
+
+    # HHI
+    ax1.plot(holdings_history["date"], holdings_history["hhi"], color="#FF9800", linewidth=2)
+    ax1.axhline(
+        y=position_analysis["avg_hhi"],
+        color="red",
+        linestyle="--",
+        label=f"Average: {position_analysis['avg_hhi']:.4f}"
+    )
+    ax1.set_ylabel("HHI")
+    ax1.set_title("Herfindahl-Hirschman Index (Lower = Less Concentrated)")
+    ax1.grid(True, alpha=0.3)
+    ax1.legend()
+
+    # Gini Coefficient
+    ax2.plot(holdings_history["date"], holdings_history["gini_coefficient"], color="#9C27B0", linewidth=2)
+    ax2.axhline(
+        y=position_analysis["avg_gini"],
+        color="red",
+        linestyle="--",
+        label=f"Average: {position_analysis['avg_gini']:.4f}"
+    )
+    ax2.set_xlabel("Date")
+    ax2.set_ylabel("Gini Coefficient")
+    ax2.set_title("Gini Coefficient (Lower = More Equal Distribution)")
+    ax2.grid(True, alpha=0.3)
+    ax2.legend()
+
+    buf = io.BytesIO()
+    fig.savefig(buf, format="png", dpi=100, bbox_inches="tight")
+    plt.close(fig)
+    buf.seek(0)
+    charts["concentration_chart"] = base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    return charts
+
+
 def analyze_run(run_path: Path, label: str):
     equity = load_equity(run_path / "momentum_equity.csv")
     trades = load_trades(run_path / "momentum_trades.csv")
@@ -1039,6 +1278,10 @@ def analyze_run(run_path: Path, label: str):
     win_rate_by_period = analyze_win_rate_by_holding_period(round_trips)
     trade_dist_chart = generate_trade_distribution_chart(round_trips)
 
+    # Position-level insights
+    position_analysis = analyze_position_sizing(trades, equity)
+    position_charts = generate_position_sizing_charts(position_analysis)
+
     return {
         "metrics": metrics,
         "periods": periods,
@@ -1063,6 +1306,8 @@ def analyze_run(run_path: Path, label: str):
         "trade_performance": trade_performance,
         "win_rate_by_period": win_rate_by_period,
         "trade_dist_chart": trade_dist_chart,
+        "position_analysis": position_analysis,
+        "position_charts": position_charts,
     }
 
 
@@ -1556,6 +1801,105 @@ def build_report(run_paths, output_path: Path):
         else:
             trade_analytics_section = "<h3>Trade Analytics</h3><p>No trade data available.</p>"
 
+        # Position-Level Insights Section
+        position_analysis = entry.get("position_analysis", {})
+        position_charts = entry.get("position_charts", {})
+
+        if position_analysis and position_analysis.get("holdings_history") is not None and not position_analysis["holdings_history"].empty:
+            # Summary metrics
+            summary_metrics = [
+                {"Metric": "Avg Number of Holdings", "Value": format_number(position_analysis["avg_num_holdings"], 1)},
+                {"Metric": "Avg Position Size", "Value": format_percent(position_analysis["avg_position_size"] / 100)},
+                {"Metric": "Avg HHI (Concentration)", "Value": format_number(position_analysis["avg_hhi"], 4)},
+                {"Metric": "Avg Top 5 Concentration", "Value": format_percent(position_analysis["avg_top5_concentration"])},
+                {"Metric": "Avg Gini Coefficient", "Value": format_number(position_analysis["avg_gini"], 4)},
+            ]
+            summary_metrics_html = pd.DataFrame(summary_metrics).to_html(index=False, escape=False)
+
+            # Charts
+            holdings_count_html = ""
+            if position_charts.get("holdings_count_chart"):
+                holdings_count_html = f'<img src="data:image/png;base64,{position_charts["holdings_count_chart"]}" alt="Holdings Count" style="max-width: 100%;" />'
+
+            concentration_html = ""
+            if position_charts.get("concentration_chart"):
+                concentration_html = f'<img src="data:image/png;base64,{position_charts["concentration_chart"]}" alt="Concentration Metrics" style="max-width: 100%;" />'
+
+            # Interpretation box
+            hhi = position_analysis["avg_hhi"]
+            gini = position_analysis["avg_gini"]
+
+            # HHI interpretation (1/N for equal weight, 1.0 for single holding)
+            n_holdings = position_analysis["avg_num_holdings"]
+            equal_weight_hhi = 1.0 / n_holdings if n_holdings > 0 else 0
+            hhi_ratio = hhi / equal_weight_hhi if equal_weight_hhi > 0 else 1
+
+            if hhi_ratio < 1.1:
+                hhi_interpretation = "Very evenly distributed (close to equal weight)"
+                hhi_color = "#4CAF50"
+            elif hhi_ratio < 1.3:
+                hhi_interpretation = "Moderately concentrated"
+                hhi_color = "#FF9800"
+            else:
+                hhi_interpretation = "Highly concentrated (unequal weights)"
+                hhi_color = "#F44336"
+
+            # Gini interpretation (0 = perfect equality, 1 = perfect inequality)
+            if gini < 0.2:
+                gini_interpretation = "Very equal distribution"
+                gini_color = "#4CAF50"
+            elif gini < 0.4:
+                gini_interpretation = "Moderately equal distribution"
+                gini_color = "#8BC34A"
+            elif gini < 0.6:
+                gini_interpretation = "Moderate inequality"
+                gini_color = "#FF9800"
+            else:
+                gini_interpretation = "High inequality"
+                gini_color = "#F44336"
+
+            interpretation_html = f"""
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 4px; margin: 10px 0;">
+                <h4 style="margin-top: 0;">Portfolio Structure Interpretation</h4>
+                <div style="margin: 10px 0;">
+                    <strong>HHI (Herfindahl-Hirschman Index):</strong>
+                    <span style="color: {hhi_color}; font-weight: bold;">{format_number(hhi, 4)}</span>
+                    <br>
+                    <span style="color: {hhi_color};">→ {hhi_interpretation}</span>
+                    <br>
+                    <small>(Equal-weight HHI would be {format_number(equal_weight_hhi, 4)})</small>
+                </div>
+                <div style="margin: 10px 0;">
+                    <strong>Gini Coefficient:</strong>
+                    <span style="color: {gini_color}; font-weight: bold;">{format_number(gini, 4)}</span>
+                    <br>
+                    <span style="color: {gini_color};">→ {gini_interpretation}</span>
+                </div>
+                <p style="margin: 10px 0; font-size: 0.9em; color: #666;">
+                    <strong>Note:</strong> Lower HHI and Gini values indicate more even distribution of capital across positions.
+                    HHI ranges from 1/N (equal weight) to 1.0 (single position). Gini ranges from 0 (perfect equality) to 1 (perfect inequality).
+                </p>
+            </div>
+            """
+
+            position_insights_section = f"""
+                <h3>Portfolio Structure & Position Sizing</h3>
+                <p>Analysis of portfolio concentration, position sizing, and capital distribution over time.</p>
+
+                <h4>Summary Metrics</h4>
+                {summary_metrics_html}
+
+                {interpretation_html}
+
+                <h4>Portfolio Size Over Time</h4>
+                {holdings_count_html}
+
+                <h4>Concentration Metrics Over Time</h4>
+                {concentration_html}
+            """
+        else:
+            position_insights_section = "<h3>Portfolio Structure & Position Sizing</h3><p>Position insights unavailable (insufficient trade data).</p>"
+
         sections.append(
             f"""
             <section>
@@ -1576,6 +1920,8 @@ def build_report(run_paths, output_path: Path):
                 {calendar_section}
 
                 {trade_analytics_section}
+
+                {position_insights_section}
 
                 <h3>Trailing Returns</h3>
                 {period_html}
