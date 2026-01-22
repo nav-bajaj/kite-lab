@@ -66,6 +66,166 @@ def max_drawdown(values: pd.Series) -> float:
     return drawdown.min()
 
 
+# ============================================================================
+# Comprehensive Risk Metrics
+# ============================================================================
+
+
+def sortino_ratio(returns: pd.Series, cagr: float, risk_free_rate: float = 0.05) -> float:
+    """
+    Calculate Sortino Ratio (excess return / downside deviation).
+
+    Unlike Sharpe, only penalizes downside volatility.
+    """
+    downside_returns = returns[returns < 0]
+    if len(downside_returns) == 0:
+        return np.nan
+    downside_vol = downside_returns.std() * np.sqrt(252)
+    if downside_vol == 0:
+        return np.nan
+    return (cagr - risk_free_rate) / downside_vol
+
+
+def calmar_ratio(cagr: float, max_dd: float) -> float:
+    """
+    Calculate Calmar Ratio (CAGR / Max Drawdown).
+
+    Measures return per unit of drawdown risk.
+    """
+    if max_dd == 0 or max_dd >= 0:
+        return np.nan
+    return cagr / abs(max_dd)
+
+
+def ulcer_index(values: pd.Series) -> float:
+    """
+    Calculate Ulcer Index (measure of downside risk).
+
+    Measures depth and duration of drawdowns.
+    Formula: sqrt(mean(drawdown^2))
+    """
+    running_max = values.cummax()
+    drawdown = values / running_max - 1
+    ulcer = np.sqrt(np.mean(drawdown ** 2))
+    return ulcer
+
+
+def information_ratio(portfolio_returns: pd.Series, benchmark_returns: pd.Series,
+                      portfolio_cagr: float, benchmark_cagr: float) -> float:
+    """
+    Calculate Information Ratio (excess return / tracking error).
+
+    Measures consistency of outperformance vs benchmark.
+    """
+    tracking_error = (portfolio_returns - benchmark_returns).std() * np.sqrt(252)
+    if tracking_error == 0:
+        return np.nan
+    return (portfolio_cagr - benchmark_cagr) / tracking_error
+
+
+def value_at_risk(returns: pd.Series, confidence: float = 0.95) -> float:
+    """
+    Calculate Value at Risk (VaR) at given confidence level.
+
+    Returns the percentile loss (positive value indicates loss).
+    """
+    return -np.percentile(returns, (1 - confidence) * 100)
+
+
+def conditional_var(returns: pd.Series, confidence: float = 0.95) -> float:
+    """
+    Calculate Conditional VaR (CVaR / Expected Shortfall).
+
+    Average loss beyond VaR threshold.
+    """
+    var_threshold = value_at_risk(returns, confidence)
+    tail_losses = returns[returns <= -var_threshold]
+    if len(tail_losses) == 0:
+        return 0
+    return -tail_losses.mean()
+
+
+def omega_ratio(returns: pd.Series, threshold: float = 0.0) -> float:
+    """
+    Calculate Omega Ratio (probability-weighted gains / losses).
+
+    Ratio of area above threshold to area below threshold.
+    """
+    gains = returns[returns > threshold]
+    losses = returns[returns <= threshold]
+
+    if len(losses) == 0:
+        return np.inf
+
+    total_gains = gains.sum() - threshold * len(gains)
+    total_losses = threshold * len(losses) - losses.sum()
+
+    if total_losses == 0:
+        return np.inf
+
+    return total_gains / total_losses
+
+
+def tail_ratio(returns: pd.Series) -> float:
+    """
+    Calculate Tail Ratio (95th percentile gain / 95th percentile loss).
+
+    Measures asymmetry of extreme outcomes.
+    """
+    p95_gain = np.percentile(returns, 95)
+    p5_loss = np.percentile(returns, 5)
+
+    if p5_loss >= 0:
+        return np.nan
+
+    return abs(p95_gain / p5_loss)
+
+
+def compute_comprehensive_risk_metrics(equity_df: pd.DataFrame,
+                                      portfolio_returns: pd.Series,
+                                      benchmark_returns: pd.Series,
+                                      cagr: float,
+                                      benchmark_cagr: float,
+                                      max_dd: float,
+                                      risk_free_rate: float = 0.05) -> dict:
+    """
+    Compute all comprehensive risk metrics.
+
+    Returns dict with all advanced risk metrics.
+    """
+    metrics = {}
+
+    # Sortino Ratio
+    metrics['sortino_ratio'] = sortino_ratio(portfolio_returns, cagr, risk_free_rate)
+
+    # Calmar Ratio
+    metrics['calmar_ratio'] = calmar_ratio(cagr, max_dd)
+
+    # Ulcer Index
+    metrics['ulcer_index'] = ulcer_index(equity_df['portfolio_value'])
+
+    # Information Ratio
+    metrics['information_ratio'] = information_ratio(
+        portfolio_returns, benchmark_returns, cagr, benchmark_cagr
+    )
+
+    # Value at Risk (95% and 99%)
+    metrics['var_95'] = value_at_risk(portfolio_returns, 0.95)
+    metrics['var_99'] = value_at_risk(portfolio_returns, 0.99)
+
+    # Conditional VaR
+    metrics['cvar_95'] = conditional_var(portfolio_returns, 0.95)
+    metrics['cvar_99'] = conditional_var(portfolio_returns, 0.99)
+
+    # Omega Ratio
+    metrics['omega_ratio'] = omega_ratio(portfolio_returns, threshold=0.0)
+
+    # Tail Ratio
+    metrics['tail_ratio'] = tail_ratio(portfolio_returns)
+
+    return metrics
+
+
 def compute_drawdown_series(values: pd.Series, dates: pd.Series) -> pd.DataFrame:
     """Compute drawdown series with peaks and troughs"""
     running_max = values.cummax()
@@ -1241,6 +1401,17 @@ def analyze_run(run_path: Path, label: str):
         (metrics["cagr"] or 0) / metrics["vol"] if metrics["vol"] not in (0, None) else np.nan
     )
 
+    # Comprehensive risk metrics
+    comprehensive_risk = compute_comprehensive_risk_metrics(
+        equity,
+        equity["portfolio_return"],
+        equity["benchmark_return"],
+        metrics["cagr"],
+        metrics["bench_cagr"],
+        metrics["max_dd"]
+    )
+    metrics.update(comprehensive_risk)
+
     # merge extended metrics if available
     metrics.update({k: v for k, v in metrics_file.items() if k not in metrics})
 
@@ -1379,6 +1550,32 @@ def build_report(run_paths, output_path: Path):
                     {"Metric": "Hit-rate q5", "Value": format_percent(metrics_detail.get("hit_rate_q5"))},
                 ]
             ).to_html(index=False, escape=False)
+
+            # Add comprehensive risk metrics section
+            risk_metrics_html = ""
+            if m.get("sortino_ratio") is not None:
+                risk_metrics_data = [
+                    {"Metric": "Sortino Ratio", "Value": format_number(m.get("sortino_ratio"), 2), "Description": "Return / Downside Deviation"},
+                    {"Metric": "Calmar Ratio", "Value": format_number(m.get("calmar_ratio"), 2), "Description": "CAGR / Max Drawdown"},
+                    {"Metric": "Information Ratio", "Value": format_number(m.get("information_ratio"), 2), "Description": "Excess Return / Tracking Error"},
+                    {"Metric": "Omega Ratio", "Value": format_number(m.get("omega_ratio"), 2), "Description": "Gains / Losses Ratio"},
+                    {"Metric": "Ulcer Index", "Value": format_number(m.get("ulcer_index"), 4), "Description": "Drawdown Pain Measure"},
+                    {"Metric": "VaR (95%)", "Value": format_percent(m.get("var_95")), "Description": "95% Confidence Loss"},
+                    {"Metric": "VaR (99%)", "Value": format_percent(m.get("var_99")), "Description": "99% Confidence Loss"},
+                    {"Metric": "CVaR (95%)", "Value": format_percent(m.get("cvar_95")), "Description": "Expected Shortfall (95%)"},
+                    {"Metric": "CVaR (99%)", "Value": format_percent(m.get("cvar_99")), "Description": "Expected Shortfall (99%)"},
+                    {"Metric": "Tail Ratio", "Value": format_number(m.get("tail_ratio"), 2), "Description": "95th Pct Gain / 5th Pct Loss"},
+                ]
+                risk_metrics_html = pd.DataFrame(risk_metrics_data).to_html(index=False, escape=False)
+
+            # Combine both tables
+            metrics_table = f"""
+                <h4>Trading Metrics</h4>
+                {metrics_table}
+                <h4 style="margin-top: 20px;">Comprehensive Risk Metrics</h4>
+                <p style="font-size: 0.9em; color: #666;">Advanced risk-adjusted performance measures beyond basic Sharpe ratio.</p>
+                {risk_metrics_html}
+            """
         else:
             metrics_table = "<p>No metrics file found.</p>"
 
