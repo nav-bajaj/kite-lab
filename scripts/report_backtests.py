@@ -1539,6 +1539,208 @@ def generate_rebalancing_charts(rebalancing_analysis: dict) -> dict:
     return charts
 
 
+# ============================================================================
+# Enhanced Benchmark Comparison
+# ============================================================================
+
+
+def compute_relative_strength(portfolio_values: pd.Series, benchmark_values: pd.Series) -> pd.Series:
+    """
+    Compute relative strength ratio (portfolio / benchmark).
+
+    Values > 1 indicate outperformance, < 1 indicate underperformance.
+    """
+    # Normalize both to start at 1.0
+    portfolio_norm = portfolio_values / portfolio_values.iloc[0]
+    benchmark_norm = benchmark_values / benchmark_values.iloc[0]
+    return portfolio_norm / benchmark_norm
+
+
+def compute_tracking_error_series(portfolio_returns: pd.Series,
+                                  benchmark_returns: pd.Series,
+                                  window: int = 60) -> pd.Series:
+    """
+    Compute rolling tracking error (standard deviation of excess returns).
+
+    Args:
+        window: Rolling window in trading days (default 60 = ~3 months)
+    """
+    excess_returns = portfolio_returns - benchmark_returns
+    tracking_error = excess_returns.rolling(window=window, min_periods=20).std() * np.sqrt(252)
+    return tracking_error
+
+
+def compute_capture_ratios(portfolio_returns: pd.Series,
+                           benchmark_returns: pd.Series) -> dict:
+    """
+    Compute up-capture and down-capture ratios.
+
+    Up-capture: % of benchmark gains captured by portfolio
+    Down-capture: % of benchmark losses captured by portfolio
+    """
+    # Separate up and down periods
+    up_periods = benchmark_returns > 0
+    down_periods = benchmark_returns < 0
+
+    # Calculate average returns in each period
+    portfolio_up = portfolio_returns[up_periods].mean()
+    benchmark_up = benchmark_returns[up_periods].mean()
+
+    portfolio_down = portfolio_returns[down_periods].mean()
+    benchmark_down = benchmark_returns[down_periods].mean()
+
+    # Calculate ratios
+    up_capture = (portfolio_up / benchmark_up) if benchmark_up != 0 else np.nan
+    down_capture = (portfolio_down / benchmark_down) if benchmark_down != 0 else np.nan
+
+    return {
+        "up_capture": up_capture,
+        "down_capture": down_capture,
+        "up_periods_count": up_periods.sum(),
+        "down_periods_count": down_periods.sum()
+    }
+
+
+def compute_benchmark_relative_drawdown(portfolio_values: pd.Series,
+                                        benchmark_values: pd.Series) -> pd.Series:
+    """
+    Compute drawdown relative to benchmark (excess return drawdown).
+
+    Shows how portfolio performs vs benchmark from its relative peak.
+    """
+    relative_strength = compute_relative_strength(portfolio_values, benchmark_values)
+    running_max = relative_strength.cummax()
+    relative_dd = relative_strength / running_max - 1
+    return relative_dd
+
+
+def analyze_benchmark_comparison(equity_df: pd.DataFrame) -> dict:
+    """
+    Comprehensive benchmark comparison analysis.
+
+    Returns dict with all benchmark-relative metrics and data.
+    """
+    portfolio_values = equity_df["portfolio_value"]
+    benchmark_values = equity_df["benchmark"]
+    portfolio_returns = equity_df["portfolio_return"]
+    benchmark_returns = equity_df["benchmark_return"]
+
+    # Relative strength
+    relative_strength = compute_relative_strength(portfolio_values, benchmark_values)
+
+    # Tracking error over time
+    tracking_error = compute_tracking_error_series(portfolio_returns, benchmark_returns)
+
+    # Capture ratios
+    capture_ratios = compute_capture_ratios(portfolio_returns, benchmark_returns)
+
+    # Benchmark-relative drawdown
+    relative_dd = compute_benchmark_relative_drawdown(portfolio_values, benchmark_values)
+
+    # Outperformance/underperformance periods
+    outperformance_days = (portfolio_returns > benchmark_returns).sum()
+    underperformance_days = (portfolio_returns < benchmark_returns).sum()
+    total_days = len(portfolio_returns)
+
+    return {
+        "relative_strength": relative_strength,
+        "tracking_error": tracking_error,
+        "capture_ratios": capture_ratios,
+        "relative_drawdown": relative_dd,
+        "outperformance_days": outperformance_days,
+        "underperformance_days": underperformance_days,
+        "outperformance_pct": outperformance_days / total_days if total_days > 0 else 0,
+        "dates": equity_df["date"]
+    }
+
+
+def generate_benchmark_comparison_charts(benchmark_analysis: dict) -> dict:
+    """
+    Generate charts for benchmark comparison analysis.
+
+    Returns dict with base64-encoded images:
+        - relative_strength_chart: Portfolio/Benchmark ratio over time
+        - tracking_error_chart: Rolling tracking error
+        - relative_drawdown_chart: Excess return drawdown
+    """
+    if plt is None:
+        return {"relative_strength_chart": None, "tracking_error_chart": None,
+                "relative_drawdown_chart": None}
+
+    charts = {}
+    dates = benchmark_analysis.get("dates")
+
+    # Chart 1: Relative Strength (Portfolio / Benchmark)
+    relative_strength = benchmark_analysis.get("relative_strength")
+    if relative_strength is not None and not relative_strength.empty:
+        fig, ax = plt.subplots(figsize=(12, 5))
+        ax.plot(dates, relative_strength, color="#2196F3", linewidth=2)
+        ax.axhline(y=1.0, color="gray", linestyle="--", alpha=0.5, label="Parity")
+
+        # Shade outperformance/underperformance regions
+        ax.fill_between(dates, 1, relative_strength,
+                        where=(relative_strength >= 1), alpha=0.2, color="green",
+                        label="Outperformance")
+        ax.fill_between(dates, 1, relative_strength,
+                        where=(relative_strength < 1), alpha=0.2, color="red",
+                        label="Underperformance")
+
+        ax.set_xlabel("Date")
+        ax.set_ylabel("Relative Strength (Portfolio / Benchmark)")
+        ax.set_title("Portfolio Performance Relative to Benchmark")
+        ax.grid(True, alpha=0.3)
+        ax.legend()
+
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png", dpi=100, bbox_inches="tight")
+        plt.close(fig)
+        buf.seek(0)
+        charts["relative_strength_chart"] = base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    # Chart 2: Tracking Error Over Time
+    tracking_error = benchmark_analysis.get("tracking_error")
+    if tracking_error is not None and not tracking_error.empty:
+        fig, ax = plt.subplots(figsize=(12, 4))
+        ax.plot(dates, tracking_error * 100, color="#FF9800", linewidth=2)
+        avg_te = tracking_error.mean() * 100
+        ax.axhline(y=avg_te, color="red", linestyle="--",
+                  label=f"Average: {avg_te:.2f}%")
+
+        ax.set_xlabel("Date")
+        ax.set_ylabel("Tracking Error (%)")
+        ax.set_title("Rolling 60-Day Tracking Error vs Benchmark")
+        ax.grid(True, alpha=0.3)
+        ax.legend()
+
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png", dpi=100, bbox_inches="tight")
+        plt.close(fig)
+        buf.seek(0)
+        charts["tracking_error_chart"] = base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    # Chart 3: Benchmark-Relative Drawdown
+    relative_dd = benchmark_analysis.get("relative_drawdown")
+    if relative_dd is not None and not relative_dd.empty:
+        fig, ax = plt.subplots(figsize=(12, 4))
+        ax.fill_between(dates, 0, relative_dd * 100,
+                       where=(relative_dd <= 0), alpha=0.5, color="red")
+        ax.plot(dates, relative_dd * 100, color="#F44336", linewidth=2)
+        ax.axhline(y=0, color="gray", linestyle="-", alpha=0.5)
+
+        ax.set_xlabel("Date")
+        ax.set_ylabel("Relative Drawdown (%)")
+        ax.set_title("Benchmark-Relative Drawdown (Excess Return Drawdown)")
+        ax.grid(True, alpha=0.3)
+
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png", dpi=100, bbox_inches="tight")
+        plt.close(fig)
+        buf.seek(0)
+        charts["relative_drawdown_chart"] = base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    return charts
+
+
 def analyze_run(run_path: Path, label: str):
     equity = load_equity(run_path / "momentum_equity.csv")
     trades = load_trades(run_path / "momentum_trades.csv")
@@ -1622,6 +1824,10 @@ def analyze_run(run_path: Path, label: str):
     rebalancing_analysis = analyze_rebalancing_behavior(trades, turnover, equity)
     rebalancing_charts = generate_rebalancing_charts(rebalancing_analysis)
 
+    # Enhanced benchmark comparison
+    benchmark_comparison = analyze_benchmark_comparison(equity)
+    benchmark_charts = generate_benchmark_comparison_charts(benchmark_comparison)
+
     return {
         "metrics": metrics,
         "periods": periods,
@@ -1650,6 +1856,8 @@ def analyze_run(run_path: Path, label: str):
         "position_charts": position_charts,
         "rebalancing_analysis": rebalancing_analysis,
         "rebalancing_charts": rebalancing_charts,
+        "benchmark_comparison": benchmark_comparison,
+        "benchmark_charts": benchmark_charts,
     }
 
 
@@ -2330,6 +2538,115 @@ def build_report(run_paths, output_path: Path):
         else:
             rebalancing_section = "<h3>Rebalancing Behavior Analysis</h3><p>Rebalancing analysis unavailable (no turnover data).</p>"
 
+        # Enhanced Benchmark Comparison Section
+        benchmark_comparison = entry.get("benchmark_comparison", {})
+        benchmark_charts = entry.get("benchmark_charts", {})
+
+        if benchmark_comparison and benchmark_comparison.get("capture_ratios"):
+            capture = benchmark_comparison["capture_ratios"]
+
+            # Summary metrics table
+            bench_metrics = [
+                {"Metric": "Up Capture Ratio", "Value": format_percent(capture.get("up_capture", 0)),
+                 "Description": "% of benchmark gains captured"},
+                {"Metric": "Down Capture Ratio", "Value": format_percent(capture.get("down_capture", 0)),
+                 "Description": "% of benchmark losses captured"},
+                {"Metric": "Up Periods", "Value": format_number(capture.get("up_periods_count", 0), 0),
+                 "Description": "Days when benchmark was positive"},
+                {"Metric": "Down Periods", "Value": format_number(capture.get("down_periods_count", 0), 0),
+                 "Description": "Days when benchmark was negative"},
+                {"Metric": "Outperformance Days", "Value": f"{benchmark_comparison.get('outperformance_days', 0)} ({format_percent(benchmark_comparison.get('outperformance_pct', 0))})",
+                 "Description": "Days beating benchmark"},
+                {"Metric": "Underperformance Days", "Value": f"{benchmark_comparison.get('underperformance_days', 0)} ({format_percent(1 - benchmark_comparison.get('outperformance_pct', 0))})",
+                 "Description": "Days trailing benchmark"},
+            ]
+            bench_metrics_html = pd.DataFrame(bench_metrics).to_html(index=False, escape=False)
+
+            # Interpretation box
+            up_capture = capture.get("up_capture", 0)
+            down_capture = capture.get("down_capture", 0)
+
+            # Up capture interpretation
+            if up_capture >= 1.0:
+                up_color = "#4CAF50"
+                up_text = "Capturing all benchmark gains and more"
+            elif up_capture >= 0.8:
+                up_color = "#8BC34A"
+                up_text = "Good upside participation"
+            else:
+                up_color = "#FF9800"
+                up_text = "Missing significant upside"
+
+            # Down capture interpretation
+            if down_capture <= 0.5:
+                down_color = "#4CAF50"
+                down_text = "Excellent downside protection"
+            elif down_capture <= 0.8:
+                down_color = "#8BC34A"
+                down_text = "Good downside protection"
+            elif down_capture <= 1.0:
+                down_color = "#FF9800"
+                down_text = "Moderate downside protection"
+            else:
+                down_color = "#F44336"
+                down_text = "Amplifying benchmark losses"
+
+            interpretation_html = f"""
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 4px; margin: 10px 0;">
+                <h4 style="margin-top: 0;">Capture Ratio Interpretation</h4>
+                <div style="margin: 10px 0;">
+                    <strong>Up Capture ({format_percent(up_capture)}):</strong>
+                    <span style="color: {up_color}; font-weight: bold;">→ {up_text}</span>
+                    <br>
+                    <small>Values > 100% indicate outperformance in up markets</small>
+                </div>
+                <div style="margin: 10px 0;">
+                    <strong>Down Capture ({format_percent(down_capture)}):</strong>
+                    <span style="color: {down_color}; font-weight: bold;">→ {down_text}</span>
+                    <br>
+                    <small>Values < 100% indicate better downside protection than benchmark</small>
+                </div>
+                <p style="margin: 10px 0; font-size: 0.9em; color: #666;">
+                    <strong>Ideal Profile:</strong> Up Capture > 100%, Down Capture < 100%
+                    (capture gains, protect downside)
+                </p>
+            </div>
+            """
+
+            # Charts
+            relative_strength_html = ""
+            if benchmark_charts.get("relative_strength_chart"):
+                relative_strength_html = f'<img src="data:image/png;base64,{benchmark_charts["relative_strength_chart"]}" alt="Relative Strength" style="max-width: 100%;" />'
+
+            tracking_error_html = ""
+            if benchmark_charts.get("tracking_error_chart"):
+                tracking_error_html = f'<img src="data:image/png;base64,{benchmark_charts["tracking_error_chart"]}" alt="Tracking Error" style="max-width: 100%;" />'
+
+            relative_dd_html = ""
+            if benchmark_charts.get("relative_drawdown_chart"):
+                relative_dd_html = f'<img src="data:image/png;base64,{benchmark_charts["relative_drawdown_chart"]}" alt="Relative Drawdown" style="max-width: 100%;" />'
+
+            benchmark_section = f"""
+                <h3>Enhanced Benchmark Comparison</h3>
+                <p>Comprehensive analysis of performance relative to benchmark.</p>
+
+                <h4>Benchmark Comparison Metrics</h4>
+                {bench_metrics_html}
+
+                {interpretation_html}
+
+                <h4>Relative Strength (Portfolio / Benchmark)</h4>
+                {relative_strength_html}
+
+                <h4>Rolling Tracking Error</h4>
+                {tracking_error_html}
+
+                <h4>Benchmark-Relative Drawdown</h4>
+                {relative_dd_html}
+            """
+        else:
+            benchmark_section = "<h3>Enhanced Benchmark Comparison</h3><p>Benchmark comparison unavailable.</p>"
+
         sections.append(
             f"""
             <section>
@@ -2354,6 +2671,8 @@ def build_report(run_paths, output_path: Path):
                 {position_insights_section}
 
                 {rebalancing_section}
+
+                {benchmark_section}
 
                 <h3>Trailing Returns</h3>
                 {period_html}

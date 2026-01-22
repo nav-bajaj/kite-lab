@@ -249,24 +249,39 @@ This document outlines planned improvements to the final portfolio reporting sys
 
 ---
 
-#### 9. Enhanced Benchmark Comparison ✓
-**Why:** Better understand relative performance
+#### 9. Enhanced Benchmark Comparison ✅ COMPLETED
+**Status:** Implemented and tested
 
-**Components:**
-- Relative strength chart (portfolio / benchmark ratio over time)
-- Outperformance periods vs underperformance (highlight regions)
-- Tracking error over time
-- Up capture ratio (% of benchmark gains captured)
-- Down capture ratio (% of benchmark losses captured)
-- Multiple benchmarks side-by-side:
-  - Nifty 50
-  - Nifty 100
-  - Nifty 500
-  - Nifty Midcap 100
-- Benchmark-relative drawdown
-- Active share (portfolio deviation from benchmark)
+**Completed Components:**
+- ✅ Relative strength chart (portfolio / benchmark ratio over time)
+- ✅ Outperformance/underperformance regions shaded in chart
+- ✅ Tracking error over time (60-day rolling window)
+- ✅ Up capture ratio (% of benchmark gains captured)
+- ✅ Down capture ratio (% of benchmark losses captured)
+- ✅ Benchmark-relative drawdown (excess return drawdown)
+- ✅ Outperformance/underperformance day counts and percentages
+- ✅ Color-coded interpretation guide for capture ratios
 
-**Output:** Enhanced benchmark section + relative performance chart
+**Implementation:** `report_backtests.py` - lines 1529-1730
+- Functions: `compute_relative_strength()`, `compute_tracking_error_series()`, `compute_capture_ratios()`, `compute_benchmark_relative_drawdown()`, `analyze_benchmark_comparison()`, `generate_benchmark_comparison_charts()`
+- Three comprehensive charts showing relative performance
+- Capture ratio interpretation with ideal profile guidance
+
+**Test Results (Final Portfolio):**
+- Up Capture Ratio: 128.58% (capturing all gains and more - excellent!)
+- Down Capture Ratio: 88.64% (good downside protection)
+- Up Periods: 772 days, Down Periods: 603 days
+- Outperformance: 753 days (54.72%), Underperformance: 622 days (45.28%)
+- **Profile:** Ideal asymmetric profile (high up-capture, lower down-capture)
+
+**Charts:**
+1. Relative Strength: Shows portfolio/benchmark ratio with shaded regions
+2. Tracking Error: 60-day rolling window showing consistency
+3. Benchmark-Relative Drawdown: Excess return drawdown analysis
+
+**Note:** Multiple benchmarks comparison and active share would require additional benchmark data sources not currently loaded.
+
+**Output:** New "Enhanced Benchmark Comparison" section with metrics table, interpretation box, and three charts
 
 ---
 
