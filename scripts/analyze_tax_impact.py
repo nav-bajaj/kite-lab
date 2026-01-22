@@ -109,7 +109,7 @@ def apply_tax_on_gains(
     # Starting capital for tax calculation
     fy_start_capital = initial_capital
 
-    for i, fy in enumerate(financial_years):
+    for fy in financial_years:
         fy_data = df[df["fy"] == fy].copy()
 
         if fy_data.empty:
