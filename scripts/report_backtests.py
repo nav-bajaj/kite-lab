@@ -1375,6 +1375,170 @@ def generate_position_sizing_charts(position_analysis: dict) -> dict:
     return charts
 
 
+# ============================================================================
+# Rebalancing Behavior Analysis
+# ============================================================================
+
+
+def load_turnover(path: Path) -> pd.DataFrame:
+    """Load turnover data from CSV."""
+    if not path.exists():
+        return pd.DataFrame()
+    df = pd.read_csv(path, parse_dates=["date"])
+    return df.sort_values("date")
+
+
+def analyze_rebalancing_behavior(trades: pd.DataFrame, turnover_df: pd.DataFrame,
+                                 equity: pd.DataFrame) -> dict:
+    """
+    Analyze rebalancing patterns, turnover, and trading frequency.
+
+    Returns dict with:
+        - turnover_stats: Dict with avg, median, max turnover
+        - rebalance_dates: List of rebalance dates
+        - avg_rebalance_size: Average number of trades per rebalance
+        - trade_frequency_patterns: Dict with patterns by day/month
+        - churn_rate: Average positions changed per rebalance
+        - no_change_rebalances: Number and percentage of rebalances with no trades
+    """
+    if trades.empty or equity.empty:
+        return {
+            "turnover_stats": {},
+            "rebalance_dates": [],
+            "avg_rebalance_size": 0,
+            "trade_frequency_patterns": {},
+            "churn_rate": 0,
+            "no_change_rebalances_count": 0,
+            "no_change_rebalances_pct": 0
+        }
+
+    # Turnover statistics
+    turnover_stats = {}
+    if not turnover_df.empty:
+        turnover_stats = {
+            "avg_turnover": turnover_df["turnover_pct"].mean(),
+            "median_turnover": turnover_df["turnover_pct"].median(),
+            "max_turnover": turnover_df["turnover_pct"].max(),
+            "min_turnover": turnover_df["turnover_pct"].min(),
+            "std_turnover": turnover_df["turnover_pct"].std()
+        }
+
+    # Group trades by date to identify rebalance events
+    trades_by_date = trades.groupby("date").agg({
+        "symbol": "count",  # Number of trades
+        "notional": "sum"   # Total notional value
+    }).reset_index()
+    trades_by_date.columns = ["date", "num_trades", "total_notional"]
+
+    rebalance_dates = trades_by_date["date"].tolist()
+    avg_rebalance_size = trades_by_date["num_trades"].mean()
+
+    # Trade frequency patterns
+    trades_with_day = trades.copy()
+    trades_with_day["day_of_week"] = pd.to_datetime(trades_with_day["date"]).dt.day_name()
+    trades_with_day["month"] = pd.to_datetime(trades_with_day["date"]).dt.month_name()
+
+    day_of_week_counts = trades_with_day["day_of_week"].value_counts().to_dict()
+    month_counts = trades_with_day["month"].value_counts().to_dict()
+
+    trade_frequency_patterns = {
+        "by_day_of_week": day_of_week_counts,
+        "by_month": month_counts
+    }
+
+    # Churn rate: average number of BUY + SELL per rebalance
+    churn_rate = avg_rebalance_size / 2  # Each position change involves 1 buy + 1 sell on average
+
+    # No-change rebalances: dates in equity with no trades
+    # This is harder to determine without explicit rebalance schedule
+    # For weekly rebalance, we can estimate expected rebalances vs actual
+    days_elapsed = (equity["date"].iloc[-1] - equity["date"].iloc[0]).days
+    expected_rebalances = days_elapsed / 7  # Weekly rebalancing
+    actual_rebalances = len(rebalance_dates)
+    no_change_rebalances = max(0, expected_rebalances - actual_rebalances)
+    no_change_rebalances_pct = no_change_rebalances / expected_rebalances if expected_rebalances > 0 else 0
+
+    return {
+        "turnover_stats": turnover_stats,
+        "turnover_df": turnover_df,
+        "rebalance_dates": rebalance_dates,
+        "avg_rebalance_size": avg_rebalance_size,
+        "trade_frequency_patterns": trade_frequency_patterns,
+        "churn_rate": churn_rate,
+        "no_change_rebalances_count": int(no_change_rebalances),
+        "no_change_rebalances_pct": no_change_rebalances_pct,
+        "trades_by_date": trades_by_date
+    }
+
+
+def generate_rebalancing_charts(rebalancing_analysis: dict) -> dict:
+    """
+    Generate charts for rebalancing behavior analysis.
+
+    Returns dict with base64-encoded images:
+        - turnover_chart: Turnover over time
+        - rebalance_frequency_chart: Trades per rebalance distribution
+    """
+    if plt is None:
+        return {"turnover_chart": None, "rebalance_frequency_chart": None}
+
+    charts = {}
+
+    # Chart 1: Turnover over time
+    turnover_df = rebalancing_analysis.get("turnover_df", pd.DataFrame())
+    if not turnover_df.empty:
+        fig, ax = plt.subplots(figsize=(12, 4))
+        ax.plot(turnover_df["date"], turnover_df["turnover_pct"] * 100,
+                color="#FF9800", linewidth=1.5, alpha=0.7)
+
+        # Add rolling average
+        if len(turnover_df) > 10:
+            rolling_avg = turnover_df["turnover_pct"].rolling(window=10, min_periods=1).mean() * 100
+            ax.plot(turnover_df["date"], rolling_avg,
+                   color="#F44336", linewidth=2, label="10-Week Moving Avg")
+
+        # Add average line
+        avg_turnover = rebalancing_analysis["turnover_stats"].get("avg_turnover", 0) * 100
+        ax.axhline(y=avg_turnover, color="green", linestyle="--",
+                  label=f"Average: {avg_turnover:.1f}%")
+
+        ax.set_xlabel("Date")
+        ax.set_ylabel("Turnover %")
+        ax.set_title("Portfolio Turnover Over Time")
+        ax.grid(True, alpha=0.3)
+        ax.legend()
+
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png", dpi=100, bbox_inches="tight")
+        plt.close(fig)
+        buf.seek(0)
+        charts["turnover_chart"] = base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    # Chart 2: Rebalance size distribution
+    trades_by_date = rebalancing_analysis.get("trades_by_date", pd.DataFrame())
+    if not trades_by_date.empty:
+        fig, ax = plt.subplots(figsize=(10, 5))
+        ax.hist(trades_by_date["num_trades"], bins=20, color="#2196F3", alpha=0.7, edgecolor="black")
+
+        avg_size = rebalancing_analysis.get("avg_rebalance_size", 0)
+        ax.axvline(x=avg_size, color="red", linestyle="--", linewidth=2,
+                  label=f"Average: {avg_size:.1f} trades")
+
+        ax.set_xlabel("Number of Trades per Rebalance")
+        ax.set_ylabel("Frequency")
+        ax.set_title("Distribution of Rebalance Sizes")
+        ax.grid(True, alpha=0.3, axis="y")
+        ax.legend()
+
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png", dpi=100, bbox_inches="tight")
+        plt.close(fig)
+        buf.seek(0)
+        charts["rebalance_frequency_chart"] = base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    return charts
+
+
 def analyze_run(run_path: Path, label: str):
     equity = load_equity(run_path / "momentum_equity.csv")
     trades = load_trades(run_path / "momentum_trades.csv")
@@ -1453,6 +1617,11 @@ def analyze_run(run_path: Path, label: str):
     position_analysis = analyze_position_sizing(trades, equity)
     position_charts = generate_position_sizing_charts(position_analysis)
 
+    # Rebalancing behavior analysis
+    turnover = load_turnover(run_path / "momentum_turnover.csv")
+    rebalancing_analysis = analyze_rebalancing_behavior(trades, turnover, equity)
+    rebalancing_charts = generate_rebalancing_charts(rebalancing_analysis)
+
     return {
         "metrics": metrics,
         "periods": periods,
@@ -1479,6 +1648,8 @@ def analyze_run(run_path: Path, label: str):
         "trade_dist_chart": trade_dist_chart,
         "position_analysis": position_analysis,
         "position_charts": position_charts,
+        "rebalancing_analysis": rebalancing_analysis,
+        "rebalancing_charts": rebalancing_charts,
     }
 
 
@@ -2097,6 +2268,68 @@ def build_report(run_paths, output_path: Path):
         else:
             position_insights_section = "<h3>Portfolio Structure & Position Sizing</h3><p>Position insights unavailable (insufficient trade data).</p>"
 
+        # Rebalancing Behavior Section
+        rebalancing_analysis = entry.get("rebalancing_analysis", {})
+        rebalancing_charts = entry.get("rebalancing_charts", {})
+
+        if rebalancing_analysis and rebalancing_analysis.get("turnover_stats"):
+            turnover_stats = rebalancing_analysis["turnover_stats"]
+            trade_freq = rebalancing_analysis.get("trade_frequency_patterns", {})
+
+            # Summary metrics table
+            rebalance_metrics = [
+                {"Metric": "Avg Turnover", "Value": format_percent(turnover_stats.get("avg_turnover", 0))},
+                {"Metric": "Median Turnover", "Value": format_percent(turnover_stats.get("median_turnover", 0))},
+                {"Metric": "Max Turnover", "Value": format_percent(turnover_stats.get("max_turnover", 0))},
+                {"Metric": "Min Turnover", "Value": format_percent(turnover_stats.get("min_turnover", 0))},
+                {"Metric": "Turnover Std Dev", "Value": format_percent(turnover_stats.get("std_turnover", 0))},
+                {"Metric": "Total Rebalances", "Value": format_number(len(rebalancing_analysis.get("rebalance_dates", [])), 0)},
+                {"Metric": "Avg Trades per Rebalance", "Value": format_number(rebalancing_analysis.get("avg_rebalance_size", 0), 1)},
+                {"Metric": "Churn Rate (Positions Changed)", "Value": format_number(rebalancing_analysis.get("churn_rate", 0), 1)},
+                {"Metric": "No-Change Rebalances", "Value": f"{rebalancing_analysis.get('no_change_rebalances_count', 0)} ({format_percent(rebalancing_analysis.get('no_change_rebalances_pct', 0))})"},
+            ]
+            rebalance_metrics_html = pd.DataFrame(rebalance_metrics).to_html(index=False, escape=False)
+
+            # Trade frequency by day of week
+            day_freq_html = ""
+            if trade_freq.get("by_day_of_week"):
+                day_freq_data = [{"Day": day, "Trades": count}
+                               for day, count in trade_freq["by_day_of_week"].items()]
+                # Sort by common week order
+                day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+                day_freq_df = pd.DataFrame(day_freq_data)
+                day_freq_df["Day"] = pd.Categorical(day_freq_df["Day"], categories=day_order, ordered=True)
+                day_freq_df = day_freq_df.sort_values("Day")
+                day_freq_html = day_freq_df.to_html(index=False, escape=False)
+
+            # Charts
+            turnover_chart_html = ""
+            if rebalancing_charts.get("turnover_chart"):
+                turnover_chart_html = f'<img src="data:image/png;base64,{rebalancing_charts["turnover_chart"]}" alt="Turnover Over Time" style="max-width: 100%;" />'
+
+            rebalance_freq_chart_html = ""
+            if rebalancing_charts.get("rebalance_frequency_chart"):
+                rebalance_freq_chart_html = f'<img src="data:image/png;base64,{rebalancing_charts["rebalance_frequency_chart"]}" alt="Rebalance Size Distribution" style="max-width: 100%;" />'
+
+            rebalancing_section = f"""
+                <h3>Rebalancing Behavior Analysis</h3>
+                <p>Analysis of portfolio turnover, trading patterns, and rebalancing frequency.</p>
+
+                <h4>Rebalancing Metrics</h4>
+                {rebalance_metrics_html}
+
+                <h4>Turnover Over Time</h4>
+                {turnover_chart_html}
+
+                <h4>Rebalance Size Distribution</h4>
+                {rebalance_freq_chart_html}
+
+                <h4>Trade Frequency by Day of Week</h4>
+                {day_freq_html}
+            """
+        else:
+            rebalancing_section = "<h3>Rebalancing Behavior Analysis</h3><p>Rebalancing analysis unavailable (no turnover data).</p>"
+
         sections.append(
             f"""
             <section>
@@ -2119,6 +2352,8 @@ def build_report(run_paths, output_path: Path):
                 {trade_analytics_section}
 
                 {position_insights_section}
+
+                {rebalancing_section}
 
                 <h3>Trailing Returns</h3>
                 {period_html}
