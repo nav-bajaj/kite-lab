@@ -740,6 +740,242 @@ def compute_trailing_performance(equity: pd.DataFrame, days: int = 10) -> dict:
     }
 
 
+def compute_round_trip_trades(trades: pd.DataFrame) -> pd.DataFrame:
+    """
+    Compute round-trip trades (match BUY and SELL for each symbol).
+
+    Returns DataFrame with columns:
+    - symbol: stock symbol
+    - entry_date: buy date
+    - exit_date: sell date
+    - holding_days: days held
+    - entry_price: average buy price
+    - exit_price: average sell price
+    - shares: number of shares
+    - entry_value: total buy value
+    - exit_value: total sell value
+    - pnl: profit/loss
+    - return_pct: percentage return
+    """
+    if trades.empty:
+        return pd.DataFrame()
+
+    round_trips = []
+
+    for symbol in trades["symbol"].unique():
+        symbol_trades = trades[trades["symbol"] == symbol].sort_values("date")
+
+        position = 0  # Current position size
+        entry_value = 0  # Total value of current position
+        entry_date = None
+        entry_shares = 0
+
+        for _, trade in symbol_trades.iterrows():
+            if trade["side"] == "BUY":
+                # Add to position
+                position += trade["shares"]
+                entry_value += trade["notional"]
+                if entry_date is None:
+                    entry_date = trade["date"]
+                entry_shares = position
+
+            elif trade["side"] == "SELL" and position > 0:
+                # Close position (full or partial)
+                sell_shares = trade["shares"]
+                sell_value = trade["notional"]
+
+                # Proportion of position being closed
+                close_proportion = min(sell_shares / position, 1.0)
+
+                # Calculate PnL for this portion
+                portion_entry_value = entry_value * close_proportion
+                portion_shares = position * close_proportion
+
+                pnl = sell_value - portion_entry_value
+                return_pct = (sell_value / portion_entry_value - 1) if portion_entry_value > 0 else 0
+                holding_days = (trade["date"] - entry_date).days
+
+                round_trips.append({
+                    "symbol": symbol,
+                    "entry_date": entry_date,
+                    "exit_date": trade["date"],
+                    "holding_days": holding_days,
+                    "entry_price": portion_entry_value / portion_shares if portion_shares > 0 else 0,
+                    "exit_price": sell_value / sell_shares if sell_shares > 0 else 0,
+                    "shares": portion_shares,
+                    "entry_value": portion_entry_value,
+                    "exit_value": sell_value,
+                    "pnl": pnl,
+                    "return_pct": return_pct,
+                })
+
+                # Update position
+                position -= sell_shares
+                entry_value -= portion_entry_value
+
+                # If fully closed, reset
+                if position <= 0.01:  # Small threshold for floating point
+                    position = 0
+                    entry_value = 0
+                    entry_date = None
+                    entry_shares = 0
+
+    return pd.DataFrame(round_trips)
+
+
+def analyze_trade_performance(round_trips: pd.DataFrame) -> dict:
+    """Analyze trade performance metrics."""
+    if round_trips.empty:
+        return {
+            "total_trades": 0,
+            "winning_trades": 0,
+            "losing_trades": 0,
+            "win_rate": 0,
+            "avg_win": 0,
+            "avg_loss": 0,
+            "profit_factor": 0,
+            "expectancy": 0,
+            "best_trade": None,
+            "worst_trade": None,
+            "avg_holding_days": 0,
+            "longest_win_streak": 0,
+            "longest_loss_streak": 0,
+        }
+
+    winners = round_trips[round_trips["pnl"] > 0]
+    losers = round_trips[round_trips["pnl"] <= 0]
+
+    total_wins = winners["pnl"].sum()
+    total_losses = abs(losers["pnl"].sum())
+
+    # Best and worst trades
+    best_idx = round_trips["return_pct"].idxmax() if not round_trips.empty else None
+    worst_idx = round_trips["return_pct"].idxmin() if not round_trips.empty else None
+
+    best_trade = None
+    worst_trade = None
+
+    if best_idx is not None:
+        best = round_trips.loc[best_idx]
+        best_trade = {
+            "symbol": best["symbol"],
+            "return_pct": best["return_pct"],
+            "pnl": best["pnl"],
+            "holding_days": best["holding_days"],
+            "entry_date": best["entry_date"],
+            "exit_date": best["exit_date"],
+        }
+
+    if worst_idx is not None:
+        worst = round_trips.loc[worst_idx]
+        worst_trade = {
+            "symbol": worst["symbol"],
+            "return_pct": worst["return_pct"],
+            "pnl": worst["pnl"],
+            "holding_days": worst["holding_days"],
+            "entry_date": worst["entry_date"],
+            "exit_date": worst["exit_date"],
+        }
+
+    # Win/loss streaks
+    round_trips = round_trips.sort_values("exit_date")
+    is_winner = (round_trips["pnl"] > 0).astype(int)
+    streaks = (is_winner != is_winner.shift()).cumsum()
+    win_streaks = round_trips[is_winner == 1].groupby(streaks).size()
+    loss_streaks = round_trips[is_winner == 0].groupby(streaks).size()
+
+    return {
+        "total_trades": len(round_trips),
+        "winning_trades": len(winners),
+        "losing_trades": len(losers),
+        "win_rate": len(winners) / len(round_trips) if len(round_trips) > 0 else 0,
+        "avg_win": winners["pnl"].mean() if len(winners) > 0 else 0,
+        "avg_loss": losers["pnl"].mean() if len(losers) > 0 else 0,
+        "profit_factor": total_wins / total_losses if total_losses > 0 else float('inf'),
+        "expectancy": round_trips["pnl"].mean(),
+        "best_trade": best_trade,
+        "worst_trade": worst_trade,
+        "avg_holding_days": round_trips["holding_days"].mean(),
+        "longest_win_streak": win_streaks.max() if not win_streaks.empty else 0,
+        "longest_loss_streak": loss_streaks.max() if not loss_streaks.empty else 0,
+    }
+
+
+def analyze_win_rate_by_holding_period(round_trips: pd.DataFrame) -> pd.DataFrame:
+    """Analyze win rate and average return by holding period buckets."""
+    if round_trips.empty:
+        return pd.DataFrame()
+
+    # Define holding period buckets (in days)
+    buckets = [
+        ("< 1 week", 0, 7),
+        ("1-2 weeks", 7, 14),
+        ("2-4 weeks", 14, 28),
+        ("1-2 months", 28, 60),
+        ("> 2 months", 60, float('inf')),
+    ]
+
+    results = []
+    for label, min_days, max_days in buckets:
+        mask = (round_trips["holding_days"] >= min_days) & (round_trips["holding_days"] < max_days)
+        bucket_trades = round_trips[mask]
+
+        if len(bucket_trades) == 0:
+            continue
+
+        winners = bucket_trades[bucket_trades["pnl"] > 0]
+
+        results.append({
+            "bucket": label,
+            "count": len(bucket_trades),
+            "win_rate": len(winners) / len(bucket_trades),
+            "avg_return": bucket_trades["return_pct"].mean(),
+            "avg_pnl": bucket_trades["pnl"].mean(),
+            "total_pnl": bucket_trades["pnl"].sum(),
+        })
+
+    return pd.DataFrame(results)
+
+
+def generate_trade_distribution_chart(round_trips: pd.DataFrame) -> str:
+    """Generate histogram of trade PnL distribution."""
+    if round_trips.empty or not plt:
+        return ""
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    # Plot histogram of returns
+    returns_pct = round_trips["return_pct"] * 100  # Convert to percentage
+    ax.hist(returns_pct, bins=30, alpha=0.7, color="steelblue", edgecolor="black")
+
+    # Add vertical line at zero
+    ax.axvline(x=0, color="red", linestyle="--", linewidth=2, alpha=0.7)
+
+    # Labels
+    ax.set_xlabel("Return (%)", fontsize=12)
+    ax.set_ylabel("Number of Trades", fontsize=12)
+    ax.set_title("Trade Return Distribution", fontsize=14, fontweight="bold")
+    ax.grid(True, alpha=0.3, axis="y")
+
+    # Add statistics annotation
+    mean_return = returns_pct.mean()
+    median_return = returns_pct.median()
+    ax.text(
+        0.02, 0.98,
+        f"Mean: {mean_return:.2f}%\nMedian: {median_return:.2f}%",
+        transform=ax.transAxes,
+        verticalalignment="top",
+        bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.5),
+    )
+
+    # Convert to base64
+    buf = io.BytesIO()
+    fig.savefig(buf, format="png", dpi=100, bbox_inches="tight")
+    plt.close(fig)
+    buf.seek(0)
+    return base64.b64encode(buf.getvalue()).decode("utf-8")
+
+
 def analyze_run(run_path: Path, label: str):
     equity = load_equity(run_path / "momentum_equity.csv")
     trades = load_trades(run_path / "momentum_trades.csv")
@@ -797,6 +1033,12 @@ def analyze_run(run_path: Path, label: str):
     monthly_heatmap = generate_monthly_heatmap(monthly_returns)
     monthly_analysis = analyze_monthly_performance(monthly_returns)
 
+    # Trade analytics
+    round_trips = compute_round_trip_trades(trades)
+    trade_performance = analyze_trade_performance(round_trips)
+    win_rate_by_period = analyze_win_rate_by_holding_period(round_trips)
+    trade_dist_chart = generate_trade_distribution_chart(round_trips)
+
     return {
         "metrics": metrics,
         "periods": periods,
@@ -817,6 +1059,10 @@ def analyze_run(run_path: Path, label: str):
         "monthly_heatmap": monthly_heatmap,
         "monthly_analysis": monthly_analysis,
         "trailing_10d": trailing_10d,
+        "round_trips": round_trips,
+        "trade_performance": trade_performance,
+        "win_rate_by_period": win_rate_by_period,
+        "trade_dist_chart": trade_dist_chart,
     }
 
 
@@ -1223,6 +1469,93 @@ def build_report(run_paths, output_path: Path):
         else:
             calendar_section = "<h3>Calendar Performance</h3><p>Calendar performance unavailable (matplotlib missing).</p>"
 
+        # Trade Analytics Section
+        trade_perf = entry.get("trade_performance", {})
+        win_rate_by_period = entry.get("win_rate_by_period", pd.DataFrame())
+        trade_dist_chart = entry.get("trade_dist_chart", "")
+
+        if trade_perf and trade_perf.get("total_trades", 0) > 0:
+            # Performance metrics table
+            perf_metrics = [
+                {"Metric": "Total Trades", "Value": format_number(trade_perf["total_trades"], 0)},
+                {"Metric": "Winning Trades", "Value": format_number(trade_perf["winning_trades"], 0)},
+                {"Metric": "Losing Trades", "Value": format_number(trade_perf["losing_trades"], 0)},
+                {"Metric": "Win Rate", "Value": format_percent(trade_perf["win_rate"])},
+                {"Metric": "Average Win", "Value": f"₹{format_number(trade_perf['avg_win'], 0)}"},
+                {"Metric": "Average Loss", "Value": f"₹{format_number(trade_perf['avg_loss'], 0)}"},
+                {"Metric": "Profit Factor", "Value": format_number(trade_perf["profit_factor"], 2)},
+                {"Metric": "Expectancy (Avg PnL)", "Value": f"₹{format_number(trade_perf['expectancy'], 0)}"},
+                {"Metric": "Avg Holding Days", "Value": format_number(trade_perf["avg_holding_days"], 1)},
+                {"Metric": "Longest Win Streak", "Value": format_number(trade_perf["longest_win_streak"], 0)},
+                {"Metric": "Longest Loss Streak", "Value": format_number(trade_perf["longest_loss_streak"], 0)},
+            ]
+            perf_metrics_html = pd.DataFrame(perf_metrics).to_html(index=False, escape=False)
+
+            # Best and worst trades
+            best_trade = trade_perf.get("best_trade")
+            worst_trade = trade_perf.get("worst_trade")
+
+            best_trade_html = ""
+            if best_trade:
+                best_trade_html = f"""
+                <div style="background: #e8f5e9; padding: 10px; border-radius: 4px; margin: 10px 0;">
+                    <strong>{best_trade['symbol']}</strong><br>
+                    Return: <span style="color: green; font-weight: bold;">{format_percent(best_trade['return_pct'])}</span>
+                    (₹{format_number(best_trade['pnl'], 0)})<br>
+                    Held: {int(best_trade['holding_days'])} days
+                    ({best_trade['entry_date'].strftime('%Y-%m-%d')} → {best_trade['exit_date'].strftime('%Y-%m-%d')})
+                </div>
+                """
+
+            worst_trade_html = ""
+            if worst_trade:
+                worst_trade_html = f"""
+                <div style="background: #ffebee; padding: 10px; border-radius: 4px; margin: 10px 0;">
+                    <strong>{worst_trade['symbol']}</strong><br>
+                    Return: <span style="color: red; font-weight: bold;">{format_percent(worst_trade['return_pct'])}</span>
+                    (₹{format_number(worst_trade['pnl'], 0)})<br>
+                    Held: {int(worst_trade['holding_days'])} days
+                    ({worst_trade['entry_date'].strftime('%Y-%m-%d')} → {worst_trade['exit_date'].strftime('%Y-%m-%d')})
+                </div>
+                """
+
+            # Win rate by holding period
+            win_rate_html = ""
+            if not win_rate_by_period.empty:
+                win_rate_display = win_rate_by_period.copy()
+                win_rate_display["win_rate"] = win_rate_display["win_rate"].apply(lambda x: format_percent(x))
+                win_rate_display["avg_return"] = win_rate_display["avg_return"].apply(lambda x: format_percent(x))
+                win_rate_display["avg_pnl"] = win_rate_display["avg_pnl"].apply(lambda x: f"₹{format_number(x, 0)}")
+                win_rate_display["total_pnl"] = win_rate_display["total_pnl"].apply(lambda x: f"₹{format_number(x, 0)}")
+                win_rate_display.columns = ["Holding Period", "Trades", "Win Rate", "Avg Return", "Avg PnL", "Total PnL"]
+                win_rate_html = win_rate_display.to_html(index=False, escape=False)
+
+            # Trade distribution chart
+            trade_dist_html = ""
+            if trade_dist_chart:
+                trade_dist_html = f'<img src="data:image/png;base64,{trade_dist_chart}" alt="Trade Distribution" style="max-width: 100%;" />'
+
+            trade_analytics_section = f"""
+                <h3>Trade Analytics</h3>
+
+                <h4>Performance Metrics</h4>
+                {perf_metrics_html}
+
+                <h4>Best Trade</h4>
+                {best_trade_html}
+
+                <h4>Worst Trade</h4>
+                {worst_trade_html}
+
+                <h4>Win Rate by Holding Period</h4>
+                {win_rate_html}
+
+                <h4>Trade Return Distribution</h4>
+                {trade_dist_html}
+            """
+        else:
+            trade_analytics_section = "<h3>Trade Analytics</h3><p>No trade data available.</p>"
+
         sections.append(
             f"""
             <section>
@@ -1241,6 +1574,8 @@ def build_report(run_paths, output_path: Path):
                 {rolling_metrics_section}
 
                 {calendar_section}
+
+                {trade_analytics_section}
 
                 <h3>Trailing Returns</h3>
                 {period_html}

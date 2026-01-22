@@ -74,23 +74,30 @@ This document outlines planned improvements to the final portfolio reporting sys
 
 ---
 
-#### 3. Detailed Trade Analytics ✓
-**Why:** Better understand trading patterns and profitability
+#### 3. Detailed Trade Analytics ✅ COMPLETED
+**Status:** Implemented and tested
 
-**Components:**
-- Win rate by holding period:
-  - Buckets: <1 week, 1-2 weeks, 2-4 weeks, 1-2 months, >2 months
-  - Win % and avg return per bucket
-- Profit factor (gross profit / gross loss)
-- Average win vs average loss (expectancy)
-- Best single trade (symbol, return, holding period)
-- Worst single trade
-- Consecutive wins/losses streaks (longest)
-- Trade distribution histogram (PnL buckets)
-- Entry/exit efficiency metrics
-- Round-trip analysis (full cycle stats)
+**Completed Components:**
+- ✅ Round-trip trade computation (match BUYs and SELLs)
+- ✅ Win rate by holding period (5 buckets: <1w, 1-2w, 2-4w, 1-2m, >2m)
+- ✅ Profit factor (gross profit / gross loss)
+- ✅ Average win vs average loss (expectancy)
+- ✅ Best single trade (symbol, return, holding period, dates)
+- ✅ Worst single trade (symbol, return, holding period, dates)
+- ✅ Consecutive wins/losses streaks (longest)
+- ✅ Trade distribution histogram (return % distribution)
+- ✅ Total trades, winning/losing counts, win rate
+- ✅ Average holding days
 
-**Output:** Enhanced trade analytics section + histogram
+**Implementation:** `report_backtests.py` - lines 743-973
+- Functions: `compute_round_trip_trades()`, `analyze_trade_performance()`, `analyze_win_rate_by_holding_period()`, `generate_trade_distribution_chart()`
+- Comprehensive performance metrics table
+- Color-coded best/worst trade boxes (green/red)
+- Win rate breakdown by holding period bucket
+- Histogram showing trade return distribution with mean/median overlays
+- Integrated into HTML report with full styling
+
+**Output:** New "Trade Analytics" section with tables and histogram
 
 ---
 
