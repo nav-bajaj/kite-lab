@@ -195,10 +195,13 @@ def run_backtest(
     benchmark_aligned = benchmark.reindex(calendar).ffill()
 
     schedule = {}
+    # Build trade_date -> signal_date mapping for score lookup
+    trade_to_signal_map = {}
     for signal_date, symbols in entry_signals.items():
         trade_date = map_signal_to_trade(signal_date, calendar)
         if trade_date is not None:
             schedule[pd.Timestamp(trade_date)] = symbols
+            trade_to_signal_map[pd.Timestamp(trade_date)] = pd.Timestamp(signal_date)
 
     rebalance_dates = sorted(schedule.keys())
 
@@ -268,9 +271,11 @@ def run_backtest(
 
         target_symbols = target_symbols[:top_n]
 
-        # Apply score filtering if min_entry_score is specified
-        current_scores = score_map_by_date.get(date, {})
-        if min_entry_score is not None and current_scores:
+        # Apply score filtering if min_entry_score is specified and > 0
+        # Lookup scores using signal date (not trade date)
+        signal_date = trade_to_signal_map.get(date)
+        current_scores = score_map_by_date.get(signal_date, {}) if signal_date else {}
+        if min_entry_score is not None and min_entry_score > 0 and current_scores:
             target_symbols = [sym for sym in target_symbols if current_scores.get(sym, 0) >= min_entry_score]
 
         if exposure <= 0:
@@ -282,13 +287,14 @@ def run_backtest(
         target_set = set(target_symbols)
 
         exit_threshold = top_n + exit_buffer
-        current_ranks = rank_map_by_date.get(date, {})
+        # Lookup ranks using signal date (not trade date)
+        current_ranks = rank_map_by_date.get(signal_date, {}) if signal_date else {}
         exits = []
         for sym in sorted(current_symbols):
             if sym in target_set:
                 continue
             rank = current_ranks.get(sym, float("inf"))
-            score = current_scores.get(sym, 0) if min_exit_score is not None else None
+            score = current_scores.get(sym, 0) if (min_exit_score is not None and min_exit_score > 0) else None
             price_for_pnl = trade_panel.loc[date].get(sym)
             if pd.isna(price_for_pnl):
                 price_for_pnl = close_row.get(sym)
@@ -299,7 +305,7 @@ def run_backtest(
                     pnl_pct = price_for_pnl / avg_cost - 1
             should_exit = rank > exit_threshold
             # Also exit if score falls below minimum exit threshold
-            if min_exit_score is not None and score is not None and score < min_exit_score:
+            if min_exit_score is not None and min_exit_score > 0 and score is not None and score < min_exit_score:
                 should_exit = True
             if pnl_hold_threshold is not None and should_exit and pnl_pct is not None and pnl_pct > pnl_hold_threshold:
                 should_exit = False
@@ -349,7 +355,7 @@ def run_backtest(
         entrants = [sym for sym in target_symbols if sym not in holdings]
 
         # Handle position sizing based on rebalance mode (for score filtering)
-        if min_entry_score is not None and score_rebalance_mode == "full" and (entrants or len(target_symbols) != len(holdings)):
+        if min_entry_score is not None and min_entry_score > 0 and score_rebalance_mode == "full" and (entrants or len(target_symbols) != len(holdings)):
             # Full rebalance mode: rebalance all holdings to equal weight
             # Calculate total portfolio value
             portfolio_val = cash
@@ -528,7 +534,7 @@ def main():
     parser.add_argument("--vol-lookback", type=int, default=63)
     parser.add_argument("--target-vol", type=float, default=0.15)
     parser.add_argument("--exit-buffer", type=int, default=0, help="Allow exits only when rank exceeds top_n + buffer (hysteresis)")
-    parser.add_argument("--pnl-hold-threshold", type=float, help="If set, defer exit when rank is outside band but unrealized PnL > threshold (e.g., 0.05 for +5%)")
+    parser.add_argument("--pnl-hold-threshold", type=float, help="If set, defer exit when rank is outside band but unrealized PnL > threshold (e.g., 0.05 for +5 percent)")
     parser.add_argument("--min-score", type=float, help="Minimum momentum score required to enter/hold positions (e.g., 2.0) - deprecated, use --min-entry-score and --min-exit-score")
     parser.add_argument("--min-entry-score", type=float, help="Minimum score required to enter a position (e.g., 2.5)")
     parser.add_argument("--min-exit-score", type=float, help="Minimum score to remain in position; exit when below this (e.g., 1.5)")
