@@ -368,7 +368,8 @@ def run_backtest(
             if num_positions > 0:
                 target_per_stock = (portfolio_val * exposure) / num_positions
 
-                # Rebalance all target symbols
+                # Collect all needed buys/sells first
+                trades_needed = []
                 for sym in target_symbols:
                     price = trade_panel.loc[date].get(sym)
                     if pd.isna(price):
@@ -383,31 +384,11 @@ def run_backtest(
                     if abs(delta_value) < 1:  # Skip tiny adjustments
                         continue
 
-                    if delta_value > 0:  # Buy
-                        shares_to_buy = delta_value / (price * (1 + slippage))
-                        cost = shares_to_buy * price * (1 + slippage)
-                        if cost > cash:
-                            shares_to_buy = cash / (price * (1 + slippage))
-                            cost = shares_to_buy * price * (1 + slippage)
-                        if shares_to_buy > 0:
-                            holdings[sym] = holdings.get(sym, 0) + shares_to_buy
-                            cost_basis[sym] = cost_basis.get(sym, 0) + cost
-                            if sym not in entry_meta:
-                                entry_meta[sym] = {"date": date, "rank": current_ranks.get(sym)}
-                            cash -= cost
-                            notional = shares_to_buy * price
-                            rebalance_turnover += abs(notional)
-                            trade_records.append({
-                                "date": date,
-                                "symbol": sym,
-                                "side": "BUY",
-                                "shares": shares_to_buy,
-                                "price": price,
-                                "notional": notional,
-                                "slippage": shares_to_buy * price * slippage,
-                                "cash_after": cash,
-                            })
-                    elif delta_value < 0:  # Sell
+                    trades_needed.append((sym, price, delta_value))
+
+                # Execute sells first to free up cash
+                for sym, price, delta_value in trades_needed:
+                    if delta_value < 0:  # Sell
                         shares_to_sell = min(-delta_value / price, holdings.get(sym, 0))
                         if shares_to_sell > 0:
                             proceeds = shares_to_sell * price * (1 - slippage)
@@ -430,23 +411,79 @@ def run_backtest(
                                 "slippage": shares_to_sell * price * slippage,
                                 "cash_after": cash,
                             })
+
+                # Execute buys, giving remaining cash to last buy
+                buys_needed = [(sym, price, delta) for sym, price, delta in trades_needed if delta > 0]
+                for idx, (sym, price, delta_value) in enumerate(buys_needed):
+                    is_last_buy = (idx == len(buys_needed) - 1)
+
+                    if is_last_buy and len(buys_needed) > 1:
+                        # Give all remaining cash to last buy to avoid rounding errors
+                        shares_to_buy = cash / (price * (1 + slippage))
+                        cost = cash
+                    else:
+                        shares_to_buy = delta_value / (price * (1 + slippage))
+                        cost = shares_to_buy * price * (1 + slippage)
+                        if cost > cash + 0.01:  # Allow small tolerance
+                            shares_to_buy = cash / (price * (1 + slippage))
+                            cost = cash
+
+                    if shares_to_buy > 0:
+                        holdings[sym] = holdings.get(sym, 0) + shares_to_buy
+                        cost_basis[sym] = cost_basis.get(sym, 0) + cost
+                        if sym not in entry_meta:
+                            entry_meta[sym] = {"date": date, "rank": current_ranks.get(sym)}
+                        cash -= cost
+                        notional = shares_to_buy * price
+                        rebalance_turnover += abs(notional)
+                        trade_records.append({
+                            "date": date,
+                            "symbol": sym,
+                            "side": "BUY",
+                            "shares": shares_to_buy,
+                            "price": price,
+                            "notional": notional,
+                            "slippage": shares_to_buy * price * slippage,
+                            "cash_after": cash,
+                        })
         elif entrants:
             # Incremental mode (default): only allocate to new entrants
             target_cash = cash + sum(close_row.get(sym, last_prices.get(sym, 0)) * qty for sym, qty in holdings.items())
             deploy_cash = target_cash * exposure - (target_cash - cash)
             deploy_cash = max(0, deploy_cash)
             allocation = deploy_cash / len(entrants) if entrants else 0
+
+            # Track valid entrants (those with prices)
+            valid_entrants = []
             for sym in entrants:
                 price = trade_panel.loc[date].get(sym)
                 if pd.isna(price):
                     price = close_row.get(sym)
-                if pd.isna(price) or price <= 0:
-                    continue
-                gross = allocation
+                if not pd.isna(price) and price > 0:
+                    valid_entrants.append((sym, price))
+
+            # Execute buys, giving remaining cash to last stock to avoid rounding issues
+            for idx, (sym, price) in enumerate(valid_entrants):
+                is_last = (idx == len(valid_entrants) - 1)
+
+                if is_last and len(valid_entrants) > 1:
+                    # Give all remaining cash to last stock to ensure full deployment
+                    gross = cash
+                else:
+                    gross = allocation
+
                 shares = gross / (price * (1 + slippage))
                 cost = shares * price * (1 + slippage)
-                if cost > cash:
+
+                # Allow small tolerance for floating-point errors
+                if cost > cash + 0.01:
                     continue
+
+                # Ensure we don't overdraw cash (clamp to available)
+                if cost > cash:
+                    shares = cash / (price * (1 + slippage))
+                    cost = cash
+
                 holdings[sym] = holdings.get(sym, 0) + shares
                 cost_basis[sym] = cost_basis.get(sym, 0) + cost
                 entry_meta[sym] = {"date": date, "rank": current_ranks.get(sym)}
