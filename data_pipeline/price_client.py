@@ -26,13 +26,19 @@ class PriceClient:
         start_ts = pd.Timestamp(start)
         end_ts = pd.Timestamp(end)
 
+        # CRITICAL FIX: Zerodha API returns preliminary values when to_date equals
+        # the target date. Adding +1 day ensures we get finalized values.
+        # This affects both indices (large discrepancies) and stocks (small discrepancies).
+        # See: docs/zerodha_api_index_data_issue.md
+        fetch_end = end_ts + pd.Timedelta(days=1)
+
         if chunk_days is None:
             chunk_days = 30 if interval != "day" else 1900
 
         frames = []
         cur = start_ts
-        while cur < end_ts:
-            chunk_end = min(cur + pd.Timedelta(days=chunk_days), end_ts)
+        while cur < fetch_end:
+            chunk_end = min(cur + pd.Timedelta(days=chunk_days), fetch_end)
             candles = self.kite.historical_data(
                 instrument_token=token,
                 from_date=cur.to_pydatetime(),

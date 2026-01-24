@@ -67,11 +67,17 @@ def fetch_history(kite, symbol, start, end, interval="day", exchange=None, oi=Fa
     start_ts = pd.Timestamp(start)
     end_ts = pd.Timestamp(end)
 
+    # CRITICAL FIX: Zerodha API returns preliminary values when to_date equals
+    # the target date. Adding +1 day ensures we get finalized values.
+    # This affects both indices (large discrepancies) and stocks (small discrepancies).
+    # See: docs/zerodha_api_index_data_issue.md
+    fetch_end = end_ts + pd.Timedelta(days=1)
+
     chunk_days = 30 if interval != "day" else 1900
     frames = []
     cur = start_ts
-    while cur < end_ts:
-        chunk_end = min(cur + pd.Timedelta(days=chunk_days), end_ts)
+    while cur < fetch_end:
+        chunk_end = min(cur + pd.Timedelta(days=chunk_days), fetch_end)
         candles = kite.historical_data(
             instrument_token=token,
             from_date=cur.to_pydatetime(),
@@ -147,6 +153,12 @@ def download_batches(kite, symbols, configs, throttle_seconds=0.2, max_retries=3
         end_ts = pd.Timestamp(cfg["end"])
         print(f"\nFetching {cfg['interval']} data from {start_ts.date()} to {end_ts.date()} ...")
 
+        # CRITICAL FIX: Use rolling window for daily data to capture finalized values
+        # Zerodha API returns preliminary values initially, which get revised.
+        # Re-fetching last N days ensures we get finalized values.
+        # See: docs/zerodha_api_index_data_issue.md
+        LOOKBACK_DAYS = 30 if cfg["interval"] == "day" else 0
+
         for symbol in symbols:
             output_path = os.path.join(cfg["output_dir"], f"{symbol}_{cfg['suffix']}.csv")
             existing_df = None
@@ -159,7 +171,12 @@ def download_batches(kite, symbols, configs, throttle_seconds=0.2, max_retries=3
                         existing_df["date"] = to_local_naive(existing_df["date"])
                         last_ts = existing_df["date"].max()
                         if pd.notnull(last_ts):
-                            fetch_start = max(start_ts, last_ts + cfg["step"])
+                            if LOOKBACK_DAYS > 0:
+                                # Re-fetch last N days to get finalized values
+                                fetch_start = max(start_ts, last_ts - pd.Timedelta(days=LOOKBACK_DAYS))
+                            else:
+                                # Pure incremental update (for hourly data)
+                                fetch_start = max(start_ts, last_ts + cfg["step"])
                 except Exception as read_exc:
                     print(f"{symbol}: Warning - could not read existing data ({read_exc}). Re-fetching all.")
                     existing_df = None
@@ -187,10 +204,16 @@ def download_batches(kite, symbols, configs, throttle_seconds=0.2, max_retries=3
                 if df.empty:
                     print(f"{symbol}: No new data returned, skipping")
                     continue
+
+                # CRITICAL: Convert timezone-aware dates to naive BEFORE merging
+                df["date"] = to_local_naive(df["date"])
+
                 if existing_df is not None and not existing_df.empty:
                     df = pd.concat([existing_df, df], ignore_index=True)
-                df["date"] = to_local_naive(df["date"])
-                df = df.sort_values("date").drop_duplicates(subset=["date"])
+                    # Keep newer (more finalized) values for duplicates
+                    df = df.sort_values("date").drop_duplicates(subset=["date"], keep="last")
+                else:
+                    df = df.sort_values("date")
                 df.to_csv(output_path, index=False)
                 print(f"{symbol}: Saved {len(df)} rows to {output_path}")
                 successes += 1

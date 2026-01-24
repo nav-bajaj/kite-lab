@@ -111,13 +111,19 @@ def fetch_history(kite, instrument_token, start, end, interval="day"):
     start_ts = pd.Timestamp(start)
     end_ts = pd.Timestamp(end)
 
+    # CRITICAL FIX: Zerodha API returns preliminary values when to_date equals
+    # the target date. Adding +1 day ensures we get finalized values.
+    # This is especially critical for indices but also affects stocks.
+    # See: docs/zerodha_api_index_data_issue.md
+    fetch_end = end_ts + pd.Timedelta(days=1)
+
     # For daily data, use large chunks (1900 days max per API call)
     chunk_days = 1900 if interval == "day" else 30
     frames = []
     cur = start_ts
 
-    while cur < end_ts:
-        chunk_end = min(cur + pd.Timedelta(days=chunk_days), end_ts)
+    while cur < fetch_end:
+        chunk_end = min(cur + pd.Timedelta(days=chunk_days), fetch_end)
         candles = kite.historical_data(
             instrument_token=instrument_token,
             from_date=cur.to_pydatetime(),
@@ -200,6 +206,9 @@ def download_indices(kite, indices, start_date, end_date, output_dir, throttle_s
         output_path = os.path.join(output_dir, f"{safe_name}.csv")
 
         # Check for existing data and determine fetch start date
+        # CRITICAL FIX: Use rolling window instead of incremental updates
+        # to capture revised/finalized values for recent data
+        LOOKBACK_DAYS = 30
         existing_df = None
         fetch_start = start_date
 
@@ -210,8 +219,9 @@ def download_indices(kite, indices, start_date, end_date, output_dir, throttle_s
                     existing_df["date"] = to_local_naive(existing_df["date"])
                     last_ts = existing_df["date"].max()
                     if pd.notnull(last_ts):
-                        # Fetch from day after last recorded date
-                        fetch_start = max(start_date, last_ts + pd.Timedelta(days=1))
+                        # Re-fetch last N days to capture finalized values
+                        # See: docs/zerodha_api_index_data_issue.md
+                        fetch_start = max(start_date, last_ts - pd.Timedelta(days=LOOKBACK_DAYS))
             except Exception as read_exc:
                 print(f"{tradingsymbol}: Warning - could not read existing data ({read_exc}). Re-fetching all.")
                 existing_df = None
@@ -245,9 +255,9 @@ def download_indices(kite, indices, start_date, end_date, output_dir, throttle_s
             if existing_df is not None and not existing_df.empty:
                 df = pd.concat([existing_df, df], ignore_index=True)
 
-            # Clean and sort
+            # Clean and sort - keep newer (more finalized) values for duplicates
             df["date"] = to_local_naive(df["date"])
-            df = df.sort_values("date").drop_duplicates(subset=["date"])
+            df = df.sort_values("date").drop_duplicates(subset=["date"], keep="last")
 
             # Save to CSV
             df.to_csv(output_path, index=False)

@@ -1,16 +1,22 @@
 import argparse
 import datetime as dt
 import os
+import sys
 from pathlib import Path
 
 import pandas as pd
 from dotenv import load_dotenv
 from kiteconnect import KiteConnect
 
+# Add parent directory to path
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))
+
 from data_pipeline.price_client import PriceClient
 from data_pipeline.storage import load_dataframe, save_dataframe
 from data_pipeline.qa import validate_prices
-from history_utils import to_local_naive
+from scripts.history_utils import to_local_naive
 
 
 def init_kite():
@@ -28,16 +34,35 @@ def update_symbol(client, symbol, output_dir, interval, start, end):
     path = Path(output_dir) / f"{symbol}_{interval}.csv"
     existing = load_dataframe(path)
     fetch_start = pd.Timestamp(start)
+
+    # CRITICAL FIX: Use rolling window for daily data to capture finalized values
+    # Zerodha API returns preliminary values initially, which get revised.
+    # Re-fetching last N days ensures we get finalized values.
+    # See: docs/zerodha_api_index_data_issue.md
+    LOOKBACK_DAYS = 30 if interval == "day" else 0
+
     if not existing.empty:
         last = existing["date"].max()
-        fetch_start = max(fetch_start, last + pd.Timedelta(days=1))
+        if LOOKBACK_DAYS > 0:
+            # Re-fetch last N days to get finalized values
+            fetch_start = max(fetch_start, last - pd.Timedelta(days=LOOKBACK_DAYS))
+        else:
+            # Pure incremental update (for hourly data)
+            fetch_start = max(fetch_start, last + pd.Timedelta(days=1))
+
     df = client.fetch_history(symbol, fetch_start, end, interval=interval)
     if df.empty:
         return
+
+    # CRITICAL: Convert timezone-aware dates to naive BEFORE merging
+    df["date"] = to_local_naive(df["date"])
+
     if not existing.empty:
         df = pd.concat([existing, df], ignore_index=True)
-    df["date"] = to_local_naive(df["date"])
-    df = df.sort_values("date").drop_duplicates(subset=["date"])
+        # Keep newer (more finalized) values for duplicates
+        df = df.sort_values("date").drop_duplicates(subset=["date"], keep="last")
+    else:
+        df = df.sort_values("date")
     save_dataframe(df, path)
     qa = validate_prices(path, interval)
     if qa["errors"] or qa["warnings"]:

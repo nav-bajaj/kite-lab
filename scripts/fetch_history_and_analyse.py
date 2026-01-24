@@ -22,13 +22,19 @@ def fetch_history(symbol, start, end, interval="day", exchange="NSE", oi=False):
     start = pd.Timestamp(start)
     end   = pd.Timestamp(end)
 
+    # CRITICAL FIX: Zerodha API returns preliminary values when to_date equals
+    # the target date. Adding +1 day ensures we get finalized values.
+    # This affects both indices (large discrepancies) and stocks (small discrepancies).
+    # See: docs/zerodha_api_index_data_issue.md
+    fetch_end = end + pd.Timedelta(days=1)
+
     # Conservative chunking (minute data often requires small windows).
     # Zerodha API limit: max 2000 days for daily data, use 1900 to be safe
     chunk_days = 30 if interval != "day" else 1900
     frames = []
     cur = start
-    while cur < end:
-        chunk_end = min(cur + pd.Timedelta(days=chunk_days), end)
+    while cur < fetch_end:
+        chunk_end = min(cur + pd.Timedelta(days=chunk_days), fetch_end)
         candles = kite.historical_data(
             instrument_token=token,
             from_date=cur.to_pydatetime(),
