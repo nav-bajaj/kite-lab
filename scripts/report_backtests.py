@@ -2140,53 +2140,7 @@ def build_report(run_paths, output_path: Path):
         else:
             dd_periods_html = "<p>No significant drawdown periods identified.</p>"
 
-        # Build rolling metrics section
-        rolling_metrics = entry.get("rolling_metrics", {})
-        rolling_charts = rolling_metrics.get("charts", {})
-        rolling_stats = rolling_metrics.get("stats", {})
-
-        if rolling_charts:
-            rolling_sharpe_chart = f'<img src="data:image/png;base64,{rolling_charts["sharpe"]}" alt="Rolling Sharpe" />' if rolling_charts.get("sharpe") else ""
-            rolling_vol_chart = f'<img src="data:image/png;base64,{rolling_charts["volatility"]}" alt="Rolling Volatility" />' if rolling_charts.get("volatility") else ""
-            rolling_beta_chart = f'<img src="data:image/png;base64,{rolling_charts["beta"]}" alt="Rolling Beta" />' if rolling_charts.get("beta") else ""
-            rolling_corr_chart = f'<img src="data:image/png;base64,{rolling_charts["correlation"]}" alt="Rolling Correlation" />' if rolling_charts.get("correlation") else ""
-            rolling_dd_chart = f'<img src="data:image/png;base64,{rolling_charts["rolling_dd"]}" alt="Rolling Max DD" />' if rolling_charts.get("rolling_dd") else ""
-
-            # Rolling metrics summary table
-            rolling_stats_df = pd.DataFrame([
-                {"Metric": "Avg Rolling Sharpe (6M)", "Value": format_number(rolling_stats.get("avg_sharpe_6m", 0), 2)},
-                {"Metric": "Min Rolling Sharpe (6M)", "Value": format_number(rolling_stats.get("min_sharpe_6m", 0), 2)},
-                {"Metric": "Max Rolling Sharpe (6M)", "Value": format_number(rolling_stats.get("max_sharpe_6m", 0), 2)},
-                {"Metric": "Avg Rolling Vol (90D)", "Value": format_percent(rolling_stats.get("avg_vol_90d", 0))},
-                {"Metric": "Min Rolling Vol (90D)", "Value": format_percent(rolling_stats.get("min_vol_90d", 0))},
-                {"Metric": "Max Rolling Vol (90D)", "Value": format_percent(rolling_stats.get("max_vol_90d", 0))},
-                {"Metric": "Avg Rolling Beta (6M)", "Value": format_number(rolling_stats.get("avg_beta_6m", 0), 2)},
-                {"Metric": "Min Rolling Beta (6M)", "Value": format_number(rolling_stats.get("min_beta_6m", 0), 2)},
-                {"Metric": "Max Rolling Beta (6M)", "Value": format_number(rolling_stats.get("max_beta_6m", 0), 2)},
-                {"Metric": "Avg Rolling Correlation (6M)", "Value": format_number(rolling_stats.get("avg_corr_6m", 0), 2)},
-                {"Metric": "Avg Rolling Max DD (1Y)", "Value": format_percent(rolling_stats.get("avg_rolling_dd_1y", 0))},
-                {"Metric": "Worst Rolling Max DD (1Y)", "Value": format_percent(rolling_stats.get("worst_rolling_dd_1y", 0))},
-            ])
-            rolling_stats_html = rolling_stats_df.to_html(index=False, escape=False)
-
-            rolling_metrics_section = f"""
-                <h3>Rolling Metrics Analysis</h3>
-                <p>Analysis of performance stability and consistency over time using rolling windows.</p>
-                <h4>Rolling Sharpe Ratio</h4>
-                {rolling_sharpe_chart}
-                <h4>Rolling Volatility</h4>
-                {rolling_vol_chart}
-                <h4>Rolling Beta vs Benchmark</h4>
-                {rolling_beta_chart}
-                <h4>Rolling Correlation vs Benchmark</h4>
-                {rolling_corr_chart}
-                <h4>Rolling Maximum Drawdown</h4>
-                {rolling_dd_chart}
-                <h4>Rolling Metrics Summary</h4>
-                {rolling_stats_html}
-            """
-        else:
-            rolling_metrics_section = "<h3>Rolling Metrics Analysis</h3><p>Rolling metrics unavailable (matplotlib missing).</p>"
+        # Rolling metrics section removed for performance
 
         # Build calendar performance section
         monthly_heatmap = entry.get("monthly_heatmap", "")
@@ -2247,45 +2201,15 @@ def build_report(run_paths, output_path: Path):
             else:
                 quarterly_html = "<p>Insufficient data for quarterly analysis.</p>"
 
-            # Top 5 best and worst months
-            best_months = monthly_analysis.get('best_months', pd.DataFrame())
-            worst_months = monthly_analysis.get('worst_months', pd.DataFrame())
-
-            if not best_months.empty:
-                best_months_display = best_months.copy()
-                best_months_display['month_name'] = best_months_display['month'].apply(lambda x: month_names[int(x) - 1])
-                best_months_display['return'] = best_months_display['return'].apply(format_percent)
-                best_months_display = best_months_display[['year', 'month_name', 'return']]
-                best_months_display.columns = ['Year', 'Month', 'Return']
-                best_months_html = best_months_display.to_html(index=False, escape=False)
-            else:
-                best_months_html = "<p>No data.</p>"
-
-            if not worst_months.empty:
-                worst_months_display = worst_months.copy()
-                worst_months_display['month_name'] = worst_months_display['month'].apply(lambda x: month_names[int(x) - 1])
-                worst_months_display['return'] = worst_months_display['return'].apply(format_percent)
-                worst_months_display = worst_months_display[['year', 'month_name', 'return']]
-                worst_months_display.columns = ['Year', 'Month', 'Return']
-                worst_months_html = worst_months_display.to_html(index=False, escape=False)
-            else:
-                worst_months_html = "<p>No data.</p>"
-
             calendar_section = f"""
                 <h3>Calendar Performance</h3>
-                <p>Visual representation of monthly and quarterly returns, plus seasonality analysis.</p>
+                <p>Visual representation of monthly and quarterly returns.</p>
                 <h4>Monthly Returns Heatmap</h4>
                 {monthly_heatmap_html}
                 <h4>Monthly Performance Summary</h4>
                 {monthly_stats_html}
                 <h4>Quarterly Returns</h4>
                 {quarterly_html}
-                <h4>Top 5 Best Months</h4>
-                {best_months_html}
-                <h4>Top 5 Worst Months</h4>
-                {worst_months_html}
-                <h4>Seasonality by Calendar Month</h4>
-                {seasonality_html}
             """
         else:
             calendar_section = "<h3>Calendar Performance</h3><p>Calendar performance unavailable (matplotlib missing).</p>"
@@ -2377,104 +2301,7 @@ def build_report(run_paths, output_path: Path):
         else:
             trade_analytics_section = "<h3>Trade Analytics</h3><p>No trade data available.</p>"
 
-        # Position-Level Insights Section
-        position_analysis = entry.get("position_analysis", {})
-        position_charts = entry.get("position_charts", {})
-
-        if position_analysis and position_analysis.get("holdings_history") is not None and not position_analysis["holdings_history"].empty:
-            # Summary metrics
-            summary_metrics = [
-                {"Metric": "Avg Number of Holdings", "Value": format_number(position_analysis["avg_num_holdings"], 1)},
-                {"Metric": "Avg Position Size", "Value": format_percent(position_analysis["avg_position_size"] / 100)},
-                {"Metric": "Avg HHI (Concentration)", "Value": format_number(position_analysis["avg_hhi"], 4)},
-                {"Metric": "Avg Top 5 Concentration", "Value": format_percent(position_analysis["avg_top5_concentration"])},
-                {"Metric": "Avg Gini Coefficient", "Value": format_number(position_analysis["avg_gini"], 4)},
-            ]
-            summary_metrics_html = pd.DataFrame(summary_metrics).to_html(index=False, escape=False)
-
-            # Charts
-            holdings_count_html = ""
-            if position_charts.get("holdings_count_chart"):
-                holdings_count_html = f'<img src="data:image/png;base64,{position_charts["holdings_count_chart"]}" alt="Holdings Count" style="max-width: 100%;" />'
-
-            concentration_html = ""
-            if position_charts.get("concentration_chart"):
-                concentration_html = f'<img src="data:image/png;base64,{position_charts["concentration_chart"]}" alt="Concentration Metrics" style="max-width: 100%;" />'
-
-            # Interpretation box
-            hhi = position_analysis["avg_hhi"]
-            gini = position_analysis["avg_gini"]
-
-            # HHI interpretation (1/N for equal weight, 1.0 for single holding)
-            n_holdings = position_analysis["avg_num_holdings"]
-            equal_weight_hhi = 1.0 / n_holdings if n_holdings > 0 else 0
-            hhi_ratio = hhi / equal_weight_hhi if equal_weight_hhi > 0 else 1
-
-            if hhi_ratio < 1.1:
-                hhi_interpretation = "Very evenly distributed (close to equal weight)"
-                hhi_color = "#4CAF50"
-            elif hhi_ratio < 1.3:
-                hhi_interpretation = "Moderately concentrated"
-                hhi_color = "#FF9800"
-            else:
-                hhi_interpretation = "Highly concentrated (unequal weights)"
-                hhi_color = "#F44336"
-
-            # Gini interpretation (0 = perfect equality, 1 = perfect inequality)
-            if gini < 0.2:
-                gini_interpretation = "Very equal distribution"
-                gini_color = "#4CAF50"
-            elif gini < 0.4:
-                gini_interpretation = "Moderately equal distribution"
-                gini_color = "#8BC34A"
-            elif gini < 0.6:
-                gini_interpretation = "Moderate inequality"
-                gini_color = "#FF9800"
-            else:
-                gini_interpretation = "High inequality"
-                gini_color = "#F44336"
-
-            interpretation_html = f"""
-            <div style="background: #f5f5f5; padding: 15px; border-radius: 4px; margin: 10px 0;">
-                <h4 style="margin-top: 0;">Portfolio Structure Interpretation</h4>
-                <div style="margin: 10px 0;">
-                    <strong>HHI (Herfindahl-Hirschman Index):</strong>
-                    <span style="color: {hhi_color}; font-weight: bold;">{format_number(hhi, 4)}</span>
-                    <br>
-                    <span style="color: {hhi_color};">→ {hhi_interpretation}</span>
-                    <br>
-                    <small>(Equal-weight HHI would be {format_number(equal_weight_hhi, 4)})</small>
-                </div>
-                <div style="margin: 10px 0;">
-                    <strong>Gini Coefficient:</strong>
-                    <span style="color: {gini_color}; font-weight: bold;">{format_number(gini, 4)}</span>
-                    <br>
-                    <span style="color: {gini_color};">→ {gini_interpretation}</span>
-                </div>
-                <p style="margin: 10px 0; font-size: 0.9em; color: #666;">
-                    <strong>Note:</strong> Lower HHI and Gini values indicate more even distribution of capital across positions.
-                    HHI ranges from 1/N (equal weight) to 1.0 (single position). Gini ranges from 0 (perfect equality) to 1 (perfect inequality).
-                </p>
-            </div>
-            """
-
-            position_insights_section = f"""
-                <h3>Portfolio Structure & Position Sizing</h3>
-                <p>Analysis of portfolio concentration, position sizing, and capital distribution over time.</p>
-
-                <h4>Summary Metrics</h4>
-                {summary_metrics_html}
-
-                {interpretation_html}
-
-                <h4>Portfolio Size Over Time</h4>
-                {holdings_count_html}
-
-                <h4>Concentration Metrics Over Time</h4>
-                {concentration_html}
-            """
-        else:
-            position_insights_section = "<h3>Portfolio Structure & Position Sizing</h3><p>Position insights unavailable (insufficient trade data).</p>"
+        # Position-Level Insights Section removed for performance
 
         # Rebalancing Behavior Section
         rebalancing_analysis = entry.get("rebalancing_analysis", {})
@@ -2498,18 +2325,6 @@ def build_report(run_paths, output_path: Path):
             ]
             rebalance_metrics_html = pd.DataFrame(rebalance_metrics).to_html(index=False, escape=False)
 
-            # Trade frequency by day of week
-            day_freq_html = ""
-            if trade_freq.get("by_day_of_week"):
-                day_freq_data = [{"Day": day, "Trades": count}
-                               for day, count in trade_freq["by_day_of_week"].items()]
-                # Sort by common week order
-                day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-                day_freq_df = pd.DataFrame(day_freq_data)
-                day_freq_df["Day"] = pd.Categorical(day_freq_df["Day"], categories=day_order, ordered=True)
-                day_freq_df = day_freq_df.sort_values("Day")
-                day_freq_html = day_freq_df.to_html(index=False, escape=False)
-
             # Charts
             turnover_chart_html = ""
             if rebalancing_charts.get("turnover_chart"):
@@ -2531,9 +2346,6 @@ def build_report(run_paths, output_path: Path):
 
                 <h4>Rebalance Size Distribution</h4>
                 {rebalance_freq_chart_html}
-
-                <h4>Trade Frequency by Day of Week</h4>
-                {day_freq_html}
             """
         else:
             rebalancing_section = "<h3>Rebalancing Behavior Analysis</h3><p>Rebalancing analysis unavailable (no turnover data).</p>"
@@ -2662,13 +2474,9 @@ def build_report(run_paths, output_path: Path):
                 <h4>Top 5 Worst Drawdown Periods</h4>
                 {dd_periods_html}
 
-                {rolling_metrics_section}
-
                 {calendar_section}
 
                 {trade_analytics_section}
-
-                {position_insights_section}
 
                 {rebalancing_section}
 
