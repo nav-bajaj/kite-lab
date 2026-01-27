@@ -8,6 +8,7 @@ STEPS = [
     ("Fetch indices data", [sys.executable, "scripts/fetch_indices_history.py"]),
     ("Update Nifty 100 benchmark", [sys.executable, "scripts/compute_benchmark.py"]),
     ("Build momentum rankings", [sys.executable, "scripts/build_momentum_signals.py"]),
+    ("Backup data to external location", [sys.executable, "scripts/sync_data_backup.py"]),
 ]
 
 
