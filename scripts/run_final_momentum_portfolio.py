@@ -268,7 +268,7 @@ def main():
     parser.add_argument("--rebalance-weeks", type=int, default=1)
     parser.add_argument("--skip-days", type=int, default=0)
     parser.add_argument("--top-n", type=int, default=24)
-    parser.add_argument("--vol-floor", type=float, default=0.2)
+    parser.add_argument("--vol-floor", type=float, default=0.05)
     parser.add_argument("--vol-power", type=float, default=1.0)
     parser.add_argument("--min-entry-score", type=float, default=0.0, help="Minimum momentum score for entry (default: 0.0 - no filtering)")
     parser.add_argument("--min-exit-score", type=float, default=0.0, help="Minimum momentum score to remain in position (default: 0.0 - no filtering)")
