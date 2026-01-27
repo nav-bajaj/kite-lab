@@ -12,17 +12,33 @@ This folder contains experiments running the same momentum strategy on the Nifty
 **Source:** `data/static/nifty100_universe.csv`
 **Data:** Same price data from `nse500_data/` directory
 
-## Parameters
+## Configurations Tested
 
-Identical to NSE 500 final portfolio:
+### Configuration 1: L6 + 1-Week (Baseline) ✓
 - **Lookback:** 6 months (126 days)
-- **Skip days:** 0 (no skip window)
 - **Rebalance:** Weekly (Friday signals → Monday trades)
+- **CAGR:** 44.86%
+- **Max DD:** -19.11%
+- **Folder:** `nifty100_portfolio_20260127223454/`
+
+### Configuration 2: L9 + 2-Week
+- **Lookback:** 9 months (189 days)
+- **Rebalance:** Bi-weekly (every 2 weeks)
+- **CAGR:** 38.95%
+- **Max DD:** -25.22%
+- **Folder:** `nifty100_portfolio_20260127223955/`
+
+**Common Parameters:**
+- **Skip days:** 0 (no skip window)
 - **Vol floor:** 0.05 (5% daily = 79% annualized)
 - **Vol power:** 1.0
 - **Top-N:** 24 stocks
 - **Initial capital:** ₹1,000,000
 - **Slippage:** 0.2% (20 bps)
+
+**Winner:** L6 + 1-Week (higher returns, lower risk)
+
+See `COMPARISON.md` for detailed analysis.
 
 ## Performance Comparison
 
