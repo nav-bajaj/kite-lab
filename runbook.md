@@ -128,6 +128,13 @@ Use **entry=2.5, exit=1.5, incremental mode** for best risk-adjusted returns:
 - `python scripts/run_lookback_rebalance_mc.py --runs 20 --sample-size 250 --lookback-months 6 9 12 --rebalance-weeks 1 2 3 4 [--dry-run]`
   - Monte Carlo testing of lookback period × rebalance frequency combinations. Samples top-N, exit-buffer, and PnL-hold per run. Generates aggregated statistics by lookback, rebalance, and their combinations. Results saved under `experiments/lookback_rebal_mc_*`.
 
+## Daily Portfolio Report
+- `python scripts/generate_daily_report.py [--experiment-root experiments/final_portfolio] [--prices-dir nse500_data] [--universe-file data/static/nse500_universe.csv] [--output data/final_portfolio/daily_report.html]`
+  - Generates a single-page HTML dashboard from the latest experiment run.
+  - Sections: summary card (value, daily change, benchmark, drawdown), position breakdown (24 stocks sorted by PnL), trailing 10-day performance table, 30-day portfolio-vs-benchmark chart, sector/industry exposure.
+  - Defaults write to `data/final_portfolio/daily_report.html`; override with `--output`.
+  - Reads per-symbol prices from `nse500_data/` for position-level daily P&L and industry mapping from the universe CSV.
+
 ## Utilities
 - `python scripts/run_daily_pipeline.py [--with-login] [--dry-run]`
   - Chains login (optional) → fetch NSE500 → compute benchmark → build signals.
