@@ -404,6 +404,8 @@ def main():
             str(args.min_exit_score),
             "--score-rebalance-mode",
             args.score_rebalance_mode,
+            "--min-hold-days",
+            "8",
         ],
         args.dry_run,
     )
