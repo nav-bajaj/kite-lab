@@ -49,6 +49,31 @@ def load_signals(path: Path, top_n: int, exit_buffer: int = 0):
     return entry_grouped, rank_map_by_date, score_map_by_date, df
 
 
+def build_streak_map(signals_df: pd.DataFrame, top_n: int) -> dict:
+    """For each rebalance date, map symbol -> consecutive weeks in top-N.
+
+    Returns {Timestamp: {symbol: streak_count}}.
+    A stock appearing for the first time has streak=1.
+    """
+    entry_df = signals_df[signals_df["rank"] <= top_n]
+    dates = sorted(entry_df["date"].unique())
+    prev_symbols = set()
+    streaks = {}  # symbol -> current streak
+    result = {}
+
+    for date in dates:
+        current_symbols = set(entry_df[entry_df["date"] == date]["symbol"])
+        new_streaks = {}
+        for sym in current_symbols:
+            new_streaks[sym] = streaks.get(sym, 0) + 1 if sym in prev_symbols else 1
+        # Reset streaks for symbols that dropped out
+        streaks = new_streaks
+        result[pd.Timestamp(date)] = dict(streaks)
+        prev_symbols = current_symbols
+
+    return result
+
+
 def load_benchmark(path: Path):
     df = pd.read_csv(path, parse_dates=["date"])
     df = df.sort_values("date")
@@ -180,6 +205,9 @@ def run_backtest(
     score_rebalance_mode="full",
     min_entry_score=None,
     min_exit_score=None,
+    min_consecutive_weeks=1,
+    entry_rank=None,
+    min_hold_days=0,
 ):
     # Handle backward compatibility: if min_score is set but entry/exit not set, use min_score for both
     if min_score is not None:
@@ -190,6 +218,7 @@ def run_backtest(
 
     close_panel, trade_panel = load_price_panels(prices_dir)
     entry_signals, rank_map_by_date, score_map_by_date, _signals_df = load_signals(signals_path, top_n, exit_buffer)
+    streak_map = build_streak_map(_signals_df, top_n) if min_consecutive_weeks > 1 else {}
     benchmark = load_benchmark(benchmark_path)
     calendar = close_panel.index
     benchmark_aligned = benchmark.reindex(calendar).ffill()
@@ -309,6 +338,10 @@ def run_backtest(
                 should_exit = True
             if pnl_hold_threshold is not None and should_exit and pnl_pct is not None and pnl_pct > pnl_hold_threshold:
                 should_exit = False
+            if min_hold_days > 0 and should_exit:
+                entry_date = entry_meta.get(sym, {}).get("date")
+                if entry_date is not None and (date - entry_date).days < min_hold_days:
+                    should_exit = False
             if should_exit:
                 exits.append(sym)
         rebalance_turnover = 0
@@ -353,6 +386,22 @@ def run_backtest(
             })
 
         entrants = [sym for sym in target_symbols if sym not in holdings]
+
+        # Filter entrants by consecutive weeks in top-N
+        if min_consecutive_weeks > 1 and streak_map:
+            streaks = streak_map.get(signal_date, {})
+            entrants = [sym for sym in entrants if streaks.get(sym, 0) >= min_consecutive_weeks]
+
+        # Filter entrants by entry rank (must be top entry_rank to enter,
+        # but existing holdings stay until they exit the full top_n band)
+        if entry_rank is not None:
+            entrants = [sym for sym in entrants if current_ranks.get(sym, float("inf")) <= entry_rank]
+
+        # When pnl-hold keeps stocks beyond their rank, cap new entrants
+        # so total holdings never exceed top_n.
+        if pnl_hold_threshold is not None:
+            max_new = max(0, top_n - len(holdings))
+            entrants = entrants[:max_new]
 
         # Handle position sizing based on rebalance mode (for score filtering)
         if min_entry_score is not None and min_entry_score > 0 and score_rebalance_mode == "full" and (entrants or len(target_symbols) != len(holdings)):
@@ -576,6 +625,9 @@ def main():
     parser.add_argument("--min-entry-score", type=float, help="Minimum score required to enter a position (e.g., 2.5)")
     parser.add_argument("--min-exit-score", type=float, help="Minimum score to remain in position; exit when below this (e.g., 1.5)")
     parser.add_argument("--score-rebalance-mode", choices=["full", "incremental"], default="incremental", help="full: rebalance all holdings to equal weight; incremental: only allocate to new entrants")
+    parser.add_argument("--min-consecutive-weeks", type=int, default=1, help="Require stock to be in top-N for N consecutive weeks before entry (default: 1 = no filter)")
+    parser.add_argument("--entry-rank", type=int, help="Only enter stocks ranked <= this value; existing holdings stay until they leave top-N (e.g., 12 = enter top-12, hold until out of top-24)")
+    parser.add_argument("--min-hold-days", type=int, default=0, help="Minimum days to hold a position before it can be exited (default: 0)")
     args = parser.parse_args()
 
     run_backtest(
@@ -597,6 +649,9 @@ def main():
         score_rebalance_mode=args.score_rebalance_mode,
         min_entry_score=args.min_entry_score,
         min_exit_score=args.min_exit_score,
+        min_consecutive_weeks=args.min_consecutive_weeks,
+        entry_rank=args.entry_rank,
+        min_hold_days=args.min_hold_days,
     )
 
 
