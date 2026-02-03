@@ -6,11 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Kite-Lab is a momentum-based quantitative trading system for Indian equities using the Zerodha KiteConnect API. The system fetches NSE 500 market data, generates volatility-adjusted momentum signals, and backtests weekly-rebalanced portfolios with comprehensive performance analytics.
 
-**Current Status (January 2026):**
-- Production portfolio: NSE 500, L6 momentum, weekly rebalance
-- Performance: 57.51% CAGR, -27.67% max DD, 1.71 Sharpe (2020-2026)
-- Recent optimizations: Vol floor parameter (0.20 → 0.05)
-- Alternative portfolio: Nifty 100 for risk-averse investors
+**Current Status (February 2026):**
+- Production portfolio: NSE 500, L6 momentum, weekly rebalance, min-hold 8 days
+- Performance: 59.4% CAGR, -30.0% max DD, 1.92 Sharpe (2020-2026)
+- Recent optimizations: Min-hold-days 8 (eliminated 0-7d churn), vol floor (0.20 → 0.05)
+- Alternative universes: Nifty 100, Nifty 250 via `--universe` argument
+- Single portfolio script handles all universes
 
 ## Environment Setup
 
@@ -50,26 +51,21 @@ python scripts/run_daily_pipeline.py --with-login
 
 ### Final Portfolio Generation
 ```bash
-# Generate final NSE 500 portfolio (Thursday/Friday for weekly rebalance)
+# Generate final NSE 500 portfolio (default universe)
 python scripts/run_final_momentum_portfolio.py
 
 # With fresh data fetch
 python scripts/run_final_momentum_portfolio.py --with-data --with-login
 
+# Generate Nifty 100 portfolio (large-cap only)
+python scripts/run_final_momentum_portfolio.py --universe nifty100
+
+# Generate Nifty 250 portfolio
+python scripts/run_final_momentum_portfolio.py --universe nifty250
+
 # Thursday: Generates changes report (adds/drops)
 # Friday: Generates order file for execution
-# Output: experiments/final_portfolio/final_portfolio_TIMESTAMP/
-```
-
-### Nifty 100 Alternative Portfolio
-```bash
-# Generate Nifty 100 portfolio (same parameters, large-cap only)
-python scripts/run_nifty100_momentum.py
-
-# With different parameters
-python scripts/run_nifty100_momentum.py --lookback-months 9 --rebalance-weeks 2
-
-# Results: nifty_100_tests/nifty100_portfolio_TIMESTAMP/
+# Output varies by universe (see UNIVERSE_DEFAULTS in script)
 ```
 
 ### Manual Data Operations
@@ -162,6 +158,7 @@ Script: `scripts/backtest_momentum.py`
 - **Rebalance timing**: Friday close signals → Monday open execution
 - **Position sizing**: Equal-weight across top-N holdings
 - **Exit rules**: Baseline (rank-based exit when drops out of top-N)
+- **Min hold period**: 8 days default (prevents immediate churn exits)
 - **Comprehensive metrics**: CAGR, volatility, Sharpe, max DD, turnover, hit rates
 
 **Output files:**
@@ -210,29 +207,29 @@ Script: `scripts/sync_data_backup.py`
 - **Vol floor:** 0.05 (5% daily = 79% annualized)
 - **Vol power:** 1.0
 - **Top-N:** 24 stocks
+- **Min hold days:** 8 (one full rebalance cycle)
 - **Initial capital:** ₹1,000,000
 - **Slippage:** 0.2% (20 bps)
 
-**Performance (2020-07-10 to 2026-01-27):**
-- **CAGR:** 57.51%
-- **Total return:** 1144.7% (₹12,446,536 final value)
-- **Max drawdown:** -27.67%
-- **Volatility:** 26.02% annualized
-- **Sharpe ratio:** 1.71
-- **Turnover:** 122.27% annualized
-- **Hit rate:** 47.76%
-- **Avg holding:** 38.7 days
-- **Total trades:** 2,482 (1,253 buys, 1,229 sells)
+**Performance (2020-07-10 to 2026-02-02, with min-hold-days 8):**
+- **CAGR:** 59.4%
+- **Max drawdown:** -30.0%
+- **Sharpe ratio:** 1.92
+- **Turnover:** 123% annualized
+- **Hit rate:** 49.3%
+- **Avg holding:** 43.3 days
+- **Total trades:** 2,352 (1,188 buys, 1,164 sells)
 
 **Latest holdings (Jan 2026):**
 HINDCOPPER, ATHERENERG, NATIONALUM, NETWEB, VEDL, SHRIRAMFIN, ASHOKLEY, HINDZINC, BANKINDIA, JKTYRE, MUTHOOTFIN, INDIANB, MCX, HINDALCO, CANBK, M&MFIN, LTF, INDIACEM, CUB, IDEA, AUBANK, FEDERALBNK, ABCAPITAL, GPIL
 
 ### Nifty 100 Alternative Portfolio (Conservative)
 **Location:** `nifty_100_tests/`
+**Run with:** `python scripts/run_final_momentum_portfolio.py --universe nifty100`
 
 **Parameters:**
 - **Universe:** Nifty 100 (100 large-cap stocks)
-- **Same parameters as NSE 500** (L6, weekly, vol_floor=0.05, top-N=24)
+- **Same parameters as NSE 500** (L6, weekly, vol_floor=0.05, top-N=24, min-hold 8d)
 
 **Performance (2020-07-10 to 2026-01-27):**
 - **CAGR:** 44.86% (-12.65% vs NSE 500)
@@ -264,6 +261,7 @@ HINDZINC, VEDL, SHRIRAMFIN, CANBK, HINDALCO, EICHERMOT, SBIN, TVSMOTOR, BANKBARO
 **Universe definitions:**
 - `data/static/nse500_universe.csv` - NSE 500 stock list
 - `data/static/nifty100_universe.csv` - Nifty 100 stock list
+- `data/static/nifty250_universe.csv` - Nifty 250 stock list
 
 **Benchmarks:**
 - `data/benchmarks/nifty100.csv` - Nifty 100 Total Return Index
@@ -313,7 +311,7 @@ python scripts/run_final_momentum_portfolio.py
 ### Parameter Testing Workflow
 1. **Test new configuration:**
    ```bash
-   python scripts/run_nifty100_momentum.py --lookback-months 9 --rebalance-weeks 2
+   python scripts/run_final_momentum_portfolio.py --universe nifty100 --lookback-months 9 --rebalance-weeks 2
    ```
 
 2. **Compare results:**
@@ -322,7 +320,7 @@ python scripts/run_final_momentum_portfolio.py
    - Compare turnover and hit rates
 
 3. **Document findings:**
-   - Add to `nifty_100_tests/COMPARISON.md` or similar
+   - Add to `docs/failed_experiments.md` for experiment results
    - Update summary tables
 
 ## Recent Optimizations (January 2026)
@@ -392,6 +390,7 @@ python scripts/run_final_momentum_portfolio.py
 ✅ **Skip days:** 0 (no skip window needed)
 ✅ **Top-N:** 24 stocks (diversification vs concentration balance)
 ✅ **Universe:** Full NSE 500 (captures mid-cap alpha)
+✅ **Min hold days:** 8 (eliminates 0-7d churn, +3.2% CAGR, +0.05 Sharpe)
 
 ### What Doesn't Work (Tested):
 ❌ **Longer lookbacks:** 9-month (L9) underperforms 6-month
@@ -400,14 +399,21 @@ python scripts/run_final_momentum_portfolio.py
 ❌ **Low vol floor:** <0.04 allows over-weighting low-vol, low-return stocks
 ❌ **High vol floor:** >0.05 conceptually wrong (no benefit)
 ❌ **Volatility targeting:** Dynamic position sizing disrupts momentum strategy
+❌ **Volume-weighted scoring:** Dollar-volume and OBV blends both trail pure momentum
+❌ **PnL-hold exit filter:** Freezes portfolio, kills momentum rotation
+❌ **Consecutive weeks entry filter:** Delays re-entry after corrections, explodes drawdowns
+❌ **Entry rank threshold:** Prevents good entries as much as bad ones
+
+See `docs/failed_experiments.md` for detailed experiment logs.
 
 ## Branch Structure
 
 **Active branches:**
 - `main` - Stable production code
-- `feature-testing` - Current working branch
-- `vol-floor-experiments` - Vol floor optimization (0.20 → 0.05)
+- `consolidate-portfolio-scripts` - Unified `--universe` argument, min-hold-days
+- `fix-pnl-hold-logic` - Backtest experiment features (min-hold, entry filters)
 - `nifty100-portfolio` - Nifty 100 testing and comparisons
+- `momentum-volume` - Volume-weighted scoring experiments (abandoned)
 - `volatility-targeting` - Failed volatility targeting experiments (archived)
 
 **Recommended workflow:**
@@ -511,12 +517,13 @@ cp -r /Users/navdeep/Documents/stock_data/indices_data ./
 
 | Portfolio | CAGR | Max DD | Sharpe | Turnover | Use Case |
 |-----------|------|--------|--------|----------|----------|
-| **NSE 500 L6-1W** | 57.51% | -27.67% | 1.71 | 122% | Growth investors |
+| **NSE 500 L6-1W (min-hold 8d)** | 59.4% | -30.0% | 1.92 | 123% | Growth investors |
+| **NSE 500 L6-1W (no min-hold)** | 56.2% | -27.7% | 1.87 | 122% | Baseline reference |
 | **Nifty 100 L6-1W** | 44.86% | -19.11% | 1.69 | 58% | Risk-averse |
 | **Nifty 100 L9-2W** | 38.95% | -25.22% | 1.45 | 23% | Not recommended |
 | **Nifty 100 Index** | ~15% | -20% | ~0.7 | 0% | Buy & hold |
 
-**Key insight:** NSE 500 L6 with weekly rebalancing is optimal for most investors.
+**Key insight:** NSE 500 L6 with weekly rebalancing and min-hold 8 days is optimal for most investors.
 
 ## Troubleshooting
 
@@ -543,10 +550,11 @@ python scripts/validate_signals.py --signals <path> --top-n 24
 ## Documentation
 
 **Comprehensive docs in `docs/` folder:**
+- `failed_experiments.md` - Backtest experiments log (volume, pnl-hold, entry filters, min-hold)
 - `vol_floor_optimization.md` - Vol floor parameter analysis
 - `data_backup.md` - Backup system documentation
 - `rebalance_trade_report.md` - Trade execution reporting
-- `volatility_targeting_experiments.md` - Failed experiments (lessons learned)
+- `volatility_targeting_experiments.md` - Volatility targeting experiments (lessons learned)
 
 **Experiment summaries:**
 - `nifty_100_tests/SUMMARY.md` - Portfolio comparison
@@ -555,7 +563,7 @@ python scripts/validate_signals.py --signals <path> --top-n 24
 
 ---
 
-**Last updated:** January 2026
-**Production portfolio:** NSE 500 L6-1W (57.51% CAGR, 1.71 Sharpe)
+**Last updated:** February 2026
+**Production portfolio:** NSE 500 L6-1W + min-hold 8d (59.4% CAGR, 1.92 Sharpe)
 **Alternative portfolio:** Nifty 100 L6-1W (44.86% CAGR, -19.11% DD)
 **Status:** Optimized and production-ready

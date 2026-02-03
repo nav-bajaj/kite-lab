@@ -155,10 +155,10 @@ NSE 500 leans more cyclical/commodity-heavy.
 
 ```bash
 # Generate Nifty 100 momentum portfolio
-python scripts/run_nifty100_momentum.py
+python scripts/run_final_momentum_portfolio.py --universe nifty100
 
 # Compare with NSE 500
-python scripts/run_final_momentum_portfolio.py
+python scripts/run_final_momentum_portfolio.py --universe nse500
 
 # View reports
 open nifty_100_tests/nifty100_portfolio_*/report.html
