@@ -16,6 +16,30 @@ WEEKDAYS = {
     "sunday": 6,
 }
 
+UNIVERSE_DEFAULTS = {
+    "nse500": {
+        "universe_file": Path("data/static/nse500_universe.csv"),
+        "output_root": Path("experiments/final_portfolio"),
+        "publish_signals": Path("data/final_portfolio/final_top24_signals.csv"),
+        "latest_output": Path("data/final_portfolio/final_portfolio_24.csv"),
+        "run_prefix": "final_portfolio",
+    },
+    "nifty100": {
+        "universe_file": Path("data/static/nifty100_universe.csv"),
+        "output_root": Path("nifty_100_tests"),
+        "publish_signals": Path("data/nifty100_portfolio/final_top24_signals.csv"),
+        "latest_output": Path("data/nifty100_portfolio/final_portfolio_24.csv"),
+        "run_prefix": "nifty100_portfolio",
+    },
+    "nifty250": {
+        "universe_file": Path("data/static/nifty250_universe.csv"),
+        "output_root": Path("nifty_250_tests"),
+        "publish_signals": Path("data/nifty250_portfolio/final_top24_signals.csv"),
+        "latest_output": Path("data/nifty250_portfolio/final_portfolio_24.csv"),
+        "run_prefix": "nifty250_portfolio",
+    },
+}
+
 
 def run_command(command, dry_run=False):
     print("Command:", " ".join(str(c) for c in command))
@@ -252,14 +276,16 @@ def find_latest_change(changes_dir: Path):
 
 def main():
     parser = argparse.ArgumentParser(description="Daily final momentum portfolio generator")
+    parser.add_argument("--universe", choices=list(UNIVERSE_DEFAULTS.keys()), default="nse500",
+                        help="Stock universe (default: nse500)")
     parser.add_argument("--prices-dir", type=Path, default=Path("nse500_data"))
     parser.add_argument("--benchmark", type=Path, default=Path("data/benchmarks/nifty100.csv"))
-    parser.add_argument("--universe-file", type=Path, default=Path("data/static/nse500_universe.csv"))
-    parser.add_argument("--output-root", type=Path, default=Path("experiments/final_portfolio"))
+    parser.add_argument("--universe-file", type=Path, default=None, help="Override universe CSV (default: set by --universe)")
+    parser.add_argument("--output-root", type=Path, default=None, help="Override output root (default: set by --universe)")
     parser.add_argument("--run-label", help="Override run folder label (default: timestamp)")
     parser.add_argument("--signals-output", type=Path, help="Override signals output path")
-    parser.add_argument("--publish-signals", type=Path, default=Path("data/final_portfolio/final_top24_signals.csv"))
-    parser.add_argument("--latest-output", type=Path, default=Path("data/final_portfolio/final_portfolio_24.csv"))
+    parser.add_argument("--publish-signals", type=Path, default=None, help="Override published signals path (default: set by --universe)")
+    parser.add_argument("--latest-output", type=Path, default=None, help="Override latest portfolio path (default: set by --universe)")
     parser.add_argument("--output-dir", type=Path, help="Override output folder for snapshots/reports")
     parser.add_argument("--report-output", type=Path, help="Override report output path")
     parser.add_argument("--initial-capital", type=float, default=1_000_000)
@@ -289,6 +315,17 @@ def main():
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
+    # Apply universe-specific defaults for any args not explicitly set
+    udef = UNIVERSE_DEFAULTS[args.universe]
+    if args.universe_file is None:
+        args.universe_file = udef["universe_file"]
+    if args.output_root is None:
+        args.output_root = udef["output_root"]
+    if args.publish_signals is None:
+        args.publish_signals = udef["publish_signals"]
+    if args.latest_output is None:
+        args.latest_output = udef["latest_output"]
+
     if args.rebalance_weekday.lower() not in WEEKDAYS:
         raise SystemExit(f"Invalid rebalance weekday: {args.rebalance_weekday}")
     if args.order_weekday.lower() not in WEEKDAYS:
@@ -300,7 +337,8 @@ def main():
         today = date.today()
 
     run_label = args.run_label or datetime.now().strftime("%Y%m%d%H%M%S")
-    run_dir = args.output_root / f"final_portfolio_{run_label}"
+    run_prefix = udef["run_prefix"]
+    run_dir = args.output_root / f"{run_prefix}_{run_label}"
     signals_output = args.signals_output or (run_dir / "signals" / "final_top24_signals.csv")
     output_dir = args.output_dir or run_dir
     report_output = args.report_output or (run_dir / "report.html")
