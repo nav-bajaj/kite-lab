@@ -126,6 +126,7 @@ def main():
         "--slippage", str(args.slippage),
         "--scenario", args.scenario,
         "--exit-buffer", str(args.exit_buffer),
+        "--min-hold-days", "8",
     ]
 
     if not run_command(backtest_cmd, args.dry_run):
