@@ -82,10 +82,12 @@ def load_benchmark(path: Path):
 
 
 def map_signal_to_trade(signal_date, calendar):
-    preferred = signal_date + pd.Timedelta(days=1)
-    if preferred in calendar:
-        return preferred
-    for offset in [0, -1, -2]:
+    """Map signal date to trade execution date (next trading day after signal).
+
+    Trades always execute AFTER the signal day, never on or before.
+    Looks up to 5 days forward to find the next trading day.
+    """
+    for offset in range(1, 6):
         candidate = signal_date + pd.Timedelta(days=offset)
         if candidate in calendar:
             return candidate
