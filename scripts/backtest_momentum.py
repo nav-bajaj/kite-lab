@@ -399,9 +399,9 @@ def run_backtest(
         if entry_rank is not None:
             entrants = [sym for sym in entrants if current_ranks.get(sym, float("inf")) <= entry_rank]
 
-        # When pnl-hold keeps stocks beyond their rank, cap new entrants
+        # When min-hold-days or pnl-hold keeps stocks beyond their rank, cap new entrants
         # so total holdings never exceed top_n.
-        if pnl_hold_threshold is not None:
+        if pnl_hold_threshold is not None or min_hold_days > 0:
             max_new = max(0, top_n - len(holdings))
             entrants = entrants[:max_new]
 
