@@ -1,0 +1,58 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.eggs
+*.egg-info
+*.egg
+
+# Virtual environments
+venv
+.venv
+ENV
+env
+
+# Environment files (secrets)
+.env
+!.env.example
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache
+.coverage
+htmlcov
+.tox
+
+# Documentation (not needed in container)
+docs/
+*.md
+!README.md
+
+# Local development
+*.log
+logs/
+
+# Large data files (will be synced separately or fetched)
+data/nse500_data/
+data/nse500_data_hourly/
+data/indices_data/
+experiments/
+reports/
+nifty_*_tests/
+
+# OS files
+.DS_Store
+Thumbs.db
