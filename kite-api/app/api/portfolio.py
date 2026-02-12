@@ -4,11 +4,18 @@ Portfolio API endpoints
 from fastapi import APIRouter, Query, HTTPException
 
 from app.config import is_valid_universe, UniverseId
-from app.services.portfolio_service import (
-    get_portfolio_summary,
-    get_holdings,
-    get_allocation,
-)
+
+# Import portfolio service with error handling
+try:
+    from app.services.portfolio_service import (
+        get_portfolio_summary,
+        get_holdings,
+        get_allocation,
+    )
+    PORTFOLIO_SERVICE_AVAILABLE = True
+except ImportError as e:
+    PORTFOLIO_SERVICE_AVAILABLE = False
+    IMPORT_ERROR = str(e)
 
 router = APIRouter(prefix="/api/portfolio", tags=["portfolio"])
 
@@ -22,6 +29,24 @@ async def portfolio_summary(
 
     Returns total value, P&L, holdings count, and key metrics.
     """
+    if not PORTFOLIO_SERVICE_AVAILABLE:
+        return {
+            "error": f"Portfolio service not available: {IMPORT_ERROR}",
+            "total_value": 0,
+            "cash": 0,
+            "invested": 0,
+            "daily_pnl": 0,
+            "daily_pnl_pct": 0,
+            "total_return": 0,
+            "total_return_pct": 0,
+            "holdings_count": 0,
+            "as_of_date": "",
+            "universe": universe,
+            "cagr": None,
+            "max_drawdown": None,
+            "sharpe_ratio": None,
+        }
+
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
 
@@ -38,6 +63,13 @@ async def portfolio_holdings(
 
     Returns list of holdings with P&L and allocation info.
     """
+    if not PORTFOLIO_SERVICE_AVAILABLE:
+        return {
+            "holdings": [],
+            "summary": {"total_pnl": 0, "winners": 0, "losers": 0},
+            "error": f"Portfolio service not available: {IMPORT_ERROR}",
+        }
+
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
 
@@ -53,6 +85,12 @@ async def portfolio_allocation(
 
     Returns allocation by symbol for pie chart visualization.
     """
+    if not PORTFOLIO_SERVICE_AVAILABLE:
+        return {
+            "allocations": [],
+            "error": f"Portfolio service not available: {IMPORT_ERROR}",
+        }
+
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
 
