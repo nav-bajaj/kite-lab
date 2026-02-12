@@ -33,14 +33,13 @@ export function useHealth() {
   });
 }
 
-// Portfolio data
+// Portfolio data (no auth required)
 export function usePortfolio() {
-  const token = useAuthToken();
   const { universeId } = useUniverse();
 
   return useSWR(
-    token ? ["portfolio", universeId, token] : null,
-    ([, universe, t]) => getPortfolio(universe, t),
+    ["portfolio", universeId],
+    ([, universe]) => getPortfolio(universe),
     {
       refreshInterval: REFRESH_INTERVAL,
       revalidateOnFocus: true,
@@ -48,14 +47,13 @@ export function usePortfolio() {
   );
 }
 
-// Holdings data
+// Holdings data (no auth required)
 export function useHoldings() {
-  const token = useAuthToken();
   const { universeId } = useUniverse();
 
   return useSWR(
-    token ? ["holdings", universeId, token] : null,
-    ([, universe, t]) => getHoldings(universe, t),
+    ["holdings", universeId],
+    ([, universe]) => getHoldings(universe),
     {
       refreshInterval: REFRESH_INTERVAL,
       revalidateOnFocus: true,

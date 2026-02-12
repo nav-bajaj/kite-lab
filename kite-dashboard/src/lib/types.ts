@@ -21,6 +21,11 @@ export interface Portfolio {
   total_return_pct: number;
   holdings_count: number;
   as_of_date: string;
+  universe: string;
+  cagr: number | null;
+  max_drawdown: number | null;
+  sharpe_ratio: number | null;
+  error?: string;
 }
 
 export interface Holding {

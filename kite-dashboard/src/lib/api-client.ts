@@ -61,7 +61,7 @@ export async function getCurrentUser(token: string) {
 }
 
 // Portfolio endpoints
-export async function getPortfolio(universe: UniverseId, token: string) {
+export async function getPortfolio(universe: UniverseId, token?: string) {
   return apiFetch<{
     total_value: number;
     cash: number;
@@ -72,10 +72,15 @@ export async function getPortfolio(universe: UniverseId, token: string) {
     total_return_pct: number;
     holdings_count: number;
     as_of_date: string;
+    universe: string;
+    cagr: number | null;
+    max_drawdown: number | null;
+    sharpe_ratio: number | null;
+    error?: string;
   }>(`/api/portfolio?universe=${universe}`, { token });
 }
 
-export async function getHoldings(universe: UniverseId, token: string) {
+export async function getHoldings(universe: UniverseId, token?: string) {
   return apiFetch<{
     holdings: Array<{
       symbol: string;
