@@ -1,23 +1,51 @@
 """
 Portfolio API endpoints
+
+Reads from database first, falls back to CSV files if database is empty.
 """
 from fastapi import APIRouter, Query, HTTPException
 
 from app.config import is_valid_universe, UniverseId
 
-# Import portfolio service with error handling
-try:
-    from app.services.portfolio_service import (
-        get_portfolio_summary,
-        get_holdings,
-        get_allocation,
-    )
-    PORTFOLIO_SERVICE_AVAILABLE = True
-except ImportError as e:
-    PORTFOLIO_SERVICE_AVAILABLE = False
-    IMPORT_ERROR = str(e)
-
 router = APIRouter(prefix="/api/portfolio", tags=["portfolio"])
+
+
+def get_portfolio_service():
+    """Get the appropriate portfolio service (DB or CSV)."""
+    # Try database service first
+    try:
+        from app.services.portfolio_db_service import (
+            get_portfolio_summary_db,
+            get_holdings_db,
+            get_allocation_db,
+        )
+        return {
+            "get_summary": get_portfolio_summary_db,
+            "get_holdings": get_holdings_db,
+            "get_allocation": get_allocation_db,
+            "source": "database",
+        }
+    except ImportError:
+        pass
+
+    # Fall back to CSV service
+    try:
+        from app.services.portfolio_service import (
+            get_portfolio_summary,
+            get_holdings,
+            get_allocation,
+        )
+        return {
+            "get_summary": get_portfolio_summary,
+            "get_holdings": lambda u: get_holdings(u),
+            "get_allocation": get_allocation,
+            "source": "csv",
+        }
+    except ImportError as e:
+        return {
+            "error": str(e),
+            "source": None,
+        }
 
 
 @router.get("")
@@ -29,9 +57,14 @@ async def portfolio_summary(
 
     Returns total value, P&L, holdings count, and key metrics.
     """
-    if not PORTFOLIO_SERVICE_AVAILABLE:
+    if not is_valid_universe(universe):
+        raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+
+    service = get_portfolio_service()
+
+    if "error" in service:
         return {
-            "error": f"Portfolio service not available: {IMPORT_ERROR}",
+            "error": f"Portfolio service not available: {service['error']}",
             "total_value": 0,
             "cash": 0,
             "invested": 0,
@@ -47,33 +80,35 @@ async def portfolio_summary(
             "sharpe_ratio": None,
         }
 
-    if not is_valid_universe(universe):
-        raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
-
-    return get_portfolio_summary(universe)
+    result = service["get_summary"](universe)
+    result["data_source"] = service["source"]
+    return result
 
 
 @router.get("/holdings")
 async def portfolio_holdings(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
-    update_prices: bool = Query(default=False, description="Update with latest prices"),
 ):
     """
     Get current holdings for a universe.
 
     Returns list of holdings with P&L and allocation info.
     """
-    if not PORTFOLIO_SERVICE_AVAILABLE:
-        return {
-            "holdings": [],
-            "summary": {"total_pnl": 0, "winners": 0, "losers": 0},
-            "error": f"Portfolio service not available: {IMPORT_ERROR}",
-        }
-
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
 
-    return get_holdings(universe, update_prices=update_prices)
+    service = get_portfolio_service()
+
+    if "error" in service:
+        return {
+            "holdings": [],
+            "summary": {"total_pnl": 0, "winners": 0, "losers": 0},
+            "error": f"Portfolio service not available: {service['error']}",
+        }
+
+    result = service["get_holdings"](universe)
+    result["data_source"] = service["source"]
+    return result
 
 
 @router.get("/allocation")
@@ -85,13 +120,17 @@ async def portfolio_allocation(
 
     Returns allocation by symbol for pie chart visualization.
     """
-    if not PORTFOLIO_SERVICE_AVAILABLE:
-        return {
-            "allocations": [],
-            "error": f"Portfolio service not available: {IMPORT_ERROR}",
-        }
-
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
 
-    return get_allocation(universe)
+    service = get_portfolio_service()
+
+    if "error" in service:
+        return {
+            "allocations": [],
+            "error": f"Portfolio service not available: {service['error']}",
+        }
+
+    result = service["get_allocation"](universe)
+    result["data_source"] = service["source"]
+    return result
