@@ -1,6 +1,7 @@
 """
 Application configuration and universe definitions.
 """
+from pathlib import Path
 from pydantic_settings import BaseSettings
 from typing import Literal
 from functools import lru_cache
@@ -26,6 +27,13 @@ class Settings(BaseSettings):
 
     # App settings
     debug: bool = False
+
+    # Data directory (parent of kite-api, i.e., kite-lab root)
+    @property
+    def data_dir(self) -> Path:
+        """Get the data directory (kite-lab root, parent of kite-api)."""
+        # __file__ is app/config.py, so parent.parent is kite-api/, parent.parent.parent is kite-lab/
+        return Path(__file__).parent.parent.parent
 
     class Config:
         env_file = ".env"
@@ -85,3 +93,32 @@ def get_universe(universe_id: UniverseId) -> dict:
 def is_valid_universe(universe_id: str) -> bool:
     """Check if universe ID is valid."""
     return universe_id in UNIVERSES
+
+
+# Default settings instance
+settings = get_settings()
+
+# Universe defaults for portfolio parameters
+UNIVERSE_DEFAULTS = {
+    "nse500": {
+        "top_n": 24,
+        "lookback_months": 6,
+        "rebalance_weeks": 1,
+        "vol_floor": 0.05,
+        "min_hold_days": 8,
+    },
+    "nifty250": {
+        "top_n": 24,
+        "lookback_months": 6,
+        "rebalance_weeks": 1,
+        "vol_floor": 0.05,
+        "min_hold_days": 8,
+    },
+    "nifty100": {
+        "top_n": 24,
+        "lookback_months": 6,
+        "rebalance_weeks": 1,
+        "vol_floor": 0.05,
+        "min_hold_days": 8,
+    },
+}
