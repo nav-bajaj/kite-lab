@@ -1,8 +1,9 @@
 # Phase 1: Foundation
 
 **Duration**: Week 1-2
-**Status**: In Progress
-**Started**: February 2026
+**Status**: COMPLETED
+**Started**: February 10, 2026
+**Completed**: February 12, 2026
 
 ## Objectives
 
@@ -10,6 +11,13 @@
 - Implement authentication (Google OAuth with email whitelist)
 - Deploy basic shells to Vercel/Railway
 - Multi-universe support from day one (NSE 500, Nifty 250, Nifty 100)
+
+## Production URLs
+
+| Service | URL |
+|---------|-----|
+| Frontend (Vercel) | https://kite-lab.vercel.app |
+| Backend (Railway) | https://kite-lab-production.up.railway.app |
 
 ## Task Progress
 
@@ -29,16 +37,16 @@
 |---|------|--------|------|
 | 6 | Set up Next.js frontend project with TypeScript | `completed` | [06-nextjs-setup.md](./06-nextjs-setup.md) |
 | 7 | Install and configure shadcn/ui components | `completed` | [07-shadcn-components.md](./07-shadcn-components.md) |
-| 8 | Implement NextAuth.js with Google OAuth | `pending` | [08-nextauth.md](./08-nextauth.md) |
-| 9 | Create dashboard layout with sidebar navigation | `pending` | [09-dashboard-layout.md](./09-dashboard-layout.md) |
-| 10 | Implement universe selector and context | `pending` | [10-universe-selector.md](./10-universe-selector.md) |
-| 11 | Create API client with SWR integration | `pending` | [11-api-client.md](./11-api-client.md) |
+| 8 | Implement NextAuth.js with Google OAuth | `completed` | [08-nextauth.md](./08-nextauth.md) |
+| 9 | Create dashboard layout with sidebar navigation | `completed` | [09-dashboard-layout.md](./09-dashboard-layout.md) |
+| 10 | Implement universe selector and context | `completed` | [10-universe-selector.md](./10-universe-selector.md) |
+| 11 | Create API client with SWR integration | `completed` | [11-api-client.md](./11-api-client.md) |
 
 ### Deployment
 
 | # | Task | Status | File |
 |---|------|--------|------|
-| 12 | Deploy initial shells to Vercel and Railway | `pending` | [12-deploy.md](./12-deploy.md) |
+| 12 | Deploy initial shells to Vercel and Railway | `completed` | [12-deploy.md](./12-deploy.md) |
 
 ## Dependency Graph
 
@@ -72,11 +80,11 @@ Health/Auth                     └───┘    └────┘           
 
 ## Deliverables Checklist
 
-- [ ] Login with Google OAuth works
-- [ ] Empty dashboard shell deployed
-- [ ] Universe selector visible in header/sidebar
-- [ ] Health endpoint returns OK
-- [ ] Database tables created with universe column
+- [x] Login with Google OAuth works
+- [x] Empty dashboard shell deployed
+- [x] Universe selector visible in header/sidebar
+- [x] Health endpoint returns OK
+- [x] Database tables created with universe column
 
 ## Notes
 
