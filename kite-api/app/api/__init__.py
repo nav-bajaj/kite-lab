@@ -1,2 +1,2 @@
 # API route handlers
-from app.api import health, auth_routes, portfolio, sync
+from . import health, auth_routes, portfolio, sync
