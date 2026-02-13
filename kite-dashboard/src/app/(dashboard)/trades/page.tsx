@@ -1,24 +1,23 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+
+import { TradeSummary, TradesTable } from "@/components/trades";
 
 export default function TradesPage() {
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Trade History</CardTitle>
-          <CardDescription>
-            All executed trades with P&L analysis
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-12 text-muted-foreground">
-            <p>Trade history will be implemented in Phase 3</p>
-            <p className="text-sm mt-2">
-              Includes filtering, sorting, and export functionality
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Page Header */}
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Trade History</h1>
+        <p className="text-muted-foreground">
+          All executed trades with filtering and export
+        </p>
+      </div>
+
+      {/* Summary Stats */}
+      <TradeSummary />
+
+      {/* Trades Table */}
+      <TradesTable />
     </div>
   );
 }

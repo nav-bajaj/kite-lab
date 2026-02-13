@@ -178,6 +178,54 @@ def sync_metrics(db: Session, universe: str = "nse500") -> dict:
     return {"universe": universe, "count": 1, "computed_date": str(computed_date)}
 
 
+def sync_trades(db: Session, universe: str = "nse500") -> dict:
+    """
+    Sync trades from CSV to database.
+    """
+    exp_dir = get_latest_experiment_dir(universe)
+    if not exp_dir:
+        return {"error": f"No experiment directory found for {universe}", "count": 0}
+
+    trades_path = exp_dir / "backtests" / "baseline" / "momentum_trades.csv"
+    if not trades_path.exists():
+        return {"error": f"Trades file not found: {trades_path}", "count": 0}
+
+    df = pd.read_csv(trades_path, parse_dates=["date"])
+
+    # Get existing trade dates to check for duplicates
+    existing_count = db.query(Trade).filter(Trade.universe == universe).count()
+
+    # If we already have trades, only add new ones
+    if existing_count > 0:
+        last_trade = db.query(Trade).filter(
+            Trade.universe == universe
+        ).order_by(Trade.trade_date.desc()).first()
+
+        if last_trade:
+            df = df[df["date"] > pd.Timestamp(last_trade.trade_date)]
+
+    count = 0
+    for _, row in df.iterrows():
+        row_date = row["date"].date() if hasattr(row["date"], "date") else row["date"]
+
+        trade = Trade(
+            universe=universe,
+            trade_date=row_date,
+            symbol=row["symbol"],
+            side=row["side"],
+            shares=float(row["shares"]),
+            price=float(row["price"]),
+            notional=float(row["notional"]),
+            slippage=float(row.get("slippage", 0)) if "slippage" in row else None,
+            cash_after=float(row.get("cash_after", 0)) if "cash_after" in row else None,
+        )
+        db.add(trade)
+        count += 1
+
+    db.commit()
+    return {"universe": universe, "count": count, "total": existing_count + count}
+
+
 def sync_all(universe: str = "nse500") -> dict:
     """
     Sync all data for a universe.
@@ -191,6 +239,7 @@ def sync_all(universe: str = "nse500") -> dict:
             "holdings": sync_holdings(db, universe),
             "equity_curve": sync_equity_curve(db, universe),
             "metrics": sync_metrics(db, universe),
+            "trades": sync_trades(db, universe),
         }
         return results
     finally:

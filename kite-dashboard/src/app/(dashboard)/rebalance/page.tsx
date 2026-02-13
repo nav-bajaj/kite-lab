@@ -1,24 +1,26 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+
+import { StatusCard, ChangesPreview, OrdersTable } from "@/components/rebalance";
 
 export default function RebalancePage() {
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Rebalance</CardTitle>
-          <CardDescription>
-            Weekly portfolio rebalancing and order management
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-12 text-muted-foreground">
-            <p>Rebalance functionality will be implemented in Phase 3</p>
-            <p className="text-sm mt-2">
-              Shows pending changes, generates order files, and tracks execution
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Page Header */}
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Rebalance</h1>
+        <p className="text-muted-foreground">
+          Weekly portfolio rebalancing workflow
+        </p>
+      </div>
+
+      {/* Status Card */}
+      <StatusCard />
+
+      {/* Changes Preview (Thursday) */}
+      <ChangesPreview />
+
+      {/* Orders Table (Friday) */}
+      <OrdersTable />
     </div>
   );
 }

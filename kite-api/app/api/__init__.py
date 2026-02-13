@@ -1,2 +1,2 @@
 # API route handlers
-from . import health, auth_routes, portfolio, sync, metrics
+from . import health, auth_routes, portfolio, sync, metrics, trades, rebalance

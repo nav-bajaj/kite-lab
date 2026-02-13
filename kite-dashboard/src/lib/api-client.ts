@@ -153,19 +153,21 @@ export async function getMonthlyReturns(universe: UniverseId) {
   }>(`/api/metrics/monthly-returns?universe=${universe}`);
 }
 
-// Trades endpoints
+// Trades endpoints (public, no auth required)
 export async function getTrades(
   universe: UniverseId,
-  token: string,
-  params?: { limit?: number; offset?: number; symbol?: string; side?: string }
+  params?: { limit?: number; offset?: number; symbol?: string; side?: string; start_date?: string; end_date?: string }
 ) {
   const searchParams = new URLSearchParams({ universe });
   if (params?.limit) searchParams.set("limit", String(params.limit));
   if (params?.offset) searchParams.set("offset", String(params.offset));
   if (params?.symbol) searchParams.set("symbol", params.symbol);
   if (params?.side) searchParams.set("side", params.side);
+  if (params?.start_date) searchParams.set("start_date", params.start_date);
+  if (params?.end_date) searchParams.set("end_date", params.end_date);
 
   return apiFetch<{
+    universe: string;
     trades: Array<{
       id: number;
       date: string;
@@ -179,26 +181,81 @@ export async function getTrades(
     total_count: number;
     limit: number;
     offset: number;
-  }>(`/api/trades?${searchParams}`, { token });
+    has_more: boolean;
+  }>(`/api/trades?${searchParams}`);
 }
 
-// Rebalance endpoints
-export async function getRebalanceStatus(universe: UniverseId, token: string) {
+export async function getTradeSummary(universe: UniverseId) {
   return apiFetch<{
-    status: "pending" | "preview" | "ready" | "executed";
-    signal_date: string;
-    order_date: string;
+    universe: string;
+    total_trades: number;
+    buys: number;
+    sells: number;
+    first_trade_date: string | null;
+    last_trade_date: string | null;
+    total_notional: number;
+  }>(`/api/trades/summary?universe=${universe}`);
+}
+
+// Rebalance endpoints (public, no auth required)
+export async function getRebalanceStatus(universe: UniverseId) {
+  return apiFetch<{
+    universe: string;
+    status: string;
+    signal_date: string | null;
+    order_date: string | null;
+    current_phase: string;
+    is_rebalance_day: boolean;
     preview_available: boolean;
     orders_available: boolean;
-  }>(`/api/rebalance/status?universe=${universe}`, { token });
+    today: string;
+    weekday: string;
+  }>(`/api/rebalance/status?universe=${universe}`);
 }
 
-export async function getRebalancePreview(universe: UniverseId, token: string) {
+export async function getRebalancePreview(universe: UniverseId) {
   return apiFetch<{
-    additions: Array<{ symbol: string; rank: number; score: number }>;
-    removals: Array<{ symbol: string; prev_rank: number; reason: string }>;
-    signal_date: string;
-  }>(`/api/rebalance/preview?universe=${universe}`, { token });
+    universe: string;
+    signal_date: string | null;
+    additions: Array<{ symbol: string; rank: number; score: number | null }>;
+    removals: Array<{ symbol: string; prev_rank: number | null; reason: string }>;
+    additions_count: number;
+    removals_count: number;
+    message?: string;
+  }>(`/api/rebalance/preview?universe=${universe}`);
+}
+
+export async function getRebalanceOrders(universe: UniverseId) {
+  return apiFetch<{
+    universe: string;
+    order_date: string | null;
+    orders: Array<{
+      symbol: string;
+      action: "BUY" | "SELL";
+      shares: number;
+      target_price: number | null;
+      notional: number | null;
+    }>;
+    buy_count: number;
+    sell_count: number;
+    total_orders: number;
+    message?: string;
+  }>(`/api/rebalance/orders?universe=${universe}`);
+}
+
+export async function getRebalanceHistory(universe: UniverseId, limit: number = 20) {
+  return apiFetch<{
+    universe: string;
+    history: Array<{
+      signal_date: string;
+      order_date: string | null;
+      status: string;
+      additions: number;
+      removals: number;
+      turnover_pct: number | null;
+    }>;
+    count: number;
+  }>(`/api/rebalance/history?universe=${universe}&limit=${limit}`);
 }
 
 // Jobs endpoints

@@ -10,8 +10,11 @@ import {
   getEquityCurve,
   getMonthlyReturns,
   getTrades,
+  getTradeSummary,
   getRebalanceStatus,
   getRebalancePreview,
+  getRebalanceOrders,
+  getRebalanceHistory,
   getJobs,
   getHealth,
 } from "./api-client";
@@ -104,19 +107,20 @@ export function useMonthlyReturns() {
   );
 }
 
-// Trades with pagination
+// Trades with pagination (public, no auth required)
 export function useTrades(params?: {
   limit?: number;
   offset?: number;
   symbol?: string;
   side?: string;
+  start_date?: string;
+  end_date?: string;
 }) {
-  const token = useAuthToken();
   const { universeId } = useUniverse();
 
   return useSWR(
-    token ? ["trades", universeId, token, params] : null,
-    ([, universe, t, p]) => getTrades(universe, t, p),
+    ["trades", universeId, params],
+    ([, universe, p]) => getTrades(universe, p),
     {
       refreshInterval: REFRESH_INTERVAL,
       revalidateOnFocus: true,
@@ -124,14 +128,27 @@ export function useTrades(params?: {
   );
 }
 
-// Rebalance status
+// Trade summary (public, no auth required)
+export function useTradeSummary() {
+  const { universeId } = useUniverse();
+
+  return useSWR(
+    ["trade-summary", universeId],
+    ([, universe]) => getTradeSummary(universe),
+    {
+      refreshInterval: SLOW_REFRESH,
+      revalidateOnFocus: false,
+    }
+  );
+}
+
+// Rebalance status (public, no auth required)
 export function useRebalanceStatus() {
-  const token = useAuthToken();
   const { universeId } = useUniverse();
 
   return useSWR(
-    token ? ["rebalance-status", universeId, token] : null,
-    ([, universe, t]) => getRebalanceStatus(universe, t),
+    ["rebalance-status", universeId],
+    ([, universe]) => getRebalanceStatus(universe),
     {
       refreshInterval: REFRESH_INTERVAL,
       revalidateOnFocus: true,
@@ -139,14 +156,41 @@ export function useRebalanceStatus() {
   );
 }
 
-// Rebalance preview (additions/removals)
+// Rebalance preview (public, no auth required)
 export function useRebalancePreview() {
-  const token = useAuthToken();
   const { universeId } = useUniverse();
 
   return useSWR(
-    token ? ["rebalance-preview", universeId, token] : null,
-    ([, universe, t]) => getRebalancePreview(universe, t),
+    ["rebalance-preview", universeId],
+    ([, universe]) => getRebalancePreview(universe),
+    {
+      refreshInterval: SLOW_REFRESH,
+      revalidateOnFocus: false,
+    }
+  );
+}
+
+// Rebalance orders (public, no auth required)
+export function useRebalanceOrders() {
+  const { universeId } = useUniverse();
+
+  return useSWR(
+    ["rebalance-orders", universeId],
+    ([, universe]) => getRebalanceOrders(universe),
+    {
+      refreshInterval: SLOW_REFRESH,
+      revalidateOnFocus: false,
+    }
+  );
+}
+
+// Rebalance history (public, no auth required)
+export function useRebalanceHistory(limit: number = 20) {
+  const { universeId } = useUniverse();
+
+  return useSWR(
+    ["rebalance-history", universeId, limit],
+    ([, universe, l]) => getRebalanceHistory(universe, l),
     {
       refreshInterval: SLOW_REFRESH,
       revalidateOnFocus: false,

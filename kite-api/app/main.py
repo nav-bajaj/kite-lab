@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.config import get_settings
-from app.api import health, auth_routes, portfolio, sync, metrics
+from app.api import health, auth_routes, portfolio, sync, metrics, trades, rebalance
 
 
 @asynccontextmanager
@@ -50,6 +50,8 @@ app.include_router(auth_routes.router, prefix="/api/auth", tags=["auth"])
 app.include_router(portfolio.router, tags=["portfolio"])
 app.include_router(sync.router, tags=["sync"])
 app.include_router(metrics.router, tags=["metrics"])
+app.include_router(trades.router, tags=["trades"])
+app.include_router(rebalance.router, tags=["rebalance"])
 
 
 @app.get("/")
@@ -60,5 +62,5 @@ async def root():
         "version": "1.0.1",
         "docs": "/docs",
         "health": "/api/health",
-        "routes": ["/api/portfolio", "/api/sync", "/api/metrics"],
+        "routes": ["/api/portfolio", "/api/sync", "/api/metrics", "/api/trades", "/api/rebalance"],
     }
