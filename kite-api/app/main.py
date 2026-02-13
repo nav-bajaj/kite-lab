@@ -26,7 +26,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Kite-Lab API",
     description="Backend API for Kite-Lab Production Dashboard",
-    version="1.0.0",
+    version="1.0.1",
     docs_url="/docs",
     redoc_url="/redoc",
     lifespan=lifespan,
@@ -56,7 +56,8 @@ async def root():
     """Root endpoint with API info."""
     return {
         "name": "Kite-Lab API",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "docs": "/docs",
         "health": "/api/health",
+        "routes": ["/api/portfolio", "/api/sync"],
     }
