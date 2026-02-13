@@ -1,8 +1,9 @@
 # Phase 2: Portfolio View
 
 **Duration**: Week 3-4
-**Status**: In Progress
+**Status**: COMPLETED
 **Started**: February 12, 2026
+**Completed**: February 13, 2026
 
 ## Objectives
 
@@ -17,29 +18,29 @@
 
 | # | Task | Status | Description |
 |---|------|--------|-------------|
-| 1 | Portfolio service | `pending` | Read CSVs, calculate P&L per universe |
-| 2 | Portfolio endpoints | `pending` | REST API: GET /api/portfolio?universe=nse500 |
-| 3 | Holdings endpoint | `pending` | GET /api/portfolio/holdings?universe=nse500 |
-| 4 | CSV sync service | `pending` | Import data for all 3 universes |
-| 5 | Price service | `pending` | Current prices lookup from CSV |
+| 1 | Portfolio service | `completed` | Read from DB, fallback to CSVs |
+| 2 | Portfolio endpoints | `completed` | REST API: GET /api/portfolio?universe=nse500 |
+| 3 | Holdings endpoint | `completed` | GET /api/portfolio/holdings?universe=nse500 |
+| 4 | CSV sync service | `completed` | Import data for all 3 universes to PostgreSQL |
+| 5 | Price service | `completed` | Prices from synced holdings data |
 
 ### Frontend Tasks
 
 | # | Task | Status | Description |
 |---|------|--------|-------------|
-| 6 | Value cards | `pending` | Portfolio metrics (total value, P&L, etc.) |
-| 7 | Holdings table | `pending` | Sortable table with all 24 holdings |
-| 8 | P&L display | `pending` | Color-coded profit/loss cells |
-| 9 | Allocation chart | `pending` | Pie/donut chart for position weights |
-| 10 | Loading states | `pending` | Skeleton loaders while fetching |
+| 6 | Value cards | `completed` | Portfolio metrics (total value, CAGR, max DD) |
+| 7 | Holdings table | `completed` | Sortable table with all 24 holdings |
+| 8 | P&L display | `completed` | Color-coded profit/loss cells |
+| 9 | Allocation chart | `completed` | Pie chart for position weights |
+| 10 | Loading states | `completed` | Skeleton loaders while fetching |
 
 ## Deliverables Checklist
 
-- [ ] See all 24 holdings in table for selected universe
-- [ ] Portfolio value card with daily P&L
-- [ ] Allocation pie chart
-- [ ] Auto-refresh every 5 minutes
-- [ ] Instant switching between NSE 500, Nifty 250, Nifty 100
+- [x] See all 24 holdings in table for selected universe
+- [x] Portfolio value card with daily P&L
+- [x] Allocation pie chart
+- [x] Auto-refresh every 5 minutes
+- [x] Instant switching between NSE 500, Nifty 250, Nifty 100
 
 ## Data Sources
 
