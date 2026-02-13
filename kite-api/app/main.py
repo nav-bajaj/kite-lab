@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.config import get_settings
-from app.api import health, auth_routes, portfolio, sync
+from app.api import health, auth_routes, portfolio, sync, metrics
 
 
 @asynccontextmanager
@@ -49,6 +49,7 @@ app.include_router(health.router, prefix="/api", tags=["health"])
 app.include_router(auth_routes.router, prefix="/api/auth", tags=["auth"])
 app.include_router(portfolio.router, tags=["portfolio"])
 app.include_router(sync.router, tags=["sync"])
+app.include_router(metrics.router, tags=["metrics"])
 
 
 @app.get("/")
@@ -59,5 +60,5 @@ async def root():
         "version": "1.0.1",
         "docs": "/docs",
         "health": "/api/health",
-        "routes": ["/api/portfolio", "/api/sync"],
+        "routes": ["/api/portfolio", "/api/sync", "/api/metrics"],
     }

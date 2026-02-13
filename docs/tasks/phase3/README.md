@@ -1,7 +1,7 @@
 # Phase 3: Performance Metrics
 
 **Duration**: Week 5-6
-**Status**: Not Started
+**Status**: Completed
 **Target Start**: February 13, 2026
 
 ## Objectives
@@ -26,21 +26,21 @@
 
 | # | Task | Status | Description |
 |---|------|--------|-------------|
-| 1 | Metrics service | `pending` | Calculate metrics from equity curve data |
-| 2 | Metrics endpoint | `pending` | GET /api/metrics?universe=nse500 |
-| 3 | Equity curve endpoint | `pending` | GET /api/metrics/equity-curve |
-| 4 | Monthly returns endpoint | `pending` | GET /api/metrics/monthly-returns |
+| 1 | Metrics service | `completed` | Calculate metrics from equity curve data |
+| 2 | Metrics endpoint | `completed` | GET /api/metrics?universe=nse500 |
+| 3 | Equity curve endpoint | `completed` | GET /api/metrics/equity-curve |
+| 4 | Monthly returns endpoint | `completed` | GET /api/metrics/monthly-returns |
 
 ### Frontend Tasks
 
 | # | Task | Status | Description |
 |---|------|--------|-------------|
-| 5 | Performance page | `pending` | Page layout and routing |
-| 6 | Metrics grid | `pending` | Key metrics cards (CAGR, Sharpe, etc.) |
-| 7 | Equity curve chart | `pending` | Interactive line chart with Recharts |
-| 8 | Drawdown chart | `pending` | Drawdown visualization |
-| 9 | Benchmark toggle | `pending` | Overlay benchmark comparison |
-| 10 | Monthly heatmap | `pending` | Monthly returns calendar view |
+| 5 | Performance page | `completed` | Page layout and routing |
+| 6 | Metrics grid | `completed` | Key metrics cards (CAGR, Sharpe, etc.) |
+| 7 | Equity curve chart | `completed` | Interactive line chart with Recharts |
+| 8 | Drawdown chart | `completed` | Drawdown visualization |
+| 9 | Benchmark toggle | `completed` | Overlay benchmark comparison |
+| 10 | Monthly heatmap | `completed` | Monthly returns calendar view |
 
 ## Dependency Graph
 

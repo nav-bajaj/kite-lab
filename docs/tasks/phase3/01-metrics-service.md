@@ -1,6 +1,6 @@
 # Task 1: Metrics Service
 
-**Status**: `pending`
+**Status**: `completed`
 **Blocked By**: None
 **Blocks**: #2, #3, #4
 

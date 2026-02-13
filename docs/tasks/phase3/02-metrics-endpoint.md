@@ -1,6 +1,6 @@
 # Task 2: Metrics Endpoint
 
-**Status**: `pending`
+**Status**: `completed`
 **Blocked By**: #1 (Metrics Service)
 **Blocks**: #6
 

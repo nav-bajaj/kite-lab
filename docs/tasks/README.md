@@ -24,7 +24,7 @@ Building a production-grade web dashboard to manage, monitor, and operate the Ki
 |-------|----------|--------|-------------|
 | [Phase 1](./phase1/README.md) | Week 1-2 | **Completed** | Foundation - Backend, Frontend, Auth, Database |
 | [Phase 2](./phase2/README.md) | Week 3-4 | **Completed** | Portfolio View - Holdings, P&L, Allocation |
-| [Phase 3](./phase3/README.md) | Week 5-6 | **In Progress** | Performance Metrics - Equity curves, Benchmarks |
+| [Phase 3](./phase3/README.md) | Week 5-6 | **Completed** | Performance Metrics - Equity curves, Benchmarks |
 | [Phase 4](#phase-4-trades--rebalance) | Week 7-8 | Not Started | Trades & Rebalance - History, Workflow |
 | [Phase 5](#phase-5-admin-control-panel) | Week 9-10 | Not Started | Admin Control Panel - Jobs, Scheduler |
 | [Phase 6](#phase-6-polish--production) | Week 11-12 | Not Started | Polish & Production - Error handling, Docs |

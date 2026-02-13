@@ -8,6 +8,7 @@ import {
   getHoldings,
   getMetrics,
   getEquityCurve,
+  getMonthlyReturns,
   getTrades,
   getRebalanceStatus,
   getRebalancePreview,
@@ -61,14 +62,13 @@ export function useHoldings() {
   );
 }
 
-// Performance metrics
+// Performance metrics (public, no auth required)
 export function useMetrics() {
-  const token = useAuthToken();
   const { universeId } = useUniverse();
 
   return useSWR(
-    token ? ["metrics", universeId, token] : null,
-    ([, universe, t]) => getMetrics(universe, t),
+    ["metrics", universeId],
+    ([, universe]) => getMetrics(universe),
     {
       refreshInterval: SLOW_REFRESH,
       revalidateOnFocus: false,
@@ -76,14 +76,27 @@ export function useMetrics() {
   );
 }
 
-// Equity curve data
+// Equity curve data (public, no auth required)
 export function useEquityCurve() {
-  const token = useAuthToken();
   const { universeId } = useUniverse();
 
   return useSWR(
-    token ? ["equity-curve", universeId, token] : null,
-    ([, universe, t]) => getEquityCurve(universe, t),
+    ["equity-curve", universeId],
+    ([, universe]) => getEquityCurve(universe),
+    {
+      refreshInterval: SLOW_REFRESH,
+      revalidateOnFocus: false,
+    }
+  );
+}
+
+// Monthly returns data (public, no auth required)
+export function useMonthlyReturns() {
+  const { universeId } = useUniverse();
+
+  return useSWR(
+    ["monthly-returns", universeId],
+    ([, universe]) => getMonthlyReturns(universe),
     {
       refreshInterval: SLOW_REFRESH,
       revalidateOnFocus: false,

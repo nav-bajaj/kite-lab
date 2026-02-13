@@ -1,26 +1,3 @@
-# Task 8: Drawdown Chart
-
-**Status**: `completed`
-**Blocked By**: #3 (Equity Curve Endpoint)
-**Blocks**: None
-
-## Objective
-
-Create a dedicated drawdown visualization chart.
-
-## Tasks
-
-- [ ] Create `drawdown-chart.tsx` in `kite-dashboard/src/components/performance/`
-- [ ] Display drawdown over time as negative area
-- [ ] Highlight maximum drawdown point
-- [ ] Add loading state
-- [ ] Show drawdown statistics
-
-## Implementation
-
-### File: `kite-dashboard/src/components/performance/drawdown-chart.tsx`
-
-```tsx
 "use client";
 
 import {
@@ -36,7 +13,11 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEquityCurve, useMetrics } from "@/lib/hooks";
-import { formatDate, formatPercent } from "@/lib/utils";
+
+function formatDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-IN", { month: "short", year: "2-digit" });
+}
 
 export function DrawdownChart() {
   const { data: equityData, isLoading: equityLoading } = useEquityCurve();
@@ -50,44 +31,61 @@ export function DrawdownChart() {
     return (
       <Card>
         <CardContent className="pt-6">
-          <p className="text-sm text-muted-foreground">
-            Failed to load drawdown data
-          </p>
+          <p className="text-sm text-muted-foreground">Failed to load drawdown data</p>
         </CardContent>
       </Card>
     );
   }
 
-  const maxDrawdown = metricsData?.risk.max_drawdown || 0;
+  const maxDrawdown = metricsData?.risk.max_drawdown ?? 0;
+  const maxDdDuration = metricsData?.risk.max_dd_duration;
+
+  // Convert drawdown to negative values for display
+  const chartData = equityData.data.map((item) => ({
+    ...item,
+    drawdown: -Math.abs(item.drawdown),
+  }));
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Drawdown</CardTitle>
         <CardDescription>
-          Maximum: {formatPercent(maxDrawdown)}
-          {metricsData?.risk.max_dd_duration &&
-            ` (${metricsData.risk.max_dd_duration} days)`
-          }
+          Maximum: {maxDrawdown.toFixed(1)}%
+          {maxDdDuration ? ` (${maxDdDuration} days)` : ""}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={250}>
-          <AreaChart data={equityData.data}>
+          <AreaChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
             <XAxis
               dataKey="date"
-              tickFormatter={(date) => formatDate(date, "MMM yy")}
+              tickFormatter={formatDate}
               tick={{ fontSize: 11 }}
+              interval="preserveStartEnd"
+              minTickGap={50}
             />
             <YAxis
               tickFormatter={(value) => `${value.toFixed(0)}%`}
               tick={{ fontSize: 11 }}
               domain={["dataMin", 0]}
+              width={50}
             />
             <Tooltip
-              labelFormatter={(date) => formatDate(date, "dd MMM yyyy")}
-              formatter={(value: number) => [`${value.toFixed(2)}%`, "Drawdown"]}
+              labelFormatter={(date) =>
+                new Date(date).toLocaleDateString("en-IN", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })
+              }
+              formatter={(value) => [`${Number(value).toFixed(2)}%`, "Drawdown"]}
+              contentStyle={{
+                backgroundColor: "hsl(var(--background))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: "8px",
+              }}
             />
 
             {/* Max drawdown reference line */}
@@ -96,7 +94,7 @@ export function DrawdownChart() {
               stroke="#dc2626"
               strokeDasharray="4 4"
               label={{
-                value: `Max: ${formatPercent(maxDrawdown)}`,
+                value: `Max: ${maxDrawdown.toFixed(1)}%`,
                 position: "insideBottomLeft",
                 fill: "#dc2626",
                 fontSize: 11,
@@ -135,22 +133,3 @@ function DrawdownChartSkeleton() {
     </Card>
   );
 }
-```
-
-## Chart Features
-
-- **Negative Y-Axis**: All values are below zero
-- **Max Drawdown Line**: Dashed reference line at maximum drawdown
-- **Zero Line**: Reference line at 0%
-- **Red Fill**: Area chart with red color indicating loss
-- **Tooltip**: Shows exact drawdown percentage on hover
-
-## Notes
-
-- Drawdown data comes from the equity curve endpoint
-- Maximum drawdown value comes from metrics endpoint
-- Chart domain is `[dataMin, 0]` to show only negative values
-
----
-
-*Status Key: `pending` | `in_progress` | `completed`*

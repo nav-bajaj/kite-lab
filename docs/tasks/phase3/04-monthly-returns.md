@@ -1,6 +1,6 @@
 # Task 4: Monthly Returns Endpoint
 
-**Status**: `pending`
+**Status**: `completed`
 **Blocked By**: #1 (Metrics Service)
 **Blocks**: #10
 

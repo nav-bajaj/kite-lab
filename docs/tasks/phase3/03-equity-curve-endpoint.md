@@ -1,6 +1,6 @@
 # Task 3: Equity Curve Endpoint
 
-**Status**: `pending`
+**Status**: `completed`
 **Blocked By**: #1 (Metrics Service)
 **Blocks**: #7, #8, #9
 

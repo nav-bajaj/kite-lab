@@ -1,6 +1,6 @@
 # Task 9: Benchmark Comparison Toggle
 
-**Status**: `pending`
+**Status**: `completed`
 **Blocked By**: #7 (Equity Curve Chart)
 **Blocks**: None
 

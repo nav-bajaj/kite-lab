@@ -1,6 +1,6 @@
 # Task 10: Monthly Returns Heatmap
 
-**Status**: `pending`
+**Status**: `completed`
 **Blocked By**: #4 (Monthly Returns Endpoint)
 **Blocks**: None
 

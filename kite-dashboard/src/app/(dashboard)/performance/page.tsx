@@ -1,24 +1,38 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+
+import {
+  MetricsGrid,
+  EquityCurve,
+  DrawdownChart,
+  MonthlyHeatmap,
+  AdditionalMetrics,
+} from "@/components/performance";
 
 export default function PerformancePage() {
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Performance Analytics</CardTitle>
-          <CardDescription>
-            Detailed performance metrics and charts
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-12 text-muted-foreground">
-            <p>Performance analytics will be implemented in Phase 2</p>
-            <p className="text-sm mt-2">
-              Includes equity curves, drawdown analysis, and monthly returns
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Page Header */}
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Performance</h1>
+        <p className="text-muted-foreground">
+          Historical performance metrics and analysis
+        </p>
+      </div>
+
+      {/* Primary Metrics Grid */}
+      <MetricsGrid />
+
+      {/* Equity Curve Chart */}
+      <EquityCurve />
+
+      {/* Secondary Charts Row */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <DrawdownChart />
+        <MonthlyHeatmap />
+      </div>
+
+      {/* Additional Metrics */}
+      <AdditionalMetrics />
     </div>
   );
 }

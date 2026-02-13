@@ -103,18 +103,19 @@ export async function getHoldings(universe: UniverseId, token?: string) {
   }>(`/api/portfolio/holdings?universe=${universe}`, { token });
 }
 
-// Metrics endpoints
-export async function getMetrics(universe: UniverseId, token: string) {
+// Metrics endpoints (public, no auth required)
+export async function getMetrics(universe: UniverseId) {
   return apiFetch<{
-    period: { start: string; end: string; days: number };
+    universe: string;
+    period: { start: string | null; end: string | null; days: number };
     returns: { total_return: number; cagr: number; mtd: number; ytd: number };
     risk: {
       max_drawdown: number;
-      max_dd_duration: number;
+      max_dd_duration: number | null;
       volatility: number;
-      sharpe_ratio: number;
-      sortino_ratio: number;
-      calmar_ratio: number;
+      sharpe_ratio: number | null;
+      sortino_ratio: number | null;
+      calmar_ratio: number | null;
     };
     activity: {
       total_trades: number;
@@ -123,18 +124,33 @@ export async function getMetrics(universe: UniverseId, token: string) {
       avg_holding_days: number;
       hit_rate: number;
     };
-  }>(`/api/metrics?universe=${universe}`, { token });
+    error?: string;
+  }>(`/api/metrics?universe=${universe}`);
 }
 
-export async function getEquityCurve(universe: UniverseId, token: string) {
+export async function getEquityCurve(universe: UniverseId) {
   return apiFetch<{
+    universe: string;
     data: Array<{
       date: string;
       portfolio_value: number;
-      benchmark_value: number;
+      benchmark_value: number | null;
       drawdown: number;
     }>;
-  }>(`/api/metrics/equity-curve?universe=${universe}`, { token });
+    count: number;
+  }>(`/api/metrics/equity-curve?universe=${universe}`);
+}
+
+export async function getMonthlyReturns(universe: UniverseId) {
+  return apiFetch<{
+    universe: string;
+    years: number[];
+    data: Array<{
+      year: number;
+      months: (number | null)[];
+      ytd: number;
+    }>;
+  }>(`/api/metrics/monthly-returns?universe=${universe}`);
 }
 
 // Trades endpoints

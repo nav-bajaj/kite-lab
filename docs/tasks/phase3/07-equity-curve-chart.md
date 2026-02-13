@@ -1,6 +1,6 @@
 # Task 7: Equity Curve Chart
 
-**Status**: `pending`
+**Status**: `completed`
 **Blocked By**: #3 (Equity Curve Endpoint)
 **Blocks**: #9
 
