@@ -10,10 +10,10 @@ Set up shadcn/ui component library with all required components for the dashboar
 
 ## Tasks
 
-- [ ] Run `npx shadcn-ui@latest init`
-- [ ] Install core components
-- [ ] Configure component aliases
-- [ ] Verify components work
+- [x] Run `npx shadcn-ui@latest init`
+- [x] Install core components
+- [x] Configure component aliases
+- [x] Verify components work
 
 ## Initialize shadcn/ui
 

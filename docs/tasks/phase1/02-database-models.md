@@ -10,12 +10,12 @@ Create SQLAlchemy models and database setup with Alembic migrations. All tables 
 
 ## Tasks
 
-- [ ] Create `app/models/database.py` with engine and session setup
-- [ ] Create all SQLAlchemy models
-- [ ] Initialize Alembic (`alembic init alembic`)
-- [ ] Configure `alembic.ini` and `env.py`
-- [ ] Create initial migration
-- [ ] Add indexes for common queries
+- [x] Create `app/models/database.py` with engine and session setup
+- [x] Create all SQLAlchemy models
+- [x] Initialize Alembic (`alembic init alembic`)
+- [x] Configure `alembic.ini` and `env.py`
+- [x] Create initial migration
+- [x] Add indexes for common queries
 
 ## Models
 

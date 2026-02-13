@@ -10,13 +10,13 @@ Copy and adapt the data pipeline modules from kite-lab to the new backend struct
 
 ## Tasks
 
-- [ ] Migrate `data_pipeline/symbol_resolver.py`
-- [ ] Migrate `data_pipeline/price_client.py`
-- [ ] Migrate `data_pipeline/storage.py`
-- [ ] Migrate `data_pipeline/qa.py`
-- [ ] Copy static data files (universe CSVs)
-- [ ] Update imports to work in new structure
-- [ ] Create `__init__.py` files
+- [x] Migrate `data_pipeline/symbol_resolver.py`
+- [x] Migrate `data_pipeline/price_client.py`
+- [x] Migrate `data_pipeline/storage.py`
+- [x] Migrate `data_pipeline/qa.py`
+- [x] Copy static data files (universe CSVs)
+- [x] Update imports to work in new structure
+- [x] Create `__init__.py` files
 
 ## Files to Migrate
 

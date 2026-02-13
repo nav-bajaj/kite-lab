@@ -10,11 +10,11 @@ Create the health check endpoint and JWT-based authentication middleware with em
 
 ## Tasks
 
-- [ ] Implement `GET /api/health` endpoint (no auth required)
-- [ ] Create `app/auth.py` with JWT validation middleware
-- [ ] Set up CORS configuration
-- [ ] Add Bearer token validation for protected endpoints
-- [ ] Create `allowed_users` table check for email whitelist
+- [x] Implement `GET /api/health` endpoint (no auth required)
+- [x] Create `app/auth.py` with JWT validation middleware
+- [x] Set up CORS configuration
+- [x] Add Bearer token validation for protected endpoints
+- [x] Create `allowed_users` table check for email whitelist
 
 ## app/api/health.py
 

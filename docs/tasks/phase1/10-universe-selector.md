@@ -1,6 +1,6 @@
 # Task 10: Implement Universe Selector and Context
 
-**Status**: `pending`
+**Status**: `completed`
 **Blocked By**: #7 (shadcn/ui Components)
 **Blocks**: #12 (Deploy)
 
@@ -10,12 +10,12 @@ Create multi-universe support with a global context and selector component.
 
 ## Tasks
 
-- [ ] Create `lib/universes.ts` with universe constants
-- [ ] Build `lib/universe-context.tsx` React context
-- [ ] Create `components/shared/universe-selector.tsx` using ToggleGroup
-- [ ] Add universe selector to navbar
-- [ ] Persist selection in localStorage
-- [ ] Create TypeScript types
+- [x] Create `lib/universes.ts` with universe constants
+- [x] Build `lib/universe-context.tsx` React context
+- [x] Create `components/shared/universe-selector.tsx` using ToggleGroup
+- [x] Add universe selector to navbar
+- [x] Persist selection in localStorage
+- [x] Create TypeScript types
 
 ## src/lib/universes.ts
 

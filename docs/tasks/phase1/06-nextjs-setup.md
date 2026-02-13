@@ -10,11 +10,11 @@ Initialize the Next.js frontend project with TypeScript and Tailwind CSS.
 
 ## Tasks
 
-- [ ] Create `kite-dashboard/` with `create-next-app`
-- [ ] Configure `tailwind.config.js` for shadcn/ui
-- [ ] Set up `globals.css` with CSS variables (light/dark mode)
-- [ ] Create `lib/types.ts` for TypeScript interfaces
-- [ ] Set up project structure
+- [x] Create `kite-dashboard/` with `create-next-app`
+- [x] Configure `tailwind.config.js` for shadcn/ui
+- [x] Set up `globals.css` with CSS variables (light/dark mode)
+- [x] Create `lib/types.ts` for TypeScript interfaces
+- [x] Set up project structure
 
 ## Create Project
 

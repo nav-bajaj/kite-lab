@@ -1,6 +1,6 @@
 # Task 8: Implement NextAuth.js with Google OAuth
 
-**Status**: `pending`
+**Status**: `completed`
 **Blocked By**: #6 (Next.js Setup)
 **Blocks**: #11
 
@@ -10,13 +10,13 @@ Set up authentication with NextAuth.js using Google OAuth and email whitelist va
 
 ## Tasks
 
-- [ ] Install next-auth
-- [ ] Create auth route handler
-- [ ] Configure Google OAuth provider
-- [ ] Implement email whitelist validation
-- [ ] Set up session handling
-- [ ] Create middleware for protected routes
-- [ ] Create login page
+- [x] Install next-auth
+- [x] Create auth route handler
+- [x] Configure Google OAuth provider
+- [x] Implement email whitelist validation
+- [x] Set up session handling
+- [x] Create middleware for protected routes
+- [x] Create login page
 
 ## Install Dependencies
 

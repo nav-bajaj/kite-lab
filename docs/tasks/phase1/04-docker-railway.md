@@ -10,11 +10,11 @@ Set up deployment configuration for Railway with Docker.
 
 ## Tasks
 
-- [ ] Create `Dockerfile` (Python 3.11-slim)
-- [ ] Create `railway.toml` with build and deploy config
-- [ ] Set up healthcheck path `/api/health`
-- [ ] Configure start command with Alembic migrations
-- [ ] Create `.env.example` documenting required variables
+- [x] Create `Dockerfile` (Python 3.11-slim)
+- [x] Create `railway.toml` with build and deploy config
+- [x] Set up healthcheck path `/api/health`
+- [x] Configure start command with Alembic migrations
+- [x] Create `.env.example` documenting required variables
 
 ## Dockerfile
 

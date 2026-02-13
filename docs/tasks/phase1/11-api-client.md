@@ -1,6 +1,6 @@
 # Task 11: Create API Client with SWR Integration
 
-**Status**: `pending`
+**Status**: `completed`
 **Blocked By**: #6 (Next.js Setup), #8 (NextAuth)
 **Blocks**: #12 (Deploy)
 
@@ -10,12 +10,12 @@ Set up frontend data fetching with API client and SWR hooks.
 
 ## Tasks
 
-- [ ] Create `lib/api-client.ts` with fetch wrapper
-- [ ] Configure base URL from environment
-- [ ] Add Bearer token injection from session
-- [ ] Add universe parameter to requests
-- [ ] Set up SWR provider
-- [ ] Create example hooks
+- [x] Create `lib/api-client.ts` with fetch wrapper
+- [x] Configure base URL from environment
+- [x] Add Bearer token injection from session
+- [x] Add universe parameter to requests
+- [x] Set up SWR provider
+- [x] Create example hooks
 
 ## src/lib/api-client.ts
 

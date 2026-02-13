@@ -10,11 +10,11 @@ Initialize the FastAPI backend project with proper directory structure and depen
 
 ## Tasks
 
-- [ ] Create `kite-api/` directory at repo root
-- [ ] Set up `app/main.py` with FastAPI app instance
-- [ ] Create `requirements.txt` with all dependencies
-- [ ] Set up `app/config.py` for environment variables and universe configuration
-- [ ] Create directory structure
+- [x] Create `kite-api/` directory at repo root
+- [x] Set up `app/main.py` with FastAPI app instance
+- [x] Create `requirements.txt` with all dependencies
+- [x] Set up `app/config.py` for environment variables and universe configuration
+- [x] Create directory structure
 
 ## Directory Structure
 

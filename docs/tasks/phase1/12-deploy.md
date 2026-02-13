@@ -1,6 +1,6 @@
 # Task 12: Deploy Initial Shells to Vercel and Railway
 
-**Status**: `pending`
+**Status**: `completed`
 **Blocked By**: #3, #4, #9, #10, #11
 **Blocks**: None (Phase 1 complete)
 
@@ -10,14 +10,14 @@ Deploy the frontend to Vercel and backend to Railway, verify everything works en
 
 ## Tasks
 
-- [ ] Create GitHub repository (or configure existing)
-- [ ] Deploy frontend to Vercel
-- [ ] Deploy backend to Railway with PostgreSQL
-- [ ] Configure environment variables
-- [ ] Verify health endpoint
-- [ ] Verify Google OAuth login
-- [ ] Verify universe selector works
-- [ ] Test API communication
+- [x] Create GitHub repository (or configure existing)
+- [x] Deploy frontend to Vercel
+- [x] Deploy backend to Railway with PostgreSQL
+- [x] Configure environment variables
+- [x] Verify health endpoint
+- [x] Verify Google OAuth login
+- [x] Verify universe selector works
+- [x] Test API communication
 
 ## Repository Setup
 
@@ -178,38 +178,38 @@ cd kite-api && railway up
 
 ### Backend (Railway)
 
-- [ ] Health check returns OK
+- [x] Health check returns OK
   ```bash
   curl https://your-api.railway.app/api/health
   ```
-- [ ] Database connected
-- [ ] CORS allows frontend origin
+- [x] Database connected
+- [x] CORS allows frontend origin
 
 ### Frontend (Vercel)
 
-- [ ] Home page loads
-- [ ] Redirects to /login if not authenticated
-- [ ] Google OAuth works:
+- [x] Home page loads
+- [x] Redirects to /login if not authenticated
+- [x] Google OAuth works:
   - Click "Sign in with Google"
   - Redirects to Google
   - After auth, redirects back to dashboard
-- [ ] Unauthorized email rejected (test with different Google account)
-- [ ] Dashboard layout displays:
+- [x] Unauthorized email rejected (test with different Google account)
+- [x] Dashboard layout displays:
   - Sidebar visible on desktop
   - Mobile menu works on small screens
   - User avatar shows in navbar
-- [ ] Universe selector:
+- [x] Universe selector:
   - All three options visible (NSE 500, N250, N100)
   - Clicking changes selection
   - Refresh preserves selection
-- [ ] Theme toggle works (light/dark)
+- [x] Theme toggle works (light/dark)
 
 ### API Communication
 
-- [ ] Open DevTools → Network
-- [ ] Verify API calls go to Railway backend
-- [ ] Verify Authorization header present
-- [ ] Verify universe parameter in requests
+- [x] Open DevTools → Network
+- [x] Verify API calls go to Railway backend
+- [x] Verify Authorization header present
+- [x] Verify universe parameter in requests
 
 ## Troubleshooting
 
