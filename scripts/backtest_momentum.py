@@ -1,4 +1,5 @@
 import argparse
+import math
 from pathlib import Path
 
 import numpy as np
@@ -210,6 +211,7 @@ def run_backtest(
     min_consecutive_weeks=1,
     entry_rank=None,
     min_hold_days=0,
+    whole_shares=True,
 ):
     # Handle backward compatibility: if min_score is set but entry/exit not set, use min_score for both
     if min_score is not None:
@@ -428,26 +430,39 @@ def run_backtest(
                     if pd.isna(price) or price <= 0:
                         continue
 
-                    current_value = holdings.get(sym, 0) * price
+                    current_shares = holdings.get(sym, 0)
+                    current_value = current_shares * price
                     target_value = target_per_stock
-                    delta_value = target_value - current_value
 
-                    if abs(delta_value) < 1:  # Skip tiny adjustments
-                        continue
-
-                    trades_needed.append((sym, price, delta_value))
+                    if whole_shares:
+                        target_shares = math.floor(target_value / (price * (1 + slippage)))
+                        delta_shares = target_shares - current_shares
+                        if delta_shares == 0:
+                            continue
+                        trades_needed.append((sym, price, delta_shares, "shares"))
+                    else:
+                        delta_value = target_value - current_value
+                        if abs(delta_value) < 1:  # Skip tiny adjustments
+                            continue
+                        trades_needed.append((sym, price, delta_value, "value"))
 
                 # Execute sells first to free up cash
-                for sym, price, delta_value in trades_needed:
-                    if delta_value < 0:  # Sell
-                        shares_to_sell = min(-delta_value / price, holdings.get(sym, 0))
+                for sym, price, delta, mode in trades_needed:
+                    if (mode == "shares" and delta < 0) or (mode == "value" and delta < 0):
+                        if mode == "shares":
+                            shares_to_sell = min(-delta, holdings.get(sym, 0))
+                        else:
+                            shares_to_sell = min(-delta / price, holdings.get(sym, 0))
+                            if whole_shares:
+                                shares_to_sell = math.floor(shares_to_sell)
+
                         if shares_to_sell > 0:
                             proceeds = shares_to_sell * price * (1 - slippage)
                             cash += proceeds
                             holdings[sym] = holdings.get(sym, 0) - shares_to_sell
-                            avg_cost = cost_basis.get(sym, 0) / (holdings.get(sym, 0) + shares_to_sell)
+                            avg_cost = cost_basis.get(sym, 0) / (holdings.get(sym, 0) + shares_to_sell) if (holdings.get(sym, 0) + shares_to_sell) > 0 else 0
                             cost_basis[sym] = cost_basis.get(sym, 0) - avg_cost * shares_to_sell
-                            if holdings[sym] < 1e-6:
+                            if holdings.get(sym, 0) < 1:
                                 holdings.pop(sym, None)
                                 cost_basis.pop(sym, None)
                             notional = shares_to_sell * price
@@ -463,40 +478,92 @@ def run_backtest(
                                 "cash_after": cash,
                             })
 
-                # Execute buys, giving remaining cash to last buy
-                buys_needed = [(sym, price, delta) for sym, price, delta in trades_needed if delta > 0]
-                for idx, (sym, price, delta_value) in enumerate(buys_needed):
-                    is_last_buy = (idx == len(buys_needed) - 1)
+                # Execute buys
+                buys_needed = [(sym, price, delta, mode) for sym, price, delta, mode in trades_needed if delta > 0]
 
-                    if is_last_buy and len(buys_needed) > 1:
-                        # Give all remaining cash to last buy to avoid rounding errors
-                        shares_to_buy = cash / (price * (1 + slippage))
-                        cost = cash
-                    else:
-                        shares_to_buy = delta_value / (price * (1 + slippage))
+                if whole_shares and buys_needed:
+                    # First pass: allocate target shares
+                    pending_buys = []
+                    for sym, price, delta_shares, mode in buys_needed:
+                        shares_to_buy = delta_shares if mode == "shares" else math.floor(delta_shares / (price * (1 + slippage)))
                         cost = shares_to_buy * price * (1 + slippage)
-                        if cost > cash + 0.01:  # Allow small tolerance
+                        if shares_to_buy >= 1 and cost <= cash:
+                            pending_buys.append((sym, price, shares_to_buy, cost))
+
+                    # Calculate remaining cash
+                    total_cost = sum(cost for _, _, _, cost in pending_buys)
+                    remaining_cash = cash - total_cost
+
+                    # Distribute remaining cash one share at a time
+                    buy_symbols = [(sym, price) for sym, price, _, _ in pending_buys]
+                    buy_symbols_sorted = sorted(buy_symbols, key=lambda x: x[1])
+                    extra_shares = {}
+                    for sym, price in buy_symbols_sorted:
+                        share_cost = price * (1 + slippage)
+                        while remaining_cash >= share_cost:
+                            extra_shares[sym] = extra_shares.get(sym, 0) + 1
+                            remaining_cash -= share_cost
+
+                    # Execute buys
+                    for sym, price, shares, _ in pending_buys:
+                        total_shares = shares + extra_shares.get(sym, 0)
+                        cost = total_shares * price * (1 + slippage)
+
+                        if cost > cash + 0.01:
+                            total_shares = math.floor(cash / (price * (1 + slippage)))
+                            cost = total_shares * price * (1 + slippage)
+
+                        if total_shares >= 1:
+                            holdings[sym] = holdings.get(sym, 0) + total_shares
+                            cost_basis[sym] = cost_basis.get(sym, 0) + cost
+                            if sym not in entry_meta:
+                                entry_meta[sym] = {"date": date, "rank": current_ranks.get(sym)}
+                            cash -= cost
+                            notional = total_shares * price
+                            rebalance_turnover += abs(notional)
+                            trade_records.append({
+                                "date": date,
+                                "symbol": sym,
+                                "side": "BUY",
+                                "shares": total_shares,
+                                "price": price,
+                                "notional": notional,
+                                "slippage": total_shares * price * slippage,
+                                "cash_after": cash,
+                            })
+                else:
+                    # Fractional shares mode
+                    for idx, (sym, price, delta_value, mode) in enumerate(buys_needed):
+                        is_last_buy = (idx == len(buys_needed) - 1)
+
+                        if is_last_buy and len(buys_needed) > 1:
                             shares_to_buy = cash / (price * (1 + slippage))
                             cost = cash
+                        else:
+                            shares_to_buy = delta_value / (price * (1 + slippage))
+                            cost = shares_to_buy * price * (1 + slippage)
+                            if cost > cash + 0.01:
+                                shares_to_buy = cash / (price * (1 + slippage))
+                                cost = cash
 
-                    if shares_to_buy > 0:
-                        holdings[sym] = holdings.get(sym, 0) + shares_to_buy
-                        cost_basis[sym] = cost_basis.get(sym, 0) + cost
-                        if sym not in entry_meta:
-                            entry_meta[sym] = {"date": date, "rank": current_ranks.get(sym)}
-                        cash -= cost
-                        notional = shares_to_buy * price
-                        rebalance_turnover += abs(notional)
-                        trade_records.append({
-                            "date": date,
-                            "symbol": sym,
-                            "side": "BUY",
-                            "shares": shares_to_buy,
-                            "price": price,
-                            "notional": notional,
-                            "slippage": shares_to_buy * price * slippage,
-                            "cash_after": cash,
-                        })
+                        if shares_to_buy > 0:
+                            holdings[sym] = holdings.get(sym, 0) + shares_to_buy
+                            cost_basis[sym] = cost_basis.get(sym, 0) + cost
+                            if sym not in entry_meta:
+                                entry_meta[sym] = {"date": date, "rank": current_ranks.get(sym)}
+                            cash -= cost
+                            notional = shares_to_buy * price
+                            rebalance_turnover += abs(notional)
+                            trade_records.append({
+                                "date": date,
+                                "symbol": sym,
+                                "side": "BUY",
+                                "shares": shares_to_buy,
+                                "price": price,
+                                "notional": notional,
+                                "slippage": shares_to_buy * price * slippage,
+                                "cash_after": cash,
+                            })
         elif entrants:
             # Incremental mode (default): only allocate to new entrants
             target_cash = cash + sum(close_row.get(sym, last_prices.get(sym, 0)) * qty for sym, qty in holdings.items())
@@ -513,44 +580,121 @@ def run_backtest(
                 if not pd.isna(price) and price > 0:
                     valid_entrants.append((sym, price))
 
-            # Execute buys, giving remaining cash to last stock to avoid rounding issues
-            for idx, (sym, price) in enumerate(valid_entrants):
-                is_last = (idx == len(valid_entrants) - 1)
+            # Execute buys
+            # When using whole shares: first pass allocates equal-weight floor shares,
+            # second pass distributes remaining cash one share at a time
+            if whole_shares and valid_entrants:
+                # First pass: allocate floor shares to each stock
+                pending_buys = []
+                for sym, price in valid_entrants:
+                    shares = math.floor(allocation / (price * (1 + slippage)))
+                    if shares >= 1:
+                        cost = shares * price * (1 + slippage)
+                        pending_buys.append((sym, price, shares, cost))
 
-                if is_last and len(valid_entrants) > 1:
-                    # Give all remaining cash to last stock to ensure full deployment
-                    gross = cash
-                else:
-                    gross = allocation
+                # Calculate remaining cash after first pass
+                total_first_pass_cost = sum(cost for _, _, _, cost in pending_buys)
+                remaining_cash = cash - total_first_pass_cost
 
-                shares = gross / (price * (1 + slippage))
-                cost = shares * price * (1 + slippage)
+                # Second pass: distribute remaining cash one share at a time
+                # Sort by price ascending to maximize share count with remaining cash
+                entrants_by_price = sorted(valid_entrants, key=lambda x: x[1])
+                extra_shares = {}
+                for sym, price in entrants_by_price:
+                    share_cost = price * (1 + slippage)
+                    while remaining_cash >= share_cost:
+                        extra_shares[sym] = extra_shares.get(sym, 0) + 1
+                        remaining_cash -= share_cost
 
-                # Allow small tolerance for floating-point errors
-                if cost > cash + 0.01:
-                    continue
+                # Execute all buys
+                for sym, price, shares, _ in pending_buys:
+                    total_shares = shares + extra_shares.get(sym, 0)
+                    cost = total_shares * price * (1 + slippage)
 
-                # Ensure we don't overdraw cash (clamp to available)
-                if cost > cash:
-                    shares = cash / (price * (1 + slippage))
-                    cost = cash
+                    if cost > cash + 0.01:
+                        # Reduce shares if we somehow exceed cash
+                        total_shares = math.floor(cash / (price * (1 + slippage)))
+                        cost = total_shares * price * (1 + slippage)
 
-                holdings[sym] = holdings.get(sym, 0) + shares
-                cost_basis[sym] = cost_basis.get(sym, 0) + cost
-                entry_meta[sym] = {"date": date, "rank": current_ranks.get(sym)}
-                cash -= cost
-                notional = shares * price
-                rebalance_turnover += abs(notional)
-                trade_records.append({
-                    "date": date,
-                    "symbol": sym,
-                    "side": "BUY",
-                    "shares": shares,
-                    "price": price,
-                    "notional": notional,
-                    "slippage": shares * price * slippage,
-                    "cash_after": cash,
-                })
+                    if total_shares >= 1:
+                        holdings[sym] = holdings.get(sym, 0) + total_shares
+                        cost_basis[sym] = cost_basis.get(sym, 0) + cost
+                        entry_meta[sym] = {"date": date, "rank": current_ranks.get(sym)}
+                        cash -= cost
+                        notional = total_shares * price
+                        rebalance_turnover += abs(notional)
+                        trade_records.append({
+                            "date": date,
+                            "symbol": sym,
+                            "side": "BUY",
+                            "shares": total_shares,
+                            "price": price,
+                            "notional": notional,
+                            "slippage": total_shares * price * slippage,
+                            "cash_after": cash,
+                        })
+
+                # Handle stocks that only got extra shares (not in pending_buys)
+                for sym, price in valid_entrants:
+                    if sym in extra_shares and sym not in [pb[0] for pb in pending_buys]:
+                        total_shares = extra_shares[sym]
+                        cost = total_shares * price * (1 + slippage)
+                        if total_shares >= 1 and cost <= cash + 0.01:
+                            holdings[sym] = holdings.get(sym, 0) + total_shares
+                            cost_basis[sym] = cost_basis.get(sym, 0) + cost
+                            entry_meta[sym] = {"date": date, "rank": current_ranks.get(sym)}
+                            cash -= cost
+                            notional = total_shares * price
+                            rebalance_turnover += abs(notional)
+                            trade_records.append({
+                                "date": date,
+                                "symbol": sym,
+                                "side": "BUY",
+                                "shares": total_shares,
+                                "price": price,
+                                "notional": notional,
+                                "slippage": total_shares * price * slippage,
+                                "cash_after": cash,
+                            })
+            else:
+                # Fractional shares mode (original behavior)
+                for idx, (sym, price) in enumerate(valid_entrants):
+                    is_last = (idx == len(valid_entrants) - 1)
+
+                    if is_last and len(valid_entrants) > 1:
+                        # Give all remaining cash to last stock to ensure full deployment
+                        gross = cash
+                    else:
+                        gross = allocation
+
+                    shares = gross / (price * (1 + slippage))
+                    cost = shares * price * (1 + slippage)
+
+                    # Allow small tolerance for floating-point errors
+                    if cost > cash + 0.01:
+                        continue
+
+                    # Ensure we don't overdraw cash (clamp to available)
+                    if cost > cash:
+                        shares = cash / (price * (1 + slippage))
+                        cost = cash
+
+                    holdings[sym] = holdings.get(sym, 0) + shares
+                    cost_basis[sym] = cost_basis.get(sym, 0) + cost
+                    entry_meta[sym] = {"date": date, "rank": current_ranks.get(sym)}
+                    cash -= cost
+                    notional = shares * price
+                    rebalance_turnover += abs(notional)
+                    trade_records.append({
+                        "date": date,
+                        "symbol": sym,
+                        "side": "BUY",
+                        "shares": shares,
+                        "price": price,
+                        "notional": notional,
+                        "slippage": shares * price * slippage,
+                        "cash_after": cash,
+                    })
 
         if rebalance_turnover:
             turnover_records.append({
@@ -630,7 +774,12 @@ def main():
     parser.add_argument("--min-consecutive-weeks", type=int, default=1, help="Require stock to be in top-N for N consecutive weeks before entry (default: 1 = no filter)")
     parser.add_argument("--entry-rank", type=int, help="Only enter stocks ranked <= this value; existing holdings stay until they leave top-N (e.g., 12 = enter top-12, hold until out of top-24)")
     parser.add_argument("--min-hold-days", type=int, default=0, help="Minimum days to hold a position before it can be exited (default: 0)")
+    parser.add_argument("--whole-shares", action="store_true", default=True, help="Use whole shares only (realistic trading, default: True)")
+    parser.add_argument("--fractional-shares", action="store_true", help="Allow fractional shares (theoretical backtest)")
     args = parser.parse_args()
+
+    # Handle fractional-shares flag (overrides whole-shares)
+    use_whole_shares = not args.fractional_shares
 
     run_backtest(
         args.prices_dir,
@@ -654,6 +803,7 @@ def main():
         min_consecutive_weeks=args.min_consecutive_weeks,
         entry_rank=args.entry_rank,
         min_hold_days=args.min_hold_days,
+        whole_shares=use_whole_shares,
     )
 
 
