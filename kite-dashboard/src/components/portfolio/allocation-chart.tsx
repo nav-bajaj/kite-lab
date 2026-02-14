@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useHoldings } from "@/lib/hooks";
-import { formatPercent, formatCurrency } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 
 // Color palette for the pie chart
@@ -54,15 +54,15 @@ export function AllocationChart() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px]">
+        <div className="h-[200px] mb-4">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={chartData}
                 cx="50%"
                 cy="50%"
-                innerRadius={60}
-                outerRadius={100}
+                innerRadius={50}
+                outerRadius={80}
                 paddingAngle={1}
                 dataKey="value"
               >
@@ -71,14 +71,23 @@ export function AllocationChart() {
                 ))}
               </Pie>
               <Tooltip content={<CustomTooltip />} />
-              <Legend
-                layout="vertical"
-                align="right"
-                verticalAlign="middle"
-                formatter={(value) => <span className="text-xs">{value}</span>}
-              />
             </PieChart>
           </ResponsiveContainer>
+        </div>
+        {/* Scrollable legend */}
+        <div className="max-h-[150px] overflow-y-auto">
+          <div className="grid grid-cols-2 gap-1">
+            {chartData.map((item, index) => (
+              <div key={item.name} className="flex items-center gap-2 text-xs">
+                <div
+                  className="w-3 h-3 rounded-sm flex-shrink-0"
+                  style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                />
+                <span className="truncate">{item.name}</span>
+                <span className="text-muted-foreground ml-auto">{item.value.toFixed(1)}%</span>
+              </div>
+            ))}
+          </div>
         </div>
       </CardContent>
     </Card>
@@ -96,7 +105,7 @@ function CustomTooltip({ active, payload }: { active?: boolean; payload?: Array<
     <div className="rounded-lg border bg-background p-2 shadow-md">
       <p className="font-medium">{data.name}</p>
       <p className="text-sm text-muted-foreground">
-        Weight: {formatPercent(data.value)}
+        Weight: {data.value.toFixed(2)}%
       </p>
       <p className="text-sm text-muted-foreground">
         Value: {formatCurrency(data.notional)}

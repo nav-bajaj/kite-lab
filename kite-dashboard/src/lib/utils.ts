@@ -20,11 +20,21 @@ export function formatCurrency(value: number, decimals = 0): string {
 }
 
 /**
- * Format number as percentage with sign
+ * Format decimal as percentage with sign (0.55 -> +55.00%)
+ * Use this for decimal ratios (e.g., 0.0788 for 7.88%)
  */
 export function formatPercent(value: number, decimals = 2): string {
   const sign = value >= 0 ? "+" : "";
   return `${sign}${(value * 100).toFixed(decimals)}%`;
+}
+
+/**
+ * Format percentage value with sign (55 -> +55.00%)
+ * Use this when the value is already a percentage (e.g., 55.42 for 55.42%)
+ */
+export function formatPercentValue(value: number, decimals = 2): string {
+  const sign = value >= 0 ? "+" : "";
+  return `${sign}${value.toFixed(decimals)}%`;
 }
 
 /**

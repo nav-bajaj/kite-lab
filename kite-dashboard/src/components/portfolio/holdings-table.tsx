@@ -13,10 +13,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useHoldings } from "@/lib/hooks";
-import { formatCurrency, formatPercent, cn } from "@/lib/utils";
+import { formatCurrency, formatPercentValue, cn } from "@/lib/utils";
 import { ArrowUpDown, TrendingUp, TrendingDown } from "lucide-react";
 
-type SortField = "symbol" | "notional" | "pnl_pct" | "weight" | "holding_days";
+type SortField = "symbol" | "notional" | "pnl" | "pnl_pct" | "weight" | "holding_days";
 type SortOrder = "asc" | "desc";
 
 export function HoldingsTable() {
@@ -103,10 +103,19 @@ export function HoldingsTable() {
                 </TableHead>
                 <TableHead className="text-right">
                   <button
+                    onClick={() => handleSort("pnl")}
+                    className="flex items-center gap-1 ml-auto hover:text-foreground"
+                  >
+                    P&L (₹)
+                    <ArrowUpDown className="h-3 w-3" />
+                  </button>
+                </TableHead>
+                <TableHead className="text-right">
+                  <button
                     onClick={() => handleSort("pnl_pct")}
                     className="flex items-center gap-1 ml-auto hover:text-foreground"
                   >
-                    P&L
+                    P&L (%)
                     <ArrowUpDown className="h-3 w-3" />
                   </button>
                 </TableHead>
@@ -134,14 +143,17 @@ export function HoldingsTable() {
               {sortedHoldings.map((holding) => (
                 <TableRow key={holding.symbol}>
                   <TableCell className="font-medium">{holding.symbol}</TableCell>
-                  <TableCell className="text-right">{holding.shares.toLocaleString()}</TableCell>
-                  <TableCell className="text-right">{formatCurrency(holding.avg_cost)}</TableCell>
-                  <TableCell className="text-right">{formatCurrency(holding.current_price)}</TableCell>
-                  <TableCell className="text-right">{formatCurrency(holding.notional)}</TableCell>
+                  <TableCell className="text-right font-mono">{holding.shares.toLocaleString()}</TableCell>
+                  <TableCell className="text-right font-mono">{formatCurrency(holding.avg_cost, 2)}</TableCell>
+                  <TableCell className="text-right font-mono">{formatCurrency(holding.current_price, 2)}</TableCell>
+                  <TableCell className="text-right font-mono">{formatCurrency(holding.notional)}</TableCell>
                   <TableCell className="text-right">
-                    <PnLCell value={holding.pnl} percent={holding.pnl_pct} />
+                    <PnLValue value={holding.pnl} />
                   </TableCell>
-                  <TableCell className="text-right">{formatPercent(holding.weight)}</TableCell>
+                  <TableCell className="text-right">
+                    <PnLPercent value={holding.pnl_pct} />
+                  </TableCell>
+                  <TableCell className="text-right font-mono">{holding.weight.toFixed(2)}%</TableCell>
                   <TableCell className="text-right text-muted-foreground">{holding.holding_days}d</TableCell>
                 </TableRow>
               ))}
@@ -153,13 +165,23 @@ export function HoldingsTable() {
   );
 }
 
-function PnLCell({ value, percent }: { value: number; percent: number }) {
+function PnLValue({ value }: { value: number }) {
+  const isPositive = value >= 0;
+
+  return (
+    <span className={cn("font-mono", isPositive ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400")}>
+      {isPositive ? "+" : ""}{formatCurrency(value)}
+    </span>
+  );
+}
+
+function PnLPercent({ value }: { value: number }) {
   const isPositive = value >= 0;
 
   return (
     <div className={cn("flex items-center justify-end gap-1", isPositive ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400")}>
       {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-      <span>{formatPercent(percent)}</span>
+      <span className="font-mono">{formatPercentValue(value)}</span>
     </div>
   );
 }

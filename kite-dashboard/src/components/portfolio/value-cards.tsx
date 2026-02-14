@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePortfolio } from "@/lib/hooks";
-import { formatCurrency, formatPercent } from "@/lib/utils";
+import { formatCurrency, formatPercentValue } from "@/lib/utils";
 import { TrendingUp, TrendingDown, Wallet, BarChart3, PieChart } from "lucide-react";
 
 export function ValueCards() {
@@ -35,21 +35,21 @@ export function ValueCards() {
     },
     {
       title: "Total Return",
-      value: formatCurrency(data.total_return),
-      subtitle: formatPercent(data.total_return_pct),
+      value: formatPercentValue(data.total_return_pct),
+      subtitle: formatCurrency(data.total_return),
       icon: data.total_return >= 0 ? TrendingUp : TrendingDown,
       trend: data.total_return >= 0 ? "up" : "down",
     },
     {
       title: "CAGR",
-      value: data.cagr ? formatPercent(data.cagr) : "—",
+      value: data.cagr ? formatPercentValue(data.cagr) : "—",
       subtitle: "Annualized return",
       icon: BarChart3,
       trend: data.cagr && data.cagr > 0 ? "up" : null,
     },
     {
       title: "Max Drawdown",
-      value: data.max_drawdown ? formatPercent(data.max_drawdown) : "—",
+      value: data.max_drawdown ? formatPercentValue(data.max_drawdown) : "—",
       subtitle: "Historical worst",
       icon: TrendingDown,
       trend: "down",
