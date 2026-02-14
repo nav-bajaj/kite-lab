@@ -239,8 +239,8 @@ def main():
     parser = argparse.ArgumentParser(description="Sync local CSV data to production database")
     parser.add_argument(
         "--database-url",
-        required=True,
-        help="PostgreSQL database URL (e.g., postgresql://user:pass@host:port/db)"
+        default=None,
+        help="PostgreSQL database URL (default: read from DATABASE_URL env or config)"
     )
     parser.add_argument(
         "--universe",
@@ -251,27 +251,45 @@ def main():
     parser.add_argument(
         "--data-dir",
         default=None,
-        help="Path to kite-dashboard directory (default: auto-detect)"
+        help="Path to kite-lab directory (default: auto-detect)"
     )
     args = parser.parse_args()
 
-    # Determine data directory
+    # Get database URL from args, env, or .env file
+    import os
+    database_url = args.database_url
+    if not database_url:
+        database_url = os.environ.get("DATABASE_URL")
+    if not database_url:
+        # Try to read from kite-api/.env file
+        env_file = Path(__file__).parent.parent / ".env"
+        if env_file.exists():
+            with open(env_file) as f:
+                for line in f:
+                    if line.startswith("DATABASE_URL="):
+                        database_url = line.split("=", 1)[1].strip()
+                        break
+    if not database_url:
+        print("Error: No database URL provided. Use --database-url or set DATABASE_URL env var")
+        sys.exit(1)
+
+    # Determine data directory (kite-lab root, not kite-dashboard)
     if args.data_dir:
         data_dir = Path(args.data_dir)
     else:
-        # Auto-detect: this script is in kite-api/scripts/, data is in kite-dashboard/
-        data_dir = Path(__file__).parent.parent.parent / "kite-dashboard"
+        # Auto-detect: this script is in kite-api/scripts/, data is in kite-lab/
+        data_dir = Path(__file__).parent.parent.parent
 
     if not data_dir.exists():
         print(f"Error: Data directory not found: {data_dir}")
         sys.exit(1)
 
     print(f"Data directory: {data_dir}")
-    print(f"Database: {args.database_url.split('@')[-1]}")  # Hide credentials
+    print(f"Database: {database_url.split('@')[-1]}")  # Hide credentials
     print()
 
     # Create database connection
-    engine = create_engine(args.database_url)
+    engine = create_engine(database_url)
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     db = SessionLocal()
 

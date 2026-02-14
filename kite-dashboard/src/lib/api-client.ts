@@ -259,37 +259,173 @@ export async function getRebalanceHistory(universe: UniverseId, limit: number = 
 }
 
 // Jobs endpoints
-export async function getJobs(token: string, limit = 20) {
-  return apiFetch<{
-    jobs: Array<{
-      id: string;
-      command: string;
-      label?: string;
-      universe?: string;
-      status: "queued" | "running" | "completed" | "failed" | "cancelled";
-      started_at?: string;
-      ended_at?: string;
-      duration_seconds?: number;
-      error_message?: string;
-      created_at: string;
-    }>;
-  }>(`/api/jobs?limit=${limit}`, { token });
+export interface Job {
+  id: string;
+  command: string;
+  label: string | null;
+  universe: string | null;
+  args: Record<string, unknown> | null;
+  status: "queued" | "running" | "completed" | "failed" | "cancelled";
+  started_at: string | null;
+  ended_at: string | null;
+  duration_seconds: number | null;
+  error_message: string | null;
+  created_at: string;
 }
 
-export async function createJob(
-  token: string,
-  data: { command: string; label?: string; universe?: string }
-) {
-  return apiFetch<{ id: string; status: string }>("/api/jobs", {
+export interface JobListResponse {
+  jobs: Job[];
+}
+
+export interface CreateJobRequest {
+  command: string;
+  universe?: string;
+  args?: Record<string, unknown>;
+  label?: string;
+}
+
+export async function getJobs(params?: {
+  limit?: number;
+  universe?: string;
+  status?: string;
+}) {
+  const searchParams = new URLSearchParams();
+  if (params?.limit) searchParams.set("limit", String(params.limit));
+  if (params?.universe) searchParams.set("universe", params.universe);
+  if (params?.status) searchParams.set("status", params.status);
+
+  return apiFetch<JobListResponse>(`/api/jobs?${searchParams}`);
+}
+
+export async function getJob(jobId: string) {
+  return apiFetch<Job>(`/api/jobs/${jobId}`);
+}
+
+export async function createJob(data: CreateJobRequest) {
+  return apiFetch<Job>("/api/jobs", {
     method: "POST",
     body: data,
-    token,
   });
 }
 
-export async function cancelJob(token: string, jobId: string) {
-  return apiFetch<{ success: boolean }>(`/api/jobs/${jobId}/cancel`, {
+export async function getJobLogs(jobId: string, tail?: number) {
+  const params = tail ? `?tail=${tail}` : "";
+  return apiFetch<{ job_id: string; logs: string; status: string }>(
+    `/api/jobs/${jobId}/logs${params}`
+  );
+}
+
+export function getJobLogsStreamUrl(jobId: string) {
+  return `${API_BASE_URL}/api/jobs/${jobId}/logs?stream=true`;
+}
+
+export async function cancelJob(jobId: string) {
+  return apiFetch<{ success: boolean; job_id: string; status: string }>(
+    `/api/jobs/${jobId}/cancel`,
+    { method: "POST" }
+  );
+}
+
+// Schedule endpoints
+export interface ScheduledJob {
+  id: string;
+  name: string;
+  trigger: string;
+  next_run: string | null;
+  enabled: boolean;
+}
+
+export interface ScheduleListResponse {
+  jobs: ScheduledJob[];
+}
+
+export interface CreateScheduleRequest {
+  id: string;
+  name: string;
+  command: string;
+  universe?: string;
+  trigger?: string;
+  hour?: number;
+  minute?: number;
+  day_of_week?: string;
+  hours?: number;
+  minutes?: number;
+}
+
+export async function getSchedule() {
+  return apiFetch<ScheduleListResponse>("/api/schedule");
+}
+
+export async function createSchedule(data: CreateScheduleRequest) {
+  return apiFetch<ScheduledJob>("/api/schedule", {
     method: "POST",
-    token,
+    body: data,
   });
+}
+
+export async function deleteSchedule(jobId: string) {
+  return apiFetch<{ success: boolean; job_id: string }>(
+    `/api/schedule/${jobId}`,
+    { method: "DELETE" }
+  );
+}
+
+export async function runScheduleNow(jobId: string) {
+  return apiFetch<{ success: boolean; job_id: string; message: string }>(
+    `/api/schedule/${jobId}/run`,
+    { method: "POST" }
+  );
+}
+
+export async function getScheduleDefaults() {
+  return apiFetch<{
+    tasks: Array<{
+      id: string;
+      name: string;
+      description: string;
+      command: string;
+      trigger: string;
+      trigger_args: Record<string, unknown>;
+    }>;
+  }>("/api/schedule/defaults");
+}
+
+// System endpoints
+export interface TokenStatus {
+  valid: boolean;
+  expires_at: string | null;
+  message: string;
+}
+
+export interface DatabaseStatus {
+  connected: boolean;
+  latency_ms: number | null;
+  message: string;
+}
+
+export interface SyncStatus {
+  last_sync: string | null;
+  last_data_date: string | null;
+  message: string;
+}
+
+export interface SystemStatus {
+  api_health: boolean;
+  database: DatabaseStatus;
+  token: TokenStatus;
+  sync: SyncStatus;
+  version: string;
+  environment: string;
+}
+
+export async function getSystemStatus() {
+  return apiFetch<SystemStatus>("/api/system/status");
+}
+
+export async function getTokenStatus() {
+  return apiFetch<TokenStatus>("/api/system/token");
+}
+
+export async function getLoginUrl() {
+  return apiFetch<{ url: string; instructions: string }>("/api/system/login-url");
 }

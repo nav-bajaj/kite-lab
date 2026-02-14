@@ -1,8 +1,16 @@
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
+// Skip auth in development mode when SKIP_AUTH is set
+const SKIP_AUTH = process.env.SKIP_AUTH === "true";
+
 export default auth((req) => {
   const { pathname } = req.nextUrl;
+
+  // Skip auth entirely in dev mode
+  if (SKIP_AUTH) {
+    return NextResponse.next();
+  }
 
   // Public routes that don't require auth
   const publicRoutes = ["/login", "/api/auth"];

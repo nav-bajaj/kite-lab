@@ -8,7 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.config import get_settings
-from app.api import health, auth_routes, portfolio, sync, metrics, trades, rebalance
+from app.api import health, auth_routes, portfolio, sync, metrics, trades, rebalance, jobs, system, schedule
+from app.scheduler import start_scheduler, shutdown_scheduler, register_default_tasks, scheduler
 
 
 @asynccontextmanager
@@ -17,8 +18,16 @@ async def lifespan(app: FastAPI):
     # Startup
     settings = get_settings()
     print(f"Starting Kite-Lab API (debug={settings.debug})")
+
+    # Start scheduler (synchronous)
+    start_scheduler()
+    register_default_tasks(scheduler)
+    print("Scheduler started with default tasks")
+
     yield
-    # Shutdown
+
+    # Shutdown (synchronous)
+    shutdown_scheduler()
     print("Shutting down Kite-Lab API")
 
 
@@ -52,6 +61,9 @@ app.include_router(sync.router, tags=["sync"])
 app.include_router(metrics.router, tags=["metrics"])
 app.include_router(trades.router, tags=["trades"])
 app.include_router(rebalance.router, tags=["rebalance"])
+app.include_router(jobs.router, tags=["jobs"])
+app.include_router(system.router, tags=["system"])
+app.include_router(schedule.router, tags=["schedule"])
 
 
 @app.get("/")
@@ -59,8 +71,17 @@ async def root():
     """Root endpoint with API info."""
     return {
         "name": "Kite-Lab API",
-        "version": "1.0.1",
+        "version": "1.0.2",
         "docs": "/docs",
         "health": "/api/health",
-        "routes": ["/api/portfolio", "/api/sync", "/api/metrics", "/api/trades", "/api/rebalance"],
+        "routes": [
+            "/api/portfolio",
+            "/api/sync",
+            "/api/metrics",
+            "/api/trades",
+            "/api/rebalance",
+            "/api/jobs",
+            "/api/system",
+            "/api/schedule",
+        ],
     }

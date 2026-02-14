@@ -16,6 +16,7 @@ python-jose[cryptography]>=3.3.0
 
 # Scheduling
 apscheduler>=3.10.0
+pytz>=2024.1
 
 # HTTP client
 httpx>=0.26.0

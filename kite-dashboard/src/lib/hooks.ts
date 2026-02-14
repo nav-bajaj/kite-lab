@@ -16,7 +16,15 @@ import {
   getRebalanceOrders,
   getRebalanceHistory,
   getJobs,
+  getJob,
+  getJobLogs,
+  getSchedule,
+  getSystemStatus,
   getHealth,
+  type Job,
+  type JobListResponse,
+  type ScheduleListResponse,
+  type SystemStatus,
 } from "./api-client";
 
 // Refresh intervals
@@ -198,15 +206,65 @@ export function useRebalanceHistory(limit: number = 20) {
   );
 }
 
-// Jobs list
-export function useJobs(limit = 20) {
-  const token = useAuthToken();
-
-  return useSWR(
-    token ? ["jobs", token, limit] : null,
-    ([, t, l]) => getJobs(t, l),
+// Jobs list (no auth required for admin panel)
+export function useJobs(params?: {
+  limit?: number;
+  universe?: string;
+  status?: string;
+}) {
+  return useSWR<JobListResponse>(
+    ["jobs", params?.limit, params?.universe, params?.status],
+    () => getJobs(params),
     {
-      refreshInterval: REFRESH_INTERVAL,
+      refreshInterval: 5000, // Fast refresh for job status
+      revalidateOnFocus: true,
+    }
+  );
+}
+
+// Single job details
+export function useJob(jobId: string | null) {
+  return useSWR<Job>(
+    jobId ? ["job", jobId] : null,
+    () => getJob(jobId!),
+    {
+      refreshInterval: 2000, // Fast refresh for running jobs
+      revalidateOnFocus: true,
+    }
+  );
+}
+
+// Job logs
+export function useJobLogs(jobId: string | null, tail?: number) {
+  return useSWR<{ job_id: string; logs: string; status: string }>(
+    jobId ? ["job-logs", jobId, tail] : null,
+    () => getJobLogs(jobId!, tail),
+    {
+      refreshInterval: 2000,
+      revalidateOnFocus: false,
+    }
+  );
+}
+
+// Schedule list
+export function useSchedule() {
+  return useSWR<ScheduleListResponse>(
+    "schedule",
+    getSchedule,
+    {
+      refreshInterval: 30000, // Slower refresh for schedule
+      revalidateOnFocus: true,
+    }
+  );
+}
+
+// System status
+export function useSystemStatus() {
+  return useSWR<SystemStatus>(
+    "system-status",
+    getSystemStatus,
+    {
+      refreshInterval: 30000,
       revalidateOnFocus: true,
     }
   );
