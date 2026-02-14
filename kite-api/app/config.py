@@ -28,12 +28,21 @@ class Settings(BaseSettings):
     # App settings
     debug: bool = False
 
-    # Data directory (parent of kite-api, i.e., kite-lab root)
+    # Data directory
     @property
     def data_dir(self) -> Path:
-        """Get the data directory (kite-lab root, parent of kite-api)."""
-        # __file__ is app/config.py, so parent.parent is kite-api/, parent.parent.parent is kite-lab/
-        return Path(__file__).parent.parent.parent
+        """Get the data directory.
+
+        In Docker: /app (kite-api code is at /app, scripts at /app/scripts/)
+        In local dev: kite-lab root (parent of kite-api/)
+        """
+        import os
+        # Check if we're in Docker (working dir is /app and no parent kite-lab)
+        app_dir = Path(__file__).parent.parent  # /app/app -> /app
+        if app_dir == Path("/app"):
+            return app_dir
+        # Local development: go to parent (kite-lab root)
+        return app_dir.parent
 
     class Config:
         env_file = ".env"

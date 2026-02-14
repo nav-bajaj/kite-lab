@@ -19,15 +19,35 @@ LOGS_DIR.mkdir(parents=True, exist_ok=True)
 # Job timeout (30 minutes default)
 DEFAULT_TIMEOUT = 1800
 
-# Available commands with their script paths
+# Available commands with their script paths (relative to data_dir)
 COMMANDS = {
     "daily_pipeline": "scripts/run_daily_pipeline.py",
     "generate_portfolio": "scripts/run_final_momentum_portfolio.py",
     "backup_data": "scripts/sync_data_backup.py",
     "fetch_prices": "scripts/fetch_nse500_history.py",
     "build_signals": "scripts/build_momentum_signals_flexible.py",
-    "sync_database": "kite-api/scripts/sync_to_production.py",
+    "sync_database": "scripts/sync_to_production.py",
 }
+
+
+def resolve_script_path(command: str) -> Path:
+    """Resolve the full path to a script, handling Docker vs local environments."""
+    relative_path = COMMANDS.get(command)
+    if not relative_path:
+        raise ValueError(f"Unknown command: {command}")
+
+    # Try data_dir first (works in Docker)
+    script_path = settings.data_dir / relative_path
+    if script_path.exists():
+        return script_path
+
+    # For local dev, some scripts are in kite-api/scripts/
+    kite_api_path = settings.data_dir / "kite-api" / relative_path
+    if kite_api_path.exists():
+        return kite_api_path
+
+    # Fall back to original path
+    return script_path
 
 
 class JobService:
@@ -115,7 +135,7 @@ class JobService:
             db.commit()
 
             # Build command
-            script_path = settings.data_dir / COMMANDS[job.command]
+            script_path = resolve_script_path(job.command)
             cmd_args = [sys.executable, str(script_path)]
 
             # Add universe argument if provided
