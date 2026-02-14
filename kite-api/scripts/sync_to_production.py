@@ -22,7 +22,7 @@ from sqlalchemy.orm import sessionmaker
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from app.models.models import Base, Holding, EquityCurve, Metric
+from app.models.models import Base, Holding, EquityCurve, Metric, Trade
 
 
 def get_latest_experiment_dir(data_dir: Path, universe: str = "nse500") -> Optional[Path]:
@@ -185,6 +185,56 @@ def sync_metrics(db, data_dir: Path, universe: str = "nse500") -> dict:
     return {"universe": universe, "count": 1, "computed_date": str(computed_date)}
 
 
+def sync_trades(db, data_dir: Path, universe: str = "nse500") -> dict:
+    """Sync trades from CSV to database."""
+    exp_dir = get_latest_experiment_dir(data_dir, universe)
+    if not exp_dir:
+        return {"error": f"No experiment directory found for {universe}", "count": 0}
+
+    trades_path = exp_dir / "backtests" / "baseline" / "momentum_trades.csv"
+    if not trades_path.exists():
+        return {"error": f"Trades file not found: {trades_path}", "count": 0}
+
+    print(f"  Reading trades from: {trades_path}")
+    df = pd.read_csv(trades_path, parse_dates=["date"])
+
+    # Check existing trade count
+    existing_count = db.query(Trade).filter(Trade.universe == universe).count()
+    print(f"  Found {existing_count} existing trades")
+
+    # If we already have trades, only add new ones
+    if existing_count > 0:
+        from sqlalchemy import desc
+        last_trade = db.query(Trade).filter(
+            Trade.universe == universe
+        ).order_by(desc(Trade.trade_date)).first()
+
+        if last_trade:
+            df = df[df["date"] > pd.Timestamp(last_trade.trade_date)]
+            print(f"  Adding trades after {last_trade.trade_date}")
+
+    count = 0
+    for _, row in df.iterrows():
+        row_date = row["date"].date() if hasattr(row["date"], "date") else row["date"]
+
+        trade = Trade(
+            universe=universe,
+            trade_date=row_date,
+            symbol=row["symbol"],
+            side=row["side"],
+            shares=float(row["shares"]),
+            price=float(row["price"]),
+            notional=float(row["notional"]),
+            slippage=float(row.get("slippage", 0)) if "slippage" in row else None,
+            cash_after=float(row.get("cash_after", 0)) if "cash_after" in row else None,
+        )
+        db.add(trade)
+        count += 1
+
+    db.commit()
+    return {"universe": universe, "count": count, "total": existing_count + count}
+
+
 def main():
     parser = argparse.ArgumentParser(description="Sync local CSV data to production database")
     parser.add_argument(
@@ -237,6 +287,7 @@ def main():
             "holdings": sync_holdings(db, data_dir, universe),
             "equity_curve": sync_equity_curve(db, data_dir, universe),
             "metrics": sync_metrics(db, data_dir, universe),
+            "trades": sync_trades(db, data_dir, universe),
         }
         print()
 
@@ -251,6 +302,7 @@ def main():
         print(f"  Holdings: {data['holdings'].get('count', 0)} records")
         print(f"  Equity curve: {data['equity_curve'].get('count', 0)} new records")
         print(f"  Metrics: {data['metrics'].get('count', 0)} records")
+        print(f"  Trades: {data['trades'].get('count', 0)} new ({data['trades'].get('total', 0)} total)")
 
 
 if __name__ == "__main__":
