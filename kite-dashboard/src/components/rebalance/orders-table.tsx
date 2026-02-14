@@ -52,6 +52,8 @@ export function OrdersTable() {
     );
   }
 
+  const orders = data.orders || [];
+
   return (
     <Card>
       <CardHeader>
@@ -63,10 +65,10 @@ export function OrdersTable() {
                 ? `Order date: ${data.order_date}`
                 : "Orders for execution"}
               {" - "}
-              {data.sell_count} sells, {data.buy_count} buys
+              {data.sell_count || 0} sells, {data.buy_count || 0} buys
             </CardDescription>
           </div>
-          {data.orders.length > 0 && (
+          {orders.length > 0 && (
             <Button variant="outline" size="sm" onClick={handleExport}>
               <Download className="h-4 w-4 mr-1" />
               Export CSV
@@ -75,7 +77,7 @@ export function OrdersTable() {
         </div>
       </CardHeader>
       <CardContent>
-        {data.orders.length === 0 ? (
+        {orders.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-4">
             No orders available
           </p>
@@ -92,7 +94,7 @@ export function OrdersTable() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.orders.map((order, idx) => (
+                {orders.map((order, idx) => (
                   <TableRow key={`${order.symbol}-${idx}`}>
                     <TableCell className="font-medium">{order.symbol}</TableCell>
                     <TableCell>

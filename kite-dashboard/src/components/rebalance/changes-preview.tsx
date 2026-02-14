@@ -36,7 +36,9 @@ export function ChangesPreview() {
     );
   }
 
-  const hasChanges = data.additions.length > 0 || data.removals.length > 0;
+  const additions = data.additions || [];
+  const removals = data.removals || [];
+  const hasChanges = additions.length > 0 || removals.length > 0;
 
   return (
     <Card>
@@ -61,13 +63,13 @@ export function ChangesPreview() {
                 <div className="p-1 rounded bg-green-100 dark:bg-green-900">
                   <Plus className="h-4 w-4 text-green-600" />
                 </div>
-                <h3 className="font-medium">Additions ({data.additions_count})</h3>
+                <h3 className="font-medium">Additions ({data.additions_count || 0})</h3>
               </div>
-              {data.additions.length === 0 ? (
+              {additions.length === 0 ? (
                 <p className="text-sm text-muted-foreground">No additions</p>
               ) : (
                 <div className="space-y-2">
-                  {data.additions.map((item) => (
+                  {additions.map((item) => (
                     <div
                       key={item.symbol}
                       className="flex items-center justify-between p-2 rounded-lg border bg-green-50 dark:bg-green-950"
@@ -95,13 +97,13 @@ export function ChangesPreview() {
                 <div className="p-1 rounded bg-red-100 dark:bg-red-900">
                   <Minus className="h-4 w-4 text-red-600" />
                 </div>
-                <h3 className="font-medium">Removals ({data.removals_count})</h3>
+                <h3 className="font-medium">Removals ({data.removals_count || 0})</h3>
               </div>
-              {data.removals.length === 0 ? (
+              {removals.length === 0 ? (
                 <p className="text-sm text-muted-foreground">No removals</p>
               ) : (
                 <div className="space-y-2">
-                  {data.removals.map((item) => (
+                  {removals.map((item) => (
                     <div
                       key={item.symbol}
                       className="flex items-center justify-between p-2 rounded-lg border bg-red-50 dark:bg-red-950"

@@ -94,12 +94,12 @@ export function TradesTable() {
                 className="pl-8 w-40"
               />
             </div>
-            <Select value={side} onValueChange={(v) => { setSide(v); setPage(0); }}>
+            <Select value={side || "all"} onValueChange={(v) => { setSide(v === "all" ? "" : v); setPage(0); }}>
               <SelectTrigger className="w-24">
                 <SelectValue placeholder="Side" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All</SelectItem>
+                <SelectItem value="all">All</SelectItem>
                 <SelectItem value="BUY">Buy</SelectItem>
                 <SelectItem value="SELL">Sell</SelectItem>
               </SelectContent>

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Menu, Moon, Sun, LogOut } from "lucide-react";
 import { MobileSidebar } from "./mobile-sidebar";
 import { UniverseSelector } from "./universe-selector";
@@ -45,6 +45,7 @@ export function Navbar() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="p-0 w-64">
+          <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
           <MobileSidebar />
         </SheetContent>
       </Sheet>
