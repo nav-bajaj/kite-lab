@@ -3,6 +3,7 @@ Kite-Lab API - FastAPI Application
 
 Backend API for Kite-Lab Production Dashboard.
 """
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -10,6 +11,16 @@ from contextlib import asynccontextmanager
 from app.config import get_settings
 from app.api import health, auth_routes, portfolio, sync, metrics, trades, rebalance, jobs, system, schedule
 from app.scheduler import start_scheduler, shutdown_scheduler, register_default_tasks, scheduler
+from app.middleware.error_handlers import register_error_handlers
+from app.middleware.request_logger import RequestLoggerMiddleware
+from app.middleware.rate_limiter import register_rate_limiter
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(name)s %(levelname)s %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 
 @asynccontextmanager
@@ -35,11 +46,17 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Kite-Lab API",
     description="Backend API for Kite-Lab Production Dashboard",
-    version="1.0.1",
+    version="1.1.0",
     docs_url="/docs",
     redoc_url="/redoc",
     lifespan=lifespan,
 )
+
+# Register error handlers (must be before middleware)
+register_error_handlers(app)
+
+# Register rate limiter
+register_rate_limiter(app)
 
 # Configure CORS
 settings = get_settings()
@@ -52,6 +69,9 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
 )
+
+# Request logging middleware (outermost = runs first)
+app.add_middleware(RequestLoggerMiddleware)
 
 # Include routers
 app.include_router(health.router, prefix="/api", tags=["health"])
@@ -71,7 +91,7 @@ async def root():
     """Root endpoint with API info."""
     return {
         "name": "Kite-Lab API",
-        "version": "1.0.2",
+        "version": "1.1.0",
         "docs": "/docs",
         "health": "/api/health",
         "routes": [

@@ -27,7 +27,7 @@ Building a production-grade web dashboard to manage, monitor, and operate the Ki
 | [Phase 3](./phase3/README.md) | Week 5-6 | **Completed** | Performance Metrics - Equity curves, Benchmarks |
 | [Phase 4](./phase4/README.md) | Week 7-8 | **Completed** | Trades & Rebalance - History, Workflow |
 | [Phase 5](./phase5/README.md) | Week 9-10 | **Completed** | Admin Control Panel - Jobs, Scheduler |
-| [Phase 6](#phase-6-polish--production) | Week 11-12 | Not Started | Polish & Production - Error handling, Docs |
+| [Phase 6](./phase6/README.md) | Week 11-12 | **Completed** | Polish & Production - Error handling, Docs |
 
 ---
 
