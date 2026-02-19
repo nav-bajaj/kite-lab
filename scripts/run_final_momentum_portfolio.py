@@ -394,6 +394,11 @@ def main():
     for row in latest_rows:
         row["_as_of_date"] = as_of_date_str
 
+    # Read previous portfolio from canonical location BEFORE overwriting
+    prior_holdings = {}
+    if args.latest_output.exists():
+        prior_holdings = load_snapshot(args.latest_output)
+
     snapshot_dir = output_dir / "snapshots"
     snapshot_path = snapshot_dir / f"portfolio_{as_of_date_str}.csv"
     write_snapshot(latest_rows, snapshot_path)
@@ -463,12 +468,7 @@ def main():
     # as the single source of truth for comparisons with Monte Carlo/backtests.
 
     latest_holdings = {row["symbol"]: int(row["rank"]) for row in latest_rows}
-    prior_snapshot = find_previous_snapshot(snapshot_dir, snapshot_path)
-
-    if prior_snapshot:
-        prior_holdings = load_snapshot(prior_snapshot)
-    else:
-        prior_holdings = {}
+    # prior_holdings already loaded from args.latest_output before overwriting
 
     is_rebalance_day = today.weekday() == WEEKDAYS[args.rebalance_weekday.lower()]
     if is_rebalance_day:
@@ -480,7 +480,7 @@ def main():
         write_changes_report(
             report_path,
             changes,
-            prior_snapshot,
+            args.latest_output if prior_holdings else None,
             snapshot_path,
             today.isoformat(),
             latest_holdings,
