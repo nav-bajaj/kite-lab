@@ -1,5 +1,6 @@
 import argparse
 import csv
+import shutil
 import subprocess
 import sys
 from datetime import date, datetime, timedelta
@@ -161,6 +162,15 @@ def load_snapshot(snapshot_path: Path):
                 continue
             holdings[symbol] = int(row["rank"])
     return holdings
+
+
+def get_snapshot_date(snapshot_path: Path):
+    """Return the date from the first row of a snapshot file, or None if empty."""
+    with snapshot_path.open(newline="") as handle:
+        reader = csv.DictReader(handle)
+        for row in reader:
+            return row.get("date")
+    return None
 
 
 def find_latest_snapshot(snapshot_dir: Path):
@@ -395,9 +405,19 @@ def main():
         row["_as_of_date"] = as_of_date_str
 
     # Read previous portfolio from canonical location BEFORE overwriting
+    # On re-runs (canonical already has today's date), use the backup file
     prior_holdings = {}
+    prior_backup = args.latest_output.parent / "prior_portfolio.csv"
     if args.latest_output.exists():
-        prior_holdings = load_snapshot(args.latest_output)
+        canonical_date = get_snapshot_date(args.latest_output)
+        if canonical_date != as_of_date_str:
+            # First run of the day: use canonical as prior, save backup
+            prior_holdings = load_snapshot(args.latest_output)
+            shutil.copy2(args.latest_output, prior_backup)
+        elif prior_backup.exists():
+            # Re-run same day: use the backup we saved on first run
+            prior_holdings = load_snapshot(prior_backup)
+            print(f"Using prior portfolio backup for comparison (canonical already has today's date)")
 
     snapshot_dir = output_dir / "snapshots"
     snapshot_path = snapshot_dir / f"portfolio_{as_of_date_str}.csv"

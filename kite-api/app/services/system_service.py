@@ -219,3 +219,38 @@ class SystemService:
             return ""
 
         return f"https://kite.zerodha.com/connect/login?api_key={api_key}&v=3"
+
+    @staticmethod
+    def exchange_request_token(request_token: str) -> dict:
+        """
+        Exchange a Zerodha request_token for an access_token.
+
+        Saves the access token to disk and returns session data.
+        """
+        from kiteconnect import KiteConnect
+        import json
+
+        api_key = settings.kite_api_key
+        api_secret = settings.kite_api_secret
+
+        if not api_key or not api_secret:
+            raise ValueError("KITE_API_KEY and KITE_API_SECRET must be configured")
+
+        kite = KiteConnect(api_key=api_key)
+        data = kite.generate_session(request_token, api_secret=api_secret)
+        access_token = data["access_token"]
+
+        # Save token and session
+        token_path = settings.data_dir / "access_token.txt"
+        token_path.write_text(access_token)
+
+        session_path = settings.data_dir / "session.json"
+
+        def _json_serial(obj):
+            if hasattr(obj, "isoformat"):
+                return obj.isoformat()
+            raise TypeError(f"Type {type(obj)} not serializable")
+
+        session_path.write_text(json.dumps(data, indent=2, default=_json_serial))
+
+        return {"access_token": access_token, "user_name": data.get("user_name", "")}

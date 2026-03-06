@@ -3,15 +3,8 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { RefreshCw, BarChart3, Key, HardDrive, Loader2, ExternalLink, Database } from "lucide-react";
+import { RefreshCw, BarChart3, Key, HardDrive, Loader2, Database } from "lucide-react";
 import { createJob, getLoginUrl } from "@/lib/api-client";
 
 interface QuickAction {
@@ -63,24 +56,31 @@ const actions: QuickAction[] = [
 
 export function QuickActions() {
   const [loading, setLoading] = useState<string | null>(null);
-  const [loginOpen, setLoginOpen] = useState(false);
-  const [loginUrl, setLoginUrl] = useState<string>("");
-  const [loginInstructions, setLoginInstructions] = useState<string>("");
   const { toast } = useToast();
 
   const handleAction = async (action: QuickAction) => {
     if (action.special === "login") {
+      setLoading(action.id);
       try {
         const response = await getLoginUrl();
-        setLoginUrl(response.url);
-        setLoginInstructions(response.instructions);
-        setLoginOpen(true);
+        if (!response.url) {
+          toast({
+            title: "Error",
+            description: "Kite API key not configured on server",
+            variant: "destructive",
+          });
+          return;
+        }
+        // Open Zerodha login - callback handles token exchange automatically
+        window.open(response.url, "_blank");
       } catch {
         toast({
           title: "Error",
           description: "Failed to get login URL",
           variant: "destructive",
         });
+      } finally {
+        setLoading(null);
       }
       return;
     }
@@ -111,7 +111,6 @@ export function QuickActions() {
   };
 
   return (
-    <>
       <Card>
         <CardHeader>
           <CardTitle>Quick Actions</CardTitle>
@@ -147,34 +146,5 @@ export function QuickActions() {
           </div>
         </CardContent>
       </Card>
-
-      <Dialog open={loginOpen} onOpenChange={setLoginOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Kite Login Required</DialogTitle>
-            <DialogDescription>
-              Follow these steps to refresh your API token
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            <div className="rounded-md bg-muted p-4">
-              <pre className="whitespace-pre-wrap text-sm">
-                {loginInstructions}
-              </pre>
-            </div>
-
-            {loginUrl && (
-              <Button asChild className="w-full">
-                <a href={loginUrl} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  Open Zerodha Login
-                </a>
-              </Button>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
-    </>
   );
 }

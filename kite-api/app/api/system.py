@@ -1,7 +1,8 @@
 """
 System API endpoints for health checks and status.
 """
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
 from app.services.system_service import (
@@ -93,9 +94,51 @@ async def get_login_url():
     return LoginUrlResponse(
         url=url,
         instructions=(
-            "1. Open this URL in your browser\n"
+            "1. Click the button below to open Zerodha login\n"
             "2. Login with your Zerodha credentials\n"
-            "3. After redirect, copy the 'request_token' from URL\n"
-            "4. Run: python scripts/login_and_save_token.py <request_token>"
+            "3. You will be redirected back automatically"
         )
     )
+
+
+@router.get("/callback", response_class=HTMLResponse)
+async def kite_callback(
+    request_token: str = Query(default=None),
+    status: str = Query(default=None),
+):
+    """
+    OAuth callback from Zerodha after login.
+
+    Exchanges request_token for access_token and saves it.
+    """
+    if not request_token:
+        error_msg = status or "No request token received"
+        return HTMLResponse(content=f"""
+        <html><body style="font-family:system-ui;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;background:#0f0f0f;color:#fff">
+        <div style="text-align:center">
+            <h2 style="color:#ef4444">Login Failed</h2>
+            <p>{error_msg}</p>
+            <p style="color:#888;margin-top:24px">You can close this tab.</p>
+        </div></body></html>
+        """, status_code=400)
+
+    try:
+        result = SystemService.exchange_request_token(request_token)
+        user_name = result.get("user_name", "")
+        return HTMLResponse(content=f"""
+        <html><body style="font-family:system-ui;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;background:#0f0f0f;color:#fff">
+        <div style="text-align:center">
+            <h2 style="color:#22c55e">Login Successful</h2>
+            <p>Welcome{', ' + user_name if user_name else ''}! Access token saved.</p>
+            <p style="color:#888;margin-top:24px">You can close this tab and return to the dashboard.</p>
+        </div></body></html>
+        """)
+    except Exception as e:
+        return HTMLResponse(content=f"""
+        <html><body style="font-family:system-ui;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;background:#0f0f0f;color:#fff">
+        <div style="text-align:center">
+            <h2 style="color:#ef4444">Token Exchange Failed</h2>
+            <p>{str(e)}</p>
+            <p style="color:#888;margin-top:24px">You can close this tab.</p>
+        </div></body></html>
+        """, status_code=500)
