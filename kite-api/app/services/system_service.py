@@ -233,8 +233,13 @@ class SystemService:
         api_key = settings.kite_api_key
         api_secret = settings.kite_api_secret
 
-        if not api_key or not api_secret:
-            raise ValueError("KITE_API_KEY and KITE_API_SECRET must be configured")
+        missing = []
+        if not api_key:
+            missing.append("KITE_API_KEY")
+        if not api_secret:
+            missing.append("KITE_API_SECRET")
+        if missing:
+            raise ValueError(f"{', '.join(missing)} not configured in environment")
 
         kite = KiteConnect(api_key=api_key)
         data = kite.generate_session(request_token, api_secret=api_secret)
