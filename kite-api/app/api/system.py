@@ -101,6 +101,21 @@ async def get_login_url():
     )
 
 
+@router.get("/debug-env")
+async def debug_env():
+    """Temporary debug endpoint to check env var loading."""
+    import os
+    from app.config import settings
+    return {
+        "settings_key_set": bool(settings.kite_api_key),
+        "settings_secret_set": bool(settings.kite_api_secret),
+        "env_key_set": bool(os.environ.get("KITE_API_KEY")),
+        "env_secret_set": bool(os.environ.get("KITE_API_SECRET")),
+        "settings_secret_len": len(settings.kite_api_secret),
+        "env_secret_len": len(os.environ.get("KITE_API_SECRET", "")),
+    }
+
+
 @router.get("/callback", response_class=HTMLResponse)
 async def kite_callback(
     request_token: str = Query(default=None),
