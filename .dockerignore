@@ -1,0 +1,66 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+.Python
+*.so
+.eggs
+*.egg-info
+
+# Virtual environments
+venv
+.venv
+ENV
+env
+kite-api/venv
+
+# Environment files (secrets)
+.env
+kite-api/.env
+!.env.example
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Testing
+.pytest_cache
+.coverage
+htmlcov
+
+# Dashboard (not needed in API container)
+kite-dashboard/
+.vercel/
+
+# Large data files (fetched at runtime)
+nse500_data/
+nse500_data_hourly/
+data/nse500_data/
+data/nse500_data_hourly/
+data/indices_data/
+commodities_data/
+
+# Experiment outputs
+experiments/
+nifty_100_tests/
+nifty_250_tests/
+reports/
+
+# Logs
+logs/
+*.log
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# OS files
+.DS_Store
+Thumbs.db
