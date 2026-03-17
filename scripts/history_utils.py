@@ -14,18 +14,22 @@ EXCHANGE_PRIORITY = ("NSE", "BSE")
 
 def load_credentials():
     load_dotenv()
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("API_KEY") or os.getenv("KITE_API_KEY")
     if not api_key:
         raise RuntimeError("Missing API_KEY in environment. Populate .env before running this script.")
 
-    access_token_path = "access_token.txt"
-    if not os.path.exists(access_token_path):
-        raise RuntimeError("Missing access_token.txt. Run scripts/login_and_save_token.py first.")
+    # Check multiple locations for access_token.txt
+    token_paths = ["access_token.txt", "data/access_token.txt"]
+    access_token = ""
+    for path in token_paths:
+        if os.path.exists(path):
+            with open(path) as f:
+                access_token = f.read().strip()
+            if access_token:
+                break
 
-    with open(access_token_path) as f:
-        access_token = f.read().strip()
     if not access_token:
-        raise RuntimeError("access_token.txt is empty. Re-run scripts/login_and_save_token.py to refresh the token.")
+        raise RuntimeError("Missing access_token.txt. Run scripts/login_and_save_token.py first.")
 
     return api_key, access_token
 

@@ -32,16 +32,18 @@ OUTPUT_DIR = "indices_data"
 def load_credentials():
     """Load API credentials from .env and access_token.txt."""
     load_dotenv()
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("API_KEY") or os.getenv("KITE_API_KEY")
     if not api_key:
         raise RuntimeError("Missing API_KEY in environment. Populate .env before running this script.")
 
-    access_token_path = "access_token.txt"
-    if not os.path.exists(access_token_path):
-        raise RuntimeError("Missing access_token.txt. Run scripts/login_and_save_token.py first.")
-
-    with open(access_token_path) as f:
-        access_token = f.read().strip()
+    token_paths = ["access_token.txt", "data/access_token.txt"]
+    access_token = ""
+    for path in token_paths:
+        if os.path.exists(path):
+            with open(path) as f:
+                access_token = f.read().strip()
+            if access_token:
+                break
     if not access_token:
         raise RuntimeError("access_token.txt is empty. Re-run scripts/login_and_save_token.py to refresh the token.")
 
