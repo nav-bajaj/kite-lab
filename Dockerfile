@@ -34,11 +34,10 @@ COPY data_pipeline/ data_pipeline/
 
 # Copy static data files needed by scripts
 COPY data/static/ data/static/
-COPY data/benchmarks/ data/benchmarks/
 
-# Create data directories for runtime
+# Create data directories for runtime (benchmarks fetched at runtime)
 RUN mkdir -p data/nse500_data data/indices_data data/final_portfolio \
-    data/nifty100_portfolio data/nifty250_portfolio \
+    data/nifty100_portfolio data/nifty250_portfolio data/benchmarks \
     logs nifty_100_tests nifty_250_tests experiments
 
 # Create non-root user for security
