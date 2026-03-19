@@ -23,10 +23,10 @@ DEFAULT_TIMEOUT = 1800
 COMMANDS = {
     "daily_pipeline": "scripts/run_daily_pipeline.py",
     "generate_portfolio": "scripts/run_final_momentum_portfolio.py",
+    "update_portfolios": "scripts/update_all_portfolios.py",
     "backup_data": "scripts/sync_data_backup.py",
     "fetch_prices": "scripts/fetch_nse500_history.py",
     "build_signals": "scripts/build_momentum_signals_flexible.py",
-    "sync_database": "scripts/sync_to_production.py",
 }
 
 
@@ -145,8 +145,15 @@ class JobService:
             # Add additional arguments
             if job.args:
                 for key, value in job.args.items():
-                    if value is not None:
-                        cmd_args.extend([f"--{key.replace('_', '-')}", str(value)])
+                    if value is None:
+                        continue
+                    flag = f"--{key.replace('_', '-')}"
+                    # Boolean flags: pass flag only (no value) when True
+                    if isinstance(value, bool):
+                        if value:
+                            cmd_args.append(flag)
+                    else:
+                        cmd_args.extend([flag, str(value)])
 
             # Open log file
             log_path = JobService.get_log_path(job_id)

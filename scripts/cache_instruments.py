@@ -3,7 +3,7 @@ from kiteconnect import KiteConnect
 from dotenv import load_dotenv
 load_dotenv()
 
-API_KEY = os.getenv("API_KEY")
+API_KEY = os.getenv("API_KEY") or os.getenv("KITE_API_KEY")
 if not API_KEY:
     print("Missing API_KEY in environment. Populate .env before running this script.")
     sys.exit(1)

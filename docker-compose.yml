@@ -1,0 +1,52 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: kitelab
+      POSTGRES_PASSWORD: kitelab
+      POSTGRES_DB: kitelab
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kitelab"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://kitelab:kitelab@db:5432/kitelab
+      KITE_API_KEY: ${KITE_API_KEY:-}
+      KITE_API_SECRET: ${KITE_API_SECRET:-}
+      JWT_SECRET: dev-secret-local
+      ALLOWED_ORIGINS: http://localhost:3000
+      ALLOWED_EMAILS: test@example.com
+      DEBUG: "true"
+      PORT: "8000"
+    volumes:
+      - ./data/instruments_full.csv:/app/data/instruments_full.csv:ro
+      - ./nse500_data:/app/nse500_data
+      - ./indices_data:/app/data/indices_data
+      - ./data/benchmarks:/app/data/benchmarks
+      - ./data/final_portfolio:/app/data/final_portfolio
+      - ./data/nifty100_portfolio:/app/data/nifty100_portfolio
+      - ./data/nifty250_portfolio:/app/data/nifty250_portfolio
+      - ./experiments:/app/experiments
+      - ./nifty_100_tests:/app/nifty_100_tests
+      - ./nifty_250_tests:/app/nifty_250_tests
+    env_file:
+      - path: .env
+        required: false
+
+volumes:
+  pgdata:

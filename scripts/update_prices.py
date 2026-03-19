@@ -21,7 +21,7 @@ from scripts.history_utils import to_local_naive
 
 def init_kite():
     load_dotenv()
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("API_KEY") or os.getenv("KITE_API_KEY")
     if not api_key:
         raise RuntimeError("Missing API_KEY in environment.")
     access_token = Path("access_token.txt").read_text().strip()

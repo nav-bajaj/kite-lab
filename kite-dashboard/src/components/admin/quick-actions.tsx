@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { RefreshCw, BarChart3, Key, HardDrive, Loader2, Database } from "lucide-react";
+import { RefreshCw, BarChart3, Key, HardDrive, Loader2 } from "lucide-react";
 import { createJob, getLoginUrl } from "@/lib/api-client";
 
 interface QuickAction {
@@ -25,11 +25,11 @@ const actions: QuickAction[] = [
     command: "daily_pipeline",
   },
   {
-    id: "generate",
-    label: "Generate Portfolio",
-    description: "Build momentum signals",
+    id: "update_portfolios",
+    label: "Update Portfolios",
+    description: "Refresh prices & rebuild all 3",
     icon: BarChart3,
-    command: "generate_portfolio",
+    command: "update_portfolios",
   },
   {
     id: "login",
@@ -44,13 +44,6 @@ const actions: QuickAction[] = [
     description: "Sync to external location",
     icon: HardDrive,
     command: "backup_data",
-  },
-  {
-    id: "sync_db",
-    label: "Sync Database",
-    description: "Load CSV to database",
-    icon: Database,
-    command: "sync_database",
   },
 ];
 

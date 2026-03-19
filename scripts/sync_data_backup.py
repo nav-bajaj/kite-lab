@@ -64,6 +64,12 @@ def main():
 
     args = parser.parse_args()
 
+    # Skip backup if the destination's parent doesn't exist (e.g., in Docker)
+    if not args.backup_dir.parent.exists():
+        print(f"Backup directory parent does not exist: {args.backup_dir.parent}")
+        print("Skipping backup (likely running in Docker/production)")
+        return 0
+
     # Directories to backup
     dirs_to_backup = [
         ("nse500_data", "Daily NSE 500 price data"),

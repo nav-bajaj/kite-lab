@@ -6,7 +6,7 @@ from utils import find_token
 import matplotlib.pyplot as plt
 
 load_dotenv()
-API_KEY = os.getenv("API_KEY")
+API_KEY = os.getenv("API_KEY") or os.getenv("KITE_API_KEY")
 with open("access_token.txt") as f:
     ACCESS_TOKEN = f.read().strip()
 

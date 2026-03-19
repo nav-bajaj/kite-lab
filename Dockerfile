@@ -10,7 +10,8 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PYTHONPATH=/app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -38,7 +39,7 @@ COPY data/static/ data/static/
 # Create data directories for runtime (benchmarks fetched at runtime)
 RUN mkdir -p data/nse500_data data/indices_data data/final_portfolio \
     data/nifty100_portfolio data/nifty250_portfolio data/benchmarks \
-    logs nifty_100_tests nifty_250_tests experiments
+    logs/jobs nifty_100_tests nifty_250_tests experiments
 
 # Create non-root user for security
 RUN adduser --disabled-password --gecos '' appuser && \

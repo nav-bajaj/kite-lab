@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 import os, json, sys
 
 load_dotenv()
-API_KEY     = os.getenv("API_KEY")
-API_SECRET  = os.getenv("API_SECRET")
+API_KEY     = os.getenv("API_KEY") or os.getenv("KITE_API_KEY")
+API_SECRET  = os.getenv("API_SECRET") or os.getenv("KITE_API_SECRET")
 REDIRECT_URI= os.getenv("REDIRECT_URI")
 
 if not (API_KEY and API_SECRET and REDIRECT_URI):
