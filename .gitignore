@@ -55,3 +55,21 @@ Thumbs.db
 
 # Generated reports
 reports/
+
+# Vercel
+.vercel/
+
+# Logs
+logs/
+
+# Experimental data
+commodities_data/
+
+# Archives (from cleanup script)
+archives/
+
+# Timestamped experiment runs (large, regenerated daily)
+# Keep parent folders but ignore timestamped subdirectories
+experiments/final_portfolio/final_portfolio_*/
+nifty_100_tests/nifty100_portfolio_*/
+nifty_250_tests/nifty250_portfolio_*/
