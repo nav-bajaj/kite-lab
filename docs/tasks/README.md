@@ -69,23 +69,23 @@ Building a production-grade web dashboard to manage, monitor, and operate the Ki
 
 ---
 
-### Phase 3: Performance Metrics (IN PROGRESS)
+### Phase 3: Performance Metrics (COMPLETED)
 
 **Objective**: Historical equity curves, performance metrics, benchmark comparison.
 
 **Key Deliverables**:
-- [ ] Metrics service with Sharpe, Sortino, Calmar calculations
-- [ ] Equity curve chart (2020-present)
-- [ ] Benchmark comparison toggle
-- [ ] Drawdown visualization
-- [ ] Monthly returns heatmap
+- ✅ Metrics service with Sharpe, Sortino, Calmar calculations
+- ✅ Equity curve chart (2020-present)
+- ✅ Benchmark comparison toggle
+- ✅ Drawdown visualization
+- ✅ Monthly returns heatmap
 
-**API Endpoints** (to build):
+**API Endpoints**:
 - `GET /api/metrics?universe=nse500`
 - `GET /api/metrics/equity-curve?universe=nse500`
 - `GET /api/metrics/monthly-returns?universe=nse500`
 
-**Frontend Components** (to build):
+**Frontend Components**:
 - Performance page at `/performance`
 - Metrics grid (CAGR, Sharpe, Max DD, Volatility)
 - Equity curve chart with Recharts
@@ -96,7 +96,7 @@ Building a production-grade web dashboard to manage, monitor, and operate the Ki
 
 ---
 
-### Phase 4: Trades & Rebalance
+### Phase 4: Trades & Rebalance (COMPLETED)
 
 **Objective**: Trade history with search/filter, Thursday/Friday rebalance workflow.
 
@@ -124,15 +124,15 @@ Building a production-grade web dashboard to manage, monitor, and operate the Ki
 | History list | Past rebalances | `components/rebalance/history-list.tsx` |
 
 **Deliverables**:
-- [ ] Searchable trade history per universe
-- [ ] CSV export for selected universe
-- [ ] Thursday preview (additions/removals)
-- [ ] Friday order file download
-- [ ] Rebalance history with filter
+- ✅ Searchable trade history per universe
+- ✅ CSV export for selected universe
+- ✅ Thursday preview (additions/removals)
+- ✅ Friday order file download
+- ✅ Rebalance history with filter
 
 ---
 
-### Phase 5: Admin Control Panel
+### Phase 5: Admin Control Panel (COMPLETED)
 
 **Objective**: Sleek admin UI with visual controls, job execution, scheduling.
 
@@ -174,16 +174,16 @@ Building a production-grade web dashboard to manage, monitor, and operate the Ki
 - Min Hold Days: 8 (default)
 
 **Deliverables**:
-- [ ] One-click Daily Pipeline button
-- [ ] Portfolio generator with dropdowns
-- [ ] Real-time log viewer with streaming
-- [ ] Job history per universe
-- [ ] Scheduled jobs for all universes
-- [ ] System status dashboard
+- ✅ One-click Daily Pipeline button
+- ✅ Portfolio generator with dropdowns
+- ✅ Real-time log viewer with streaming
+- ✅ Job history per universe
+- ✅ Scheduled jobs for all universes
+- ✅ System status dashboard
 
 ---
 
-### Phase 6: Polish & Production
+### Phase 6: Polish & Production (COMPLETED)
 
 **Objective**: Production hardening, error handling, documentation.
 
@@ -202,11 +202,11 @@ Building a production-grade web dashboard to manage, monitor, and operate the Ki
 | **Testing** | Critical path E2E tests |
 
 **Deliverables**:
-- [ ] All error states handled gracefully
-- [ ] Loading states everywhere
-- [ ] Monitoring configured
-- [ ] Documentation complete
-- [ ] Mobile-responsive UI
+- ✅ All error states handled gracefully
+- ✅ Loading states everywhere
+- ✅ Monitoring configured
+- ✅ Documentation complete
+- ✅ Mobile-responsive UI
 
 ---
 
@@ -244,23 +244,26 @@ Building a production-grade web dashboard to manage, monitor, and operate the Ki
 docs/tasks/
 ├── README.md                 # This file (overview of all phases)
 ├── phase1/
-│   ├── README.md            # Phase 1 summary
-│   ├── 01-backend-setup.md
-│   ├── 02-database-models.md
-│   ├── ... (12 task files)
+│   ├── README.md            # Phase 1 summary (12 task files)
+│   └── ...
 ├── phase2/
-│   ├── README.md            # Phase 2 summary
-│   ├── 01-portfolio-service.md
-│   ├── 02-portfolio-endpoints.md
-│   ├── ... (9 task files)
+│   ├── README.md            # Phase 2 summary (9 task files)
+│   └── ...
 ├── phase3/
-│   ├── README.md            # Phase 3 summary
-│   ├── 01-metrics-service.md
-│   ├── 02-metrics-endpoint.md
-│   ├── ... (10 task files)
-├── phase4/                  # Created when Phase 4 starts
-├── phase5/                  # Created when Phase 5 starts
-└── phase6/                  # Created when Phase 6 starts
+│   ├── README.md            # Phase 3 summary (10 task files)
+│   └── ...
+├── phase4/
+│   ├── README.md            # Phase 4 summary (completed)
+│   └── ...
+├── phase5/
+│   ├── README.md            # Phase 5 summary (14 task files)
+│   └── ...
+├── phase6/
+│   ├── README.md            # Phase 6 summary (completed)
+│   └── ...
+└── phase6.1/
+    ├── README.md            # Repository reconciliation
+    └── ...
 ```
 
 ---
@@ -307,4 +310,4 @@ python scripts/sync_to_production.py \
 
 *Status Key: `pending` | `in_progress` | `completed`*
 
-*Last updated: February 13, 2026*
+*Last updated: March 20, 2026*
