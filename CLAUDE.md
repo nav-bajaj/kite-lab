@@ -6,12 +6,60 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Kite-Lab is a momentum-based quantitative trading system for Indian equities using the Zerodha KiteConnect API. The system fetches NSE 500 market data, generates volatility-adjusted momentum signals, and backtests weekly-rebalanced portfolios with comprehensive performance analytics.
 
-**Current Status (February 2026):**
+**Current Status (March 2026):**
 - Production portfolio: NSE 500, L6 momentum, weekly rebalance, min-hold 8 days
 - Performance: 59.4% CAGR, -30.0% max DD, 1.92 Sharpe (2020-2026)
 - Recent optimizations: Min-hold-days 8 (eliminated 0-7d churn), vol floor (0.20 → 0.05)
 - Alternative universes: Nifty 100, Nifty 250 via `--universe` argument
 - Single portfolio script handles all universes
+- **Production dashboard deployed** (see below)
+
+## Production Dashboard
+
+A web-based dashboard provides monitoring and control of the momentum portfolio system.
+
+**Production URLs:**
+| Service | URL |
+|---------|-----|
+| Frontend | https://kite-lab.vercel.app |
+| Backend API | https://kite-lab-production.up.railway.app |
+| API Docs | https://kite-lab-production.up.railway.app/docs |
+
+**Tech Stack:**
+- **Frontend:** Next.js 14, TypeScript, Tailwind CSS, shadcn/ui, Recharts
+- **Backend:** FastAPI, PostgreSQL, SQLAlchemy 2.0, Alembic
+- **Hosting:** Vercel (frontend) + Railway (backend + database)
+- **Auth:** Google OAuth with email whitelist
+
+**Key Features:**
+- Portfolio view with holdings, P&L, allocation pie chart
+- Performance metrics with equity curves and benchmark comparison
+- Trade history with search, filter, and CSV export
+- Rebalance workflow (Thursday preview, Friday orders)
+- Admin panel with job execution and scheduling
+- Real-time log streaming via SSE
+
+**Dashboard Commands:**
+```bash
+# Run backend locally
+cd kite-api && source .venv/bin/activate
+uvicorn app.main:app --reload --port 8000
+
+# Run frontend locally
+cd kite-dashboard && npm run dev
+
+# Sync local data to production database
+cd kite-api
+python scripts/sync_to_production.py --data-dir /path/to/kite-lab
+```
+
+**API Endpoints:**
+- `/api/portfolio` - Holdings and allocation
+- `/api/metrics` - Performance metrics and equity curves
+- `/api/trades` - Trade history with pagination
+- `/api/rebalance` - Rebalance workflow and orders
+- `/api/jobs` - Job execution and logs
+- `/api/system` - Health and token status
 
 ## Environment Setup
 
@@ -193,6 +241,33 @@ Script: `scripts/sync_data_backup.py`
 - Full directory replacement (not incremental)
 - Runs automatically with daily pipeline
 - Manual sync: `python scripts/sync_data_backup.py`
+
+### Dashboard Architecture (`kite-api/` and `kite-dashboard/`)
+
+**Backend Services (`kite-api/app/services/`):**
+- `portfolio_service.py` - Portfolio data retrieval from CSV/DB
+- `portfolio_db_service.py` - Database operations for holdings
+- `metrics_service.py` - Performance calculations (CAGR, Sharpe, DD)
+- `trade_service.py` - Trade history queries with pagination
+- `rebalance_service.py` - Rebalance workflow (preview, orders)
+- `job_service.py` - Job execution with subprocess handling
+- `sync_service.py` - CSV to PostgreSQL synchronization
+- `system_service.py` - Health checks and token management
+
+**Frontend Structure (`kite-dashboard/src/`):**
+- `app/(dashboard)/` - Main pages (portfolio, performance, trades, rebalance, admin)
+- `components/` - Reusable UI components per feature
+- `hooks/` - SWR data fetching hooks
+- `lib/` - API client and utilities
+- `contexts/` - Universe selector context
+
+**Database Tables:**
+- `equity_curve` - Daily portfolio values per universe
+- `metrics` - Performance metrics per universe
+- `trades` - Trade execution history
+- `holdings` - Current position snapshots
+- `rebalances` - Rebalance action history
+- `jobs` - Job execution logs
 
 ## Current Portfolio Configuration
 
@@ -563,7 +638,8 @@ python scripts/validate_signals.py --signals <path> --top-n 24
 
 ---
 
-**Last updated:** February 2026
+**Last updated:** March 2026
 **Production portfolio:** NSE 500 L6-1W + min-hold 8d (59.4% CAGR, 1.92 Sharpe)
 **Alternative portfolio:** Nifty 100 L6-1W (44.86% CAGR, -19.11% DD)
+**Dashboard:** https://kite-lab.vercel.app (deployed Feb 2026)
 **Status:** Optimized and production-ready

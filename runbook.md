@@ -2,6 +2,81 @@
 
 Quick reference for the CLI scripts in this repo. Assumes `.env` has `API_KEY`, `API_SECRET`, `REDIRECT_URI`, and you have a fresh `access_token.txt` (run login first).
 
+## Production Dashboard
+
+**URLs:**
+- Frontend: https://kite-lab.vercel.app
+- Backend: https://kite-lab-production.up.railway.app
+- API Docs: https://kite-lab-production.up.railway.app/docs
+
+### Dashboard Health Checks
+```bash
+# Check backend health
+curl https://kite-lab-production.up.railway.app/api/health
+# Expected: {"status": "healthy", "version": "1.1.0"}
+
+# Check system status (requires auth)
+curl https://kite-lab-production.up.railway.app/api/system/status
+```
+
+### Running Dashboard Locally
+```bash
+# Backend (FastAPI)
+cd kite-api && source .venv/bin/activate
+uvicorn app.main:app --reload --port 8000
+
+# Frontend (Next.js)
+cd kite-dashboard && npm run dev
+# Opens http://localhost:3000
+```
+
+### Database Sync
+Sync local CSV data to production PostgreSQL:
+```bash
+cd kite-api && source .venv/bin/activate
+
+# Sync all universes
+python scripts/sync_to_production.py \
+  --database-url "$DATABASE_URL" \
+  --data-dir /path/to/kite-lab
+
+# Or use the admin panel:
+# 1. Go to https://kite-lab.vercel.app/admin
+# 2. Click "Daily Pipeline" quick action
+# 3. Monitor job logs in real-time
+```
+
+### Job Management via Admin Panel
+The admin panel at `/admin` provides:
+- **Quick Actions:** One-click buttons for common operations
+  - Daily Pipeline: Fetch data + build signals + sync
+  - Generate Portfolio: Build signals + run backtest
+  - Kite Login: Refresh API token
+  - Backup Data: Sync to backup folder
+- **Portfolio Generator:** Custom parameters (universe, lookback, rebalance)
+- **Job List:** View recent jobs and their status
+- **Log Viewer:** Real-time streaming logs for running jobs
+- **Schedule Table:** View/manage scheduled jobs
+
+### Dashboard Troubleshooting
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| 500 errors on API | Database connection | Check Railway PostgreSQL status |
+| Stale data | Sync not run | Run sync from admin panel or CLI |
+| Auth failures | Token expired | Re-authenticate via Kite Login |
+| Frontend 404 | Deployment issue | Check Vercel deployment status |
+| Jobs stuck | Process hanging | Cancel job in admin, check logs |
+
+**Railway Logs:**
+```bash
+# Via Railway CLI (if installed)
+railway logs
+```
+
+**Vercel Logs:**
+Check deployment logs at https://vercel.com/dashboard
+
 ## Authentication & instruments
 - `python scripts/login_and_save_token.py`
   - Opens browser for Kite login; auto-writes `access_token.txt` and `session.json`.
