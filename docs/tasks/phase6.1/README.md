@@ -27,7 +27,7 @@ This phase reconciles all work done and establishes clean workflows going forwar
 | # | Task | Status | Description |
 |---|------|--------|-------------|
 | 1 | [Fix tasks README](./01-fix-tasks-readme.md) | `completed` | Update docs/tasks/README.md to show all phases completed |
-| 2 | [Commit portfolio data](./02-commit-portfolio-data.md) | `pending` | Stage and commit current holdings/signals |
+| 2 | [Commit portfolio data](./02-commit-portfolio-data.md) | `completed` | Stage and commit current holdings/signals |
 | 3 | [Update CLAUDE.md](./03-update-claude-md.md) | `pending` | Add dashboard completion status and URLs |
 | 4 | [Create cleanup script](./04-cleanup-script.md) | `pending` | Script to archive old experiment directories |
 | 5 | [Update runbook](./05-update-runbook.md) | `pending` | Add dashboard operation procedures |
