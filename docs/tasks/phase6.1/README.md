@@ -31,7 +31,7 @@ This phase reconciles all work done and establishes clean workflows going forwar
 | 3 | [Update CLAUDE.md](./03-update-claude-md.md) | `pending` | Add dashboard completion status and URLs |
 | 4 | [Create cleanup script](./04-cleanup-script.md) | `pending` | Script to archive old experiment directories |
 | 5 | [Update runbook](./05-update-runbook.md) | `pending` | Add dashboard operation procedures |
-| 6 | [Review gitignore](./06-review-gitignore.md) | `pending` | Ensure experiment dirs properly handled |
+| 6 | [Review gitignore](./06-review-gitignore.md) | `completed` | Ensure experiment dirs properly handled |
 
 ## Deliverables
 

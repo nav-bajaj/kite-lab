@@ -1,6 +1,6 @@
 # Task 06: Review Gitignore
 
-**Status**: `pending`
+**Status**: `completed`
 **Priority**: LOW
 **Estimated Time**: 15 minutes
 
