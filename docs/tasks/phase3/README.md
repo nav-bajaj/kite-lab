@@ -66,13 +66,13 @@ Metrics  Equity   Monthly             │        │       Drawdown  Heatmap
 
 ## Deliverables Checklist
 
-- [ ] Performance page accessible at `/performance`
-- [ ] Equity curve from 2020 to present for each universe
-- [ ] All key metrics displayed (CAGR, Sharpe, Max DD, Volatility)
-- [ ] Benchmark comparison with Nifty 100
-- [ ] Drawdown chart visualization
-- [ ] Monthly returns heatmap
-- [ ] Different metrics visible when switching universes
+- [x] Performance page accessible at `/performance`
+- [x] Equity curve from 2020 to present for each universe
+- [x] All key metrics displayed (CAGR, Sharpe, Max DD, Volatility)
+- [x] Benchmark comparison with Nifty 100
+- [x] Drawdown chart visualization
+- [x] Monthly returns heatmap
+- [x] Different metrics visible when switching universes
 
 ## Data Sources
 
