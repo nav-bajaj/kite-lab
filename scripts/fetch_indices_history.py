@@ -210,7 +210,7 @@ def download_indices(kite, indices, start_date, end_date, output_dir, throttle_s
         # Check for existing data and determine fetch start date
         # CRITICAL FIX: Use rolling window instead of incremental updates
         # to capture revised/finalized values for recent data
-        LOOKBACK_DAYS = 30
+        LOOKBACK_DAYS = 15
         existing_df = None
         fetch_start = start_date
 
@@ -314,7 +314,7 @@ def main():
         start_date,
         end_date,
         OUTPUT_DIR,
-        throttle_seconds=0.2,
+        throttle_seconds=0.34,
         max_retries=3,
     )
 
