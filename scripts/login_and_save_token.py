@@ -1,4 +1,4 @@
-import http.server, socketserver, webbrowser, urllib.parse, threading, time
+import http.server, socketserver, webbrowser, urllib.parse, threading, time, socket
 from kiteconnect import KiteConnect
 from dotenv import load_dotenv
 import os, json, sys
@@ -31,9 +31,16 @@ except Exception:
 
 # simple HTTP handler to capture request_token from redirect
 class Handler(http.server.SimpleHTTPRequestHandler):
+    def log_message(self, format, *args):
+        # Override to print request logs
+        print(f"[HTTP] {args[0]}")
+
     def do_GET(self):
+        print(f"[DEBUG] Received request: {self.path}")
         parsed = urllib.parse.urlparse(self.path)
-        if parsed.path == urllib.parse.urlparse(REDIRECT_URI).path:
+        expected_path = urllib.parse.urlparse(REDIRECT_URI).path
+        print(f"[DEBUG] Parsed path: {parsed.path}, Expected: {expected_path}")
+        if parsed.path == expected_path:
             qs = urllib.parse.parse_qs(parsed.query)
             request_token = qs.get("request_token", [None])[0]
             if not request_token:
@@ -74,17 +81,43 @@ httpd = None
 
 def serve():
     url = urllib.parse.urlparse(REDIRECT_URI)
-    host = url.hostname or "localhost"
     port = url.port or 8000
+    # Bind to 127.0.0.1 explicitly (not "localhost") to avoid DNS resolution issues
+    host = "127.0.0.1"
     global httpd
-    with ReusableTCPServer((host, port), Handler) as srv:
-        httpd = srv
-        print(f"Listening on {host}:{port} for redirect ...")
-        srv.serve_forever()
+    try:
+        with ReusableTCPServer((host, port), Handler) as srv:
+            httpd = srv
+            print(f"Listening on {host}:{port} for redirect ...")
+            print(f"Expected callback path: {url.path}")
+            srv.serve_forever()
+    except OSError as e:
+        print(f"ERROR: Could not start server on {host}:{port} - {e}")
+        print("Check if another process is using this port: lsof -i :8000")
+        shutdown_event.set()
 
 
 t = threading.Thread(target=serve, daemon=True)
 t.start()
+
+# Give the server a moment to start
+time.sleep(0.5)
+
+# Verify server is actually listening
+def check_server():
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(1)
+        result = sock.connect_ex(('127.0.0.1', urllib.parse.urlparse(REDIRECT_URI).port or 8000))
+        sock.close()
+        return result == 0
+    except:
+        return False
+
+if check_server():
+    print("Server verified: accepting connections on 127.0.0.1:8000")
+else:
+    print("WARNING: Server may not be accepting connections. Check for port conflicts.")
 
 # Keep process alive for a few minutes while you log in, but exit once token is saved
 if not shutdown_event.wait(timeout=600):
