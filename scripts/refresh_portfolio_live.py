@@ -6,6 +6,7 @@ This is fast (single API call) and shows current prices during market hours.
 
 Usage:
     python scripts/refresh_portfolio_live.py
+    python scripts/refresh_portfolio_live.py --universe nifty100
     python scripts/refresh_portfolio_live.py --detailed  # Show full quote data
 
 Prerequisites:
@@ -22,8 +23,9 @@ import pandas as pd
 from dotenv import load_dotenv
 from kiteconnect import KiteConnect
 
-PORTFOLIO_FILE = "data/final_portfolio/final_portfolio_24.csv"
-PRICE_DATA_DIR = "nse500_data"
+# Add scripts directory to path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from universe_config import get_universe_config, list_universes
 
 
 def load_credentials():
@@ -55,13 +57,14 @@ def init_kite_client():
     return kite
 
 
-def check_pipeline_freshness():
+def check_pipeline_freshness(config: dict):
     """Verify daily pipeline ran today."""
-    if not os.path.exists(PORTFOLIO_FILE):
+    portfolio_file = config["portfolio_file"]
+    if not portfolio_file.exists():
         return False, "Portfolio file not found"
 
     # Check portfolio file date
-    df = pd.read_csv(PORTFOLIO_FILE)
+    df = pd.read_csv(portfolio_file)
     if df.empty:
         return False, "Portfolio file is empty"
 
@@ -81,16 +84,16 @@ def check_pipeline_freshness():
         return False, f"Pipeline data is stale ({portfolio_date}, {days_old} days old). Run daily pipeline first."
 
 
-def load_portfolio():
+def load_portfolio(config: dict):
     """Load current portfolio symbols."""
-    df = pd.read_csv(PORTFOLIO_FILE)
+    df = pd.read_csv(config["portfolio_file"])
     return df["symbol"].tolist()
 
 
-def get_previous_close(symbol):
+def get_previous_close(symbol, config: dict):
     """Get previous day's close from local data."""
-    csv_path = os.path.join(PRICE_DATA_DIR, f"{symbol}_day.csv")
-    if not os.path.exists(csv_path):
+    csv_path = config["price_dir"] / f"{symbol}_day.csv"
+    if not csv_path.exists():
         return None
     try:
         df = pd.read_csv(csv_path)
@@ -101,7 +104,7 @@ def get_previous_close(symbol):
     return None
 
 
-def display_quotes(quotes, symbols, detailed=False):
+def display_quotes(quotes, symbols, config, detailed=False):
     """Display quote data in a formatted table."""
     print("\n" + "=" * 80)
     print(f"PORTFOLIO LIVE PRICES - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -130,7 +133,7 @@ def display_quotes(quotes, symbols, detailed=False):
         open_price = ohlc.get("open", 0)
         high = ohlc.get("high", 0)
         low = ohlc.get("low", 0)
-        prev_close = ohlc.get("close", 0) or get_previous_close(symbol) or ltp
+        prev_close = ohlc.get("close", 0) or get_previous_close(symbol, config) or ltp
         volume = q.get("volume", 0)
 
         change = ltp - prev_close if prev_close else 0
@@ -163,6 +166,12 @@ def display_quotes(quotes, symbols, detailed=False):
 def main():
     parser = argparse.ArgumentParser(description="Fetch live portfolio prices")
     parser.add_argument(
+        "--universe", "-u",
+        choices=list_universes(),
+        default="nse500",
+        help="Universe to use (default: nse500)"
+    )
+    parser.add_argument(
         "--detailed", "-d",
         action="store_true",
         help="Show detailed quote data (OHLC, volume)"
@@ -175,17 +184,20 @@ def main():
 
     args = parser.parse_args()
 
+    # Get universe config
+    config = get_universe_config(args.universe)
+
     # Check pipeline freshness
     if not args.skip_check:
-        is_fresh, message = check_pipeline_freshness()
+        is_fresh, message = check_pipeline_freshness(config)
         if not is_fresh:
             print(f"Error: {message}")
             sys.exit(1)
         print(f"Pipeline check: {message}")
 
     # Load portfolio
-    symbols = load_portfolio()
-    print(f"Loaded {len(symbols)} portfolio stocks")
+    symbols = load_portfolio(config)
+    print(f"Loaded {len(symbols)} portfolio stocks from {config['name']}")
 
     # Initialize Kite
     kite = init_kite_client()
@@ -197,7 +209,7 @@ def main():
 
     try:
         quotes = kite.quote(instrument_list)
-        display_quotes(quotes, symbols, detailed=args.detailed)
+        display_quotes(quotes, symbols, config, detailed=args.detailed)
     except Exception as e:
         print(f"Error fetching quotes: {e}")
         sys.exit(1)

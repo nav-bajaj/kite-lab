@@ -6,6 +6,7 @@ Much faster than full pipeline (~8s vs ~60s) for intraday updates.
 
 Usage:
     python scripts/refresh_portfolio_historical.py
+    python scripts/refresh_portfolio_historical.py --universe nifty100
     python scripts/refresh_portfolio_historical.py --days 3  # Fetch last 3 days
 
 Prerequisites:
@@ -26,9 +27,8 @@ from kiteconnect import KiteConnect
 # Add scripts directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import find_token
+from universe_config import get_universe_config, list_universes
 
-PORTFOLIO_FILE = "data/final_portfolio/final_portfolio_24.csv"
-PRICE_DATA_DIR = "nse500_data"
 INDIA_TZ = "Asia/Kolkata"
 
 
@@ -70,12 +70,13 @@ def to_local_naive(date_series):
     return dates
 
 
-def check_pipeline_freshness():
+def check_pipeline_freshness(config: dict):
     """Verify daily pipeline ran today."""
-    if not os.path.exists(PORTFOLIO_FILE):
+    portfolio_file = config["portfolio_file"]
+    if not portfolio_file.exists():
         return False, "Portfolio file not found"
 
-    df = pd.read_csv(PORTFOLIO_FILE)
+    df = pd.read_csv(portfolio_file)
     if df.empty:
         return False, "Portfolio file is empty"
 
@@ -94,9 +95,9 @@ def check_pipeline_freshness():
         return False, f"Pipeline data is stale ({portfolio_date}, {days_old} days old). Run daily pipeline first."
 
 
-def load_portfolio():
+def load_portfolio(config: dict):
     """Load current portfolio symbols."""
-    df = pd.read_csv(PORTFOLIO_FILE)
+    df = pd.read_csv(config["portfolio_file"])
     return df["symbol"].tolist()
 
 
@@ -134,11 +135,11 @@ def fetch_symbol_data(kite, symbol, start_date, end_date):
         return None, str(e)
 
 
-def update_csv_file(symbol, new_data):
+def update_csv_file(symbol, new_data, config: dict):
     """Update CSV file with new data, merging with existing."""
-    csv_path = os.path.join(PRICE_DATA_DIR, f"{symbol}_day.csv")
+    csv_path = config["price_dir"] / f"{symbol}_day.csv"
 
-    if os.path.exists(csv_path):
+    if csv_path.exists():
         existing_df = pd.read_csv(csv_path)
         existing_df["date"] = to_local_naive(existing_df["date"])
 
@@ -154,6 +155,12 @@ def update_csv_file(symbol, new_data):
 
 def main():
     parser = argparse.ArgumentParser(description="Refresh historical data for portfolio stocks")
+    parser.add_argument(
+        "--universe", "-u",
+        choices=list_universes(),
+        default="nse500",
+        help="Universe to use (default: nse500)"
+    )
     parser.add_argument(
         "--days", "-d",
         type=int,
@@ -174,22 +181,25 @@ def main():
 
     args = parser.parse_args()
 
+    # Get universe config
+    config = get_universe_config(args.universe)
+
     print("=" * 60)
-    print("PORTFOLIO HISTORICAL REFRESH")
+    print(f"PORTFOLIO HISTORICAL REFRESH - {config['name']}")
     print("=" * 60)
     print(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
     # Check pipeline freshness
     if not args.skip_check:
-        is_fresh, message = check_pipeline_freshness()
+        is_fresh, message = check_pipeline_freshness(config)
         if not is_fresh:
             print(f"\nError: {message}")
             sys.exit(1)
         print(f"Pipeline check: {message}")
 
     # Load portfolio
-    symbols = load_portfolio()
-    print(f"Loaded {len(symbols)} portfolio stocks")
+    symbols = load_portfolio(config)
+    print(f"Loaded {len(symbols)} portfolio stocks from {config['name']}")
 
     # Initialize Kite
     kite = init_kite_client()
@@ -212,7 +222,7 @@ def main():
             print(f"  [{i}/{len(symbols)}] {symbol}: FAILED - {error}")
             failures.append(symbol)
         else:
-            rows = update_csv_file(symbol, df)
+            rows = update_csv_file(symbol, df, config)
             new_rows = len(df)
             print(f"  [{i}/{len(symbols)}] {symbol}: OK (+{new_rows} rows, {rows} total)")
             successes += 1
