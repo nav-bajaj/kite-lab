@@ -38,15 +38,12 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         print(f"[DEBUG] Received request: {self.path}")
         parsed = urllib.parse.urlparse(self.path)
-        expected_path = urllib.parse.urlparse(REDIRECT_URI).path
-        print(f"[DEBUG] Parsed path: {parsed.path}, Expected: {expected_path}")
-        if parsed.path == expected_path:
-            qs = urllib.parse.parse_qs(parsed.query)
-            request_token = qs.get("request_token", [None])[0]
-            if not request_token:
-                self.send_response(400); self.end_headers()
-                self.wfile.write(b"Missing request_token.")
-                return
+        qs = urllib.parse.parse_qs(parsed.query)
+
+        # Accept any path that has request_token (more robust than exact path matching)
+        # This handles both /callback and /api/system/callback
+        request_token = qs.get("request_token", [None])[0]
+        if request_token:
 
             # Exchange request_token -> access_token
             try:
@@ -89,7 +86,7 @@ def serve():
         with ReusableTCPServer((host, port), Handler) as srv:
             httpd = srv
             print(f"Listening on {host}:{port} for redirect ...")
-            print(f"Expected callback path: {url.path}")
+            print(f"Will accept any request with request_token parameter")
             srv.serve_forever()
     except OSError as e:
         print(f"ERROR: Could not start server on {host}:{port} - {e}")
