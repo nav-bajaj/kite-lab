@@ -18,6 +18,7 @@ import argparse
 import os
 import sys
 from datetime import datetime, date
+from pathlib import Path
 
 import pandas as pd
 from dotenv import load_dotenv
@@ -58,30 +59,26 @@ def init_kite_client():
 
 
 def check_pipeline_freshness(config: dict):
-    """Verify daily pipeline ran today."""
-    portfolio_file = config["portfolio_file"]
-    if not portfolio_file.exists():
-        return False, "Portfolio file not found"
+    """Verify daily pipeline ran recently (checks price data, not portfolio file)."""
+    price_dir = config["price_dir"]
+    if not price_dir.exists():
+        return False, f"Price directory not found: {price_dir}"
 
-    # Check portfolio file date
-    df = pd.read_csv(portfolio_file)
-    if df.empty:
-        return False, "Portfolio file is empty"
+    # Check modification time of price files
+    csv_files = list(price_dir.glob("*_day.csv"))
+    if not csv_files:
+        return False, f"No price files found in {price_dir}"
 
-    portfolio_date = pd.to_datetime(df["date"].iloc[0]).date()
-    today = date.today()
+    # Check the most recently modified file
+    latest_file = max(csv_files, key=lambda f: f.stat().st_mtime)
+    mtime = datetime.fromtimestamp(latest_file.stat().st_mtime)
+    hours_old = (datetime.now() - mtime).total_seconds() / 3600
 
-    # Allow for weekend - if today is weekend, accept Friday's data
-    days_old = (today - portfolio_date).days
-
-    if days_old == 0:
-        return True, f"Pipeline data is current ({portfolio_date})"
-    elif days_old <= 3 and today.weekday() in [5, 6]:  # Weekend
-        return True, f"Pipeline data from {portfolio_date} (weekend, acceptable)"
-    elif days_old <= 3 and today.weekday() == 0:  # Monday
-        return True, f"Pipeline data from {portfolio_date} (Monday, acceptable)"
+    if hours_old <= 24:
+        return True, f"Price data updated {hours_old:.1f} hours ago"
     else:
-        return False, f"Pipeline data is stale ({portfolio_date}, {days_old} days old). Run daily pipeline first."
+        days_old = hours_old / 24
+        return False, f"Price data is {days_old:.1f} days old. Run daily pipeline first."
 
 
 def load_portfolio(config: dict):
