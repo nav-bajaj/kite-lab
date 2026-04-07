@@ -228,6 +228,40 @@ class Signal(Base):
         return f"<Signal({self.universe} {self.signal_date} #{self.rank} {self.symbol})>"
 
 
+class OpenPosition(Base):
+    """
+    Live portfolio positions for real-time tracking.
+
+    Unlike the Holding model (which stores backtest snapshots), this table
+    stores actual positions that the user holds for live P&L tracking.
+    """
+
+    __tablename__ = "open_positions"
+
+    id = Column(Integer, primary_key=True)
+    universe = Column(String(20), nullable=False, default="nse500", index=True)
+    symbol = Column(String(50), nullable=False)
+    instrument_token = Column(Integer)  # Zerodha instrument token for API calls
+    qty = Column(Integer, nullable=False)
+    avg_price = Column(Numeric(18, 4), nullable=False)
+    entry_date = Column(Date)
+    # Last known price (for when market is closed)
+    last_price = Column(Numeric(18, 4))
+    prev_close = Column(Numeric(18, 4))  # Previous day's closing price
+    price_updated_at = Column(DateTime)  # When prices were last updated
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index("idx_open_positions_universe", "universe"),
+        Index("idx_open_positions_symbol", "symbol"),
+        Index("idx_open_positions_universe_symbol", "universe", "symbol", unique=True),
+    )
+
+    def __repr__(self):
+        return f"<OpenPosition({self.universe} {self.symbol} qty={self.qty})>"
+
+
 class Job(Base):
     """Background job execution history."""
 

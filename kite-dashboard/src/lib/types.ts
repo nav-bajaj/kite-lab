@@ -148,6 +148,71 @@ export interface RebalanceRemoval {
   reason: string;
 }
 
+// Open Positions types (live portfolio tracking)
+export interface LiveQuote {
+  symbol: string;
+  instrument_token?: number;
+  ltp: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  change: number;
+  change_pct: number;
+  volume?: number;
+  last_trade_time?: string;
+}
+
+export interface Position {
+  symbol: string;
+  qty: number;
+  avg_price: number;
+  entry_date?: string;
+  ltp: number;
+  day_change: number;
+  day_change_pct: number;
+  invested: number;
+  current_value: number;
+  total_pnl: number;
+  total_pnl_pct: number;
+  day_pnl: number;
+  day_pnl_pct: number;
+}
+
+export interface MarketStatus {
+  is_open: boolean;
+  status: "pre_open" | "open" | "closed";
+  message: string;
+  next_open?: string;
+  last_updated: string;
+}
+
+export interface PositionsSummary {
+  total_invested: number;
+  total_current_value: number;
+  total_pnl: number;
+  total_pnl_pct: number;
+  day_pnl: number;
+  day_pnl_pct: number;
+  position_count: number;
+  winners: number;
+  losers: number;
+}
+
+export interface PositionsResponse {
+  universe: string;
+  positions: Position[];
+  summary: PositionsSummary;
+  market_status: MarketStatus;
+  last_updated: string;
+}
+
+export interface QuotesResponse {
+  quotes: Record<string, LiveQuote>;
+  market_status: MarketStatus;
+  last_updated: string;
+}
+
 // API response wrapper
 export interface ApiError {
   detail: string;

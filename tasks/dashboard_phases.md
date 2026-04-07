@@ -28,6 +28,7 @@ Building a production-grade web dashboard to manage, monitor, and operate the Ki
 | [Phase 4](./phase4/README.md) | Week 7-8 | **Completed** | Trades & Rebalance - History, Workflow |
 | [Phase 5](./phase5/README.md) | Week 9-10 | **Completed** | Admin Control Panel - Jobs, Scheduler |
 | [Phase 6](./phase6/README.md) | Week 11-12 | **Completed** | Polish & Production - Error handling, Docs |
+| [Live Portfolio](./live_portfolio/README.md) | April 2026 | **Completed** | Open Positions with live Zerodha prices |
 
 ---
 

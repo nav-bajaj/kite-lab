@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Kite-Lab is a momentum-based quantitative trading system for Indian equities using the Zerodha KiteConnect API. The system fetches NSE 500 market data, generates volatility-adjusted momentum signals, and backtests weekly-rebalanced portfolios with comprehensive performance analytics.
 
-**Current Status (March 2026):**
+**Current Status (April 2026):**
 - Production portfolio: NSE 500, L6 momentum, weekly rebalance, min-hold 8 days
 - Performance: 59.4% CAGR, -30.0% max DD, 1.92 Sharpe (2020-2026)
 - Recent optimizations: Min-hold-days 8 (eliminated 0-7d churn), vol floor (0.20 → 0.05)
@@ -33,11 +33,12 @@ A web-based dashboard provides monitoring and control of the momentum portfolio 
 
 **Key Features:**
 - Portfolio view with holdings, P&L, allocation pie chart
+- **Open Positions** - Live portfolio with real-time Zerodha prices during market hours
 - Performance metrics with equity curves and benchmark comparison
 - Trade history with search, filter, and CSV export
 - Rebalance workflow (Thursday preview, Friday orders)
 - Admin panel with job execution and scheduling
-- Real-time log streaming via SSE
+- Real-time streaming via SSE (logs and live prices)
 
 **Dashboard Commands:**
 ```bash
@@ -54,7 +55,9 @@ python scripts/sync_to_production.py --data-dir /path/to/kite-lab
 ```
 
 **API Endpoints:**
-- `/api/portfolio` - Holdings and allocation
+- `/api/portfolio` - Holdings and allocation (backtest data)
+- `/api/positions` - **Live positions with real-time prices from Zerodha**
+- `/api/positions/stream` - SSE for live price updates
 - `/api/metrics` - Performance metrics and equity curves
 - `/api/trades` - Trade history with pagination
 - `/api/rebalance` - Rebalance workflow and orders

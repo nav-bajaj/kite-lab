@@ -10,12 +10,14 @@ import {
   History,
   Settings,
   ChevronLeft,
+  Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Open Positions", href: "/positions", icon: Wallet },
   { name: "Performance", href: "/performance", icon: TrendingUp },
   { name: "Rebalance", href: "/rebalance", icon: RefreshCw },
   { name: "Trades", href: "/trades", icon: History },

@@ -429,3 +429,51 @@ export async function getTokenStatus() {
 export async function getLoginUrl() {
   return apiFetch<{ url: string; instructions: string }>("/api/system/login-url");
 }
+
+// Positions endpoints (live portfolio tracking)
+import type {
+  Position,
+  PositionsResponse,
+  PositionsSummary,
+  MarketStatus,
+  QuotesResponse,
+} from "./types";
+
+export async function getPositions(universe: UniverseId) {
+  return apiFetch<PositionsResponse>(`/api/positions?universe=${universe}`);
+}
+
+export async function getPositionsHoldings(universe: UniverseId) {
+  return apiFetch<{
+    universe: string;
+    holdings: Array<{
+      symbol: string;
+      qty: number;
+      avg_price: number;
+      entry_date?: string;
+    }>;
+    count: number;
+  }>(`/api/positions/holdings?universe=${universe}`);
+}
+
+export async function getPositionsQuotes(universe: UniverseId) {
+  return apiFetch<QuotesResponse>(`/api/positions/quotes?universe=${universe}`);
+}
+
+export async function getMarketStatus() {
+  return apiFetch<MarketStatus>("/api/positions/market-status");
+}
+
+export async function syncPositionsFromCsv(universe: UniverseId) {
+  return apiFetch<{
+    success: boolean;
+    synced_count: number;
+    universe: string;
+    message: string;
+  }>(`/api/positions/sync-from-csv?universe=${universe}`, { method: "POST" });
+}
+
+export function getPositionsStreamUrl(universe: UniverseId, interval: number = 3) {
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  return `${API_BASE}/api/positions/stream?universe=${universe}&interval=${interval}`;
+}

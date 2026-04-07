@@ -33,3 +33,9 @@ python-dotenv>=1.0.0
 
 # Rate limiting
 slowapi>=0.1.9
+
+# Server-Sent Events
+sse-starlette>=1.6.5
+
+# Caching
+cachetools>=5.3.0

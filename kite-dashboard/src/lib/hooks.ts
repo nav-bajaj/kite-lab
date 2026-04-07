@@ -21,11 +21,14 @@ import {
   getSchedule,
   getSystemStatus,
   getHealth,
+  getPositions,
+  getMarketStatus,
   type Job,
   type JobListResponse,
   type ScheduleListResponse,
   type SystemStatus,
 } from "./api-client";
+import type { PositionsResponse, MarketStatus } from "./types";
 
 // Refresh intervals
 const REFRESH_INTERVAL = 60_000; // 1 minute
@@ -265,6 +268,33 @@ export function useSystemStatus() {
     getSystemStatus,
     {
       refreshInterval: 30000,
+      revalidateOnFocus: true,
+    }
+  );
+}
+
+// Open Positions (live portfolio tracking)
+const POSITIONS_REFRESH = 10_000; // 10 seconds for live data
+
+export function usePositions() {
+  const { universeId } = useUniverse();
+
+  return useSWR<PositionsResponse>(
+    ["positions", universeId],
+    ([, universe]) => getPositions(universe),
+    {
+      refreshInterval: POSITIONS_REFRESH,
+      revalidateOnFocus: true,
+    }
+  );
+}
+
+export function useMarketStatus() {
+  return useSWR<MarketStatus>(
+    "market-status",
+    getMarketStatus,
+    {
+      refreshInterval: 60_000, // 1 minute
       revalidateOnFocus: true,
     }
   );

@@ -9,11 +9,13 @@ import {
   RefreshCw,
   History,
   Settings,
+  Wallet,
 } from "lucide-react";
 import { SheetClose } from "@/components/ui/sheet";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Open Positions", href: "/positions", icon: Wallet },
   { name: "Performance", href: "/performance", icon: TrendingUp },
   { name: "Rebalance", href: "/rebalance", icon: RefreshCw },
   { name: "Trades", href: "/trades", icon: History },
