@@ -2,8 +2,9 @@
 Rebalance API endpoints
 
 Weekly rebalance workflow: Thursday preview, Friday orders.
+All endpoints require authentication.
 """
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Depends
 from fastapi.responses import StreamingResponse
 import io
 
@@ -15,6 +16,7 @@ from app.services.rebalance_service import (
     get_rebalance_history,
     export_orders_csv,
 )
+from app.auth import get_current_user
 
 router = APIRouter(prefix="/api/rebalance", tags=["rebalance"])
 
@@ -22,6 +24,7 @@ router = APIRouter(prefix="/api/rebalance", tags=["rebalance"])
 @router.get("/status")
 async def rebalance_status(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
+    user: dict = Depends(get_current_user)
 ):
     """
     Get current rebalance status.
@@ -38,6 +41,7 @@ async def rebalance_status(
 @router.get("/preview")
 async def rebalance_preview(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
+    user: dict = Depends(get_current_user)
 ):
     """
     Get preview of upcoming rebalance changes (Thursday).
@@ -54,6 +58,7 @@ async def rebalance_preview(
 @router.get("/orders")
 async def rebalance_orders(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
+    user: dict = Depends(get_current_user)
 ):
     """
     Get order file for execution (Friday).
@@ -70,6 +75,7 @@ async def rebalance_orders(
 @router.get("/orders/export")
 async def export_orders(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
+    user: dict = Depends(get_current_user)
 ):
     """
     Export orders as CSV file for Kite execution.
@@ -100,6 +106,7 @@ async def export_orders(
 async def rebalance_history(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     limit: int = Query(default=20, ge=1, le=100, description="Number of records to return"),
+    user: dict = Depends(get_current_user)
 ):
     """
     Get history of past rebalances.

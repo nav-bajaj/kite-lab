@@ -2,10 +2,12 @@
 Portfolio API endpoints
 
 Reads from database first, falls back to CSV files if database is empty.
+All endpoints require authentication.
 """
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Depends
 
 from app.config import is_valid_universe, UniverseId
+from app.auth import get_current_user
 
 router = APIRouter(prefix="/api/portfolio", tags=["portfolio"])
 
@@ -50,7 +52,8 @@ def get_portfolio_service():
 
 @router.get("")
 async def portfolio_summary(
-    universe: UniverseId = Query(default="nse500", description="Portfolio universe")
+    universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
+    user: dict = Depends(get_current_user)
 ):
     """
     Get portfolio summary for a universe.
@@ -88,6 +91,7 @@ async def portfolio_summary(
 @router.get("/holdings")
 async def portfolio_holdings(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
+    user: dict = Depends(get_current_user)
 ):
     """
     Get current holdings for a universe.
@@ -114,6 +118,7 @@ async def portfolio_holdings(
 @router.get("/allocation")
 async def portfolio_allocation(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
+    user: dict = Depends(get_current_user)
 ):
     """
     Get allocation breakdown for a universe.

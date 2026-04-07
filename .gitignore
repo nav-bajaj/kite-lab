@@ -10,9 +10,35 @@ ENV/
 env/
 
 # Environment variables and secrets
+# Root level
 .env
+.env.*
+!.env.example
+
+# All subdirectories - ignore all .env files
+**/.env
+**/.env.local
+**/.env.production
+**/.env.development
+**/.env.docker
+
+# But allow .env.example templates
+!**/.env.example
+!.env.docker.example
+
+# Explicit patterns for known locations
+kite-api/.env
+kite-api/.env.*
+!kite-api/.env.example
+kite-dashboard/.env
+kite-dashboard/.env.*
+!kite-dashboard/.env.example
+
+# Credentials and tokens
 access_token.txt
 session.json
+**/access_token.txt
+**/session.json
 
 # Data files
 data/*

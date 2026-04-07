@@ -1,7 +1,9 @@
 """
 Schedule API endpoints for managing scheduled jobs.
+
+All endpoints require authentication.
 """
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
@@ -15,6 +17,7 @@ from app.scheduler.scheduler import (
 )
 from app.scheduler.tasks import create_task_wrapper, SCHEDULED_TASKS
 from app.services.job_service import COMMANDS
+from app.auth import get_current_user
 
 router = APIRouter(prefix="/api/schedule", tags=["schedule"])
 
@@ -63,7 +66,7 @@ class DeleteResponse(BaseModel):
 
 
 @router.get("", response_model=ScheduleListResponse)
-async def list_scheduled_jobs():
+async def list_scheduled_jobs(user: dict = Depends(get_current_user)):
     """
     List all scheduled jobs.
 
@@ -83,7 +86,7 @@ async def list_scheduled_jobs():
 
 
 @router.post("", response_model=ScheduledJobResponse)
-async def create_scheduled_job(request: CreateScheduleRequest):
+async def create_scheduled_job(request: CreateScheduleRequest, user: dict = Depends(get_current_user)):
     """
     Create a new scheduled job.
 
@@ -156,7 +159,7 @@ async def create_scheduled_job(request: CreateScheduleRequest):
 
 
 @router.delete("/{job_id}", response_model=DeleteResponse)
-async def delete_scheduled_job(job_id: str):
+async def delete_scheduled_job(job_id: str, user: dict = Depends(get_current_user)):
     """
     Remove a scheduled job.
 
@@ -179,7 +182,7 @@ async def delete_scheduled_job(job_id: str):
 
 
 @router.post("/{job_id}/run", response_model=RunNowResponse)
-async def run_scheduled_job_now(job_id: str):
+async def run_scheduled_job_now(job_id: str, user: dict = Depends(get_current_user)):
     """
     Run a scheduled job immediately.
 
@@ -203,7 +206,7 @@ async def run_scheduled_job_now(job_id: str):
 
 
 @router.get("/defaults")
-async def get_default_schedules():
+async def get_default_schedules(user: dict = Depends(get_current_user)):
     """
     Get list of default scheduled tasks.
 

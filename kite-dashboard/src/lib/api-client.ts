@@ -2,6 +2,24 @@ import { UniverseId } from "./types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+// Global token storage for authenticated requests
+let globalAuthToken: string | null = null;
+
+/**
+ * Set the global authentication token.
+ * Called by ApiAuthContext when token changes.
+ */
+export function setGlobalAuthToken(token: string | null) {
+  globalAuthToken = token;
+}
+
+/**
+ * Get the current global authentication token.
+ */
+export function getGlobalAuthToken(): string | null {
+  return globalAuthToken;
+}
+
 export class ApiError extends Error {
   status: number;
 
@@ -16,20 +34,23 @@ interface FetchOptions {
   method?: "GET" | "POST" | "PUT" | "DELETE";
   body?: unknown;
   token?: string;
+  skipAuth?: boolean;
 }
 
 async function apiFetch<T>(
   endpoint: string,
   options: FetchOptions = {}
 ): Promise<T> {
-  const { method = "GET", body, token } = options;
+  const { method = "GET", body, token, skipAuth = false } = options;
 
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };
 
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
+  // Use provided token, fall back to global token
+  const authToken = token ?? (skipAuth ? null : globalAuthToken);
+  if (authToken) {
+    headers["Authorization"] = `Bearer ${authToken}`;
   }
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -48,7 +69,7 @@ async function apiFetch<T>(
 
 // Health check (no auth required)
 export async function getHealth() {
-  return apiFetch<{ status: string; database: string; timestamp: string }>("/api/health");
+  return apiFetch<{ status: string; database: string; timestamp: string }>("/api/health", { skipAuth: true });
 }
 
 // Auth endpoints
@@ -461,7 +482,7 @@ export async function getPositionsQuotes(universe: UniverseId) {
 }
 
 export async function getMarketStatus() {
-  return apiFetch<MarketStatus>("/api/positions/market-status");
+  return apiFetch<MarketStatus>("/api/positions/market-status", { skipAuth: true });
 }
 
 export async function syncPositionsFromCsv(universe: UniverseId) {

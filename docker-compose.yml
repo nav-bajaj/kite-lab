@@ -1,16 +1,20 @@
+# Docker Compose for local development
+# SECURITY: Do not use these defaults in production
+# Create .env.docker with your own values
+
 services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: kitelab
-      POSTGRES_PASSWORD: kitelab
-      POSTGRES_DB: kitelab
+      POSTGRES_USER: ${POSTGRES_USER:-kitelab}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-kitelab_dev_only}
+      POSTGRES_DB: ${POSTGRES_DB:-kitelab}
     ports:
       - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U kitelab"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-kitelab}"]
       interval: 5s
       timeout: 3s
       retries: 5
@@ -25,13 +29,15 @@ services:
       db:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://kitelab:kitelab@db:5432/kitelab
+      DATABASE_URL: postgresql://${POSTGRES_USER:-kitelab}:${POSTGRES_PASSWORD:-kitelab_dev_only}@db:5432/${POSTGRES_DB:-kitelab}
       KITE_API_KEY: ${KITE_API_KEY:-}
       KITE_API_SECRET: ${KITE_API_SECRET:-}
-      JWT_SECRET: dev-secret-local
-      ALLOWED_ORIGINS: http://localhost:3000
-      ALLOWED_EMAILS: test@example.com
-      DEBUG: "true"
+      # SECURITY: Override JWT_SECRET in .env.docker for any shared environments
+      JWT_SECRET: ${JWT_SECRET:-local-dev-jwt-secret-not-for-production}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
+      ALLOWED_EMAILS: ${ALLOWED_EMAILS:-}
+      # SECURITY: Debug is OFF by default
+      DEBUG: ${DEBUG:-false}
       PORT: "8000"
     volumes:
       - ./data/instruments_full.csv:/app/data/instruments_full.csv:ro
@@ -46,6 +52,8 @@ services:
       - ./nifty_250_tests:/app/nifty_250_tests
     env_file:
       - path: .env
+        required: false
+      - path: .env.docker
         required: false
 
 volumes:

@@ -1,8 +1,8 @@
 "use client";
 
 import useSWR from "swr";
-import { useSession } from "next-auth/react";
 import { useUniverse } from "@/contexts/universe-context";
+import { useApiToken } from "@/contexts/api-auth-context";
 import {
   getPortfolio,
   getHoldings,
@@ -33,12 +33,6 @@ import type { PositionsResponse, MarketStatus } from "./types";
 // Refresh intervals
 const REFRESH_INTERVAL = 60_000; // 1 minute
 const SLOW_REFRESH = 300_000; // 5 minutes
-
-// Helper to get token from session
-function useAuthToken() {
-  const { data: session } = useSession();
-  return session?.accessToken;
-}
 
 // Health check (no auth)
 export function useHealth() {
