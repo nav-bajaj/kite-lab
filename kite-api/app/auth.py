@@ -59,8 +59,8 @@ def decode_token(token: str) -> dict:
             algorithms=[settings.jwt_algorithm]
         )
         return payload
-    except JWTError as e:
-        raise AuthError(f"Invalid or expired token: {str(e)}")
+    except JWTError:
+        raise AuthError("Invalid or expired token")
 
 
 def get_current_user(
@@ -124,7 +124,7 @@ def get_current_user(
         }
 
     # User not authorized
-    raise ForbiddenError(f"User {email} is not authorized to access this application")
+    raise ForbiddenError("User is not authorized to access this application")
 
 
 def get_optional_user(

@@ -27,11 +27,11 @@ Security review identified 30 issues across critical, high, medium, and low seve
 | # | Task | Status | User Action Required |
 |---|------|--------|---------------------|
 | 6 | [Add authentication to API endpoints](./06-api-authentication.md) | `pending` | No |
-| 7 | [Disable API docs in production](./07-disable-api-docs.md) | `pending` | No |
-| 8 | [Rate limit auth endpoints](./08-rate-limit-auth.md) | `pending` | No |
-| 9 | [Sanitize error messages](./09-sanitize-errors.md) | `pending` | No |
-| 10 | [Validate CORS configuration](./10-validate-cors.md) | `pending` | No |
-| 11 | [Disable debug mode in production](./11-disable-debug.md) | `pending` | No |
+| 7 | [Disable API docs in production](./07-disable-api-docs.md) | `done` | No |
+| 8 | [Rate limit auth endpoints](./08-rate-limit-auth.md) | `done` | No |
+| 9 | [Sanitize error messages](./09-sanitize-errors.md) | `done` | No |
+| 10 | [Validate CORS configuration](./10-validate-cors.md) | `done` | No |
+| 11 | [Disable debug mode in production](./11-disable-debug.md) | `done` | No |
 
 ---
 
@@ -65,8 +65,8 @@ Security review identified 30 issues across critical, high, medium, and low seve
 
 | Severity | Total | Fixed | Remaining |
 |----------|-------|-------|-----------|
-| Critical | 5 | 4 | 1 |
-| High | 6 | 1 | 5 |
+| Critical | 5 | 5 | 0 |
+| High | 6 | 6 | 0 |
 | Medium | 7 | 0 | 7 |
 | Low | 5 | 0 | 5 |
 
@@ -81,6 +81,11 @@ Security review identified 30 issues across critical, high, medium, and low seve
 
 **High:**
 - [x] #6 - API authentication added to all sensitive endpoints
+- [x] #7 - API docs (/docs, /redoc, /openapi.json) disabled when debug=False
+- [x] #8 - Auth token endpoint rate limited to 5 req/min per IP
+- [x] #9 - Error messages sanitized (no emails or JWTError details leaked)
+- [x] #10 - Wildcard CORS origins blocked in production
+- [x] #11 - Startup warnings for debug mode and default JWT secret
 
 ### User Actions Required
 

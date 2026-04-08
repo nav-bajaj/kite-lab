@@ -28,6 +28,14 @@ async def lifespan(app: FastAPI):
     """Application lifespan events."""
     # Startup
     settings = get_settings()
+    if settings.debug:
+        logging.getLogger(__name__).warning(
+            "DEBUG MODE IS ENABLED - disable in production by setting DEBUG=false"
+        )
+    if settings.jwt_secret == "change-me-in-production":
+        logging.getLogger(__name__).warning(
+            "JWT_SECRET is using the default value - set a strong secret in production"
+        )
     print(f"Starting Kite-Lab API (debug={settings.debug})")
 
     # Start scheduler (synchronous)
@@ -43,12 +51,14 @@ async def lifespan(app: FastAPI):
 
 
 # Create FastAPI app
+_settings = get_settings()
 app = FastAPI(
     title="Kite-Lab API",
     description="Backend API for Kite-Lab Production Dashboard",
     version="1.1.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
+    docs_url="/docs" if _settings.debug else None,
+    redoc_url="/redoc" if _settings.debug else None,
+    openapi_url="/openapi.json" if _settings.debug else None,
     lifespan=lifespan,
 )
 
@@ -60,7 +70,14 @@ register_rate_limiter(app)
 
 # Configure CORS
 settings = get_settings()
-origins = [origin.strip() for origin in settings.allowed_origins.split(",")]
+origins = [origin.strip() for origin in settings.allowed_origins.split(",") if origin.strip()]
+
+# Block wildcard origins in production
+if not settings.debug and "*" in origins:
+    logging.getLogger(__name__).warning(
+        "Wildcard CORS origin '*' is not allowed in production. Restricting to localhost."
+    )
+    origins = ["http://localhost:3000"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -93,7 +110,6 @@ async def root():
     return {
         "name": "Kite-Lab API",
         "version": "1.1.0",
-        "docs": "/docs",
         "health": "/api/health",
         "routes": [
             "/api/portfolio",
