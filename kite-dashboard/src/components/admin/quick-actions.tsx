@@ -116,7 +116,7 @@ export function QuickActions() {
           <CardTitle>Quick Actions</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
             {actions.map((action) => {
               const Icon = action.icon;
               const isLoading = loading === action.id;
