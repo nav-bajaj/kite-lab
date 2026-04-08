@@ -5,6 +5,9 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
+# Pre-fetch step: instruments cache (required for symbol resolution)
+INSTRUMENTS_STEP = ("Cache instruments list", [sys.executable, "scripts/cache_instruments.py"])
+
 # Steps that can run in parallel (data fetching)
 PARALLEL_FETCH_STEPS = [
     ("Refresh NSE 500 data", [sys.executable, "scripts/fetch_nse500_history.py"]),
@@ -90,6 +93,12 @@ def main():
         name, success, _ = run_command("Login to Kite", login_cmd, dry_run=args.dry_run)
         if not success:
             sys.exit(1)
+
+    # Cache instruments (needed for symbol resolution in stock fetches)
+    name, success, _ = run_command(*INSTRUMENTS_STEP, dry_run=args.dry_run)
+    if not success:
+        print("\nFailed to cache instruments. Stock fetches will fail without it.")
+        sys.exit(1)
 
     # Run data fetch steps
     if args.sequential:
