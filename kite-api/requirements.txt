@@ -1,41 +1,41 @@
 # FastAPI and server
-fastapi>=0.109.0
-uvicorn[standard]>=0.27.0
+fastapi==0.128.6
+uvicorn[standard]==0.39.0
 
 # Database
-sqlalchemy>=2.0.0
-alembic>=1.13.0
-psycopg2-binary>=2.9.0
+sqlalchemy==2.0.46
+alembic==1.16.5
+psycopg2-binary==2.9.11
 
 # Data validation
-pydantic>=2.0.0
-pydantic-settings>=2.0.0
+pydantic==2.12.5
+pydantic-settings==2.11.0
 
 # Authentication
-python-jose[cryptography]>=3.3.0
+python-jose[cryptography]==3.5.0
 
 # Scheduling
-apscheduler>=3.10.0
-pytz>=2024.1
+apscheduler==3.11.2
+pytz==2025.2
 
 # HTTP client
-httpx>=0.26.0
+httpx==0.28.1
 
 # Data processing
-pandas>=2.0.0
-numpy>=1.24.0
+pandas==2.3.3
+numpy==2.0.2
 
 # Zerodha API
-kiteconnect>=5.0.0
+kiteconnect==5.0.1
 
 # Environment
-python-dotenv>=1.0.0
+python-dotenv==1.2.1
 
 # Rate limiting
-slowapi>=0.1.9
+slowapi==0.1.9
 
 # Server-Sent Events
-sse-starlette>=1.6.5
+sse-starlette==3.3.0
 
 # Caching
-cachetools>=5.3.0
+cachetools==6.2.6

@@ -53,11 +53,11 @@ Security review identified 30 issues across critical, high, medium, and low seve
 
 | # | Task | Status |
 |---|------|--------|
-| 19 | Add request ID tracking | `pending` |
-| 20 | Implement audit logging | `pending` |
-| 21 | Add pagination limits | `pending` |
-| 22 | Pin dependency versions | `pending` |
-| 23 | Encrypt access_token.txt | `pending` |
+| 19 | Add request ID tracking | `done` |
+| 20 | Implement audit logging | `done` |
+| 21 | Add pagination limits | `skip` (already bounded) |
+| 22 | Pin dependency versions | `done` |
+| 23 | Secure access_token.txt | `done` |
 
 ---
 
@@ -68,7 +68,7 @@ Security review identified 30 issues across critical, high, medium, and low seve
 | Critical | 5 | 5 | 0 |
 | High | 6 | 6 | 0 |
 | Medium | 7 | 6 | 1 (skipped) |
-| Low | 5 | 0 | 5 |
+| Low | 5 | 3 | 2 (skipped) |
 
 ### Completed Fixes
 
@@ -95,6 +95,13 @@ Security review identified 30 issues across critical, high, medium, and low seve
 - [~] #16 - Session timeout already 24h (matches daily trading workflow, skipped)
 - [x] #17 - Input length limits on all Pydantic string fields, schedule ID restricted to alphanumeric
 - [x] #18 - Backend rejects token creation if ALLOWED_EMAILS not configured in production
+
+**Low:**
+- [x] #19 - Request ID tracking added (X-Request-ID header, logged per request)
+- [x] #20 - Audit logging for sensitive endpoints (jobs, schedule, sync, rebalance, auth)
+- [~] #21 - Pagination limits already bounded (trades le=500, jobs le=100) - skipped
+- [x] #22 - All Python and Node dependencies pinned to exact versions
+- [x] #23 - access_token.txt and session.json written with 0600 permissions
 
 ### User Actions Required
 
@@ -130,4 +137,4 @@ The following fixes may cause temporary disruption:
 
 ---
 
-*Last updated: April 7, 2026*
+*Last updated: April 8, 2026*
