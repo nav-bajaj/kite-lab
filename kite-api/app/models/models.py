@@ -47,10 +47,10 @@ class Trade(Base):
     symbol = Column(String(50), nullable=False)
     side = Column(String(10), nullable=False)  # BUY or SELL
     shares = Column(Numeric(18, 6), nullable=False)
-    price = Column(Numeric(18, 4), nullable=False)
-    notional = Column(Numeric(18, 2), nullable=False)
-    slippage = Column(Numeric(18, 4))
-    cash_after = Column(Numeric(18, 2))
+    price = Column(Numeric(18, 6), nullable=False)
+    notional = Column(Numeric(18, 4), nullable=False)
+    slippage = Column(Numeric(18, 6))
+    cash_after = Column(Numeric(18, 4))
     created_at = Column(DateTime, default=func.now())
 
     __table_args__ = (
@@ -72,12 +72,12 @@ class EquityCurve(Base):
     id = Column(Integer, primary_key=True)
     universe = Column(String(20), nullable=False, default="nse500", index=True)
     date = Column(Date, nullable=False)
-    portfolio_value = Column(Numeric(18, 2), nullable=False)
-    cash = Column(Numeric(18, 2))
-    invested = Column(Numeric(18, 2))
-    benchmark = Column(Numeric(18, 2))
-    drawdown = Column(Numeric(10, 6))
-    exposure = Column(Numeric(5, 4), default=1.0)
+    portfolio_value = Column(Numeric(18, 4), nullable=False)
+    cash = Column(Numeric(18, 4))
+    invested = Column(Numeric(18, 4))
+    benchmark = Column(Numeric(18, 4))
+    drawdown = Column(Numeric(18, 10))
+    exposure = Column(Numeric(10, 6), default=1.0)
     created_at = Column(DateTime, default=func.now())
 
     __table_args__ = (
@@ -100,14 +100,14 @@ class Holding(Base):
     symbol = Column(String(50), nullable=False)
     rank = Column(Integer)
     shares = Column(Numeric(18, 6))
-    avg_cost = Column(Numeric(18, 4))
+    avg_cost = Column(Numeric(18, 8))
     entry_date = Column(Date)
     entry_rank = Column(Integer)
     holding_days = Column(Integer)
-    last_price = Column(Numeric(18, 4))
-    pnl_pct = Column(Numeric(10, 6))
-    notional = Column(Numeric(18, 2))
-    contribution_pct = Column(Numeric(10, 6))
+    last_price = Column(Numeric(18, 6))
+    pnl_pct = Column(Numeric(18, 10))
+    notional = Column(Numeric(18, 4))
+    contribution_pct = Column(Numeric(18, 10))
     sector = Column(String(100))
     industry = Column(String(100))
     created_at = Column(DateTime, default=func.now())
@@ -134,24 +134,24 @@ class Metric(Base):
     end_date = Column(Date)
 
     # Returns
-    total_return = Column(Numeric(18, 6))
-    cagr = Column(Numeric(10, 6))
-    mtd_return = Column(Numeric(10, 6))
-    ytd_return = Column(Numeric(10, 6))
+    total_return = Column(Numeric(18, 10))
+    cagr = Column(Numeric(18, 10))
+    mtd_return = Column(Numeric(18, 10))
+    ytd_return = Column(Numeric(18, 10))
 
     # Risk metrics
-    max_drawdown = Column(Numeric(10, 6))
+    max_drawdown = Column(Numeric(18, 10))
     max_drawdown_duration = Column(Integer)  # days
-    volatility = Column(Numeric(10, 6))
-    sharpe_ratio = Column(Numeric(10, 4))
-    sortino_ratio = Column(Numeric(10, 4))
-    calmar_ratio = Column(Numeric(10, 4))
+    volatility = Column(Numeric(18, 10))
+    sharpe_ratio = Column(Numeric(18, 10))
+    sortino_ratio = Column(Numeric(18, 10))
+    calmar_ratio = Column(Numeric(18, 10))
 
     # Activity metrics
-    avg_turnover_pct = Column(Numeric(10, 6))
-    annualized_turnover = Column(Numeric(10, 6))
-    hit_rate = Column(Numeric(10, 6))
-    avg_holding_days = Column(Numeric(10, 2))
+    avg_turnover_pct = Column(Numeric(18, 10))
+    annualized_turnover = Column(Numeric(18, 10))
+    hit_rate = Column(Numeric(18, 10))
+    avg_holding_days = Column(Numeric(18, 4))
 
     # Trade counts
     trades_total = Column(Integer)
