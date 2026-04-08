@@ -54,8 +54,8 @@ def register_error_handlers(app: FastAPI) -> None:
     async def global_exception_handler(request: Request, exc: Exception):
         """Catch-all handler for unhandled exceptions."""
         logger.error(
-            f"Unhandled exception on {request.method} {request.url.path}: "
-            f"{type(exc).__name__}: {exc}"
+            "Unhandled exception on %s %s: %s",
+            request.method, request.url.path, type(exc).__name__,
         )
         logger.debug(traceback.format_exc())
 

@@ -1,24 +1,27 @@
 """
 Job API endpoints for executing and managing background jobs.
+
+All endpoints require authentication.
 """
 import asyncio
-from fastapi import APIRouter, BackgroundTasks, Query, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Query, HTTPException, Depends
 from fastapi.responses import StreamingResponse
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.services.job_service import JobService, COMMANDS
 from app.schemas.jobs import JobResponse, JobListResponse
+from app.auth import get_current_user
 
 router = APIRouter(prefix="/api/jobs", tags=["jobs"])
 
 
 class CreateJobRequest(BaseModel):
     """Request body for creating a job."""
-    command: str
-    universe: Optional[str] = None
+    command: str = Field(..., max_length=100)
+    universe: Optional[str] = Field(None, max_length=50)
     args: Optional[dict] = None
-    label: Optional[str] = None
+    label: Optional[str] = Field(None, max_length=500)
 
 
 class LogsResponse(BaseModel):
@@ -38,7 +41,8 @@ class CancelResponse(BaseModel):
 @router.post("", response_model=JobResponse)
 async def create_job(
     request: CreateJobRequest,
-    background_tasks: BackgroundTasks
+    background_tasks: BackgroundTasks,
+    user: dict = Depends(get_current_user)
 ):
     """
     Create and start a new job.
@@ -87,7 +91,8 @@ async def create_job(
 async def list_jobs(
     limit: int = Query(default=20, ge=1, le=100),
     universe: Optional[str] = None,
-    status: Optional[str] = None
+    status: Optional[str] = None,
+    user: dict = Depends(get_current_user)
 ):
     """
     List recent jobs with optional filters.
@@ -121,7 +126,7 @@ async def list_jobs(
 
 
 @router.get("/{job_id}", response_model=JobResponse)
-async def get_job(job_id: str):
+async def get_job(job_id: str, user: dict = Depends(get_current_user)):
     """Get details for a specific job."""
     job = JobService.get_job(job_id)
 
@@ -147,7 +152,8 @@ async def get_job(job_id: str):
 async def get_job_logs(
     job_id: str,
     stream: bool = Query(default=False, description="Enable SSE streaming"),
-    tail: int = Query(default=0, ge=0, description="Return last N lines only")
+    tail: int = Query(default=0, ge=0, description="Return last N lines only"),
+    user: dict = Depends(get_current_user)
 ):
     """
     Get logs for a job.
@@ -181,7 +187,7 @@ async def get_job_logs(
 
 
 @router.post("/{job_id}/cancel", response_model=CancelResponse)
-async def cancel_job(job_id: str):
+async def cancel_job(job_id: str, user: dict = Depends(get_current_user)):
     """
     Cancel a running or queued job.
 

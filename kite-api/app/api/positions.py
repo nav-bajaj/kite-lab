@@ -2,13 +2,14 @@
 Open Positions API endpoints.
 
 Provides live portfolio tracking with real-time prices from Zerodha API.
+All endpoints require authentication except market-status.
 """
 from datetime import datetime
 from typing import Optional
 import asyncio
 import logging
 
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Depends
 from fastapi.responses import StreamingResponse
 from sse_starlette.sse import EventSourceResponse
 
@@ -30,6 +31,7 @@ from app.services.quotes_service import (
     QuotesFetchError,
 )
 from app.services.market_service import get_market_status, is_market_open
+from app.auth import get_current_user
 
 logger = logging.getLogger(__name__)
 IST = pytz.timezone("Asia/Kolkata")
@@ -39,7 +41,8 @@ router = APIRouter(prefix="/api/positions", tags=["positions"])
 
 @router.get("", response_model=PositionsResponse)
 async def get_positions(
-    universe: UniverseId = Query(default="nse500", description="Portfolio universe")
+    universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
+    user: dict = Depends(get_current_user)
 ):
     """
     Get all open positions with live prices and P&L calculations.
@@ -70,7 +73,8 @@ async def get_positions(
 
 @router.get("/holdings", response_model=HoldingsOnlyResponse)
 async def get_holdings(
-    universe: UniverseId = Query(default="nse500", description="Portfolio universe")
+    universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
+    user: dict = Depends(get_current_user)
 ):
     """
     Get raw holdings without live prices.
@@ -85,7 +89,8 @@ async def get_holdings(
 
 @router.get("/quotes", response_model=QuotesResponse)
 async def get_quotes(
-    universe: UniverseId = Query(default="nse500", description="Portfolio universe")
+    universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
+    user: dict = Depends(get_current_user)
 ):
     """
     Get live quotes for all holdings.
@@ -135,7 +140,7 @@ async def get_market_status_endpoint():
 
 
 @router.post("/sync", response_model=SyncResponse)
-async def sync_positions(request: PositionsSyncRequest):
+async def sync_positions(request: PositionsSyncRequest, user: dict = Depends(get_current_user)):
     """
     Sync positions from provided data.
 
@@ -149,7 +154,8 @@ async def sync_positions(request: PositionsSyncRequest):
 
 @router.post("/sync-from-csv", response_model=SyncResponse)
 async def sync_from_csv(
-    universe: UniverseId = Query(default="nse500", description="Portfolio universe")
+    universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
+    user: dict = Depends(get_current_user)
 ):
     """
     Sync positions from the portfolio CSV file.
@@ -165,7 +171,8 @@ async def sync_from_csv(
 @router.get("/stream")
 async def positions_stream(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
-    interval: int = Query(default=3, ge=2, le=10, description="Update interval in seconds")
+    interval: int = Query(default=3, ge=2, le=10, description="Update interval in seconds"),
+    user: dict = Depends(get_current_user)
 ):
     """
     Server-Sent Events (SSE) stream for real-time position updates.

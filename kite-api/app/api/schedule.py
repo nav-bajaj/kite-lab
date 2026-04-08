@@ -1,8 +1,11 @@
 """
 Schedule API endpoints for managing scheduled jobs.
+
+All endpoints require authentication.
 """
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+import re
+from fastapi import APIRouter, HTTPException, Depends
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, List
 from datetime import datetime
 
@@ -15,6 +18,7 @@ from app.scheduler.scheduler import (
 )
 from app.scheduler.tasks import create_task_wrapper, SCHEDULED_TASKS
 from app.services.job_service import COMMANDS
+from app.auth import get_current_user
 
 router = APIRouter(prefix="/api/schedule", tags=["schedule"])
 
@@ -35,18 +39,25 @@ class ScheduleListResponse(BaseModel):
 
 class CreateScheduleRequest(BaseModel):
     """Request to create a scheduled job."""
-    id: str
-    name: str
-    command: str
-    universe: Optional[str] = None
-    trigger: str = "cron"  # cron or interval
+    id: str = Field(..., max_length=64, pattern=r"^[a-zA-Z0-9_-]+$")
+    name: str = Field(..., max_length=255)
+    command: str = Field(..., max_length=100)
+    universe: Optional[str] = Field(None, max_length=50)
+    trigger: str = Field(default="cron", pattern=r"^(cron|interval)$")
     # Cron options
-    hour: Optional[int] = None
-    minute: Optional[int] = 0
-    day_of_week: Optional[str] = None  # "mon-fri", "sun", etc.
+    hour: Optional[int] = Field(None, ge=0, le=23)
+    minute: Optional[int] = Field(0, ge=0, le=59)
+    day_of_week: Optional[str] = Field(None, max_length=50)
     # Interval options
-    hours: Optional[int] = None
-    minutes: Optional[int] = None
+    hours: Optional[int] = Field(None, ge=1, le=168)
+    minutes: Optional[int] = Field(None, ge=1, le=1440)
+
+    @field_validator("day_of_week")
+    @classmethod
+    def validate_day_of_week(cls, v):
+        if v is not None and not re.match(r"^[a-z,\-]+$", v):
+            raise ValueError("day_of_week must contain only lowercase letters, commas, and hyphens")
+        return v
 
 
 class RunNowResponse(BaseModel):
@@ -63,7 +74,7 @@ class DeleteResponse(BaseModel):
 
 
 @router.get("", response_model=ScheduleListResponse)
-async def list_scheduled_jobs():
+async def list_scheduled_jobs(user: dict = Depends(get_current_user)):
     """
     List all scheduled jobs.
 
@@ -83,7 +94,7 @@ async def list_scheduled_jobs():
 
 
 @router.post("", response_model=ScheduledJobResponse)
-async def create_scheduled_job(request: CreateScheduleRequest):
+async def create_scheduled_job(request: CreateScheduleRequest, user: dict = Depends(get_current_user)):
     """
     Create a new scheduled job.
 
@@ -156,7 +167,7 @@ async def create_scheduled_job(request: CreateScheduleRequest):
 
 
 @router.delete("/{job_id}", response_model=DeleteResponse)
-async def delete_scheduled_job(job_id: str):
+async def delete_scheduled_job(job_id: str, user: dict = Depends(get_current_user)):
     """
     Remove a scheduled job.
 
@@ -179,7 +190,7 @@ async def delete_scheduled_job(job_id: str):
 
 
 @router.post("/{job_id}/run", response_model=RunNowResponse)
-async def run_scheduled_job_now(job_id: str):
+async def run_scheduled_job_now(job_id: str, user: dict = Depends(get_current_user)):
     """
     Run a scheduled job immediately.
 
@@ -203,7 +214,7 @@ async def run_scheduled_job_now(job_id: str):
 
 
 @router.get("/defaults")
-async def get_default_schedules():
+async def get_default_schedules(user: dict = Depends(get_current_user)):
     """
     Get list of default scheduled tasks.
 

@@ -1,13 +1,22 @@
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
-// Skip auth in development mode when SKIP_AUTH is set
-const SKIP_AUTH = process.env.SKIP_AUTH === "true";
+// SECURITY: SKIP_AUTH is ONLY for local development
+// It is NEVER allowed in production, regardless of env var
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
+const SKIP_AUTH = !IS_PRODUCTION && process.env.SKIP_AUTH === "true";
+
+// Log warning if someone tries to enable SKIP_AUTH in production
+if (IS_PRODUCTION && process.env.SKIP_AUTH === "true") {
+  console.error(
+    "SECURITY WARNING: SKIP_AUTH=true is ignored in production. Authentication is enforced."
+  );
+}
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
 
-  // Skip auth entirely in dev mode
+  // Skip auth ONLY in development mode (never in production)
   if (SKIP_AUTH) {
     return NextResponse.next();
   }

@@ -49,12 +49,16 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             try:
                 data = kite.generate_session(request_token, api_secret=API_SECRET)
                 access_token = data["access_token"]
-                # Persist
-                with open("access_token.txt", "w") as f:
+                # Persist with restricted file permissions (owner read/write only)
+                token_path = "access_token.txt"
+                with open(token_path, "w") as f:
                     f.write(access_token)
+                os.chmod(token_path, 0o600)
                 # Optional: keep full session json if you want
-                with open("session.json", "w") as f:
+                session_path = "session.json"
+                with open(session_path, "w") as f:
                     json.dump(data, f, indent=2, default=json_serial)
+                os.chmod(session_path, 0o600)
 
                 msg = f"Success! access_token saved to access_token.txt"
                 print(msg)

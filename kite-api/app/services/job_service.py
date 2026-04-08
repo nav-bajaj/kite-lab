@@ -10,7 +10,7 @@ from typing import Optional, List, Dict, Any
 
 from app.models.database import get_session_local
 from app.models.models import Job
-from app.config import settings
+from app.config import settings, is_valid_universe
 
 # Log directory for job outputs
 LOGS_DIR = settings.data_dir / "logs" / "jobs"
@@ -138,15 +138,45 @@ class JobService:
             script_path = resolve_script_path(job.command)
             cmd_args = [sys.executable, str(script_path)]
 
-            # Add universe argument if provided
+            # Add universe argument if provided (validated against whitelist)
             if job.universe:
+                if not is_valid_universe(job.universe):
+                    job.status = "failed"
+                    job.error_message = f"Invalid universe: {job.universe}"
+                    job.ended_at = datetime.utcnow()
+                    db.commit()
+                    return
                 cmd_args.extend(["--universe", job.universe])
 
-            # Add additional arguments
+            # Allowed argument keys (whitelist)
+            ALLOWED_ARG_KEYS = {
+                "lookback-months", "lookback_months",
+                "rebalance-weeks", "rebalance_weeks",
+                "top-n", "top_n",
+                "vol-floor", "vol_floor",
+                "min-hold-days", "min_hold_days",
+                "with-login", "with_login",
+                "with-data", "with_data",
+                "skip-days", "skip_days",
+            }
+
+            # Add additional arguments (validated)
             if job.args:
                 for key, value in job.args.items():
                     if value is None:
                         continue
+                    if key not in ALLOWED_ARG_KEYS:
+                        job.status = "failed"
+                        job.error_message = f"Disallowed argument: {key}"
+                        job.ended_at = datetime.utcnow()
+                        db.commit()
+                        return
+                    if isinstance(value, str) and len(value) > 200:
+                        job.status = "failed"
+                        job.error_message = f"Argument value too long: {key}"
+                        job.ended_at = datetime.utcnow()
+                        db.commit()
+                        return
                     flag = f"--{key.replace('_', '-')}"
                     # Boolean flags: pass flag only (no value) when True
                     if isinstance(value, bool):
