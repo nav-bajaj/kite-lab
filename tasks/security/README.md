@@ -2,11 +2,11 @@
 
 **Created:** April 7, 2026
 **Branch:** `security`
-**Status:** In Progress
+**Status:** Complete
 
 ## Overview
 
-Security review identified 30 issues across critical, high, medium, and low severity levels. This task list tracks remediation efforts.
+Security review identified 23 issues across critical, high, medium, and low severity levels. All actionable items have been remediated. 3 items were skipped as already addressed or not applicable.
 
 ---
 
@@ -14,11 +14,11 @@ Security review identified 30 issues across critical, high, medium, and low seve
 
 | # | Task | Status | User Action Required |
 |---|------|--------|---------------------|
-| 1 | [Remove .env.production from git history](./01-remove-env-production.md) | `pending` | Yes - rotate DB password |
-| 2 | [Secure Zerodha API credentials](./02-secure-zerodha-creds.md) | `pending` | Yes - rotate API keys |
-| 3 | [Generate strong JWT secrets](./03-strong-jwt-secrets.md) | `pending` | Yes - update Railway env |
-| 4 | [Remove SKIP_AUTH bypass](./04-remove-skip-auth.md) | `pending` | No |
-| 5 | [Secure docker-compose credentials](./05-secure-docker-compose.md) | `pending` | No |
+| 1 | [Remove .env.production from git history](./01-remove-env-production.md) | `done` | No (was never committed) |
+| 2 | [Secure Zerodha API credentials](./02-secure-zerodha-creds.md) | `done` | Optional - rotate keys |
+| 3 | [Generate strong JWT secrets](./03-strong-jwt-secrets.md) | `done` | Done - secrets set in Railway/Vercel |
+| 4 | [Remove SKIP_AUTH bypass](./04-remove-skip-auth.md) | `done` | No |
+| 5 | [Secure docker-compose credentials](./05-secure-docker-compose.md) | `done` | No |
 
 ---
 
@@ -26,12 +26,12 @@ Security review identified 30 issues across critical, high, medium, and low seve
 
 | # | Task | Status | User Action Required |
 |---|------|--------|---------------------|
-| 6 | [Add authentication to API endpoints](./06-api-authentication.md) | `pending` | No |
-| 7 | [Disable API docs in production](./07-disable-api-docs.md) | `done` | No |
-| 8 | [Rate limit auth endpoints](./08-rate-limit-auth.md) | `done` | No |
-| 9 | [Sanitize error messages](./09-sanitize-errors.md) | `done` | No |
-| 10 | [Validate CORS configuration](./10-validate-cors.md) | `done` | No |
-| 11 | [Disable debug mode in production](./11-disable-debug.md) | `done` | No |
+| 6 | [Add authentication to API endpoints](./06-api-authentication.md) | `done` | No |
+| 7 | Disable API docs in production | `done` | No |
+| 8 | Rate limit auth endpoints | `done` | No |
+| 9 | Sanitize error messages | `done` | No |
+| 10 | Validate CORS configuration | `done` | No |
+| 11 | Disable debug mode in production | `done` | No |
 
 ---
 
@@ -103,26 +103,16 @@ Security review identified 30 issues across critical, high, medium, and low seve
 - [x] #22 - All Python and Node dependencies pinned to exact versions
 - [x] #23 - access_token.txt and session.json written with 0600 permissions
 
-### User Actions Required
+### User Actions Completed
 
-1. **Generate strong secrets** (if not already done):
-   ```bash
-   # Generate JWT_SECRET for Railway
-   openssl rand -base64 32
+- [x] Generated strong JWT_SECRET and NEXTAUTH_SECRET
+- [x] Updated Railway environment variables (JWT_SECRET)
+- [x] Updated Vercel environment variables (NEXTAUTH_SECRET)
+- [x] ALLOWED_EMAILS set in both Railway and Vercel
 
-   # Generate NEXTAUTH_SECRET for Vercel
-   openssl rand -base64 32
-   ```
+### Post-Merge Action
 
-2. **Update Railway environment variables:**
-   - `JWT_SECRET` - use generated value
-
-3. **Update Vercel environment variables:**
-   - `NEXTAUTH_SECRET` - use generated value
-
-4. **Ensure ALLOWED_EMAILS is set** in both Railway and Vercel
-
-5. **Redeploy both services** after updating environment variables
+- Redeploy both services after merging to main
 
 ---
 
