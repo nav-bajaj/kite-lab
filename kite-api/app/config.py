@@ -27,6 +27,7 @@ class Settings(BaseSettings):
 
     # App settings
     debug: bool = False
+    disable_auth: bool = False
 
     # Data directory
     @property

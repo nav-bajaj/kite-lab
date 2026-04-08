@@ -86,6 +86,16 @@ def get_current_user(
         AuthError: If no token or invalid token
         ForbiddenError: If user not authorized
     """
+    # Dev mode: skip auth entirely
+    settings = get_settings()
+    if settings.disable_auth and settings.debug:
+        return {
+            "email": "dev@localhost",
+            "name": "Dev User",
+            "picture": "",
+            "source": "dev_bypass",
+        }
+
     if credentials is None:
         raise AuthError("Missing authentication token")
 
