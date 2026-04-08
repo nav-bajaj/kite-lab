@@ -29,6 +29,7 @@ COMMANDS = {
     "backup_data": "scripts/sync_data_backup.py",
     "fetch_prices": "scripts/fetch_nse500_history.py",
     "build_signals": "scripts/build_momentum_signals_flexible.py",
+    "sync_database": "scripts/sync_to_database.py",
 }
 
 

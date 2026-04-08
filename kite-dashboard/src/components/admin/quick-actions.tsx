@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { RefreshCw, BarChart3, Key, HardDrive, Loader2 } from "lucide-react";
+import { RefreshCw, BarChart3, Key, HardDrive, DatabaseZap, Loader2 } from "lucide-react";
 import { createJob, getLoginUrl } from "@/lib/api-client";
 
 interface QuickAction {
@@ -37,6 +37,13 @@ const actions: QuickAction[] = [
     description: "Refresh API token",
     icon: Key,
     special: "login",
+  },
+  {
+    id: "sync_database",
+    label: "Sync to DB",
+    description: "Push CSV data to database",
+    icon: DatabaseZap,
+    command: "sync_database",
   },
   {
     id: "backup",
@@ -109,7 +116,7 @@ export function QuickActions() {
           <CardTitle>Quick Actions</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
             {actions.map((action) => {
               const Icon = action.icon;
               const isLoading = loading === action.id;

@@ -18,6 +18,7 @@ PARALLEL_FETCH_STEPS = [
 SEQUENTIAL_STEPS = [
     ("Update Nifty 100 benchmark", [sys.executable, "scripts/compute_benchmark.py"]),
     ("Build momentum rankings", [sys.executable, "scripts/build_momentum_signals.py"]),
+    ("Sync data to database", [sys.executable, "scripts/sync_to_database.py"]),
     ("Backup data to external location", [sys.executable, "scripts/sync_data_backup.py"]),
 ]
 
