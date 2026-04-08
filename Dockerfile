@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libpq-dev \
     curl \
+    gosu \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
@@ -45,10 +46,8 @@ RUN mkdir -p data/nse500_data data/indices_data data/final_portfolio \
 RUN chmod +x scripts/init_persistent_storage.sh
 
 # Create non-root user for security
-# Give appuser ownership of /app and ability to write to /data volume
 RUN adduser --disabled-password --gecos '' appuser && \
     chown -R appuser:appuser /app
-USER appuser
 
 # Expose port (Railway will override with $PORT)
 EXPOSE 8000
@@ -57,5 +56,9 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:${PORT:-8000}/api/health || exit 1
 
-# Initialize persistent storage (if volume mounted), run migrations, start server
-CMD ["sh", "-c", "scripts/init_persistent_storage.sh && alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Copy entrypoint script
+COPY scripts/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Start as root (entrypoint inits storage, then drops to appuser for server)
+ENTRYPOINT ["/entrypoint.sh"]

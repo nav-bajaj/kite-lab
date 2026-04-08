@@ -14,7 +14,9 @@ from app.config import settings, is_valid_universe
 
 # Log directory for job outputs
 LOGS_DIR = settings.data_dir / "logs" / "jobs"
-LOGS_DIR.mkdir(parents=True, exist_ok=True)
+# Use os.makedirs which handles symlinks correctly (Path.mkdir fails on symlinks)
+import os
+os.makedirs(LOGS_DIR, exist_ok=True)
 
 # Job timeout (30 minutes default)
 DEFAULT_TIMEOUT = 1800
