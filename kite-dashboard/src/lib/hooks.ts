@@ -28,7 +28,7 @@ import {
   type ScheduleListResponse,
   type SystemStatus,
 } from "./api-client";
-import type { PositionsResponse, MarketStatus } from "./types";
+import type { PositionsResponse, MarketStatus, UniverseId } from "./types";
 
 // Refresh intervals
 const REFRESH_INTERVAL = 60_000; // 1 minute
@@ -275,7 +275,7 @@ export function usePositions() {
 
   return useSWR<PositionsResponse>(
     ["positions", universeId],
-    ([, universe]) => getPositions(universe),
+    ([, universe]: [string, UniverseId]) => getPositions(universe),
     {
       refreshInterval: POSITIONS_REFRESH,
       revalidateOnFocus: true,
