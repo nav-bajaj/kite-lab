@@ -253,6 +253,11 @@ def main():
         default=None,
         help="Path to kite-lab directory (default: auto-detect)"
     )
+    parser.add_argument(
+        "--full",
+        action="store_true",
+        help="Full sync: wipe existing data and re-import everything (use for one-time reset)"
+    )
     args = parser.parse_args()
 
     # Get database URL from args, env, or .env file
@@ -297,6 +302,15 @@ def main():
     Base.metadata.create_all(bind=engine)
 
     universes = ["nse500", "nifty100", "nifty250"] if args.universe == "all" else [args.universe]
+
+    if args.full:
+        print("FULL SYNC: Wiping existing data before re-importing...")
+        for universe in universes:
+            for model in [Holding, EquityCurve, Metric, Trade]:
+                deleted = db.query(model).filter(model.universe == universe).delete()
+                print(f"  Deleted {deleted} {model.__tablename__} rows for {universe}")
+            db.commit()
+        print()
 
     results = {}
     for universe in universes:
