@@ -8,7 +8,7 @@ dockerfilePath = "Dockerfile"
 
 [deploy]
 # Run migrations before starting the server
-startCommand = "sh -c 'alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT'"
+startCommand = "sh -c 'scripts/init_persistent_storage.sh && alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT'"
 
 # Health check configuration
 healthcheckPath = "/api/health"

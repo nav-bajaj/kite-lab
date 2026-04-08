@@ -41,7 +41,11 @@ RUN mkdir -p data/nse500_data data/indices_data data/final_portfolio \
     data/nifty100_portfolio data/nifty250_portfolio data/benchmarks \
     logs/jobs nifty_100_tests nifty_250_tests experiments
 
+# Make persistent storage init script executable
+RUN chmod +x scripts/init_persistent_storage.sh
+
 # Create non-root user for security
+# Give appuser ownership of /app and ability to write to /data volume
 RUN adduser --disabled-password --gecos '' appuser && \
     chown -R appuser:appuser /app
 USER appuser
@@ -53,5 +57,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:${PORT:-8000}/api/health || exit 1
 
-# Run migrations and start server
-CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Initialize persistent storage (if volume mounted), run migrations, start server
+CMD ["sh", "-c", "scripts/init_persistent_storage.sh && alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
