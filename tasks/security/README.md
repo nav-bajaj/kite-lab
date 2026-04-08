@@ -39,13 +39,13 @@ Security review identified 30 issues across critical, high, medium, and low seve
 
 | # | Task | Status |
 |---|------|--------|
-| 12 | Add path traversal protection | `pending` |
-| 13 | Validate subprocess arguments | `pending` |
-| 14 | Secure NextAuth token handling | `pending` |
-| 15 | Add security headers (CSP, HSTS) | `pending` |
-| 16 | Reduce session timeout | `pending` |
-| 17 | Add input length limits | `pending` |
-| 18 | Require ALLOWED_EMAILS in production | `pending` |
+| 12 | Add path traversal protection | `done` |
+| 13 | Validate subprocess arguments | `done` |
+| 14 | Secure NextAuth token handling | `done` |
+| 15 | Add security headers (CSP, HSTS) | `done` |
+| 16 | Reduce session timeout | `skip` (24h matches daily workflow) |
+| 17 | Add input length limits | `done` |
+| 18 | Require ALLOWED_EMAILS in production | `done` |
 
 ---
 
@@ -67,7 +67,7 @@ Security review identified 30 issues across critical, high, medium, and low seve
 |----------|-------|-------|-----------|
 | Critical | 5 | 5 | 0 |
 | High | 6 | 6 | 0 |
-| Medium | 7 | 0 | 7 |
+| Medium | 7 | 6 | 1 (skipped) |
 | Low | 5 | 0 | 5 |
 
 ### Completed Fixes
@@ -86,6 +86,15 @@ Security review identified 30 issues across critical, high, medium, and low seve
 - [x] #9 - Error messages sanitized (no emails or JWTError details leaked)
 - [x] #10 - Wildcard CORS origins blocked in production
 - [x] #11 - Startup warnings for debug mode and default JWT secret
+
+**Medium:**
+- [x] #12 - Universe validated against whitelist before path/subprocess use
+- [x] #13 - Subprocess args restricted to allowed keys with length limits
+- [x] #14 - NextAuth denies login when ALLOWED_EMAILS is empty (was allowing all)
+- [x] #15 - Security headers added (X-Content-Type-Options, X-Frame-Options, HSTS, etc.)
+- [~] #16 - Session timeout already 24h (matches daily trading workflow, skipped)
+- [x] #17 - Input length limits on all Pydantic string fields, schedule ID restricted to alphanumeric
+- [x] #18 - Backend rejects token creation if ALLOWED_EMAILS not configured in production
 
 ### User Actions Required
 

@@ -7,7 +7,7 @@ import asyncio
 from fastapi import APIRouter, BackgroundTasks, Query, HTTPException, Depends
 from fastapi.responses import StreamingResponse
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.services.job_service import JobService, COMMANDS
 from app.schemas.jobs import JobResponse, JobListResponse
@@ -18,10 +18,10 @@ router = APIRouter(prefix="/api/jobs", tags=["jobs"])
 
 class CreateJobRequest(BaseModel):
     """Request body for creating a job."""
-    command: str
-    universe: Optional[str] = None
+    command: str = Field(..., max_length=100)
+    universe: Optional[str] = Field(None, max_length=50)
     args: Optional[dict] = None
-    label: Optional[str] = None
+    label: Optional[str] = Field(None, max_length=500)
 
 
 class LogsResponse(BaseModel):

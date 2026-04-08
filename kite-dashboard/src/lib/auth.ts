@@ -21,7 +21,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ user }) {
       // Check email whitelist
       if (!user.email) return false;
-      if (ALLOWED_EMAILS.length === 0) return true; // No whitelist = allow all
+      if (ALLOWED_EMAILS.length === 0) return false; // No whitelist configured = deny all
       return ALLOWED_EMAILS.includes(user.email);
     },
     async jwt({ token, user, account }) {

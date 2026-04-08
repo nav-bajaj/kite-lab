@@ -2,7 +2,7 @@
 Authentication-related routes.
 """
 from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.auth import get_current_user, create_access_token
 from app.config import get_settings
@@ -13,8 +13,8 @@ router = APIRouter()
 
 class TokenRequest(BaseModel):
     """Request for creating an internal token."""
-    email: str
-    name: str = ""
+    email: str = Field(..., max_length=255)
+    name: str = Field(default="", max_length=255)
 
 
 class TokenResponse(BaseModel):
@@ -65,6 +65,11 @@ async def create_token(request: Request, body: TokenRequest):
 
     # Check if email is in allowed list
     allowed_emails = [e.strip() for e in settings.allowed_emails.split(",") if e.strip()]
+    if not allowed_emails and not settings.debug:
+        raise HTTPException(
+            status_code=500,
+            detail="ALLOWED_EMAILS not configured"
+        )
     if allowed_emails and body.email not in allowed_emails:
         raise HTTPException(
             status_code=403,
