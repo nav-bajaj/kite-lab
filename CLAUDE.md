@@ -23,10 +23,10 @@ A web-based dashboard provides monitoring and control of the momentum portfolio 
 |---------|-----|
 | Frontend | https://kite-lab.vercel.app |
 | Backend API | https://kite-lab-production.up.railway.app |
-| API Docs | https://kite-lab-production.up.railway.app/docs |
+| API Docs | Disabled in production (available locally with DEBUG=true) |
 
 **Tech Stack:**
-- **Frontend:** Next.js 14, TypeScript, Tailwind CSS, shadcn/ui, Recharts
+- **Frontend:** Next.js 16, TypeScript, Tailwind CSS, shadcn/ui, Recharts
 - **Backend:** FastAPI, PostgreSQL, SQLAlchemy 2.0, Alembic
 - **Hosting:** Vercel (frontend) + Railway (backend + database)
 - **Auth:** Google OAuth with email whitelist
@@ -49,9 +49,12 @@ uvicorn app.main:app --reload --port 8000
 # Run frontend locally
 cd kite-dashboard && npm run dev
 
-# Sync local data to production database
+# Sync local backtest results to production database
 cd kite-api
-python scripts/sync_to_production.py --data-dir /path/to/kite-lab
+python scripts/sync_to_production.py --full --data-dir /path/to/kite-lab --database-url "postgresql://..."
+
+# One-time upload of local price data to Railway volume
+python scripts/upload_price_data.py --api-url https://kite-lab-production.up.railway.app --token "JWT_TOKEN"
 ```
 
 **API Endpoints:**
@@ -63,6 +66,8 @@ python scripts/sync_to_production.py --data-dir /path/to/kite-lab
 - `/api/rebalance` - Rebalance workflow and orders
 - `/api/jobs` - Job execution and logs
 - `/api/system` - Health and token status
+- `/api/sync` - CSV to database sync + price data upload
+- `/api/auth` - JWT token creation and verification
 
 ## Environment Setup
 
@@ -89,15 +94,17 @@ pip install kiteconnect pandas matplotlib python-dotenv
 
 ### Daily Production Pipeline
 ```bash
-# Full pipeline (login + data + signals + backup)
+# Full pipeline (login + data + signals + sync + backup)
 python scripts/run_daily_pipeline.py --with-login
 
 # This runs:
-# 1. Login to Kite API
-# 2. Fetch NSE 500 + indices data
-# 3. Update Nifty 100 benchmark
-# 4. Build momentum signals
-# 5. Backup data to /Users/navdeep/Documents/stock_data/
+# 1. Login to Kite API (optional, with --with-login)
+# 2. Cache instruments list (symbol → token mapping)
+# 3. Fetch NSE 500 + indices data (parallel)
+# 4. Update Nifty 100 benchmark
+# 5. Build momentum signals
+# 6. Sync data to database (holdings, equity curve, metrics, trades, open positions)
+# 7. Backup data to /Users/navdeep/Documents/stock_data/
 ```
 
 ### Final Portfolio Generation
@@ -248,29 +255,39 @@ Script: `scripts/sync_data_backup.py`
 ### Dashboard Architecture (`kite-api/` and `kite-dashboard/`)
 
 **Backend Services (`kite-api/app/services/`):**
-- `portfolio_service.py` - Portfolio data retrieval from CSV/DB
-- `portfolio_db_service.py` - Database operations for holdings
+- `portfolio_service.py` - Portfolio data retrieval from CSV (local dev fallback)
+- `portfolio_db_service.py` - Portfolio data from PostgreSQL (production)
+- `positions_service.py` - Live positions with real-time Zerodha prices
 - `metrics_service.py` - Performance calculations (CAGR, Sharpe, DD)
 - `trade_service.py` - Trade history queries with pagination
 - `rebalance_service.py` - Rebalance workflow (preview, orders)
 - `job_service.py` - Job execution with subprocess handling
 - `sync_service.py` - CSV to PostgreSQL synchronization
-- `system_service.py` - Health checks and token management
+- `quotes_service.py` - Zerodha live price quotes with caching
+- `system_service.py` - Health checks, token management, OAuth callback
 
 **Frontend Structure (`kite-dashboard/src/`):**
 - `app/(dashboard)/` - Main pages (portfolio, performance, trades, rebalance, admin)
 - `components/` - Reusable UI components per feature
 - `hooks/` - SWR data fetching hooks
 - `lib/` - API client and utilities
-- `contexts/` - Universe selector context
+- `contexts/` - Universe selector + API auth contexts
 
 **Database Tables:**
 - `equity_curve` - Daily portfolio values per universe
 - `metrics` - Performance metrics per universe
 - `trades` - Trade execution history
-- `holdings` - Current position snapshots
+- `holdings` - Current position snapshots (backtest)
+- `open_positions` - Live portfolio positions (actual holdings)
 - `rebalances` - Rebalance action history
 - `jobs` - Job execution logs
+- `allowed_users` - Email whitelist for dashboard access
+
+**Railway Deployment:**
+- Persistent volume mounted at `/data` for price CSVs, tokens, experiments
+- `scripts/init_persistent_storage.sh` symlinks `/data` dirs into `/app` at startup
+- `scripts/entrypoint.sh` runs storage init as root, then drops to appuser via gosu
+- All API endpoints require JWT authentication (except health, login, market-status)
 
 ## Current Portfolio Configuration
 
@@ -364,12 +381,13 @@ python scripts/run_daily_pipeline.py --with-login
 ```
 
 This automatically:
-1. Logs in to Kite API
-2. Fetches latest NSE 500 price data
-3. Fetches latest indices data
+1. Logs in to Kite API (with --with-login)
+2. Caches instruments list
+3. Fetches latest NSE 500 + indices data (parallel)
 4. Updates Nifty 100 benchmark
 5. Builds momentum signals
-6. Syncs backup to external location
+6. Syncs data to database
+7. Backs up to external location
 
 ### Weekly Portfolio Rebalance
 **Thursday (review day):**
@@ -487,12 +505,11 @@ See `docs/failed_experiments.md` for detailed experiment logs.
 ## Branch Structure
 
 **Active branches:**
-- `main` - Stable production code
-- `consolidate-portfolio-scripts` - Unified `--universe` argument, min-hold-days
-- `fix-pnl-hold-logic` - Backtest experiment features (min-hold, entry filters)
-- `nifty100-portfolio` - Nifty 100 testing and comparisons
-- `momentum-volume` - Volume-weighted scoring experiments (abandoned)
-- `volatility-targeting` - Failed volatility targeting experiments (archived)
+- `main` - Stable production code (deployed to Railway + Vercel)
+- `refinement` - Current repo cleanup and polish
+
+**Legacy branches** (kept for reference, not actively developed):
+- Various experiment branches (`momentum-volume`, `volatility-targeting`, `nifty100-portfolio`, etc.)
 
 **Recommended workflow:**
 - Create feature branches for new experiments
@@ -641,8 +658,9 @@ python scripts/validate_signals.py --signals <path> --top-n 24
 
 ---
 
-**Last updated:** March 2026
-**Production portfolio:** NSE 500 L6-1W + min-hold 8d (59.4% CAGR, 1.92 Sharpe)
-**Alternative portfolio:** Nifty 100 L6-1W (44.86% CAGR, -19.11% DD)
-**Dashboard:** https://kite-lab.vercel.app (deployed Feb 2026)
-**Status:** Optimized and production-ready
+**Last updated:** April 2026
+**Production portfolio:** NSE 500 L6-1W + min-hold 8d
+**Alternative portfolios:** Nifty 100, Nifty 250 (L6-1W)
+**Dashboard:** https://kite-lab.vercel.app
+**Backend:** https://kite-lab-production.up.railway.app (persistent volume at /data)
+**Status:** Production-ready with full security hardening, DB sync pipeline, and persistent storage
