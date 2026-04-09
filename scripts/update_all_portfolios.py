@@ -11,8 +11,6 @@ import argparse
 import os
 import subprocess
 import sys
-import urllib.request
-import json
 
 UNIVERSES = ["nse500", "nifty100", "nifty250"]
 
@@ -31,26 +29,9 @@ def run_step(name, command):
 
 
 def sync_to_database():
-    """Call the API sync endpoint to load CSVs into PostgreSQL."""
-    port = os.environ.get("PORT", "8000")
-    url = f"http://localhost:{port}/api/sync/all"
-    print(f"\n{'='*60}")
-    print(">>> Sync all universes to database")
-    print(f"{'='*60}")
-    try:
-        req = urllib.request.Request(url, method="POST")
-        with urllib.request.urlopen(req, timeout=120) as resp:
-            data = json.loads(resp.read().decode())
-            for universe, result in data.items():
-                holdings = result.get("holdings", {}).get("count", 0)
-                equity = result.get("equity_curve", {}).get("count", 0)
-                print(f"  {universe}: {holdings} holdings, {equity} new equity points")
-        print("OK: Database sync")
-        return True
-    except Exception as e:
-        print(f"WARNING: Database sync failed: {e}")
-        print("  (This is OK if running outside the API server)")
-        return True  # Non-fatal
+    """Run sync_to_database.py script directly (no HTTP auth needed)."""
+    return run_step("Sync all universes to database",
+                    [sys.executable, "scripts/sync_to_database.py"])
 
 
 def main():
