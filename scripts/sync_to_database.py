@@ -31,16 +31,33 @@ def main():
     args = parser.parse_args()
 
     from app.services.sync_service import sync_all, sync_all_universes
+    from app.services.positions_service import PositionsService
 
     if args.universe:
+        universes = [args.universe]
         print(f"Syncing {args.universe} to database...")
         result = sync_all(args.universe)
         print_result(args.universe, result)
     else:
+        universes = ["nse500", "nifty100", "nifty250"]
         print("Syncing all universes to database...")
         results = sync_all_universes()
         for universe, result in results.items():
             print_result(universe, result)
+
+    # Also sync open positions from CSV
+    print(f"\n{'='*50}")
+    print("Syncing open positions...")
+    print(f"{'='*50}")
+    for universe in universes:
+        try:
+            pos_result = PositionsService.sync_from_csv(universe)
+            if pos_result.success:
+                print(f"  {universe}: {pos_result.synced_count} positions synced")
+            else:
+                print(f"  {universe}: {pos_result.message}")
+        except Exception as e:
+            print(f"  {universe}: ERROR - {e}")
 
     print("\nSync complete.")
 
