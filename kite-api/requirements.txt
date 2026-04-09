@@ -39,3 +39,6 @@ sse-starlette==3.3.0
 
 # Caching
 cachetools==6.2.6
+
+# File upload support (required by FastAPI UploadFile)
+python-multipart==0.0.20
