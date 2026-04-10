@@ -160,6 +160,18 @@ require_auth = Depends(get_current_user)
 optional_auth = Depends(get_optional_user)
 
 
+def validate_token_string(token: str) -> dict:
+    """
+    Validate a raw JWT token string (for SSE endpoints where
+    EventSource can't send Authorization headers).
+
+    Returns decoded payload or raises AuthError.
+    """
+    if not token:
+        raise AuthError("Missing authentication token")
+    return decode_token(token)
+
+
 def create_access_token(data: dict, expires_delta: Optional[int] = None) -> str:
     """
     Create a new JWT access token.

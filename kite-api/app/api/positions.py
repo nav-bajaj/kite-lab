@@ -31,7 +31,7 @@ from app.services.quotes_service import (
     QuotesFetchError,
 )
 from app.services.market_service import get_market_status, is_market_open
-from app.auth import get_current_user
+from app.auth import get_current_user, validate_token_string, AuthError
 
 logger = logging.getLogger(__name__)
 IST = pytz.timezone("Asia/Kolkata")
@@ -172,18 +172,12 @@ async def sync_from_csv(
 async def positions_stream(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     interval: int = Query(default=3, ge=2, le=10, description="Update interval in seconds"),
-    user: dict = Depends(get_current_user)
+    token: str = Query(default=None, description="JWT token (for SSE clients that can't send headers)"),
 ):
     """
     Server-Sent Events (SSE) stream for real-time position updates.
 
-    During market hours:
-    - Sends position updates every {interval} seconds
-    - Includes live prices and P&L
-
-    Outside market hours:
-    - Sends market status updates every 60 seconds
-    - Includes next market open time
+    Auth: accepts token via query param (EventSource can't send headers).
 
     Events:
     - price_update: Full positions response with live data
@@ -191,6 +185,14 @@ async def positions_stream(
     - heartbeat: Keep-alive ping
     - error: Error messages
     """
+    # Validate token from query param (EventSource can't send Authorization header)
+    if not token:
+        raise HTTPException(status_code=401, detail="Token required (pass as ?token=...)")
+    try:
+        validate_token_string(token)
+    except AuthError:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
 

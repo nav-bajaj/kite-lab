@@ -337,7 +337,8 @@ export async function getJobLogs(jobId: string, tail?: number) {
 }
 
 export function getJobLogsStreamUrl(jobId: string) {
-  return `${API_BASE_URL}/api/jobs/${jobId}/logs?stream=true`;
+  const token = globalAuthToken || "";
+  return `${API_BASE_URL}/api/jobs/${jobId}/logs?stream=true&token=${token}`;
 }
 
 export async function cancelJob(jobId: string) {
@@ -496,5 +497,6 @@ export async function syncPositionsFromCsv(universe: UniverseId) {
 
 export function getPositionsStreamUrl(universe: UniverseId, interval: number = 3) {
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-  return `${API_BASE}/api/positions/stream?universe=${universe}&interval=${interval}`;
+  const token = globalAuthToken || "";
+  return `${API_BASE}/api/positions/stream?universe=${universe}&interval=${interval}&token=${token}`;
 }

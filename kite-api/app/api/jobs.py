@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 
 from app.services.job_service import JobService, COMMANDS
 from app.schemas.jobs import JobResponse, JobListResponse
-from app.auth import get_current_user
+from app.auth import get_current_user, get_optional_user, validate_token_string, AuthError
 
 router = APIRouter(prefix="/api/jobs", tags=["jobs"])
 
@@ -153,15 +153,23 @@ async def get_job_logs(
     job_id: str,
     stream: bool = Query(default=False, description="Enable SSE streaming"),
     tail: int = Query(default=0, ge=0, description="Return last N lines only"),
-    user: dict = Depends(get_current_user)
+    token: str = Query(default=None, description="JWT token (for SSE clients that can't send headers)"),
+    user: dict = Depends(get_optional_user),
 ):
     """
     Get logs for a job.
 
-    Query parameters:
-    - stream: If true, stream logs via Server-Sent Events
-    - tail: If > 0, return only last N lines
+    Auth: accepts token via query param (for EventSource) or Authorization header.
     """
+    # Authenticate via header or query param token
+    if user is None:
+        if token:
+            try:
+                validate_token_string(token)
+            except AuthError:
+                raise HTTPException(status_code=401, detail="Invalid or expired token")
+        else:
+            raise HTTPException(status_code=401, detail="Authentication required")
     job = JobService.get_job(job_id)
 
     if not job:
