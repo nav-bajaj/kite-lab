@@ -22,7 +22,7 @@ MARKET_CLOSE = time(15, 30)  # 3:30 PM IST
 NSE_HOLIDAYS_2026 = [
     (1, 26),   # Republic Day
     (3, 17),   # Holi
-    (4, 10),   # Good Friday
+    (4, 3),    # Good Friday
     (4, 14),   # Ambedkar Jayanti
     (4, 21),   # Ram Navami
     (5, 1),    # May Day
