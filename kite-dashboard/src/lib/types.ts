@@ -93,6 +93,16 @@ export interface EquityCurvePoint {
 }
 
 // Trade types
+export interface MatchedBuy {
+  buy_trade_id: number;
+  entry_date: string;
+  entry_price: number;        // effective (net of slippage) per-share buy price
+  shares_matched: number;
+  holding_days: number;
+  realized_pnl: number;       // net of slippage on both legs
+  realized_pnl_pct: number;
+}
+
 export interface Trade {
   id: number;
   date: string;
@@ -102,6 +112,7 @@ export interface Trade {
   price: number;
   notional: number;
   slippage: number;
+  matches?: MatchedBuy[];     // populated only for SELL trades
 }
 
 export interface TradesResponse {
@@ -109,6 +120,18 @@ export interface TradesResponse {
   total_count: number;
   limit: number;
   offset: number;
+}
+
+export interface TradeSummaryData {
+  total_trades: number;
+  buys: number;
+  sells: number;
+  total_notional: number;
+  realized_pnl_total?: number | null;
+  win_rate?: number | null;
+  avg_holding_days?: number | null;
+  best_trade_pct?: number | null;
+  worst_trade_pct?: number | null;
 }
 
 // Job types

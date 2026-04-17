@@ -22,15 +22,42 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTrades } from "@/lib/hooks";
-import { ChevronLeft, ChevronRight, Search, Download } from "lucide-react";
+import type { Trade } from "@/lib/types";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  ChevronUp,
+  Search,
+  Download,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 25;
+
+const inr = (v: number) =>
+  v.toLocaleString("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  });
+
+const inrSigned = (v: number) => (v >= 0 ? `+${inr(v)}` : `-${inr(Math.abs(v))}`);
 
 export function TradesTable() {
   const [page, setPage] = useState(0);
   const [symbol, setSymbol] = useState("");
   const [side, setSide] = useState<string>("");
   const [searchInput, setSearchInput] = useState("");
+  const [expanded, setExpanded] = useState<Set<number>>(new Set());
+
+  const toggleExpand = (id: number) =>
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
 
   const { data, isLoading, error } = useTrades({
     limit: PAGE_SIZE,
@@ -125,42 +152,24 @@ export function TradesTable() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-8"></TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead>Symbol</TableHead>
                     <TableHead>Side</TableHead>
                     <TableHead className="text-right">Shares</TableHead>
                     <TableHead className="text-right">Price</TableHead>
                     <TableHead className="text-right">Notional</TableHead>
+                    <TableHead className="text-right">Realized P&amp;L</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {trades.map((trade) => (
-                    <TableRow key={trade.id}>
-                      <TableCell className="font-mono text-sm">
-                        {trade.date}
-                      </TableCell>
-                      <TableCell className="font-medium">{trade.symbol}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={trade.side === "BUY" ? "default" : "destructive"}
-                        >
-                          {trade.side}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right font-mono">
-                        {trade.shares.toLocaleString()}
-                      </TableCell>
-                      <TableCell className="text-right font-mono">
-                        {trade.price.toFixed(2)}
-                      </TableCell>
-                      <TableCell className="text-right font-mono">
-                        {trade.notional.toLocaleString("en-IN", {
-                          style: "currency",
-                          currency: "INR",
-                          maximumFractionDigits: 0,
-                        })}
-                      </TableCell>
-                    </TableRow>
+                    <TradeRow
+                      key={trade.id}
+                      trade={trade}
+                      isExpanded={expanded.has(trade.id)}
+                      onToggle={() => toggleExpand(trade.id)}
+                    />
                   ))}
                 </TableBody>
               </Table>
@@ -197,6 +206,172 @@ export function TradesTable() {
         )}
       </CardContent>
     </Card>
+  );
+}
+
+function TradeRow({
+  trade,
+  isExpanded,
+  onToggle,
+}: {
+  trade: Trade;
+  isExpanded: boolean;
+  onToggle: () => void;
+}) {
+  const hasMatches = trade.side === "SELL" && (trade.matches?.length ?? 0) > 0;
+  const totalPnl =
+    trade.matches?.reduce((sum, m) => sum + m.realized_pnl, 0) ?? 0;
+  const pnlPositive = totalPnl >= 0;
+
+  return (
+    <>
+      <TableRow
+        className={cn(hasMatches && "cursor-pointer hover:bg-muted/50")}
+        onClick={hasMatches ? onToggle : undefined}
+      >
+        <TableCell className="w-8">
+          {hasMatches ? (
+            isExpanded ? (
+              <ChevronUp className="h-4 w-4 text-muted-foreground" />
+            ) : (
+              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            )
+          ) : null}
+        </TableCell>
+        <TableCell className="font-mono text-sm">{trade.date}</TableCell>
+        <TableCell className="font-medium">{trade.symbol}</TableCell>
+        <TableCell>
+          <Badge variant={trade.side === "BUY" ? "default" : "destructive"}>
+            {trade.side}
+          </Badge>
+        </TableCell>
+        <TableCell className="text-right font-mono">
+          {trade.shares.toLocaleString()}
+        </TableCell>
+        <TableCell className="text-right font-mono">
+          {trade.price.toFixed(2)}
+        </TableCell>
+        <TableCell className="text-right font-mono">
+          {inr(trade.notional)}
+        </TableCell>
+        <TableCell
+          className={cn(
+            "text-right font-mono",
+            hasMatches
+              ? pnlPositive
+                ? "text-green-600"
+                : "text-red-600"
+              : "text-muted-foreground"
+          )}
+        >
+          {hasMatches ? inrSigned(totalPnl) : "—"}
+        </TableCell>
+      </TableRow>
+      {hasMatches && isExpanded && (
+        <TableRow className="bg-muted/30 hover:bg-muted/30">
+          <TableCell colSpan={8} className="p-4">
+            <MatchedBuyPanel trade={trade} />
+          </TableCell>
+        </TableRow>
+      )}
+    </>
+  );
+}
+
+function MatchedBuyPanel({ trade }: { trade: Trade }) {
+  const matches = trade.matches ?? [];
+  if (matches.length === 0) return null;
+
+  const totalPnl = matches.reduce((s, m) => s + m.realized_pnl, 0);
+  const totalShares = matches.reduce((s, m) => s + m.shares_matched, 0);
+  const weightedEntry =
+    totalShares > 0
+      ? matches.reduce((s, m) => s + m.entry_price * m.shares_matched, 0) /
+        totalShares
+      : 0;
+  const weightedHold =
+    totalShares > 0
+      ? matches.reduce((s, m) => s + m.holding_days * m.shares_matched, 0) /
+        totalShares
+      : 0;
+  const exitPrice = trade.notional > 0 ? (trade.notional - trade.slippage) / trade.shares : 0;
+  const overallPct =
+    weightedEntry > 0 ? (exitPrice / weightedEntry - 1) * 100 : 0;
+  const isMulti = matches.length > 1;
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+        <div>
+          <div className="text-xs text-muted-foreground">
+            Entry Date{isMulti ? " (earliest)" : ""}
+          </div>
+          <div className="font-mono">{matches[0].entry_date}</div>
+        </div>
+        <div>
+          <div className="text-xs text-muted-foreground">
+            Entry Price{isMulti ? " (weighted)" : " (net)"}
+          </div>
+          <div className="font-mono">{weightedEntry.toFixed(2)}</div>
+        </div>
+        <div>
+          <div className="text-xs text-muted-foreground">
+            Holding Days{isMulti ? " (weighted)" : ""}
+          </div>
+          <div className="font-mono">{weightedHold.toFixed(0)}</div>
+        </div>
+        <div>
+          <div className="text-xs text-muted-foreground">Exit Price (net)</div>
+          <div className="font-mono">{exitPrice.toFixed(2)}</div>
+        </div>
+      </div>
+      <div className="flex items-center gap-4 pt-2 border-t">
+        <div>
+          <div className="text-xs text-muted-foreground">Realized P&amp;L</div>
+          <div
+            className={cn(
+              "font-mono text-lg font-semibold",
+              totalPnl >= 0 ? "text-green-600" : "text-red-600"
+            )}
+          >
+            {inrSigned(totalPnl)}{" "}
+            <span className="text-sm font-normal">
+              ({overallPct >= 0 ? "+" : ""}
+              {overallPct.toFixed(2)}%)
+            </span>
+          </div>
+        </div>
+      </div>
+      {isMulti && (
+        <div className="pt-2">
+          <div className="text-xs text-muted-foreground mb-2">
+            Matched across {matches.length} buy lots (FIFO):
+          </div>
+          <div className="space-y-1 text-xs font-mono">
+            {matches.map((m, i) => (
+              <div
+                key={i}
+                className="flex gap-4 items-center justify-between pl-2"
+              >
+                <span>
+                  {m.entry_date} — {m.shares_matched.toLocaleString()} sh @{" "}
+                  {m.entry_price.toFixed(2)} ({m.holding_days}d)
+                </span>
+                <span
+                  className={cn(
+                    m.realized_pnl >= 0 ? "text-green-600" : "text-red-600"
+                  )}
+                >
+                  {inrSigned(m.realized_pnl)} (
+                  {m.realized_pnl_pct >= 0 ? "+" : ""}
+                  {m.realized_pnl_pct.toFixed(2)}%)
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 

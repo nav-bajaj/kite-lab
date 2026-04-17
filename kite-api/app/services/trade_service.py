@@ -6,11 +6,11 @@ from typing import Optional, List
 import io
 import csv
 
-from sqlalchemy import desc, func
+from sqlalchemy import desc, func, case
 from sqlalchemy.orm import Session
 
 from app.models.database import get_session_local
-from app.models.models import Trade
+from app.models.models import Trade, TradeMatch
 
 
 def get_trades(
@@ -63,10 +63,31 @@ def get_trades(
 
         trades = query.all()
 
+        # Batch-fetch matches for any SELL trades on this page
+        sell_ids = [t.id for t in trades if t.side == "SELL"]
+        matches_by_sell: dict[int, list[dict]] = {}
+        if sell_ids:
+            match_rows = (
+                db.query(TradeMatch)
+                .filter(TradeMatch.sell_trade_id.in_(sell_ids))
+                .order_by(TradeMatch.id.asc())
+                .all()
+            )
+            for m in match_rows:
+                matches_by_sell.setdefault(m.sell_trade_id, []).append({
+                    "buy_trade_id": m.buy_trade_id,
+                    "entry_date": str(m.entry_date),
+                    "entry_price": round(float(m.entry_price), 4),
+                    "shares_matched": round(float(m.shares_matched), 6),
+                    "holding_days": m.holding_days,
+                    "realized_pnl": round(float(m.realized_pnl), 2),
+                    "realized_pnl_pct": round(float(m.realized_pnl_pct), 4),
+                })
+
         # Format response
         trade_list = []
         for t in trades:
-            trade_list.append({
+            row = {
                 "id": t.id,
                 "date": str(t.trade_date),
                 "symbol": t.symbol,
@@ -75,7 +96,10 @@ def get_trades(
                 "price": round(float(t.price), 2),
                 "notional": round(float(t.notional), 2),
                 "slippage": round(float(t.slippage), 2) if t.slippage else 0,
-            })
+            }
+            if t.side == "SELL":
+                row["matches"] = matches_by_sell.get(t.id, [])
+            trade_list.append(row)
 
         return {
             "universe": universe,
@@ -122,6 +146,39 @@ def get_trade_summary(universe: str = "nse500") -> dict:
             Trade.universe == universe
         ).scalar() or 0
 
+        # Realized P&L stats from trade_matches
+        winner_expr = case((TradeMatch.realized_pnl > 0, 1), else_=0)
+        loser_expr = case((TradeMatch.realized_pnl < 0, 1), else_=0)
+        winner_pct = case(
+            (TradeMatch.realized_pnl > 0, TradeMatch.realized_pnl_pct), else_=None
+        )
+        loser_pct = case(
+            (TradeMatch.realized_pnl < 0, TradeMatch.realized_pnl_pct), else_=None
+        )
+
+        match_stats = db.query(
+            func.sum(TradeMatch.realized_pnl).label("pnl_total"),
+            func.count(TradeMatch.id).label("match_count"),
+            func.sum(winner_expr).label("winners"),
+            func.sum(loser_expr).label("losers"),
+            func.avg(TradeMatch.holding_days).label("avg_hold"),
+            func.max(TradeMatch.realized_pnl_pct).label("best_pct"),
+            func.min(TradeMatch.realized_pnl_pct).label("worst_pct"),
+            func.avg(winner_pct).label("avg_winner_pct"),
+            func.avg(loser_pct).label("avg_loser_pct"),
+        ).filter(TradeMatch.universe == universe).one()
+
+        match_count = int(match_stats.match_count or 0)
+        winners = int(match_stats.winners or 0)
+
+        realized_pnl_total = float(match_stats.pnl_total) if match_stats.pnl_total is not None else None
+        win_rate = (winners / match_count * 100) if match_count > 0 else None
+        avg_holding_days = float(match_stats.avg_hold) if match_stats.avg_hold is not None else None
+        best_trade_pct = float(match_stats.best_pct) if match_stats.best_pct is not None else None
+        worst_trade_pct = float(match_stats.worst_pct) if match_stats.worst_pct is not None else None
+        avg_winner_pct = float(match_stats.avg_winner_pct) if match_stats.avg_winner_pct is not None else None
+        avg_loser_pct = float(match_stats.avg_loser_pct) if match_stats.avg_loser_pct is not None else None
+
         return {
             "universe": universe,
             "total_trades": total,
@@ -130,6 +187,13 @@ def get_trade_summary(universe: str = "nse500") -> dict:
             "first_trade_date": str(first_trade.trade_date) if first_trade else None,
             "last_trade_date": str(last_trade.trade_date) if last_trade else None,
             "total_notional": round(float(total_notional), 2),
+            "realized_pnl_total": round(realized_pnl_total, 2) if realized_pnl_total is not None else None,
+            "win_rate": round(win_rate, 2) if win_rate is not None else None,
+            "avg_holding_days": round(avg_holding_days, 1) if avg_holding_days is not None else None,
+            "best_trade_pct": round(best_trade_pct, 2) if best_trade_pct is not None else None,
+            "worst_trade_pct": round(worst_trade_pct, 2) if worst_trade_pct is not None else None,
+            "avg_winner_pct": round(avg_winner_pct, 2) if avg_winner_pct is not None else None,
+            "avg_loser_pct": round(avg_loser_pct, 2) if avg_loser_pct is not None else None,
         }
     finally:
         db.close()

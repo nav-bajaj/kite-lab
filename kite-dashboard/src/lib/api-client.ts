@@ -198,6 +198,15 @@ export async function getTrades(
       price: number;
       notional: number;
       slippage: number;
+      matches?: Array<{
+        buy_trade_id: number;
+        entry_date: string;
+        entry_price: number;
+        shares_matched: number;
+        holding_days: number;
+        realized_pnl: number;
+        realized_pnl_pct: number;
+      }>;
     }>;
     total_count: number;
     limit: number;
@@ -215,6 +224,13 @@ export async function getTradeSummary(universe: UniverseId) {
     first_trade_date: string | null;
     last_trade_date: string | null;
     total_notional: number;
+    realized_pnl_total?: number | null;
+    win_rate?: number | null;
+    avg_holding_days?: number | null;
+    best_trade_pct?: number | null;
+    worst_trade_pct?: number | null;
+    avg_winner_pct?: number | null;
+    avg_loser_pct?: number | null;
   }>(`/api/trades/summary?universe=${universe}`);
 }
 

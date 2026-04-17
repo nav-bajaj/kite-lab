@@ -230,6 +230,8 @@ def sync_all(universe: str = "nse500") -> dict:
     """
     Sync all data for a universe.
     """
+    from app.services.trade_matching_service import rebuild_matches
+
     SessionLocal = get_session_local()
     db = SessionLocal()
 
@@ -241,6 +243,15 @@ def sync_all(universe: str = "nse500") -> dict:
             "metrics": sync_metrics(db, universe),
             "trades": sync_trades(db, universe),
         }
+        try:
+            match_result = rebuild_matches(universe, db)
+            results["trade_matches"] = {
+                "count": match_result.matches_created,
+                "unmatched_sell_shares": float(match_result.unmatched_sell_shares),
+                "open_lots_remaining": match_result.open_lots_remaining,
+            }
+        except Exception as e:
+            results["trade_matches"] = {"error": str(e)}
         return results
     finally:
         db.close()

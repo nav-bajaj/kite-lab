@@ -67,14 +67,19 @@ def print_result(universe, result):
     print(f"Universe: {universe}")
     print(f"{'='*50}")
 
-    for key in ["holdings", "equity_curve", "metrics", "trades"]:
+    for key in ["holdings", "equity_curve", "metrics", "trades", "trade_matches"]:
         if key in result:
             r = result[key]
             if "error" in r:
                 print(f"  {key}: ERROR - {r['error']}")
             else:
                 count = r.get("count", 0)
-                print(f"  {key}: {count} records synced")
+                suffix = ""
+                if key == "trade_matches":
+                    unmatched = r.get("unmatched_sell_shares", 0)
+                    open_lots = r.get("open_lots_remaining", 0)
+                    suffix = f" ({unmatched} unmatched sell shares, {open_lots} open lots)"
+                print(f"  {key}: {count} records synced{suffix}")
 
 
 if __name__ == "__main__":

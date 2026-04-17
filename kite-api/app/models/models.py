@@ -14,8 +14,10 @@ from sqlalchemy import (
     Text,
     Index,
     CheckConstraint,
+    ForeignKey,
 )
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.models.database import Base
@@ -62,6 +64,50 @@ class Trade(Base):
 
     def __repr__(self):
         return f"<Trade({self.trade_date} {self.side} {self.symbol})>"
+
+
+class TradeMatch(Base):
+    """
+    FIFO-matched pair linking a SELL trade to the BUY trade(s) that opened
+    the position. Realized P&L is net of slippage on both legs.
+
+    Multiple rows per SELL are possible when one sell closes several earlier
+    buy lots; multiple rows per BUY are possible when one buy is unwound in
+    several sells. Populated by ``trade_matching_service.rebuild_matches``.
+    """
+
+    __tablename__ = "trade_matches"
+
+    id = Column(Integer, primary_key=True)
+    universe = Column(String(20), nullable=False, index=True)
+    buy_trade_id = Column(Integer, ForeignKey("trades.id", ondelete="CASCADE"), nullable=False)
+    sell_trade_id = Column(Integer, ForeignKey("trades.id", ondelete="CASCADE"), nullable=False)
+    symbol = Column(String(50), nullable=False)
+    shares_matched = Column(Numeric(18, 6), nullable=False)
+    entry_date = Column(Date, nullable=False)
+    exit_date = Column(Date, nullable=False)
+    entry_price = Column(Numeric(18, 6), nullable=False)
+    exit_price = Column(Numeric(18, 6), nullable=False)
+    holding_days = Column(Integer, nullable=False)
+    realized_pnl = Column(Numeric(18, 4), nullable=False)
+    realized_pnl_pct = Column(Numeric(12, 6), nullable=False)
+    created_at = Column(DateTime, default=func.now())
+
+    buy_trade = relationship("Trade", foreign_keys=[buy_trade_id])
+    sell_trade = relationship("Trade", foreign_keys=[sell_trade_id])
+
+    __table_args__ = (
+        Index("idx_trade_matches_universe", "universe"),
+        Index("idx_trade_matches_sell", "sell_trade_id"),
+        Index("idx_trade_matches_buy", "buy_trade_id"),
+        Index("idx_trade_matches_universe_symbol", "universe", "symbol"),
+    )
+
+    def __repr__(self):
+        return (
+            f"<TradeMatch({self.symbol} buy={self.buy_trade_id} "
+            f"sell={self.sell_trade_id} pnl={self.realized_pnl})>"
+        )
 
 
 class EquityCurve(Base):
