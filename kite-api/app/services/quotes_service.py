@@ -19,8 +19,9 @@ logger = logging.getLogger(__name__)
 _quotes_cache: TTLCache = TTLCache(maxsize=100, ttl=2)
 _cache_lock = threading.Lock()
 
-# KiteConnect client singleton
+# KiteConnect client singleton (rebuilt when token changes)
 _kite_client = None
+_kite_token = None
 _kite_lock = threading.Lock()
 
 
@@ -38,37 +39,44 @@ def get_kite_client():
     """
     Get or create KiteConnect client instance.
 
+    Re-reads access token from disk each call. If the token has changed
+    (e.g. user re-logged in), rebuilds the client with the new token.
+
     Returns:
-        KiteConnect instance with access token set
+        KiteConnect instance with current access token set
 
     Raises:
-        TokenExpiredError: If access token is missing or expired
+        TokenExpiredError: If access token is missing
     """
-    global _kite_client
+    global _kite_client, _kite_token
 
     with _kite_lock:
-        if _kite_client is not None:
-            return _kite_client
-
         settings = get_settings()
 
         if not settings.kite_api_key:
             raise QuotesFetchError("KITE_API_KEY not configured")
+
+        # Always re-read token from disk — it may have been refreshed via login
+        access_token = _read_access_token(settings)
+        if not access_token:
+            _kite_client = None
+            _kite_token = None
+            raise TokenExpiredError("Access token not found. Please login first.")
+
+        # Reuse cached client only if token hasn't changed
+        if _kite_client is not None and _kite_token == access_token:
+            return _kite_client
 
         try:
             from kiteconnect import KiteConnect
         except ImportError:
             raise QuotesFetchError("kiteconnect package not installed")
 
-        # Read access token from file
-        access_token = _read_access_token(settings)
-        if not access_token:
-            raise TokenExpiredError("Access token not found. Please login first.")
-
         kite = KiteConnect(api_key=settings.kite_api_key)
         kite.set_access_token(access_token)
 
         _kite_client = kite
+        _kite_token = access_token
         return _kite_client
 
 
@@ -95,9 +103,10 @@ def _read_access_token(settings) -> Optional[str]:
 
 def reset_kite_client():
     """Reset the KiteConnect client (used when token expires)."""
-    global _kite_client
+    global _kite_client, _kite_token
     with _kite_lock:
         _kite_client = None
+        _kite_token = None
 
 
 def get_live_quotes(symbols: List[str]) -> Dict[str, LiveQuote]:
