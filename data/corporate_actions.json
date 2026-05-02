@@ -1,0 +1,10 @@
+[
+  {
+    "symbol": "VEDL",
+    "action": "demerger",
+    "ex_date": "2026-04-30",
+    "factor": 0.3834,
+    "raw_pre_ex_close": 773.6,
+    "note": "Vedanta demerger - aluminium business spun off"
+  }
+]

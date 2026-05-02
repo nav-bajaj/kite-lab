@@ -16,6 +16,7 @@ PARALLEL_FETCH_STEPS = [
 
 # Steps that must run sequentially (depend on fetched data)
 SEQUENTIAL_STEPS = [
+    ("Apply corporate actions", [sys.executable, "scripts/apply_corporate_actions.py"]),
     ("Update Nifty 100 benchmark", [sys.executable, "scripts/compute_benchmark.py"]),
     ("Build momentum rankings", [sys.executable, "scripts/build_momentum_signals.py"]),
     ("Sync data to database", [sys.executable, "scripts/sync_to_database.py"]),
