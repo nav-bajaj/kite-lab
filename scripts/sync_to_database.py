@@ -10,6 +10,7 @@ Usage:
     python scripts/sync_to_database.py --universe nse500  # Sync one universe
 """
 import argparse
+import math
 import sys
 import os
 import json
@@ -59,7 +60,68 @@ def main():
         except Exception as e:
             print(f"  {universe}: ERROR - {e}")
 
+    # Apply corporate action adjustments to open positions
+    adjust_open_positions_for_corporate_actions()
+
     print("\nSync complete.")
+
+
+def adjust_open_positions_for_corporate_actions():
+    """
+    Adjust avg_price in open_positions for any corporate actions.
+    Uses threshold-based detection to identify unadjusted positions
+    and applies the factor. Idempotent — skips already-adjusted positions.
+    """
+    actions_file = os.path.join(repo_root, "data", "corporate_actions.json")
+    if not os.path.exists(actions_file):
+        return
+
+    with open(actions_file) as f:
+        actions = json.load(f)
+
+    if not actions:
+        return
+
+    from app.models.database import get_session_local
+    from app.models.models import OpenPosition
+
+    SessionLocal = get_session_local()
+    db = SessionLocal()
+
+    print(f"\n{'='*50}")
+    print("Adjusting open positions for corporate actions...")
+    print(f"{'='*50}")
+
+    try:
+        for action in actions:
+            symbol = action["symbol"]
+            factor = action["factor"]
+            raw_pre_ex_close = action["raw_pre_ex_close"]
+            threshold = raw_pre_ex_close * math.sqrt(factor)
+
+            positions = db.query(OpenPosition).filter(
+                OpenPosition.symbol == symbol
+            ).all()
+
+            if not positions:
+                continue
+
+            adjusted_count = 0
+            for pos in positions:
+                if pos.avg_price and float(pos.avg_price) > threshold:
+                    pos.avg_price = round(float(pos.avg_price) * factor, 2)
+                    adjusted_count += 1
+
+            if adjusted_count > 0:
+                db.commit()
+                print(f"  {symbol}: Adjusted avg_price for {adjusted_count} position(s) (factor={factor})")
+            else:
+                print(f"  {symbol}: Already adjusted, skipping")
+    except Exception as e:
+        db.rollback()
+        print(f"  ERROR: {e}")
+    finally:
+        db.close()
 
 
 def print_result(universe, result):
