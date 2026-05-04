@@ -36,6 +36,7 @@ COPY data_pipeline/ data_pipeline/
 
 # Copy static data files needed by scripts
 COPY data/static/ data/static/
+COPY data/corporate_actions.json data/corporate_actions.json
 
 # Create data directories for runtime (benchmarks fetched at runtime)
 RUN mkdir -p data/nse500_data data/indices_data data/final_portfolio \
