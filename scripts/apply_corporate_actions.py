@@ -21,8 +21,9 @@ import pandas as pd
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(SCRIPT_DIR)
 ACTIONS_FILE = os.path.join(ROOT_DIR, "data", "corporate_actions.json")
-APPLIED_FILE = os.path.join(ROOT_DIR, "data", "corporate_actions_applied.json")
 PRICE_DIR = os.path.join(ROOT_DIR, "nse500_data")
+# Store sidecar in PRICE_DIR (persistent volume on Railway) so it survives redeploys
+APPLIED_FILE = os.path.join(PRICE_DIR, ".corporate_actions_applied.json")
 PRICE_COLS = ["open", "high", "low", "close"]
 
 
@@ -77,6 +78,19 @@ def apply_adjustment(action, applied):
     data_is_adjusted = abs(last_pre_ex_close - expected_adjusted) / expected_adjusted < 0.05
     data_is_raw = abs(last_pre_ex_close - raw_pre_ex_close) / raw_pre_ex_close < 0.05
 
+    # Detect double-adjusted data (factor applied twice: close ≈ raw * factor^2)
+    expected_double = raw_pre_ex_close * factor * factor
+    data_is_double_adjusted = abs(last_pre_ex_close - expected_double) / expected_double < 0.05
+
+    if data_is_double_adjusted:
+        # Recover: divide by factor to get back to single-adjusted
+        for col in PRICE_COLS:
+            df.loc[pre_mask, col] = (df.loc[pre_mask, col] / factor).round(2)
+        df.to_csv(csv_path, index=False)
+        applied[key] = True
+        print(f"  {symbol}: RECOVERED from double-adjustment - divided {pre_mask.sum()} rows by factor")
+        return True
+
     if not previously_applied:
         if data_is_adjusted:
             # Data already adjusted (e.g., restored from backup), just mark as applied
@@ -85,7 +99,8 @@ def apply_adjustment(action, applied):
             return False
         if not data_is_raw:
             print(f"  {symbol}: WARNING - last pre-ex close ({last_pre_ex_close:.2f}) doesn't match "
-                  f"raw ({raw_pre_ex_close:.2f}) or adjusted ({expected_adjusted:.2f}). Manual review needed.")
+                  f"raw ({raw_pre_ex_close:.2f}), adjusted ({expected_adjusted:.2f}), "
+                  f"or double-adjusted ({expected_double:.2f}). Manual review needed.")
             return False
         # First run: all pre-ex rows are raw, adjust everything
         for col in PRICE_COLS:
