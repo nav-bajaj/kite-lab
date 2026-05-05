@@ -1,224 +1,123 @@
-# Trend Leaders 25 — Strategy Implementation
+# Trend Leaders 25 — Final Strategy
 
 ## Overview
 
-A standalone trend-following portfolio strategy for Indian equities, designed as a separate subscriber product alongside the existing cross-sectional momentum strategy.
-
-**Strategy philosophy:** Select stocks in the cleanest, most durable uptrends with recent momentum strength. Let winners run with dynamic trailing stops. Auto-raise cash when fewer stocks qualify.
+A standalone trend-following portfolio strategy for Indian equities. Designed to be simple, robust, and explainable in 3 sentences.
 
 **Branch:** `trend-leaders-20`
 
-**Specification:** `data/trend_leaders_20_backtest_handoff.md`
+---
+
+## Strategy (3 sentences)
+
+> Buy the top 25 stocks by trend quality score (equal-weight: MA stacking + persistence + drawdown control + 6-month momentum). Enter bi-weekly. Exit if Close < 200 DMA or 3x ATR trailing stop from peak.
 
 ---
 
-## Current Best Configuration
+## Configuration
 
 | Parameter | Value |
 |-----------|-------|
-| Universe | NSE 500 (also tested on Nifty 250, Nifty 100) |
+| Universe | NSE 500 / Nifty 250 / Nifty 100 |
 | Target holdings | 25 |
 | Entry frequency | Bi-weekly (every other Friday) |
-| Exit frequency | Weekly (every Friday — trailing stop checks) |
-| Exit buffer | 20 (keep stock unless rank drops below 45) |
-| Position sizing | Equal weight 4% (7.5% cap when fewer stocks qualify) |
-| Trailing stop | Dynamic: 200 DMA base; 50 DMA/15% trail if >30% extended; 20% trail if >15% extended |
+| Exit checks | Weekly (every Friday) |
+| Exit rule | Close < 200 DMA OR 3x 20-day ATR trailing stop from position peak (min 10%) |
+| Rank exit | Drop below rank 45 (buffer of 20) |
+| Position sizing | Equal weight (1/N), max 7.5% cap |
 | Slippage | 20 bps (OHLC/4 pricing) |
-| Benchmark | Nifty 100 TRI |
 
-**Trend Quality Score (TQS) — raw weighted average, no distance penalty:**
-- 30% Moving Average Structure (Close > 50 > 100 > 200 DMA stacking)
-- 30% Trend Persistence (% of 63 days Close > 100 DMA)
-- 25% Drawdown Control (proximity to 6-month rolling high)
-- 15% Momentum (3-month return, percentile-ranked among eligible stocks)
+**Trend Quality Score (equal 25% weights):**
+1. MA Structure — binary: Close > 50 > 100 > 200 DMA stacking + slope
+2. Trend Persistence — % of last 63 days Close > 100 DMA
+3. Drawdown Control — Close / 126-day rolling high
+4. 6-Month Momentum — percentile-ranked among eligible stocks
 
----
-
-## Performance Results
-
-### Universe Comparison (same config)
-
-| Universe | CAGR | Max DD | Sharpe | Sortino | Calmar | Vol |
-|----------|------|--------|--------|---------|--------|-----|
-| **NSE 500** | **40.1%** | -25.0% | 1.76 | 2.01 | 1.60 | 22.8% |
-| **Nifty 250** | 40.0% | -21.1% | **1.93** | **2.26** | **1.90** | 20.7% |
-| Nifty 100 | 32.9% | -17.3% | 1.81 | 2.18 | 1.90 | 18.2% |
-
-**Nifty 250 is the sweet spot** — same CAGR as NSE 500 with 4% less DD and best Sharpe.
-
-### Optimization Journey (NSE 500)
-
-| Iteration | CAGR | Max DD | Sharpe | Calmar | Change |
-|-----------|------|--------|--------|--------|--------|
-| V1 Base (monthly, with distance penalty) | 20.8% | -18.9% | 1.25 | 1.10 | Starting point |
-| + Remove distance penalty | 26.7% | -32.2% | 1.26 | 0.83 | Let winners run |
-| + Dynamic trailing stop | 30.0% | -25.7% | 1.52 | 1.17 | Protect extended stocks |
-| + 15% momentum component | 36.1% | -26.6% | 1.62 | 1.36 | Prefer recent strength |
-| + Top-25 (from Top-20) | 37.2% | -26.2% | 1.72 | 1.42 | More diversification |
-| **+ Bi-weekly entry** | **40.1%** | **-25.0%** | **1.76** | **1.60** | Faster trend capture |
-
-### Comparison with Momentum Strategy
-
-| Metric | TL25 (NSE 500) | Momentum L6 | Benchmark |
-|--------|----------------|-------------|-----------|
-| CAGR | 40.1% | 59.4% | ~15% |
-| Max DD | -25.0% | -30.0% | ~-20% |
-| Sharpe | 1.76 | 1.92 | ~0.7 |
-| Calmar | 1.60 | — | — |
-| Monthly Win Rate | 69.4% | — | — |
-| Correlation (daily) | — | 0.785 | — |
+**Eligibility filter:**
+- Close > 200 DMA
+- 50 DMA > 200 DMA
+- 200 DMA today > 200 DMA 20 days ago (slope rising)
 
 ---
 
-## Implementation
+## Performance (Full Universes)
 
-### Scripts
+| Universe | CAGR | Max DD | Sharpe | Sortino | Calmar |
+|----------|------|--------|--------|---------|--------|
+| NSE 500 | 43.1% | -21.1% | 1.92 | — | 2.04 |
+| Nifty 250 | 40.1% | -20.4% | 1.94 | — | 1.97 |
+| Nifty 100 | 33.4% | -16.5% | 1.84 | — | 2.02 |
+
+**Period:** 2021-02 to 2026-04 (5.2 years)
+
+---
+
+## Robustness Test (Random Universe Subsets)
+
+Removed 30% of stocks randomly, 10 trials per universe:
+
+| Universe | Subset Size | Median CAGR | Min CAGR | Median Sharpe | Min Sharpe | >25% CAGR |
+|----------|-------------|-------------|----------|---------------|------------|------------|
+| NSE 500 | 350 / 500 | 42.0% | 35.5% | 1.91 | 1.64 | 10/10 |
+| Nifty 250 | 175 / 251 | 39.0% | 33.8% | 1.95 | 1.74 | 10/10 |
+| Nifty 100 | 70 / 101 | 32.3% | 23.8% | 1.88 | 1.48 | 9/10 |
+
+**29/30 trials above 25% CAGR. 30/30 trials above 1.0 Sharpe.**
+
+The strategy does not depend on specific stocks — it finds good trends regardless of which names are available.
+
+---
+
+## Comparison with Momentum Strategy
+
+| Metric | TL25 (Nifty 250) | Momentum (NSE 500) |
+|--------|-------------------|-------------------|
+| CAGR (from Feb 2021) | 40.0% | 26.4% |
+| CAGR (from Jan 2024) | 19.7% | 1.1% |
+| Max DD | -20.4% | -35.3% |
+| Sharpe | 1.94 | 1.19 |
+| Daily correlation | 0.84 | — |
+
+Momentum has higher ceiling in bull markets (2020-21: +102%) but has been essentially dead since Jan 2024 (1.1% CAGR). TL25 is more consistent across market regimes.
+
+---
+
+## Design Principles
+
+1. **Simple rules** — the strategy can be described in 3 sentences. No tiered thresholds, no complex conditional logic.
+2. **Round numbers** — 3x ATR, 25 stocks, 200 DMA. No precisely tuned parameters.
+3. **Robust to universe changes** — works on NSE 500, Nifty 250, Nifty 100, and random subsets.
+4. **Let winners run** — no distance-from-MA penalty. The ATR trailing stop adapts to each stock's volatility.
+5. **Defensive exits** — weekly trailing stop checks catch trend breaks before they become catastrophic drawdowns.
+
+---
+
+## Scripts
 
 | Script | Purpose |
 |--------|---------|
-| `scripts/build_trend_leaders_signals.py` | Signal generation: eligibility + TQS ranking (monthly/weekly/bi-weekly) |
-| `scripts/backtest_trend_leaders.py` | Backtest engine: dual-frequency, trailing stops, exit hysteresis |
-| `scripts/run_trend_leaders_portfolio.py` | Orchestrator: signals + backtests + summary |
-| `scripts/report_trend_leaders.py` | HTML report: metrics, charts, holdings, comparison |
-
-### Running the Strategy
-
-```bash
-# Generate signals (bi-weekly, top-25, rank output 45 for buffer)
-python scripts/build_trend_leaders_signals.py \
-  --universe data/static/nse500_universe.csv \
-  --rebalance-freq weekly \
-  --rank-output 45 --top-n 25 \
-  --w-ma 0.30 --w-persistence 0.30 --w-drawdown 0.25 --w-distance 0.0
-
-# Run backtest
-python scripts/backtest_trend_leaders.py \
-  --signals data/trend_leaders/signals/trend_leaders_signals.csv \
-  --prices-dir nse500_data \
-  --benchmark data/benchmarks/nifty100.csv \
-  --output-dir data/trend_leaders/backtests/current_best \
-  --top-n 25 --exit-buffer 20 --variant base
-
-# Generate report
-python scripts/report_trend_leaders.py
-```
-
-Note: The current best configuration (bi-weekly + momentum component + trailing stop) was developed through inline testing. The scripts support all the building blocks but the full optimized pipeline hasn't been wired into a single orchestrator command yet (see TODO below).
+| `scripts/build_trend_leaders_signals.py` | Signal generation |
+| `scripts/backtest_trend_leaders.py` | Backtest engine |
+| `scripts/run_trend_leaders_portfolio.py` | Orchestrator |
+| `scripts/report_trend_leaders.py` | HTML report |
 
 ---
 
-## Architecture
+## TODO
 
-### Entry Logic (bi-weekly)
-1. Compute trend eligibility: Close > 200 DMA, 50 DMA > 200 DMA, 200 DMA rising
-2. Compute TQS for eligible stocks (MA structure + persistence + drawdown control + 3m momentum)
-3. Rank by TQS descending
-4. Fill open slots from top-25 (only buy new entrants, no rebalance of continuing positions)
+### Production
+- [ ] Wire simplified config into orchestrator as single command
+- [ ] Integrate with daily pipeline and dashboard
+- [ ] Paper trade for 3 months before live deployment
+- [ ] Add to subscriber product (tiered: Nifty 250 flagship, Nifty 100 conservative)
 
-### Exit Logic (weekly)
-**Dynamic trailing stop based on how extended the stock is:**
-- **All stocks:** Close < 200 DMA → exit
-- **Stocks >30% above 200 DMA:** Close < 50 DMA OR 15% off position peak → exit
-- **Stocks >15% above 200 DMA:** 20% off position peak → exit
-
-**Monthly rank-based exit:**
-- Stock drops below rank 45 (top_n + buffer) → exit
-
-### Key Design Decisions
-
-1. **No distance-from-200 DMA penalty** — lets winners run; the trailing stop provides protection instead
-2. **Incremental sizing** — only buy new entrants with freed cash; continuing positions drift
-3. **Exit hysteresis (buffer=20)** — prevents churn from rank noise near boundary
-4. **Momentum component (15%)** — percentile-ranked 3m return gives preference to stocks with recent strength, without making this a pure momentum strategy
-5. **Bi-weekly entry** — catches new trends faster than monthly without weekly noise
+### Further Testing
+- [ ] Sector concentration check (is there sector clustering?)
+- [ ] Different slippage sensitivity (10 bps, 30 bps, 50 bps)
+- [ ] Walk-forward validation (roll forward 6-month windows)
+- [ ] Survivorship bias check (historical index constituents)
+- [ ] Longer history if data becomes available (2015-2020)
 
 ---
 
-## Output Structure
-
-```
-data/trend_leaders/
-  signals/
-    trend_leaders_signals.csv             # Current production signals
-    persistence_only_signals.csv          # Variant 4 (simpler)
-    no_distance_penalty_signals.csv       # No distance penalty signals
-  backtests/
-    current_best/                         # Latest locked-in config
-    base/                                 # Original V1 base
-    trailing_stop_b/                      # Trailing stop without bi-weekly
-    [other experiment variants...]
-  reports/
-    trend_leaders_20_report.html          # Comprehensive HTML report
-    comparison_summary.md                 # Results summary
-```
-
----
-
-## Experiments Log
-
-### What Worked
-- Removing distance-from-200 DMA penalty (+6% CAGR)
-- Dynamic trailing stop by extension level (+3% CAGR, -6% DD)
-- 15% momentum component (3-month return) (+6% CAGR, +0.10 Sharpe)
-- Top-25 instead of Top-20 (+1% CAGR, +0.10 Sharpe, lower DD)
-- Bi-weekly entry instead of monthly (+3% CAGR, -1% DD)
-- Exit buffer of 20 (vs 10 or 15)
-
-### What Didn't Work
-- Weekly rebalance (too much churn, rank noise destroys returns)
-- 100 DMA eligibility instead of 200 DMA (too permissive in bear markets, -29.6% DD)
-- Full rebalance at each entry (unnecessary turnover — 2696% annualized)
-- Percentile-ranked TQS components (amplifies tiny differences, causes rank volatility)
-- Hybrid entry/hold signals (selecting "near MA" stocks for entry picked weaker trends)
-- Tighter exit buffer (10 or 15 — more churn, worse Sharpe)
-- Higher momentum weights (>15% — diminishing returns, slightly worse DD)
-- Top-10 or Top-12 concentration (too volatile)
-
----
-
-## TODO / Future Work
-
-### Strategy Improvements to Test
-- [ ] 6-month momentum instead of 3-month (longer lookback may be more stable)
-- [ ] ATR-based trailing stop (adapts to each stock's volatility instead of fixed %)
-- [ ] Sector diversification cap (max 4-5 stocks from same sector)
-- [ ] Minimum volume/liquidity filter (exclude illiquid micro-caps)
-- [ ] EMA instead of SMA for faster indicator response
-- [ ] Min-hold-days (8 days, like momentum strategy — prevent immediate flip-flops)
-
-### Robustness & Sensitivity
-- [ ] Different initial capital (₹10L, ₹50L, ₹1Cr)
-- [ ] Slippage sensitivity (10 bps vs 30 bps vs 50 bps)
-- [ ] Out-of-sample testing (train on 2021-2023, test on 2024-2026)
-- [ ] Monte Carlo simulation of parameter stability
-- [ ] Survivorship bias check (use actual historical NSE 500 constituents)
-
-### Production Pipeline
-- [ ] Wire optimized config into `run_trend_leaders_portfolio.py` orchestrator
-- [ ] Add bi-weekly rebalance date derivation to orchestrator
-- [ ] Add momentum component to signal generator CLI (new `--w-momentum` flag)
-- [ ] Integrate with dashboard (sync to production DB)
-- [ ] Add to daily pipeline (like momentum strategy)
-- [ ] Thursday preview / Friday execution workflow
-
-### Product & Reporting
-- [ ] Offer as tiered product: Nifty 250 (flagship), Nifty 100 (conservative), NSE 500 (aggressive)
-- [ ] Generate subscriber-friendly report (simplified, weekly email)
-- [ ] Track live paper portfolio before going to production
-- [ ] Combine with momentum for a blended product (50/50 or risk-parity)
-
----
-
-## Design Documents
-
-- [DESIGN.md](DESIGN.md) — Architecture decisions, lessons learned, V1 assessment
-- [phase1_signals.md](phase1_signals.md) — Signal generation implementation (Done)
-- [phase2_backtest.md](phase2_backtest.md) — Backtest engine implementation (Done)
-- [phase3_variants.md](phase3_variants.md) — Variant testing (Done)
-- [phase4_reports.md](phase4_reports.md) — Report generation (Done)
-- [phase5_orchestrator.md](phase5_orchestrator.md) — Orchestrator (Done)
-
----
-
-*Created: May 2026*
-*Last updated: May 2026 — Locked in bi-weekly + Top-25 + Mom 15% + trailing stop (40.1% CAGR, 1.76 Sharpe)*
+*Last updated: May 2026*
