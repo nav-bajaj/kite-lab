@@ -1,100 +1,120 @@
-# OM25 — Omega Ratio Stock Portfolio
+# OM25 — Upside/Downside Capture Ratio Portfolio
 
 ## Overview
 
-A standalone portfolio strategy that ranks stocks by the quality and asymmetry of their historical daily return distribution using the Omega Ratio. Designed as a third subscriber product alongside Momentum and TL25.
-
-**Core question:** Which stocks have the best upside/downside return asymmetry over the past year?
+A portfolio strategy that selects stocks with the best asymmetric market sensitivity — stocks that go up more than the market on good days and fall less on bad days.
 
 **Branch:** `om25`
 
-**Specification:** `data/om25_backtest_handoff.md`
+---
+
+## Strategy (3 sentences)
+
+> Rank stocks by their upside/downside capture ratio over the past year. Monthly, buy the top 25 (let existing positions run, exit buffer 15). Every two weeks, exit if Close < 200 DMA or stock has dropped more than 4x its 20-day ATR from peak.
 
 ---
 
-## Strategy Summary
+## Locked-In Configuration
 
 | Parameter | Value |
 |-----------|-------|
 | Universe | NSE 500 |
-| Target holdings | 25 |
-| Sizing | Equal weight 4% per stock (no scale-up) |
-| Rebalance | Monthly (1st trading day) |
-| Signal | Omega Ratio (sum of gains / sum of losses, threshold = 0%) |
-| Lookback | 252 trading days (configurable: 126, 378) |
-| Eligibility | Min 220 valid observations + positive 252-day return |
-| Omega cap | 10.0 (prevent infinite values) |
-| Cash | Remainder when <25 qualify, earns 0% |
-| Slippage | 20 bps (OHLC/4 pricing, consistent with other strategies) |
-| Exits | Monthly only (no weekly exits in V1) |
+| Signal | Upside/Downside Capture Ratio (252-day) |
+| Entry | Monthly (1st trading day), top 25, incremental sizing |
+| Exit check | Bi-weekly (every other Friday) |
+| Exit rule | Close < 200 DMA OR 4x ATR(20) trailing stop from peak |
+| Exit buffer | 15 (keep stock unless rank drops below 40) |
+| Sizing | Equal weight (1/N), 7.5% cap |
+| Slippage | 20 bps (OHLC/4) |
+
+**Capture Ratio formula:**
+```
+upside_capture = avg(stock return on market-up days) / avg(market return on up days)
+downside_capture = avg(stock return on market-down days) / avg(market return on down days)
+score = upside_capture / downside_capture
+```
+
+Higher score = stock participates more in rallies, less in selloffs.
 
 ---
 
-## How OM25 Differs
+## Current Results
 
-| Strategy | Question | Signal | Personality |
-|----------|----------|--------|-------------|
-| Momentum | Strongest relative performers? | 6m price return | Aggressive growth |
-| TL25 | Cleanest sustained uptrends? | MA structure + persistence + trailing stop | Trend-following, defensive |
-| **OM25** | **Best upside/downside asymmetry?** | **Omega Ratio of daily returns** | **Quality returns, smoother winners** |
+| Metric | Value |
+|--------|-------|
+| CAGR | 32.9% |
+| Max Drawdown | -19.6% |
+| Sharpe | 2.20 |
+| Calmar | 1.68 |
+| Correlation with momentum | 0.789 |
 
----
-
-## Implementation Phases
-
-| Phase | Description | Status |
-|-------|-------------|--------|
-| 1 | Signal generator (Omega computation + ranking) | Pending |
-| 2 | Backtest engine (monthly rebalance, 4% weight, cash tracking) | Pending |
-| 3 | Run all 5 variants | Pending |
-| 4 | Report generation + comparison vs momentum + TL25 | Pending |
-| 5 | Robustness testing (universe sampling) | Pending |
+**Status:** CAGR needs improvement. 32.9% pre-tax/pre-friction may not be compelling enough for an active subscriber product. Target: 40%+.
 
 ---
 
-## Variants to Test
+## What We Tested
 
-| # | Name | Lookback | Ranking | Positive Return Filter |
-|---|------|----------|---------|------------------------|
-| 1 | Pure Omega | 252d | Raw omega_capped | Yes |
-| 2 | Omega Quality Score | 252d | 60% omega + 20% return + 20% downside dev | Yes |
-| 3 | 126-Day Omega | 126d | Raw omega_capped | Yes |
-| 4 | 378-Day Omega | 378d | Raw omega_capped | Yes |
-| 5 | No Return Filter | 252d | Raw omega_capped | No |
+### Signal variants (all with full rebalance)
+| Signal | CAGR | Sharpe | Corr w/ Mom | Verdict |
+|--------|------|--------|-------------|---------|
+| Pure Omega Ratio | 35.4% | 1.59 | 0.920 | Too correlated with momentum |
+| Omega Quality Score | 30.1% | 1.54 | — | Worse on all metrics |
+| Consistency (% pos months × return) | 43.8% | 1.81 | 0.904 | High CAGR but still correlated |
+| **Capture Ratio** | 33.2% | 1.83 | **0.829** | Most differentiated |
 
----
+### Trading mechanics (capture ratio, incremental sizing)
+| Config | CAGR | Max DD | Sharpe | Calmar |
+|--------|------|--------|--------|--------|
+| Monthly entry, no stop | 33.2% | -23.6% | 1.83 | 1.41 |
+| Monthly entry, 4x ATR weekly | 30.1% | -18.8% | 2.08 | 1.60 |
+| **Monthly entry, 4x ATR biweekly** | **32.9%** | **-19.6%** | **2.20** | **1.68** |
+| Biweekly entry, weekly exit | 36.1% | -19.8% | 2.16 | 1.82 |
+| 20/30/40-day low stop | 33.6% | -23.1% | 1.95 | 1.45 |
+| 5x ATR biweekly | 32.4% | -20.9% | 2.06 | 1.55 |
 
-## Scripts (Planned)
-
-| Script | Purpose |
-|--------|---------|
-| `scripts/build_om25_signals.py` | Omega computation + ranking + audit output |
-| `scripts/backtest_om25.py` | Monthly rebalance backtest with 4% sizing |
-| `scripts/run_om25_portfolio.py` | Orchestrator |
-| `scripts/report_om25.py` | HTML report |
-
----
-
-## Key Questions to Answer
-
-1. Does raw Omega work as a stock-ranking signal?
-2. Is OM25 meaningfully different from momentum and TL25?
-3. Does it select "smoother winners" or just low-vol sleepy stocks?
-4. Does the positive return filter help or make it too momentum-like?
-5. Which lookback (126/252/378) is best?
-6. Is turnover reasonable for monthly rebalance?
-7. Does Omega Quality Score improve over pure Omega?
+### What didn't work
+- Pure Omega Ratio: 0.92 correlation with momentum (just momentum restated)
+- N-day low stops: never trigger before 200 DMA (no benefit)
+- 6-month lookback: noisier signal, higher correlation
+- No positive return filter: identical to with filter (non-binding)
+- Full rebalance: excessive turnover, lower CAGR
 
 ---
 
-## Design Principles (from TL25 lessons)
+## Exit Analysis
 
-1. **Start simple** — pure Omega ranking first, add complexity only if it helps
-2. **Round numbers** — 252 days, 25 stocks, 4% weight, cap at 10
-3. **Validate with universe sampling** — don't overfit to specific stocks
-4. **Compare honestly** — correlation with existing strategies is the key differentiation test
-5. **Avoid overfitting** — resist the urge to tune many dials; the goal is to test whether Omega Ratio IS a signal, not to maximize in-sample CAGR
+From the 4x ATR weekly stop analysis:
+- **ATR stop**: 70% of exits, avg P&L +4.3%, 42% win rate — clips some winners early
+- **200 DMA**: 15% of exits, avg P&L -4.3%, 19% win rate — crash protector (correct)
+- **Rank drop**: 15% of exits, avg P&L +17.6%, 84% win rate — healthy rotation
+
+Moving to biweekly exit checks reduced ATR exits from 567 → 460 (less noise), improving CAGR by +2.8%.
 
 ---
 
-*Created: May 2026*
+## Differentiation
+
+| Strategy | Signal | Corr with OM25 |
+|----------|--------|----------------|
+| Momentum | 6m price return | 0.789 |
+| TL25 | Trend quality (MA + persistence) | ~0.85 |
+| OM25 | Capture ratio (asymmetric market sensitivity) | — |
+
+10/25 stock overlap with TL25 on latest date. Different character: OM25 picks "quality beta" stocks (low downside participation), not necessarily the fastest trends.
+
+---
+
+## TODO: Improve CAGR to 40%+
+
+Ideas to test:
+- [ ] Blend capture ratio with 3-month momentum (like TL25's 15% momentum boost)
+- [ ] Bi-weekly entry (faster rotation into new high-capture stocks)
+- [ ] Reduce to top 20 (more concentrated)
+- [ ] Use capture ratio from market UP days only (ignore downside — just pick best upside participators)
+- [ ] Combine with TL25 eligibility filter (only pick capture-ratio stocks that are also in uptrends)
+- [ ] Test on Nifty 250 (may have better risk-adjusted like TL25)
+- [ ] Universe sampling robustness test
+
+---
+
+*Last updated: May 2026*
