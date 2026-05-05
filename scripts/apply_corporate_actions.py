@@ -4,11 +4,14 @@ Reads data/corporate_actions.json and adjusts OHLC prices in nse500_data/
 for events like demergers, splits, and bonuses. Designed to run after every
 price fetch so that re-fetched raw prices are always corrected.
 
-Idempotency strategy:
-- First run: adjusts ALL pre-ex-date prices (tracked via sidecar file).
-- Subsequent runs: scans ALL pre-ex-date rows using a price threshold
-  (geometric mean of raw and adjusted reference prices) to find any
-  re-fetched raw rows, and adjusts only those.
+Strategy:
+- Uses a price threshold to identify unadjusted (raw) rows. Any pre-ex-date
+  row with close > threshold is raw and gets the factor applied.
+- On first run (no sidecar), verifies data consistency before bulk adjusting.
+  If data is in an unrecoverable mixed state, deletes the CSV so the next
+  fetch downloads fresh raw data.
+- The sidecar (.corporate_actions_applied.json) lives in the price directory
+  (persistent volume on Railway) to survive container redeploys.
 """
 
 import json
@@ -22,7 +25,6 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(SCRIPT_DIR)
 ACTIONS_FILE = os.path.join(ROOT_DIR, "data", "corporate_actions.json")
 PRICE_DIR = os.path.join(ROOT_DIR, "nse500_data")
-# Store sidecar in PRICE_DIR (persistent volume on Railway) so it survives redeploys
 APPLIED_FILE = os.path.join(PRICE_DIR, ".corporate_actions_applied.json")
 PRICE_COLS = ["open", "high", "low", "close"]
 
@@ -70,39 +72,60 @@ def apply_adjustment(action, applied):
         print(f"  {symbol}: No pre-ex-date data, skipping")
         return False
 
+    # Threshold separates raw prices (above) from adjusted prices (below)
+    threshold = raw_pre_ex_close * math.sqrt(factor)
+    expected_adjusted = raw_pre_ex_close * factor
+
+    # Check last pre-ex close
+    last_pre_ex_close = df.loc[pre_mask, "close"].iloc[-1]
+    last_is_adjusted = abs(last_pre_ex_close - expected_adjusted) / expected_adjusted < 0.05
+    last_is_raw = abs(last_pre_ex_close - raw_pre_ex_close) / raw_pre_ex_close < 0.05
+
     previously_applied = key in applied
 
-    # Check the last pre-ex close to determine if data is raw or adjusted
-    last_pre_ex_close = df.loc[pre_mask, "close"].iloc[-1]
-    expected_adjusted = raw_pre_ex_close * factor
-    data_is_adjusted = abs(last_pre_ex_close - expected_adjusted) / expected_adjusted < 0.05
-    data_is_raw = abs(last_pre_ex_close - raw_pre_ex_close) / raw_pre_ex_close < 0.05
-
-    # Detect double-adjusted data (factor applied twice: close ≈ raw * factor^2)
-    expected_double = raw_pre_ex_close * factor * factor
-    data_is_double_adjusted = abs(last_pre_ex_close - expected_double) / expected_double < 0.05
-
-    if data_is_double_adjusted:
-        # Recover: divide by factor to get back to single-adjusted
+    if previously_applied:
+        # Normal operation: just fix any raw rows from re-fetch
+        raw_rows = pre_mask & (df["close"] > threshold)
+        if not raw_rows.any():
+            print(f"  {symbol}: All prices adjusted, skipping")
+            return False
         for col in PRICE_COLS:
-            df.loc[pre_mask, col] = (df.loc[pre_mask, col] / factor).round(2)
+            df.loc[raw_rows, col] = (df.loc[raw_rows, col] * factor).round(2)
         df.to_csv(csv_path, index=False)
-        applied[key] = True
-        print(f"  {symbol}: RECOVERED from double-adjustment - divided {pre_mask.sum()} rows by factor")
+        print(f"  {symbol}: Re-fetch fix - adjusted {raw_rows.sum()} rows (threshold={threshold:.2f})")
         return True
 
-    if not previously_applied:
-        if data_is_adjusted:
-            # Data already adjusted (e.g., restored from backup), just mark as applied
+    # First time processing this action on this volume.
+    # Verify data is in a known-good state before proceeding.
+
+    if last_is_adjusted:
+        # Check a sample of older data too to confirm consistency
+        first_pre_ex_close = df.loc[pre_mask, "close"].iloc[0]
+        # If both first and last are in adjusted range (below threshold), mark as done
+        if first_pre_ex_close < threshold:
             applied[key] = True
-            print(f"  {symbol}: Already adjusted (close={last_pre_ex_close:.2f}), marking as applied")
+            print(f"  {symbol}: Already adjusted (last={last_pre_ex_close:.2f}), marking as applied")
             return False
-        if not data_is_raw:
-            print(f"  {symbol}: WARNING - last pre-ex close ({last_pre_ex_close:.2f}) doesn't match "
-                  f"raw ({raw_pre_ex_close:.2f}), adjusted ({expected_adjusted:.2f}), "
-                  f"or double-adjusted ({expected_double:.2f}). Manual review needed.")
-            return False
-        # First run: all pre-ex rows are raw, adjust everything
+
+    if last_is_raw:
+        # Last close is raw. Check if ALL data is raw (true first run)
+        # or if it's a mixed state (corrupted volume + re-fetch).
+        # A "true first run" means oldest data should also be raw.
+        first_pre_ex_close = df.loc[pre_mask, "close"].iloc[0]
+        # VEDL's earliest raw price was ~50+ (post-COVID). If first close
+        # is unreasonably low (< expected_adjusted * 0.5), data is corrupted.
+        if first_pre_ex_close < expected_adjusted * 0.3:
+            # Corrupted state: old data has been multiply-adjusted.
+            # Delete CSV so next fetch downloads fresh raw data.
+            os.remove(csv_path)
+            # Also remove sidecar so next run treats it as fresh
+            if key in applied:
+                del applied[key]
+            print(f"  {symbol}: CORRUPTED data detected (first close={first_pre_ex_close:.2f}). "
+                  f"Deleted CSV - will be re-fetched on next pipeline run.")
+            return True
+
+        # Data looks consistently raw - adjust everything
         for col in PRICE_COLS:
             df.loc[pre_mask, col] = (df.loc[pre_mask, col] * factor).round(2)
         df.to_csv(csv_path, index=False)
@@ -110,20 +133,14 @@ def apply_adjustment(action, applied):
         print(f"  {symbol}: First run - adjusted {pre_mask.sum()} rows (factor={factor})")
         return True
 
-    # Subsequent run: scan for any raw rows that survived a re-fetch.
-    # Raw prices are above the threshold; adjusted prices are below.
-    threshold = raw_pre_ex_close * math.sqrt(factor)
-    raw_rows = pre_mask & (df["close"] > threshold)
-
-    if not raw_rows.any():
-        print(f"  {symbol}: All prices adjusted, skipping")
-        return False
-
-    for col in PRICE_COLS:
-        df.loc[raw_rows, col] = (df.loc[raw_rows, col] * factor).round(2)
-
-    df.to_csv(csv_path, index=False)
-    print(f"  {symbol}: Re-fetch fix - adjusted {raw_rows.sum()} rows (threshold={threshold:.2f})")
+    # Last close doesn't match raw or adjusted - possibly double/triple adjusted
+    # or partially corrupted. Delete and let it re-fetch.
+    os.remove(csv_path)
+    if key in applied:
+        del applied[key]
+    print(f"  {symbol}: UNRECOVERABLE state (last pre-ex close={last_pre_ex_close:.2f}, "
+          f"expected raw={raw_pre_ex_close:.2f} or adjusted={expected_adjusted:.2f}). "
+          f"Deleted CSV - will be re-fetched on next pipeline run.")
     return True
 
 
