@@ -240,6 +240,13 @@ def derive_monthly_rebalance_dates(index: pd.DatetimeIndex) -> pd.DatetimeIndex:
     return pd.DatetimeIndex(monthly_first.values)
 
 
+def derive_weekly_rebalance_dates(index: pd.DatetimeIndex) -> pd.DatetimeIndex:
+    """Last trading day of each week (Friday-anchored)."""
+    calendar = pd.Series(index=index, data=index)
+    weekly_last = calendar.resample("W-FRI").last().dropna()
+    return pd.DatetimeIndex(weekly_last.values)
+
+
 # ---------------------------------------------------------------------------
 # Signal output
 # ---------------------------------------------------------------------------
@@ -379,6 +386,8 @@ def main():
                         help="Number of stocks to output in signals (for exit buffer)")
     parser.add_argument("--scoring-mode", choices=["composite", "persistence_only"], default="composite",
                         help="composite = full TQS, persistence_only = rank by persistence alone")
+    parser.add_argument("--rebalance-freq", choices=["monthly", "weekly"], default="monthly",
+                        help="Rebalance frequency: monthly (1st trading day) or weekly (Friday)")
     parser.add_argument("--no-audit", action="store_true", help="Skip audit file generation (faster)")
 
     # Configurable indicator parameters
@@ -416,9 +425,10 @@ def main():
     print("Computing moving averages (50, 100, 200 DMA)...")
     sma_dict = compute_moving_averages(close)
 
-    # Compute eligibility
-    print("Computing trend eligibility...")
-    eligibility = compute_eligibility(close, sma_dict["sma_50"], sma_dict["sma_200"])
+    # Compute eligibility (using configurable long DMA)
+    long_key = f"sma_{args.dma_long}"
+    print(f"Computing trend eligibility (Close > {args.dma_long} DMA, 50 > {args.dma_long} DMA)...")
+    eligibility = compute_eligibility(close, sma_dict["sma_50"], sma_dict[long_key])
 
     # Compute score components
     print("Computing score components...")
@@ -428,7 +438,7 @@ def main():
     persistence = compute_persistence_score(
         close, sma_dict["sma_100"], window=args.persistence_window
     )
-    distance_200 = compute_distance_200_score(close, sma_dict["sma_200"])
+    distance_200 = compute_distance_200_score(close, sma_dict[long_key])
     drawdown_control = compute_drawdown_control_score(
         close, window=args.drawdown_window
     )
@@ -441,11 +451,14 @@ def main():
     }
 
     # Derive rebalance dates
-    rebalance_dates = derive_monthly_rebalance_dates(close.index)
-    # Filter to dates where we have enough history for 200 DMA
-    min_date = close.index[args.dma_long + args.persistence_window]  # need both 200 DMA + persistence window
+    if args.rebalance_freq == "weekly":
+        rebalance_dates = derive_weekly_rebalance_dates(close.index)
+    else:
+        rebalance_dates = derive_monthly_rebalance_dates(close.index)
+    # Filter to dates where we have enough history
+    min_date = close.index[args.dma_long + args.persistence_window]
     rebalance_dates = rebalance_dates[rebalance_dates >= min_date]
-    print(f"Monthly rebalance dates: {len(rebalance_dates)} "
+    print(f"{args.rebalance_freq.capitalize()} rebalance dates: {len(rebalance_dates)} "
           f"({rebalance_dates[0].date()} to {rebalance_dates[-1].date()})")
 
     # Compute TQS

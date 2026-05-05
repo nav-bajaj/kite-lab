@@ -403,20 +403,21 @@ def main():
     if plt is None:
         raise SystemExit("matplotlib is required for report generation")
 
-    # Load all variant data
-    variants = ["base", "market_filter", "monthly_only", "persistence_only"]
+    # Load all variant data — auto-detect directories with tl20_metrics.csv
+    backtests_dir = args.data_dir / "backtests"
     all_metrics = {}
     all_equity = {}
 
-    for variant in variants:
-        variant_dir = args.data_dir / "backtests" / variant
+    for variant_dir in sorted(backtests_dir.iterdir()):
+        if not variant_dir.is_dir():
+            continue
         metrics_path = variant_dir / "tl20_metrics.csv"
         equity_path = variant_dir / "tl20_equity.csv"
 
         if not metrics_path.exists():
-            print(f"  Skipping {variant} (no metrics file)")
             continue
 
+        variant = variant_dir.name
         m = pd.read_csv(metrics_path)
         if not m.empty:
             all_metrics[variant] = m.iloc[0].to_dict()

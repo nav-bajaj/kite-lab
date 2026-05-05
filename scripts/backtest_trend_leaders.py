@@ -102,6 +102,9 @@ def run_backtest(
     market_filter_index_path: Path = None,
     market_filter_max_exposure: float = 0.50,
     whole_shares: bool = True,
+    min_hold_days: int = 0,
+    unified_rebalance: bool = False,
+    hold_signals_path: Path = None,
 ):
     exit_threshold = top_n + exit_buffer  # e.g., 30
 
@@ -111,7 +114,15 @@ def run_backtest(
     calendar = close_panel.index
 
     print("Loading signals...")
-    entry_signals, rank_map = load_trend_signals(signals_path, top_n, exit_buffer)
+    entry_signals, entry_rank_map = load_trend_signals(signals_path, top_n, exit_buffer)
+
+    # Hold signals: used for exit decisions (rank-based exit hysteresis)
+    # If not provided, use same as entry signals
+    if hold_signals_path and hold_signals_path.exists():
+        print(f"Loading separate hold signals from {hold_signals_path}...")
+        _, rank_map = load_trend_signals(hold_signals_path, top_n, exit_buffer)
+    else:
+        rank_map = entry_rank_map
 
     print("Loading benchmark...")
     benchmark = load_benchmark(benchmark_path)
@@ -126,9 +137,11 @@ def run_backtest(
     # Weekly exit dates
     weekly_exit_dates = derive_weekly_exit_dates(calendar)
 
-    # Pre-compute 200 DMA for weekly exit checks
-    print("Pre-computing 200 DMA for exit checks...")
-    sma_200_panel = close_panel.rolling(window=200, min_periods=200).mean()
+    # Pre-compute 200 DMA for weekly exit checks (skip if unified rebalance)
+    sma_200_panel = None
+    if not unified_rebalance:
+        print("Pre-computing 200 DMA for exit checks...")
+        sma_200_panel = close_panel.rolling(window=200, min_periods=200).mean()
 
     # Market filter: load index data and compute its 200 DMA
     mf_close = None
@@ -145,8 +158,9 @@ def run_backtest(
     active_calendar = calendar[calendar >= first_trade_date]
     print(f"Backtest period: {active_calendar[0].date()} to {active_calendar[-1].date()} "
           f"({len(active_calendar)} trading days)")
-    print(f"Monthly entry dates: {len(monthly_trade_dates)}")
-    print(f"Variant: {variant}")
+    print(f"Rebalance dates: {len(monthly_trade_dates)}")
+    print(f"Variant: {variant}" + (f" | min_hold_days={min_hold_days}" if min_hold_days > 0 else "")
+          + (" | unified_rebalance" if unified_rebalance else ""))
 
     # State
     holdings = {}       # symbol -> shares
@@ -298,9 +312,16 @@ def run_backtest(
         })
 
         # 3. Weekly exit check (BEFORE monthly entry if same day)
-        if date in weekly_exit_dates and variant != "monthly_only":
+        #    Skip if unified_rebalance (exits handled at rebalance via rank drop)
+        if date in weekly_exit_dates and variant != "monthly_only" and not unified_rebalance:
             exits_this_week = []
             for sym in list(holdings.keys()):
+                # Min hold check
+                if min_hold_days > 0:
+                    entry_date = entry_meta.get(sym, {}).get("date")
+                    if entry_date and (date - entry_date).days < min_hold_days:
+                        continue
+
                 sym_close = close_row.get(sym, np.nan)
                 sym_sma200 = sma_200_panel.loc[date, sym] if sym in sma_200_panel.columns else np.nan
 
@@ -330,6 +351,12 @@ def run_backtest(
 
             # Exit hysteresis: sell holdings ranked > exit_threshold (or unranked)
             for sym in list(holdings.keys()):
+                # Min hold check
+                if min_hold_days > 0:
+                    entry_date = entry_meta.get(sym, {}).get("date")
+                    if entry_date and (date - entry_date).days < min_hold_days:
+                        continue
+
                 sym_rank = current_ranks.get(sym, float("inf"))
                 if sym_rank > exit_threshold:
                     execute_sell(sym, date, reason="monthly_exit")
@@ -605,7 +632,9 @@ def main():
         description="Backtest Trend Leaders 20 — dual-frequency trend-following portfolio"
     )
     parser.add_argument("--signals", required=True, type=Path,
-                        help="Path to trend leaders signals CSV")
+                        help="Path to trend leaders signals CSV (used for entry ranking)")
+    parser.add_argument("--hold-signals", type=Path, default=None,
+                        help="Separate signals for hold/exit decisions (if different from entry)")
     parser.add_argument("--prices-dir", default="nse500_data", type=Path)
     parser.add_argument("--benchmark", default="data/benchmarks/nifty100.csv", type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
@@ -620,6 +649,10 @@ def main():
     parser.add_argument("--market-filter-index", type=Path, default=None,
                         help="Index CSV for market filter (e.g., indices_data/NIFTY_500.csv)")
     parser.add_argument("--market-filter-max-exposure", type=float, default=0.50)
+    parser.add_argument("--min-hold-days", type=int, default=0,
+                        help="Minimum holding period in days (default 0)")
+    parser.add_argument("--unified-rebalance", action="store_true",
+                        help="Unified rebalance: entry+exit on same dates (no separate weekly exit)")
     parser.add_argument("--no-whole-shares", action="store_true",
                         help="Use fractional shares (default: whole shares)")
 
@@ -639,6 +672,9 @@ def main():
         top_n=args.top_n,
         exit_buffer=args.exit_buffer,
         max_weight=args.max_weight,
+        min_hold_days=args.min_hold_days,
+        unified_rebalance=args.unified_rebalance,
+        hold_signals_path=args.hold_signals,
         slippage=args.slippage,
         variant=args.variant,
         market_filter_index_path=mf_index,
