@@ -94,13 +94,47 @@ For each stock on each monthly rebalance date:
 
 ---
 
+## Universe & Frequency Matrix
+
+| Universe | Entry | CAGR | Max DD | Sharpe | Calmar |
+|----------|-------|------|--------|--------|--------|
+| NSE 500 | Monthly | 53.7% | -24.1% | 2.72 | 2.23 |
+| **NSE 500** | **Bi-weekly** | **60.0%** | -25.1% | 2.58 | 2.40 |
+| Nifty 250 | Monthly | 47.3% | -18.3% | 2.44 | **2.59** |
+| Nifty 250 | Bi-weekly | 52.4% | -20.3% | 2.40 | 2.58 |
+| Nifty 100 | Monthly | 33.6% | -20.3% | 1.97 | 1.66 |
+| Nifty 100 | Bi-weekly | 38.1% | -21.6% | 1.95 | 1.77 |
+
+## Slippage Sensitivity (NSE 500, monthly)
+
+| Slippage | CAGR | Sharpe | CAGR loss |
+|----------|------|--------|-----------|
+| 10 bps | 55.3% | 2.81 | — |
+| 20 bps | 53.7% | 2.72 | -1.6% |
+| 30 bps | 51.9% | 2.64 | -3.4% |
+| 50 bps | 48.8% | 2.47 | -6.5% |
+
+Even at 50 bps (very conservative), strategy delivers 48.8% CAGR.
+
+## Period Analysis
+
+| Period | OM25 CAGR | Momentum | TL25 |
+|--------|-----------|----------|------|
+| Full (2021+) | +52.9% | +26.4% | +43.3% |
+| 2022+ | +29.8% | +13.3% | +29.9% |
+| 2024+ | +25.7% | +1.1% | +15.1% |
+| 2025+ | +6.3% | -17.9% | -3.2% |
+
+Hot year: 2023 (+83%) — but unlike momentum, OM25 followed up with 2024 (+57%) and stays positive in 2025.
+
+---
+
 ## TODO
 
-- [ ] Run on Nifty 250 and Nifty 100 universes
 - [ ] Generate comprehensive HTML report
-- [ ] Test on recent periods (2024+) specifically
 - [ ] Paper trade for validation
 - [ ] Wire into production scripts
+- [ ] Sector concentration analysis
 
 ---
 
