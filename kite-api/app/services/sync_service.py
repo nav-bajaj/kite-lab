@@ -178,9 +178,13 @@ def sync_metrics(db: Session, universe: str = "nse500") -> dict:
     return {"universe": universe, "count": 1, "computed_date": str(computed_date)}
 
 
-def sync_trades(db: Session, universe: str = "nse500") -> dict:
+def sync_trades(db: Session, universe: str = "nse500", full: bool = False) -> dict:
     """
     Sync trades from CSV to database.
+
+    Args:
+        full: If True, delete all existing trades and re-insert from CSV.
+              Default False (incremental: only add trades after last existing).
     """
     exp_dir = get_latest_experiment_dir(universe)
     if not exp_dir:
@@ -192,17 +196,19 @@ def sync_trades(db: Session, universe: str = "nse500") -> dict:
 
     df = pd.read_csv(trades_path, parse_dates=["date"])
 
-    # Get existing trade dates to check for duplicates
-    existing_count = db.query(Trade).filter(Trade.universe == universe).count()
-
-    # If we already have trades, only add new ones
-    if existing_count > 0:
-        last_trade = db.query(Trade).filter(
-            Trade.universe == universe
-        ).order_by(Trade.trade_date.desc()).first()
-
-        if last_trade:
-            df = df[df["date"] > pd.Timestamp(last_trade.trade_date)]
+    if full:
+        # Full replace: delete all existing trades for this universe
+        deleted = db.query(Trade).filter(Trade.universe == universe).delete()
+        db.flush()
+    else:
+        # Incremental: only add new trades after last existing
+        existing_count = db.query(Trade).filter(Trade.universe == universe).count()
+        if existing_count > 0:
+            last_trade = db.query(Trade).filter(
+                Trade.universe == universe
+            ).order_by(Trade.trade_date.desc()).first()
+            if last_trade:
+                df = df[df["date"] > pd.Timestamp(last_trade.trade_date)]
 
     count = 0
     for _, row in df.iterrows():
@@ -223,12 +229,16 @@ def sync_trades(db: Session, universe: str = "nse500") -> dict:
         count += 1
 
     db.commit()
-    return {"universe": universe, "count": count, "total": existing_count + count}
+    mode = "full replace" if full else "incremental"
+    return {"universe": universe, "count": count, "mode": mode}
 
 
-def sync_all(universe: str = "nse500") -> dict:
+def sync_all(universe: str = "nse500", full_trades: bool = False) -> dict:
     """
     Sync all data for a universe.
+
+    Args:
+        full_trades: If True, do a full trade re-sync (delete + reinsert).
     """
     from app.services.trade_matching_service import rebuild_matches
 
@@ -241,7 +251,7 @@ def sync_all(universe: str = "nse500") -> dict:
             "holdings": sync_holdings(db, universe),
             "equity_curve": sync_equity_curve(db, universe),
             "metrics": sync_metrics(db, universe),
-            "trades": sync_trades(db, universe),
+            "trades": sync_trades(db, universe, full=full_trades),
         }
         try:
             match_result = rebuild_matches(universe, db)
@@ -257,11 +267,11 @@ def sync_all(universe: str = "nse500") -> dict:
         db.close()
 
 
-def sync_all_universes() -> dict:
+def sync_all_universes(full_trades: bool = False) -> dict:
     """
     Sync all data for all universes.
     """
     results = {}
     for universe in ["nse500", "nifty100", "nifty250"]:
-        results[universe] = sync_all(universe)
+        results[universe] = sync_all(universe, full_trades=full_trades)
     return results

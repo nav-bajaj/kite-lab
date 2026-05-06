@@ -29,20 +29,25 @@ def main():
     parser = argparse.ArgumentParser(description="Sync CSV data to database")
     parser.add_argument("--universe", type=str, default=None,
                         help="Universe to sync (nse500, nifty100, nifty250). Default: all")
+    parser.add_argument("--full", action="store_true",
+                        help="Full trade re-sync (delete all trades and reinsert from CSV)")
     args = parser.parse_args()
 
     from app.services.sync_service import sync_all, sync_all_universes
     from app.services.positions_service import PositionsService
 
+    if args.full:
+        print("Full trade re-sync enabled: all trades will be replaced from CSV")
+
     if args.universe:
         universes = [args.universe]
         print(f"Syncing {args.universe} to database...")
-        result = sync_all(args.universe)
+        result = sync_all(args.universe, full_trades=args.full)
         print_result(args.universe, result)
     else:
         universes = ["nse500", "nifty100", "nifty250"]
         print("Syncing all universes to database...")
-        results = sync_all_universes()
+        results = sync_all_universes(full_trades=args.full)
         for universe, result in results.items():
             print_result(universe, result)
 

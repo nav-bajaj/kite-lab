@@ -28,10 +28,12 @@ def run_step(name, command):
     return True
 
 
-def sync_to_database():
+def sync_to_database(full=False):
     """Run sync_to_database.py script directly (no HTTP auth needed)."""
-    return run_step("Sync all universes to database",
-                    [sys.executable, "scripts/sync_to_database.py"])
+    cmd = [sys.executable, "scripts/sync_to_database.py"]
+    if full:
+        cmd.append("--full")
+    return run_step("Sync all universes to database", cmd)
 
 
 def main():
@@ -61,7 +63,10 @@ def main():
             portfolio_failures.append(universe)
 
     # Step 3: Sync to database
-    sync_to_database()
+    # Use full trade re-sync when corporate actions exist (ensures stale trades are replaced)
+    ca_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "corporate_actions.json")
+    has_corporate_actions = os.path.exists(ca_file)
+    sync_to_database(full=has_corporate_actions)
 
     # Summary
     total_portfolios = len(UNIVERSES)
