@@ -48,6 +48,10 @@ def main():
             print("\nPrice fetch failed - continuing with existing data")
             fetch_ok = False
 
+    # Step 1.5: Apply corporate action adjustments to price data
+    run_step("Apply corporate actions",
+             [sys.executable, "scripts/apply_corporate_actions.py"])
+
     # Step 2: Generate portfolio for each universe (these are critical)
     portfolio_failures = []
     for universe in UNIVERSES:
