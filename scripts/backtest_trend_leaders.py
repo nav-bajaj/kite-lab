@@ -134,8 +134,17 @@ def run_backtest(
     )
     monthly_trade_dates = set(entry_schedule.keys())
 
-    # Weekly exit dates
-    weekly_exit_dates = derive_weekly_exit_dates(calendar)
+    # Weekly exit dates: signal dates (Fridays). Execution happens on the
+    # next trading day (Monday). This separates signal date from execution
+    # date to avoid same-day close → same-day OHLC/4 lookahead.
+    weekly_signal_dates = derive_weekly_exit_dates(calendar)
+    # Map: execution_date (e.g. Monday) -> signal_date (e.g. Friday)
+    weekly_exec_to_signal = {}
+    for sd in weekly_signal_dates:
+        td = map_signal_to_trade(sd, calendar)
+        if td is not None:
+            weekly_exec_to_signal[pd.Timestamp(td)] = pd.Timestamp(sd)
+    weekly_exit_dates = set(weekly_exec_to_signal.keys())
 
     # Pre-compute 200 DMA for weekly exit checks (skip if unified rebalance)
     sma_200_panel = None
@@ -311,28 +320,35 @@ def run_backtest(
             "drawdown": drawdown,
         })
 
-        # 3. Weekly exit check (BEFORE monthly entry if same day)
-        #    Skip if unified_rebalance (exits handled at rebalance via rank drop)
+        # 3. Weekly exit check on EXECUTION date (e.g. Monday).
+        #    Decision uses SIGNAL date (e.g. prior Friday) close + 200 DMA.
+        #    Execution happens at TODAY's OHLC/4 — no same-day lookahead.
         if date in weekly_exit_dates and variant != "monthly_only" and not unified_rebalance:
-            exits_this_week = []
-            for sym in list(holdings.keys()):
-                # Min hold check
-                if min_hold_days > 0:
-                    entry_date = entry_meta.get(sym, {}).get("date")
-                    if entry_date and (date - entry_date).days < min_hold_days:
+            signal_date = weekly_exec_to_signal[date]
+            if signal_date in close_panel.index:
+                signal_close_row = close_panel.loc[signal_date]
+                exits_this_week = []
+                for sym in list(holdings.keys()):
+                    # Min hold check
+                    if min_hold_days > 0:
+                        entry_date = entry_meta.get(sym, {}).get("date")
+                        if entry_date and (date - entry_date).days < min_hold_days:
+                            continue
+
+                    # Use SIGNAL DATE close + 200 DMA, not today's
+                    sym_close = signal_close_row.get(sym, np.nan)
+                    sym_sma200 = (sma_200_panel.loc[signal_date, sym]
+                                  if sym in sma_200_panel.columns else np.nan)
+
+                    if pd.isna(sym_close) or pd.isna(sym_sma200):
                         continue
 
-                sym_close = close_row.get(sym, np.nan)
-                sym_sma200 = sma_200_panel.loc[date, sym] if sym in sma_200_panel.columns else np.nan
+                    if sym_close < sym_sma200:
+                        exits_this_week.append(sym)
 
-                if pd.isna(sym_close) or pd.isna(sym_sma200):
-                    continue
-
-                if sym_close < sym_sma200:
-                    exits_this_week.append(sym)
-
-            for sym in exits_this_week:
-                execute_sell(sym, date, reason="weekly_exit")
+                # Execute at today's OHLC/4 (date), not signal date
+                for sym in exits_this_week:
+                    execute_sell(sym, date, reason="weekly_exit")
 
         # 4. Monthly entry/rebalance
         if date in monthly_trade_dates:

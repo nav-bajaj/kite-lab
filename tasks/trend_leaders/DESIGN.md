@@ -1,14 +1,30 @@
 # Trend Leaders 25 — Design & Decisions Log
 
+> ⚠️ **REBASELINED MAY 2026.** All performance numbers in this doc were rebaselined after fixing a same-day-close → same-day-OHLC/4 lookahead bug in `backtest_trend_leaders.py`. Strategy parameters are unchanged; only the historical performance figures are corrected to honest no-lookahead values.
+
 ## Final Strategy (Simplified)
 
 ```
-Entry:  Top 25 eligible stocks by TQS, every other Friday
-Exit:   Close < 200 DMA  OR  3x ATR(20) trailing stop from position peak (min 10%)
-Score:  25% MA structure + 25% persistence + 25% drawdown control + 25% 6m momentum (pct-ranked)
-Filter: Close > 200 DMA, 50 DMA > 200 DMA, 200 DMA rising
-Sizing: Equal weight (1/N), 7.5% cap, exit buffer 20 (keep until rank > 45)
+Signal:    Friday close (Thursday-style timing also works)
+Execution: Monday OHLC/4 (next trading day) with 20 bps slippage
+Entry:     Top 25 eligible stocks by TQS, every other Friday signal
+Exit:      Weekly Friday signal: Close < 200 DMA  OR  3x ATR(20) trailing stop
+            from position peak (min 10% floor)
+Score:     25% MA structure + 25% persistence + 25% drawdown control
+            + 25% 6m momentum (pct-ranked)
+Filter:    Close > 200 DMA, 50 DMA > 200 DMA, 200 DMA rising
+Sizing:    Equal weight (1/N), 7.5% cap, exit buffer 20 (keep until rank > 45)
 ```
+
+## Honest Performance (post-rebaseline)
+
+| Universe | Cadence | CAGR | Max DD | Sharpe | Calmar |
+|----------|---------|------|--------|--------|--------|
+| NSE 500 | Bi-weekly | 36.4% | -26.2% | 1.52 | 1.39 |
+| **Nifty 250** | **Bi-weekly** | **38.8%** | **-23.2%** | **1.79** | **1.67** |
+| Nifty 100 | Bi-weekly | 31.9% | -19.8% | 1.71 | 1.61 |
+
+**Recommended flagship: Nifty 250 Bi-weekly** — best Sharpe and Calmar across all variants.
 
 ---
 

@@ -4,13 +4,15 @@
 
 A standalone trend-following portfolio strategy for Indian equities. Designed to be simple, robust, and explainable in 3 sentences.
 
-**Branch:** `trend-leaders-20`
+**Branch:** `trend-leaders-20` (merged into `main`)
+
+> ⚠️ **REBASELINED MAY 2026.** Earlier numbers in this doc reflected a same-day-close → same-day-OHLC/4 lookahead bug in the weekly exit logic. The bug has been fixed in `scripts/backtest_trend_leaders.py`. All numbers below are honest, no-lookahead results.
 
 ---
 
 ## Strategy (3 sentences)
 
-> Buy the top 25 stocks by trend quality score (equal-weight: MA stacking + persistence + drawdown control + 6-month momentum). Enter bi-weekly. Exit if Close < 200 DMA or 3x ATR trailing stop from peak.
+> Buy the top 25 stocks by trend quality score (equal-weight: MA stacking + persistence + drawdown control + 6-month momentum). Enter bi-weekly. Exit if Close < 200 DMA or 3x ATR trailing stop from peak (min 10% floor).
 
 ---
 
@@ -18,14 +20,14 @@ A standalone trend-following portfolio strategy for Indian equities. Designed to
 
 | Parameter | Value |
 |-----------|-------|
-| Universe | NSE 500 / Nifty 250 / Nifty 100 |
+| Universe | NSE 500 (flagship) / Nifty 250 / Nifty 100 |
 | Target holdings | 25 |
-| Entry frequency | Bi-weekly (every other Friday) |
-| Exit checks | Weekly (every Friday) |
-| Exit rule | Close < 200 DMA OR 3x 20-day ATR trailing stop from position peak (min 10%) |
+| Entry frequency | Bi-weekly (every other Friday signal → Monday execution) |
+| Exit checks | Weekly (Friday signal → Monday execution) |
+| Exit rule | Close < 200 DMA OR 3x 20-day ATR trailing stop from position peak (min 10% floor) |
 | Rank exit | Drop below rank 45 (buffer of 20) |
 | Position sizing | Equal weight (1/N), max 7.5% cap |
-| Slippage | 20 bps (OHLC/4 pricing) |
+| Slippage | 20 bps (OHLC/4 pricing on next trading day) |
 
 **Trend Quality Score (equal 25% weights):**
 1. MA Structure — binary: Close > 50 > 100 > 200 DMA stacking + slope
@@ -38,86 +40,122 @@ A standalone trend-following portfolio strategy for Indian equities. Designed to
 - 50 DMA > 200 DMA
 - 200 DMA today > 200 DMA 20 days ago (slope rising)
 
----
-
-## Performance (Full Universes)
-
-| Universe | CAGR | Max DD | Sharpe | Sortino | Calmar |
-|----------|------|--------|--------|---------|--------|
-| NSE 500 | 43.1% | -21.1% | 1.92 | — | 2.04 |
-| Nifty 250 | 40.1% | -20.4% | 1.94 | — | 1.97 |
-| Nifty 100 | 33.4% | -16.5% | 1.84 | — | 2.02 |
-
-**Period:** 2021-02 to 2026-04 (5.2 years)
+**Execution model:**
+- All decisions use prior-day's close + indicators (signal date)
+- All trades execute at next trading day's OHLC/4 (execution date)
+- 20 bps slippage applied to every fill
 
 ---
 
-## Robustness Test (Random Universe Subsets)
+## Honest Performance (Lookahead-Corrected)
 
-Removed 30% of stocks randomly, 10 trials per universe:
+| Universe | Cadence | CAGR | Max DD | Sharpe | Calmar | Beta |
+|----------|---------|------|--------|--------|--------|------|
+| **NSE 500** | **Bi-weekly** | **36.4%** | **-26.2%** | **1.52** | **1.39** | 1.12 |
+| NSE 500 | Monthly | 33.2% | -27.6% | 1.54 | 1.21 | 0.97 |
+| **Nifty 250** | **Bi-weekly** | **38.8%** | **-23.2%** | **1.79** | **1.67** | 1.09 |
+| Nifty 250 | Monthly | 29.3% | -25.4% | 1.46 | 1.16 | 1.00 |
+| Nifty 100 | Bi-weekly | 31.9% | -19.8% | 1.71 | 1.61 | 1.05 |
+| Nifty 100 | Monthly | 28.1% | -19.5% | 1.58 | 1.44 | 0.99 |
 
-| Universe | Subset Size | Median CAGR | Min CAGR | Median Sharpe | Min Sharpe | >25% CAGR |
-|----------|-------------|-------------|----------|---------------|------------|------------|
-| NSE 500 | 350 / 500 | 42.0% | 35.5% | 1.91 | 1.64 | 10/10 |
-| Nifty 250 | 175 / 251 | 39.0% | 33.8% | 1.95 | 1.74 | 10/10 |
-| Nifty 100 | 70 / 101 | 32.3% | 23.8% | 1.88 | 1.48 | 9/10 |
+**Period:** 2021-02 to 2026-05 (5.3 years)
 
-**29/30 trials above 25% CAGR. 30/30 trials above 1.0 Sharpe.**
-
-The strategy does not depend on specific stocks — it finds good trends regardless of which names are available.
-
----
-
-## Comparison with Momentum Strategy
-
-| Metric | TL25 (Nifty 250) | Momentum (NSE 500) |
-|--------|-------------------|-------------------|
-| CAGR (from Feb 2021) | 40.0% | 26.4% |
-| CAGR (from Jan 2024) | 19.7% | 1.1% |
-| Max DD | -20.4% | -35.3% |
-| Sharpe | 1.94 | 1.19 |
-| Daily correlation | 0.84 | — |
-
-Momentum has higher ceiling in bull markets (2020-21: +102%) but has been essentially dead since Jan 2024 (1.1% CAGR). TL25 is more consistent across market regimes.
+### Best risk-adjusted: Nifty 250 Bi-weekly
+- 38.8% CAGR, 1.79 Sharpe, 1.67 Calmar, -23.2% max DD
+- Better than NSE 500 on every metric except gross CAGR
 
 ---
 
-## Design Principles
+## Lookahead Correction Detail
 
-1. **Simple rules** — the strategy can be described in 3 sentences. No tiered thresholds, no complex conditional logic.
-2. **Round numbers** — 3x ATR, 25 stocks, 200 DMA. No precisely tuned parameters.
-3. **Robust to universe changes** — works on NSE 500, Nifty 250, Nifty 100, and random subsets.
-4. **Let winners run** — no distance-from-MA penalty. The ATR trailing stop adapts to each stock's volatility.
-5. **Defensive exits** — weekly trailing stop checks catch trend breaks before they become catastrophic drawdowns.
+The original `backtest_trend_leaders.py` used same-day close to decide same-day OHLC/4 execution in the weekly exit check:
+
+```python
+# OLD (buggy):
+if date in weekly_exit_dates:
+    if close_panel.loc[date, sym] < sma_200_panel.loc[date, sym]:
+        execute_sell(at trade_panel.loc[date, sym])  # same day, lookahead
+```
+
+The fix separates signal date from execution date:
+
+```python
+# NEW (clean):
+if date in weekly_exec_to_signal:  # date is execution day (e.g. Monday)
+    signal_date = weekly_exec_to_signal[date]  # prior signal day (Friday)
+    if close_panel.loc[signal_date, sym] < sma_200_panel.loc[signal_date, sym]:
+        execute_sell(at trade_panel.loc[date, sym])  # next-day OHLC/4
+```
+
+### Inflation removed
+
+| Metric | Old (claimed) | New (clean) | Δ |
+|--------|---------------|-------------|---|
+| NSE 500 Bi-weekly CAGR | 43.1% | 36.4% | -6.7% |
+| NSE 500 Bi-weekly Sharpe | 1.93 | 1.52 | -0.41 |
+
+The lookahead added ~5-7% CAGR by allowing exit decisions to "see" the day's close when executing at the day's OHLC/4. Removing it gives realistic trading expectations.
 
 ---
 
-## Scripts
+## Parameter Re-validation (with clean engine)
 
-| Script | Purpose |
-|--------|---------|
-| `scripts/build_trend_leaders_signals.py` | Signal generation |
-| `scripts/backtest_trend_leaders.py` | Backtest engine |
-| `scripts/run_trend_leaders_portfolio.py` | Orchestrator |
-| `scripts/report_trend_leaders.py` | HTML report |
+Most locked-in parameter choices held up under proper testing:
+
+| Parameter | Locked-in | Tested alternatives | Verdict |
+|-----------|-----------|---------------------|---------|
+| Top-N | 25 | 20, 30 | **Keep 25** (clearly best) |
+| Exit buffer | 20 | 15, 25, 30 | Marginal: buf 15 slightly better (+0.4% CAGR) |
+| ATR multiplier | 3x | 3.5x, 4x | **Keep 3x** (best DD with 10% floor) |
+| ATR floor | 10% | 0% (no floor) | **Keep 10%** (clearly better DD) |
+| Momentum lookback | 6m | 3m | Marginal: 3m slightly better (+0.5% CAGR) |
+| Cadence | Bi-weekly | Monthly | Tied on Sharpe; bi-weekly +3% CAGR |
+
+### Optional refinements (within noise)
+- Could change exit buffer 20 → 15 (+0.4% CAGR, +0.02 Sharpe)
+- Could change momentum lookback 6m → 3m (+0.5% CAGR, +0.06 Sharpe)
+
+These are marginal and likely just noise. Recommendation: **keep current parameters** to avoid over-tuning.
+
+---
+
+## Strategy Differentiation
+
+| Dimension | Momentum | TL25 | OM25 |
+|-----------|----------|------|------|
+| Signal | 6m return / vol | Trend structure + 6m mom | Composite capture asymmetry |
+| TL25 vs Momentum corr | — | high | — |
+| Max DD | -35% | **-26%** | -27% |
+| Recent CAGR (clean) | 1% (stagnant) | **36%** | 48% |
+
+TL25 is the **steady trend-follower** that sits between aggressive momentum and the more defensive OM25.
+
+---
+
+## Production Choice
+
+**Flagship: NSE 500 Bi-weekly** — 36.4% CAGR, -26.2% DD, 1.52 Sharpe
+- Highest gross CAGR
+- Largest universe = most opportunity
+
+**Best risk-adjusted: Nifty 250 Bi-weekly** — 38.8% CAGR, -23.2% DD, 1.79 Sharpe
+- Genuinely better Sharpe AND lower DD AND higher CAGR than NSE 500
+- Worth promoting to flagship
+
+**Conservative: Nifty 100 Bi-weekly** — 31.9% CAGR, -19.8% DD, 1.71 Sharpe
+- Lowest DD, very high Sharpe
+- Suitable for risk-averse subscribers
 
 ---
 
 ## TODO
 
-### Production
-- [ ] Wire simplified config into orchestrator as single command
-- [ ] Integrate with daily pipeline and dashboard
-- [ ] Paper trade for 3 months before live deployment
-- [ ] Add to subscriber product (tiered: Nifty 250 flagship, Nifty 100 conservative)
-
-### Further Testing
-- [ ] Sector concentration check (is there sector clustering?)
-- [ ] Different slippage sensitivity (10 bps, 30 bps, 50 bps)
-- [ ] Walk-forward validation (roll forward 6-month windows)
-- [ ] Survivorship bias check (historical index constituents)
-- [ ] Longer history if data becomes available (2015-2020)
+- [ ] Re-test bi-weekly vs monthly more carefully (Sharpe was tied — could simplify product to monthly only)
+- [ ] Sector concentration check
+- [ ] Generate updated HTML report with clean numbers
+- [ ] Validate Nifty 250 Bi-weekly as the new flagship recommendation
+- [ ] Paper trade 3 months before live deployment
 
 ---
 
-*Last updated: May 2026*
+*Last updated: May 2026 — rebaselined to honest no-lookahead numbers.*

@@ -4,239 +4,191 @@
 
 A portfolio strategy that selects stocks with both high upside market participation AND good upside/downside asymmetry. Uses a composite percentile rank of upside capture and capture ratio.
 
-**Branch:** `om25`
+**Branch:** `om25` (merged into `main`)
 
 **Status:** Production strategy with two tiers (Monthly + Bi-weekly).
+
+> ⚠️ **REBASELINED MAY 2026.** Earlier numbers (54.4% CAGR / 2.76 Sharpe etc.) reflected a same-day-close → same-day-OHLC/4 lookahead bug in weekly exit logic. Strategy parameters are unchanged; numbers below are honest, no-lookahead results. Removing the lookahead reduced CAGR by 6-11% and Sharpe by 0.4-0.6 across variants.
 
 ---
 
 ## Strategy (3 sentences)
 
-> Rank each stock by the average of its upside-capture percentile rank and its capture-ratio percentile rank over the past year. Buy the top 25 (let winners run, exit buffer 15). Weekly, exit if Close < 200 DMA or 4x ATR trailing stop from peak.
+> Rank each stock by the average of its upside-capture percentile rank and its capture-ratio percentile rank over the past year. Buy the top 25 (let winners run, exit buffer 15). On weekly Friday signal → Monday OHLC/4 execution, exit if Close < 200 DMA or 4x ATR trailing stop from peak.
 
 Same signal, two cadences.
 
 ---
 
-## Two Production Variants
+## Two Production Variants — Honest Numbers
 
-OM25 is offered as **two tiers** that share the exact same signal but differ on rebalance cadence. The signal picks the same kinds of stocks; the cadence determines deployment speed and consequently risk profile.
+OM25 is offered as **two tiers** sharing the exact same signal but differing on entry cadence. The signal picks the same kinds of stocks; the cadence determines deployment speed and risk profile.
 
-### Tier 1 — Monthly (Conservative)
-> Entry: Monthly (1st trading day) | Exit: Weekly (4x ATR or Close < 200 DMA)
+### Tier 1 — Monthly (Flagship by Sharpe)
+> Entry: Monthly (1st trading day signal → 2nd trading day execution) | Exit: Weekly (Friday signal → Monday OHLC/4)
 
-| Metric | Value |
-|--------|-------|
-| CAGR | 54.4% |
-| Max Drawdown | -24.0% |
-| Sharpe | **2.76** |
-| Sortino | **3.44** |
-| Calmar | 2.27 |
-| Volatility | 19.7% |
-| Beta | 0.82 |
-| Avg Cash | 21.4% |
+| Metric | NSE 500 | Nifty 250 | Nifty 100 |
+|--------|---------|-----------|-----------|
+| **CAGR** | **48.1%** | 40.6% | 28.6% |
+| Max DD | -27.4% | -22.8% | -25.3% |
+| **Sharpe** | **2.26** | 2.01 | 1.55 |
+| Sortino | 2.77 | 2.40 | 1.79 |
+| Calmar | 1.75 | 1.78 | 1.13 |
+| Beta | 0.90 | 0.97 | 0.96 |
+| Avg Cash | 16.9% | 18.2% | 20.5% |
+| Trades / 5y | 1,367 | 1,358 | 1,375 |
 
-**Character:** More defensive. Avg cash of 21% acts as natural shock absorber. Sees fewer drawdowns (11 significant DDs vs bi-weekly's 17), but each takes longer to recover (~80 days avg vs 32 days for bi-weekly).
+### Tier 2 — Bi-weekly (Higher CAGR)
+> Entry: Every other Friday signal → Monday execution | Exit: Same as monthly
 
-### Tier 2 — Bi-weekly (Aggressive)
-> Entry: Every other Friday | Exit: Weekly (4x ATR or Close < 200 DMA)
+| Metric | NSE 500 | Nifty 250 | Nifty 100 |
+|--------|---------|-----------|-----------|
+| **CAGR** | **49.2%** | 46.1% | 33.2% |
+| Max DD | -32.2% | -25.5% | -27.0% |
+| Sharpe | 2.02 | 2.01 | 1.62 |
+| Sortino | 2.41 | 2.40 | 1.89 |
+| Calmar | 1.53 | 1.80 | 1.23 |
+| Beta | 1.10 | 1.15 | 1.13 |
+| Avg Cash | 6.7% | 6.9% | 8.5% |
+| Trades / 5y | 1,777 | 1,731 | 1,841 |
 
-| Metric | Value |
-|--------|-------|
-| CAGR | **60.6%** |
-| Max Drawdown | -25.1% |
-| Sharpe | 2.61 |
-| Sortino | 3.06 |
-| Calmar | **2.42** |
-| Volatility | 23.2% |
-| Beta | 1.04 |
-| Avg Cash | 10.0% |
+**Period:** 2021-02 to 2026-05 (5.3 years).
 
-**Character:** More aggressive. Higher deployment, faster drawdown recoveries. More drawdowns but each one shorter. Captures bull rallies more fully.
+### Recommended Production Picks
 
-### Why Both?
-
-Different subscriber profiles:
-- **Conservative subscribers** — those who lose sleep over drawdowns, want smoother equity curves → Monthly
-- **Aggressive subscribers** — those optimizing for compound growth, can tolerate more volatility → Bi-weekly
-
-The two strategies are highly correlated (0.95 monthly returns) since they hold the same kinds of stocks. They differ mainly in **deployment level**, not in stock selection.
+| Persona | Universe | Cadence | CAGR | DD | Sharpe |
+|---------|----------|---------|------|-----|--------|
+| **Flagship (best risk-adjusted)** | NSE 500 | **Monthly** | 48.1% | -27.4% | **2.26** |
+| **Mid-cap balanced** | Nifty 250 | Bi-weekly | 46.1% | -25.5% | 2.01 |
+| **Conservative large-cap** | Nifty 250 | Monthly | 40.6% | -22.8% | 2.01 |
+| **Risk-averse** | Nifty 100 | Monthly | 28.6% | -25.3% | 1.55 |
 
 ---
 
-## Key Insight: Beta Decomposition
+## Yearly Returns (Honest)
 
-Cross-correlation analysis revealed a counter-intuitive truth:
+| Year | NSE 500 M | NSE 500 BW | Nifty 250 M | Nifty 250 BW | Nifty 100 M |
+|------|-----------|------------|-------------|--------------|-------------|
+| 2022 | -3.2% | -1.2% | +8.5% | +21.3% | +13.6% |
+| 2023 | +79.4% | +96.9% | +73.9% | +81.3% | +69.0% |
+| 2024 | +67.4% | +64.4% | +57.3% | +66.3% | +21.6% |
+| **2025** | **-17.0%** | **-17.5%** | **-3.3%** | **-7.9%** | **-4.3%** |
+| 2026 YTD | +8.7% | +5.4% | +9.3% | +9.3% | +3.6% |
+
+### Critical 2025 Insight (REVISED)
+
+The **lookahead was hiding 2025's pain** in NSE 500. Honest 2025 numbers:
+- NSE 500 Monthly: **-17.0%** (was claimed -4.4% with lookahead)
+- Nifty 250 Monthly: -3.3% (genuinely defensive)
+- Nifty 100 Monthly: -4.3% (defensive)
+
+**Implication:** Nifty 250 / Nifty 100 universes were genuinely more resilient in 2025 than NSE 500. The earlier "NSE 500 Monthly is the best Sharpe" recommendation needs re-thinking — Nifty 250 is competitive on Sharpe and meaningfully better in down years.
+
+---
+
+## Lookahead Correction Detail
+
+The bug was in the weekly trailing-stop check:
+
+```python
+# OLD (buggy): same-day close decides same-day OHLC/4 execution
+if date in weekly_dates:
+    if close_panel.loc[date, sym] < sma_200_panel.loc[date, sym]:
+        sell at trade_panel.loc[date, sym]  # SAME DAY — lookahead
+
+# NEW (clean): prior signal-day close decides next-day OHLC/4 execution
+if date in weekly_exec_to_signal:  # date = Monday (execution)
+    signal_date = weekly_exec_to_signal[date]  # Friday (signal)
+    if close_panel.loc[signal_date, sym] < sma_200_panel.loc[signal_date, sym]:
+        sell at trade_panel.loc[date, sym]  # Monday OHLC/4
+```
+
+The fix is in `scripts/_clean_engine.py` (the engine used for all enhanced OM25 variants). Production `scripts/backtest_om25.py` (V1 pure omega, no weekly stops) was not affected because it had no weekly exit logic.
+
+### Inflation Removed
+
+| Variant | Old (claimed) | New (clean) | Δ CAGR | Δ Sharpe |
+|---------|---------------|-------------|--------|----------|
+| NSE 500 Monthly | 54.4% / 2.76 | 48.1% / 2.26 | -6.3% | -0.50 |
+| NSE 500 Bi-weekly | 60.6% / 2.61 | 49.2% / 2.02 | -11.4% | -0.59 |
+| Nifty 250 Monthly | 47.3% / 2.44 | 40.6% / 2.01 | -6.7% | -0.43 |
+| Nifty 250 Bi-weekly | 52.4% / 2.40 | 46.1% / 2.01 | -6.3% | -0.39 |
+
+---
+
+## Parameter Re-validation (with clean engine)
+
+| Parameter | Locked-in | Tested alternatives | Verdict |
+|-----------|-----------|---------------------|---------|
+| Top-N | 25 | 15, 20, 30 | **Keep 25** (clearly best) |
+| Exit buffer | 15 | 10, 20 | Marginal: buf 20 slightly better (+1.2% CAGR, +0.03 Sharpe) |
+| ATR multiplier | 4x | 3x, 3.5x, 4.5x, 5x | **Keep 4x** (clearly optimal: 48.1% vs 37.9% at 3x) |
+| ATR floor | 0% | 10% | **Keep 0%** (no floor is cleaner for OM25) |
+| Composite weights | 50/50 upside/ratio | 30/70, 70/30, 100/0, 0/100 | **Keep 50/50** (each component contributes) |
+
+### Optional Refinement (within noise)
+- Exit buffer 15 → 20 gives +1.2% CAGR, +0.03 Sharpe with similar DD
+
+The core architecture (top 25, equal weight 4%, 4x ATR no floor, 50/50 composite, weekly trailing stop) is validated.
+
+---
+
+## Key Insight: Beta Decomposition (Updated with Clean Numbers)
 
 | Measurement | Monthly | Bi-weekly | Gap |
 |-------------|---------|-----------|-----|
-| Headline beta | 0.82 | 1.04 | +0.22 |
-| Stock-portion beta (cash removed) | 1.20 | 1.21 | +0.005 |
+| Headline beta | 0.90 | 1.10 | +0.20 |
+| Avg Cash | 16.9% | 6.7% | -10% |
+| Stock-portion beta (cash removed) | ~1.08 | ~1.18 | +0.10 |
 
-**98% of the beta gap is cash drag, not stock selection.** Both tiers pick stocks with the same ~1.20 deployed beta. Monthly's "lower beta" comes from holding 21% cash on average vs bi-weekly's 10%.
-
-This is why both tiers can be marketed honestly:
-- They use **identical stock selection** (same signal, same composite score)
-- They differ only in **how often cash gets redeployed**
-- Cash itself functions as the risk modulator
+The cash drag effect persists post-rebaseline but is somewhat smaller than originally claimed. Both tiers still pick stocks with similar deployed beta; cadence determines deployment level.
 
 ---
 
-## Performance — Multi-Period Analysis
+## Strategy Differentiation (Clean)
 
-### Yearly Returns
+| | Momentum | TL25 | OM25 (Monthly NSE 500) |
+|---|---|---|---|
+| Signal | 6m return / vol | Trend structure + 6m mom | Capture asymmetry |
+| Max DD | -35% | -26.2% | -27.4% |
+| Sharpe (clean) | 1.92* | 1.52 | **2.26** |
+| Recent CAGR (2024+) | 1% | ~30% | ~48% |
+| Best in | Strong directional bulls | Steady trends | Asymmetric/quality markets |
 
-| Year | Monthly | Bi-weekly | Diff (Bi - Monthly) |
-|------|---------|-----------|---------------------|
-| 2022 | +0.2% | +11.7% | +11.5% (bi-weekly redeploys post-correction faster) |
-| 2023 | +83.0% | +106.1% | +23.2% (bull captured better) |
-| 2024 | +57.2% | +60.1% | +2.9% |
-| 2025 | -4.4% | -8.7% | -4.3% (monthly's cash buffer helps) |
-| 2026 YTD | +18.1% | +12.0% | -6.1% |
-
-### Period CAGR
-
-| Period | Monthly | Bi-weekly | Winner |
-|--------|---------|-----------|--------|
-| Full (2021+) | 53.6% | 59.9% | Bi-weekly |
-| From 2022 | 30.6% | 34.9% | Bi-weekly |
-| From 2023 | 42.2% | 43.8% | Bi-weekly |
-| From 2024 | 27.0% | 22.5% | **Monthly** |
-| From 2025 | 8.3% | 0.7% | **Monthly** |
-
-**Bi-weekly wins clean bulls. Monthly wins choppy/down markets.**
+*Momentum's 1.92 Sharpe is honest — momentum has no lookahead bug, was never affected.
 
 ---
 
-## How the Composite Score Works
+## Risk-Off Mechanisms — Tested and Rejected (still valid)
 
-```
-For each stock on each rebalance date:
-  1. Compute upside_capture = avg(stock return on market-up days) / avg(market return on up days)
-  2. Compute capture_ratio = upside_capture / downside_capture
-  3. Percentile-rank both among eligible stocks (0 to 1)
-  4. composite_score = 0.5 * upside_pct_rank + 0.5 * ratio_pct_rank
-  5. Select top 25 by composite_score
-```
+The four risk-off mechanisms tested earlier (Index 200 DMA, Breadth filter, Skip-in-down-market, Half-exit) were rejected because:
+1. The trailing stop already handles per-stock risk-off
+2. Cash drag (in monthly tier) provides implicit defense
+3. Adding filters cost more in lost recovery than they saved in drawdowns
+4. Filter complexity invites overfitting
 
-**What this selects:** Stocks that score well on BOTH dimensions — high upside participation AND good asymmetry. Filters out:
-- Pure high-beta stocks (high upside but also high downside → poor ratio rank)
-- Pure defensive stocks (great ratio but low upside → poor upside rank)
-
-**What it keeps:** Stocks that go up aggressively on good days AND have structural downside protection.
+This conclusion still holds with clean numbers.
 
 ---
 
-## Differentiation From Other Strategies
+## Open Questions for Production
 
-| | Momentum | TL25 | OM25 (Monthly) | OM25 (Bi-weekly) |
-|---|---|---|---|---|
-| Signal | 6m price return | Trend structure + persistence | Composite capture score | Same |
-| Corr with Momentum | 1.00 | 0.89 | 0.82 | 0.87 |
-| Corr with TL25 | 0.89 | 1.00 | 0.87 | 0.88 |
-| Character | Aggressive growth | Steady trend followers | Quality upside participators | Same, more deployed |
-| Max DD | -35% | -21% | -24% | -25% |
-| Recent CAGR (2024+) | 1% | 20% | 27% | 22.5% |
+1. **Universe choice may need revisiting.** Nifty 250 has comparable Sharpe with much better 2025 performance (-3.3% vs NSE 500's -17%). Worth deeper analysis before locking flagship.
+
+2. **Monthly vs Bi-weekly economics.** With clean numbers, bi-weekly's premium over monthly is smaller (~1% CAGR on NSE 500). May simplify product to monthly only.
+
+3. **Subscriber experience of -27% DD.** A monthly strategy with -27% max DD is still a meaningful drawdown for retail subscribers. Worth explicit communication.
 
 ---
 
-## Trading Activity
+## Files
 
-| | Monthly | Bi-weekly |
-|---|---------|-----------|
-| Trades / year | 281 | 367 |
-| Annualized turnover | 536% | 712% |
-| Cost drag (5y total) | 60% | 103% |
-| Avg holding | 49 days | 43 days |
-
-Bi-weekly trades 30% more, costing ~42% more in slippage over 5 years.
+| File | Purpose |
+|------|---------|
+| `scripts/build_om25_signals.py` | Signal computation |
+| `scripts/backtest_om25.py` | V1 production engine (monthly only, no weekly stops, no lookahead) |
+| `scripts/_clean_engine.py` | Clean engine for all enhanced variants (composite, bi-weekly, weekly stops) |
 
 ---
 
-## Robustness (Random Universe Subsets)
-
-Random 350/500 NSE 500 stock subsets, 10 trials, on monthly variant:
-
-| Metric | Min | Median | Max |
-|--------|-----|--------|-----|
-| CAGR | 44.1% | 50.2% | 61.0% |
-| Sharpe | 2.21 | 2.53 | 3.04 |
-| Max DD | -23.2% | -21.6% | -20.4% |
-
-10/10 trials above 40% CAGR. Strategy doesn't depend on a few specific stocks.
-
----
-
-## Universe Variants
-
-| Universe | Entry | CAGR | Max DD | Sharpe | Calmar |
-|----------|-------|------|--------|--------|--------|
-| **NSE 500** | Monthly | 54.4% | -24.0% | 2.76 | 2.27 |
-| **NSE 500** | Bi-weekly | 60.6% | -25.1% | 2.61 | 2.42 |
-| Nifty 250 | Monthly | 47.3% | -18.3% | 2.44 | 2.59 |
-| Nifty 250 | Bi-weekly | 52.4% | -20.3% | 2.40 | 2.58 |
-| Nifty 100 | Monthly | 33.6% | -20.3% | 1.97 | 1.66 |
-| Nifty 100 | Bi-weekly | 38.1% | -21.6% | 1.95 | 1.77 |
-
----
-
-## Slippage Sensitivity (NSE 500, Monthly)
-
-| Slippage | CAGR | Sharpe |
-|----------|------|--------|
-| 10 bps | 55.3% | 2.81 |
-| 20 bps (current) | 53.7% | 2.72 |
-| 30 bps | 51.9% | 2.64 |
-| 50 bps | 48.8% | 2.47 |
-
-Robust to higher real-world execution costs.
-
----
-
-## Risk-Off Mechanisms — Tested and Rejected
-
-We tested four explicit risk-off filters on top of bi-weekly to see if we could systematically reduce drawdowns. All were rejected.
-
-| Mechanism | CAGR | Max DD | Verdict |
-|-----------|------|--------|---------|
-| Baseline (no filter) | 60.6% | -25.1% | — |
-| V1: Index < 200 DMA → 50% exposure | 55.3% | -19.1% | Loses 5.3% CAGR, 200 DMA too coarse |
-| V2: Breadth <30% → 50% exposure | 58.9% | -19.1% | Quietly defensive, but barely activated when needed (2025) |
-| V3: Skip entries when index < 50 DMA | 53.8% | -16.6% | Best DD reduction but cost 12% YTD in 2026 (skipped recovery) |
-| V4: Half-exit on weekly stops | 55.6% | -23.3% | More trades, worse Sharpe (whipsaw) |
-
-### Why We Rejected Them
-
-- **The baseline already has internal protection** — 4x ATR trailing stop + 200 DMA exit handle most stock-specific risk
-- **Drawdown character matters more than depth** — baseline's -25% DD recovers in <1 year. V3's lower DD comes with sluggish 50 DMA filter that misses sharp recoveries
-- **Compound speed > drawdown reduction** — losing 12% YTD recovery in 2026 (V3) is the kind of gap that compounds badly over years
-- **Cash drag is already implicitly providing risk management** in the monthly variant — no need to add another layer
-- **Filter complexity invites overfitting** — every threshold (30% breadth, 50 DMA, etc.) is another parameter to fit to the past
-
-The strategy is left clean. Both monthly and bi-weekly stand on their own merits.
-
----
-
-## Evolution Log
-
-| Step | Signal | CAGR | Sharpe | DD | Corr | Verdict |
-|------|--------|------|--------|-----|------|---------|
-| Pure Omega | sum(gains)/sum(losses) | 35.4% | 1.59 | -31.8% | 0.92 | Too correlated with momentum |
-| Capture Ratio | upside/downside capture | 32.9% | 2.20 | -19.6% | 0.79 | Good risk-adj but low CAGR |
-| Upside-only | upside capture only | 45.2% | 2.04 | -27.3% | 0.76 | High CAGR but high DD |
-| **Composite Monthly** | **50/50 pct rank blend** | **54.4%** | **2.76** | **-24.0%** | **0.82** | **Production: conservative** |
-| **Composite Bi-weekly** | **Same signal, faster cadence** | **60.6%** | **2.61** | **-25.1%** | **0.87** | **Production: aggressive** |
-
----
-
-## TODO
-
-- [ ] Generate comprehensive HTML reports for both tiers
-- [ ] Paper trade for validation (separate paper portfolios for each tier)
-- [ ] Wire into production scripts
-- [ ] Sector concentration analysis
-- [ ] Decide on naming for subscriber-facing products
-
----
-
-*Last updated: May 2026*
+*Last updated: May 2026 — rebaselined with no-lookahead engine.*

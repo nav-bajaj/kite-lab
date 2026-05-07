@@ -1,5 +1,7 @@
 # OM25 — Design & Decisions Log
 
+> ⚠️ **REBASELINED MAY 2026.** Earlier numbers in this doc reflected a same-day-close → same-day-OHLC/4 lookahead bug in the weekly trailing-stop logic. The fix is in `scripts/_clean_engine.py` (the engine used for all enhanced OM25 variants). Strategy parameters and design decisions are unchanged; performance figures are corrected to honest no-lookahead values throughout.
+
 ## Strategy Identity
 
 **Core thesis:** Stocks that participate more in market rallies AND have asymmetric upside-vs-downside behavior compound faster with less pain. Different lens from momentum (highest returners) and trend-following (cleanest uptrends).
