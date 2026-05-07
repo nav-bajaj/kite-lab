@@ -25,6 +25,11 @@ class Settings(BaseSettings):
     kite_api_key: str = ""
     kite_api_secret: str = ""
 
+    # Headless login (optional - for automated login without browser)
+    kite_user_id: str = ""
+    kite_password: str = ""
+    totp_secret: str = ""
+
     # App settings
     debug: bool = False
     disable_auth: bool = False

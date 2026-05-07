@@ -468,6 +468,10 @@ export async function getLoginUrl() {
   return apiFetch<{ url: string; instructions: string }>("/api/system/login-url");
 }
 
+export async function headlessLogin() {
+  return apiFetch<TokenStatus>("/api/system/headless-login", { method: "POST" });
+}
+
 // Positions endpoints (live portfolio tracking)
 import type {
   Position,

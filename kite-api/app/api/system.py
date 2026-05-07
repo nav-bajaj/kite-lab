@@ -1,10 +1,11 @@
 """
 System API endpoints for health checks and status.
 """
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
+from app.auth import get_current_user
 from app.services.system_service import (
     SystemService,
     SystemStatus,
@@ -100,6 +101,18 @@ async def get_login_url():
         )
     )
 
+
+
+@router.post("/headless-login", response_model=TokenStatus)
+async def headless_login(user=Depends(get_current_user)):
+    """
+    Perform automated Zerodha login without browser.
+
+    Requires KITE_USER_ID, KITE_PASSWORD, and TOTP_SECRET env vars.
+    Returns token status after login attempt.
+    """
+    result = SystemService.headless_login()
+    return result
 
 
 @router.get("/callback", response_class=HTMLResponse)

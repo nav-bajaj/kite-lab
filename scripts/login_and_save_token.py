@@ -1,9 +1,26 @@
-import http.server, socketserver, webbrowser, urllib.parse, threading, time, socket
+import http.server, socketserver, webbrowser, urllib.parse, threading, time, socket, argparse
 from kiteconnect import KiteConnect
 from dotenv import load_dotenv
 import os, json, sys
 
 load_dotenv()
+
+# Parse arguments first - headless mode skips browser entirely
+parser = argparse.ArgumentParser(description="Login to Zerodha and save access token")
+parser.add_argument("--headless", action="store_true",
+                    help="Use automated login (requires KITE_USER_ID, KITE_PASSWORD, TOTP_SECRET)")
+_args = parser.parse_args()
+
+if _args.headless:
+    # Delegate to headless login script
+    from importlib.util import spec_from_file_location, module_from_spec
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    spec = spec_from_file_location("headless_login", os.path.join(script_dir, "headless_login.py"))
+    mod = module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    mod.headless_login()
+    sys.exit(0)
+
 API_KEY     = os.getenv("API_KEY") or os.getenv("KITE_API_KEY")
 API_SECRET  = os.getenv("API_SECRET") or os.getenv("KITE_API_SECRET")
 REDIRECT_URI= os.getenv("REDIRECT_URI")

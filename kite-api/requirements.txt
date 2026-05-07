@@ -27,6 +27,7 @@ numpy==2.0.2
 
 # Zerodha API
 kiteconnect==5.0.1
+pyotp==2.9.0
 
 # Environment
 python-dotenv==1.2.1

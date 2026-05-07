@@ -221,6 +221,123 @@ class SystemService:
         return f"https://kite.zerodha.com/connect/login?api_key={api_key}&v=3"
 
     @staticmethod
+    def headless_login() -> "TokenStatus":
+        """
+        Perform automated Zerodha login using requests + pyotp.
+
+        Returns TokenStatus after login attempt.
+        """
+        import requests as req_lib
+
+        try:
+            import pyotp
+        except ImportError:
+            return TokenStatus(
+                valid=False,
+                message="pyotp not installed. Run: pip install pyotp"
+            )
+
+        from kiteconnect import KiteConnect
+        import urllib.parse
+        import logging
+
+        logger = logging.getLogger(__name__)
+
+        user_id = settings.kite_user_id
+        password = settings.kite_password
+        totp_secret = settings.totp_secret
+        api_key = settings.kite_api_key
+        api_secret = settings.kite_api_secret
+
+        missing = []
+        if not user_id:
+            missing.append("KITE_USER_ID")
+        if not password:
+            missing.append("KITE_PASSWORD")
+        if not totp_secret:
+            missing.append("TOTP_SECRET")
+        if not api_key:
+            missing.append("KITE_API_KEY")
+        if not api_secret:
+            missing.append("KITE_API_SECRET")
+
+        if missing:
+            return TokenStatus(
+                valid=False,
+                message=f"Missing env vars: {', '.join(missing)}"
+            )
+
+        try:
+            session = req_lib.Session()
+
+            # Step 1: POST credentials
+            resp = session.post("https://kite.zerodha.com/api/login", data={
+                "user_id": user_id,
+                "password": password,
+            })
+            if resp.status_code != 200:
+                return TokenStatus(valid=False, message=f"Login failed (HTTP {resp.status_code})")
+
+            login_data = resp.json()
+            if login_data.get("status") != "success":
+                return TokenStatus(valid=False, message=f"Login failed: {login_data.get('message', 'Unknown')}")
+
+            request_id = login_data["data"]["request_id"]
+
+            # Step 2: POST TOTP
+            totp = pyotp.TOTP(totp_secret)
+            resp = session.post("https://kite.zerodha.com/api/twofa", data={
+                "user_id": user_id,
+                "request_id": request_id,
+                "twofa_value": totp.now(),
+                "twofa_type": "totp",
+            })
+            if resp.status_code != 200:
+                return TokenStatus(valid=False, message=f"TOTP failed (HTTP {resp.status_code})")
+
+            twofa_data = resp.json()
+            if twofa_data.get("status") != "success":
+                return TokenStatus(valid=False, message=f"TOTP failed: {twofa_data.get('message', 'Unknown')}")
+
+            # Step 3: Extract request_token by following redirect chain
+            kite = KiteConnect(api_key=api_key)
+            url = kite.login_url()
+            request_token = None
+
+            for _ in range(5):
+                resp = session.get(url, allow_redirects=False)
+                if resp.status_code not in (301, 302, 303, 307, 308):
+                    break
+
+                url = resp.headers.get("Location", "")
+                if not url:
+                    break
+
+                parsed = urllib.parse.urlparse(url)
+                qs = urllib.parse.parse_qs(parsed.query)
+                token = qs.get("request_token", [None])[0]
+                if token:
+                    request_token = token
+                    break
+
+                # Stop before hitting localhost redirect_uri
+                if any(url.startswith(p) for p in ("http://127.0.0.1", "http://localhost")):
+                    break
+
+            if not request_token:
+                return TokenStatus(valid=False, message="No request_token in redirect chain")
+
+            # Step 4: Exchange for access_token (reuse existing method)
+            result = SystemService.exchange_request_token(request_token)
+            logger.info(f"Headless login successful for user: {result.get('user_name', '')}")
+
+            return SystemService.check_token_status()
+
+        except Exception as e:
+            logger.error(f"Headless login failed: {e}")
+            return TokenStatus(valid=False, message=f"Headless login error: {str(e)}")
+
+    @staticmethod
     def exchange_request_token(request_token: str) -> dict:
         """
         Exchange a Zerodha request_token for an access_token.

@@ -84,6 +84,7 @@ def run_parallel_steps(steps, dry_run=False):
 def main():
     parser = argparse.ArgumentParser(description="Run the daily momentum data pipeline")
     parser.add_argument("--with-login", action="store_true", help="Run login script before data updates")
+    parser.add_argument("--headless", action="store_true", help="Use automated login (no browser needed)")
     parser.add_argument("--dry-run", action="store_true", help="Print commands without executing")
     parser.add_argument("--sequential", action="store_true", help="Disable parallel execution (for debugging)")
     args = parser.parse_args()
@@ -92,6 +93,8 @@ def main():
 
     if args.with_login:
         login_cmd = [sys.executable, "scripts/login_and_save_token.py"]
+        if args.headless:
+            login_cmd.append("--headless")
         name, success, _ = run_command("Login to Kite", login_cmd, dry_run=args.dry_run)
         if not success:
             sys.exit(1)
