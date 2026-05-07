@@ -50,6 +50,33 @@ Real-time portfolio tracking with live prices from Zerodha API.
 
 ---
 
+### Trend Leaders 20 — IN PROGRESS
+
+A standalone trend-following portfolio strategy, designed as a separate subscriber product alongside momentum.
+
+- **Documentation**: [trend_leaders/README.md](./trend_leaders/README.md)
+- **Design Doc**: [trend_leaders/DESIGN.md](./trend_leaders/DESIGN.md)
+- **Branch**: `trend-leaders-20`
+- **Status**: V1 complete — all 5 phases done, strategy improvement in progress
+
+**Phases**:
+| Phase | Description | Task File | Status |
+|-------|-------------|-----------|--------|
+| 1 | Signal generation (eligibility + TQS ranking) | [phase1_signals.md](./trend_leaders/phase1_signals.md) | Done |
+| 2 | Backtest engine (dual-frequency rebalance) | [phase2_backtest.md](./trend_leaders/phase2_backtest.md) | Done |
+| 3 | Run all 4 backtest variants | [phase3_variants.md](./trend_leaders/phase3_variants.md) | Done |
+| 4 | Report generation + momentum comparison | [phase4_reports.md](./trend_leaders/phase4_reports.md) | Done |
+| 5 | Orchestrator script | [phase5_orchestrator.md](./trend_leaders/phase5_orchestrator.md) | Done |
+
+**Key Deliverables**:
+- Trend Quality Score signal generator (4-component composite)
+- Dual-frequency backtest engine (monthly entry + weekly exit)
+- 4 strategy variants (base, market filter, monthly-only, persistence-only)
+- Performance comparison vs momentum strategy
+- HTML reports with equity curves, drawdowns, and correlation analysis
+
+---
+
 ## Directory Structure
 
 ```
@@ -63,9 +90,17 @@ tasks/
 ├── phase5/                      # Admin Control Panel
 ├── phase6/                      # Polish & Production
 ├── phase6.1/                    # Repository Reconciliation
-└── live_portfolio/              # Live Portfolio Feature
-    ├── README.md                # Task breakdown
-    └── DESIGN.md                # Technical design
+├── live_portfolio/              # Live Portfolio Feature
+│   ├── README.md                # Task breakdown
+│   └── DESIGN.md                # Technical design
+└── trend_leaders/               # Trend Leaders 20 Strategy
+    ├── README.md                # Overview and task index
+    ├── DESIGN.md                # Architecture and design decisions
+    ├── phase1_signals.md        # Signal generation tasks
+    ├── phase2_backtest.md       # Backtest engine tasks
+    ├── phase3_variants.md       # Variant execution tasks
+    ├── phase4_reports.md        # Report generation tasks
+    └── phase5_orchestrator.md   # Orchestrator tasks
 ```
 
 ---
@@ -80,4 +115,4 @@ tasks/
 
 ---
 
-*Last updated: April 2026*
+*Last updated: May 2026*
