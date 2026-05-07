@@ -1,15 +1,14 @@
 """
-Orchestrator for Trend Leaders 20 — runs full pipeline
+Orchestrator for Trend Leaders 25 — runs full pipeline
 
 Pipeline:
-  1. Build composite signals (+ persistence-only for Variant 4)
-  2. Run 4 backtest variants
+  1. Build composite signals (locked-in TQS: 1/3 persist + 1/3 dd + 1/3 mom)
+  2. Run backtest variants
   3. Print summary comparison
 
 Usage:
     python scripts/run_trend_leaders_portfolio.py
     python scripts/run_trend_leaders_portfolio.py --variant base
-    python scripts/run_trend_leaders_portfolio.py --top-n 25 --exit-buffer 15
 """
 
 import argparse
@@ -28,12 +27,11 @@ from scripts.build_trend_leaders_signals import (
     load_universe,
     compute_moving_averages,
     compute_eligibility,
-    compute_ma_structure_score,
     compute_persistence_score,
-    compute_distance_200_score,
     compute_drawdown_control_score,
+    compute_momentum_score,
     compute_trend_quality_score_fast,
-    derive_monthly_rebalance_dates,
+    derive_biweekly_rebalance_dates,
     build_signals,
     build_audit,
 )
@@ -46,23 +44,11 @@ import numpy as np
 VARIANT_CONFIGS = {
     "base": {
         "variant": "base",
-        "signals_key": "composite",
-        "description": "Monthly entry + weekly exit, no market filter",
+        "description": "Bi-weekly entry + weekly exit, no market filter",
     },
     "market_filter": {
         "variant": "market_filter",
-        "signals_key": "composite",
-        "description": "Monthly entry + weekly exit, Nifty 500 < 200 DMA caps at 50%",
-    },
-    "monthly_only": {
-        "variant": "monthly_only",
-        "signals_key": "composite",
-        "description": "Monthly entry and exit only, no weekly checks",
-    },
-    "persistence_only": {
-        "variant": "base",
-        "signals_key": "persistence_only",
-        "description": "Persistence-only ranking, weekly exits",
+        "description": "Bi-weekly entry + weekly exit, Nifty 500 < 200 DMA caps at 50%",
     },
 }
 
@@ -73,9 +59,9 @@ def main():
     parser.add_argument("--universe", default="data/static/nse500_universe.csv", type=Path)
     parser.add_argument("--output-root", default="data/trend_leaders", type=Path)
     parser.add_argument("--benchmark", default="data/benchmarks/nifty100.csv", type=Path)
-    parser.add_argument("--top-n", type=int, default=20)
+    parser.add_argument("--top-n", type=int, default=25)
     parser.add_argument("--exit-buffer", type=int, default=20)
-    parser.add_argument("--rank-output", type=int, default=40)
+    parser.add_argument("--rank-output", type=int, default=45)
     parser.add_argument("--max-weight", type=float, default=0.075)
     parser.add_argument("--slippage", type=float, default=0.002)
     parser.add_argument("--initial-capital", type=float, default=1_000_000)
@@ -94,9 +80,6 @@ def main():
         variants_to_run = [args.variant]
     else:
         variants_to_run = list(VARIANT_CONFIGS.keys())
-
-    # Check if we need persistence-only signals
-    needs_persistence = "persistence_only" in variants_to_run
 
     # -----------------------------------------------------------------------
     # Step 1: Build signals
@@ -118,32 +101,28 @@ def main():
 
     print("Computing eligibility and score components...")
     eligibility = compute_eligibility(close, sma_dict["sma_50"], sma_dict["sma_200"])
-    ma_structure = compute_ma_structure_score(
-        close, sma_dict["sma_50"], sma_dict["sma_100"], sma_dict["sma_200"]
-    )
-    persistence = compute_persistence_score(close, sma_dict["sma_100"])
-    distance_200 = compute_distance_200_score(close, sma_dict["sma_200"])
-    drawdown_control = compute_drawdown_control_score(close)
+    persistence = compute_persistence_score(close, sma_dict["sma_100"], window=252)
+    drawdown_control = compute_drawdown_control_score(close, window=126)
+    momentum = compute_momentum_score(close, eligibility, window=63)
 
     components = {
-        "ma_structure": ma_structure,
         "persistence": persistence,
-        "distance_200": distance_200,
         "drawdown_control": drawdown_control,
+        "momentum": momentum,
     }
 
-    # Derive rebalance dates
-    rebalance_dates = derive_monthly_rebalance_dates(close.index)
-    min_date = close.index[200 + 63]  # 200 DMA + persistence window
+    # Bi-weekly rebalance dates (locked-in for TL25 entries)
+    rebalance_dates = derive_biweekly_rebalance_dates(close.index)
+    min_date = close.index[200 + 252]  # 200 DMA + 252d persistence window
     rebalance_dates = rebalance_dates[rebalance_dates >= min_date]
-    print(f"Rebalance dates: {len(rebalance_dates)} months "
+    print(f"Bi-weekly rebalance dates: {len(rebalance_dates)} "
           f"({rebalance_dates[0].date()} to {rebalance_dates[-1].date()})")
 
-    # Composite TQS signals
-    print("Computing composite Trend Quality Score...")
+    # Composite TQS — equal 1/3 weights (locked-in)
+    print("Computing composite Trend Quality Score (1/3 each: persist, dd, mom)...")
     tqs_composite = compute_trend_quality_score_fast(
-        ma_structure, persistence, distance_200, drawdown_control,
-        eligibility, (0.30, 0.30, 0.20, 0.20), rebalance_dates,
+        persistence, drawdown_control, momentum,
+        eligibility, (1/3, 1/3, 1/3), rebalance_dates,
     )
     signals_composite = build_signals(
         close, tqs_composite, eligibility, components,
@@ -152,25 +131,6 @@ def main():
     composite_path = signals_dir / "trend_leaders_signals.csv"
     signals_composite.to_csv(composite_path, index=False)
     print(f"Composite signals: {len(signals_composite)} rows -> {composite_path}")
-
-    # Persistence-only signals (if needed)
-    persistence_path = signals_dir / "persistence_only_signals.csv"
-    if needs_persistence:
-        print("Computing persistence-only scores...")
-        tqs_persist = pd.DataFrame(np.nan, index=rebalance_dates, columns=close.columns)
-        for date in rebalance_dates:
-            if date not in eligibility.index:
-                continue
-            elig = eligibility.loc[date]
-            if elig.sum() == 0:
-                continue
-            tqs_persist.loc[date] = persistence.loc[date].where(elig)
-        signals_persist = build_signals(
-            close, tqs_persist, eligibility, components,
-            rebalance_dates, top_n=args.top_n, rank_output=args.rank_output,
-        )
-        signals_persist.to_csv(persistence_path, index=False)
-        print(f"Persistence signals: {len(signals_persist)} rows -> {persistence_path}")
 
     # Audit file
     if not args.no_audit:
@@ -196,7 +156,7 @@ def main():
         config = VARIANT_CONFIGS[variant_name]
         print(f"\n--- Variant: {variant_name} ({config['description']}) ---")
 
-        signals_path = composite_path if config["signals_key"] == "composite" else persistence_path
+        signals_path = composite_path
         output_dir = args.output_root / "backtests" / variant_name
 
         metrics = run_backtest(
@@ -220,7 +180,7 @@ def main():
     elapsed = time.time() - t0
     print()
     print("=" * 60)
-    print(f"TREND LEADERS 20 — BACKTEST SUMMARY (completed in {elapsed:.0f}s)")
+    print(f"TREND LEADERS 25 — BACKTEST SUMMARY (completed in {elapsed:.0f}s)")
     print("=" * 60)
 
     if all_metrics:

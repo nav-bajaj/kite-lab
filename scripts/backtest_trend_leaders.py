@@ -1,14 +1,18 @@
 """
-Backtest engine for Trend Leaders 20 — trend-following portfolio
+Backtest engine for Trend Leaders 25 — trend-following portfolio
 
-Dual-frequency rebalance:
-  - Monthly entry: select top-N stocks by Trend Quality Score
-  - Weekly exit: sell if Close < 200 DMA
+Dual-frequency rebalance (locked-in May 2026):
+  - Bi-weekly entry: top-N=25 by Trend Quality Score, every other Friday signal
+  - Weekly exit: every Friday signal — exit if Close < 200 DMA
+                 OR drawdown from position peak > 5x 20-day ATR (no floor)
 
 Variants:
-  - base: monthly entry + weekly exit, no market filter
+  - base: bi-weekly entry + weekly exit, no market filter
   - market_filter: + Nifty 500 < 200 DMA caps exposure at 50%
-  - monthly_only: monthly entry and exit, no weekly checks
+  - monthly_only: monthly entry and exit, no weekly checks (legacy)
+
+All decisions use prior signal-date close + indicators; execution at
+next-trading-day OHLC/4. No same-day lookahead.
 
 Usage:
     python scripts/backtest_trend_leaders.py \
@@ -94,8 +98,8 @@ def run_backtest(
     benchmark_path: Path,
     output_dir: Path,
     initial_capital: float = 1_000_000,
-    top_n: int = 20,
-    exit_buffer: int = 10,
+    top_n: int = 25,
+    exit_buffer: int = 20,
     max_weight: float = 0.075,
     slippage: float = 0.002,
     variant: str = "base",
@@ -105,6 +109,9 @@ def run_backtest(
     min_hold_days: int = 0,
     unified_rebalance: bool = False,
     hold_signals_path: Path = None,
+    atr_mult: float = 5.0,
+    atr_min_floor: float = 0.0,
+    use_atr_stop: bool = True,
 ):
     exit_threshold = top_n + exit_buffer  # e.g., 30
 
@@ -146,11 +153,13 @@ def run_backtest(
             weekly_exec_to_signal[pd.Timestamp(td)] = pd.Timestamp(sd)
     weekly_exit_dates = set(weekly_exec_to_signal.keys())
 
-    # Pre-compute 200 DMA for weekly exit checks (skip if unified rebalance)
+    # Pre-compute 200 DMA + 20-day ATR for weekly exit checks
     sma_200_panel = None
+    atr_20_panel = None
     if not unified_rebalance:
-        print("Pre-computing 200 DMA for exit checks...")
+        print("Pre-computing 200 DMA and 20-day ATR for exit checks...")
         sma_200_panel = close_panel.rolling(window=200, min_periods=200).mean()
+        atr_20_panel = close_panel.pct_change().rolling(20).std()
 
     # Market filter: load index data and compute its 200 DMA
     mf_close = None
@@ -267,7 +276,14 @@ def run_backtest(
         holdings[symbol] = holdings.get(symbol, 0) + shares
         cost_basis[symbol] = cost_basis.get(symbol, 0) + cost
         if symbol not in entry_meta:
-            entry_meta[symbol] = {"date": date, "rank": rank, "signal_date": signal_date}
+            # Initialize per-position peak from current close for ATR trailing stop
+            init_peak = close_row.get(symbol, price)
+            if pd.isna(init_peak):
+                init_peak = price
+            entry_meta[symbol] = {
+                "date": date, "rank": rank, "signal_date": signal_date,
+                "peak": init_peak,
+            }
         cash -= cost
 
         notional = shares * price
@@ -321,13 +337,22 @@ def run_backtest(
         })
 
         # 3. Weekly exit check on EXECUTION date (e.g. Monday).
-        #    Decision uses SIGNAL date (e.g. prior Friday) close + 200 DMA.
+        #    Decision uses SIGNAL date (e.g. prior Friday) close + 200 DMA + ATR.
         #    Execution happens at TODAY's OHLC/4 — no same-day lookahead.
         if date in weekly_exit_dates and variant != "monthly_only" and not unified_rebalance:
             signal_date = weekly_exec_to_signal[date]
             if signal_date in close_panel.index:
                 signal_close_row = close_panel.loc[signal_date]
-                exits_this_week = []
+
+                # Update each position's peak from SIGNAL-date close
+                for sym in list(holdings.keys()):
+                    sc = signal_close_row.get(sym, np.nan)
+                    if not pd.isna(sc) and sym in entry_meta:
+                        entry_meta[sym]["peak"] = max(
+                            entry_meta[sym].get("peak", sc), sc
+                        )
+
+                exits_this_week = []  # list of (sym, reason)
                 for sym in list(holdings.keys()):
                     # Min hold check
                     if min_hold_days > 0:
@@ -335,20 +360,33 @@ def run_backtest(
                         if entry_date and (date - entry_date).days < min_hold_days:
                             continue
 
-                    # Use SIGNAL DATE close + 200 DMA, not today's
                     sym_close = signal_close_row.get(sym, np.nan)
                     sym_sma200 = (sma_200_panel.loc[signal_date, sym]
                                   if sym in sma_200_panel.columns else np.nan)
-
                     if pd.isna(sym_close) or pd.isna(sym_sma200):
                         continue
 
+                    # 200 DMA exit
                     if sym_close < sym_sma200:
-                        exits_this_week.append(sym)
+                        exits_this_week.append((sym, "weekly_exit_200dma"))
+                        continue
+
+                    # 5x ATR trailing stop from peak (locked-in May 2026)
+                    if use_atr_stop:
+                        peak = entry_meta.get(sym, {}).get("peak", sym_close)
+                        if peak > 0:
+                            from_peak = sym_close / peak - 1.0
+                            atr = (atr_20_panel.loc[signal_date, sym]
+                                   if sym in atr_20_panel.columns else np.nan)
+                            if pd.isna(atr):
+                                atr = 0.02
+                            trail = max(atr_mult * atr, atr_min_floor)
+                            if from_peak < -trail:
+                                exits_this_week.append((sym, "weekly_exit_atr"))
 
                 # Execute at today's OHLC/4 (date), not signal date
-                for sym in exits_this_week:
-                    execute_sell(sym, date, reason="weekly_exit")
+                for sym, reason in exits_this_week:
+                    execute_sell(sym, date, reason=reason)
 
         # 4. Monthly entry/rebalance
         if date in monthly_trade_dates:
@@ -583,7 +621,7 @@ def compute_metrics(equity_df, trades_df, turnover_df, exit_records,
         hit_rate = (valid["pnl_pct"] > 0).mean() if not valid.empty else None
         avg_hold = exit_df["holding_days"].mean()
         med_hold = exit_df["holding_days"].median()
-        weekly_exits = int((exit_df["reason"] == "weekly_exit").sum())
+        weekly_exits = int(exit_df["reason"].str.startswith("weekly_exit").sum())
         monthly_exits = int((exit_df["reason"] == "monthly_exit").sum())
 
     trade_counts = {
@@ -645,7 +683,7 @@ def compute_metrics(equity_df, trades_df, turnover_df, exit_records,
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Backtest Trend Leaders 20 — dual-frequency trend-following portfolio"
+        description="Backtest Trend Leaders 25 — dual-frequency trend-following portfolio"
     )
     parser.add_argument("--signals", required=True, type=Path,
                         help="Path to trend leaders signals CSV (used for entry ranking)")
@@ -655,9 +693,10 @@ def main():
     parser.add_argument("--benchmark", default="data/benchmarks/nifty100.csv", type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--initial-capital", type=float, default=1_000_000)
-    parser.add_argument("--top-n", type=int, default=20)
-    parser.add_argument("--exit-buffer", type=int, default=10,
-                        help="Keep stock unless rank drops below top_n + buffer (default 10)")
+    parser.add_argument("--top-n", type=int, default=25,
+                        help="Locked-in: 25")
+    parser.add_argument("--exit-buffer", type=int, default=20,
+                        help="Locked-in: 20 (keep stock until rank > top_n + buffer)")
     parser.add_argument("--max-weight", type=float, default=0.075)
     parser.add_argument("--slippage", type=float, default=0.002)
     parser.add_argument("--variant", choices=["base", "market_filter", "monthly_only"],
@@ -665,12 +704,17 @@ def main():
     parser.add_argument("--market-filter-index", type=Path, default=None,
                         help="Index CSV for market filter (e.g., indices_data/NIFTY_500.csv)")
     parser.add_argument("--market-filter-max-exposure", type=float, default=0.50)
-    parser.add_argument("--min-hold-days", type=int, default=0,
-                        help="Minimum holding period in days (default 0)")
+    parser.add_argument("--min-hold-days", type=int, default=0)
     parser.add_argument("--unified-rebalance", action="store_true",
                         help="Unified rebalance: entry+exit on same dates (no separate weekly exit)")
     parser.add_argument("--no-whole-shares", action="store_true",
                         help="Use fractional shares (default: whole shares)")
+    parser.add_argument("--atr-mult", type=float, default=5.0,
+                        help="ATR trailing-stop multiplier (locked-in: 5x)")
+    parser.add_argument("--atr-min-floor", type=float, default=0.0,
+                        help="Floor on ATR trailing distance (locked-in: 0 = no floor)")
+    parser.add_argument("--no-atr-stop", action="store_true",
+                        help="Disable ATR trailing stop (200 DMA exit only)")
 
     args = parser.parse_args()
 
@@ -696,6 +740,9 @@ def main():
         market_filter_index_path=mf_index,
         market_filter_max_exposure=args.market_filter_max_exposure,
         whole_shares=not args.no_whole_shares,
+        atr_mult=args.atr_mult,
+        atr_min_floor=args.atr_min_floor,
+        use_atr_stop=not args.no_atr_stop,
     )
 
 
