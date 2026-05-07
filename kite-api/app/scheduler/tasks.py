@@ -14,8 +14,9 @@ SCHEDULED_TASKS = [
     {
         "id": "daily_pipeline",
         "name": "Daily Pipeline",
-        "description": "Fetch data, build signals, backup",
+        "description": "Auto-login + fetch data, build signals, backup",
         "command": "daily_pipeline",
+        "args": {"with-login": True, "headless": True},
         "func_ref": "app.scheduler.tasks:run_daily_pipeline",
         "trigger": "cron",
         "trigger_args": {
@@ -44,7 +45,12 @@ SCHEDULED_TASKS = [
 def run_daily_pipeline():
     """Run the daily pipeline task (synchronous wrapper for APScheduler)."""
     import asyncio
-    asyncio.run(_execute_scheduled_task("daily_pipeline"))
+    # Find the task config to get args
+    task_config = next((t for t in SCHEDULED_TASKS if t["id"] == "daily_pipeline"), {})
+    asyncio.run(_execute_scheduled_task(
+        "daily_pipeline",
+        args=task_config.get("args"),
+    ))
 
 
 def run_weekly_backup():
@@ -53,13 +59,14 @@ def run_weekly_backup():
     asyncio.run(_execute_scheduled_task("backup_data"))
 
 
-async def _execute_scheduled_task(command: str, universe: str = None):
+async def _execute_scheduled_task(command: str, universe: str = None, args: dict = None):
     """
     Execute a scheduled task by creating and running a job.
 
     Args:
         command: Command name from COMMANDS
         universe: Target universe (optional)
+        args: Additional command arguments (optional)
     """
     from app.services.job_service import JobService
 
@@ -70,6 +77,7 @@ async def _execute_scheduled_task(command: str, universe: str = None):
         job = await JobService.create_job(
             command=command,
             universe=universe,
+            args=args,
             label=f"Scheduled: {command}"
         )
 

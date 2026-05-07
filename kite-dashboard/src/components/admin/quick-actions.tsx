@@ -4,8 +4,8 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { RefreshCw, BarChart3, Key, HardDrive, DatabaseZap, Loader2 } from "lucide-react";
-import { createJob, getLoginUrl } from "@/lib/api-client";
+import { RefreshCw, BarChart3, Key, KeyRound, HardDrive, DatabaseZap, Loader2 } from "lucide-react";
+import { createJob, getLoginUrl, headlessLogin } from "@/lib/api-client";
 
 interface QuickAction {
   id: string;
@@ -13,16 +13,18 @@ interface QuickAction {
   description: string;
   icon: React.ElementType;
   command?: string;
-  special?: "login";
+  args?: Record<string, unknown>;
+  special?: "login" | "headless-login";
 }
 
 const actions: QuickAction[] = [
   {
     id: "daily_pipeline",
     label: "Daily Pipeline",
-    description: "Fetch data, build signals, backup",
+    description: "Auto-login + fetch, signals, backup",
     icon: RefreshCw,
     command: "daily_pipeline",
+    args: { "with-login": true, "headless": true },
   },
   {
     id: "update_portfolios",
@@ -32,9 +34,16 @@ const actions: QuickAction[] = [
     command: "update_portfolios",
   },
   {
+    id: "headless_login",
+    label: "Auto Login",
+    description: "Headless token refresh",
+    icon: KeyRound,
+    special: "headless-login",
+  },
+  {
     id: "login",
-    label: "Kite Login",
-    description: "Refresh API token",
+    label: "Browser Login",
+    description: "Manual browser login",
     icon: Key,
     special: "login",
   },
@@ -59,6 +68,27 @@ export function QuickActions() {
   const { toast } = useToast();
 
   const handleAction = async (action: QuickAction) => {
+    if (action.special === "headless-login") {
+      setLoading(action.id);
+      try {
+        const result = await headlessLogin();
+        toast({
+          title: result.valid ? "Login Successful" : "Login Failed",
+          description: result.message,
+          variant: result.valid ? "default" : "destructive",
+        });
+      } catch {
+        toast({
+          title: "Error",
+          description: "Headless login failed — check server env vars",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(null);
+      }
+      return;
+    }
+
     if (action.special === "login") {
       setLoading(action.id);
       try {
@@ -93,6 +123,7 @@ export function QuickActions() {
       const job = await createJob({
         command: action.command,
         label: action.label,
+        args: action.args,
       });
 
       toast({
@@ -116,7 +147,7 @@ export function QuickActions() {
           <CardTitle>Quick Actions</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
             {actions.map((action) => {
               const Icon = action.icon;
               const isLoading = loading === action.id;

@@ -161,6 +161,7 @@ class JobService:
                 "with-login", "with_login",
                 "with-data", "with_data",
                 "skip-days", "skip_days",
+                "headless",
             }
 
             # Add additional arguments (validated)
