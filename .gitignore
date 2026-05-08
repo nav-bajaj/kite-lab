@@ -63,6 +63,7 @@ next50_data_hourly/
 nse500_data/
 nse500_data_hourly/
 indices_data/
+truedata_test/
 
 # Corporate actions state (stored in price dir for persistence on Railway)
 # nse500_data/ is already gitignored, so .corporate_actions_applied.json inside it is too
