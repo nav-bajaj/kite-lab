@@ -2,182 +2,179 @@
 
 ## Overview
 
-A portfolio strategy that selects stocks with both high upside market participation AND good upside/downside asymmetry. Uses a composite percentile rank of upside capture and capture ratio.
+Selects stocks with the best **upside-vs-downside market-sensitivity asymmetry** —
+participates aggressively in rallies, structurally resists drawdowns. Different
+lens from momentum (highest returners) and TL25 (cleanest trend structure).
 
 **Branch:** `om25` (merged into `main`)
 
-**Status:** Production strategy with two tiers (Monthly + Bi-weekly).
-
-> ⚠️ **REBASELINED MAY 2026.** Earlier numbers (54.4% CAGR / 2.76 Sharpe etc.) reflected a same-day-close → same-day-OHLC/4 lookahead bug in weekly exit logic. Strategy parameters are unchanged; numbers below are honest, no-lookahead results. Removing the lookahead reduced CAGR by 6-11% and Sharpe by 0.4-0.6 across variants.
+> **REVIEWED MAY 2026.** Full parameter review under the clean (no-lookahead)
+> engine, with two material engine corrections this review:
+> 1. **Daily-peak fix.** Trailing-stop peak now updated every trading day,
+>    not just Fridays. The Friday-peak quirk had been quietly making the
+>    trailing stop fire too rarely. Numbers below are post-fix.
+> 2. **Locked-in stack changes.** Trailing stop dropped entirely, eligibility
+>    return-filter dropped. See "Locked-in changes" below.
+>
+> Earlier numbers (54%-60% CAGR with 4x ATR / positive-return filter) are
+> superseded.
 
 ---
 
 ## Strategy (3 sentences)
 
-> Rank each stock by the average of its upside-capture percentile rank and its capture-ratio percentile rank over the past year. Buy the top 25 (let winners run, exit buffer 15). On weekly Friday signal → Monday OHLC/4 execution, exit if Close < 200 DMA or 4x ATR trailing stop from peak.
+> Rank each stock by `0.5 × pct_rank(upside_capture) + 0.5 × pct_rank(capture_ratio)`
+> over the past 252 trading days. Buy the top 25 (let winners run, exit
+> buffer 15). Exit if Close < 200 DMA on a weekly check, or if rank drops
+> below 40 at the next entry rebalance — no trailing stop.
 
-Same signal, two cadences.
+Same signal, two cadences (Monthly and Bi-weekly).
 
 ---
 
-## Two Production Variants — Honest Numbers
+## Configuration
 
-OM25 is offered as **two tiers** sharing the exact same signal but differing on entry cadence. The signal picks the same kinds of stocks; the cadence determines deployment speed and risk profile.
+| Parameter | Value |
+|-----------|-------|
+| Universe | NSE 500 / Nifty 250 / Nifty 100 |
+| Target holdings | 25 |
+| Entry frequency | Monthly (1st trading day) **or** Bi-weekly (every other Friday) |
+| Exit checks | Weekly (Friday signal → Monday execution) |
+| Hard exit | Close < 200 DMA on weekly check |
+| Trailing stop | **None** (dropped May 2026 review — was 4x ATR no floor) |
+| Rank exit | Drop below rank 40 (top-25 + buffer-15) at next entry rebalance |
+| Position sizing | Equal weight (1/N), max 7.5% cap, drift after entry |
+| Slippage | 20 bps (OHLC/4 pricing on next trading day) |
 
-### Tier 1 — Monthly (Flagship by Sharpe)
-> Entry: Monthly (1st trading day signal → 2nd trading day execution) | Exit: Weekly (Friday signal → Monday OHLC/4)
+### Composite signal (locked-in 50/50)
 
-| Metric | NSE 500 | Nifty 250 | Nifty 100 |
-|--------|---------|-----------|-----------|
-| **CAGR** | **48.1%** | 40.6% | 28.6% |
-| Max DD | -27.4% | -22.8% | -25.3% |
-| **Sharpe** | **2.26** | 2.01 | 1.55 |
-| Sortino | 2.77 | 2.40 | 1.79 |
-| Calmar | 1.75 | 1.78 | 1.13 |
-| Beta | 0.90 | 0.97 | 0.96 |
-| Avg Cash | 16.9% | 18.2% | 20.5% |
-| Trades / 5y | 1,367 | 1,358 | 1,375 |
+```
+upside_capture (UC)  = avg(stock_ret | market UP day) / avg(market_ret | UP day)
+downside_capture (DC) = avg(stock_ret | market DOWN day) / avg(market_ret | DOWN day)
+capture_ratio (CR)   = UC / DC
 
-### Tier 2 — Bi-weekly (Higher CAGR)
-> Entry: Every other Friday signal → Monday execution | Exit: Same as monthly
+score = 0.5 × pct_rank(UC) + 0.5 × pct_rank(CR)
+```
 
-| Metric | NSE 500 | Nifty 250 | Nifty 100 |
-|--------|---------|-----------|-----------|
-| **CAGR** | **49.2%** | 46.1% | 33.2% |
-| Max DD | -32.2% | -25.5% | -27.0% |
-| Sharpe | 2.02 | 2.01 | 1.62 |
-| Sortino | 2.41 | 2.40 | 1.89 |
-| Calmar | 1.53 | 1.80 | 1.23 |
-| Beta | 1.10 | 1.15 | 1.13 |
-| Avg Cash | 6.7% | 6.9% | 8.5% |
-| Trades / 5y | 1,777 | 1,731 | 1,841 |
+### Eligibility (locked-in: data-quantity only)
+
+- ≥220 valid daily returns in the 252-day window
+- ≥50 market-up days AND ≥50 market-down days
+
+(No price/MA gate, no positive-return prefilter — the composite score does
+the quality work.)
+
+### Execution model
+
+- All decisions use signal_date close + indicators (Friday for weekly check,
+  bi-weekly Friday or 1st trading day of month for entries)
+- All trades execute at next trading day's OHLC/4 (execution date)
+- 20 bps slippage on every fill
+
+---
+
+## Honest Performance (clean engine, May 2026 stack)
+
+| Universe | Cadence | CAGR | Max DD | Sharpe | Sortino | Calmar |
+|----------|---------|------|--------|--------|---------|--------|
+| **NSE 500** | Monthly | 58.9% | -35.0% | 2.17 | 2.77 | 1.68 |
+| **NSE 500** | Bi-weekly | **62.7%** | -34.8% | **2.33** | **2.92** | **1.80** |
+| **Nifty 250** | Monthly | 55.7% | -30.3% | 2.18 | 2.68 | 1.84 |
+| **Nifty 250** | Bi-weekly | 51.9% | -30.9% | 2.03 | 2.49 | 1.68 |
+| **Nifty 100** | Monthly | 35.4% | -31.7% | 1.47 | 1.83 | 1.12 |
+| **Nifty 100** | Bi-weekly | 38.5% | -31.7% | 1.57 | 1.92 | 1.22 |
 
 **Period:** 2021-02 to 2026-05 (5.3 years).
 
-### Recommended Production Picks
+### Recommended Production Picks (preliminary — pending cadence study)
 
 | Persona | Universe | Cadence | CAGR | DD | Sharpe |
 |---------|----------|---------|------|-----|--------|
-| **Flagship (best risk-adjusted)** | NSE 500 | **Monthly** | 48.1% | -27.4% | **2.26** |
-| **Mid-cap balanced** | Nifty 250 | Bi-weekly | 46.1% | -25.5% | 2.01 |
-| **Conservative large-cap** | Nifty 250 | Monthly | 40.6% | -22.8% | 2.01 |
-| **Risk-averse** | Nifty 100 | Monthly | 28.6% | -25.3% | 1.55 |
+| **Highest CAGR + Sharpe** | NSE 500 | Bi-weekly | **62.7%** | -34.8% | **2.33** |
+| **Best DD-adjusted** | Nifty 250 | Monthly | 55.7% | **-30.3%** | 2.18 |
+| **Conservative large-cap** | Nifty 100 | Bi-weekly | 38.5% | -31.7% | 1.57 |
 
 ---
 
-## Yearly Returns (Honest)
+## Locked-in changes — May 2026 review
 
-| Year | NSE 500 M | NSE 500 BW | Nifty 250 M | Nifty 250 BW | Nifty 100 M |
-|------|-----------|------------|-------------|--------------|-------------|
-| 2022 | -3.2% | -1.2% | +8.5% | +21.3% | +13.6% |
-| 2023 | +79.4% | +96.9% | +73.9% | +81.3% | +69.0% |
-| 2024 | +67.4% | +64.4% | +57.3% | +66.3% | +21.6% |
-| **2025** | **-17.0%** | **-17.5%** | **-3.3%** | **-7.9%** | **-4.3%** |
-| 2026 YTD | +8.7% | +5.4% | +9.3% | +9.3% | +3.6% |
+| Component | Old (prior locked-in) | New (May 2026) | Why |
+|-----------|----------------------|----------------|-----|
+| Engine peak tracking | Friday-only update | **Daily update** | Bug fix; previous trailing stop fired too rarely |
+| Trailing stop | 4x ATR, no floor | **None (dropped)** | After peak fix, stop fired tighter; tested 0/3/4/5/6/8x × 0/5/10% — "no stop" wins CAGR universally and ties or wins Sharpe on flagship |
+| Eligibility | Positive 252d return | **No filter** (data-quantity only) | Composite score does the quality work; positive-return filter actively hurt Sharpe and CAGR everywhere |
+| Lookback | 252d | 252d (unchanged) | Confirmed: 63d too noisy, 504d too sluggish |
+| Composite weights | 50/50 UC + CR | 50/50 UC + CR (unchanged) | V8 (UC + invDC) wins Sharpe by 0.05 but loses 7% CAGR — bad trade |
 
-### Critical 2025 Insight (REVISED)
+### Tested and rejected (May 2026)
 
-The **lookahead was hiding 2025's pain** in NSE 500. Honest 2025 numbers:
-- NSE 500 Monthly: **-17.0%** (was claimed -4.4% with lookahead)
-- Nifty 250 Monthly: -3.3% (genuinely defensive)
-- Nifty 100 Monthly: -4.3% (defensive)
-
-**Implication:** Nifty 250 / Nifty 100 universes were genuinely more resilient in 2025 than NSE 500. The earlier "NSE 500 Monthly is the best Sharpe" recommendation needs re-thinking — Nifty 250 is competitive on Sharpe and meaningfully better in down years.
+| Idea | Verdict |
+|------|---------|
+| Trailing stop 3x/4x/5x/6x/8x × floor 0/5%/10% | All worse than no stop except Nifty 250 BW edge cases |
+| ATR floor 5% or 10% | No mult benefits from a floor |
+| Eligibility "+ Close > 200 DMA" | Reduces DD by ~3% but costs 5% CAGR — bad trade as default |
+| Eligibility "+ 50 > 200 DMA" | Same shape — DD better, CAGR worse |
+| Eligibility "TL25 trend gate" (3 conditions) | Worst on Sharpe; over-restricts pool |
+| Eligibility "positive 126d return" | Marginally better Sharpe than 252d; not enough to flip |
+| Lookback 63d, 126d, 189d, 378d, 504d | 252d wins avg Sharpe and CAGR |
+| Weights 70/30, 30/70, UC only, CR only | All lose CAGR vs 50/50 |
+| Weights 3-component (+ total return) | Wins on NSE 500 but lags smaller universes — not universe-agnostic |
+| Weights UC + invDC | Best avg Sharpe by 0.05, but -7% CAGR cost |
 
 ---
 
-## Lookahead Correction Detail
+## Strategy Differentiation
 
-The bug was in the weekly trailing-stop check:
+| Strategy | Question | Eligibility | Bias |
+|---|---|---|---|
+| Momentum | What went up the most? | None | High-vol, high-beta winners |
+| TL25 | Cleanest uptrend right now? | Trend-gated (Close > 200 + stack + slope) | Confirmed trend leaders |
+| **OM25** | **Best up-day-vs-down-day asymmetry?** | **Data-quality only** | **Asymmetric beta — can pick stocks in mild pullbacks** |
 
-```python
-# OLD (buggy): same-day close decides same-day OHLC/4 execution
-if date in weekly_dates:
-    if close_panel.loc[date, sym] < sma_200_panel.loc[date, sym]:
-        sell at trade_panel.loc[date, sym]  # SAME DAY — lookahead
+The locked-in V2 eligibility (no trend gate) makes OM25 genuinely orthogonal
+to TL25 — it can hold quality names through pullbacks where TL25's eligibility
+would have ejected them.
 
-# NEW (clean): prior signal-day close decides next-day OHLC/4 execution
-if date in weekly_exec_to_signal:  # date = Monday (execution)
-    signal_date = weekly_exec_to_signal[date]  # Friday (signal)
-    if close_panel.loc[signal_date, sym] < sma_200_panel.loc[signal_date, sym]:
-        sell at trade_panel.loc[date, sym]  # Monday OHLC/4
+---
+
+## Productization candidate — OM25 Defensive (V5 CR-only)
+
+Worth offering as a **separate product** for risk-averse subscribers.
+
+```
+score = pct_rank(capture_ratio)        # CR only, no upside_capture term
 ```
 
-The fix is in `scripts/_clean_engine.py` (the engine used for all enhanced OM25 variants). Production `scripts/backtest_om25.py` (V1 pure omega, no weekly stops) was not affected because it had no weekly exit logic.
+The signal asks one question only — *how asymmetric is this stock?* — and
+ignores absolute participation. Picks defensive low-beta names (FMCG, pharma,
+quality IT) that resist downturns harder than they participate in upturns.
 
-### Inflation Removed
+### V5 performance (averaged across 3 universes × 2 cadences)
 
-| Variant | Old (claimed) | New (clean) | Δ CAGR | Δ Sharpe |
-|---------|---------------|-------------|--------|----------|
-| NSE 500 Monthly | 54.4% / 2.76 | 48.1% / 2.26 | -6.3% | -0.50 |
-| NSE 500 Bi-weekly | 60.6% / 2.61 | 49.2% / 2.02 | -11.4% | -0.59 |
-| Nifty 250 Monthly | 47.3% / 2.44 | 40.6% / 2.01 | -6.7% | -0.43 |
-| Nifty 250 Bi-weekly | 52.4% / 2.40 | 46.1% / 2.01 | -6.3% | -0.39 |
-
----
-
-## Parameter Re-validation (with clean engine)
-
-| Parameter | Locked-in | Tested alternatives | Verdict |
-|-----------|-----------|---------------------|---------|
-| Top-N | 25 | 15, 20, 30 | **Keep 25** (clearly best) |
-| Exit buffer | 15 | 10, 20 | Marginal: buf 20 slightly better (+1.2% CAGR, +0.03 Sharpe) |
-| ATR multiplier | 4x | 3x, 3.5x, 4.5x, 5x | **Keep 4x** (clearly optimal: 48.1% vs 37.9% at 3x) |
-| ATR floor | 0% | 10% | **Keep 0%** (no floor is cleaner for OM25) |
-| Composite weights | 50/50 upside/ratio | 30/70, 70/30, 100/0, 0/100 | **Keep 50/50** (each component contributes) |
-
-### Optional Refinement (within noise)
-- Exit buffer 15 → 20 gives +1.2% CAGR, +0.03 Sharpe with similar DD
-
-The core architecture (top 25, equal weight 4%, 4x ATR no floor, 50/50 composite, weekly trailing stop) is validated.
-
----
-
-## Key Insight: Beta Decomposition (Updated with Clean Numbers)
-
-| Measurement | Monthly | Bi-weekly | Gap |
-|-------------|---------|-----------|-----|
-| Headline beta | 0.90 | 1.10 | +0.20 |
-| Avg Cash | 16.9% | 6.7% | -10% |
-| Stock-portion beta (cash removed) | ~1.08 | ~1.18 | +0.10 |
-
-The cash drag effect persists post-rebaseline but is somewhat smaller than originally claimed. Both tiers still pick stocks with similar deployed beta; cadence determines deployment level.
-
----
-
-## Strategy Differentiation (Clean)
-
-| | Momentum | TL25 | OM25 (Monthly NSE 500) |
+| Metric | OM25 main (V1) | OM25 Defensive (V5) | Δ |
 |---|---|---|---|
-| Signal | 6m return / vol | Trend structure + 6m mom | Capture asymmetry |
-| Max DD | -35% | -26.2% | -27.4% |
-| Sharpe (clean) | 1.92* | 1.52 | **2.26** |
-| Recent CAGR (2024+) | 1% | ~30% | ~48% |
-| Best in | Strong directional bulls | Steady trends | Asymmetric/quality markets |
+| CAGR | 50.5% | 32.3% | -18.2% |
+| Max DD | -32.4% | **-25.5%** | +6.9% |
+| Sharpe | 1.96 | 1.77 | -0.19 |
+| Calmar | 1.56 | 1.27 | -0.29 |
 
-*Momentum's 1.92 Sharpe is honest — momentum has no lookahead bug, was never affected.
+**Best V5 cell:** Nifty 250 Monthly — 38.1% CAGR, -26.1% DD, Sharpe 2.10,
+Calmar 1.46.
 
----
+### Subscriber fit
+- Risk-averse retail (people who pull money at -20% DDs and miss the recovery)
+- Retirement-stage investors prioritizing preservation
+- Bond-fund refugees seeking equity exposure with bond-like volatility
+- First-time equity allocators as a stepping-stone
 
-## Risk-Off Mechanisms — Tested and Rejected (still valid)
+### Operational cost
+Identical engine, identical pipeline — only the scoring weights change.
+Single codebase, single monitoring.
 
-The four risk-off mechanisms tested earlier (Index 200 DMA, Breadth filter, Skip-in-down-market, Half-exit) were rejected because:
-1. The trailing stop already handles per-stock risk-off
-2. Cash drag (in monthly tier) provides implicit defense
-3. Adding filters cost more in lost recovery than they saved in drawdowns
-4. Filter complexity invites overfitting
-
-This conclusion still holds with clean numbers.
-
----
-
-## Open Questions for Production
-
-1. **Universe choice may need revisiting.** Nifty 250 has comparable Sharpe with much better 2025 performance (-3.3% vs NSE 500's -17%). Worth deeper analysis before locking flagship.
-
-2. **Monthly vs Bi-weekly economics.** With clean numbers, bi-weekly's premium over monthly is smaller (~1% CAGR on NSE 500). May simplify product to monthly only.
-
-3. **Subscriber experience of -27% DD.** A monthly strategy with -27% max DD is still a meaningful drawdown for retail subscribers. Worth explicit communication.
+### Open questions before productizing
+- Sector concentration risk — likely loads on FMCG/pharma; may need a sector cap
+- 2025 yearly returns specifically — claim is "wins choppy/down years," needs verification
+- Turnover ~60% higher than V1 main — tax/transaction cost implications
 
 ---
 
@@ -185,10 +182,56 @@ This conclusion still holds with clean numbers.
 
 | File | Purpose |
 |------|---------|
-| `scripts/build_om25_signals.py` | Signal computation |
-| `scripts/backtest_om25.py` | V1 production engine (monthly only, no weekly stops, no lookahead) |
-| `scripts/_clean_engine.py` | Clean engine for all enhanced variants (composite, bi-weekly, weekly stops) |
+| `scripts/_clean_engine.py` | Canonical clean (no-lookahead) backtest engine |
+| `scripts/build_om25_signals.py` | V1 legacy omega-ratio script (pre-clean engine) |
+| `scripts/backtest_om25.py` | V1 legacy monthly omega backtest |
+| `tasks/om25/experiments/_om25_*.py` | May 2026 review test scripts |
 
 ---
 
-*Last updated: May 2026 — rebaselined with no-lookahead engine.*
+## TODO
+
+- [ ] **Min observations threshold** study (currently 220/252, scale variants)
+- [ ] **Cadence study** (monthly vs bi-weekly head-to-head with locked-in stack — earlier rebaseline study used pre-fix engine)
+- [ ] **Top-N × buffer grid** (20/25/30 × 10/15/20)
+- [ ] **Sizing study** (equal-weight vs score-weighted vs pyramid-into-winners)
+- [ ] **Universe choice** — finalize flagship (NSE 500 vs Nifty 250 — 2025 resilience favors Nifty 250)
+- [ ] **OM25 Defensive (V5) sector concentration check + 2025 returns**
+- [ ] Stock-level overlap analysis between OM25 main and TL25 (concrete diversification claim)
+- [ ] Generate updated HTML report with locked-in stack
+- [ ] Out-of-sample / walk-forward validation
+- [ ] Paper trade 3 months before live deployment
+
+---
+
+## Interesting observations from the May 2026 review
+
+1. **The Friday-peak engine quirk was performance-flattering.** Daily-peak
+   correction reduced CAGR by 2-7% and Sharpe by 0.07-0.29 across variants.
+   The pre-fix headlines were genuinely too rosy.
+
+2. **The trailing stop wasn't earning its keep.** Across all universes and
+   cadences, "no stop" (200 DMA only) wins CAGR universally and ties or wins
+   Sharpe on the flagship NSE 500. The whole 4x ATR apparatus was squeezing
+   out ~4% DD reduction in exchange for 5-12% CAGR loss.
+
+3. **The positive-return filter was wrong empirically.** The DESIGN.md
+   rationale said it screened out "beaten-down low-quality names with
+   statistical artifacts." The data shows those names actually contribute
+   positively when ranked via the composite score.
+
+4. **Universe-size pattern in lookback.** NSE 500 prefers 378d, Nifty 250
+   prefers 252d, Nifty 100 prefers 126d. Bigger universes can afford slower
+   capture estimation; smaller ones need responsiveness. We chose 252d as
+   universe-agnostic compromise.
+
+5. **CR-only is a real alternative product, not just a weight variant.** V5's
+   selection bias (defensive low-beta names) is genuinely different from V1's
+   (asymmetric high-beta names). Same signal family, different question
+   asked — clean basis for a "defensive" tier.
+
+---
+
+*Last updated: May 2026 — engine fixed (daily peak), trailing stop dropped,
+eligibility filter dropped. Lookback and composite weights confirmed. Other
+parameters under review.*
