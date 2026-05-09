@@ -78,15 +78,18 @@ def score_om25_composite(signal_date, returns_universe=None, min_obs=220):
 
 
 def _score_om25_window(window, min_obs=220):
-    """OM25 composite scoring on a return window."""
+    """OM25 composite scoring on a return window.
+
+    Eligibility (locked-in May 2026, V2):
+      - len(r) >= min_obs valid daily returns
+      - >= 50 market-up days AND >= 50 market-down days
+    No positive-return prefilter — composite score does the quality work.
+    """
     market_ret = window.mean(axis=1)
     results = {}
     for sym in window.columns:
         r = window[sym].dropna()
         if len(r) < min_obs:
-            continue
-        tr = (1 + r).prod() - 1
-        if tr <= 0:
             continue
         common = r.index.intersection(market_ret.index)
         sr = r.loc[common]
@@ -250,12 +253,21 @@ def run_strategy(*,
 
     for date in active_cal:
         cr = close_panel.loc[date]
-        # Update last prices and peak (peak update uses ALL prior close info,
-        # not future info, so this is fine)
+        # Update last prices for held names
         for sym in holdings:
             p = cr.get(sym, np.nan)
             if not pd.isna(p):
                 last_prices[sym] = p
+
+        # Daily peak update: peak = max of (entry exec price, all closes from
+        # entry to today inclusive). Uses today's close — backward-looking
+        # since `date` is the current iteration day; no future info.
+        for sym in holdings:
+            p = cr.get(sym, np.nan)
+            if not pd.isna(p) and sym in entry_meta:
+                entry_meta[sym]['peak'] = max(
+                    entry_meta[sym].get('peak', p), p
+                )
 
         # Mark-to-market
         pv = cash
@@ -272,24 +284,13 @@ def run_strategy(*,
             'benchmark': benchmark_aligned.get(date, np.nan)
         })
 
-        # Update peaks ONCE per day. Use SIGNAL DATE close for peak tracking
-        # so that the peak we use in exit decision corresponds to the same
-        # information set as the close we compare against. We'll use prior
-        # day's close for peak (or signal date's close if available).
-        # Simplest approach: update peak using prior trading day's close.
-
-        # Weekly exit check: signal date close + indicators, execute today
+        # Weekly exit check: signal date close + indicators, execute today.
+        # Peak already reflects all closes through signal_date (updated daily
+        # above) so we don't redo the peak update here.
         if use_trailing_stop and date in weekly_exec_to_signal:
             signal_date = weekly_exec_to_signal[date]
             if signal_date in close_panel.index:
                 signal_close_row = close_panel.loc[signal_date]
-                # Update peaks using signal date close
-                for sym in list(holdings.keys()):
-                    sc = signal_close_row.get(sym, np.nan)
-                    if not pd.isna(sc) and sym in entry_meta:
-                        entry_meta[sym]['peak'] = max(
-                            entry_meta[sym].get('peak', sc), sc
-                        )
                 # Now check exits using signal date data
                 exits_now = []
                 for sym in list(holdings.keys()):
