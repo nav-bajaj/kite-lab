@@ -507,6 +507,25 @@ def main():
         )
         print(f"Saved rebalance changes to {changes_csv}")
         print(f"Saved rebalance report to {report_path}")
+
+        # Generate detailed trade report with prices and quantities
+        trade_report_path = changes_dir / f"trade_report_{today.isoformat()}.md"
+        trade_report_cmd = [
+            sys.executable,
+            "scripts/generate_rebalance_trade_report.py",
+            "--changes", str(changes_csv),
+            "--prices-dir", str(args.prices_dir),
+            "--signal-date", today.isoformat(),
+            "--capital", str(args.initial_capital),
+            "--portfolio-size", str(args.top_n),
+            "--slippage", str(args.slippage),
+            "--output", str(trade_report_path),
+        ]
+        try:
+            run_command(trade_report_cmd, args.dry_run)
+            print(f"Saved detailed trade report to {trade_report_path}")
+        except Exception as e:
+            print(f"Warning: Failed to generate detailed trade report: {e}")
     else:
         print("Not a rebalance day; changes report not generated.")
 
