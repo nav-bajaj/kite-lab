@@ -209,19 +209,112 @@ candidate (see README).
 
 Test script: `experiments/_om25_weights_test.py`
 
+### 5. Cadence
+
+Tested 4 entry-cadence variants (Weekly, Bi-weekly, Monthly, Bi-monthly).
+Weekly exit checks (Friday signal) ran for all variants — only entry
+frequency varied.
+
+**Verdict: keep Monthly + Bi-weekly (unchanged).**
+
+| Cadence | Avg CAGR | Avg DD | Avg Sharpe | Avg Calmar |
+|---|---|---|---|---|
+| **Weekly** | **51.9%** | **-31.2%** | **2.05** | **1.67** |
+| Bi-weekly | 51.0% | -32.5% | 1.98 | 1.57 |
+| Monthly | 50.0% | -32.3% | 1.94 | 1.55 |
+| Bi-monthly | 46.3% | -34.7% | 1.78 | 1.33 |
+
+Weekly numerically best on every aggregate metric. Choice to retain
+Monthly + Bi-weekly was branding/operational — preserves the existing
+two-tier subscriber product without requiring a migration. The Sharpe
+delta (Weekly +0.07-0.10 vs Bi-weekly/Monthly) is real but small.
+
+**Important re-finding:** the "Monthly = defensive via cash drag" story
+(prior DESIGN claim, ~98% of beta gap explained by cash) is **no longer
+true** under V2 + no trailing stop. Average cash for Monthly is now
+0.4-0.9% (vs 16-23% pre-rebaseline). Why? V2's looser eligibility keeps
+the candidate pool large enough to fill the top-25 reliably, and removing
+the trailing stop eliminates ATR-driven kickouts. Monthly is now just
+slower-redeploying — no implicit defense.
+
+Bi-monthly was clearly worst on every metric (too slow to redeploy after
+corrections). Weekly was best but kept off the menu by branding choice.
+
+Test script: `experiments/_om25_cadence_test.py`
+
+### 6. Minimum observations threshold
+
+Tested 6 thresholds: 150, 180, 200, 220 (current), 240, 252.
+
+**Verdict: 220 (unchanged) — robustness check.**
+
+| min_obs | Avg CAGR | Avg DD | Avg Sharpe | Avg Calmar |
+|---|---|---|---|---|
+| 150 | 50.4% | -32.0% | 1.95 | 1.58 |
+| 180 | 50.1% | -32.7% | 1.94 | 1.54 |
+| 200 | 49.8% | -32.2% | 1.94 | 1.55 |
+| **220 (current)** | 50.5% | -32.4% | 1.96 | 1.56 |
+| 240 | 50.2% | -32.3% | 1.95 | 1.55 |
+| 252 | **50.9%** | -32.6% | **1.98** | 1.55 |
+
+All six values produce Sharpe within 0.04 of each other and CAGR within
+1.1%. Differences are noise-level. min_obs is not a tuning knob for
+established universes (most NSE 500 / Nifty 250 / Nifty 100 stocks have
+full 252-day histories by 2021+). It still serves as a useful safety
+check against bad data (combined with the 50+ up/dn day requirement).
+
+NSE 500 marginally prefers stricter thresholds (240-252); smaller
+universes prefer looser (150). But the magnitudes don't justify
+universe-specific tuning.
+
+Test script: `experiments/_om25_min_obs_test.py`
+
+### 7. Top-N × Buffer
+
+Tested 3×3 grid: Top-N ∈ {20, 25, 30} × Buffer ∈ {10, 15, 20}.
+
+**Verdict: 25 / 15 (unchanged).**
+
+| Config | Avg CAGR | Avg DD | Avg Sharpe | Avg Calmar |
+|---|---|---|---|---|
+| 20/10 | 49.3% | -35.1% | 1.88 | 1.32 |
+| **20/15** | **50.9%** | -35.3% | 1.93 | 1.44 |
+| 20/20 | 49.3% | -34.9% | 1.88 | 1.43 |
+| **25/10** | 50.2% | -32.2% | **1.97** | **1.56** |
+| **25/15 (current)** | 50.5% | -32.4% | 1.96 | **1.56** |
+| 25/20 | 49.0% | -33.2% | 1.91 | 1.46 |
+| 30/10 | 47.9% | -32.6% | 1.91 | 1.40 |
+| 30/15 | 48.3% | -31.8% | 1.91 | 1.51 |
+| **30/20** | 48.6% | **-31.5%** | 1.92 | 1.53 |
+
+Best alternatives differ by metric (25/10 on Sharpe, 20/15 on CAGR, 30/20
+on DD), all within noise of current 25/15. None justifies a change.
+
+Per-universe optima follow the TL25 universe-size pattern: NSE 500 wants
+larger Top-N (30/20), Nifty 250 wants 25/15, Nifty 100 wants 20/15.
+Universe-agnostic compromise: 25/15.
+
+Test script: `experiments/_om25_topn_buffer_test.py`
+
 ---
 
 ## Decisions Still Open
 
-- **Min observations threshold** (currently 220/252 ≈ 87%) — to be tested.
-- **Cadence study** (monthly vs bi-weekly head-to-head) — earlier rebaseline
-  used pre-fix engine; needs re-run on locked-in stack.
-- **Top-N × buffer** (currently 25/15) — TL25 settled on 25/20; OM25 may
-  differ.
-- **Sizing** (currently equal-weight 1/N max 7.5%) — score-weighted and
-  pyramid-into-winners not yet tested under clean engine.
-- **Universe finalization** — Nifty 250 was meaningfully more resilient in
-  2025 (-3.3% vs NSE 500's -17%); flagship choice not yet locked.
+Parameter review is complete. Remaining items are productization /
+validation, not parameter tuning:
+
+- **Sizing** — kept at equal-weight 1/N max 7.5% + drift, intentionally
+  not re-tested in this review. TL25 review found pyramid-into-winners
+  had no universal benefit; assumed similar for OM25.
+- **Universe finalization** — deferred. Decision is to **offer all three
+  universes (NSE 500 / Nifty 250 / Nifty 100) as subscriber-choice tiers**
+  rather than picking one flagship. 2025 resilience differs (NSE 500
+  -14.6%, Nifty 250 -2.9%, Nifty 100 -6.5%) — let subscribers self-select.
+- **OM25 Defensive (V5) productization** — sector concentration check,
+  2025 yearly returns, turnover/tax review.
+- **Sector concentration check on OM25 main** — does it ever load 8+ of
+  25 names in one sector?
+- **Stock-level overlap with TL25** — concrete diversification claim.
 
 ---
 
@@ -332,23 +425,29 @@ turnover impact).
 ## Production Status
 
 **Locked-in for production (after May 2026 review):**
-- OM25 Monthly tier (NSE 500, 1st trading day of month)
-- OM25 Bi-weekly tier (NSE 500, every other Friday)
+- OM25 Monthly tier — entry on 1st trading day of each month
+- OM25 Bi-weekly tier — entry every other Friday
+- Both tiers offered on all three universes: NSE 500, Nifty 250, Nifty 100
 
-Both share identical signal, eligibility, exit, and sizing logic. They
-differ only in entry cadence.
+All variants share identical signal, eligibility, exit, and sizing logic.
+They differ only in entry cadence and universe selection (subscriber
+chooses).
 
 **Productization candidate (separate tier, not yet validated):**
 - OM25 Defensive (V5 CR-only) — needs sector concentration check, 2025
   yearly return analysis, turnover/tax review
 
-**Not pursuing:**
-- Trailing stop (dropped May 2026 — universally hurt)
+**Tested and not pursued:**
+- Trailing stop (dropped May 2026 — universally hurt CAGR/Sharpe)
 - Positive-return eligibility filter (dropped May 2026 — universally hurt)
+- Weekly cadence (numerically best but kept off-menu for branding continuity)
+- Bi-monthly cadence (clearly worst on every metric)
 - Explicit risk-off filters (V1-V4 from earlier review — all rejected, still rejected)
 
 ---
 
-*Last updated: May 2026 — engine fix, trailing stop dropped, eligibility
-filter dropped, lookback and composite weights confirmed unchanged. Min-obs,
-cadence, Top-N/buffer, sizing, and universe choice still pending.*
+*Last updated: May 2026 — full parameter review complete. Engine fix
+(daily peak + score function cleanup), trailing stop dropped, eligibility
+filter dropped. Lookback, composite weights, cadence, min observations,
+and Top-N/buffer all confirmed unchanged. Sizing kept at equal-weight +
+drift (not re-tested). Universe finalization deferred — offering all three.*

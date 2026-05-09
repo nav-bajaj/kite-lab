@@ -78,15 +78,18 @@ def score_om25_composite(signal_date, returns_universe=None, min_obs=220):
 
 
 def _score_om25_window(window, min_obs=220):
-    """OM25 composite scoring on a return window."""
+    """OM25 composite scoring on a return window.
+
+    Eligibility (locked-in May 2026, V2):
+      - len(r) >= min_obs valid daily returns
+      - >= 50 market-up days AND >= 50 market-down days
+    No positive-return prefilter — composite score does the quality work.
+    """
     market_ret = window.mean(axis=1)
     results = {}
     for sym in window.columns:
         r = window[sym].dropna()
         if len(r) < min_obs:
-            continue
-        tr = (1 + r).prod() - 1
-        if tr <= 0:
             continue
         common = r.index.intersection(market_ret.index)
         sr = r.loc[common]

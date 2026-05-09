@@ -86,7 +86,7 @@ the quality work.)
 
 **Period:** 2021-02 to 2026-05 (5.3 years).
 
-### Recommended Production Picks (preliminary — pending cadence study)
+### Recommended Production Picks
 
 | Persona | Universe | Cadence | CAGR | DD | Sharpe |
 |---------|----------|---------|------|-----|--------|
@@ -101,10 +101,15 @@ the quality work.)
 | Component | Old (prior locked-in) | New (May 2026) | Why |
 |-----------|----------------------|----------------|-----|
 | Engine peak tracking | Friday-only update | **Daily update** | Bug fix; previous trailing stop fired too rarely |
+| Engine OM25 score | Had positive-return filter | **No filter** | Codifies V2 eligibility into the canonical score function |
 | Trailing stop | 4x ATR, no floor | **None (dropped)** | After peak fix, stop fired tighter; tested 0/3/4/5/6/8x × 0/5/10% — "no stop" wins CAGR universally and ties or wins Sharpe on flagship |
 | Eligibility | Positive 252d return | **No filter** (data-quantity only) | Composite score does the quality work; positive-return filter actively hurt Sharpe and CAGR everywhere |
 | Lookback | 252d | 252d (unchanged) | Confirmed: 63d too noisy, 504d too sluggish |
 | Composite weights | 50/50 UC + CR | 50/50 UC + CR (unchanged) | V8 (UC + invDC) wins Sharpe by 0.05 but loses 7% CAGR — bad trade |
+| Cadence | Monthly + Bi-weekly | Monthly + Bi-weekly (unchanged) | Weekly numerically better avg (Sharpe 2.05 vs 1.94/1.98); kept status-quo branding for subscriber continuity |
+| Min observations | 220 / 252 | 220 / 252 (unchanged) | Robustness check: 150-252 all within Sharpe 0.04 — non-parameter |
+| Top-N / Buffer | 25 / 15 | 25 / 15 (unchanged) | Universal best Calmar (1.56), top-2 on every other metric. Universe-specific optima diverge but small. |
+| Sizing | Equal 1/N + drift | Equal 1/N + drift (unchanged, not re-tested) | TL25 review found pyramid-into-winners had no universal benefit |
 
 ### Tested and rejected (May 2026)
 
@@ -120,6 +125,10 @@ the quality work.)
 | Weights 70/30, 30/70, UC only, CR only | All lose CAGR vs 50/50 |
 | Weights 3-component (+ total return) | Wins on NSE 500 but lags smaller universes — not universe-agnostic |
 | Weights UC + invDC | Best avg Sharpe by 0.05, but -7% CAGR cost |
+| Weekly cadence | Best avg Sharpe/CAGR/DD/Calmar but kept Monthly+Bi-weekly for subscriber branding |
+| Bi-monthly cadence | Worst on every metric — too slow to redeploy |
+| Top-N × buffer 9-cell grid (20/25/30 × 10/15/20) | All within noise of 25/15; universe-agnostic compromise unchanged |
+| Min obs 150/180/200/240/252 | All within Sharpe 0.04 of current 220 — non-parameter |
 
 ---
 
@@ -191,16 +200,16 @@ Single codebase, single monitoring.
 
 ## TODO
 
-- [ ] **Min observations threshold** study (currently 220/252, scale variants)
-- [ ] **Cadence study** (monthly vs bi-weekly head-to-head with locked-in stack — earlier rebaseline study used pre-fix engine)
-- [ ] **Top-N × buffer grid** (20/25/30 × 10/15/20)
-- [ ] **Sizing study** (equal-weight vs score-weighted vs pyramid-into-winners)
-- [ ] **Universe choice** — finalize flagship (NSE 500 vs Nifty 250 — 2025 resilience favors Nifty 250)
-- [ ] **OM25 Defensive (V5) sector concentration check + 2025 returns**
-- [ ] Stock-level overlap analysis between OM25 main and TL25 (concrete diversification claim)
-- [ ] Generate updated HTML report with locked-in stack
-- [ ] Out-of-sample / walk-forward validation
-- [ ] Paper trade 3 months before live deployment
+Parameter review is complete. Remaining items are larger productization
+and validation tasks, not parameter tuning.
+
+- [ ] **OM25 Defensive (V5) productization** — sector concentration check, 2025 yearly returns specifically, turnover/tax implications, branding
+- [ ] **Sector concentration check on OM25 main** — does it ever load 8+ of 25 names in one sector?
+- [ ] **Stock-level overlap analysis between OM25 main and TL25** — concrete diversification claim
+- [ ] **Updated HTML report** on the locked-in stack (replace old reports)
+- [ ] **Out-of-sample / walk-forward validation** before live
+- [ ] **Paper trade 3 months** before live deployment
+- [ ] Universe finalization deferred — offering all three (NSE 500, Nifty 250, Nifty 100) as subscriber-choice tiers
 
 ---
 
@@ -230,8 +239,25 @@ Single codebase, single monitoring.
    (asymmetric high-beta names). Same signal family, different question
    asked — clean basis for a "defensive" tier.
 
+6. **Weekly cadence is numerically best but kept Monthly + Bi-weekly.**
+   Weekly won avg Sharpe (2.05 vs 1.94/1.98), CAGR (51.9% vs 50.0%/51.0%),
+   and DD (-31.2% vs -32.3%/-32.5%). Choice was branding/operational —
+   subscribers already have Monthly/Bi-weekly tiers, +0.07-0.10 Sharpe
+   wasn't worth the migration churn. The cash-drag-as-defense story for
+   Monthly tier is dead under V2 + no trailing stop (avg cash now 0.4-0.9%
+   vs 16-23% pre-fix); Monthly is just slower-redeploying now.
+
+7. **min_obs and Top-N/buffer are robustness checks, not optimization knobs.**
+   Both varied within Sharpe ±0.04 across the tested ranges. Universe-specific
+   optima diverge with universe size (smaller universe → smaller Top-N) but
+   the magnitudes don't justify universe-specific tuning. Same conclusion as
+   TL25.
+
 ---
 
-*Last updated: May 2026 — engine fixed (daily peak), trailing stop dropped,
-eligibility filter dropped. Lookback and composite weights confirmed. Other
-parameters under review.*
+*Last updated: May 2026 — full parameter review complete. Engine fixed
+(daily peak), trailing stop dropped, eligibility filter dropped. Lookback,
+composite weights, cadence, min observations, and Top-N/buffer all
+confirmed unchanged. Sizing and universe finalization deferred from the
+parameter review (skipped intentionally — keeping equal-weight + drift,
+offering all three universes).*
