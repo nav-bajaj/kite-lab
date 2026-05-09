@@ -213,6 +213,8 @@ def main():
     parser.add_argument("--ranking", choices=["pure_omega", "omega_quality"], default="pure_omega")
     parser.add_argument("--no-return-filter", action="store_true")
     parser.add_argument("--no-audit", action="store_true")
+    parser.add_argument("--rebalance-freq", choices=["monthly", "biweekly", "weekly"],
+                        default="monthly", help="Signal cadence (default: monthly)")
     args = parser.parse_args()
 
     universe = load_universe(args.universe)
@@ -223,9 +225,15 @@ def main():
     print(f"Loaded {len(close.columns)} symbols, {len(close)} days "
           f"({close.index[0].date()} to {close.index[-1].date()})")
 
-    # Monthly rebalance dates
+    # Rebalance dates
     cal = pd.Series(index=close.index, data=close.index)
-    rebalance_dates = pd.DatetimeIndex(cal.resample("MS").first().dropna().values)
+    if args.rebalance_freq == "monthly":
+        rebalance_dates = pd.DatetimeIndex(cal.resample("MS").first().dropna().values)
+    elif args.rebalance_freq == "biweekly":
+        weekly = pd.DatetimeIndex(cal.resample("W-FRI").last().dropna().values)
+        rebalance_dates = weekly[::2]
+    else:  # weekly
+        rebalance_dates = pd.DatetimeIndex(cal.resample("W-FRI").last().dropna().values)
 
     min_obs = args.min_obs
     if args.lookback != 252:

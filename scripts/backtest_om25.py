@@ -32,6 +32,8 @@ def run_backtest(
     top_n: int = 25,
     target_weight: float = 0.04,
     slippage: float = 0.002,
+    hold_signals_path: Path = None,
+    exit_buffer: int = 25,
 ):
     # Load
     close_panel, trade_panel = load_price_panels(prices_dir)
@@ -55,6 +57,21 @@ def run_backtest(
     rebalance_dates = set(entry_schedule.keys())
     first_trade = min(rebalance_dates)
     active_cal = calendar[calendar >= first_trade]
+
+    # Optional: weekly hold-signals for between-rebalance exit checks
+    hold_rank_by_date = {}
+    weekly_exit_dates = set()
+    if hold_signals_path is not None and Path(hold_signals_path).exists():
+        h_df = pd.read_csv(hold_signals_path, parse_dates=["date"])
+        for sig_date, group in h_df.groupby("date"):
+            td = map_signal_to_trade(pd.Timestamp(sig_date), calendar)
+            if not td:
+                continue
+            ranks = dict(zip(group["symbol"], group["rank"]))
+            hold_rank_by_date[pd.Timestamp(td)] = ranks
+            weekly_exit_dates.add(pd.Timestamp(td))
+        weekly_exit_dates -= rebalance_dates  # only check on non-entry weeks
+        print(f"Weekly exit dates: {len(weekly_exit_dates)}  (exit_buffer={exit_buffer})")
 
     print(f"Backtest: {active_cal[0].date()} to {active_cal[-1].date()} ({len(active_cal)} days)")
     print(f"Rebalance dates: {len(rebalance_dates)}")
@@ -96,6 +113,36 @@ def run_backtest(
             "cash_pct": cash_pct, "holdings_count": len(holdings),
             "benchmark": benchmark_aligned.get(date, np.nan), "drawdown": dd,
         })
+
+        # Weekly exit check: drop holdings whose hold-signal rank > top_n + exit_buffer
+        if date in weekly_exit_dates:
+            ranks = hold_rank_by_date.get(date, {})
+            if ranks:
+                exit_threshold = top_n + exit_buffer
+                for sym in list(holdings.keys()):
+                    rk = ranks.get(sym, 10**9)
+                    if rk > exit_threshold:
+                        shares = holdings.pop(sym, 0)
+                        if shares == 0:
+                            continue
+                        price = trade_panel.loc[date, sym] if sym in trade_panel.columns else np.nan
+                        if pd.isna(price):
+                            price = close_row.get(sym, last_prices.get(sym, np.nan))
+                        if pd.isna(price) or price <= 0:
+                            holdings[sym] = shares
+                            continue
+                        proceeds = shares * price * (1 - slippage)
+                        cash += proceeds
+                        avg_cost = cost_basis.get(sym, 0) / shares if shares else 0
+                        meta = entry_meta.pop(sym, {"date": date})
+                        pnl_pct = price / avg_cost - 1 if avg_cost > 0 else None
+                        exit_records.append({"symbol": sym, "entry_date": meta.get("date"),
+                            "exit_date": date, "pnl_pct": pnl_pct,
+                            "holding_days": (date - meta["date"]).days if meta.get("date") else None})
+                        cost_basis.pop(sym, None)
+                        trade_records.append({"date": date, "symbol": sym, "side": "SELL",
+                            "shares": shares, "price": price, "notional": shares * price,
+                            "slippage": shares * price * slippage, "reason": "weekly_exit"})
 
         # Monthly rebalance: full rebalance to equal weight
         if date in rebalance_dates:
@@ -256,6 +303,10 @@ def main():
     parser.add_argument("--top-n", type=int, default=25)
     parser.add_argument("--target-weight", type=float, default=0.04)
     parser.add_argument("--slippage", type=float, default=0.002)
+    parser.add_argument("--hold-signals", type=Path, default=None,
+                        help="Optional separate signals (e.g. weekly) for between-rebalance exit checks")
+    parser.add_argument("--exit-buffer", type=int, default=25,
+                        help="Sell holdings whose hold-signal rank > top_n + buffer (default 25)")
     args = parser.parse_args()
 
     run_backtest(
@@ -267,6 +318,8 @@ def main():
         top_n=args.top_n,
         target_weight=args.target_weight,
         slippage=args.slippage,
+        hold_signals_path=args.hold_signals,
+        exit_buffer=args.exit_buffer,
     )
 
 
