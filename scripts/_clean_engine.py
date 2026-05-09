@@ -204,6 +204,8 @@ def run_strategy(*,
                  slippage=0.002,
                  initial_capital=1_000_000,
                  use_trailing_stop=True,    # if False, only 200 DMA exit
+                 regime_panel=None,         # optional pd.Series[date]->bool, True=bull
+                 bear_exposure=0.0,          # gross exposure cap during bear (0..1)
                  ):
     """Generic clean (no-lookahead) backtest.
 
@@ -284,6 +286,62 @@ def run_strategy(*,
             'benchmark': benchmark_aligned.get(date, np.nan)
         })
 
+        # Regime filter: if bear regime, scale exposure down to bear_exposure
+        # by selling pro-rata across holdings. Lookahead-safe: regime_panel is
+        # expected to already be lagged by the caller (using prior day's
+        # close-vs-200DMA decision).
+        is_bear = False
+        if regime_panel is not None:
+            try:
+                rv = regime_panel.get(date, True)
+                is_bear = not bool(rv) if rv is not None else False
+            except Exception:
+                is_bear = False
+            if is_bear and holdings:
+                invested = pv - cash
+                target_invested = pv * bear_exposure
+                excess = invested - target_invested
+                if excess > 0 and invested > 0:
+                    scale = min(1.0, excess / invested)
+                    for sym in list(holdings.keys()):
+                        sh = holdings[sym]
+                        shares_to_sell = int(sh * scale)
+                        if shares_to_sell < 1:
+                            if scale >= 0.999:
+                                shares_to_sell = sh  # sell all if scaling to ~0
+                            else:
+                                continue
+                        exec_price = (trade_panel.loc[date, sym]
+                                      if sym in trade_panel.columns else np.nan)
+                        if pd.isna(exec_price) or exec_price <= 0:
+                            exec_price = cr.get(sym, last_prices.get(sym, np.nan))
+                        if pd.isna(exec_price) or exec_price <= 0:
+                            continue
+                        cash += shares_to_sell * exec_price * (1 - slippage)
+                        holdings[sym] -= shares_to_sell
+                        if holdings[sym] <= 0:
+                            meta = entry_meta.pop(sym, {'date': date})
+                            avg_cost = (cost_basis.pop(sym, 0) / sh
+                                        if sh else 0)
+                            pnl_pct = ((exec_price / avg_cost - 1)
+                                       if avg_cost > 0 else None)
+                            exit_records.append({
+                                'symbol': sym, 'pnl_pct': pnl_pct,
+                                'reason': 'regime_bear',
+                                'entry_date': meta.get('date'),
+                                'exit_date': date,
+                                'hold_days': ((date - meta['date']).days
+                                              if meta.get('date') else None)
+                            })
+                            holdings.pop(sym, None)
+                        trade_records.append({
+                            'date': date, 'symbol': sym, 'side': 'SELL',
+                            'shares': shares_to_sell, 'price': exec_price,
+                            'notional': shares_to_sell * exec_price,
+                            'slippage': shares_to_sell * exec_price * slippage,
+                            'reason': 'regime_bear'
+                        })
+
         # Weekly exit check: signal date close + indicators, execute today.
         # Peak already reflects all closes through signal_date (updated daily
         # above) so we don't redo the peak update here.
@@ -344,7 +402,9 @@ def run_strategy(*,
                         'reason': reason
                     })
 
-        # Entry rebalance: signal date list, execute today
+        # Entry rebalance: signal date list, execute today.
+        # Skip entries during bear regime (existing positions handled above);
+        # exits via rank still run so we keep churn control during bear.
         if date in rebal_set:
             sd = entry_schedule[date]
             ranked = signals.get(sd, [])
@@ -384,7 +444,9 @@ def run_strategy(*,
                         'reason': 'rank'
                     })
 
-            # Buy new entrants
+            # Buy new entrants — skipped if bear regime (no fresh exposure)
+            if is_bear:
+                continue
             entrants = [s for s in ranked[:top_n] if s not in holdings]
             entrants = entrants[:max(0, top_n - len(holdings))]
             if entrants:

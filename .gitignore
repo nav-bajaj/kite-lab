@@ -65,6 +65,8 @@ nse500_data_hourly/
 # nse500_data_historical/ — committed: one-time GDF backfill 2009-2019
 nse500_data_merged/
 indices_data/
+indices_data_historical/
+indices_data_merged/
 truedata_test/
 gdf_test/
 
@@ -108,3 +110,4 @@ experiments/final_portfolio/final_portfolio_*/
 nifty_100_tests/nifty100_portfolio_*/
 nifty_250_tests/nifty250_portfolio_*/
 experiments/oos_walkthrough/
+experiments/oos_retune/
