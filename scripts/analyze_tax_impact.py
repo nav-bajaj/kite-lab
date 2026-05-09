@@ -9,8 +9,19 @@ This script:
 5. Shows total impact of taxation on performance
 
 Usage:
-    python scripts/analyze_tax_impact.py --equity data/backtests/momentum_equity.csv
-    python scripts/analyze_tax_impact.py --equity experiments/final_portfolio/*/backtests/baseline/momentum_equity.csv --tax-rate 0.25
+    # Run on all three universes (default)
+    python scripts/analyze_tax_impact.py
+
+    # Run on a specific universe
+    python scripts/analyze_tax_impact.py --universe nse500
+    python scripts/analyze_tax_impact.py --universe nifty100
+    python scripts/analyze_tax_impact.py --universe nifty250
+
+    # Run with explicit equity file (overrides universe auto-discovery)
+    python scripts/analyze_tax_impact.py --equity path/to/momentum_equity.csv
+
+    # Custom tax rate and output
+    python scripts/analyze_tax_impact.py --universe all --tax-rate 0.20 --output-dir reports/
 
 Tax Model:
     - Indian Financial Year: April 1 to March 31
@@ -19,6 +30,8 @@ Tax Model:
     - Continue investing with post-tax amount in next FY
     - 25% flat tax rate (default, configurable)
 """
+
+from __future__ import annotations
 
 import argparse
 from pathlib import Path
@@ -34,6 +47,58 @@ try:
     HAS_MATPLOTLIB = True
 except ImportError:
     HAS_MATPLOTLIB = False
+
+
+UNIVERSE_CONFIGS = {
+    "nse500": {
+        "label": "NSE 500",
+        "output_root": Path("experiments/final_portfolio"),
+        "run_prefix": "final_portfolio",
+        "fallback_equity": Path("data/backtests/momentum_equity.csv"),
+    },
+    "nifty100": {
+        "label": "Nifty 100",
+        "output_root": Path("nifty_100_tests"),
+        "run_prefix": "nifty100_portfolio",
+        "fallback_equity": None,
+    },
+    "nifty250": {
+        "label": "Nifty 250",
+        "output_root": Path("nifty_250_tests"),
+        "run_prefix": "nifty250_portfolio",
+        "fallback_equity": None,
+    },
+}
+
+
+def find_latest_equity(universe: str) -> Path | None:
+    """Find the latest momentum_equity.csv for a universe by picking the newest timestamped run."""
+    cfg = UNIVERSE_CONFIGS[universe]
+    root = cfg["output_root"]
+    prefix = cfg["run_prefix"]
+
+    if not root.exists():
+        if cfg["fallback_equity"] and cfg["fallback_equity"].exists():
+            return cfg["fallback_equity"]
+        return None
+
+    # Find timestamped run directories (prefix_YYYYMMDDHHMMSS)
+    run_dirs = sorted(
+        [d for d in root.iterdir() if d.is_dir() and d.name.startswith(prefix + "_") and d.name[len(prefix) + 1:].isdigit()],
+        key=lambda d: d.name,
+        reverse=True,
+    )
+
+    for run_dir in run_dirs:
+        equity_path = run_dir / "backtests" / "baseline" / "momentum_equity.csv"
+        if equity_path.exists():
+            return equity_path
+
+    # Fallback for NSE 500 which also has data/backtests/
+    if cfg["fallback_equity"] and cfg["fallback_equity"].exists():
+        return cfg["fallback_equity"]
+
+    return None
 
 
 def load_equity_data(equity_path: Path) -> pd.DataFrame:
@@ -371,14 +436,100 @@ def generate_report(
     return "\n".join(lines)
 
 
+def run_analysis(
+    label: str,
+    equity_path: Path,
+    tax_rate: float,
+    initial_capital: float,
+    output_dir: Path | None,
+) -> dict:
+    """Run tax impact analysis for a single universe. Returns summary metrics."""
+    print(f"\n{'=' * 80}")
+    print(f"  {label}")
+    print(f"  Equity: {equity_path}")
+    print(f"{'=' * 80}")
+
+    equity_df = load_equity_data(equity_path)
+
+    print(f"Applying {tax_rate:.1%} tax on gains at end of each financial year...")
+    post_tax_df, tax_events_df = apply_tax_on_gains(
+        equity_df,
+        tax_rate=tax_rate,
+        initial_capital=initial_capital,
+    )
+
+    report = generate_report(post_tax_df, tax_events_df, initial_capital, tax_rate)
+
+    if output_dir:
+        output_dir.mkdir(parents=True, exist_ok=True)
+        slug = label.lower().replace(" ", "_")
+
+        report_path = output_dir / f"tax_impact_report_{slug}.txt"
+        with open(report_path, "w") as f:
+            f.write(report)
+        print(f"✓ Report saved to {report_path}")
+
+        chart_path = output_dir / f"tax_impact_chart_{slug}.png"
+        if generate_chart(post_tax_df, chart_path):
+            print(f"✓ Chart saved to {chart_path}")
+
+        csv_path = output_dir / f"tax_impact_data_{slug}.csv"
+        export_df = post_tax_df[["date", "fy", "portfolio_value", "post_tax_value"]].copy()
+        export_df["tax_drag"] = export_df["portfolio_value"] - export_df["post_tax_value"]
+        export_df.to_csv(csv_path, index=False)
+        print(f"✓ CSV saved to {csv_path}")
+    else:
+        print(report)
+
+    pre = compute_metrics(post_tax_df["portfolio_value"], post_tax_df["date"])
+    post = compute_metrics(post_tax_df["post_tax_value"], post_tax_df["date"])
+    return {
+        "label": label,
+        "pre_tax_cagr": pre["cagr"],
+        "post_tax_cagr": post["cagr"],
+        "cagr_drag": pre["cagr"] - post["cagr"],
+        "pre_tax_final": pre["final_value"],
+        "post_tax_final": post["final_value"],
+        "total_tax_paid": tax_events_df["tax_amount"].sum(),
+    }
+
+
+def print_comparison_table(summaries: list[dict]) -> None:
+    """Print a side-by-side comparison table across universes."""
+    print(f"\n{'=' * 90}")
+    print("  CROSS-UNIVERSE TAX IMPACT COMPARISON")
+    print(f"{'=' * 90}\n")
+
+    header = f"{'Universe':<15} {'Pre-Tax CAGR':>13} {'Post-Tax CAGR':>14} {'CAGR Drag':>10} {'Tax Paid':>15} {'Post-Tax Final':>16}"
+    print(header)
+    print("-" * 90)
+
+    for s in summaries:
+        print(
+            f"{s['label']:<15} "
+            f"{s['pre_tax_cagr']:>12.2%} "
+            f"{s['post_tax_cagr']:>13.2%} "
+            f"{s['cagr_drag']:>9.2%} "
+            f"₹{s['total_tax_paid']:>13,.0f} "
+            f"₹{s['post_tax_final']:>14,.0f}"
+        )
+
+    print(f"\n{'=' * 90}")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Analyze tax impact on portfolio returns using Indian FY (April-March)"
     )
     parser.add_argument(
+        "--universe",
+        choices=["nse500", "nifty100", "nifty250", "all"],
+        default="all",
+        help="Stock universe to analyze (default: all)",
+    )
+    parser.add_argument(
         "--equity",
-        required=True,
-        help="Path to portfolio equity CSV (must have date, portfolio_value columns)",
+        help="Explicit path to equity CSV (overrides --universe auto-discovery)",
     )
     parser.add_argument(
         "--tax-rate",
@@ -393,65 +544,46 @@ def main():
         help="Initial capital in rupees (default: 1,000,000)",
     )
     parser.add_argument(
-        "--output",
-        help="Optional output file for report (default: print to console)",
-    )
-    parser.add_argument(
-        "--chart",
-        help="Generate comparison chart (PNG file path)",
-    )
-    parser.add_argument(
-        "--csv",
-        help="Export comparison data to CSV",
+        "--output-dir",
+        type=Path,
+        help="Directory to save reports, charts, and CSVs (default: print to console)",
     )
 
     args = parser.parse_args()
 
-    # Load data
-    print(f"Loading equity data from {args.equity}...")
-    equity_df = load_equity_data(Path(args.equity))
+    # If explicit equity path given, run single analysis
+    if args.equity:
+        summary = run_analysis(
+            label="Custom",
+            equity_path=Path(args.equity),
+            tax_rate=args.tax_rate,
+            initial_capital=args.initial_capital,
+            output_dir=args.output_dir,
+        )
+        print_comparison_table([summary])
+        return 0
 
-    # Apply tax
-    print(f"Applying {args.tax_rate:.1%} tax on gains at end of each financial year...")
-    post_tax_df, tax_events_df = apply_tax_on_gains(
-        equity_df,
-        tax_rate=args.tax_rate,
-        initial_capital=args.initial_capital,
-    )
+    # Determine which universes to run
+    universes = list(UNIVERSE_CONFIGS.keys()) if args.universe == "all" else [args.universe]
 
-    # Generate report
-    report = generate_report(post_tax_df, tax_events_df, args.initial_capital, args.tax_rate)
+    summaries = []
+    for universe in universes:
+        equity_path = find_latest_equity(universe)
+        if equity_path is None:
+            print(f"\n⚠ Skipping {UNIVERSE_CONFIGS[universe]['label']}: no equity file found")
+            continue
 
-    # Output report
-    if args.output:
-        output_path = Path(args.output)
-        with open(output_path, "w") as f:
-            f.write(report)
-        print(f"\n✓ Report saved to {output_path}")
-        print("\n" + "=" * 80)
-        print("SUMMARY")
-        print("=" * 80)
-        # Print just the summary section
-        print(report.split("KEY INSIGHTS")[1])
-    else:
-        print("\n" + report)
+        summary = run_analysis(
+            label=UNIVERSE_CONFIGS[universe]["label"],
+            equity_path=equity_path,
+            tax_rate=args.tax_rate,
+            initial_capital=args.initial_capital,
+            output_dir=args.output_dir,
+        )
+        summaries.append(summary)
 
-    # Generate chart
-    if args.chart:
-        chart_path = Path(args.chart)
-        print(f"\nGenerating comparison chart...")
-        if generate_chart(post_tax_df, chart_path):
-            print(f"✓ Chart saved to {chart_path}")
-        else:
-            print("✗ Chart generation failed (matplotlib not available)")
-
-    # Export CSV
-    if args.csv:
-        csv_path = Path(args.csv)
-        export_df = post_tax_df[["date", "fy", "portfolio_value", "post_tax_value"]].copy()
-        export_df["tax_drag"] = export_df["portfolio_value"] - export_df["post_tax_value"]
-        export_df.to_csv(csv_path, index=False)
-        print(f"✓ Comparison data saved to {csv_path}")
+    if len(summaries) > 1:
+        print_comparison_table(summaries)
 
     return 0
 
