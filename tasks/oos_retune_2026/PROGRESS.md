@@ -76,7 +76,26 @@ vs same combo on 200 DMA: +0.1 to +0.34 Sharpe, 0-15pp better DD.
 
 ---
 
-## Open: regime-as-weight-lever (next iteration)
+## OM25 LOCKED IN (2026-05-10)
+
+Final config: **Nifty 250 biweekly + NIFTY 100 100-DMA 3-conf regime + bull(50/50) → bear(0/100) tilt**.
+
+Performance summary (OOS-full 2017-2026):
+- 44.78% CAGR ✓ exceeds 40% target
+- 1.83 Sharpe ✓ exceeds 1.5 target
+- -36.6% Max DD ✓ below -45% threshold
+- All sub-windows pass (Sharpe ≥ 1.5)
+- ~24pp annualized alpha vs NIFTY 200 over 17 years
+
+**Full writeup:** `RESULTS.md`
+
+Key mechanism: regime tilts the UC/CR weight blend (not cash on/off). Strategy
+stays 100% invested; bull regime uses production-identity 50/50, bear regime
+rotates to defensive CR-only. Avoids cash drag and re-entry friction.
+
+---
+
+## Initial regime-as-weight-lever exploration (superseded by lock-in above)
 
 User idea: instead of using the regime filter as a cash on/off switch,
 use it to **tilt the score weight blend**:

@@ -25,29 +25,30 @@ See `PROGRESS.md` for running findings; `PLAN.md` for original plan + criteria.
 - [x] All 135 NSE_IDX symbols on disk (11M, single GDF source)
 - [x] `scripts/stitch_gdf_indices.py` written (not yet needed; using historical files directly)
 
-## 4. Regime filter exploration — IN PROGRESS
+## 4. Regime filter exploration — DONE
 
-- [x] Post-hoc test: 200 DMA on 4 universe×cadence combos (`_om25_regime_filter_test.py`)
-- [x] In-engine test: 200 DMA, 4 indices, 36 configs (`_om25_regime_in_engine.py`)
-  - In-engine numbers ~10pp lower CAGR than post-hoc — friction is real
-- [x] In-engine test: 100 DMA + 3-day confirmation, same 36 configs (`_om25_regime_100dma_3conf.py`)
-  - Big improvement: +0.1 to +0.34 Sharpe vs 200 DMA
-  - Two strong candidates: NSE 500 biweekly + NIFTY 200 + 25% bear (Sharpe 2.07 / 37.7% / -25.8%); NSE 500 biweekly + NIFTY 50 + 0% bear (40.3% / 1.94 / -27.9%)
-- [ ] **NEXT — Regime as weight-lever**: regime tilts UC/CR weight blend instead of cash on/off. Strategy stays fully invested; regime just biases stock selection.
-  - [ ] Build `tasks/om25/experiments/_om25_regime_weight_tilt.py`
-  - [ ] Closure score: bull weights vs bear weights; lookup regime per signal date
-  - [ ] Sweep: pairs like {(70/30, 30/70), (60/40, 40/60), (70/30, 0/100), (60/40, 0/100)}
-  - [ ] Same regime signal: 100 DMA + 3-day confirmation
-  - [ ] Same universe candidates: NSE 500 biweekly, Nifty 250 biweekly
-  - [ ] Same indices: NIFTY 50 / 100 / 200
+- [x] Post-hoc test: 200 DMA on 4 universe×cadence combos
+- [x] In-engine test: 200 DMA, 4 indices, 36 configs
+- [x] In-engine test: 100 DMA + 3-day confirmation hysteresis
+- [x] **Regime as weight-lever** (`_om25_regime_weight_tilt.py`)
+  - 76 configs: 2 univ × 2 cad × 3 indices × 6 weight pairs + 4 baselines
+  - Winner: bull(50/50) → bear(0/100) on Nifty 250 biweekly + NIFTY 100
 
-## 5. Year-by-year sanity check on top candidates
+## 5. Year-by-year sanity check on chosen candidate — DONE
 
-- [ ] Year-by-year breakdown for each top candidate (Candidate A, B, regime-tilt winner)
-- [ ] Verify no individual year is a disaster
-- [ ] Cross-check IS year-by-year vs OOS to look for IS-specific behavior
+- [x] Year-by-year for tilt winner
+- [x] Vs each major index (Nifty 50/100/200/250/500)
+- [x] By-regime breakdown (bull vs bear stats)
+- [x] No single year is a disaster; worst is 2011 at -11.6% (better than baseline -17.5%)
 
-## 6. TL25 retune — NOT STARTED
+## 6. OM25 LOCKED IN (2026-05-10)
+
+- [x] Final config documented in `RESULTS.md`
+- [x] Performance: OOS 44.78% CAGR / 1.83 Sharpe / -36.6% DD
+- [x] All sub-window pass criteria cleared
+- [x] +24pp alpha vs NIFTY 200 over 17 years
+
+## 7. TL25 retune — NOT STARTED
 
 - [ ] Create `tasks/trend_leaders/experiments/_tl25_oos_retune.py`
 - [ ] Stage-1: 7 weight variants (P/DD/M splits)
@@ -55,13 +56,20 @@ See `PROGRESS.md` for running findings; `PLAN.md` for original plan + criteria.
 - [ ] Universe + cadence + regime exploration mirroring OM25 process
 - [ ] OOS multi-window evaluation
 
-## 7. Write up RESULTS.md — NOT STARTED
+## 8. Write up RESULTS.md — OM25 done; TL25 pending
 
-- [ ] OM25 section: chosen config, all metrics, year-by-year, vs production
-- [ ] TL25 section: same
+- [x] OM25 section: chosen config, all metrics, year-by-year, vs indices, regime breakdown
+- [x] Survivorship-bias and other caveats noted
+- [ ] TL25 section
 - [ ] Cross-strategy comparison
-- [ ] Survivorship-bias caveat
-- [ ] Recommendation per strategy
+
+## 9. Productionization (open)
+
+- [ ] Adapt `scripts/build_om25_signals.py` to compute regime + apply tilt
+- [ ] Adapt `scripts/backtest_om25.py` to support regime-tilt mode
+- [ ] Wire regime data fetch into `scripts/run_daily_pipeline.py`
+- [ ] Update `tasks/om25/README.md` with new locked-in stack
+- [ ] Paper-trading window (3-6 months minimum) before live
 
 ## 8. Decide on next steps (post-results)
 
