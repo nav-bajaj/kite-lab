@@ -346,6 +346,41 @@ HINDCOPPER, ATHERENERG, NATIONALUM, NETWEB, VEDL, SHRIRAMFIN, ASHOKLEY, HINDZINC
 **Latest holdings (Jan 2026):**
 HINDZINC, VEDL, SHRIRAMFIN, CANBK, HINDALCO, EICHERMOT, SBIN, TVSMOTOR, BANKBARODA, MARUTI, AXISBANK, TATASTEEL, JSWSTEEL, TITAN, ADANIPOWER, ASIANPAINT, SBILIFE, BAJAJ-AUTO, HCLTECH, TECHM, COALINDIA, TORNTPHARM, LTIM, TATACONSUM
 
+### OM25 v3 Production Portfolio (Locked-in May 2026 OOS Retune)
+**Location:** `data/om25/v3/runs/<ts>/`
+**Run:** `python scripts/run_om25_v3_portfolio.py --start 2016-01-01`
+
+**Parameters:**
+- **Universe:** NSE Nifty 250 (250 stocks)
+- **Cadence:** Bi-weekly entry (every other Friday) + weekly exit checks
+- **Score (bull regime):** 0.5 × pct_rank(UC) + 0.5 × pct_rank(CR)
+- **Score (bear regime):** pct_rank(CR) only — defensive tilt
+- **Regime signal:** NIFTY 100 close vs 100-day MA, 3-day confirmation hysteresis
+- **Lookback:** 252 days, ≥220 obs required
+- **Top-N:** 25 stocks, exit-buffer 20 (drop below rank 45)
+- **Drawdown stop:** 20% from running peak (weekly check)
+- **Sizing:** Equal 1/N, max 7.5%, drift after entry
+- **Slippage:** 0.2% (20 bps, OHLC/4 next-day)
+- **Initial capital:** ₹1,000,000
+
+**Performance (2016-01-04 to 2026-05-08, 10.4 years):**
+- **CAGR:** 39.34%
+- **Sharpe ratio:** 1.66 (rf=5%)
+- **Max drawdown:** -32.01%
+- **Total trades:** 1,414 (729 buys, 685 sells)
+
+**OOS-only validation (2017-2026, 9.3 years):**
+- CAGR 44.78% / Sharpe 1.86 / MaxDD -36.6%
+- Sub-window Sharpes: 1.57 (2017-19) / 2.10 (2020-22) / 1.80 (2023-26) — all pass
+
+**Use case:**
+- Quality-aware momentum with regime-adaptive defensive rotation
+- Bull regimes: balanced UC+CR (production identity preserved)
+- Bear regimes: rotates to CR-only (low-beta defensive names)
+- Always 100% invested — no cash drag
+
+**Full evidence trail:** `tasks/oos_retune_2026/RESULTS.md`
+
 ## Key Data Directories
 
 **Price data:**

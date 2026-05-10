@@ -6,22 +6,87 @@ Selects stocks with the best **upside-vs-downside market-sensitivity asymmetry**
 participates aggressively in rallies, structurally resists drawdowns. Different
 lens from momentum (highest returners) and TL25 (cleanest trend structure).
 
-**Branch:** `om25` (merged into `main`)
-
-> **REVIEWED MAY 2026.** Full parameter review under the clean (no-lookahead)
-> engine, with two material engine corrections this review:
-> 1. **Daily-peak fix.** Trailing-stop peak now updated every trading day,
->    not just Fridays. The Friday-peak quirk had been quietly making the
->    trailing stop fire too rarely. Numbers below are post-fix.
-> 2. **Locked-in stack changes.** Trailing stop dropped entirely, eligibility
->    return-filter dropped. See "Locked-in changes" below.
->
-> Earlier numbers (54%-60% CAGR with 4x ATR / positive-return filter) are
-> superseded.
+**Branch:** `main`
 
 ---
 
-## Strategy (3 sentences)
+## v3 LOCKED IN (May 2026 OOS Retune) — current production
+
+> Retuned with rigorous IS/OOS discipline: **2009-2016 in-sample**,
+> **2017-2026 multi-window OOS** (split into 2017-19, 2020-22, 2023-26).
+> Each candidate must pass per-sub-window robustness checks before we
+> looked at full-OOS metrics. Full writeup: `tasks/oos_retune_2026/RESULTS.md`.
+
+### Production-locked performance (2016-01-04 → 2026-05-08, 10.4 years)
+
+| Metric | Value |
+|---|---|
+| CAGR | **39.34%** |
+| Sharpe (rf=5%) | **1.66** |
+| Max Drawdown | **-32.01%** |
+| Total Return | ~3,500% |
+| Trades | 729 buys / 685 sells |
+| Avg position hold | ~118 days (rank exit) / ~159 days (drawdown stop) |
+
+OOS-only validation (2017-2026 sliced from same run): 44.78% CAGR / 1.86 Sharpe /
+-36.6% Max DD across 9.3 years; passes per-window pass criteria with sub-window
+Sharpes of 1.57 / 2.10 / 1.80.
+
+### v3 Configuration
+
+| Parameter | Value |
+|---|---|
+| **Universe** | **NSE Nifty 250** (changed from NSE 500 / mixed in v2) |
+| Cadence | Bi-weekly entry (every other Friday) + weekly exit checks |
+| Score (bull regime) | 0.5 × pct_rank(UC) + 0.5 × pct_rank(CR) |
+| **Score (bear regime)** | **pct_rank(CR) only — defensive tilt** |
+| **Regime signal** | **NIFTY 100 close vs 100-DMA, 3-day confirmation** |
+| Lookback | 252d, ≥220 obs, ≥50 up + ≥50 down market days |
+| Return filter | Positive 252d total return required |
+| Top-N / Exit-buffer | 25 / 20 (drop below rank 45) |
+| **Drawdown stop** | **20% from running peak (weekly check)** |
+| Position sizing | Equal 1/N, 7.5% max, drift after entry |
+| Slippage | 20 bps (OHLC/4 next-day execution) |
+| Allocation | Order-independent two-pass (per-entrant fair share) |
+
+### What changed from v2
+
+| Component | v2 (May 2026 review) | **v3 (May 2026 OOS retune)** |
+|---|---|---|
+| Universe | NSE 500 / Nifty 250 / Nifty 100 (multiple) | **Nifty 250 (single, locked)** |
+| Score | Static 50/50 UC/CR | **Regime-tilted: 50/50 in bull, CR-only in bear** |
+| Trailing stop | None | **20% from peak** |
+| 200 DMA exit | Yes (weekly check) | **No** (tested and rejected — 39% hit rate, hurt CAGR) |
+| Allocation engine | Greedy sequential | **Order-independent two-pass** |
+
+### How to run (production)
+
+```bash
+# Backtest from 2016 (research-replication mode):
+python scripts/run_om25_v3_portfolio.py --start 2016-01-01
+
+# Live production (uses indices_data/ and current Kite prices):
+python scripts/run_om25_v3_portfolio.py \
+    --prices-dir nse500_data \
+    --regime-index indices_data/NIFTY_100.csv
+
+# Outputs: data/om25/v3/runs/<ts>/
+#   - om25_signals.csv, om25_equity.csv, om25_trades.csv,
+#     om25_exits.csv, metrics.json
+```
+
+Locked-in defaults are in `scripts/om25_v3.py:LOCKED`. See
+`tasks/oos_retune_2026/RESULTS.md` for the full evidence trail.
+
+---
+
+## v2 history (May 2026 parameter review) — superseded by v3
+
+> Below is the prior v2 documentation, kept for historical context.
+> v2 is no longer the production stack; v3 supersedes it with the OOS
+> retune work above.
+
+### v2 strategy (1 sentence)
 
 > Rank each stock by `0.5 × pct_rank(upside_capture) + 0.5 × pct_rank(capture_ratio)`
 > over the past 252 trading days. Buy the top 25 (let winners run, exit
