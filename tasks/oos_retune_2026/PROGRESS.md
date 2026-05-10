@@ -116,6 +116,27 @@ real allocation flaw worth fixing for correctness.
   total target × num_entrants pro-rata)
 - Allocate to each entrant up to that share, regardless of iteration order
 
+## Engine fix applied (2026-05-10, same day)
+
+Two-pass allocation in `_clean_engine.run_strategy`:
+- Pass 1: each entrant gets `min(target, cash/n_entrants)` — order-independent
+- Pass 2: redistributes leftover cash to entrants under target, with a
+  10%-of-target threshold to skip dust trades
+
+CUMMINSIND fix verified: 2026-03-02 entry now 204 shares (₹980k notional)
+vs previous 8 shares (₹38k). BUYs <50 shares dropped 78 → 62 (most
+remaining are legitimate high-price names like ABB/EICHERMOT). BUY count
+1026 → 729 (dust trades eliminated).
+
+Performance impact (locked-in OM25 from 2016-01-01):
+- CAGR:    40.18% → 39.34% (-0.84pp)
+- Sharpe:  1.70   → 1.66   (-0.04)
+- Max DD:  -31.55% → -32.01% (-0.46pp)
+
+Greedy allocation was giving implicit boost to earlier-ranked entrants
+(better-scoring stocks); fixed version is genuinely equal-weight per
+design. Honest numbers slightly worse than buggy numbers — correct trade.
+
 ---
 
 ## Stop-loss alternatives explored & rejected (2026-05-10)

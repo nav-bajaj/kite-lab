@@ -475,15 +475,29 @@ def run_strategy(*,
                 n = len(holdings) + len(entrants)
                 stock_w = min(1.0 / n if n > 0 else 0, max_weight)
                 tgt = pv2 * stock_w
+
+                # Order-independent allocation: divide available cash
+                # equally across entrants, capped at target weight. Earlier
+                # version was greedy/sequential — when cash ran out, late
+                # entrants got fractional or zero allocations purely due
+                # to iteration order. Two-pass strategy: pass 1 buys the
+                # fair per-entrant budget; pass 2 redistributes any cash
+                # left over (from share-rounding or zero-price symbols) to
+                # entrants that still have headroom to tgt.
+                n_entrants = len(entrants)
+                fair_share = (cash * 0.99) / n_entrants
+                per_entrant_budget = min(tgt, fair_share)
+
+                spent = {sym: 0.0 for sym in entrants}
+                # Pass 1: each entrant gets its fair share
                 for sym in entrants:
                     exec_price = (trade_panel.loc[date, sym]
                                   if sym in trade_panel.columns else np.nan)
                     if pd.isna(exec_price) or exec_price <= 0:
                         continue
-                    alloc = min(tgt, cash * 0.99)
-                    if alloc <= 0:
+                    if per_entrant_budget <= 0:
                         break
-                    sh = math.floor(alloc / (exec_price * (1 + slippage)))
+                    sh = math.floor(per_entrant_budget / (exec_price * (1 + slippage)))
                     if sh < 1:
                         continue
                     cost = sh * exec_price * (1 + slippage)
@@ -493,6 +507,7 @@ def run_strategy(*,
                     cost_basis[sym] = cost_basis.get(sym, 0) + cost
                     entry_meta[sym] = {'date': date, 'peak': exec_price}
                     cash -= cost
+                    spent[sym] += cost
                     trade_records.append({
                         'date': date, 'symbol': sym, 'side': 'BUY',
                         'shares': sh, 'price': exec_price,
@@ -500,6 +515,45 @@ def run_strategy(*,
                         'slippage': sh * exec_price * slippage,
                         'reason': 'entry'
                     })
+
+                # Pass 2: redistribute leftover cash to entrants that
+                # haven't yet hit their target. Bound by remaining cash.
+                # Skip dust-sized fills: only top up if room is meaningful
+                # (>=10% of tgt) to avoid generating dozens of 1-share dust
+                # trades from rounding leftovers.
+                min_topup = tgt * 0.10
+                if cash > min_topup:
+                    for sym in entrants:
+                        room_to_target = tgt - spent.get(sym, 0)
+                        if room_to_target < min_topup:
+                            continue
+                        exec_price = (trade_panel.loc[date, sym]
+                                      if sym in trade_panel.columns else np.nan)
+                        if pd.isna(exec_price) or exec_price <= 0:
+                            continue
+                        alloc = min(room_to_target, cash * 0.99)
+                        if alloc < min_topup:
+                            continue
+                        sh = math.floor(alloc / (exec_price * (1 + slippage)))
+                        if sh < 1:
+                            continue
+                        cost = sh * exec_price * (1 + slippage)
+                        if cost > cash:
+                            continue
+                        holdings[sym] = holdings.get(sym, 0) + sh
+                        cost_basis[sym] = cost_basis.get(sym, 0) + cost
+                        # Don't overwrite entry_meta if already set by pass 1
+                        if sym not in entry_meta:
+                            entry_meta[sym] = {'date': date, 'peak': exec_price}
+                        cash -= cost
+                        spent[sym] += cost
+                        trade_records.append({
+                            'date': date, 'symbol': sym, 'side': 'BUY',
+                            'shares': sh, 'price': exec_price,
+                            'notional': sh * exec_price,
+                            'slippage': sh * exec_price * slippage,
+                            'reason': 'entry'
+                        })
 
     return {
         'equity': pd.DataFrame(eq_records),
