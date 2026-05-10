@@ -205,6 +205,7 @@ def run_strategy(*,
                  initial_capital=1_000_000,
                  use_trailing_stop=True,    # ATR trailing stop on/off
                  use_dma_exit=True,          # weekly 200 DMA exit on/off (independent)
+                 donchian_low_panel=None,    # optional Date×Symbol N-day low panel; exit if close < low
                  regime_panel=None,         # optional pd.Series[date]->bool, True=bull
                  bear_exposure=0.0,          # gross exposure cap during bear (0..1)
                  ):
@@ -346,8 +347,9 @@ def run_strategy(*,
         # Weekly exit check: signal date close + indicators, execute today.
         # Peak already reflects all closes through signal_date (updated daily
         # above) so we don't redo the peak update here.
-        # 200 DMA and ATR stop are independent toggles.
-        if (use_trailing_stop or use_dma_exit) and date in weekly_exec_to_signal:
+        # 200 DMA, ATR stop, and Donchian low are independent toggles.
+        use_donchian = donchian_low_panel is not None
+        if (use_trailing_stop or use_dma_exit or use_donchian) and date in weekly_exec_to_signal:
             signal_date = weekly_exec_to_signal[date]
             if signal_date in close_panel.index:
                 signal_close_row = close_panel.loc[signal_date]
@@ -369,9 +371,21 @@ def run_strategy(*,
 
                     hit_dma = use_dma_exit and (sc < s200)
                     hit_atr = use_trailing_stop and (op < -trail)
+                    hit_donchian = False
+                    if use_donchian and sym in donchian_low_panel.columns:
+                        don_low = donchian_low_panel.loc[signal_date, sym] \
+                                  if signal_date in donchian_low_panel.index else None
+                        if don_low is not None and not pd.isna(don_low):
+                            hit_donchian = sc < don_low
 
-                    if hit_dma or hit_atr:
-                        exits_now.append((sym, '200dma' if hit_dma else 'atr_stop'))
+                    if hit_dma or hit_atr or hit_donchian:
+                        if hit_donchian:
+                            reason = 'donchian'
+                        elif hit_dma:
+                            reason = '200dma'
+                        else:
+                            reason = 'atr_stop'
+                        exits_now.append((sym, reason))
 
                 for sym, reason in exits_now:
                     sh = holdings.pop(sym, 0)

@@ -76,6 +76,30 @@ vs same combo on 200 DMA: +0.1 to +0.34 Sharpe, 0-15pp better DD.
 
 ---
 
+## Stop-loss alternatives explored & rejected (2026-05-10)
+
+Discovered prior "ATR" was actually 20-day return std (not real ATR).
+Tested true ATR (OHLC-based) + Donchian channels, then a regime-aware
+hybrid. All discipline-driven (IS-only first, then OOS).
+
+**True ATR(14) × 6 — IS:** 29.05% / 1.60 / -25.5% (tied with fixed 20% on Sharpe)
+**True ATR(14) × 6 — OOS:** 42.46% / 1.75 / -37.2% (loses on every metric vs fixed 20%)
+- COVID 2020 was the failure mode: ATR widened in vol shock → looser stops just when needed tighter
+
+**Donchian — IS:** best Sharpe 1.57 (20d). Doesn't beat fixed 20%.
+
+**Hybrid: bull→ATR(14)×6, bear→fixed 20% — IS:** 26.74% / 1.51 / -26.1%
+- WORSE than no-stop baseline (1.53)
+- Reverse hybrid (sanity check) was BETTER (1.59) — failed in wrong direction
+- Mechanism story didn't hold; switching stops at regime boundaries creates whipsaw friction
+- Confirmed user's overfitting concern
+
+**Net result:** locked-in stays as fixed 20% from peak. Multiple alternatives
+tested rigorously; none survives IS+OOS validation. Sole exit mechanic
+remains rank-at-rebalance + fixed 20% drawdown stop.
+
+---
+
 ## Final addition: 20% drawdown stop (2026-05-10)
 
 User flagged feeling insecure about a strategy with only rank exits and asked
