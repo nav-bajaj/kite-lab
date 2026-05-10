@@ -203,7 +203,8 @@ def run_strategy(*,
                  max_weight=0.075,
                  slippage=0.002,
                  initial_capital=1_000_000,
-                 use_trailing_stop=True,    # if False, only 200 DMA exit
+                 use_trailing_stop=True,    # ATR trailing stop on/off
+                 use_dma_exit=True,          # weekly 200 DMA exit on/off (independent)
                  regime_panel=None,         # optional pd.Series[date]->bool, True=bull
                  bear_exposure=0.0,          # gross exposure cap during bear (0..1)
                  ):
@@ -345,7 +346,8 @@ def run_strategy(*,
         # Weekly exit check: signal date close + indicators, execute today.
         # Peak already reflects all closes through signal_date (updated daily
         # above) so we don't redo the peak update here.
-        if use_trailing_stop and date in weekly_exec_to_signal:
+        # 200 DMA and ATR stop are independent toggles.
+        if (use_trailing_stop or use_dma_exit) and date in weekly_exec_to_signal:
             signal_date = weekly_exec_to_signal[date]
             if signal_date in close_panel.index:
                 signal_close_row = close_panel.loc[signal_date]
@@ -365,8 +367,8 @@ def run_strategy(*,
                         atr = 0.02
                     trail = max(atr_mult * atr, atr_min_floor)
 
-                    hit_dma = sc < s200
-                    hit_atr = op < -trail
+                    hit_dma = use_dma_exit and (sc < s200)
+                    hit_atr = use_trailing_stop and (op < -trail)
 
                     if hit_dma or hit_atr:
                         exits_now.append((sym, '200dma' if hit_dma else 'atr_stop'))

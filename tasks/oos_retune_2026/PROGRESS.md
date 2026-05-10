@@ -76,6 +76,24 @@ vs same combo on 200 DMA: +0.1 to +0.34 Sharpe, 0-15pp better DD.
 
 ---
 
+## Engine bug fix + exit-mechanic verification (2026-05-10)
+
+User flagged an exit-trigger question. Investigation revealed:
+
+1. **Bug:** `_clean_engine.run_strategy` had both ATR trailing stop AND 200 DMA exit gated behind a single `use_trailing_stop` flag. With `use_trailing_stop=False` (our config), 200 DMA exit was NOT firing. All 830 exits in the locked-in winner were rank-based.
+
+2. **Fix:** Split into two independent flags, `use_trailing_stop` and `use_dma_exit`.
+
+3. **Empirical test:** With `use_dma_exit=True` enabled, the strategy made 1,408 exits (834 = 200 DMA, 574 = rank). 200 DMA exits had 39% hit rate / median -1.7% PnL. Net effect: -3.8pp CAGR / -0.07 Sharpe / +2.6pp DD reduction. Bad trade.
+
+4. **Conclusion:** the locked-in `use_dma_exit=False` setting is the right choice — the strategy's biweekly rank-rotation + regime tilt provides sufficient exit discipline without 200 DMA over-pruning.
+
+Sole exit mechanic in production:
+- **Rank exit at biweekly rebalance** — when stock falls below rank 45 (top-25 + buffer-20)
+- Stats: 830 exits over 17 years, 57.7% hit rate, +24.3% avg PnL, 172-day avg hold
+
+---
+
 ## OM25 LOCKED IN (2026-05-10)
 
 Final config: **Nifty 250 biweekly + NIFTY 100 100-DMA 3-conf regime + bull(50/50) → bear(0/100) tilt**.

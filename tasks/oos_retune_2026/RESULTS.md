@@ -18,6 +18,7 @@
 | **Min observations** | 220 | Noise filter; stocks with sparser histories excluded. |
 | **Return filter** | ON (require positive 252d total return) | +0.11 IS Sharpe at 50/50 weights; small but consistent edge. |
 | **ATR trailing stop** | OFF | Tested 0/3/4/5/6/8x with 0/5/10% floors; "no stop" wins universally. |
+| **200 DMA weekly exit** | **OFF** | Empirically tested (after fixing engine bug): enabling adds 834 exits over the period but 200 DMA exits have only 39% hit rate (median -1.7% PnL) — they mostly stop out positions during normal pullbacks. Net cost: -3.8pp CAGR / -0.07 Sharpe / +2.6pp DD reduction. Bad ratio. |
 | **Position sizing** | Equal 1/N, 7.5% max, drift after entry | No rebalancing within rebalance windows. |
 | **Slippage** | 20 bps (OHLC/4 pricing) | Realistic India retail/HNI execution. |
 
@@ -144,6 +145,22 @@ The tilt earns its keep on big bear events (2011, 2018, 2020). Costs ~5-10pp in 
 Strategy delivers ~24 percentage points of annualized alpha over the closest comparable cap-weighted index across the full 17-year period.
 
 ---
+
+## Exit mechanics
+
+Only one exit trigger fires in the locked-in config: **rank exit at biweekly rebalance** (drop below rank 45 = top-25 + buffer-20). Stats over the 17-year backtest:
+
+| Metric | Value |
+|---|---|
+| Total exits | 830 |
+| Hit rate (PnL > 0) | 57.7% |
+| Avg PnL on exit | +24.3% |
+| Median PnL on exit | +3.2% |
+| Avg hold | 172 days (~5.7 months) |
+
+Long right-tail of big winners (avg 24% vs median 3%). The hold of ~5.7 months reflects the fact that names entered during a cycle stay until they fall out of top-45 — defensive companies during bear regimes naturally hold longer than aggressive names during bull regimes.
+
+**An engine bug was discovered and fixed during this work** (commit `_clean_engine.py`): previously `use_trailing_stop=False` disabled BOTH the ATR trailing stop and the 200 DMA exit because they were gated behind the same flag. Now `use_trailing_stop` and `use_dma_exit` are independent. The locked-in strategy uses `use_dma_exit=False` as a tested choice (not an accidental disabling) — the empirical comparison showed adding 200 DMA exit costs 3.8pp CAGR for 2.6pp DD reduction.
 
 ## Why this won
 
