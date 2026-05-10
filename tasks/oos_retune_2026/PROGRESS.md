@@ -76,6 +76,48 @@ vs same combo on 200 DMA: +0.1 to +0.34 Sharpe, 0-15pp better DD.
 
 ---
 
+## Production report + allocation bug discovered (2026-05-10)
+
+Generated comprehensive HTML report for the locked-in OM25 from
+2016-01-01 → 2026-05-08 (10.4 years). Includes risk metrics (Beta,
+Alpha, Information Ratio, Omega, Calmar, VaR/CVaR, Tail Ratio, Skew/
+Kurtosis), per-index comparison (Nifty 50/100/250/500), drawdowns,
+year-by-year, monthly heatmap, current holdings with PnL, last-10-day
+PnL.
+
+Final OM25 production-config metrics over 10.4 years:
+- CAGR: 40.18%
+- Sharpe: 1.70 (rf=5%)
+- Max DD: -31.55%
+- Total return: ~3,700%
+- 25 holdings as of 2026-05-08, ~0% cash
+
+Report file: `reports/om25_production_<ts>.html`
+
+**Bug discovered during report review:** the `_clean_engine.run_strategy`
+entrant-allocation loop is greedy/sequential — on rebalance days, each
+new entrant is allocated `min(target_weight × pv, remaining_cash × 0.99)`.
+When earlier entrants in iteration order consume cash, later entrants
+get fractional allocations.
+
+Example: CUMMINSIND on 2026-03-02 got 8 shares (notional ₹38k, weight
+0.13%) instead of the ~4% target. 78 of 709 BUYs (11%) had < 50 shares.
+Most are high-priced names where 1-share is plausible (HONAUT ₹28k,
+PAGEIND ₹24k, 3MINDIA ₹20k), but some are mid-priced names like
+CUMMINSIND that should have gotten ~10× more shares.
+
+**Impact:** portfolio isn't truly equal-weight. Affected positions are
+< 1% of portfolio and don't materially hurt CAGR. But the engine has a
+real allocation flaw worth fixing for correctness.
+
+**Fix plan (next):**
+- Sell-first pass to compute total available cash
+- Compute `per_entrant_cash = available_cash / num_entrants` (or use
+  total target × num_entrants pro-rata)
+- Allocate to each entrant up to that share, regardless of iteration order
+
+---
+
 ## Stop-loss alternatives explored & rejected (2026-05-10)
 
 Discovered prior "ATR" was actually 20-day return std (not real ATR).
