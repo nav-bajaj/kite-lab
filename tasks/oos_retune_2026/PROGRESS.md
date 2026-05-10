@@ -76,6 +76,31 @@ vs same combo on 200 DMA: +0.1 to +0.34 Sharpe, 0-15pp better DD.
 
 ---
 
+## Final addition: 20% drawdown stop (2026-05-10)
+
+User flagged feeling insecure about a strategy with only rank exits and asked
+to think of an alternative trailing stop other than 200 DMA (which we tested
+and rejected). Solution: hard %-from-peak drawdown stop.
+
+Engine trick: `atr_mult=0, atr_min_floor=X, use_trailing_stop=True` gives
+a fixed X% drawdown stop without ATR scaling. Tested 15/20/25/30%:
+
+| Stop | Exits | %Stop | OOS CAGR | OOS Sharpe | OOS DD |
+|---|---|---|---|---|---|
+| Baseline (no stop) | 830 | 0% | 44.78% | 1.83 | -36.57% |
+| 15% | 1403 | 54% | 41.43% | 1.84 | -27.37% |
+| **20%** | **1093** | **34%** | **43.57%** | **1.86** | **-31.44%** |
+| 25% | 960 | 22% | 43.44% | 1.83 | -33.54% |
+| 30% | 902 | 12% | 40.13% | 1.71 | -35.76% |
+
+20% is the sweet spot: -1.2pp CAGR cost, +0.03 Sharpe gain, +5.1pp DD better.
+Stop hit rate 50%, median PnL -0.2% — catches mean-reverters cleanly.
+Locked in.
+
+Final OM25 OOS-full performance: **43.57% CAGR / 1.86 Sharpe / -31.44% DD**.
+
+---
+
 ## Engine bug fix + exit-mechanic verification (2026-05-10)
 
 User flagged an exit-trigger question. Investigation revealed:

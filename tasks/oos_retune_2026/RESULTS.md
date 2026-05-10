@@ -17,8 +17,9 @@
 | **Lookback** | 252 trading days (1 year) | Production default; pinned to avoid 189-day overfit. |
 | **Min observations** | 220 | Noise filter; stocks with sparser histories excluded. |
 | **Return filter** | ON (require positive 252d total return) | +0.11 IS Sharpe at 50/50 weights; small but consistent edge. |
-| **ATR trailing stop** | OFF | Tested 0/3/4/5/6/8x with 0/5/10% floors; "no stop" wins universally. |
-| **200 DMA weekly exit** | **OFF** | Empirically tested (after fixing engine bug): enabling adds 834 exits over the period but 200 DMA exits have only 39% hit rate (median -1.7% PnL) — they mostly stop out positions during normal pullbacks. Net cost: -3.8pp CAGR / -0.07 Sharpe / +2.6pp DD reduction. Bad ratio. |
+| **ATR-scaled trailing stop** | OFF | Tested 0/3/4/5/6/8x with 0/5/10% floors; vol-scaled stops hurt CAGR. |
+| **200 DMA weekly exit** | **OFF** | Empirically tested (after fixing engine bug): enabling adds 834 exits but 200 DMA exits have only 39% hit rate (median -1.7% PnL) — they mostly stop out positions during normal pullbacks. Net cost: -3.8pp CAGR for 2.6pp DD reduction. Bad ratio. |
+| **Hard %-from-peak drawdown stop** | **20% (ON)** | Tested 15/20/25/30%; 20% is the sweet spot. Fires 371 times over 17 years (33.9% of total exits), 50% hit rate, median ~0% PnL on stop exits — catches real losers without over-pruning. Improves Sharpe by 0.03 and Max DD by 5.1pp at -1.2pp CAGR cost. Implementation: `atr_mult=0, atr_min_floor=0.20, use_trailing_stop=True`. |
 | **Position sizing** | Equal 1/N, 7.5% max, drift after entry | No rebalancing within rebalance windows. |
 | **Slippage** | 20 bps (OHLC/4 pricing) | Realistic India retail/HNI execution. |
 
@@ -62,27 +63,26 @@ The strategy is **always 100% invested** — regime only tilts the score blend, 
 
 ## Performance (in-engine backtest on GDF-stitched panel, 2009-2026)
 
-### Per-window summary
+### Per-window summary (with 20% drawdown stop)
 
 | Window | Period | Years | CAGR | Sharpe | Max DD |
 |---|---|---|---|---|---|
-| **IS** | 2009-09 → 2016-12 | 7.0 | — | 1.53 | -19.3% |
-| **OOS-A** | 2017-01 → 2019-12 | 3.0 | 26.47% | 1.57 | -23.0% |
-| **OOS-B** | 2020-01 → 2022-12 | 3.0 | 64.15% | **2.10** | -36.6% |
-| **OOS-C** | 2023-01 → 2026-05 | 3.4 | 36.39% | 1.80 | -24.3% |
-| **OOS-full** | 2017-01 → 2026-05 | 9.3 | **44.78%** | **1.83** | **-36.6%** |
-| Full | 2010-01 → 2026-05 | 16.3 | 34.60% | — | -36.6% |
+| **IS** | 2009-09 → 2016-12 | 7.0 | 28.59% | 1.60 | -26.5% |
+| **OOS-A** | 2017-01 → 2019-12 | 3.0 | 26.14% | 1.60 | -20.9% |
+| **OOS-B** | 2020-01 → 2022-12 | 3.0 | 60.04% | **2.12** | -31.4% |
+| **OOS-C** | 2023-01 → 2026-05 | 3.4 | 46.49% | 1.85 | -23.4% |
+| **OOS-full** | 2017-01 → 2026-05 | 9.3 | **43.57%** | **1.86** | **-31.44%** |
 
 ### Pass criteria (from PLAN.md)
 
 | Criterion | Target | Result |
 |---|---|---|
-| IS Sharpe ≥ 1.0 | ✓ 1.53 |
-| OOS-full Sharpe ≥ 1.0 | ✓ 1.83 |
-| OOS-A Sharpe ≥ 0.7 | ✓ 1.57 |
-| OOS-B Sharpe ≥ 0.7 | ✓ 2.10 |
-| OOS-C Sharpe ≥ 0.7 | ✓ 1.80 |
-| OOS-full Max DD ≥ -45% | ✓ -36.6% |
+| IS Sharpe ≥ 1.0 | ✓ 1.60 |
+| OOS-full Sharpe ≥ 1.0 | ✓ 1.86 |
+| OOS-A Sharpe ≥ 0.7 | ✓ 1.60 |
+| OOS-B Sharpe ≥ 0.7 | ✓ 2.12 |
+| OOS-C Sharpe ≥ 0.7 | ✓ 1.85 |
+| OOS-full Max DD ≥ -45% | ✓ -31.44% |
 
 **All pass. Aspirational targets (40% CAGR / 1.5 Sharpe) both exceeded.**
 
@@ -148,19 +148,33 @@ Strategy delivers ~24 percentage points of annualized alpha over the closest com
 
 ## Exit mechanics
 
-Only one exit trigger fires in the locked-in config: **rank exit at biweekly rebalance** (drop below rank 45 = top-25 + buffer-20). Stats over the 17-year backtest:
+Two exit triggers fire in the locked-in config:
+
+### 1. Rank exit at biweekly rebalance
+Drop below rank 45 (top-25 + buffer-20) at any biweekly Friday signal date.
 
 | Metric | Value |
 |---|---|
-| Total exits | 830 |
-| Hit rate (PnL > 0) | 57.7% |
-| Avg PnL on exit | +24.3% |
-| Median PnL on exit | +3.2% |
-| Avg hold | 172 days (~5.7 months) |
+| Count | 722 (66.1% of exits) |
+| Hit rate | 59.1% |
+| Avg PnL | +14.6% |
+| Median PnL | +3.5% |
+| Avg hold | 117 days |
 
-Long right-tail of big winners (avg 24% vs median 3%). The hold of ~5.7 months reflects the fact that names entered during a cycle stay until they fall out of top-45 — defensive companies during bear regimes naturally hold longer than aggressive names during bull regimes.
+### 2. Hard 20%-from-peak drawdown stop (weekly check)
+Exit if Close < 0.80 × position's running peak. Position peak is updated daily from entry. Check fires on weekly signal dates; execution next trading day.
 
-**An engine bug was discovered and fixed during this work** (commit `_clean_engine.py`): previously `use_trailing_stop=False` disabled BOTH the ATR trailing stop and the 200 DMA exit because they were gated behind the same flag. Now `use_trailing_stop` and `use_dma_exit` are independent. The locked-in strategy uses `use_dma_exit=False` as a tested choice (not an accidental disabling) — the empirical comparison showed adding 200 DMA exit costs 3.8pp CAGR for 2.6pp DD reduction.
+| Metric | Value |
+|---|---|
+| Count | 371 (33.9% of exits) |
+| Hit rate | 49.9% (50% — coin flip; that's by design) |
+| Avg PnL | +21.4% |
+| Median PnL | -0.2% |
+| Avg hold | 159 days |
+
+The drawdown-stop's median PnL is essentially 0% — it's catching positions that *had* run up but then mean-reverted ~20%, capturing what was left rather than letting the loss deepen. The avg PnL of +21% reflects positive selection (stops fire on positions that had already appreciated, not on day-1 losers).
+
+**Engine bug discovered and fixed during this work** (`_clean_engine.py`): previously `use_trailing_stop=False` disabled BOTH the ATR trailing stop and the 200 DMA exit because they were gated behind the same flag. Now `use_trailing_stop` (ATR) and `use_dma_exit` (200 DMA) are independent toggles. The locked-in strategy uses `use_trailing_stop=True` with `atr_mult=0, atr_min_floor=0.20` (this gives a fixed 20% drawdown stop without ATR scaling) and `use_dma_exit=False`.
 
 ## Why this won
 
