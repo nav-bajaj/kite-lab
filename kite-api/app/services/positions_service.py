@@ -391,6 +391,8 @@ class PositionsService:
             experiments_dir = settings.data_dir / "nifty_100_tests"
         elif universe == "nifty250":
             experiments_dir = settings.data_dir / "nifty_250_tests"
+        elif universe == "om25_v3":
+            experiments_dir = settings.data_dir / "data" / "om25_v3_portfolios"
         else:
             experiments_dir = portfolio_dir
 
@@ -399,15 +401,17 @@ class PositionsService:
 
         # Check experiments folder for timestamped runs first (most likely location)
         import re
+        # Matches: final_portfolio_<14-digit-ts>, nifty\d+_portfolio_<14-digit-ts>,
+        # or om25_v3_portfolio_<YYYYMMDD>_<HHMMSS> (underscore-separated date/time).
+        dir_pattern = re.compile(
+            r'(final_portfolio|nifty\d+_portfolio|om25_v3_portfolio)_\d{8}(_\d{6}|\d{6})'
+        )
         for search_dir in [experiments_dir, portfolio_dir]:
             if search_dir.exists():
-                # Filter to timestamped folders only (YYYYMMDDHHMMSS pattern)
                 timestamped_dirs = []
                 for subdir in search_dir.iterdir():
-                    if subdir.is_dir():
-                        # Match folders like final_portfolio_20260306182308 or nifty100_portfolio_20260306182308
-                        if re.match(r'(final_portfolio|nifty\d+_portfolio)_\d{14}', subdir.name):
-                            timestamped_dirs.append(subdir)
+                    if subdir.is_dir() and dir_pattern.match(subdir.name):
+                        timestamped_dirs.append(subdir)
 
                 # Sort by name (timestamp) descending to get latest first
                 for subdir in sorted(timestamped_dirs, key=lambda x: x.name, reverse=True):
