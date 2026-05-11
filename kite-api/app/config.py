@@ -63,11 +63,16 @@ def get_settings() -> Settings:
 
 
 # Universe configuration
+# Note: `om25_v3` is a strategy entry (not just a universe) — it runs the
+# OM25 v3 regime-tilted strategy on the Nifty 250 stocks. Treated like a
+# universe for dashboard/DB compatibility; UNIVERSES dict is now strategy×
+# universe combinations.
 UNIVERSES = {
     "nse500": {
         "id": "nse500",
         "name": "NSE 500",
         "description": "Full mid+large cap universe",
+        "strategy": "L6 momentum",
         "stocks": 499,
         "risk_profile": "Growth-focused",
         "data_dir": "nse500_data",
@@ -78,9 +83,10 @@ UNIVERSES = {
         "id": "nifty250",
         "name": "Nifty 250",
         "description": "Large + mid-cap blend",
+        "strategy": "L6 momentum",
         "stocks": 250,
         "risk_profile": "Balanced",
-        "data_dir": "nse500_data",  # Uses same price data
+        "data_dir": "nse500_data",
         "universe_file": "data/static/nifty250_universe.csv",
         "portfolio_dir": "nifty_250_tests",
     },
@@ -88,15 +94,27 @@ UNIVERSES = {
         "id": "nifty100",
         "name": "Nifty 100",
         "description": "Large-cap only",
+        "strategy": "L6 momentum",
         "stocks": 100,
         "risk_profile": "Conservative",
-        "data_dir": "nse500_data",  # Uses same price data
+        "data_dir": "nse500_data",
         "universe_file": "data/static/nifty100_universe.csv",
         "portfolio_dir": "nifty_100_tests",
     },
+    "om25_v3": {
+        "id": "om25_v3",
+        "name": "OM25 v3",
+        "description": "Regime-tilted UC/CR composite on Nifty 250 (May 2026 OOS retune)",
+        "strategy": "OM25 v3 (UC/CR composite, regime-tilted)",
+        "stocks": 250,
+        "risk_profile": "Quality momentum with defensive bear tilt",
+        "data_dir": "nse500_data",
+        "universe_file": "data/static/nifty250_universe.csv",
+        "portfolio_dir": "data/om25_v3_portfolios",
+    },
 }
 
-UniverseId = Literal["nse500", "nifty250", "nifty100"]
+UniverseId = Literal["nse500", "nifty250", "nifty100", "om25_v3"]
 
 
 def get_universe(universe_id: UniverseId) -> dict:

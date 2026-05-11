@@ -24,6 +24,8 @@ def get_latest_experiment_dir(universe: str = "nse500") -> Optional[Path]:
         pattern = base_dir / "nifty_100_tests" / "nifty100_portfolio_202*"
     elif universe == "nifty250":
         pattern = base_dir / "nifty_250_tests" / "nifty250_portfolio_202*"
+    elif universe == "om25_v3":
+        pattern = base_dir / "data" / "om25_v3_portfolios" / "om25_v3_portfolio_202*"
     else:
         return None
 
@@ -269,9 +271,9 @@ def sync_all(universe: str = "nse500", full_trades: bool = False) -> dict:
 
 def sync_all_universes(full_trades: bool = False) -> dict:
     """
-    Sync all data for all universes.
+    Sync all data for all universes (and strategies treated as universes).
     """
     results = {}
-    for universe in ["nse500", "nifty100", "nifty250"]:
+    for universe in ["nse500", "nifty100", "nifty250", "om25_v3"]:
         results[universe] = sync_all(universe, full_trades=full_trades)
     return results

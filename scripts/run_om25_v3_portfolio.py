@@ -45,6 +45,127 @@ from scripts.om25_v3 import (
 )
 
 
+def write_dashboard_outputs(*, dashboard_dir: Path, eq: pd.DataFrame,
+                             trades: pd.DataFrame, exits: pd.DataFrame,
+                             close_panel: pd.DataFrame, slippage: float) -> None:
+    """Write L6-momentum-schema CSVs that kite-api sync_service can read.
+
+    Schema match required by app/services/sync_service.py:
+      - momentum_equity.csv:    date, portfolio_value, benchmark, drawdown
+      - momentum_holdings.csv:  symbol, shares, avg_cost, entry_date,
+                                entry_rank, holding_days, last_price,
+                                pnl_pct, notional, contribution_pct
+      - momentum_trades.csv:    date, symbol, side, shares, price,
+                                notional, slippage
+      - momentum_metrics.csv:   single-row with cagr, total_return,
+                                max_drawdown, sharpe_ratio, etc.
+    """
+    import math
+
+    # ---- equity ----
+    eq_out = eq.copy()
+    eq_out["date"] = pd.to_datetime(eq_out["date"])
+    eq_out = eq_out.sort_values("date").reset_index(drop=True)
+    eq_out["portfolio_value"] = eq_out["pv"].astype(float)
+    eq_out["drawdown"] = eq_out["portfolio_value"] / eq_out["portfolio_value"].cummax() - 1.0
+    bench_col = eq_out["benchmark"] if "benchmark" in eq_out.columns else None
+    out_cols = ["date", "portfolio_value", "drawdown"]
+    if bench_col is not None:
+        out_cols.append("benchmark")
+    eq_out[out_cols].to_csv(dashboard_dir / "momentum_equity.csv", index=False)
+
+    # ---- trades ----
+    tr_out = trades.copy()
+    tr_out["date"] = pd.to_datetime(tr_out["date"])
+    keep = ["date", "symbol", "side", "shares", "price", "notional", "slippage"]
+    tr_out = tr_out[[c for c in keep if c in tr_out.columns]]
+    tr_out.to_csv(dashboard_dir / "momentum_trades.csv", index=False)
+
+    # ---- holdings (reconstruct current open positions) ----
+    held = {}
+    for _, tr in trades.sort_values("date").iterrows():
+        sym = tr["symbol"]
+        side = tr["side"]
+        sh = tr["shares"]
+        price = tr["price"]
+        if side == "BUY":
+            if sym not in held:
+                held[sym] = {"shares": 0, "cost_basis": 0,
+                              "entry_date": tr["date"], "entry_price": price}
+            held[sym]["shares"] += sh
+            held[sym]["cost_basis"] += sh * price * (1 + slippage)
+        else:
+            if sym in held and held[sym]["shares"] > 0:
+                cost_per_share = held[sym]["cost_basis"] / held[sym]["shares"]
+                held[sym]["shares"] -= sh
+                held[sym]["cost_basis"] -= sh * cost_per_share
+                if held[sym]["shares"] <= 0:
+                    held.pop(sym, None)
+
+    last_date = pd.to_datetime(eq_out["date"].iloc[-1])
+    final_pv = float(eq_out["portfolio_value"].iloc[-1])
+    holdings_rows = []
+    for sym, info in held.items():
+        if info["shares"] <= 0:
+            continue
+        last_close = (close_panel.loc[last_date, sym]
+                      if sym in close_panel.columns else None)
+        if last_close is None or pd.isna(last_close):
+            continue
+        notional = info["shares"] * float(last_close)
+        avg_cost = info["cost_basis"] / info["shares"] if info["shares"] > 0 else 0
+        pnl = (float(last_close) / avg_cost - 1) if avg_cost > 0 else 0
+        days = (last_date - info["entry_date"]).days
+        holdings_rows.append({
+            "symbol": sym,
+            "shares": int(info["shares"]),
+            "avg_cost": round(avg_cost, 4),
+            "entry_date": info["entry_date"].strftime("%Y-%m-%d"),
+            "entry_rank": 1,  # not tracked; placeholder
+            "holding_days": int(days),
+            "last_price": round(float(last_close), 4),
+            "pnl_pct": round(pnl, 6),
+            "notional": round(notional, 2),
+            "contribution_pct": round(notional / final_pv, 6) if final_pv > 0 else 0,
+        })
+    holdings_df = pd.DataFrame(holdings_rows).sort_values("notional", ascending=False)
+    holdings_df.to_csv(dashboard_dir / "momentum_holdings.csv", index=False)
+
+    # ---- metrics (single-row) ----
+    pv = eq_out.set_index("date")["portfolio_value"].astype(float)
+    rets = pv.pct_change().dropna()
+    days = (pv.index[-1] - pv.index[0]).days
+    yrs = max(days / 365.25, 1e-9)
+    total_ret = pv.iloc[-1] / pv.iloc[0] - 1
+    cagr = (pv.iloc[-1] / pv.iloc[0]) ** (1 / yrs) - 1
+    vol = rets.std() * math.sqrt(252)
+    sharpe = (cagr - 0.05) / vol if vol > 0 else 0
+    mdd = pv.div(pv.cummax()).min() - 1
+    sells = trades[trades["side"] == "SELL"]
+    hit_rate = (
+        (exits["pnl_pct"] > 0).mean()
+        if not exits.empty and "pnl_pct" in exits.columns else 0
+    )
+    avg_hold = exits["hold_days"].mean() if not exits.empty and "hold_days" in exits.columns else 0
+    metrics_row = {
+        "start": pv.index[0].date(),
+        "end": pv.index[-1].date(),
+        "total_return": float(total_ret),
+        "cagr": float(cagr),
+        "max_drawdown": float(mdd),
+        "sharpe_ratio": float(sharpe),
+        "annualized_volatility": float(vol),
+        "hit_rate_overall": float(hit_rate),
+        "avg_holding_days": float(avg_hold),
+        "trades_total": int(len(trades)),
+        "buys": int((trades["side"] == "BUY").sum()),
+        "sells": int(len(sells)),
+    }
+    pd.DataFrame([metrics_row]).to_csv(
+        dashboard_dir / "momentum_metrics.csv", index=False
+    )
+
+
 def parse_args():
     ap = argparse.ArgumentParser(description="OM25 v3 production pipeline")
     ap.add_argument("--prices-dir", type=Path,
@@ -87,8 +208,16 @@ def parse_args():
 def main():
     args = parse_args()
     ts = pd.Timestamp.now().strftime("%Y%m%d_%H%M%S")
-    out_dir = args.output_dir or (ROOT / f"data/om25/v3/runs/{ts}")
+    # Output structure matches existing L6/TL25 portfolio convention so the
+    # dashboard sync_service can find it under data/om25_v3_portfolios/
+    # om25_v3_portfolio_<ts>/backtests/baseline/momentum_*.csv. Top-level
+    # of the run dir also has the OM25-native om25_*.csv files.
+    out_dir = args.output_dir or (
+        ROOT / f"data/om25_v3_portfolios/om25_v3_portfolio_{ts}"
+    )
     out_dir.mkdir(parents=True, exist_ok=True)
+    dashboard_dir = out_dir / "backtests" / "baseline"
+    dashboard_dir.mkdir(parents=True, exist_ok=True)
 
     print(f"[run] OM25 v3 production pipeline")
     print(f"  output → {out_dir}")
@@ -185,6 +314,15 @@ def main():
     trades.to_csv(out_dir / "om25_trades.csv", index=False)
     exits.to_csv(out_dir / "om25_exits.csv", index=False)
     signals_df.to_csv(out_dir / "om25_signals.csv", index=False)
+
+    # ============ Dashboard-compatible outputs ============
+    # Mirror L6 momentum schema so kite-api/services/sync_service.py
+    # can sync this strategy without code changes.
+    write_dashboard_outputs(
+        dashboard_dir=dashboard_dir,
+        eq=eq, trades=trades, exits=exits,
+        close_panel=close_panel, slippage=args.slippage,
+    )
 
     # Compute headline metrics
     pv = eq.set_index("date")["pv"].astype(float)
