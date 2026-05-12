@@ -112,9 +112,20 @@ UNIVERSES = {
         "universe_file": "data/static/nifty250_universe.csv",
         "portfolio_dir": "data/om25_v3_portfolios",
     },
+    "tl25_v3": {
+        "id": "tl25_v3",
+        "name": "TL25 v3",
+        "description": "Trend-quality score on NSE 500 (May 2026 OOS retune)",
+        "strategy": "TL25 v3 (3-component trend score, weekly rank-exit)",
+        "stocks": 499,
+        "risk_profile": "Pure trend-following, diversifier vs OM25",
+        "data_dir": "nse500_data",
+        "universe_file": "data/static/nse500_universe.csv",
+        "portfolio_dir": "data/tl25_v3_portfolios",
+    },
 }
 
-UniverseId = Literal["nse500", "nifty250", "nifty100", "om25_v3"]
+UniverseId = Literal["nse500", "nifty250", "nifty100", "om25_v3", "tl25_v3"]
 
 
 def get_universe(universe_id: UniverseId) -> dict:

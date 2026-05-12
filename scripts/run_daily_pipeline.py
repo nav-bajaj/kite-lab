@@ -28,6 +28,14 @@ SEQUENTIAL_STEPS = [
         "--regime-index", "indices_data/NIFTY_100.csv",
         "--start", "2020-01-01",
     ]),
+    # TL25 v3 production run — locked-in May 2026 OOS retune stack.
+    # Pure trend-following on NSE 500; complements OM25 v3 (different signal).
+    # See tasks/oos_retune_2026/RESULTS.md for the strategy spec.
+    ("Build TL25 v3 portfolio", [
+        sys.executable, "scripts/run_tl25_v3_portfolio.py",
+        "--prices-dir", "nse500_data",
+        "--start", "2020-01-01",
+    ]),
     ("Sync data to database", [sys.executable, "scripts/sync_to_database.py"]),
     ("Backup data to external location", [sys.executable, "scripts/sync_data_backup.py"]),
 ]
