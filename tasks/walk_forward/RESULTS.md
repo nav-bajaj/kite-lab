@@ -1,6 +1,6 @@
 # Walk-Forward Robustness Study — Results
 
-**Status:** Phase 1 (production-universe) and Phase 2 (cross-universe) completed 2026-05-12.
+**Status:** Phases 1-4 completed 2026-05-12. Locked v3 configs validated; no re-tune.
 
 **Scope:** OM25 v3 and TL25 v3, three universes (NSE 500, Nifty 250, Nifty 100), 13 rolling 3y-IS / 1y-OOS windows from 2010-09 to 2026-05. **78 OOS validations total.**
 
@@ -31,9 +31,31 @@
    - **W13** (OOS 2025-09 → 2026-05): partial recovery; insufficient data window
    These are not fixable via re-tuning; they're characteristic drawdowns of the strategy class.
 
+## Phase 4 — Alternative IS metrics (added after Phase 1-3)
+
+Question raised: would picking by an alternative IS metric (Calmar, multi-criteria, Sharpe+Calmar composite) instead of IS Sharpe give better OOS predictions?
+
+**Method:**
+- Phase 4a: cheap re-rank — for each window, compute IS-top-1 under each metric using existing `is_sweep.csv` data. Many new top-1 picks happen to be one of {challenger, baseline, worst} for which we already have OOS data.
+- Phase 4b: focused re-run — for OM25 windows where Calmar picks a config we don't have OOS for, run those OOS backtests (14 missing combos, ~30s).
+
+**Result (full unbiased sample, OM25 v3, n=39 windows across 3 universes):**
+
+| Metric | Mean OOS Sharpe | vs locked baseline | Pass rate |
+|---|---|---|---|
+| Sharpe (current) | 1.729 | +0.093 | 76.9% |
+| Calmar (alternative) | 1.743 | +0.108 | 76.9% |
+| **Δ** | **+0.014** | **+0.015** | **0** |
+
+The Phase 4a hint of +0.188 advantage for Calmar was **selection bias** — it came from comparing on sub-samples where Calmar's pick happened to overlap with one of three configs we'd already evaluated OOS. The Phase 4b unbiased comparison shrinks the advantage to +0.014, which is well within window-to-window noise.
+
+**Conclusion:** alternative IS selection metrics do NOT meaningfully improve OOS performance for either strategy. This *strengthens* the original recommendation — locked v3 configs are robust not only to a single IS selection metric, but across multiple plausible alternatives.
+
+For TL25 v3, no Phase 4b was needed; Phases 1-2 already showed the noise-floor (mean Δ vs baseline ≈ 0 regardless of selection metric).
+
 ## Recommendation
 
-**Do not re-tune OM25 v3 or TL25 v3.** The locked configs from `tasks/oos_retune_2026/` hold up under walk-forward stress. The two production locks (OM25→Nifty 250, TL25→NSE 500) are validated.
+**Do not re-tune OM25 v3 or TL25 v3.** The locked configs from `tasks/oos_retune_2026/` hold up under walk-forward stress, **and** the choice of IS Sharpe (vs Calmar, multi-criteria, or composite) is not load-bearing — alternative metrics give statistically indistinguishable OOS results.
 
 Manage W06-style and W12-style drawdowns at the portfolio level (position sizing, risk overlay), not at the strategy-config level.
 
@@ -43,7 +65,7 @@ Manage W06-style and W12-style drawdowns at the portfolio level (position sizing
 - **Param grids:** TL25 = 6 combos (3 weight × 2 DD stops); OM25 = 9 combos (3 UC/CR weights × 3 cadences). Tighter than original plan grids — sufficient for robustness measurement.
 - **Anti-overfit floors:** IS Max DD must be shallower than -45%; minimum 40 round-trip trades in 3y IS.
 - **No CLI flag changes** to production backtest scripts. Orchestrator calls `_clean_engine.run_strategy()` directly with pre-loaded panels (~1s per backtest).
-- **Total compute:** Phase 1 (26 window-runs) ran in 285s on M-series Mac with 6 workers; Phase 2 (78 window-runs) in 835s.
+- **Total compute:** Phase 1 (26 window-runs) ran in 285s on M-series Mac with 6 workers; Phase 2 (78 window-runs) in 835s; Phase 4a (alt-metric re-rank from existing CSVs) <1s; Phase 4b (14 missing OM25 OOS runs for Calmar) 34s. **Combined: ~20 min wall-clock** for the entire study.
 
 ## Files
 

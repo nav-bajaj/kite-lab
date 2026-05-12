@@ -47,7 +47,26 @@
   trajectory, gap distribution, IS-vs-OOS scatter, drift heatmap) + 4 tables
   + narrative callouts.
 - Wrote `RESULTS.md` and `reports/walk_forward_summary.html`.
-- Final recommendation: **keep locked v3 configs, no re-tune**.
+- Initial recommendation: **keep locked v3 configs, no re-tune**.
+
+### 2026-05-12 — Phase 4 alternative-IS-metric study (follow-up)
+- Question: could a different IS metric (Calmar, multi-criteria filter,
+  Sharpe+Calmar composite) predict OOS better than Sharpe?
+- **Phase 4a — cheap re-rank** (`scripts/walk_forward_alt_metrics.py`, <1s):
+  for each window, re-rank existing IS sweep results by each alt metric.
+  Many new top-1 picks overlap with existing OOS data (chal/base/worst):
+  Calmar 61.5%, multi 70.5%, composite 74.4%. Apparent OM25 Calmar advantage
+  +0.188 vs Sharpe — BUT on a biased subsample.
+- **Phase 4b — focused re-runs** (`scripts/walk_forward_run_missing.py`, 34s):
+  ran the 14 OM25 windows where Calmar's pick wasn't in the existing
+  chal/base/worst set.
+- **Result:** full unbiased sample (n=39 OM25 windows across 3 universes)
+  shows Calmar vs Sharpe Δ = **+0.014 mean OOS Sharpe (within noise)**.
+  Pass rate identical at 76.9%. The +0.188 was selection bias.
+- TL25 needed no Phase 4b — Phases 1-2 already proved noise-floor.
+- **Conclusion:** locked v3 configs robust across IS-metric choice too.
+  Strengthens the original recommendation. Added Phase 4 section to
+  `RESULTS.md` and `reports/walk_forward_summary.html`.
 
 ---
 
@@ -59,7 +78,10 @@
 | Phase 1 (production universes) | 26 | 285s | Both strategies, 6 workers |
 | Phase 2 (cross universes) | 78 | 835s | Adds Nifty 100 + cross-universe combos, 6 workers |
 | Phase 3 (report) | — | <30s | Chart + HTML generation |
-| **Total** | **~110** | **~19 min** | vs original plan's ~10 hr (~30× speedup) |
+| Phase 4a (alt-metric re-rank) | — | <1s | No new backtests, just re-rank existing IS CSVs |
+| Phase 4b (missing OM25 Calmar) | 14 | 34s | Focused OOS-only runs for un-overlapping configs |
+| Phase 3' (regenerate report) | — | <30s | Re-render with Phase 4 section |
+| **Total** | **~125** | **~20 min** | vs original plan's ~10 hr (~30× speedup) |
 
 The speedup came from the load-once orchestrator pattern + multiprocessing
 across (strategy, window) pairs. Modal/cloud was sketched but not needed.
@@ -78,4 +100,7 @@ across (strategy, window) pairs. Modal/cloud was sketched but not needed.
 | `tasks/walk_forward/results/phase2/` | Phase 2 outputs (78 window-runs) |
 | `reports/walk_forward_summary.html` | Phase 3 visual report (5 charts + tables) |
 | `scripts/run_walk_forward.py` | Orchestrator (load-once + multiprocessing) |
-| `scripts/walk_forward_report.py` | Report generator |
+| `scripts/walk_forward_report.py` | Report generator (charts + HTML + Markdown) |
+| `scripts/walk_forward_alt_metrics.py` | Phase 4a alt-metric re-rank |
+| `scripts/walk_forward_run_missing.py` | Phase 4b focused missing-config OOS runner |
+| `tasks/walk_forward/results/alt_metrics/` | Phase 4 outputs (overlap, per-window picks, aggregated, missing) |
