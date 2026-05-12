@@ -251,9 +251,85 @@ To explore:
 
 ---
 
-## TL25 retune
+## TL25 retune (2026-05-11 → 2026-05-12)
 
-Not yet started. Will follow OM25 pattern once OM25 winner is selected.
+### Setup
+- Used the same `_clean_engine.run_strategy` engine + multi-window OOS framework as OM25.
+- Created `scripts/tl25_v3.py` with `V2_LOCKED` defaults + parameterized `build_tl25_panels` and `make_tl25_score`.
+- Baseline established with TL25 V2 spec: NSE 500, bi-weekly, equal-1/3 weights, 252/126/63 windows, top-25/buffer-20, 5x ATR-vol stop, 200 DMA exit ON. IS Sharpe ~1.55.
+
+### IS-only sweeps (no OOS peeking)
+
+1. **Stop variants** — Tested A1 (no stops), A2 (200 DMA only), A3 (20% DD only), A4 (V2 stack: 200 DMA + 5x ATR-vol).
+   - **A3 won IS Sharpe (1.61, CAGR 30.57%, DD -28.21%).** V2's 200 DMA + 5x ATR-vol stack was worst.
+   - Locked: 20% fixed DD stop, no 200 DMA exit, no ATR-vol stop.
+2. **Weight variants (single config)** — Tested 11 weight combinations.
+   - **A3 weights 40/20/40 (Offensive P+M) won Sharpe 1.61.**
+   - Persistence-heavy 50/25/25 and 50/30/20 both at 1.60. DD-heavy variants under 1.55.
+3. **Tilt variants (regime-aware)** — Tested bull/bear weight tilts with NIFTY 100 regime panel.
+   - B2 (bear-DD-heavy tilt) had best IS Sharpe 1.62 but only 0.01 better than A3.
+   - User decision: keep single config (A3) to maintain product diversity vs OM25 (which is regime-tilted).
+4. **Windows / top-N sweep** — Tested persistence 126/252/378, momentum 21/63/126, drawdown 63/126/252, top-N 20/25/30, buffer 15/20/25.
+   - V2 defaults (252/126/63 + top-25/buffer-20) remained optimal.
+5. **Universe + cadence** — Tested NSE 500 / Nifty 250 / Nifty 100 × {weekly, biweekly, monthly}.
+   - NSE 500 + biweekly won IS Sharpe by a hair (1.61 vs Nifty 250's 1.59).
+   - Honored IS commitment, locked NSE 500.
+
+### OOS validation (single-pass, no iterative tuning)
+
+A3 baseline (NSE 500, biweekly, 40/20/40, 20% DD stop):
+- **OOS-full Sharpe 1.52, CAGR 35.85%, DD -40.09%. PASS.**
+- Sub-window Sharpes: 1.14 (2017-19) / 2.19 (2020-22) / 1.14 (2023-26) — all pass.
+
+### Universe peek (deliberate; documented)
+- Out of curiosity tested NSE 500 / Nifty 250 / Nifty 100 on OOS too.
+- Nifty 250 actually won OOS Sharpe (1.55 vs NSE 500's 1.52).
+- User: "sticking to NSE500 is better" — honored IS commitment over OOS-peeking.
+
+### DD-reduction attempts (post-IS-OOS-validation)
+
+User flagged DD concern (-40% on OOS). Tested two DD-reduction levers:
+
+1. **45/35/20 weight tweak** — IS Sharpe 1.60 (-0.01), IS DD improved 2.70pp.
+   - OOS test: **FAILED hard.** OOS-full Sharpe -0.07 vs A3, CAGR -4.23pp, **DD WORSE by 3.73pp**.
+   - Classic IS-overfit catch. Rejected.
+2. **Weekly rank-exit** — Initial IS test (2026-05-11) appeared to make things worse: Sharpe 1.55 (vs 1.61), DD -31.22% (worse), 0 `rank_weekly` exits despite my code edit using that label.
+   - Investigated 2026-05-12: discovered engine bug. When `weekly_rank_check=True`, `signals` dict was populated for every Friday, and `entry_schedule` was built from `signals.keys()` — causing every Monday to be in `rebal_set` and skipping the dedicated weekly-rank-exit block.
+   - **Fixed** `_clean_engine.py:236-246` to build `entry_schedule` only from `entry_signal_dates`.
+   - Re-ran IS post-fix: **Sharpe 1.58 (-0.03), CAGR -1.30pp, DD +2.39pp BETTER**. Now a real DD-reduction lever.
+   - OOS validation: **PASSED.** OOS-full Sharpe 1.53 (+0.01), CAGR 34.86% (-0.99pp), DD -39.00% (+1.09pp better). Unlike 45/35/20, robust across IS and all OOS sub-windows.
+   - **Adopted as final TL25 v3 config.**
+
+### TL25 v3 LOCKED IN (2026-05-12)
+
+**Config:**
+- Universe: NSE 500
+- Cadence: bi-weekly entry + weekly rank-exit + weekly DD-stop checks
+- Score weights: 0.40 × Persistence + 0.20 × Drawdown + 0.40 × Momentum
+- Windows: 252 / 126 (squared) / 63
+- Top-25, exit-buffer 20, max 7.5% per stock
+- 20% DD stop from peak, no 200 DMA exit
+- No regime tilt (single config — distinguishes from OM25 v3)
+
+**Performance:**
+- Full panel (2009-2026, 16.7y): CAGR 32.73%, Sharpe 1.40 (rf=5%), MaxDD -39.10%
+- OOS-only (2017-2026, 9.3y): CAGR 34.86%, Sharpe 1.53 (rf=0), MaxDD -39.00%
+
+**Saved as:** `scripts/tl25_v3.py:V3_LOCKED`
+**HTML report:** `reports/tl25_v3_production_*.html`
+**Full writeup:** `tasks/oos_retune_2026/RESULTS.md` — TL25 v3 section.
+
+### Diversification check
+Daily return correlation TL25 v3 (A3) vs OM25 v3 ~0.78; Jaccard holdings overlap ~0.22. Sufficient diversification. B2 tilt variant had higher correlation — confirmed user's intuition that single-config TL25 is the right complementary product.
+
+### TL25 productionization
+**STILL PENDING.** Same wiring needed as OM25 v3:
+- Create `scripts/run_tl25_v3_portfolio.py` (mirror of OM25 v3 orchestrator)
+- Add `tl25_v3` to `kite-api/app/config.py:UNIVERSES`
+- Update `sync_service.get_latest_experiment_dir`
+- Extend `positions_service` regex
+- Add TL25 v3 step to `run_daily_pipeline.py`
+- Update `tasks/trend_leaders/README.md` to feature v3 LOCKED at top
 
 ---
 

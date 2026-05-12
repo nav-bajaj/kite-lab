@@ -1,8 +1,6 @@
-# OOS Retune 2026 — OM25 Final Result
+# OOS Retune 2026 — Final Results
 
-**Status:** OM25 locked in. TL25 retune not yet started.
-
-**Date locked:** 2026-05-10
+**Status:** OM25 v3 locked in (2026-05-10). TL25 v3 locked in (2026-05-12).
 
 ---
 
@@ -217,7 +215,134 @@ Faster MA (100 vs 200) with 3-day confirmation hysteresis was the difference bet
 
 ## Next steps
 
-1. **Productionize** — adapt `scripts/build_om25_signals.py` and `scripts/backtest_om25.py` to compute regime + apply the tilt. Wire into `scripts/run_daily_pipeline.py`. Update `tasks/om25/README.md` with new locked-in stack. (Open ticket; not done in this work.)
-2. **Paper-trading window** — minimum 3-6 months of paper-traded performance before live capital.
-3. **TL25 retune** — apply the same IS=2009-2016 / OOS-multi-window framework + regime-tilt idea to TL25.
+1. **Productionize OM25** — DONE 2026-05-11. See `scripts/run_om25_v3_portfolio.py`, dashboard backend wiring, daily pipeline step.
+2. **Paper-trading window** — minimum 3-6 months of paper-traded performance before live capital. STILL PENDING.
+3. **TL25 retune** — DONE 2026-05-12. See TL25 v3 section below.
 4. **Monitor 2025/2026** — the regime-tilt's recent underperformance is real. Watch for whether 2026 H2 reverts (tilt earning back) or persists (regime mismatch worsening).
+
+---
+
+# TL25 v3 — Final Result
+
+**Date locked:** 2026-05-12
+
+## Final TL25 v3 portfolio mechanics
+
+| Parameter | Value | Notes |
+|---|---|---|
+| **Universe** | NSE 500 (`data/static/nse500_universe.csv`) | NSE 500 won IS Sharpe; Nifty 250 marginally better OOS but user honoured IS commitment. Kept NSE 500. |
+| **Cadence** | **Bi-weekly entry** (every other Friday → next-day exec) + **weekly rank-exit** + **weekly DD-stop checks** | Bi-weekly entry confirmed in IS sweep. Weekly rank-exit added 2026-05-12 — reduces OOS-full DD by 1.09pp at -0.99pp CAGR / +0.01 Sharpe (modest, robust). |
+| **Score** | `0.40 × Persistence + 0.20 × Drawdown + 0.40 × Momentum` (A3 weights) | Offensive P+M tilt won IS Sharpe sweep (1.61). Equal 1/3/1/3/1/3 was 1.59; DD-heavy 40/40/20 was 1.52. 45/35/20 won IS DD but FAILED OOS (Sharpe -0.07, DD WORSE -3.73pp) — rejected. |
+| **Persistence window** | 252 trading days | Locked from V2; `% of days Close > 100 DMA`. |
+| **Drawdown window** | 126 trading days, squared | Locked from V2; `(Close / 126d high) ^ 2`. |
+| **Momentum window** | 63 trading days | Locked from V2; raw N-day return, percentile-ranked among eligible. |
+| **Eligibility** | Close > 200 DMA AND 50 DMA > 200 DMA AND 200 DMA rising over 20d | Locked from V2; the trend gate. |
+| **Top-N** | 25 stocks | Locked. |
+| **Exit buffer** | 20 (drop below rank 45 to exit) | Locked. |
+| **Drawdown stop** | **20% from peak** (weekly check) | Same as OM25; tested 15/18/20/22 — 20% the sweet spot. `atr_mult=0, atr_min_floor=0.20`. |
+| **200 DMA exit** | OFF | Disabled. The DD stop alone is sufficient. |
+| **Position sizing** | Equal 1/N, 7.5% max, drift after entry | Standard. |
+| **Slippage** | 20 bps (OHLC/4 pricing) | Standard. |
+| **Regime tilt** | NONE (single config) | Deliberate product-diversification choice vs OM25 (which has regime tilt). TL25 = pure trend-following on a bigger universe. |
+
+## Performance
+
+### Per-window summary (locked-in config, weekly rank-exit)
+
+| Window | Period | Years | CAGR | Sharpe | Max DD |
+|---|---|---|---|---|---|
+| IS | 2009-09 → 2016-12 | 7.0 | 29.27% | 1.58 | -25.82% |
+| OOS_A | 2017-01 → 2019-12 | 3.0 | 19.71% | 1.18 | -32.02% |
+| OOS_B | 2020-01 → 2022-12 | 3.0 | 63.87% | **2.16** | -31.03% |
+| OOS_C | 2023-01 → 2026-05 | 3.4 | 25.75% | 1.18 | -29.06% |
+| **OOS_full** | 2017-01 → 2026-05 | 9.3 | **34.86%** | **1.53** | **-39.00%** |
+| Full panel | 2009-09 → 2026-05 | 16.7 | 32.73% | 1.40 (rf=5%) | -39.10% |
+
+### Pass criteria
+
+| Criterion | Target | Result |
+|---|---|---|
+| IS Sharpe ≥ 1.0 | ✓ 1.58 |
+| OOS-full Sharpe ≥ 1.0 | ✓ 1.53 |
+| OOS-A Sharpe ≥ 0.7 | ✓ 1.18 |
+| OOS-B Sharpe ≥ 0.7 | ✓ 2.16 |
+| OOS-C Sharpe ≥ 0.7 | ✓ 1.18 |
+| OOS-full Max DD ≥ -45% | ✓ -39.00% |
+
+**All pass.**
+
+## Search summary
+
+The TL25 retune followed the same anti-overfit discipline as OM25.
+
+**IS-only phases (no OOS peeking):**
+
+1. **Stop variants** — A3 baseline (20% fixed DD stop) beat V2's stack (200 DMA + 5x ATR-vol). V2's stops fire too often during normal pullbacks.
+2. **Weight variants (single config)** — Offensive P+M (40/20/40) won IS Sharpe (1.61). Equal 1/3 came in at 1.59. Persistence-heavy (50/25/25) at 1.60. DD-heavy variants underperformed.
+3. **Tilt variants (regime-aware)** — User decided to keep single config to maintain product diversity vs OM25 (which is regime-tilted). Tilt explored but rejected on principle.
+4. **Windows / top-N** — V2 defaults (252/126/63 + top-25/buffer-20) confirmed optimal. No improvement from variants.
+5. **Universe + cadence** — NSE 500 won IS Sharpe by a hair; Nifty 250 won OOS. User chose to honor IS commitment, keep NSE 500.
+6. **DD-reduction sweep** — `45/35/20` weight tweak improved IS DD by 2.70pp at Sharpe -0.01. Looked attractive...
+7. **Weekly rank-exit** — Initially looked like it hurt the strategy due to an engine bug (entry_schedule was being built from all weekly signal dates when weekly_rank_check=True). Bug fixed on 2026-05-12. After fix: improves IS DD by 2.39pp at Sharpe -0.03.
+
+**OOS validation:**
+
+| Variant | Decision | OOS Sharpe | OOS CAGR | OOS DD |
+|---|---|---|---|---|
+| A3 baseline (40/20/40, biweekly rank) | reference | 1.52 | 35.85% | -40.09% |
+| 45/35/20 weight tweak | **REJECTED** — textbook IS-overfit catch | -0.07 (vs A3) | -4.23pp | **DD WORSE by 3.73pp** |
+| Weekly rank-exit | **ADOPTED** | +0.01 | -0.99pp | +1.09pp (better) |
+
+The 45/35/20 case was an instructive failure: IS DD looked great, OOS DD got worse — exactly the IS/OOS discipline this whole retune was meant to catch. Held the line, didn't adopt.
+
+## Engine bug discovered and fixed
+
+`scripts/_clean_engine.py` — when `weekly_rank_check=True`, the `signals` dict was populated for every Friday (biweekly + weekly), and `entry_schedule` was being built from `signals.keys()`. This caused `rebal_set` to include every Monday, so the entry rebalance block fired weekly (tagging exits as `rank`) and the dedicated weekly-rank-exit block (gated by `date not in rebal_set`) never fired.
+
+Fix: build `entry_schedule` only from `entry_signal_dates`, not from `signals.keys()`. Documented inline.
+
+After the fix, the weekly rank-exit block fires correctly with the `rank_weekly` reason label, and the test results changed materially: from "weekly rank hurts" (pre-fix, +153 rank exits all tagged 'rank') to "weekly rank reduces DD" (post-fix, 371 weekly-rank exits, 81 atr_stop, 373 biweekly-rank exits).
+
+## Diversification vs OM25 v3
+
+Lightweight test comparing daily returns + holdings overlap of TL25 v3 A3 vs OM25 v3:
+- **Daily return correlation:** ~0.78 (moderate; not redundant)
+- **Holdings Jaccard overlap:** ~0.22 average (sufficient overlap given both pick top-25 momentum/trend names, but the sub-signals diverge)
+- TL25 weight variant B2 (regime-tilted) had higher correlation than A3 (single config) — confirms user's intuition that **single-config TL25 is the right complementary product** vs regime-tilted OM25.
+
+## Files
+
+| Component | Path |
+|---|---|
+| TL25 v3 LOCKED defaults | `scripts/tl25_v3.py:V3_LOCKED` |
+| Score factory | `scripts/tl25_v3.py:make_tl25_score` |
+| Panels builder | `scripts/tl25_v3.py:build_tl25_panels` |
+| Engine (with weekly_rank_check) | `scripts/_clean_engine.py` |
+| Multi-window evaluator | `scripts/multi_window_oos_eval.py` |
+| Production report | `tasks/trend_leaders/experiments/_tl25_v3_production_report.py` |
+| Baseline IS | `tasks/trend_leaders/experiments/_tl25_v3_baseline.py` |
+| Weight sweep IS | `tasks/trend_leaders/experiments/_tl25_v3_weights_is.py` |
+| Tilt variant IS | `tasks/trend_leaders/experiments/_tl25_v3_tilt_is.py` |
+| Windows / top-N sweep | `tasks/trend_leaders/experiments/_tl25_v3_windows_topn_is.py` |
+| Universe + cadence sweep | `tasks/trend_leaders/experiments/_tl25_v3_universe_cadence_is.py` |
+| DD-reduction sweep IS | `tasks/trend_leaders/experiments/_tl25_v3_dd_reduction_is.py` |
+| Weekly rank IS | `tasks/trend_leaders/experiments/_tl25_v3_weekly_rank_is.py` |
+| 45/35/20 OOS (REJECTED) | `tasks/trend_leaders/experiments/_tl25_v3_oos_45_35_20.py` |
+| Weekly rank OOS (ADOPTED) | `tasks/trend_leaders/experiments/_tl25_v3_oos_weekly_rank.py` |
+| All-universes OOS | `tasks/trend_leaders/experiments/_tl25_v3_oos_all_universes.py` |
+| OM25 correlation | `tasks/trend_leaders/experiments/_tl25_v3_correlation_with_om25.py` |
+| Production equity | `tasks/oos_retune_2026/winner_artifacts/tl25_v3_production_equity.csv` |
+| Production trades | `tasks/oos_retune_2026/winner_artifacts/tl25_v3_production_trades.csv` |
+| HTML report (OOS only) | `reports/tl25_v3_production_*.html` |
+
+## TL25 v3 caveats
+
+- Same survivorship bias as OM25 (universe is 2026-vintage NSE 500).
+- Different optimization target than OM25: TL25 is pure trend-following on NSE 500; OM25 is regime-aware quality-momentum on Nifty 250. **Both are valid; pick based on factor preference.**
+- **Productionization pending.** Same wiring needed as OM25 v3 (daily pipeline step, dashboard backend, sync_service). Documented as "next step" below.
+
+## TL25 v3 next steps
+
+1. **Productionize** — Create `scripts/run_tl25_v3_portfolio.py` (mirror of OM25 v3 orchestrator). Add `tl25_v3` to dashboard backend (`kite-api/app/config.py:UNIVERSES`, `sync_service.get_latest_experiment_dir`, `positions_service` regex). Add to daily pipeline. Update `tasks/trend_leaders/README.md` to feature v3 LOCKED at top.
+2. **Paper-trading window** — 3-6 months of paper-traded performance before live capital.
+3. **Periodically refresh correlation** with OM25 — if correlation creeps up past ~0.9, revisit weights to re-diversify.

@@ -48,27 +48,47 @@ See `PROGRESS.md` for running findings; `PLAN.md` for original plan + criteria.
 - [x] All sub-window pass criteria cleared
 - [x] +24pp alpha vs NIFTY 200 over 17 years
 
-## 7. TL25 retune — NOT STARTED
+## 7. TL25 retune — DONE (2026-05-12)
 
-- [ ] Create `tasks/trend_leaders/experiments/_tl25_oos_retune.py`
-- [ ] Stage-1: 7 weight variants (P/DD/M splits)
-- [ ] Stage-2: ~60 configs around top-3 winners
-- [ ] Universe + cadence + regime exploration mirroring OM25 process
-- [ ] OOS multi-window evaluation
+- [x] Engine extended with `weekly_rank_check` param (and bug fix to `entry_schedule`)
+- [x] Stop variants (A1-A4) — A3 (20% DD only) won
+- [x] Weight variants (11 configs) — A3 weights 40/20/40 won IS Sharpe 1.61
+- [x] Tilt variants (regime-aware) — explored, rejected for product diversity vs OM25
+- [x] Windows / top-N sweep — V2 defaults retained
+- [x] Universe + cadence — NSE 500 biweekly won IS Sharpe
+- [x] OOS validation A3 baseline — PASS (Sharpe 1.52, DD -40.09%)
+- [x] DD-reduction sweep IS — 45/35/20 weights looked attractive
+- [x] OOS validation 45/35/20 — FAILED (DD worse 3.73pp on OOS) — rejected
+- [x] Weekly rank-exit IS test — initial bug, post-fix +2.39pp DD
+- [x] Weekly rank-exit OOS validation — PASS (+0.01 Sharpe, +1.09pp DD better)
+- [x] **TL25 v3 LOCKED IN** as A3 + weekly rank-exit. Saved to `scripts/tl25_v3.py:V3_LOCKED`.
+- [x] Diversification check vs OM25 v3 — corr ~0.78, Jaccard ~0.22
 
-## 8. Write up RESULTS.md — OM25 done; TL25 pending
+## 8. Write up RESULTS.md — DONE
 
 - [x] OM25 section: chosen config, all metrics, year-by-year, vs indices, regime breakdown
 - [x] Survivorship-bias and other caveats noted
-- [ ] TL25 section
-- [ ] Cross-strategy comparison
+- [x] TL25 v3 section: chosen config, IS/OOS metrics, search summary, engine bug writeup
+- [x] Diversification note (TL25 vs OM25 correlation)
+- [x] HTML report generator (`_tl25_v3_production_report.py`) — OOS-only output
 
-## 9. Productionization (open)
+## 9. Productionization
 
-- [ ] Adapt `scripts/build_om25_signals.py` to compute regime + apply tilt
-- [ ] Adapt `scripts/backtest_om25.py` to support regime-tilt mode
-- [ ] Wire regime data fetch into `scripts/run_daily_pipeline.py`
-- [ ] Update `tasks/om25/README.md` with new locked-in stack
+### OM25 — DONE (2026-05-11)
+- [x] Created `scripts/run_om25_v3_portfolio.py`
+- [x] Added `om25_v3` to `kite-api/app/config.py:UNIVERSES`
+- [x] Updated `sync_service.get_latest_experiment_dir`
+- [x] Extended `positions_service` regex for `om25_v3_portfolio_*` format
+- [x] Added OM25 v3 step to `run_daily_pipeline.py`
+- [x] Fixed "Portfolio CSV not found" error in daily pipeline
+
+### TL25 — PENDING
+- [ ] Create `scripts/run_tl25_v3_portfolio.py` (mirror OM25 v3 orchestrator)
+- [ ] Add `tl25_v3` to `kite-api/app/config.py:UNIVERSES`
+- [ ] Update `sync_service.get_latest_experiment_dir` for tl25_v3
+- [ ] Extend `positions_service` regex for `tl25_v3_portfolio_*` format
+- [ ] Add TL25 v3 step to `run_daily_pipeline.py`
+- [ ] Update `sync_to_database.py` CLI
 - [ ] Paper-trading window (3-6 months minimum) before live
 
 ## 8. Decide on next steps (post-results)

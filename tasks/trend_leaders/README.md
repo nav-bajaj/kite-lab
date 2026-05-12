@@ -5,12 +5,68 @@
 A standalone trend-following portfolio strategy for Indian equities. Designed
 to be simple, robust, and explainable in 3 sentences.
 
+---
+
+## V3 LOCKED IN (May 2026 OOS retune)
+
+**Status:** v3 locked 2026-05-12 after IS/OOS multi-window retune.
+**Authoritative defaults:** `scripts/tl25_v3.py:V3_LOCKED`.
+**Full evidence trail:** `tasks/oos_retune_2026/RESULTS.md` (TL25 v3 section).
+
+### V3 config
+
+| Parameter | Value | Notes |
+|---|---|---|
+| Universe | NSE 500 | IS Sharpe winner; honored over Nifty 250 which marginally won OOS |
+| Cadence | Bi-weekly entry + **weekly rank-exit** + weekly DD-stop | Weekly rank-exit added post OOS validation (modest DD lever) |
+| Score weights | **0.40 P + 0.20 DD + 0.40 M** (A3) | Offensive P+M tilt won IS sweep |
+| Persistence window | 252d (% Close > 100 DMA) | Unchanged from v2 |
+| Drawdown window | 126d, squared | Unchanged from v2 |
+| Momentum window | 63d (raw 3-mo return, pct-ranked) | Unchanged from v2 |
+| Eligibility | Close>200DMA & 50DMA>200DMA & 200DMA rising 20d | Unchanged from v2 |
+| Top-N / buffer | 25 / 20 | Unchanged from v2 |
+| Stop | **20% from peak (fixed)**, weekly check | Replaces v2's 200 DMA + 5x ATR-vol stack |
+| 200 DMA exit | OFF | Disabled in v3 |
+| Sizing | Equal 1/N, 7.5% max, drift after entry | Unchanged |
+| Slippage | 20 bps (OHLC/4 next-day) | Unchanged |
+| Regime tilt | NONE | Single config — deliberate diversifier vs OM25 v3 |
+
+### V3 OOS-validated performance
+
+| Window | Years | CAGR | Sharpe | Max DD |
+|---|---|---|---|---|
+| IS (2009-09 → 2016-12) | 7.0 | 29.27% | 1.58 | -25.82% |
+| OOS_A (2017-19) | 3.0 | 19.71% | 1.18 | -32.02% |
+| OOS_B (2020-22) | 3.0 | 63.87% | 2.16 | -31.03% |
+| OOS_C (2023-26) | 3.4 | 25.75% | 1.18 | -29.06% |
+| **OOS_full** | 9.3 | **34.86%** | **1.53** | **-39.00%** |
+| Full panel | 16.7 | 32.73% | 1.40 (rf=5%) | -39.10% |
+
+All multi-window pass criteria met (Sharpe ≥1.0 / sub ≥0.7 / DD ≥-45%).
+
+### Why this won
+
+- A3 weights (40/20/40) beat both equal-1/3 and DD-heavy variants on IS Sharpe.
+- 45/35/20 weight tweak improved IS DD but **FAILED OOS** (DD got worse 3.73pp) — rejected as IS-overfit.
+- Weekly rank-exit (added post-fix to an engine bug) is a modest, robust DD-reducer: +1.09pp DD improvement on OOS_full, Sharpe held flat.
+- No regime tilt: deliberate product-diversification choice vs OM25 v3 (which IS regime-tilted) — keeps daily-return correlation ~0.78.
+
+### V3 productionization (PENDING)
+
+- [ ] `scripts/run_tl25_v3_portfolio.py` (mirror of OM25 v3 orchestrator)
+- [ ] Dashboard backend wiring (`kite-api/app/config.py`, `sync_service`, `positions_service`)
+- [ ] Daily pipeline step
+- [ ] Paper-trading window (3-6 months minimum)
+
+---
+
 **Branch:** `trend-leaders-20` (merged into `main`)
 
-> **REVIEWED MAY 2026.** Full parameter review under the clean (no-lookahead)
-> engine in `scripts/_clean_engine.py`. Several components changed; numbers
-> below are the honest no-lookahead results with the new locked-in stack.
-> The earlier doc (May 2026 rebaseline) is superseded.
+> **HISTORICAL — superseded by V3 above (May 2026 OOS retune).**
+> The section below is the pre-OOS-retune review (still useful for the
+> parameter-by-parameter rationale on score components and eligibility).
+> The V3 retune kept all score components and windows; changed only weights,
+> stops, and added weekly rank-exit.
 
 ---
 

@@ -381,6 +381,42 @@ HINDZINC, VEDL, SHRIRAMFIN, CANBK, HINDALCO, EICHERMOT, SBIN, TVSMOTOR, BANKBARO
 
 **Full evidence trail:** `tasks/oos_retune_2026/RESULTS.md`
 
+### TL25 v3 Production Portfolio (Locked-in May 2026 OOS Retune)
+**Location:** `tasks/oos_retune_2026/winner_artifacts/tl25_v3_production_*.csv`
+**Report:** `reports/tl25_v3_production_*.html`
+**Run:** `python tasks/trend_leaders/experiments/_tl25_v3_production_report.py`
+
+**Parameters:**
+- **Universe:** NSE 500 (499 stocks)
+- **Cadence:** Bi-weekly entry + **weekly rank-exit** + weekly DD-stop checks
+- **Score weights:** 0.40 × Persistence + 0.20 × Drawdown-Control + 0.40 × Momentum
+- **Persistence:** % of 252d where Close > 100 DMA
+- **Drawdown-Control:** (Close / 126d rolling high)² (squared/concave)
+- **Momentum:** 63-day return, percentile-ranked among eligible
+- **Eligibility:** Close > 200 DMA AND 50 DMA > 200 DMA AND 200 DMA rising over 20d
+- **Top-N:** 25 stocks, exit-buffer 20 (drop below rank 45)
+- **Drawdown stop:** 20% from peak (weekly check), no 200 DMA exit
+- **Sizing:** Equal 1/N, max 7.5%, drift after entry
+- **Slippage:** 0.2% (20 bps, OHLC/4 next-day)
+- **Regime tilt:** None (single config, distinguishes from OM25 v3)
+
+**Performance (2009-09 to 2026-05, 16.7 years full panel):**
+- **CAGR:** 32.73%
+- **Sharpe ratio:** 1.40 (rf=5%)
+- **Max drawdown:** -39.10%
+
+**OOS-only validation (2017-2026, 9.3 years):**
+- CAGR 34.86% / Sharpe 1.53 (rf=0) / MaxDD -39.00%
+- Sub-window Sharpes: 1.18 (2017-19) / 2.16 (2020-22) / 1.18 (2023-26) — all pass
+
+**Use case:**
+- Pure trend-following with no regime tilt
+- Diversifier vs OM25 v3 (different signal: trend quality vs capture asymmetry)
+- Different universe (NSE 500 vs Nifty 250) → less stock overlap
+- Weekly rank-exit provides modest DD reduction over biweekly-only
+
+**Full evidence trail:** `tasks/oos_retune_2026/RESULTS.md` (TL25 v3 section)
+
 ## Key Data Directories
 
 **Price data:**
@@ -643,7 +679,9 @@ cp -r /Users/navdeep/Documents/stock_data/indices_data ./
 
 **Backup contents updated daily** with latest price data.
 
-## Performance Benchmarks (2020-2026)
+## Performance Benchmarks
+
+### Momentum L6-1W family (2020-2026, IS-only tuning)
 
 | Portfolio | CAGR | Max DD | Sharpe | Turnover | Use Case |
 |-----------|------|--------|--------|----------|----------|
@@ -653,7 +691,14 @@ cp -r /Users/navdeep/Documents/stock_data/indices_data ./
 | **Nifty 100 L9-2W** | 38.95% | -25.22% | 1.45 | 23% | Not recommended |
 | **Nifty 100 Index** | ~15% | -20% | ~0.7 | 0% | Buy & hold |
 
-**Key insight:** NSE 500 L6 with weekly rebalancing and min-hold 8 days is optimal for most investors.
+### OOS-validated v3 strategies (2017-2026 OOS, tuned on 2009-2016)
+
+| Portfolio | OOS CAGR | OOS Max DD | OOS Sharpe | Signal | Use Case |
+|-----------|---------|------------|-----------|--------|----------|
+| **OM25 v3** (Nifty 250) | 44.78% | -36.6% | 1.86 (rf=0) | Capture asymmetry + regime tilt | Quality momentum, regime-adaptive |
+| **TL25 v3** (NSE 500) | 34.86% | -39.0% | 1.53 (rf=0) | 3-component trend quality | Pure trend-following, diversifier |
+
+**Key insight:** Momentum L6-1W is IS-tuned for 2020-2026 (no OOS validation). OM25 v3 and TL25 v3 are tuned on 2009-2016 and OOS-validated on 2017-2026 — pick these for "timeless" robustness; pick L6 for highest recent CAGR.
 
 ## Troubleshooting
 
@@ -693,8 +738,8 @@ python scripts/validate_signals.py --signals <path> --top-n 24
 
 ---
 
-**Last updated:** April 2026
-**Production portfolio:** NSE 500 L6-1W + min-hold 8d
+**Last updated:** May 2026
+**Production portfolios:** NSE 500 L6-1W (momentum), OM25 v3 (Nifty 250 regime-tilt), TL25 v3 (NSE 500 trend-following)
 **Alternative portfolios:** Nifty 100, Nifty 250 (L6-1W)
 **Dashboard:** https://kite-lab.vercel.app
 **Backend:** https://kite-lab-production.up.railway.app (persistent volume at /data)

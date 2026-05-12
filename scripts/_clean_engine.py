@@ -206,6 +206,7 @@ def run_strategy(*,
                  use_trailing_stop=True,    # ATR trailing stop on/off
                  use_dma_exit=True,          # weekly 200 DMA exit on/off (independent)
                  donchian_low_panel=None,    # optional Date×Symbol N-day low panel; exit if close < low
+                 weekly_rank_check=False,    # if True, fire rank-exit at every weekly_signal_date
                  regime_panel=None,         # optional pd.Series[date]->bool, True=bull
                  bear_exposure=0.0,          # gross exposure cap during bear (0..1)
                  ):
@@ -214,9 +215,14 @@ def run_strategy(*,
     signal_function(signal_date, **signal_function_args) → pd.Series of scores
     keyed by symbol. Higher score = more attractive. NaN means ineligible.
     """
-    # Pre-compute signals on each entry signal date
+    # Pre-compute signals at entry dates (and weekly dates if weekly_rank_check).
+    # Weekly rank check needs scores at every Friday so we can rank-out holdings
+    # without waiting for the next biweekly rebalance.
+    score_dates = set(entry_signal_dates)
+    if weekly_rank_check:
+        score_dates |= set(weekly_signal_dates)
     signals = {}
-    for date in entry_signal_dates:
+    for date in score_dates:
         if date not in close_panel.index:
             continue
         scores = signal_function(date, **signal_function_args)
@@ -227,9 +233,18 @@ def run_strategy(*,
             continue
         signals[date] = ranked.index.tolist()
 
-    # Map signal dates → execution dates
+    # Map signal dates → execution dates.
+    # Entry schedule is built from entry_signal_dates ONLY (the biweekly set
+    # the caller passed). When weekly_rank_check is True, `signals` also has
+    # weekly Friday scores — but those are for the rank-exit-only block below,
+    # not new entries. Mixing them in here would turn every Friday into a
+    # rebalance day and the weekly-rank-exit block (guarded by
+    # `date not in rebal_set`) would never fire.
+    entry_set = set(pd.Timestamp(d) for d in entry_signal_dates)
     entry_schedule = {}
     for sd in sorted(signals.keys()):
+        if sd not in entry_set:
+            continue
         td = map_signal_to_trade(sd, calendar)
         if td is not None:
             entry_schedule[pd.Timestamp(td)] = pd.Timestamp(sd)
@@ -417,6 +432,50 @@ def run_strategy(*,
                         'slippage': sh * exec_price * slippage,
                         'reason': reason
                     })
+
+        # Weekly rank-exit check (NEW, optional): fires at every
+        # weekly_signal_date so a stock that loses rank doesn't sit in the
+        # portfolio for up to 2 weeks until the next biweekly rebalance.
+        # Skipped on rebal_set dates (the entry block below handles it).
+        # No new entries here — just exit-only.
+        if (weekly_rank_check and date in weekly_exec_to_signal
+                and date not in rebal_set):
+            sd_w = weekly_exec_to_signal[date]
+            ranked_w = signals.get(sd_w, [])
+            if ranked_w:
+                keep_w = set(ranked_w[:top_n + exit_buffer])
+                for sym in list(holdings.keys()):
+                    if sym not in keep_w:
+                        sh = holdings.pop(sym, 0)
+                        if sh == 0:
+                            continue
+                        exec_price = (trade_panel.loc[date, sym]
+                                      if sym in trade_panel.columns
+                                      else cr.get(sym, np.nan))
+                        if pd.isna(exec_price) or exec_price <= 0:
+                            holdings[sym] = sh
+                            continue
+                        cash += sh * exec_price * (1 - slippage)
+                        avg_cost = cost_basis.get(sym, 0) / sh if sh else 0
+                        meta = entry_meta.pop(sym, {'date': date})
+                        pnl_pct = ((exec_price / avg_cost - 1)
+                                   if avg_cost > 0 else None)
+                        exit_records.append({
+                            'symbol': sym, 'pnl_pct': pnl_pct,
+                            'reason': 'rank_weekly',
+                            'entry_date': meta.get('date'),
+                            'exit_date': date,
+                            'hold_days': ((date - meta['date']).days
+                                          if meta.get('date') else None)
+                        })
+                        cost_basis.pop(sym, None)
+                        trade_records.append({
+                            'date': date, 'symbol': sym, 'side': 'SELL',
+                            'shares': sh, 'price': exec_price,
+                            'notional': sh * exec_price,
+                            'slippage': sh * exec_price * slippage,
+                            'reason': 'rank_weekly'
+                        })
 
         # Entry rebalance: signal date list, execute today.
         # Skip entries during bear regime (existing positions handled above);
