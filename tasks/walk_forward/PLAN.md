@@ -1,5 +1,27 @@
 # Walk-Forward 2026 — Rolling 3+1 Robustness Check
 
+**Status (2026-05-12): COMPLETED.** See `RESULTS.md` for findings and
+`reports/walk_forward_summary.html` for the visual report. Both locked v3
+configs survive walk-forward stress (84.6% pass rate on production universes).
+No re-tune recommended.
+
+**Scope changes from this plan during execution** (after user-decisions
+captured in `~/.claude/plans/sunny-seeking-hartmanis.md`):
+- L6 momentum **dropped** from scope (focus on the recently-locked v3 configs
+  that we actually wanted to validate).
+- The proposed `--start-date / --end-date` flag additions to production
+  backtest scripts were **skipped**. Instead a single orchestrator
+  (`scripts/run_walk_forward.py`) calls `_clean_engine.run_strategy()`
+  directly with pre-loaded panels — load-once + multiprocessing, ~1s per
+  backtest. Production scripts untouched.
+- Aspirational 70% pass-rate threshold from the plan was exceeded (both
+  strategies hit 84.6% on production universe).
+- Phase 0 (smell test, 11.6s) added before Phase 1; Phase 1 + Phase 2
+  completed in 285s + 835s respectively.
+- Modal/cloud compute deferred (local was fast enough).
+
+---
+
 ## Why this work
 
 The `tasks/oos_retune_2026/` project (May 2026) used a **single anchored split** — IS 2009-2016, OOS 2017-2026 sliced into three sub-windows. OM25 v3 and TL25 v3 were locked in under that split with strong pass-criterion results (OOS Sharpe 1.86 and 1.53 respectively).

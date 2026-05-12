@@ -420,6 +420,35 @@ HINDZINC, VEDL, SHRIRAMFIN, CANBK, HINDALCO, EICHERMOT, SBIN, TVSMOTOR, BANKBARO
 
 **Full evidence trail:** `tasks/oos_retune_2026/RESULTS.md` (TL25 v3 section)
 
+### Walk-Forward Robustness Study (May 2026)
+
+Independent stress test of locked OM25 v3 and TL25 v3 across 13 rolling
+3y-IS / 1y-OOS windows × 3 universes = **78 OOS validations**. Built as a
+robustness check, never a re-tune.
+
+**Headline:** Both locked v3 configs achieve **84.6% pass rate** (Sharpe ≥ 0.7
+floor) on their production universes. TL25 v3 also holds 84.6% on Nifty 250
+(more universe-robust than OM25). Three windows fail universally — W06
+(2018-19 IL&FS), W12 (2025 small-cap correction), W13 (partial 2025-26) — these
+are regime tails not fixable via tuning.
+
+**Key finding:** IS Sharpe ranking carries little predictive signal at 3y
+windows (mean gap +0.37 for OM25, **−0.08 for TL25**). The locked v3 baselines
+match or beat IS-best challengers on average. **Don't re-tune.**
+
+**Compute:** ~19 min total local wall-clock (vs ~10 hr in the original plan).
+Speedup from load-once orchestrator pattern + multiprocessing —
+`scripts/run_walk_forward.py` calls `_clean_engine.run_strategy()` directly
+with pre-loaded panels (~1s per backtest).
+
+**Files:**
+- `scripts/run_walk_forward.py` — orchestrator (Phases 0/1/2)
+- `scripts/walk_forward_report.py` — Phase 3 HTML/markdown report
+- `tasks/walk_forward/PLAN.md` — methodology + scope changes
+- `tasks/walk_forward/RESULTS.md` — findings + recommendation
+- `tasks/walk_forward/PROGRESS.md` — execution log
+- `reports/walk_forward_summary.html` — visual report (5 charts + tables)
+
 ## Key Data Directories
 
 **Price data:**
