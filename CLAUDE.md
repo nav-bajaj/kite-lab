@@ -103,8 +103,10 @@ python scripts/run_daily_pipeline.py --with-login
 # 3. Fetch NSE 500 + indices data (parallel)
 # 4. Update Nifty 100 benchmark
 # 5. Build momentum signals
-# 6. Sync data to database (holdings, equity curve, metrics, trades, open positions)
-# 7. Backup data to /Users/navdeep/Documents/stock_data/
+# 6. Build OM25 v3 portfolio (regime-tilted UC/CR composite on Nifty 250)
+# 7. Build TL25 v3 portfolio (3-component trend score on NSE 500)
+# 8. Sync data to database (holdings, equity curve, metrics, trades, open positions)
+# 9. Backup data to /Users/navdeep/Documents/stock_data/
 ```
 
 ### Final Portfolio Generation
@@ -382,9 +384,10 @@ HINDZINC, VEDL, SHRIRAMFIN, CANBK, HINDALCO, EICHERMOT, SBIN, TVSMOTOR, BANKBARO
 **Full evidence trail:** `tasks/oos_retune_2026/RESULTS.md`
 
 ### TL25 v3 Production Portfolio (Locked-in May 2026 OOS Retune)
-**Location:** `tasks/oos_retune_2026/winner_artifacts/tl25_v3_production_*.csv`
-**Report:** `reports/tl25_v3_production_*.html`
-**Run:** `python tasks/trend_leaders/experiments/_tl25_v3_production_report.py`
+**Location:** `data/tl25_v3_portfolios/tl25_v3_portfolio_<ts>/`
+**Run (production orchestrator):** `python scripts/run_tl25_v3_portfolio.py --start 2020-01-01`
+**Report (HTML, research):** `python tasks/trend_leaders/experiments/_tl25_v3_production_report.py`
+**Research artifacts:** `tasks/oos_retune_2026/winner_artifacts/tl25_v3_production_*.csv`
 
 **Parameters:**
 - **Universe:** NSE 500 (499 stocks)

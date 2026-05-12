@@ -51,12 +51,14 @@ All multi-window pass criteria met (Sharpe ≥1.0 / sub ≥0.7 / DD ≥-45%).
 - Weekly rank-exit (added post-fix to an engine bug) is a modest, robust DD-reducer: +1.09pp DD improvement on OOS_full, Sharpe held flat.
 - No regime tilt: deliberate product-diversification choice vs OM25 v3 (which IS regime-tilted) — keeps daily-return correlation ~0.78.
 
-### V3 productionization (PENDING)
+### V3 productionization (DONE 2026-05-12, commit `0cdb984`)
 
-- [ ] `scripts/run_tl25_v3_portfolio.py` (mirror of OM25 v3 orchestrator)
-- [ ] Dashboard backend wiring (`kite-api/app/config.py`, `sync_service`, `positions_service`)
-- [ ] Daily pipeline step
-- [ ] Paper-trading window (3-6 months minimum)
+- [x] `scripts/run_tl25_v3_portfolio.py` — orchestrator using `V3_LOCKED` defaults; dual output (native `tl25_*.csv` + dashboard `momentum_*.csv` at `<run>/backtests/baseline/`)
+- [x] Dashboard backend wiring (`kite-api/app/config.py`, `sync_service.get_latest_experiment_dir` + `sync_all_universes`, `positions_service` regex + experiments_dir branch)
+- [x] `scripts/sync_to_database.py` CLI updated
+- [x] Daily pipeline step inserted between OM25 v3 and DB sync
+- Design notes + nuances: `tasks/trend_leaders/V3_PRODUCTIONIZATION.md`
+- Frontend universe-selector update (kite-dashboard): out of scope, follow-up
 
 ---
 

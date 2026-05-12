@@ -341,8 +341,22 @@ Lightweight test comparing daily returns + holdings overlap of TL25 v3 A3 vs OM2
 - Different optimization target than OM25: TL25 is pure trend-following on NSE 500; OM25 is regime-aware quality-momentum on Nifty 250. **Both are valid; pick based on factor preference.**
 - **Productionization pending.** Same wiring needed as OM25 v3 (daily pipeline step, dashboard backend, sync_service). Documented as "next step" below.
 
-## TL25 v3 next steps
+## TL25 v3 productionization (DONE 2026-05-12, commit `0cdb984`)
 
-1. **Productionize** — Create `scripts/run_tl25_v3_portfolio.py` (mirror of OM25 v3 orchestrator). Add `tl25_v3` to dashboard backend (`kite-api/app/config.py:UNIVERSES`, `sync_service.get_latest_experiment_dir`, `positions_service` regex). Add to daily pipeline. Update `tasks/trend_leaders/README.md` to feature v3 LOCKED at top.
-2. **Paper-trading window** — 3-6 months of paper-traded performance before live capital.
-3. **Periodically refresh correlation** with OM25 — if correlation creeps up past ~0.9, revisit weights to re-diversify.
+Wired into production identically to OM25 v3. Files touched:
+- `scripts/run_tl25_v3_portfolio.py` (new orchestrator)
+- `kite-api/app/config.py` (UNIVERSES + UniverseId)
+- `kite-api/app/services/sync_service.py` (resolver + rotation)
+- `kite-api/app/services/positions_service.py` (regex + experiments_dir branch)
+- `scripts/sync_to_database.py` (CLI)
+- `scripts/run_daily_pipeline.py` (new step between OM25 v3 and DB sync)
+
+Design notes + 10 wiring nuances captured in `tasks/trend_leaders/V3_PRODUCTIONIZATION.md`.
+
+End-to-end verification: orchestrator smoke test → CSV schema → sync_service resolver → positions_service.sync_from_csv (21 positions to DB) → sync_to_database CLI → daily pipeline dry-run. All green.
+
+## TL25 v3 follow-ups
+
+1. **Full live pipeline run** — requires Kite login + network; deferred to user.
+2. **Frontend universe selector** — `kite-dashboard` (separate Next.js codebase) needs a "TL25 v3" option in the universe dropdown. Backend already returns the data.
+3. **Periodically refresh correlation** with OM25 — if daily-return correlation creeps past ~0.9, revisit TL25 weights to re-diversify.

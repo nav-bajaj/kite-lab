@@ -322,14 +322,17 @@ User flagged DD concern (-40% on OOS). Tested two DD-reduction levers:
 ### Diversification check
 Daily return correlation TL25 v3 (A3) vs OM25 v3 ~0.78; Jaccard holdings overlap ~0.22. Sufficient diversification. B2 tilt variant had higher correlation — confirmed user's intuition that single-config TL25 is the right complementary product.
 
-### TL25 productionization
-**STILL PENDING.** Same wiring needed as OM25 v3:
-- Create `scripts/run_tl25_v3_portfolio.py` (mirror of OM25 v3 orchestrator)
-- Add `tl25_v3` to `kite-api/app/config.py:UNIVERSES`
-- Update `sync_service.get_latest_experiment_dir`
-- Extend `positions_service` regex
-- Add TL25 v3 step to `run_daily_pipeline.py`
-- Update `tasks/trend_leaders/README.md` to feature v3 LOCKED at top
+### TL25 productionization (DONE 2026-05-12, commit `0cdb984`)
+Same wiring as OM25 v3:
+- [x] `scripts/run_tl25_v3_portfolio.py` — orchestrator with V3_LOCKED defaults, dual output (native `tl25_*.csv` + dashboard `momentum_*.csv`)
+- [x] `kite-api/app/config.py:UNIVERSES` — `tl25_v3` entry + UniverseId Literal
+- [x] `sync_service.get_latest_experiment_dir` + `sync_all_universes` updated
+- [x] `positions_service` regex extended for `tl25_v3_portfolio_*` + experiments_dir branch
+- [x] `run_daily_pipeline.py` — new step between OM25 v3 and DB sync
+- [x] `sync_to_database.py` — CLI help + default-sync rotation
+- [x] End-to-end tested offline (orchestrator + sync_service resolver + positions_service.sync_from_csv + sync_to_database CLI + pipeline dry-run all green)
+- Frontend universe selector (kite-dashboard) — out of scope, follow-up
+- Full live pipeline run — deferred to user (requires Kite login)
 
 ---
 

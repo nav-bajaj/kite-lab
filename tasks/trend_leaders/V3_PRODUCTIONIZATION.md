@@ -2,9 +2,32 @@
 
 **Goal:** wire the locked-in TL25 v3 strategy (saved as `scripts/tl25_v3.py:V3_LOCKED`) into the existing production stack — daily pipeline, dashboard backend, and DB sync — mirroring exactly what was done for OM25 v3 in commits `5888249`, `d2c1162`, `826f2a9`.
 
-**Owner:** to be assigned.
-**Status:** PENDING (research locked 2026-05-12; production not started).
+**Owner:** Claude + nav-bajaj.
+**Status:** DONE (productionization committed 2026-05-12 in `0cdb984`).
 **Reference for wiring contracts:** see `tasks/oos_retune_2026/RESULTS.md` (TL25 v3 section) and the three OM25 v3 commits above.
+
+## Result (2026-05-12)
+
+All 4 phases completed in a single session. End-to-end verification:
+
+| # | Test | Result |
+|---|---|---|
+| 1 | Orchestrator smoke test (`--start 2017-01-01`) | ✓ CAGR 34.33% / Sharpe 1.37 / MaxDD -38.79% — matches OOS report |
+| 2 | CSV schema (holdings / equity / trades / metrics) | ✓ All columns correct |
+| 3 | `get_latest_experiment_dir('tl25_v3')` | ✓ Returns latest portfolio dir |
+| 4 | `PositionsService.sync_from_csv('tl25_v3')` | ✓ 21 positions inserted into DB |
+| 5 | `sync_to_database.py --universe tl25_v3` | ✓ 21 holdings / 2304 equity / 2812 trades / 1410 matches |
+| 6 | `run_daily_pipeline.py --dry-run` | ✓ TL25 v3 step inserted between OM25 v3 and DB sync |
+| 7 | Full live run | Deferred (requires Kite login + network) |
+
+Final wiring landed in `0cdb984` — 7 files changed, +707/-6:
+- `scripts/run_tl25_v3_portfolio.py` (new)
+- `kite-api/app/config.py`
+- `kite-api/app/services/sync_service.py`
+- `kite-api/app/services/positions_service.py`
+- `scripts/sync_to_database.py`
+- `scripts/run_daily_pipeline.py`
+- `tasks/trend_leaders/V3_PRODUCTIONIZATION.md`
 
 ---
 

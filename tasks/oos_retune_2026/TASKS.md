@@ -82,14 +82,15 @@ See `PROGRESS.md` for running findings; `PLAN.md` for original plan + criteria.
 - [x] Added OM25 v3 step to `run_daily_pipeline.py`
 - [x] Fixed "Portfolio CSV not found" error in daily pipeline
 
-### TL25 — PENDING
-- [ ] Create `scripts/run_tl25_v3_portfolio.py` (mirror OM25 v3 orchestrator)
-- [ ] Add `tl25_v3` to `kite-api/app/config.py:UNIVERSES`
-- [ ] Update `sync_service.get_latest_experiment_dir` for tl25_v3
-- [ ] Extend `positions_service` regex for `tl25_v3_portfolio_*` format
-- [ ] Add TL25 v3 step to `run_daily_pipeline.py`
-- [ ] Update `sync_to_database.py` CLI
-- [ ] Paper-trading window (3-6 months minimum) before live
+### TL25 — DONE (2026-05-12, commit 0cdb984)
+- [x] Create `scripts/run_tl25_v3_portfolio.py` (mirror OM25 v3 orchestrator)
+- [x] Add `tl25_v3` to `kite-api/app/config.py:UNIVERSES`
+- [x] Update `sync_service.get_latest_experiment_dir` for tl25_v3
+- [x] Extend `positions_service` regex for `tl25_v3_portfolio_*` format
+- [x] Add TL25 v3 step to `run_daily_pipeline.py`
+- [x] Update `sync_to_database.py` CLI
+- [x] End-to-end smoke tests (orchestrator → CSV → resolver → sync → DB → pipeline dry-run)
+- Frontend universe-selector update (kite-dashboard Next.js): out of scope, follow-up
 
 ## 8. Decide on next steps (post-results)
 
