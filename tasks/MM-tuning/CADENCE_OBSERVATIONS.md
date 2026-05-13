@@ -7,6 +7,36 @@ revisited after the OOS validation phase.
 
 ---
 
+## Operational lens (added 2026-05-13)
+
+Cadence isn't just a performance choice — it's an **audience choice**. A
+subscriber can only benefit from a strategy if they can execute it for
+years. The product matrix needs to consider:
+
+| Cadence | Operational profile | Audience fit | DD profile |
+|---|---|---|---|
+| **Bi-weekly Fri→Mon** | 2.5 day awareness window; predictable Mon mornings | Broadest — most retail investors | Smoother (mid-cadence) |
+| **Weekly Thu→Fri** | Overnight window; faster reaction | Active investors | Sharper signal, deeper DD |
+| **Monthly** | One Monday/quarter feel | Set-and-forget; tax-sensitive | Smoothest, similar DD to weekly |
+
+A weekly Thursday→Friday strategy with 25-30% DDs requires a subscriber who:
+- Can act on a Thursday close signal by Friday morning
+- Has psychological capacity for double-digit drawdowns
+- Understands the strategy well enough not to panic-quit mid-DD
+
+That's a narrow audience. **Broader-audience operational profiles often
+matter more than ~2pp CAGR** for subscription business retention. A
+biweekly L6 (operational tradeoff) might net more LTV-per-subscriber
+than a weekly L6 (raw performance optimum) even if backtests favor weekly.
+
+See `DD_REDUCTION_RESEARCH.md` for the related work on DD-compression
+levers; the three-tier product framework there ties this operational
+lens to specific candidate sibling products.
+
+---
+
+---
+
 ## Test setup
 
 - IS window: 2009-09-01 → 2016-12-31 (~7.3 years)

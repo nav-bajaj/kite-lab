@@ -49,6 +49,8 @@ BASELINE = dict(
     cross_sectional_zscore=True,
     max_weight=0.075,
     slippage=0.002,
+    drawdown_stop=0.0,         # %-from-peak trailing stop; 0.0 = disabled
+                               # (production has no stop; OM25/TL25 v3 use 0.20)
 )
 
 
@@ -166,19 +168,29 @@ def entry_dates_for_rebalance(calendar, rebalance: str,
 
 def run_momentum(*, close_panel, trade_panel, calendar, benchmark_aligned,
                   panels, sma_200_panel, atr_20_panel,
-                  start, end, config: dict) -> Optional[dict]:
+                  start, end, config: dict,
+                  regime_panel=None, bear_exposure: float = 0.0) -> Optional[dict]:
     """Run a single momentum config over [start, end] entry dates.
 
     `config` is a dict merging BASELINE with overrides. Returns the
     `_clean_engine.run_strategy` result dict, or None if no entry dates.
+
+    Optional regime params:
+      regime_panel: pd.Series[date]→bool (True=bull). When False (bear),
+        gross exposure is scaled to bear_exposure (0=cash, 1=full).
+        Built by scripts.om25_v3.build_regime_panel_confirmed.
+      bear_exposure: 0..1 fraction of capital deployed during bear regime.
     """
     cfg = {**BASELINE, **config}
-    entry_all = entry_dates_for_rebalance(calendar, cfg["rebalance"],
-                                            cfg.get("signal_day", "thursday"))
+    sd = cfg.get("signal_day", "thursday")
+    entry_all = entry_dates_for_rebalance(calendar, cfg["rebalance"], sd)
     s = pd.Timestamp(start); e = pd.Timestamp(end)
     entry_dates = entry_all[(entry_all >= s) & (entry_all <= e)]
-    weekly_filt = fridays(calendar)
-    weekly_filt = weekly_filt[(weekly_filt >= s) & (weekly_filt <= e)]
+    # Weekly DD-stop check aligned with the signal day so the check + trade
+    # cadence matches entries (e.g. Thu signal → Fri exec).
+    weekly_signal_all = thursdays(calendar) if sd == "thursday" else fridays(calendar)
+    weekly_filt = weekly_signal_all[(weekly_signal_all >= s)
+                                      & (weekly_signal_all <= e)]
     if len(entry_dates) == 0:
         return None
 
@@ -188,6 +200,7 @@ def run_momentum(*, close_panel, trade_panel, calendar, benchmark_aligned,
         vol_power=cfg["vol_power"],
         cross_sectional_zscore=cfg["cross_sectional_zscore"],
     )
+    dd_stop = cfg.get("drawdown_stop", 0.0)
     return run_strategy(
         close_panel=close_panel, trade_panel=trade_panel,
         calendar=calendar, benchmark_aligned=benchmark_aligned,
@@ -196,11 +209,12 @@ def run_momentum(*, close_panel, trade_panel, calendar, benchmark_aligned,
         sma_200_panel=sma_200_panel, atr_20_panel=atr_20_panel,
         top_n=cfg["top_n"], exit_buffer=cfg["exit_buffer"],
         max_weight=cfg["max_weight"], slippage=cfg["slippage"],
-        atr_mult=0.0, atr_min_floor=0.0,
-        use_trailing_stop=False,
+        # Trailing stop: atr_mult=0 + atr_min_floor=dd_stop = fixed %-from-peak stop
+        atr_mult=0.0, atr_min_floor=dd_stop,
+        use_trailing_stop=dd_stop > 0.0,
         use_dma_exit=False,
         weekly_rank_check=False,    # momentum doesn't use weekly rank-exit
-        regime_panel=None, bear_exposure=0.0,
+        regime_panel=regime_panel, bear_exposure=bear_exposure,
         min_hold_days=cfg["min_hold_days"],
         initial_capital=1_000_000,
     )
