@@ -209,6 +209,7 @@ def run_strategy(*,
                  weekly_rank_check=False,    # if True, fire rank-exit at every weekly_signal_date
                  regime_panel=None,         # optional pd.Series[date]->bool, True=bull
                  bear_exposure=0.0,          # gross exposure cap during bear (0..1)
+                 min_hold_days=0,            # if >0, block rank-exit while held<N days
                  ):
     """Generic clean (no-lookahead) backtest.
 
@@ -446,6 +447,11 @@ def run_strategy(*,
                 keep_w = set(ranked_w[:top_n + exit_buffer])
                 for sym in list(holdings.keys()):
                     if sym not in keep_w:
+                        # min-hold check: skip rank-exit if held < N days
+                        if min_hold_days > 0:
+                            entry_d = entry_meta.get(sym, {}).get('date')
+                            if entry_d is not None and (date - entry_d).days < min_hold_days:
+                                continue
                         sh = holdings.pop(sym, 0)
                         if sh == 0:
                             continue
@@ -488,6 +494,11 @@ def run_strategy(*,
             # Sell out-of-rank holdings
             for sym in list(holdings.keys()):
                 if sym not in keep:
+                    # min-hold check: skip rank-exit if held < N days
+                    if min_hold_days > 0:
+                        entry_d = entry_meta.get(sym, {}).get('date')
+                        if entry_d is not None and (date - entry_d).days < min_hold_days:
+                            continue
                     sh = holdings.pop(sym, 0)
                     if sh == 0:
                         continue
