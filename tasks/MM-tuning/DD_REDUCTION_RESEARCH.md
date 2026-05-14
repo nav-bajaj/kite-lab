@@ -325,6 +325,22 @@ better COVID-window protection. Could be marketed as
 "crash-protection-focused" variant. But the 100-DMA stays the cleaner
 general-purpose Defensive.
 
+### Update (2026-05-14): Value Zone regime supersedes binary 100-DMA
+
+The locked candidate below uses a **binary** 100-DMA regime. Subsequent
+work introduced a **3-state regime (Bull / Bear / Value Zone)** that
+preserves the same bear protection but adds a re-deploy trigger for
+deep-oversold conditions — addressing the "we miss the bounce while
+waiting for MA recovery" failure mode the binary filter has.
+
+Best variant: **BV3 — breadth value zone when <20% of NSE 500 stocks
+are above their own 200-DMA**. Beats binary on OOS Sharpe (1.92 vs
+1.85), captures the Apr-May 2026 rally (7.06% 6mo vs 4.16% reference),
+and matches walk-forward pass rate.
+
+Defensive production lock is **paused** pending breadth-metric
+exploration. See `VALUE_ZONE_REGIME.md` for the full writeup.
+
 ### Final Defensive product spec (locked candidate, 2026-05-14)
 
 ```
@@ -360,3 +376,4 @@ Performance (validated):
 | `tasks/MM-tuning/multi_strategy_combo.csv` | 3-strategy combo results |
 | `tasks/MM-tuning/multi_strategy_50_50.csv` | 50-50 combo results |
 | `tasks/MM-tuning/dd_stop_test.csv` | Per-stock stop sweep results |
+| `tasks/MM-tuning/VALUE_ZONE_REGIME.md` | 3-state Bull/Bear/Value regime — supersedes the binary 100-DMA above |

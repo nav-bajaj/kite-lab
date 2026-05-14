@@ -210,6 +210,10 @@ def run_strategy(*,
                  regime_panel=None,         # optional pd.Series[date]->bool, True=bull
                  bear_exposure=0.0,          # gross exposure cap during bear (0..1)
                  min_hold_days=0,            # if >0, block rank-exit while held<N days
+                 bear_skips_entries=True,    # if True (default, preserves OM25 v3 behavior):
+                                             # don't add new positions during bear regime.
+                                             # if False: allow entries at bear-scaled size
+                                             # (target_exposure / top_n weight per stock).
                  ):
     """Generic clean (no-lookahead) backtest.
 
@@ -538,8 +542,15 @@ def run_strategy(*,
                         'reason': 'rank'
                     })
 
-            # Buy new entrants — skipped if bear regime (no fresh exposure)
-            if is_bear:
+            # Buy new entrants. Behavior during bear regime depends on
+            # bear_skips_entries:
+            #   True (default): skip entries entirely → holdings dwindle
+            #     over extended bears (preserves OM25 v3 research-tested
+            #     behavior for COMBO Defensive's first version)
+            #   False: allow entries at bear-scaled weight
+            #     (target_exposure / top_n per stock) → maintains 24-stock
+            #     structure during bear, just at reduced gross exposure
+            if is_bear and bear_skips_entries:
                 continue
             entrants = [s for s in ranked[:top_n] if s not in holdings]
             entrants = entrants[:max(0, top_n - len(holdings))]
@@ -552,6 +563,11 @@ def run_strategy(*,
                     pv2 += sh * p
                 n = len(holdings) + len(entrants)
                 stock_w = min(1.0 / n if n > 0 else 0, max_weight)
+                if is_bear:
+                    # Bear regime + entries allowed: scale per-stock weight
+                    # by target_exposure so new entrants match the de-risked
+                    # stance of existing (already-scaled-down) holdings.
+                    stock_w = stock_w * target_exposure
                 tgt = pv2 * stock_w
 
                 # Order-independent allocation: divide available cash

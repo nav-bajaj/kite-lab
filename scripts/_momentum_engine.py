@@ -169,7 +169,8 @@ def entry_dates_for_rebalance(calendar, rebalance: str,
 def run_momentum(*, close_panel, trade_panel, calendar, benchmark_aligned,
                   panels, sma_200_panel, atr_20_panel,
                   start, end, config: dict,
-                  regime_panel=None, bear_exposure: float = 0.0) -> Optional[dict]:
+                  regime_panel=None, bear_exposure: float = 0.0,
+                  bear_skips_entries: bool = True) -> Optional[dict]:
     """Run a single momentum config over [start, end] entry dates.
 
     `config` is a dict merging BASELINE with overrides. Returns the
@@ -215,6 +216,7 @@ def run_momentum(*, close_panel, trade_panel, calendar, benchmark_aligned,
         use_dma_exit=False,
         weekly_rank_check=False,    # momentum doesn't use weekly rank-exit
         regime_panel=regime_panel, bear_exposure=bear_exposure,
+        bear_skips_entries=bear_skips_entries,
         min_hold_days=cfg["min_hold_days"],
         initial_capital=1_000_000,
     )
