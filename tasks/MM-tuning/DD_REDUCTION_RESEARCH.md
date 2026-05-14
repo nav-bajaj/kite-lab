@@ -287,6 +287,65 @@ window DD** (-13.46% on OOS_B vs binary's -17.64%), so it's a candidate
 for a "deep-bear-focused" sibling variant. But for general Defensive
 purposes, the binary 100-DMA wins.
 
+### Tests 9-10: walk-forward + 50-DMA variants (2026-05-14)
+
+After locking in the Friday biweekly L6→OM25 + Binary 100-DMA + 3conf +
+50% bear candidate, ran two follow-up validations:
+
+**Test 9 — Walk-forward stress test (13 rolling windows):**
+
+| Config | Pass rate | Mean OOS Sharpe | Median Sharpe | Mean CAGR | Worst-window DD |
+|---|---|---|---|---|---|
+| L6 standalone (current production) | 77% | 1.68 | 1.50 | 57.08% | -36.63% |
+| Combo no regime (Fri biwkly) | 77% | 1.69 | 1.72 | 51.86% | -34.99% |
+| **Combo + 100-DMA/3conf/50%** | 77% | **1.80** | **2.19** | 45.84% | **-20.69%** |
+
+The new candidate matches L6 standalone's pass rate but achieves better
+mean Sharpe (1.80 vs 1.68) and dramatically better worst-window DD
+(-20.69% vs -36.63%). Walk-forward CONFIRMS the structural DD reduction.
+
+Three failure windows are universal (W06, W12, W13) — characteristic
+momentum-strategy tails; no config can fix them via parameter tuning.
+
+**Test 10 — 50-DMA variants for faster bear detection:**
+
+| Config | Mean OOS Sharpe | Mean CAGR | Worst-window DD | W07 COVID DD |
+|---|---|---|---|---|
+| **100-DMA + 3conf + 50% bear (winner)** | **1.80** | 45.84% | **-20.69%** | -17.64% |
+| 50-DMA + 3conf + 75% bear | 1.78 | 45.21% | -25.41% | -14.36% |
+| 50-DMA + 5conf + 50% bear | 1.76 | 41.80% | -24.37% | -9.62% |
+| 50-DMA + 3conf + 50% bear | 1.75 | 39.40% | -23.93% | -9.63% |
+
+50-DMA fires faster (better COVID DD) but whipsaws more often, costing
+CAGR + Sharpe overall. The 100-DMA + 3-day confirm is the sweet spot.
+
+**One interesting Pareto-different sibling**: 50-DMA + 3conf + 75% bear
+keeps CAGR comparable to 100-DMA candidate (45.21% vs 45.84%) and gives
+better COVID-window protection. Could be marketed as
+"crash-protection-focused" variant. But the 100-DMA stays the cleaner
+general-purpose Defensive.
+
+### Final Defensive product spec (locked candidate, 2026-05-14)
+
+```
+Strategy:     COMBO 50-50 (L6 + OM25 v3 with priority dedup, L6 first)
+Cadence:      Bi-weekly Friday signal → Monday OHLC/4 execution
+Universe:     L6 picks from NSE 500; OM25 picks from Nifty 250
+Stocks:       24 total (12 from each, equal weight, max 7.5%)
+Min hold:     8 days
+Slippage:     20 bps
+Regime:       NIFTY 100 vs 100-DMA, 3-day confirmation
+              → bull: 100% invested
+              → bear: 50% invested / 50% cash
+              (Also: OM25 component has its own internal regime tilt that
+              shifts its score from balanced UC+CR to CR-only in bear)
+
+Performance (validated):
+  OOS_full (2017-26, 9.3y): CAGR 39.44% / Sharpe 1.91 / DD -25.60% / Calmar 1.54
+  Production window (5.84y): CAGR 48.88% / Sharpe 2.16 / DD -15.46% / Calmar 3.16
+  Walk-forward (13 windows): 77% pass rate, mean Sharpe 1.80, worst-window DD -20.69%
+```
+
 ---
 
 ## Files
