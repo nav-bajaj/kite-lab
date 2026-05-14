@@ -209,6 +209,7 @@ def run_strategy(*,
                  weekly_rank_check=False,    # if True, fire rank-exit at every weekly_signal_date
                  regime_panel=None,         # optional pd.Series[date]->bool, True=bull
                  bear_exposure=0.0,          # gross exposure cap during bear (0..1)
+                 min_hold_days=0,            # if >0, block rank-exit while held<N days
                  ):
     """Generic clean (no-lookahead) backtest.
 
@@ -303,20 +304,28 @@ def run_strategy(*,
             'benchmark': benchmark_aligned.get(date, np.nan)
         })
 
-        # Regime filter: if bear regime, scale exposure down to bear_exposure
-        # by selling pro-rata across holdings. Lookahead-safe: regime_panel is
-        # expected to already be lagged by the caller (using prior day's
-        # close-vs-200DMA decision).
+        # Regime filter: scale gross exposure to target. regime_panel may carry
+        # either bool (True=bull, False=bear→bear_exposure) for binary regimes,
+        # or float (0.0..1.0) for layered regimes that pick a target exposure
+        # directly per date. Lookahead-safe: regime_panel is expected to be
+        # lagged by the caller (using prior-day close-vs-MA decision).
         is_bear = False
+        target_exposure = 1.0
         if regime_panel is not None:
             try:
                 rv = regime_panel.get(date, True)
-                is_bear = not bool(rv) if rv is not None else False
+                if rv is None:
+                    target_exposure = 1.0
+                elif isinstance(rv, (bool, np.bool_)):
+                    target_exposure = 1.0 if bool(rv) else float(bear_exposure)
+                else:
+                    target_exposure = float(rv)
             except Exception:
-                is_bear = False
+                target_exposure = 1.0
+            is_bear = target_exposure < 1.0
             if is_bear and holdings:
                 invested = pv - cash
-                target_invested = pv * bear_exposure
+                target_invested = pv * target_exposure
                 excess = invested - target_invested
                 if excess > 0 and invested > 0:
                     scale = min(1.0, excess / invested)
@@ -446,6 +455,11 @@ def run_strategy(*,
                 keep_w = set(ranked_w[:top_n + exit_buffer])
                 for sym in list(holdings.keys()):
                     if sym not in keep_w:
+                        # min-hold check: skip rank-exit if held < N days
+                        if min_hold_days > 0:
+                            entry_d = entry_meta.get(sym, {}).get('date')
+                            if entry_d is not None and (date - entry_d).days < min_hold_days:
+                                continue
                         sh = holdings.pop(sym, 0)
                         if sh == 0:
                             continue
@@ -488,6 +502,11 @@ def run_strategy(*,
             # Sell out-of-rank holdings
             for sym in list(holdings.keys()):
                 if sym not in keep:
+                    # min-hold check: skip rank-exit if held < N days
+                    if min_hold_days > 0:
+                        entry_d = entry_meta.get(sym, {}).get('date')
+                        if entry_d is not None and (date - entry_d).days < min_hold_days:
+                            continue
                     sh = holdings.pop(sym, 0)
                     if sh == 0:
                         continue

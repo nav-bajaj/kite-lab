@@ -355,6 +355,15 @@ def run_backtest(
             if pd.isna(price):
                 price = close_row.get(sym)
             if pd.isna(price) or price <= 0:
+                # Bug fix (2026-05-13): a delisted holding could be trapped
+                # forever — exit kept retrying with NaN price and re-adding
+                # to holdings. Fall back to last known close so we don't
+                # freeze positions in min-hold-days limbo when the stock
+                # goes dark. last_prices is updated every day for held
+                # symbols (see top of run_backtest loop), so it carries
+                # the most recent valid close.
+                price = last_prices.get(sym)
+            if pd.isna(price) or price <= 0:
                 holdings[sym] = shares
                 continue
             proceeds = shares * price * (1 - slippage)
