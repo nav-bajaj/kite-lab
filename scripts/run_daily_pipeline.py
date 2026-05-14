@@ -46,6 +46,14 @@ SEQUENTIAL_STEPS = [
         "--prices-dir", "nse500_data",
         "--start", "2020-01-01",
     ]),
+    # COMBO Defensive — new product (50-50 L6 + OM25, regime-overlaid).
+    # Biweekly Fri → Mon cadence. Operates on same nse500_data.
+    # See tasks/MM-tuning/DD_REDUCTION_RESEARCH.md for the full spec.
+    ("Build COMBO Defensive portfolio", [
+        sys.executable, "scripts/run_combo_defensive_portfolio.py",
+        "--prices-dir", "nse500_data",
+        "--start", "2020-01-01",
+    ]),
     ("Sync data to database", [sys.executable, "scripts/sync_to_database.py"]),
     ("Backup data to external location", [sys.executable, "scripts/sync_data_backup.py"]),
 ]

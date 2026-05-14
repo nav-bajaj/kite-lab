@@ -134,9 +134,20 @@ UNIVERSES = {
         "universe_file": "data/static/nse500_universe.csv",
         "portfolio_dir": "data/l6_v2_portfolios",
     },
+    "combo_defensive": {
+        "id": "combo_defensive",
+        "name": "COMBO Defensive",
+        "description": "50-50 L6 + OM25 v3 with 100-DMA regime overlay (DD-conscious)",
+        "strategy": "COMBO Defensive (L6 + OM25 priority-deduped + regime de-risk)",
+        "stocks": 24,
+        "risk_profile": "Growth with regime-aware capital preservation",
+        "data_dir": "nse500_data",
+        "universe_file": "data/static/nse500_universe.csv",
+        "portfolio_dir": "data/combo_defensive_portfolios",
+    },
 }
 
-UniverseId = Literal["nse500", "nifty250", "nifty100", "om25_v3", "tl25_v3", "l6_v2"]
+UniverseId = Literal["nse500", "nifty250", "nifty100", "om25_v3", "tl25_v3", "l6_v2", "combo_defensive"]
 
 
 def get_universe(universe_id: UniverseId) -> dict:
