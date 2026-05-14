@@ -129,45 +129,104 @@ Calmar 2.89 is exceptional. -16% DD on the production window is in
 
 ---
 
-## Three-tier product framework
+## Product framework (revised 2026-05-14)
 
-| Tier | Product | OOS CAGR / Sharpe / DD | Audience | Operational |
+### Why we dropped "Balanced"
+
+Initial framing had three tiers (Aggressive / Balanced / Defensive) with
+COMBO 50-50 as the Balanced middle. On reflection, **Balanced doesn't serve
+a distinct audience**:
+
+- Aggressive (L6): OOS CAGR 47% / Sharpe 1.69 / MaxDD **-37%** / worst-window **-37%**
+- Balanced (COMBO 50-50): OOS CAGR 45% / Sharpe 1.72 / MaxDD **-34%** / worst-window **-34%**
+- Defensive (COMBO + Regime): OOS CAGR 36% / Sharpe 1.75 / MaxDD **-31%** / worst-window **-22%**
+
+The Balanced tier sacrifices 2.5pp CAGR for 2.4pp DD reduction. The
+**worst-window DD is essentially the same** as Aggressive (-34% vs -37%) —
+both ride out psychologically similar drawdowns. A subscriber who would
+quit at -37% will also quit at -34%. The "middle ground" exists
+mathematically (slightly better Sharpe) but no audience exists for whom
+"-34% DD is bearable but -37% isn't."
+
+Whereas Aggressive vs Defensive is a real **15pp difference in
+worst-window DD** (-37% → -22%). That's the line between
+"unbearable" and "manageable" for typical subscribers.
+
+### Two-tier weekly product line + one biweekly operational option
+
+| Position | Product | OOS CAGR / Sharpe / MaxDD / Worst-window DD | Audience | Operational |
 |---|---|---|---|---|
-| **Aggressive** | L6 standalone (current) | 47% / 1.69 / -37% | Growth-tolerant, can sit through -37% DD | Weekly, Thu→Fri |
-| **Balanced** | COMBO 50-50 (L6 + OM25) | 45% / 1.72 / -34% | Growth investors who want slightly tamer ride | Weekly, Thu→Fri |
-| **Defensive** | COMBO 50-50 + Regime | 36% / 1.75 / -31% | DD-sensitive, capital preservation tilt | Weekly + regime monitor |
-| **Conservative** | OM25 v3 (biweekly) | 43% / 1.80 / -35% | Set-and-forget biweekly investors | **Bi-weekly, Fri→Mon ← operationally easiest** |
+| **Aggressive** | L6 standalone (current production) | 47% / 1.69 / -37% / -37% | Sophisticated growth investors; can sit through ⅓-account DDs | Weekly Thu→Fri |
+| **Defensive** | COMBO 50-50 + Regime (candidate) | 36% / 1.75 / -31% / **-22%** | DD-conscious, capital preservation tilt | Weekly Thu→Fri |
+| **Set-and-forget** | OM25 v3 biweekly (current production) | 43% / 1.86 / -37% / (TBD) | Operationally low-touch subscribers | Bi-weekly Fri→Mon |
 
-The COMBO 50-50 is the cleanest **Pareto upgrade to L6** (better risk metrics
-+ better DD at small CAGR cost). The COMBO + Regime gives serious DD
-protection (-16% on production window, Calmar 2.89). And **OM25 v3 biweekly
-remains the operationally-easiest option for retail subscribers** — broader
-audience reach matters as much as raw performance.
+Each entry serves a distinct (audience × operational profile) combination
+— not a flavor of the same job.
+
+**Why three is the right number, not four:**
+- "Subscriber who can stomach Aggressive's DD" → Aggressive
+- "Subscriber who CAN'T stomach Aggressive's DD" → Defensive (real DD floor)
+  — NOT Balanced (same DD floor)
+- "Subscriber who wants low operational engagement" → OM25 v3 biweekly
+  (handled by a separate operational axis)
+
+There's no fourth orthogonal axis that Balanced would serve.
 
 ---
 
-## What's deferred / still to do
+## Walk-forward validation (added 2026-05-14)
 
-- **Walk-forward stress test** on COMBO 50-50 (with and without regime) — same
-  framework used for OM25/TL25 v3. Validates robustness across 13 rolling
-  3y-IS/1y-OOS windows. Required before any deployment.
-- **Operational sibling exploration**: an L6 BIWEEKLY variant. Friday→Monday
-  cadence is the operational sweet spot for retail; we documented earlier
-  that monthly L6 has interesting profile too. Worth re-examining for
-  biweekly L6 specifically.
+`scripts/momentum_walk_forward.py` runs all 4 candidates across 13 rolling
+1-year OOS windows (the same framework used for OM25 v3 / TL25 v3). Results
+confirm the DD reduction is structural, not single-window luck.
+
+### Per-config summary (13 windows)
+
+| Config | Pass rate (Sharpe ≥ 0.7) | Mean OOS Sharpe | Median Sharpe | Mean OOS CAGR | Worst window DD |
+|---|---|---|---|---|---|
+| L6 standalone | 10/13 = 77% | 1.68 | 1.50 | **57.1%** | -36.6% |
+| L6 + Regime | 10/13 = 77% | 1.68 | 1.93 | 48.4% | -27.4% |
+| COMBO 50-50 | 10/13 = 77% | 1.71 | 1.65 | 51.6% | -34.2% |
+| **COMBO + Regime** | 10/13 = 77% | **1.74** | **1.90** | 44.6% | **-21.7%** |
+
+### Where regime delivers (worst-window DD reduction)
+
+The big wins are concentrated in bear regimes (where investors actually
+need protection):
+
+| Window | L6 standalone DD | COMBO + Regime DD | DD improvement |
+|---|---|---|---|
+| W03 (demonetization 2015-16) | -25.4% | **-5.1%** | +20pp |
+| W07 (COVID 2020) | **-36.6%** | -16.0% | +20.7pp |
+| W09 (inflation 2021-22) | -26.5% | -12.8% | +13.7pp |
+| W12 (2025 small-cap correction) | -26.8% | -12.5% | +14.3pp |
+
+Three failure windows are universal (W06, W12, W13) — characteristic
+momentum-strategy tails, not config bugs.
+
+The walk-forward CONFIRMS the OOS_full finding: COMBO + Regime trades
+~12pp CAGR for genuinely structural DD compression.
+
+## Still deferred
+
+- **Operational sibling exploration**: a biweekly L6 variant. Friday→Monday
+  cadence is the operational sweet spot for retail; monthly L6 has an
+  interesting profile too. Worth re-examining for biweekly L6 specifically.
 - **Tail hedging via index puts** — operationally complex, deferred.
 
 ---
 
-## Decision (current)
+## Decision (current — 2026-05-14)
 
-**No production change yet.** Findings strongly support a future product
-expansion but require walk-forward validation. Production L6 (Thursday +
-weekly + no regime) stays as the flagship pending the walk-forward
-results.
+**No production change yet** — pending product/operational decisions and
+any further user-side validation.
 
-The 50-50 COMBO + Regime is the headline candidate to validate for an
-"L6 Defensive" sibling product.
+The candidate Defensive product is **COMBO 50-50 + Regime (100-DMA + 3-day
+confirm + bear=50%)**, weekly Thursday cadence. Walk-forward across 13
+rolling windows confirms structural DD reduction.
+
+Production L6 stays as the Aggressive flagship; OM25 v3 biweekly remains
+the Set-and-forget option.
 
 ---
 
