@@ -154,11 +154,11 @@ worst-window DD** (-37% → -22%). That's the line between
 
 ### Two-tier weekly product line + one biweekly operational option
 
-| Position | Product | OOS CAGR / Sharpe / MaxDD / Worst-window DD | Audience | Operational |
+| Position | Product | OOS CAGR / Sharpe / MaxDD | Audience | Operational |
 |---|---|---|---|---|
-| **Aggressive** | L6 standalone (current production) | 47% / 1.69 / -37% / -37% | Sophisticated growth investors; can sit through ⅓-account DDs | Weekly Thu→Fri |
-| **Defensive** | COMBO 50-50 + Regime (candidate) | 36% / 1.75 / -31% / **-22%** | DD-conscious, capital preservation tilt | Weekly Thu→Fri |
-| **Set-and-forget** | OM25 v3 biweekly (current production) | 43% / 1.86 / -37% / (TBD) | Operationally low-touch subscribers | Bi-weekly Fri→Mon |
+| **Aggressive** | L6 standalone (current production) | 47% / 1.69 / -37% | Sophisticated growth investors; can sit through ⅓-account DDs | Weekly Thu→Fri |
+| **Defensive** | COMBO 50-50 + Regime (candidate) | 39% / 1.91 / **-26%** | DD-conscious, capital preservation tilt | **Bi-weekly Fri→Mon** (revised 2026-05-14) |
+| **Set-and-forget** | OM25 v3 biweekly (current production) | 43% / 1.86 / -37% | Operationally low-touch subscribers | Bi-weekly Fri→Mon |
 
 Each entry serves a distinct (audience × operational profile) combination
 — not a flavor of the same job.
@@ -221,12 +221,71 @@ The walk-forward CONFIRMS the OOS_full finding: COMBO + Regime trades
 **No production change yet** — pending product/operational decisions and
 any further user-side validation.
 
-The candidate Defensive product is **COMBO 50-50 + Regime (100-DMA + 3-day
-confirm + bear=50%)**, weekly Thursday cadence. Walk-forward across 13
-rolling windows confirms structural DD reduction.
+### Defensive candidate (updated 2026-05-14 after priority×cadence + layered regime tests)
+
+**COMBO 50-50 + Regime** with the following spec:
+- Cadence: **Friday biweekly** (Fri close signal → Mon OHLC/4 execution) —
+  2.5-day awareness window for subscribers
+- Priority: **L6 → OM25** (verified consistent winner across signal day +
+  cadence combinations)
+- Regime overlay: **Binary 100-DMA + 3-day confirm + 50% bear exposure**
+  (layered approaches did not improve over this — see Test 8 below)
+- 24 stocks total (12 L6 + 12 OM25, priority-deduped), equal weight, 8-day
+  min-hold
+
+OOS_full performance: **CAGR 39.44% / Sharpe 1.91 / MaxDD -25.60% / Calmar 1.54**
+Production window: **CAGR 48.88% / Sharpe 2.16 / MaxDD -15.46% / Calmar 3.16**
 
 Production L6 stays as the Aggressive flagship; OM25 v3 biweekly remains
 the Set-and-forget option.
+
+### Tests 6-8: priority/cadence verification + layered regime (2026-05-14)
+
+**Test 6 — Priority verification:** L6→OM25 priority order verified as the
+winner across all (signal_day, cadence) combinations:
+
+| Configuration | OOS_full Sharpe (L6→OM25) | OOS_full Sharpe (OM25→L6) |
+|---|---|---|
+| Thursday weekly | 1.72 | 1.67 |
+| Friday weekly | 1.67 | 1.63 |
+| Friday biweekly | **1.77** | 1.68 |
+
+L6 priority wins by 0.05-0.09 Sharpe everywhere. **Friday biweekly
+L6→OM25 emerges as the new optimal base** (Sharpe 1.77 without regime —
+better than Thursday weekly at 1.72, AND operationally easier).
+
+**Test 7 — Cadence operational benefit:** Friday biweekly gives
+subscribers 2.5 trading days between signal and execution (Fri close to
+Mon open) vs Thursday weekly's overnight window. Same audience profile as
+OM25 v3 production cadence — proven operational fit.
+
+**Test 8 — Layered regime overlay:** Tested whether progressive
+de-risking (100-DMA → 75% / 200-DMA → 50%) improves over the binary
+100-DMA + 50% scheme.
+
+| OOS_full | CAGR | Sharpe | Calmar | MaxDD |
+|---|---|---|---|---|
+| No regime | 46.46% | 1.77 | 1.33 | -34.99% |
+| **Binary 100-DMA + 50% bear** | 39.44% | **1.91** | **1.54** | **-25.60%** |
+| Binary 200-DMA + 50% bear | 38.90% | 1.79 | 1.32 | -29.55% |
+| Layered 100→75%, 200→50% | 38.08% | 1.81 | 1.41 | -27.07% |
+| Layered 100→50%, 200→25% (aggressive) | 36.93% | 1.84 | 1.38 | -26.70% |
+
+**Binary 100-DMA + 50% bear wins** — best Sharpe, best Calmar, best MaxDD.
+Layered approaches give Pareto-different (not Pareto-better) profiles.
+
+Why layered didn't help:
+- "Mild bear" state (price below 100-DMA but above 200-DMA) is only 8.5%
+  of days — too rare to materially change the profile
+- Binary fires earlier on bear entry; layered waits for 200-DMA confirmation
+  during which protection is only 75% (incomplete)
+- The 100-DMA + 3-day confirm trigger is doing the heavy lifting; adding
+  200-DMA structure on top is marginal
+
+The aggressive layered (100→50%, 200→25%) does deliver the **best COVID
+window DD** (-13.46% on OOS_B vs binary's -17.64%), so it's a candidate
+for a "deep-bear-focused" sibling variant. But for general Defensive
+purposes, the binary 100-DMA wins.
 
 ---
 
