@@ -36,6 +36,16 @@ SEQUENTIAL_STEPS = [
         "--prices-dir", "nse500_data",
         "--start", "2020-01-01",
     ]),
+    # L6 v2 parallel run — same L6 momentum config but via the new
+    # _momentum_engine. Runs alongside the legacy L6 path during the
+    # parallel-run verification window (5-7 trading days). After clean
+    # diffs, dashboard cuts over to v2 and the legacy path is retired.
+    # See tasks/MM-tuning/PRODUCTIONIZATION.md.
+    ("Build L6 v2 portfolio (parallel-run)", [
+        sys.executable, "scripts/run_l6_v2_portfolio.py",
+        "--prices-dir", "nse500_data",
+        "--start", "2020-01-01",
+    ]),
     ("Sync data to database", [sys.executable, "scripts/sync_to_database.py"]),
     ("Backup data to external location", [sys.executable, "scripts/sync_data_backup.py"]),
 ]

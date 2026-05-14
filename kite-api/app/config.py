@@ -123,9 +123,20 @@ UNIVERSES = {
         "universe_file": "data/static/nse500_universe.csv",
         "portfolio_dir": "data/tl25_v3_portfolios",
     },
+    "l6_v2": {
+        "id": "l6_v2",
+        "name": "L6 Momentum v2",
+        "description": "L6 momentum on NSE 500 via new _momentum_engine (parallel-run for validation)",
+        "strategy": "L6 momentum v2 (clean engine, same params as legacy L6 production)",
+        "stocks": 499,
+        "risk_profile": "Aggressive growth, no DD overlay",
+        "data_dir": "nse500_data",
+        "universe_file": "data/static/nse500_universe.csv",
+        "portfolio_dir": "data/l6_v2_portfolios",
+    },
 }
 
-UniverseId = Literal["nse500", "nifty250", "nifty100", "om25_v3", "tl25_v3"]
+UniverseId = Literal["nse500", "nifty250", "nifty100", "om25_v3", "tl25_v3", "l6_v2"]
 
 
 def get_universe(universe_id: UniverseId) -> dict:

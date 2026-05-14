@@ -28,7 +28,7 @@ if os.path.isdir(kite_api_dir):
 def main():
     parser = argparse.ArgumentParser(description="Sync CSV data to database")
     parser.add_argument("--universe", type=str, default=None,
-                        help="Universe to sync (nse500, nifty100, nifty250, om25_v3, tl25_v3). Default: all")
+                        help="Universe to sync (nse500, nifty100, nifty250, om25_v3, tl25_v3, l6_v2). Default: all")
     parser.add_argument("--full", action="store_true",
                         help="Full trade re-sync (delete all trades and reinsert from CSV)")
     args = parser.parse_args()
@@ -45,7 +45,7 @@ def main():
         result = sync_all(args.universe, full_trades=args.full)
         print_result(args.universe, result)
     else:
-        universes = ["nse500", "nifty100", "nifty250", "om25_v3", "tl25_v3"]
+        universes = ["nse500", "nifty100", "nifty250", "om25_v3", "tl25_v3", "l6_v2"]
         print("Syncing all universes to database...")
         results = sync_all_universes(full_trades=args.full)
         for universe, result in results.items():

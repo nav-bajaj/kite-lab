@@ -395,6 +395,8 @@ class PositionsService:
             experiments_dir = settings.data_dir / "data" / "om25_v3_portfolios"
         elif universe == "tl25_v3":
             experiments_dir = settings.data_dir / "data" / "tl25_v3_portfolios"
+        elif universe == "l6_v2":
+            experiments_dir = settings.data_dir / "data" / "l6_v2_portfolios"
         else:
             experiments_dir = portfolio_dir
 
@@ -404,10 +406,10 @@ class PositionsService:
         # Check experiments folder for timestamped runs first (most likely location)
         import re
         # Matches: final_portfolio_<14-digit-ts>, nifty\d+_portfolio_<14-digit-ts>,
-        # om25_v3_portfolio or tl25_v3_portfolio with <YYYYMMDD>_<HHMMSS>
-        # (underscore-separated date/time).
+        # om25_v3_portfolio / tl25_v3_portfolio / l6_v2_portfolio with
+        # <YYYYMMDD>_<HHMMSS> (underscore-separated date/time).
         dir_pattern = re.compile(
-            r'(final_portfolio|nifty\d+_portfolio|om25_v3_portfolio|tl25_v3_portfolio)_\d{8}(_\d{6}|\d{6})'
+            r'(final_portfolio|nifty\d+_portfolio|om25_v3_portfolio|tl25_v3_portfolio|l6_v2_portfolio)_\d{8}(_\d{6}|\d{6})'
         )
         for search_dir in [experiments_dir, portfolio_dir]:
             if search_dir.exists():
