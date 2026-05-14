@@ -69,6 +69,8 @@ indices_data_historical/
 indices_data_merged/
 truedata_test/
 gdf_test/
+us_equities_data/
+experiments/eodhd_trial/
 
 # Corporate actions state (stored in price dir for persistence on Railway)
 # nse500_data/ is already gitignored, so .corporate_actions_applied.json inside it is too
