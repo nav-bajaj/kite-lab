@@ -18,7 +18,13 @@ PARALLEL_FETCH_STEPS = [
 SEQUENTIAL_STEPS = [
     ("Apply corporate actions", [sys.executable, "scripts/apply_corporate_actions.py"]),
     ("Update Nifty 100 benchmark", [sys.executable, "scripts/compute_benchmark.py"]),
-    ("Build momentum rankings", [sys.executable, "scripts/build_momentum_signals.py"]),
+    # NOTE: scripts/build_momentum_signals.py was removed from the daily pipeline
+    # on 2026-05-15 (pipeline-improvements branch). Its output
+    # data/momentum/top25_signals.csv had no downstream consumers in the
+    # daily pipeline — only ad-hoc research tools (validate_signals,
+    # compare_signals_baseline, backtest_momentum, run_rebalance_sensitivity)
+    # read it. Run it standalone when those tools need fresh signals.
+    # See tasks/pipeline_improvements/PLAN.md.
     # OM25 v3 production run — locked-in May 2026 OOS retune stack.
     # Uses live Kite data (nse500_data) and live NIFTY 100 index for regime.
     # See tasks/oos_retune_2026/RESULTS.md for the strategy spec.
@@ -133,6 +139,16 @@ def main():
         name, success, _ = run_command("Login to Kite", login_cmd, dry_run=args.dry_run)
         if not success:
             sys.exit(1)
+
+    # Token-expiry preflight — fail fast (<1s) if the access token is
+    # missing or expired, before any data-fetch step runs. Cheap kite.profile()
+    # call. If --with-login just ran, this also confirms the new token works.
+    preflight_cmd = [sys.executable, "scripts/preflight_token.py"]
+    name, success, _ = run_command("Preflight: Kite token check", preflight_cmd,
+                                    dry_run=args.dry_run)
+    if not success:
+        print("\nToken preflight failed. Re-run with --with-login.")
+        sys.exit(1)
 
     # Cache instruments (needed for symbol resolution in stock fetches)
     name, success, _ = run_command(*INSTRUMENTS_STEP, dry_run=args.dry_run)

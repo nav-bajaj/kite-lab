@@ -40,6 +40,7 @@ from scripts.om25_v3 import (
 from scripts.combo_defensive import LOCKED, make_combo_score_fn
 from scripts.backtest_momentum import load_price_panels, load_benchmark
 from scripts.build_om25_signals import load_universe
+from scripts.metrics_common import write_dashboard_metrics
 
 
 def write_dashboard_outputs(*, dashboard_dir: Path, eq: pd.DataFrame,
@@ -105,30 +106,7 @@ def write_dashboard_outputs(*, dashboard_dir: Path, eq: pd.DataFrame,
     holdings_df = pd.DataFrame(rows).sort_values("notional", ascending=False)
     holdings_df.to_csv(dashboard_dir / "momentum_holdings.csv", index=False)
 
-    pv = eq_out.set_index("date")["portfolio_value"].astype(float)
-    rets = pv.pct_change().dropna()
-    days = (pv.index[-1] - pv.index[0]).days
-    yrs = max(days / 365.25, 1e-9)
-    total_ret = pv.iloc[-1] / pv.iloc[0] - 1
-    cagr = (pv.iloc[-1] / pv.iloc[0]) ** (1 / yrs) - 1
-    vol = rets.std() * math.sqrt(252)
-    sharpe = (cagr - 0.05) / vol if vol > 0 else 0
-    mdd = pv.div(pv.cummax()).min() - 1
-    sells = trades[trades["side"] == "SELL"]
-    hit_rate = ((exits["pnl_pct"] > 0).mean()
-                if not exits.empty and "pnl_pct" in exits.columns else 0)
-    avg_hold = exits["hold_days"].mean() if not exits.empty and "hold_days" in exits.columns else 0
-    pd.DataFrame([{
-        "start": pv.index[0].date(), "end": pv.index[-1].date(),
-        "total_return": float(total_ret), "cagr": float(cagr),
-        "max_drawdown": float(mdd), "sharpe_ratio": float(sharpe),
-        "annualized_volatility": float(vol),
-        "hit_rate_overall": float(hit_rate),
-        "avg_holding_days": float(avg_hold),
-        "trades_total": int(len(trades)),
-        "buys": int((trades["side"] == "BUY").sum()),
-        "sells": int(len(sells)),
-    }]).to_csv(dashboard_dir / "momentum_metrics.csv", index=False)
+    write_dashboard_metrics(dashboard_dir, eq_out, trades, exits)
 
 
 def parse_args():
