@@ -1,0 +1,936 @@
+{
+  "captured_at": "2026-05-15T15:18:08",
+  "root": "/Users/navdeep/kite-lab",
+  "portfolios": {
+    "om25_v3": {
+      "found": true,
+      "run_dir": "data/om25_v3_portfolios/om25_v3_portfolio_20260512_142913",
+      "run_mtime": "2026-05-12T14:29:38",
+      "files": {
+        "momentum_equity.csv": {
+          "exists": true,
+          "path": "data/om25_v3_portfolios/om25_v3_portfolio_20260512_142913/backtests/baseline/momentum_equity.csv",
+          "size_bytes": 72684,
+          "row_count": 1326,
+          "columns": [
+            "benchmark",
+            "date",
+            "drawdown",
+            "portfolio_value"
+          ],
+          "sha256": "4de8bd4537f433b23a7060593c73bb77a7711e88fdc2068e76bb9a2f5f84854f",
+          "summary": {
+            "portfolio_value": {
+              "min": 973129.998875,
+              "max": 7389323.055304999,
+              "mean": 3997854.128696496,
+              "last": 6986685.392715001
+            },
+            "drawdown": {
+              "min": -0.2532901697,
+              "max": 0.0,
+              "mean": -0.0551891109,
+              "last": -0.0544891135
+            },
+            "benchmark": {
+              "min": 13743.3,
+              "max": 27256.25,
+              "mean": 20742.2135369532,
+              "last": 24400.15
+            }
+          }
+        },
+        "momentum_trades.csv": {
+          "exists": true,
+          "path": "data/om25_v3_portfolios/om25_v3_portfolio_20260512_142913/backtests/baseline/momentum_trades.csv",
+          "size_bytes": 55534,
+          "row_count": 868,
+          "columns": [
+            "date",
+            "notional",
+            "price",
+            "shares",
+            "side",
+            "slippage",
+            "symbol"
+          ],
+          "sha256": "1c5d1dc28a92080fd7b55b7a0c5006d3abb05a28ea30715e5c9120eb0b931dfb",
+          "summary": {
+            "shares": {
+              "min": 1.0,
+              "max": 24250.0,
+              "mean": 535.3456221198,
+              "last": 904.0
+            },
+            "price": {
+              "min": 4.65,
+              "max": 45632.5,
+              "mean": 2215.2469326037,
+              "last": 295.8875
+            },
+            "notional": {
+              "min": 8172.15,
+              "max": 749407.8125,
+              "mean": 133711.8287932028,
+              "last": 267482.3
+            },
+            "slippage": {
+              "min": 16.3443,
+              "max": 1498.815625,
+              "mean": 267.4236575864,
+              "last": 534.9646
+            }
+          }
+        },
+        "momentum_holdings.csv": {
+          "exists": true,
+          "path": "data/om25_v3_portfolios/om25_v3_portfolio_20260512_142913/backtests/baseline/momentum_holdings.csv",
+          "size_bytes": 1890,
+          "row_count": 25,
+          "columns": [
+            "avg_cost",
+            "contribution_pct",
+            "entry_date",
+            "entry_rank",
+            "holding_days",
+            "last_price",
+            "notional",
+            "pnl_pct",
+            "shares",
+            "symbol"
+          ],
+          "sha256": "e4fdd8d1e6c164748df5daf6547a70343c33701efa37b5c1b00e6ff863bea2b8",
+          "summary": {
+            "shares": {
+              "min": 12.0,
+              "max": 1563.0,
+              "mean": 459.12,
+              "last": 32.0
+            },
+            "avg_cost": {
+              "min": 163.1782,
+              "max": 22241.394,
+              "mean": 2830.587068,
+              "last": 7399.0185
+            },
+            "last_price": {
+              "min": 155.66,
+              "max": 32570.0,
+              "mean": 3441.3884,
+              "last": 7168.5
+            },
+            "pnl_pct": {
+              "min": -0.056538,
+              "max": 0.464387,
+              "mean": 0.10714744,
+              "last": -0.031155
+            },
+            "notional": {
+              "min": 229392.0,
+              "max": 390840.0,
+              "mean": 279217.3988,
+              "last": 229392.0
+            },
+            "contribution_pct": {
+              "min": 0.032833,
+              "max": 0.055941,
+              "mean": 0.03996428,
+              "last": 0.032833
+            },
+            "holding_days": {
+              "min": 8.0,
+              "max": 232.0,
+              "mean": 93.04,
+              "last": 64.0
+            }
+          }
+        },
+        "momentum_metrics.csv": {
+          "exists": true,
+          "path": "data/om25_v3_portfolios/om25_v3_portfolio_20260512_142913/backtests/baseline/momentum_metrics.csv",
+          "size_bytes": 303,
+          "row_count": 1,
+          "columns": [
+            "annualized_volatility",
+            "avg_holding_days",
+            "buys",
+            "cagr",
+            "end",
+            "hit_rate_overall",
+            "max_drawdown",
+            "sells",
+            "sharpe_ratio",
+            "start",
+            "total_return",
+            "trades_total"
+          ],
+          "sha256": "534fcba7587293cf71cca32ad0bef23a870dab518763b57263bc397c9a485a3b",
+          "summary": {
+            "total_return": {
+              "min": 5.9866853927,
+              "max": 5.9866853927,
+              "mean": 5.9866853927,
+              "last": 5.9866853927
+            },
+            "cagr": {
+              "min": 0.4381850345,
+              "max": 0.4381850345,
+              "mean": 0.4381850345,
+              "last": 0.4381850345
+            },
+            "max_drawdown": {
+              "min": -0.2532901697,
+              "max": -0.2532901697,
+              "mean": -0.2532901697,
+              "last": -0.2532901697
+            },
+            "sharpe_ratio": {
+              "min": 1.7400590364,
+              "max": 1.7400590364,
+              "mean": 1.7400590364,
+              "last": 1.7400590364
+            },
+            "annualized_volatility": {
+              "min": 0.2230872783,
+              "max": 0.2230872783,
+              "mean": 0.2230872783,
+              "last": 0.2230872783
+            },
+            "hit_rate_overall": {
+              "min": 0.4685990338,
+              "max": 0.4685990338,
+              "mean": 0.4685990338,
+              "last": 0.4685990338
+            },
+            "avg_holding_days": {
+              "min": 111.2995169082,
+              "max": 111.2995169082,
+              "mean": 111.2995169082,
+              "last": 111.2995169082
+            },
+            "trades_total": {
+              "min": 868.0,
+              "max": 868.0,
+              "mean": 868.0,
+              "last": 868.0
+            },
+            "buys": {
+              "min": 454.0,
+              "max": 454.0,
+              "mean": 454.0,
+              "last": 454.0
+            },
+            "sells": {
+              "min": 414.0,
+              "max": 414.0,
+              "mean": 414.0,
+              "last": 414.0
+            }
+          }
+        }
+      }
+    },
+    "tl25_v3": {
+      "found": true,
+      "run_dir": "data/tl25_v3_portfolios/tl25_v3_portfolio_20260512_142938",
+      "run_mtime": "2026-05-12T14:29:40",
+      "files": {
+        "momentum_equity.csv": {
+          "exists": true,
+          "path": "data/tl25_v3_portfolios/tl25_v3_portfolio_20260512_142938/backtests/baseline/momentum_equity.csv",
+          "size_bytes": 74820,
+          "row_count": 1354,
+          "columns": [
+            "benchmark",
+            "date",
+            "drawdown",
+            "portfolio_value"
+          ],
+          "sha256": "5581ab6fa30240065f6fc1f81b109f001047c3b8c08cdad58776cd01794d306c",
+          "summary": {
+            "portfolio_value": {
+              "min": 985577.6241,
+              "max": 7357067.640024999,
+              "mean": 4036193.9004733665,
+              "last": 5717405.232089998
+            },
+            "drawdown": {
+              "min": -0.3103846342,
+              "max": 0.0,
+              "mean": -0.0963293173,
+              "last": -0.2228690136
+            },
+            "benchmark": {
+              "min": 12959.8,
+              "max": 27256.25,
+              "mean": 20594.1242614476,
+              "last": 24400.15
+            }
+          }
+        },
+        "momentum_trades.csv": {
+          "exists": true,
+          "path": "data/tl25_v3_portfolios/tl25_v3_portfolio_20260512_142938/backtests/baseline/momentum_trades.csv",
+          "size_bytes": 111970,
+          "row_count": 1737,
+          "columns": [
+            "date",
+            "notional",
+            "price",
+            "shares",
+            "side",
+            "slippage",
+            "symbol"
+          ],
+          "sha256": "b750af158a260bf986a171b1407fdc6ae0d836882ce20fe5b6558b87378d9658",
+          "summary": {
+            "shares": {
+              "min": 1.0,
+              "max": 5200.0,
+              "mean": 449.6850892343,
+              "last": 342.0
+            },
+            "price": {
+              "min": 7.6,
+              "max": 41588.6375,
+              "mean": 1828.4192271157,
+              "last": 586.325
+            },
+            "notional": {
+              "min": 3922.45,
+              "max": 544550.3999999999,
+              "mean": 145930.2872510075,
+              "last": 200523.15
+            },
+            "slippage": {
+              "min": 7.8449,
+              "max": 1089.1008,
+              "mean": 291.860574502,
+              "last": 401.0463
+            }
+          }
+        },
+        "momentum_holdings.csv": {
+          "exists": true,
+          "path": "data/tl25_v3_portfolios/tl25_v3_portfolio_20260512_142938/backtests/baseline/momentum_holdings.csv",
+          "size_bytes": 1607,
+          "row_count": 21,
+          "columns": [
+            "avg_cost",
+            "contribution_pct",
+            "entry_date",
+            "entry_rank",
+            "holding_days",
+            "last_price",
+            "notional",
+            "pnl_pct",
+            "shares",
+            "symbol"
+          ],
+          "sha256": "cfb2f867d1dc77c370dd5588a6d592bfdec8f86076c49a59bc59bb78a054f727",
+          "summary": {
+            "shares": {
+              "min": 8.0,
+              "max": 2977.0,
+              "mean": 392.9047619048,
+              "last": 195.0
+            },
+            "avg_cost": {
+              "min": 66.0769,
+              "max": 24559.02,
+              "mean": 3185.3498952381,
+              "last": 1042.318
+            },
+            "last_price": {
+              "min": 79.19,
+              "max": 32570.0,
+              "mean": 3772.84,
+              "last": 1020.0
+            },
+            "pnl_pct": {
+              "min": -0.021412,
+              "max": 0.685612,
+              "mean": 0.117491619,
+              "last": -0.021412
+            },
+            "notional": {
+              "min": 198900.0,
+              "max": 337610.0,
+              "mean": 231967.3109523809,
+              "last": 198900.0
+            },
+            "contribution_pct": {
+              "min": 0.034789,
+              "max": 0.05905,
+              "mean": 0.0405722381,
+              "last": 0.034789
+            },
+            "holding_days": {
+              "min": 8.0,
+              "max": 190.0,
+              "mean": 43.3333333333,
+              "last": 50.0
+            }
+          }
+        },
+        "momentum_metrics.csv": {
+          "exists": true,
+          "path": "data/tl25_v3_portfolios/tl25_v3_portfolio_20260512_142938/backtests/baseline/momentum_metrics.csv",
+          "size_bytes": 303,
+          "row_count": 1,
+          "columns": [
+            "annualized_volatility",
+            "avg_holding_days",
+            "buys",
+            "cagr",
+            "end",
+            "hit_rate_overall",
+            "max_drawdown",
+            "sells",
+            "sharpe_ratio",
+            "start",
+            "total_return",
+            "trades_total"
+          ],
+          "sha256": "4dd8bea677204a89844dfebe73e33373c9b873576d285c0f2186e62edac11708",
+          "summary": {
+            "total_return": {
+              "min": 4.7174052321,
+              "max": 4.7174052321,
+              "mean": 4.7174052321,
+              "last": 4.7174052321
+            },
+            "cagr": {
+              "min": 0.3758167229,
+              "max": 0.3758167229,
+              "mean": 0.3758167229,
+              "last": 0.3758167229
+            },
+            "max_drawdown": {
+              "min": -0.3103846342,
+              "max": -0.3103846342,
+              "mean": -0.3103846342,
+              "last": -0.3103846342
+            },
+            "sharpe_ratio": {
+              "min": 1.4254897221,
+              "max": 1.4254897221,
+              "mean": 1.4254897221,
+              "last": 1.4254897221
+            },
+            "annualized_volatility": {
+              "min": 0.2285647647,
+              "max": 0.2285647647,
+              "mean": 0.2285647647,
+              "last": 0.2285647647
+            },
+            "hit_rate_overall": {
+              "min": 0.4723203769,
+              "max": 0.4723203769,
+              "mean": 0.4723203769,
+              "last": 0.4723203769
+            },
+            "avg_holding_days": {
+              "min": 53.9199057715,
+              "max": 53.9199057715,
+              "mean": 53.9199057715,
+              "last": 53.9199057715
+            },
+            "trades_total": {
+              "min": 1737.0,
+              "max": 1737.0,
+              "mean": 1737.0,
+              "last": 1737.0
+            },
+            "buys": {
+              "min": 888.0,
+              "max": 888.0,
+              "mean": 888.0,
+              "last": 888.0
+            },
+            "sells": {
+              "min": 849.0,
+              "max": 849.0,
+              "mean": 849.0,
+              "last": 849.0
+            }
+          }
+        }
+      }
+    },
+    "l6_v2": {
+      "found": true,
+      "run_dir": "data/l6_v2_portfolios/l6_v2_portfolio_20260514_140512",
+      "run_mtime": "2026-05-14T14:05:13",
+      "files": {
+        "momentum_equity.csv": {
+          "exists": true,
+          "path": "data/l6_v2_portfolios/l6_v2_portfolio_20260514_140512/backtests/baseline/momentum_equity.csv",
+          "size_bytes": 79508,
+          "row_count": 1449,
+          "columns": [
+            "benchmark",
+            "date",
+            "drawdown",
+            "portfolio_value"
+          ],
+          "sha256": "595e437c57dc243fb65855735ec09242273f89cec2a2bc9682db436bbc7d8257",
+          "summary": {
+            "portfolio_value": {
+              "min": 982251.2724,
+              "max": 13763922.052235,
+              "mean": 6742904.3375488855,
+              "last": 11554411.05531
+            },
+            "drawdown": {
+              "min": -0.2988656982,
+              "max": 0.0,
+              "mean": -0.0858007288,
+              "last": -0.160529171
+            },
+            "benchmark": {
+              "min": 10768.6,
+              "max": 27256.25,
+              "mean": 20009.291994479,
+              "last": 24400.15
+            }
+          }
+        },
+        "momentum_trades.csv": {
+          "exists": true,
+          "path": "data/l6_v2_portfolios/l6_v2_portfolio_20260514_140512/backtests/baseline/momentum_trades.csv",
+          "size_bytes": 141525,
+          "row_count": 2207,
+          "columns": [
+            "date",
+            "notional",
+            "price",
+            "shares",
+            "side",
+            "slippage",
+            "symbol"
+          ],
+          "sha256": "da3834ae33056568ec69310515ade4e7a13cabcf646fe1d5184b4da09f870766",
+          "summary": {
+            "shares": {
+              "min": 3.0,
+              "max": 40582.0,
+              "mean": 1134.7961033077,
+              "last": 386.0
+            },
+            "price": {
+              "min": 2.575,
+              "max": 30719.8625,
+              "mean": 1388.4344902583,
+              "last": 1126.2125
+            },
+            "notional": {
+              "min": 5462.9625,
+              "max": 1012995.75,
+              "mean": 257060.9050045311,
+              "last": 434718.025
+            },
+            "slippage": {
+              "min": 10.925925,
+              "max": 2025.9915,
+              "mean": 514.1218100091,
+              "last": 869.43605
+            }
+          }
+        },
+        "momentum_holdings.csv": {
+          "exists": true,
+          "path": "data/l6_v2_portfolios/l6_v2_portfolio_20260514_140512/backtests/baseline/momentum_holdings.csv",
+          "size_bytes": 1833,
+          "row_count": 24,
+          "columns": [
+            "avg_cost",
+            "contribution_pct",
+            "entry_date",
+            "entry_rank",
+            "holding_days",
+            "last_price",
+            "notional",
+            "pnl_pct",
+            "shares",
+            "symbol"
+          ],
+          "sha256": "3b4d641dbd420c62830c6a4c02c10733deebc924473d68db240d6f22ea99563c",
+          "summary": {
+            "shares": {
+              "min": 16.0,
+              "max": 5461.0,
+              "mean": 870.375,
+              "last": 1910.0
+            },
+            "avg_cost": {
+              "min": 79.4962,
+              "max": 24656.715,
+              "mean": 2951.9904208333,
+              "last": 228.4034
+            },
+            "last_price": {
+              "min": 79.19,
+              "max": 32570.0,
+              "mean": 3459.3308333333,
+              "last": 209.7
+            },
+            "pnl_pct": {
+              "min": -0.081888,
+              "max": 0.565553,
+              "mean": 0.1350862083,
+              "last": -0.081888
+            },
+            "notional": {
+              "min": 400527.0,
+              "max": 645794.2,
+              "mean": 480587.4454166667,
+              "last": 400527.0
+            },
+            "contribution_pct": {
+              "min": 0.034664,
+              "max": 0.055892,
+              "mean": 0.0415935417,
+              "last": 0.034664
+            },
+            "holding_days": {
+              "min": 4.0,
+              "max": 179.0,
+              "mean": 46.9583333333,
+              "last": 4.0
+            }
+          }
+        },
+        "momentum_metrics.csv": {
+          "exists": true,
+          "path": "data/l6_v2_portfolios/l6_v2_portfolio_20260514_140512/backtests/baseline/momentum_metrics.csv",
+          "size_bytes": 301,
+          "row_count": 1,
+          "columns": [
+            "annualized_volatility",
+            "avg_holding_days",
+            "buys",
+            "cagr",
+            "end",
+            "hit_rate_overall",
+            "max_drawdown",
+            "sells",
+            "sharpe_ratio",
+            "start",
+            "total_return",
+            "trades_total"
+          ],
+          "sha256": "25947e31dfcfe85638cc39f8e19deb526406e086ae0ddd31e510cfb602666289",
+          "summary": {
+            "total_return": {
+              "min": 10.5544110553,
+              "max": 10.5544110553,
+              "mean": 10.5544110553,
+              "last": 10.5544110553
+            },
+            "cagr": {
+              "min": 0.5207850758,
+              "max": 0.5207850758,
+              "mean": 0.5207850758,
+              "last": 0.5207850758
+            },
+            "max_drawdown": {
+              "min": -0.2988656982,
+              "max": -0.2988656982,
+              "mean": -0.2988656982,
+              "last": -0.2988656982
+            },
+            "sharpe_ratio": {
+              "min": 1.8078045687,
+              "max": 1.8078045687,
+              "mean": 1.8078045687,
+              "last": 1.8078045687
+            },
+            "annualized_volatility": {
+              "min": 0.2604181248,
+              "max": 0.2604181248,
+              "mean": 0.2604181248,
+              "last": 0.2604181248
+            },
+            "hit_rate_overall": {
+              "min": 0.4986225895,
+              "max": 0.4986225895,
+              "mean": 0.4986225895,
+              "last": 0.4986225895
+            },
+            "avg_holding_days": {
+              "min": 45.9513314968,
+              "max": 45.9513314968,
+              "mean": 45.9513314968,
+              "last": 45.9513314968
+            },
+            "trades_total": {
+              "min": 2207.0,
+              "max": 2207.0,
+              "mean": 2207.0,
+              "last": 2207.0
+            },
+            "buys": {
+              "min": 1118.0,
+              "max": 1118.0,
+              "mean": 1118.0,
+              "last": 1118.0
+            },
+            "sells": {
+              "min": 1089.0,
+              "max": 1089.0,
+              "mean": 1089.0,
+              "last": 1089.0
+            }
+          }
+        }
+      }
+    },
+    "combo_defensive": {
+      "found": true,
+      "run_dir": "data/combo_defensive_portfolios/combo_defensive_portfolio_20260514_141405",
+      "run_mtime": "2026-05-14T14:14:17",
+      "files": {
+        "momentum_equity.csv": {
+          "exists": true,
+          "path": "data/combo_defensive_portfolios/combo_defensive_portfolio_20260514_141405/backtests/baseline/momentum_equity.csv",
+          "size_bytes": 80458,
+          "row_count": 1443,
+          "columns": [
+            "benchmark",
+            "date",
+            "drawdown",
+            "portfolio_value"
+          ],
+          "sha256": "1fe5c8aaad295d55ee6ce4b4f9396c4956abf6f136b478d8b9bbdb02c94f504a",
+          "summary": {
+            "portfolio_value": {
+              "min": 999802.8167,
+              "max": 10640647.967094995,
+              "mean": 5770362.553202015,
+              "last": 9639652.654614989
+            },
+            "drawdown": {
+              "min": -0.1639373602,
+              "max": 0.0,
+              "mean": -0.0574459252,
+              "last": -0.0940727779
+            },
+            "benchmark": {
+              "min": 10922.25,
+              "max": 27256.25,
+              "mean": 20047.2118503119,
+              "last": 24400.15
+            }
+          }
+        },
+        "momentum_trades.csv": {
+          "exists": true,
+          "path": "data/combo_defensive_portfolios/combo_defensive_portfolio_20260514_141405/backtests/baseline/momentum_trades.csv",
+          "size_bytes": 120717,
+          "row_count": 1925,
+          "columns": [
+            "date",
+            "notional",
+            "price",
+            "shares",
+            "side",
+            "slippage",
+            "symbol"
+          ],
+          "sha256": "3d5e7ff1ec62245cbc2f84fbba92b90ff9bf957798f3a93b40c1cfdd0808837d",
+          "summary": {
+            "shares": {
+              "min": 1.0,
+              "max": 37853.0,
+              "mean": 915.2,
+              "last": 139.0
+            },
+            "price": {
+              "min": 2.6875,
+              "max": 25500.25,
+              "mean": 1445.2248,
+              "last": 1877.925
+            },
+            "notional": {
+              "min": 112.2375,
+              "max": 705873.9375,
+              "mean": 156619.5488012987,
+              "last": 261031.575
+            },
+            "slippage": {
+              "min": 0.224475,
+              "max": 1411.747875,
+              "mean": 313.2390976026,
+              "last": 522.06315
+            }
+          }
+        },
+        "momentum_holdings.csv": {
+          "exists": true,
+          "path": "data/combo_defensive_portfolios/combo_defensive_portfolio_20260514_141405/backtests/baseline/momentum_holdings.csv",
+          "size_bytes": 467,
+          "row_count": 5,
+          "columns": [
+            "avg_cost",
+            "contribution_pct",
+            "entry_date",
+            "entry_rank",
+            "holding_days",
+            "last_price",
+            "notional",
+            "pnl_pct",
+            "shares",
+            "symbol"
+          ],
+          "sha256": "3806be66aa0b1d5135b972cc6eef5c6ba9c7cc82cf5df354349e50e6c6d14049",
+          "summary": {
+            "shares": {
+              "min": 12.0,
+              "max": 502.0,
+              "mean": 269.2,
+              "last": 502.0
+            },
+            "avg_cost": {
+              "min": 240.5426,
+              "max": 22241.394,
+              "mean": 5356.42896,
+              "last": 240.5426
+            },
+            "last_price": {
+              "min": 305.1,
+              "max": 32570.0,
+              "mean": 7630.3,
+              "last": 305.1
+            },
+            "pnl_pct": {
+              "min": 0.183197,
+              "max": 0.502235,
+              "mean": 0.367918,
+              "last": 0.268382
+            },
+            "notional": {
+              "min": 153160.2,
+              "max": 390840.0,
+              "mean": 240906.38,
+              "last": 153160.2
+            },
+            "contribution_pct": {
+              "min": 0.015889,
+              "max": 0.040545,
+              "mean": 0.0249912,
+              "last": 0.015889
+            },
+            "holding_days": {
+              "min": 92.0,
+              "max": 148.0,
+              "mean": 120.0,
+              "last": 120.0
+            }
+          }
+        },
+        "momentum_metrics.csv": {
+          "exists": true,
+          "path": "data/combo_defensive_portfolios/combo_defensive_portfolio_20260514_141405/backtests/baseline/momentum_metrics.csv",
+          "size_bytes": 304,
+          "row_count": 1,
+          "columns": [
+            "annualized_volatility",
+            "avg_holding_days",
+            "buys",
+            "cagr",
+            "end",
+            "hit_rate_overall",
+            "max_drawdown",
+            "sells",
+            "sharpe_ratio",
+            "start",
+            "total_return",
+            "trades_total"
+          ],
+          "sha256": "93b429a19aa8e23fdc8fa478afd442aba3a22025875c916248ca70f4739281f9",
+          "summary": {
+            "total_return": {
+              "min": 8.6396526546,
+              "max": 8.6396526546,
+              "mean": 8.6396526546,
+              "last": 8.6396526546
+            },
+            "cagr": {
+              "min": 0.477004824,
+              "max": 0.477004824,
+              "mean": 0.477004824,
+              "last": 0.477004824
+            },
+            "max_drawdown": {
+              "min": -0.1639373602,
+              "max": -0.1639373602,
+              "mean": -0.1639373602,
+              "last": -0.1639373602
+            },
+            "sharpe_ratio": {
+              "min": 2.0816534411,
+              "max": 2.0816534411,
+              "mean": 2.0816534411,
+              "last": 2.0816534411
+            },
+            "annualized_volatility": {
+              "min": 0.2051277199,
+              "max": 0.2051277199,
+              "mean": 0.2051277199,
+              "last": 0.2051277199
+            },
+            "hit_rate_overall": {
+              "min": 0.3303030303,
+              "max": 0.3303030303,
+              "mean": 0.3303030303,
+              "last": 0.3303030303
+            },
+            "avg_holding_days": {
+              "min": 58.9196969697,
+              "max": 58.9196969697,
+              "mean": 58.9196969697,
+              "last": 58.9196969697
+            },
+            "trades_total": {
+              "min": 1925.0,
+              "max": 1925.0,
+              "mean": 1925.0,
+              "last": 1925.0
+            },
+            "buys": {
+              "min": 668.0,
+              "max": 668.0,
+              "mean": 668.0,
+              "last": 668.0
+            },
+            "sells": {
+              "min": 1257.0,
+              "max": 1257.0,
+              "mean": 1257.0,
+              "last": 1257.0
+            }
+          }
+        }
+      }
+    }
+  },
+  "legacy_signals": {
+    "exists": true,
+    "path": "data/momentum/top25_signals.csv",
+    "size_bytes": 750826,
+    "row_count": 7650,
+    "columns": [
+      "date",
+      "mom_6",
+      "rank",
+      "score",
+      "score_6",
+      "symbol",
+      "vol_6"
+    ],
+    "sha256": "f24437cf14f5070af0981d773f498ee9d3e6db050875488b1cfedffeefe8775c",
+    "summary": {}
+  },
+  "label": "phase0_baseline"
+}

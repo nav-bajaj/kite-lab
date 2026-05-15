@@ -6,13 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Kite-Lab is a momentum-based quantitative trading system for Indian equities using the Zerodha KiteConnect API. The system fetches NSE 500 market data, generates volatility-adjusted momentum signals, and backtests weekly-rebalanced portfolios with comprehensive performance analytics.
 
-**Current Status (April 2026):**
-- Production portfolio: NSE 500, L6 momentum, weekly rebalance, min-hold 8 days
-- Performance: 59.4% CAGR, -30.0% max DD, 1.92 Sharpe (2020-2026)
-- Recent optimizations: Min-hold-days 8 (eliminated 0-7d churn), vol floor (0.20 → 0.05)
-- Alternative universes: Nifty 100, Nifty 250 via `--universe` argument
-- Single portfolio script handles all universes
-- **Production dashboard deployed** (see below)
+**Current Status (May 2026):**
+- **Production portfolios — all built daily by [scripts/run_daily_pipeline.py](scripts/run_daily_pipeline.py):**
+  - **OM25 v3** (Nifty 250) — regime-tilt UC/CR composite, bi-weekly entry, weekly exit
+  - **TL25 v3** (NSE 500) — 3-component trend score, bi-weekly entry, weekly rank-exit
+  - **L6 v2** (NSE 500) — weekly L6 momentum on new `_momentum_engine` (calibrated within 0.4pp CAGR / 0.01 Sharpe of legacy L6)
+  - **COMBO Defensive** (NSE 500) — 50-50 L6 + OM25 dedup with 50% bear-regime overlay, bi-weekly Friday→Monday
+- **Manual / research portfolios (not in daily pipeline):**
+  - Legacy L6-1W via `run_final_momentum_portfolio.py` (Thursday/Friday rebalance helper, NSE 500 / Nifty 100 / Nifty 250 via `--universe`)
+- **Production dashboard deployed** (see below) — syncs all 4 production + 3 alt-universe portfolios
 
 ## Production Dashboard
 
@@ -97,16 +99,24 @@ pip install kiteconnect pandas matplotlib python-dotenv
 # Full pipeline (login + data + signals + sync + backup)
 python scripts/run_daily_pipeline.py --with-login
 
-# This runs:
-# 1. Login to Kite API (optional, with --with-login)
-# 2. Cache instruments list (symbol → token mapping)
-# 3. Fetch NSE 500 + indices data (parallel)
-# 4. Update Nifty 100 benchmark
-# 5. Build momentum signals
-# 6. Build OM25 v3 portfolio (regime-tilted UC/CR composite on Nifty 250)
-# 7. Build TL25 v3 portfolio (3-component trend score on NSE 500)
-# 8. Sync data to database (holdings, equity curve, metrics, trades, open positions)
-# 9. Backup data to /Users/navdeep/Documents/stock_data/
+# This runs (actual pipeline as of May 2026):
+#  1. Login to Kite API (optional, with --with-login)
+#  2. Cache instruments list (symbol → token mapping)
+#  3. Fetch NSE 500 + indices data (parallel)
+#  4. Apply corporate actions to nse500_data/*.csv (idempotent)
+#  5. Update Nifty 100 benchmark
+#  6. Build momentum rankings → data/momentum/top25_signals.csv
+#       (legacy step — output not consumed by any later pipeline step;
+#        only used by ad-hoc validate_signals/compare_signals/backtest_momentum.
+#        Candidate for removal from daily pipeline — see tasks/pipeline_improvements/)
+#  7. Build OM25 v3 portfolio   → data/om25_v3_portfolios/om25_v3_portfolio_<ts>/
+#  8. Build TL25 v3 portfolio   → data/tl25_v3_portfolios/tl25_v3_portfolio_<ts>/
+#  9. Build L6 v2 portfolio     → data/l6_v2_portfolios/l6_v2_portfolio_<ts>/
+# 10. Build COMBO Defensive    → data/combo_defensive_portfolios/combo_defensive_portfolio_<ts>/
+# 11. Sync to database (sync_to_database.py syncs 7 universes:
+#       nse500, nifty100, nifty250, om25_v3, tl25_v3, l6_v2, combo_defensive
+#       + open_positions + corporate-action adjustments)
+# 12. Backup price data to /Users/navdeep/Documents/stock_data/
 ```
 
 ### Final Portfolio Generation
@@ -349,8 +359,9 @@ HINDCOPPER, ATHERENERG, NATIONALUM, NETWEB, VEDL, SHRIRAMFIN, ASHOKLEY, HINDZINC
 HINDZINC, VEDL, SHRIRAMFIN, CANBK, HINDALCO, EICHERMOT, SBIN, TVSMOTOR, BANKBARODA, MARUTI, AXISBANK, TATASTEEL, JSWSTEEL, TITAN, ADANIPOWER, ASIANPAINT, SBILIFE, BAJAJ-AUTO, HCLTECH, TECHM, COALINDIA, TORNTPHARM, LTIM, TATACONSUM
 
 ### OM25 v3 Production Portfolio (Locked-in May 2026 OOS Retune)
-**Location:** `data/om25/v3/runs/<ts>/`
+**Location:** `data/om25_v3_portfolios/om25_v3_portfolio_<ts>/` (legacy runs under `data/om25/v3/runs/`)
 **Run:** `python scripts/run_om25_v3_portfolio.py --start 2016-01-01`
+**Daily pipeline invocation:** `--prices-dir nse500_data --regime-index indices_data/NIFTY_100.csv --start 2020-01-01`
 
 **Parameters:**
 - **Universe:** NSE Nifty 250 (250 stocks)
@@ -419,6 +430,40 @@ HINDZINC, VEDL, SHRIRAMFIN, CANBK, HINDALCO, EICHERMOT, SBIN, TVSMOTOR, BANKBARO
 - Weekly rank-exit provides modest DD reduction over biweekly-only
 
 **Full evidence trail:** `tasks/oos_retune_2026/RESULTS.md` (TL25 v3 section)
+
+### L6 v2 Production Portfolio (Engine migration, May 2026)
+**Location:** `data/l6_v2_portfolios/l6_v2_portfolio_<ts>/`
+**Run:** `python scripts/run_l6_v2_portfolio.py --prices-dir nse500_data --start 2020-01-01`
+**Engine:** `scripts/_momentum_engine.py` atop `scripts/_clean_engine.run_strategy()`
+
+**Parameters (same as legacy L6, no behavioral change):**
+- **Universe:** NSE 500 (499 stocks)
+- **Score:** `momentum_6m / max(realized_vol, 0.05)^1.0`, cross-sectional z-score
+- **Cadence:** Weekly Thursday signal → Friday OHLC/4 execution
+- **Top-N:** 24 stocks, equal-weight 1/24, max 7.5%
+- **Min hold:** 8 days, **Exit buffer:** 0 (immediate exit when out of top-24)
+- **Slippage:** 0.2% (20 bps), **Skip days:** 0
+- **No drawdown stop, no regime overlay** (those live in COMBO Defensive sibling)
+
+**Purpose:** Production migration of legacy L6-1W (the script `run_final_momentum_portfolio.py` continues to run as a Thursday/Friday rebalance helper, but `run_l6_v2_portfolio.py` is the engine going forward). Calibrated within 0.4pp CAGR / 0.01 Sharpe of legacy on identical data (verified during MM-tuning calibration). Performance characteristics match the legacy "NSE 500 L6-1W (min-hold 8d)" row in the benchmark table — see legacy L6 figures above.
+
+**Full evidence trail:** `tasks/MM-tuning/PRODUCTIONIZATION.md`
+
+### COMBO Defensive Portfolio (Locked-in May 2026)
+**Location:** `data/combo_defensive_portfolios/combo_defensive_portfolio_<ts>/`
+**Run:** `python scripts/run_combo_defensive_portfolio.py --prices-dir nse500_data --start 2020-01-01`
+**Spec:** `scripts/combo_defensive.py` (LOCKED config), `tasks/MM-tuning/DD_REDUCTION_RESEARCH.md`
+
+**Parameters:**
+- **Universe:** NSE 500
+- **Composite:** 50% L6 v2 ranks + 50% OM25 v3 ranks, priority dedup
+- **Cadence:** Bi-weekly Friday signal → Monday OHLC/4 execution
+- **Regime overlay:** NIFTY 100 close vs 100-DMA, 3-day confirmation, **50% allocation cut in bear regime**
+- **Top-N / Sizing / Slippage:** inherits from L6 / OM25 component specs
+
+**Purpose:** Drawdown-reduction sibling product. Combines L6 momentum capture with OM25's regime-aware defensive rotation; the 50% bear-regime cut sacrifices some upside for materially lower max DD.
+
+**Full evidence trail:** `tasks/MM-tuning/DD_REDUCTION_RESEARCH.md`
 
 ### Walk-Forward Robustness Study (May 2026)
 
@@ -770,9 +815,9 @@ python scripts/validate_signals.py --signals <path> --top-n 24
 
 ---
 
-**Last updated:** May 2026
-**Production portfolios:** NSE 500 L6-1W (momentum), OM25 v3 (Nifty 250 regime-tilt), TL25 v3 (NSE 500 trend-following)
-**Alternative portfolios:** Nifty 100, Nifty 250 (L6-1W)
+**Last updated:** May 2026 (pipeline-improvements branch)
+**Production portfolios (built daily):** OM25 v3 (Nifty 250), TL25 v3 (NSE 500), L6 v2 (NSE 500), COMBO Defensive (NSE 500)
+**Manual / alt portfolios:** Legacy L6-1W via `run_final_momentum_portfolio.py` (NSE 500 / Nifty 100 / Nifty 250)
 **Dashboard:** https://kite-lab.vercel.app
 **Backend:** https://kite-lab-production.up.railway.app (persistent volume at /data)
-**Status:** Production-ready with full security hardening, DB sync pipeline, and persistent storage
+**Status:** Production-ready with full security hardening, DB sync pipeline, and persistent storage. Active refactor: see `tasks/pipeline_improvements/PLAN.md`.
