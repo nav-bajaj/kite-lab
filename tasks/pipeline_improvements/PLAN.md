@@ -138,6 +138,37 @@ Add to `run_daily_pipeline.py`:
 
 ---
 
+## Audit corrections (post-Phase-1)
+
+Three concerns the user raised on 2026-05-15 turned out to be already
+correctly handled by existing code:
+
+1. **Schedule 7am IST Mon-Fri** — already configured at
+   [`kite-api/app/scheduler/tasks.py:23-26`](../../kite-api/app/scheduler/tasks.py#L23-L26)
+   with `hour=7, minute=0, day_of_week="mon-fri"`. Scheduler tz is set to
+   `Asia/Kolkata` at
+   [`scheduler.py:18`](../../kite-api/app/scheduler/scheduler.py#L18) and passed
+   to APScheduler. If the schedule appears not to fire at 7am IST in
+   practice, the cause is runtime (Railway container restart wiping the
+   in-memory jobstore, scheduler service crashed, etc.) — **not config**.
+   We add a runtime verification step in Phase 2.5.1.
+
+2. **Incremental fetch** — already incremental at
+   [`history_utils.py:178-195`](../../scripts/history_utils.py#L178-L195).
+   Reads the existing CSV, picks `fetch_start = last_date + 1 day`, and
+   skips the API call entirely if `fetch_start >= end_ts`. Mid-day reruns
+   and recovery-from-failure paths already benefit.
+
+3. **Incremental backup** — already incremental by default at
+   [`sync_data_backup.py:172`](../../scripts/sync_data_backup.py#L172).
+   `--full` is an explicit opt-in override; default behaviour copies only
+   changed files.
+
+The perception of "lots of refetching" most likely comes from the per-stock
+CSV-read overhead (500 files opened just to check last_date even when no new
+data exists, ~5s wall-clock). Phase 2's load-once orchestrator pattern
+eliminates that overhead.
+
 ## Phase 2 — Performance
 
 ### 2.1 Orchestrator-level data load
@@ -175,6 +206,96 @@ total wall-clock.
   changes only data flow, not logic.
 - Confirm each portfolio script still works standalone via CLI.
 - Confirm timing improvement ≥ 30s.
+
+---
+
+## Phase 2.5 — Data redundancy & resilience
+
+The single biggest data-loss risk today is a Railway outage or DB
+corruption: the Postgres tables `trades`, `trade_matches`,
+`open_positions`, `rebalances`, and `jobs` have no offsite backup. The
+local price-data backup at `~/Documents/stock_data/` also lives on the
+same Mac as the source — single physical device risk.
+
+### 2.5.1 Live schedule verification
+
+Add `scripts/check_schedule.py` that queries the production
+`/api/schedule` endpoint and prints next-fire times for each registered
+job. Confirms the 7am IST Mon-Fri trigger is live, the scheduler is
+running, and the in-memory jobstore was repopulated on the most recent
+container start.
+
+If a runtime gap is found, switch the APScheduler jobstore from
+`MemoryJobStore` to `SQLAlchemyJobStore` against the existing Postgres
+DB. Schedules then survive container restarts without relying on the
+`register_default_tasks` startup hook.
+
+### 2.5.2 Postgres offsite backup
+
+Add `scripts/backup_database.py`:
+
+- `pg_dump` of the Railway Postgres into a timestamped compressed file
+  under `data/db_backups/`
+- Rotation: keep last 14 daily + last 12 weekly (Sunday) + last 12
+  monthly (1st of month)
+- Tables backed up explicitly enumerated; halts if a new table appears
+  unrecognised (forces a conscious choice on whether to back it up)
+- Smoke test on every run: `pg_restore --list` against the new file
+  must succeed before the previous day's file is purged by rotation
+
+Schedule this as a separate **20:00 IST daily** job (after market
+close, well before the next morning's 7am pipeline) via the same
+APScheduler config in `tasks.py`.
+
+### 2.5.3 Critical-data git audit
+
+One-time review pass:
+
+- Confirm `data/corporate_actions.json` is committed (it drives the
+  corporate-action adjustments in `apply_corporate_actions.py` and
+  `sync_to_database.py`).
+- Confirm `data/static/*.csv` (universe definitions) are tracked.
+- Confirm locked strategy configs (`scripts/om25_v3.py`,
+  `scripts/tl25_v3.py`, `scripts/combo_defensive.py`,
+  `scripts/_momentum_engine.py:BASELINE`) are tracked.
+- The `nse500_data_historical/` 2009-2019 backfill (GDF-sourced, not
+  refetchable from Zerodha) lives only on the Mac. Decide: commit via
+  git-lfs, upload to cloud as part of 2.5.4, or document as a
+  manual-rebuy-only artifact.
+
+Output: a markdown checklist `tasks/pipeline_improvements/CRITICAL_DATA.md`.
+
+### 2.5.4 Cloud-redundancy upload (optional)
+
+If 2.5.2 lands cleanly, extend it to upload the Postgres dump and
+critical-data tarball to a second location (Google Drive via the
+existing OAuth in the dashboard, or a free-tier S3 bucket). Off-Mac,
+off-Railway — survives loss of either.
+
+Requires creds + small SDK call; deferred until 2.5.1-2.5.3 are green
+so credential-setup risk is scoped.
+
+### 2.5.5 Recovery runbook
+
+Document the disaster-recovery procedure in
+`tasks/pipeline_improvements/RECOVERY.md`:
+
+- "Railway DB is gone": restore from latest `data/db_backups/*.sql.gz`
+- "Local repo lost": clone from GitHub + restore prices from
+  `~/Documents/stock_data/`
+- "Mac lost (no local backups)": clone from GitHub + Phase 2.5.4 cloud
+  restore + manual GDF re-purchase for the 2009-2019 backfill
+- Test the runbook by doing a dry-run restore into a scratch directory
+
+### Validation Gate 2.5
+
+- `check_schedule.py` reports daily-pipeline next-fire as
+  `<next weekday> 07:00:00 IST`.
+- A dry-run of `backup_database.py` produces a non-empty compressed
+  dump that `pg_restore --list` reads back successfully.
+- `CRITICAL_DATA.md` checklist is fully green.
+- `RECOVERY.md` exists and a dry-run restore from the latest backup
+  into a scratch DB succeeds end-to-end.
 
 ---
 

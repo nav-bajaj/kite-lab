@@ -126,3 +126,104 @@ Awaiting user go-ahead. First step: refactor `run_daily_pipeline.py` to
 call Python entry points instead of subprocess-launching scripts, so the
 price panel / benchmark / regime can be loaded once and shared across all
 four portfolio builds. Target wall-clock improvement: ≥30s.
+
+## 2026-05-15 — Phase 2 complete
+
+User decisions received:
+- Performance first, then redundancy (Phase 2 → Phase 2.5)
+- Postgres backups land in `~/Documents/stock_data/db_backups/`
+- Cloud target is Google Drive
+
+User also raised three concerns that turned out to already be correctly
+handled by existing code:
+- **Schedule 7am IST Mon-Fri:** correctly configured in
+  `kite-api/app/scheduler/tasks.py:23-26` with scheduler tz=Asia/Kolkata.
+- **Incremental fetch:** already incremental in
+  `scripts/history_utils.py:178-195` (reads existing CSV last-date,
+  fetches only newer; skips API call if up-to-date).
+- **Incremental backup:** already incremental by default in
+  `scripts/sync_data_backup.py:172` (`--full` is an explicit override).
+
+Documented as the "Audit corrections" block at the top of PLAN.md.
+
+### Phase 2.1 — orchestrator-level data load
+
+Chose the subprocess-preserving pickle-cache approach over going in-process
+to keep the diff small and preserve crash isolation between portfolios.
+
+- Built `scripts/pipeline_core.py` with:
+  - `PipelineState` frozen dataclass (close_panel, trade_panel, benchmark,
+    optional regime_panel, provenance fields, schema_version=1)
+  - `load_shared_state()` — reads all panels from disk in one pass
+  - `dump_to_cache()` / `load_from_cache()` — pickle round-trip with
+    schema-version + type guards
+  - `describe()` — one-line summary for logs
+  - CLI: `python scripts/pipeline_core.py --prices-dir ... --benchmark
+    ... --regime-index ... --output ...` writes the cache
+- Fixed a pickle-qualname bug discovered in testing: the CLI block now
+  re-imports `PipelineState` through `scripts.pipeline_core` instead of
+  using the local `__main__` symbol, so other processes can unpickle.
+
+Each of the four production portfolio scripts (`run_om25_v3_portfolio`,
+`run_tl25_v3_portfolio`, `run_l6_v2_portfolio`,
+`run_combo_defensive_portfolio`) now accepts `--shared-state-file <path>`.
+When set, they:
+
+- Load `close_panel`, `trade_panel`, `benchmark` from the cache instead
+  of calling `load_price_panels` and `load_benchmark` on disk.
+- Reindex `cached_regime` to the local calendar for OM25/COMBO,
+  bypassing the in-script `build_regime_panel_confirmed` calls.
+- Fall back to the original on-disk path when the flag is absent
+  (standalone CLI behaviour preserved).
+
+### Phase 2.3 — orchestrator wiring + timing
+
+`scripts/run_daily_pipeline.py` was restructured:
+
+- New "Prepare shared-state cache" step runs `pipeline_core.py` after
+  benchmark and corporate-action steps, writing to
+  `/tmp/pipeline_state_<ts>.pkl`. `atexit` cleans up the file.
+- The four portfolio commands now have `--shared-state-file` appended.
+- New `--no-shared-state` flag falls back to per-portfolio loads (escape
+  hatch).
+- End-of-run timing table prints OK/FAIL + duration per step.
+
+### Validation Gate 2 — PASSED
+
+Ran each portfolio twice (with and without `--shared-state-file`) on
+identical inputs. All four dashboard CSVs (`momentum_equity.csv`,
+`momentum_trades.csv`, `momentum_holdings.csv`, `momentum_metrics.csv`)
+hashed byte-identically for every portfolio.
+
+Re-snapshot vs Phase 0 baseline: only the `label` field differs.
+
+Wall-clock impact was smaller than projected:
+- TL25 without cache: 1.8s
+- TL25 with cache: 0.9s
+- Savings/portfolio: ~0.9s
+- Net pipeline savings: ~2.7s (not the projected 30s)
+
+Reason: `load_price_panels` is already fast on a modern SSD; the
+PLAN.md projection of 4-8s/load was too high. The cache is still
+worth keeping for hygiene, future scale-ups, and the unified plumbing
+it provides for Phase 3.
+
+### Phase 2 deliverables
+
+- `scripts/pipeline_core.py` (new, 177 LOC)
+- `scripts/run_daily_pipeline.py` (rewired)
+- 4 portfolio scripts (each gained `--shared-state-file` + 10-15 LOC)
+- `tests/test_pipeline_core.py` (5 new tests)
+- Updated `RESULTS.md` with Validation Gate 2 record
+- Updated `PLAN.md` with audit-correction block
+
+### Next — Phase 2.5 (Data redundancy & resilience)
+
+Awaiting go-ahead. Five sub-items per PLAN.md:
+1. `scripts/check_schedule.py` — runtime verification of the
+   APScheduler 7am-IST job, with optional Postgres-jobstore migration.
+2. `scripts/backup_database.py` — pg_dump with 14d/12w/12m rotation,
+   landing in `~/Documents/stock_data/db_backups/`.
+3. Critical-data git audit (`CRITICAL_DATA.md`).
+4. Cloud upload to Google Drive (uses existing OAuth).
+5. `RECOVERY.md` disaster-recovery runbook with dry-run verification.

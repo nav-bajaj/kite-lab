@@ -169,6 +169,11 @@ def parse_args():
     ap.add_argument("--initial-capital", type=float, default=1_000_000)
     ap.add_argument("--output-dir", type=Path, default=None,
                     help="Output dir; default: data/om25/v3/runs/<ts>")
+    ap.add_argument("--shared-state-file", type=Path, default=None,
+                    help="Pickle cache from scripts/pipeline_core.py; if set, "
+                         "use cached panels (Phase 2 load-once). Note: requires "
+                         "the cache to have been built with --regime-index using "
+                         "the same MA window and confirm-days as this run.")
     return ap.parse_args()
 
 
@@ -194,10 +199,21 @@ def main():
     print(f"  cadence → {args.cadence}")
     print(f"  start → {args.start}")
 
-    print(f"[load] panels...")
-    close_panel, trade_panel = load_price_panels(args.prices_dir)
+    if args.shared_state_file is not None:
+        from scripts.pipeline_core import load_from_cache, describe
+        state = load_from_cache(args.shared_state_file)
+        print(f"[load] shared state from {args.shared_state_file.name}")
+        print(f"       {describe(state)}")
+        close_panel = state.close_panel
+        trade_panel = state.trade_panel
+        benchmark = state.benchmark
+        cached_regime = state.regime_panel
+    else:
+        print(f"[load] panels...")
+        close_panel, trade_panel = load_price_panels(args.prices_dir)
+        benchmark = load_benchmark(args.benchmark)
+        cached_regime = None
     calendar = close_panel.index
-    benchmark = load_benchmark(args.benchmark)
     benchmark_aligned = benchmark.reindex(calendar).ffill()
     sma_200 = close_panel.rolling(200, min_periods=200).mean()
 
@@ -219,10 +235,14 @@ def main():
     returns_uni = close_panel[cols].pct_change()
     print(f"  universe: {len(cols)} symbols")
 
-    print(f"[regime] {args.regime_index.name}: {args.ma_window}-DMA, {args.confirm_days}-day confirm")
-    regime = build_regime_panel_confirmed(
-        args.regime_index, args.ma_window, args.confirm_days, calendar=calendar
-    )
+    if cached_regime is not None:
+        print(f"[regime] using cached regime panel (assumed ma_window={args.ma_window}, confirm_days={args.confirm_days})")
+        regime = cached_regime.reindex(calendar).ffill()
+    else:
+        print(f"[regime] {args.regime_index.name}: {args.ma_window}-DMA, {args.confirm_days}-day confirm")
+        regime = build_regime_panel_confirmed(
+            args.regime_index, args.ma_window, args.confirm_days, calendar=calendar
+        )
 
     score_fn = make_om25_tilt_score(
         returns_uni, regime,

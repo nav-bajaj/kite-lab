@@ -157,6 +157,9 @@ def parse_args():
     ap.add_argument("--initial-capital", type=float, default=1_000_000)
     ap.add_argument("--output-dir", type=Path, default=None,
                     help="Output dir; default: data/tl25_v3_portfolios/tl25_v3_portfolio_<ts>")
+    ap.add_argument("--shared-state-file", type=Path, default=None,
+                    help="Pickle cache from scripts/pipeline_core.py; if set, "
+                         "use cached close/trade/benchmark panels (Phase 2 load-once)")
     return ap.parse_args()
 
 
@@ -181,10 +184,19 @@ def main():
     print(f"  weights → P={args.w_persistence} DD={args.w_drawdown} M={args.w_momentum}")
     print(f"  start → {args.start}")
 
-    print(f"[load] panels...")
-    close_panel, trade_panel = load_price_panels(args.prices_dir)
+    if args.shared_state_file is not None:
+        from scripts.pipeline_core import load_from_cache, describe
+        state = load_from_cache(args.shared_state_file)
+        print(f"[load] shared state from {args.shared_state_file.name}")
+        print(f"       {describe(state)}")
+        close_panel = state.close_panel
+        trade_panel = state.trade_panel
+        benchmark = state.benchmark
+    else:
+        print(f"[load] panels...")
+        close_panel, trade_panel = load_price_panels(args.prices_dir)
+        benchmark = load_benchmark(args.benchmark)
     calendar = close_panel.index
-    benchmark = load_benchmark(args.benchmark)
     benchmark_aligned = benchmark.reindex(calendar).ffill()
     sma_200 = close_panel.rolling(200, min_periods=200).mean()
     atr_panel = close_panel.pct_change().rolling(20).std()

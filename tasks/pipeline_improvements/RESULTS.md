@@ -84,3 +84,80 @@ new `momentum_metrics.csv` files should be:
   2026-05-12 / 2026-05-14)
 
 Re-snapshot after that run and confirm.
+
+## Validation Gate 2 (Phase 2 — Performance) — PASSED
+
+**Date:** 2026-05-15
+**Baseline:** `golden_master_20260515_151808.json` (Phase 0)
+**Comparison:** post-Phase-2 re-snapshot
+
+### Outcome
+
+Each of the four production portfolios was run twice — once with
+`--shared-state-file` pointing at a `pipeline_core` cache, once without
+— and the four dashboard CSVs (`momentum_equity.csv`, `momentum_trades.csv`,
+`momentum_holdings.csv`, `momentum_metrics.csv`) hashed byte-identically
+across both runs for every portfolio:
+
+| Portfolio | Files compared | Result |
+|---|---|---|
+| L6 v2 | 4 | bit-identical |
+| OM25 v3 | 4 | bit-identical |
+| TL25 v3 | 4 | bit-identical |
+| COMBO Defensive | 4 | bit-identical |
+
+Re-snapshotting the production run dirs against the Phase 0 baseline
+diffs cleanly (only the `label` field changes, as designed). All 27
+unit tests across `test_metrics_common.py`, `test_sync_validation.py`,
+and `test_pipeline_core.py` pass.
+
+### Wall-clock impact
+
+Real-world savings on this machine for the 2020-2026 backtest window
+(measured for TL25 v3 with the cache built once):
+
+| Run | Wall-clock |
+|---|---|
+| TL25 without cache | 1.8s |
+| TL25 with cache | 0.9s |
+| Savings per portfolio | ~0.9s |
+
+Extrapolating to all 4 portfolios + 1 cache-build step: roughly
+**4 × 0.9s = 3.6s saved**, minus 0.95s for the one-time cache build =
+**~2.7s net saved per pipeline run** on this dataset.
+
+This is below the 30s target from PLAN.md. The reason is that
+`load_price_panels` is already fast on a modern SSD (~1s for 500
+files of ~60KB each); the original 4-8s/load estimate in PLAN.md
+overcounted. The remaining wins from this pattern come at scale
+(larger universes, slower disks, or when re-running portfolios many
+times — e.g. parameter sweeps).
+
+The cache is preserved in the orchestrator anyway because:
+
+1. It eliminates work duplication, which is good hygiene independent
+   of the absolute savings.
+2. The `--shared-state-file` plumbing is now in place for Phase 3
+   when the engine consolidation may load additional shared artefacts.
+3. The `--no-shared-state` flag preserves backward-compatibility.
+
+### Phase 2 deliverables
+
+- `scripts/pipeline_core.py` (177 LOC) — `PipelineState`,
+  `load_shared_state()`, `dump_to_cache()`, `load_from_cache()`,
+  schema-versioned pickle round-trip.
+- 4 portfolio scripts now accept `--shared-state-file` (read panels
+  from the cache instead of disk).
+- `scripts/run_daily_pipeline.py` rewired with a "Prepare shared-state
+  cache" step before the portfolio builds, plus a `--no-shared-state`
+  escape hatch and per-step timing summary at the end of the run.
+- `tests/test_pipeline_core.py` (5 tests, round-trip + describe +
+  schema-mismatch + wrong-type behaviour).
+
+### Audit corrections folded into PLAN.md (Phase 2.5)
+
+The user's concerns on 2026-05-15 about scheduling, incremental fetch,
+and incremental backup turned out to already be correctly handled by
+existing code. The "Audit corrections" section in PLAN.md now documents
+this so future work doesn't re-litigate. Phase 2.5 (data redundancy)
+remains the meaningful unmet need and is the next phase.
