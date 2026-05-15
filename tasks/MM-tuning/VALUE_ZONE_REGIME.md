@@ -284,24 +284,50 @@ production calls are byte-identical to pre-change behavior.
 
 ## Open questions before production lock-in
 
-1. **Is breadth our most informative second dimension?** Need to test
-   alternatives:
-   - % NSE 500 above own 50-DMA (faster signal)
-   - % advancers / decliners over 20d
-   - New 52w highs minus new 52w lows
-   - Volume-weighted breadth
-2. **Threshold sensitivity** — is 20% robust, or did we just find a
-   lucky number? Sweep 15-30% in 1pp steps.
-3. **Lookback sensitivity for the breadth window** — currently 200d on
-   per-stock DMA; test 100d, 150d, 250d.
+**Update (2026-05-15): the indicator-side of question 1 is answered by
+the Breadth Atlas** (`tasks/breadth_atlas/REPORT.md` / `REPORT.html`).
+Indicator-first profiling of 14 NSE 500 breadth metrics across 2010-2026
+shows that:
+
+- The 14-metric panel collapses to **6 effective dimensions** (PCA, 90%
+  variance). PC1 = slow trend-participation; PC2 = daily flow.
+- BV3's `pct_above_200dma <20%` threshold sits between the 5th and 15th
+  percentile depending on bucket. The continuous version,
+  `avg_dist_from_200dma <-2σ`, captures more samples (n=47 vs n=11) at
+  comparable concurrent N100 drawdown (-27% vs -33%) — more
+  statistically robust trigger.
+- `net_new_highs_pct <-2σ` is **independent** of pct_above_200dma
+  (ρ=0.73, below the 0.85 redundancy cutoff). 139 days at -16% mean
+  concurrent DD. Strong candidate as a confirmation rule.
+- `mcclellan_sum <-2σ` is corroborating slow-flow confirmation (76 days
+  at -20% mean DD).
+- Daily-flow metrics (ad_ratio, ad_net_pct, up_vol_ratio, mcclellan_osc)
+  show **flat** bucket-vs-DD relationships — not useful as level signals
+  for a regime gate, but possibly useful for trade-day timing.
+
+**Refined open questions (post-atlas):**
+
+1. **Threshold sweep on the empirically grounded set.** Now that the
+   atlas tells us which thresholds correspond to which percentiles, sweep
+   on the COMBO Defensive substrate:
+   - `pct_above_200dma` at the 3, 5, 8, 10, 15, 20 percentile
+   - `avg_dist_from_200dma` at the -1, -1.5, -2, -2.5 σ marks
+   - `net_new_highs_pct` at the -1.5, -2, -2.5 σ marks
+   - `mcclellan_sum` at the -1.5, -2 σ marks
+2. **Combinational triggers.** Test "fire Value Zone when *both*
+   pct_above_200dma <X% **and** net_new_highs_pct <Yσ" — the two are
+   independent enough to be additive. Compare to either alone.
+3. **Lookback sensitivity** — atlas shows half-life ranges from 13d
+   (21-DMA) to 130d (200-DMA). Test 100d, 150d, 250d versions of the
+   "% above own DMA" metric.
 4. **Bull entry on Value→Bull transition** — currently Value Zone
    exposure is 100%, identical to Bull. Should re-entry from Value
    have a brief cooldown to avoid whipsaw if the bounce fails?
 5. **Out-of-sample stress** — test against 2008-09 (limited data),
    2013 taper tantrum, 2015 China devaluation if data permits.
 
-Next session: tackle #1 and #2 (breadth metric exploration +
-threshold sweep).
+Next session: tackle #1 and #2 — atlas-grounded threshold sweep +
+combinational triggers on COMBO Defensive substrate.
 
 ---
 
