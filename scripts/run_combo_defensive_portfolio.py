@@ -40,6 +40,7 @@ from scripts.om25_v3 import (
 from scripts.combo_defensive import LOCKED, make_combo_score_fn
 from scripts.backtest_momentum import load_price_panels, load_benchmark
 from scripts.build_om25_signals import load_universe
+from scripts.metrics_common import write_dashboard_metrics
 
 
 def write_dashboard_outputs(*, dashboard_dir: Path, eq: pd.DataFrame,
@@ -105,30 +106,7 @@ def write_dashboard_outputs(*, dashboard_dir: Path, eq: pd.DataFrame,
     holdings_df = pd.DataFrame(rows).sort_values("notional", ascending=False)
     holdings_df.to_csv(dashboard_dir / "momentum_holdings.csv", index=False)
 
-    pv = eq_out.set_index("date")["portfolio_value"].astype(float)
-    rets = pv.pct_change().dropna()
-    days = (pv.index[-1] - pv.index[0]).days
-    yrs = max(days / 365.25, 1e-9)
-    total_ret = pv.iloc[-1] / pv.iloc[0] - 1
-    cagr = (pv.iloc[-1] / pv.iloc[0]) ** (1 / yrs) - 1
-    vol = rets.std() * math.sqrt(252)
-    sharpe = (cagr - 0.05) / vol if vol > 0 else 0
-    mdd = pv.div(pv.cummax()).min() - 1
-    sells = trades[trades["side"] == "SELL"]
-    hit_rate = ((exits["pnl_pct"] > 0).mean()
-                if not exits.empty and "pnl_pct" in exits.columns else 0)
-    avg_hold = exits["hold_days"].mean() if not exits.empty and "hold_days" in exits.columns else 0
-    pd.DataFrame([{
-        "start": pv.index[0].date(), "end": pv.index[-1].date(),
-        "total_return": float(total_ret), "cagr": float(cagr),
-        "max_drawdown": float(mdd), "sharpe_ratio": float(sharpe),
-        "annualized_volatility": float(vol),
-        "hit_rate_overall": float(hit_rate),
-        "avg_holding_days": float(avg_hold),
-        "trades_total": int(len(trades)),
-        "buys": int((trades["side"] == "BUY").sum()),
-        "sells": int(len(sells)),
-    }]).to_csv(dashboard_dir / "momentum_metrics.csv", index=False)
+    write_dashboard_metrics(dashboard_dir, eq_out, trades, exits)
 
 
 def parse_args():
@@ -144,6 +122,9 @@ def parse_args():
                     default=ROOT / LOCKED["regime_index_path"])
     ap.add_argument("--initial-capital", type=float, default=1_000_000)
     ap.add_argument("--output-dir", type=Path, default=None)
+    ap.add_argument("--shared-state-file", type=Path, default=None,
+                    help="Pickle cache from scripts/pipeline_core.py; if set, "
+                         "use cached panels (Phase 2 load-once)")
     return ap.parse_args()
 
 
@@ -166,10 +147,21 @@ def main():
           f"bear={LOCKED['regime_bear_exposure']*100:.0f}%")
     print(f"  start → {args.start}")
 
-    print(f"[load] panels ...")
-    close_panel, trade_panel = load_price_panels(args.prices_dir)
+    if args.shared_state_file is not None:
+        from scripts.pipeline_core import load_from_cache, describe
+        state = load_from_cache(args.shared_state_file)
+        print(f"[load] shared state from {args.shared_state_file.name}")
+        print(f"       {describe(state)}")
+        close_panel = state.close_panel
+        trade_panel = state.trade_panel
+        benchmark = state.benchmark
+        cached_regime = state.regime_panel
+    else:
+        print(f"[load] panels ...")
+        close_panel, trade_panel = load_price_panels(args.prices_dir)
+        benchmark = load_benchmark(args.benchmark)
+        cached_regime = None
     calendar = close_panel.index
-    benchmark = load_benchmark(args.benchmark)
     benchmark_aligned = benchmark.reindex(calendar).ffill()
     sma_200 = close_panel.rolling(200, min_periods=200).mean()
     atr_20 = close_panel.pct_change().rolling(20).std()
@@ -194,11 +186,14 @@ def main():
     nifty250_uni = load_universe(ROOT / LOCKED["om25_universe_csv"])
     nifty250_cols = [s for s in close_panel.columns if s in nifty250_uni]
     om25_returns = close_panel[nifty250_cols].pct_change()
-    om25_regime_for_score = build_regime_panel_confirmed(
-        args.regime_index,
-        OM25_LOCKED["regime_ma_window"], OM25_LOCKED["regime_confirm_days"],
-        calendar=calendar,
-    )
+    if cached_regime is not None:
+        om25_regime_for_score = cached_regime.reindex(calendar).ffill()
+    else:
+        om25_regime_for_score = build_regime_panel_confirmed(
+            args.regime_index,
+            OM25_LOCKED["regime_ma_window"], OM25_LOCKED["regime_confirm_days"],
+            calendar=calendar,
+        )
     om25_score = make_om25_tilt_score(
         om25_returns, om25_regime_for_score,
         bull_w_uc=LOCKED["om25_bull_w_uc"], bull_w_cr=LOCKED["om25_bull_w_cr"],
@@ -218,11 +213,14 @@ def main():
     print(f"[regime overlay] {args.regime_index.name}, "
           f"{LOCKED['regime_ma_window']}-DMA, "
           f"{LOCKED['regime_confirm_days']}-day confirm")
-    portfolio_regime = build_regime_panel_confirmed(
-        args.regime_index,
-        LOCKED["regime_ma_window"], LOCKED["regime_confirm_days"],
-        calendar=calendar,
-    )
+    if cached_regime is not None:
+        portfolio_regime = cached_regime.reindex(calendar).ffill()
+    else:
+        portfolio_regime = build_regime_panel_confirmed(
+            args.regime_index,
+            LOCKED["regime_ma_window"], LOCKED["regime_confirm_days"],
+            calendar=calendar,
+        )
 
     # Dates: biweekly Friday entry, weekly Friday for regime/DD checks
     weekly_fri = fridays(calendar)

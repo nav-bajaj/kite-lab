@@ -43,6 +43,7 @@ from scripts.build_om25_signals import load_universe
 from scripts.om25_v3 import (
     LOCKED, build_regime_panel_confirmed, make_om25_tilt_score,
 )
+from scripts.metrics_common import write_dashboard_metrics
 
 
 def write_dashboard_outputs(*, dashboard_dir: Path, eq: pd.DataFrame,
@@ -60,8 +61,6 @@ def write_dashboard_outputs(*, dashboard_dir: Path, eq: pd.DataFrame,
       - momentum_metrics.csv:   single-row with cagr, total_return,
                                 max_drawdown, sharpe_ratio, etc.
     """
-    import math
-
     # ---- equity ----
     eq_out = eq.copy()
     eq_out["date"] = pd.to_datetime(eq_out["date"])
@@ -131,39 +130,7 @@ def write_dashboard_outputs(*, dashboard_dir: Path, eq: pd.DataFrame,
     holdings_df = pd.DataFrame(holdings_rows).sort_values("notional", ascending=False)
     holdings_df.to_csv(dashboard_dir / "momentum_holdings.csv", index=False)
 
-    # ---- metrics (single-row) ----
-    pv = eq_out.set_index("date")["portfolio_value"].astype(float)
-    rets = pv.pct_change().dropna()
-    days = (pv.index[-1] - pv.index[0]).days
-    yrs = max(days / 365.25, 1e-9)
-    total_ret = pv.iloc[-1] / pv.iloc[0] - 1
-    cagr = (pv.iloc[-1] / pv.iloc[0]) ** (1 / yrs) - 1
-    vol = rets.std() * math.sqrt(252)
-    sharpe = (cagr - 0.05) / vol if vol > 0 else 0
-    mdd = pv.div(pv.cummax()).min() - 1
-    sells = trades[trades["side"] == "SELL"]
-    hit_rate = (
-        (exits["pnl_pct"] > 0).mean()
-        if not exits.empty and "pnl_pct" in exits.columns else 0
-    )
-    avg_hold = exits["hold_days"].mean() if not exits.empty and "hold_days" in exits.columns else 0
-    metrics_row = {
-        "start": pv.index[0].date(),
-        "end": pv.index[-1].date(),
-        "total_return": float(total_ret),
-        "cagr": float(cagr),
-        "max_drawdown": float(mdd),
-        "sharpe_ratio": float(sharpe),
-        "annualized_volatility": float(vol),
-        "hit_rate_overall": float(hit_rate),
-        "avg_holding_days": float(avg_hold),
-        "trades_total": int(len(trades)),
-        "buys": int((trades["side"] == "BUY").sum()),
-        "sells": int(len(sells)),
-    }
-    pd.DataFrame([metrics_row]).to_csv(
-        dashboard_dir / "momentum_metrics.csv", index=False
-    )
+    write_dashboard_metrics(dashboard_dir, eq_out, trades, exits)
 
 
 def parse_args():
@@ -202,6 +169,11 @@ def parse_args():
     ap.add_argument("--initial-capital", type=float, default=1_000_000)
     ap.add_argument("--output-dir", type=Path, default=None,
                     help="Output dir; default: data/om25/v3/runs/<ts>")
+    ap.add_argument("--shared-state-file", type=Path, default=None,
+                    help="Pickle cache from scripts/pipeline_core.py; if set, "
+                         "use cached panels (Phase 2 load-once). Note: requires "
+                         "the cache to have been built with --regime-index using "
+                         "the same MA window and confirm-days as this run.")
     return ap.parse_args()
 
 
@@ -227,10 +199,21 @@ def main():
     print(f"  cadence → {args.cadence}")
     print(f"  start → {args.start}")
 
-    print(f"[load] panels...")
-    close_panel, trade_panel = load_price_panels(args.prices_dir)
+    if args.shared_state_file is not None:
+        from scripts.pipeline_core import load_from_cache, describe
+        state = load_from_cache(args.shared_state_file)
+        print(f"[load] shared state from {args.shared_state_file.name}")
+        print(f"       {describe(state)}")
+        close_panel = state.close_panel
+        trade_panel = state.trade_panel
+        benchmark = state.benchmark
+        cached_regime = state.regime_panel
+    else:
+        print(f"[load] panels...")
+        close_panel, trade_panel = load_price_panels(args.prices_dir)
+        benchmark = load_benchmark(args.benchmark)
+        cached_regime = None
     calendar = close_panel.index
-    benchmark = load_benchmark(args.benchmark)
     benchmark_aligned = benchmark.reindex(calendar).ffill()
     sma_200 = close_panel.rolling(200, min_periods=200).mean()
 
@@ -252,10 +235,14 @@ def main():
     returns_uni = close_panel[cols].pct_change()
     print(f"  universe: {len(cols)} symbols")
 
-    print(f"[regime] {args.regime_index.name}: {args.ma_window}-DMA, {args.confirm_days}-day confirm")
-    regime = build_regime_panel_confirmed(
-        args.regime_index, args.ma_window, args.confirm_days, calendar=calendar
-    )
+    if cached_regime is not None:
+        print(f"[regime] using cached regime panel (assumed ma_window={args.ma_window}, confirm_days={args.confirm_days})")
+        regime = cached_regime.reindex(calendar).ffill()
+    else:
+        print(f"[regime] {args.regime_index.name}: {args.ma_window}-DMA, {args.confirm_days}-day confirm")
+        regime = build_regime_panel_confirmed(
+            args.regime_index, args.ma_window, args.confirm_days, calendar=calendar
+        )
 
     score_fn = make_om25_tilt_score(
         returns_uni, regime,

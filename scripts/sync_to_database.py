@@ -31,7 +31,55 @@ def main():
                         help="Universe to sync (nse500, nifty100, nifty250, om25_v3, tl25_v3, l6_v2, combo_defensive). Default: all")
     parser.add_argument("--full", action="store_true",
                         help="Full trade re-sync (delete all trades and reinsert from CSV)")
+    parser.add_argument("--skip-validation", action="store_true",
+                        help="Skip pre-sync CSV validation (not recommended)")
+    parser.add_argument("--validate-only", action="store_true",
+                        help="Run pre-sync validation and exit without writing to DB")
     args = parser.parse_args()
+
+    # Pre-sync validation: catch malformed/incomplete portfolio CSVs before
+    # they touch the production database. Scoped to the four daily-pipeline
+    # portfolios (om25_v3, tl25_v3, l6_v2, combo_defensive); the legacy
+    # NSE 500 / Nifty 100 / Nifty 250 outputs use a different metrics
+    # schema and are skipped by the validator.
+    if not args.skip_validation:
+        sys.path.insert(0, os.path.join(repo_root, "scripts"))
+        from sync_validation import (
+            validate_universes, format_report, RUN_DIR_GLOBS,
+        )
+        # Determine which universes to validate:
+        #   - --universe matches a validator-known universe → just that one
+        #   - --universe is a legacy universe (nse500/nifty100/nifty250) →
+        #     skip validation (different metrics schema, out of scope)
+        #   - no --universe given → all 4 daily-pipeline portfolios
+        if args.universe and args.universe in RUN_DIR_GLOBS:
+            targets = [args.universe]
+        elif args.universe:
+            targets = []
+        else:
+            targets = list(RUN_DIR_GLOBS.keys())
+
+        if targets:
+            print(f"{'='*50}")
+            print(f"Pre-sync validation ({len(targets)} universes)...")
+            print(f"{'='*50}")
+            reports = validate_universes(targets)
+            any_fail = False
+            for u in targets:
+                rep = reports[u]
+                print(format_report(rep))
+                if not rep.ok:
+                    any_fail = True
+            if any_fail:
+                print("\nValidation FAILED. Aborting sync to protect production DB.")
+                print("Re-run with --skip-validation only after manual review.")
+                sys.exit(2)
+            print("All validated universes passed.\n")
+        else:
+            print(f"[validation] universe '{args.universe}' is legacy schema; skipped.")
+        if args.validate_only:
+            print("--validate-only set; exiting before DB writes.")
+            return
 
     from app.services.sync_service import sync_all, sync_all_universes
     from app.services.positions_service import PositionsService
