@@ -1,5 +1,22 @@
 # Breadth Atlas — Empirical Profile of NSE 500 Market Breadth
 
+> **Status (2026-05-15): COMPLETE.** Phases 0–3 shipped on the `breadth-atlas` branch (commits `3b5a812`, `4312182`, plus HTML generator). Deliverables:
+> - **Narrative:** [`REPORT.md`](REPORT.md) — six-section writeup with headlines, tables, and figure references.
+> - **Interactive report:** [`REPORT.html`](REPORT.html) — self-contained 6.3 MB single-file HTML with all 33 figures embedded inline and a sticky TOC. Open in any browser.
+> - **Panel:** `data/breadth/breadth_daily.csv` (3,932 trading days × 14 metrics) + `breadth_universe_size.csv`.
+> - **Section CSVs:** `section1_distribution_stats`, `section1_yearly_means`, `section2_dwell_times`, `section3_extremes` (1,962 events), `section4_mean_reversion`, `section5_conditional`, `section6_{pearson,spearman,pca_variance,pca_loadings}.csv`.
+> - **Figures:** 33 PNGs across `figures/{distributions,dwell_time,index_relationship,correlation}/` — gitignored (regenerable), but embedded in REPORT.html.
+> - **Scripts:** `scripts/build_breadth_panel.py` (one-time compute, ~30s) + `scripts/breadth_atlas_report.py` (tables + figures, ~60s) + `scripts/breadth_atlas_html.py` (HTML render, ~10s).
+>
+> **Key empirical findings:**
+> 1. 14 metrics collapse to 6 effective dimensions (PCA, 90% variance). PC1 (48%) = slow trend-participation; PC2 (21%) = daily flow.
+> 2. Six redundant correlation pairs ≥ 0.85 — `pct_above_200dma ↔ avg_dist_from_200dma` is the strongest (0.97).
+> 3. Deep oversold lives in three places: `pct_above_200dma` 0–10% bucket (n=11, mean concurrent N100 DD −33%); `avg_dist_from_200dma` <−2σ (n=47, −27%); `mcclellan_sum` <−2σ (n=76, −20%).
+> 4. `net_new_highs_pct` is asymmetric (min −71.8% vs max +43.2%); carries information independent of `pct_above_200dma` (ρ=0.73). Useful candidate for confirmation rules.
+> 5. `pct_above_DMA` half-lives form a clean speed gradient: 21d→13 days, 50d→36, 100d→69, 200d→130. Slow enough that biweekly portfolios react without whipsaw.
+>
+> **Next study (separate, this plan does not propose it):** BV3 threshold sweep and alternative-metric A/B on the COMBO Defensive substrate, informed by the atlas findings above.
+
 ## Why this work
 
 `tasks/MM-tuning/VALUE_ZONE_REGIME.md` flagged that the Defensive production lock is paused pending **deeper breadth-metric exploration**. The existing work (BV3 in `scripts/_three_state_regime_test.py`) jumps straight from "% above 200-DMA" to a trading regime gate. That's signal-first.
