@@ -63,38 +63,41 @@ from Zerodha**, which doesn't go back that far. If this Mac dies:
 **Decision needed:** commit via git-lfs, upload as part of Phase 2.5.4
 to Google Drive, or formally accept the manual-rebuy-only path.
 
-### 2. **Railway DB connection string**
+### 2. **Railway DB connection string** — DECISION PENDING
 
-Right now `DATABASE_PUBLIC_URL` is only accessible from the Railway
-dashboard. If you lose that account / it's compromised / the Railway
-team revokes access, the backup script can't reach the DB to take the
-final pre-disaster snapshot.
+`DATABASE_PUBLIC_URL` is only stored in the Railway dashboard. If the
+Railway account is compromised or revoked, no offline copy of the
+connection string exists and the backup script can't reach the DB to
+take a final snapshot.
 
-**Action:** save `DATABASE_PUBLIC_URL` in a password manager you trust
-(1Password, Bitwarden, etc.). Update it whenever Railway rotates the
-proxy port.
+The textbook fix is a password manager (1Password, Bitwarden) entry.
+Lower-effort alternatives if you don't run a password manager:
 
-### 3. **`data/static/nifty_smallcap_universe.csv` is untracked**
+- Save to a plain file with restrictive permissions:
+  `mkdir -p ~/.config/kite-lab && \
+   echo 'DATABASE_PUBLIC_URL=...' > ~/.config/kite-lab/credentials && \
+   chmod 600 ~/.config/kite-lab/credentials`
+- Paste into Apple Notes with an encrypted lock
+- Print on paper and tape to the back of the desk (not joking — this
+  is fine for credentials you only need during disaster recovery)
 
-On disk but never committed. Either:
+Either way, the goal is one copy that survives losing the Mac and
+the Railway dashboard simultaneously.
 
-- Commit it (`git add data/static/nifty_smallcap_universe.csv`) if
-  it's a real universe definition you want kept
-- Delete it if it was an experiment scratch file
+### 3. **`data/static/nifty_smallcap_universe.csv`** — RESOLVED 2026-05-16
 
-### 4. **`rebalances` table is empty in production**
+Committed. 250 stocks, same schema as the other universe CSVs. Not
+currently used by any strategy, kept available for future small-cap
+experiments.
 
-The `backup_database.py --dry-run` flagged this. Two interpretations:
+### 4. **`rebalances` table is empty in production** — RESOLVED 2026-05-16
 
-- You've never used the dashboard's Admin → Rebalance flow (you place
-  orders directly via Zerodha Console). 0 rows is expected and OK.
-- You have used it, in which case the writes are going somewhere
-  unexpected and that's a real data-loss bug.
-
-**If you HAVE used the Rebalance page on the dashboard**, check that
-`kite-api/app/api/rebalance.py` actually writes to the `rebalances`
-table on order submit. If not, the dashboard is silently losing that
-state.
+Operator confirmed: the dashboard's Admin → Rebalance page has never
+been used; orders are placed directly via Zerodha Console. 0 rows is
+expected. The script's warning is correct behaviour — if a row ever
+gets written to `rebalances` (i.e. the operator starts using the
+dashboard rebalance flow), future backups will pick it up and the
+warning will go away on its own.
 
 ### 5. **Backup is currently local-only**
 
