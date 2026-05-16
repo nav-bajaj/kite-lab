@@ -227,3 +227,61 @@ Awaiting go-ahead. Five sub-items per PLAN.md:
 3. Critical-data git audit (`CRITICAL_DATA.md`).
 4. Cloud upload to Google Drive (uses existing OAuth).
 5. `RECOVERY.md` disaster-recovery runbook with dry-run verification.
+
+## 2026-05-16 — Phase 2.5 in progress
+
+### Phase 2.5.1 — skipped per operator decision
+
+Operator confirmed scheduling is working in production (live 7am IST
+run completed cleanly on 2026-05-15). No script needed.
+
+### Phase 2.5.2 — Postgres backup — DONE
+
+- `scripts/backup_database.py`: SQLAlchemy + pandas (no pg_dump dep),
+  dumps each of the 10 known tables to CSV.gz inside one timestamped
+  tarball. 14d + 12w + 12m rotation gated on smoke-test success.
+- `scripts/restore_database.py` companion with `--dry-run` and
+  `--truncate` modes.
+- 9 new unit tests for rotation + parse_ts. All 36 pipeline-improvements
+  tests pass.
+- First live --dry-run against Railway initially hit
+  `postgres.railway.internal` (the internal hostname). Fixed by adding
+  a fail-fast probe in `_engine_from_env` with a Railway-specific
+  error pointing at `DATABASE_PUBLIC_URL`. Second --dry-run via the
+  public proxy succeeded: 31,537 rows captured across 10 tables.
+- First real backup written and smoke-tested OK. Offsite-on-Mac is
+  now closed.
+
+### Phase 2.5.3 — Critical-data audit — DONE
+
+- `CRITICAL_DATA.md` inventories what's replaceable vs irreplaceable.
+- Confirmed all locked strategy configs + universe CSVs + corporate
+  actions are git-tracked.
+- Committed `data/static/nifty_smallcap_universe.csv` (250 stocks)
+  that was on disk but untracked.
+- Resolved 2 of the 5 gaps surfaced (smallcap untracked, rebalances
+  empty). Three remain pending or moved into 2.5.4 / RECOVERY: the
+  2009-2019 GDF backfill (HIGH risk, single-Mac), the
+  password-manager entry, and the cloud-redundancy gap.
+
+### Phase 2.5.5 — Recovery runbook — DONE
+
+- `RECOVERY.md` covers three failure scenarios (Railway DB dead /
+  Mac gone / GitHub repo lost). Each has explicit restore commands
+  and a quarterly dry-run test.
+
+### Phase 2.5.4 — Google Drive cloud upload — READY FOR OPERATOR
+
+- `scripts/upload_to_gdrive.py` written. Uses
+  google-api-python-client (installed into local .venv).
+- Strategy:
+  - `db_backups/` mirrored file-by-file (md5 dedup; preserves every
+    tarball that ever existed in Drive)
+  - `nse500_data/`, `nse500_data_historical/`, `nse500_data_hourly/`,
+    `indices_data/` snapshotted as one daily tarball each, with
+    7-day retention in Drive
+- `auth`, `upload`, `status` sub-commands.
+- `GDRIVE_SETUP.md` is a 10-min runbook covering the Google Cloud
+  Console OAuth setup + first auth + first upload.
+- Pending: operator runs through GDRIVE_SETUP.md and confirms the
+  first upload lands in `My Drive/kite-lab-backups/`.
