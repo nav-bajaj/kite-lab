@@ -113,14 +113,35 @@ def _engine_from_env() -> Engine:
     url = os.environ.get("DATABASE_URL", "").strip()
     if not url:
         raise SystemExit(
-            "DATABASE_URL not set. Pull it from Railway → variables and "
-            "export it before running this script."
+            "DATABASE_URL not set. From Railway → Postgres service → "
+            "Variables, copy DATABASE_PUBLIC_URL (NOT DATABASE_URL — that "
+            "uses the postgres.railway.internal hostname which only "
+            "resolves inside Railway's private network)."
         )
     # Some Railway URLs use postgres:// which SQLAlchemy 2.x rejects.
     if url.startswith("postgres://"):
         url = "postgresql://" + url[len("postgres://"):]
     print(f"[backup] connecting to {_redact(url)}")
-    return create_engine(url, pool_pre_ping=True, future=True)
+
+    engine = create_engine(url, pool_pre_ping=True, future=True)
+
+    # Fail fast on unreachable host — without this, every per-table query
+    # below would emit the same DNS / connection error and the output
+    # becomes noise. One clear message is better.
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+    except Exception as exc:
+        msg = str(exc)
+        if "postgres.railway.internal" in msg:
+            raise SystemExit(
+                "Connection failed: the postgres.railway.internal hostname "
+                "only resolves inside Railway's private network. From your "
+                "Mac you need DATABASE_PUBLIC_URL (Railway → Postgres → "
+                "Variables, or enable Public Networking under Settings)."
+            ) from None
+        raise SystemExit(f"Database connection failed: {exc!s}") from None
+    return engine
 
 
 # ---------------------------------------------------------------------------
