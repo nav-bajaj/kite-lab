@@ -62,6 +62,7 @@ ALLOWED_UPLOAD_DIRS = {
     "nse500_data",
     "nse500_data_hourly",
     "nse500_data_historical",
+    "nse500_data_gdf_full",   # 2009-2023 deep GDF backfill (Phase 2.5.x side task)
     "indices_data",
 }
 

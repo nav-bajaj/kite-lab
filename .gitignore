@@ -58,6 +58,8 @@ data/*
 !data/final_portfolio/*.md
 !experiments/final_portfolio/**/*.csv
 !experiments/final_portfolio/**/*.html
+# Validator output for the GDF full backfill — documentation, not data
+!tasks/gdf_full_backfill/*.csv
 
 # Historical data directories (large, regenerated daily)
 next50_data/
