@@ -78,7 +78,16 @@ TABLES = [
 IRREPLACEABLE = {"trades", "trade_matches", "open_positions", "rebalances"}
 
 
-DEFAULT_OUTPUT_DIR = Path.home() / "Documents" / "stock_data" / "db_backups"
+# Output directory resolution order:
+#   1. --output-dir CLI flag (operator explicit override)
+#   2. KITE_BACKUP_OUTPUT_DIR env var (Railway: set to /data/db_backups)
+#   3. ~/Documents/stock_data/db_backups/  (Mac-local default)
+DEFAULT_OUTPUT_DIR = Path(
+    os.environ.get(
+        "KITE_BACKUP_OUTPUT_DIR",
+        str(Path.home() / "Documents" / "stock_data" / "db_backups"),
+    )
+)
 
 
 @dataclass

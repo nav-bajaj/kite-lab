@@ -38,6 +38,33 @@ SCHEDULED_TASKS = [
             "minute": 0
         },
     },
+    # Phase 2.5.6 — Railway-side backup chain. Both jobs every day so
+    # weekends don't go without a backup; the dump is small enough
+    # that 7-days-a-week cost is negligible.
+    {
+        "id": "daily_db_backup",
+        "name": "Daily DB Backup",
+        "description": "Dump Postgres to /data/db_backups/ + smoke-test + rotation",
+        "command": "db_backup",
+        "func_ref": "app.scheduler.tasks:run_daily_db_backup",
+        "trigger": "cron",
+        "trigger_args": {
+            "hour": 20,
+            "minute": 0,
+        },
+    },
+    {
+        "id": "daily_cloud_upload",
+        "name": "Daily Cloud Upload",
+        "description": "Mirror /data backup tarballs + snapshot price dirs to Google Drive",
+        "command": "cloud_upload",
+        "func_ref": "app.scheduler.tasks:run_daily_cloud_upload",
+        "trigger": "cron",
+        "trigger_args": {
+            "hour": 20,
+            "minute": 30,
+        },
+    },
 ]
 
 
@@ -57,6 +84,22 @@ def run_weekly_backup():
     """Run the weekly backup task (synchronous wrapper for APScheduler)."""
     import asyncio
     asyncio.run(_execute_scheduled_task("backup_data"))
+
+
+def run_daily_db_backup():
+    """Phase 2.5.6 — pg_dump-equivalent of the Railway Postgres into
+    /data/db_backups/. Sync wrapper for APScheduler."""
+    import asyncio
+    asyncio.run(_execute_scheduled_task("db_backup"))
+
+
+def run_daily_cloud_upload():
+    """Phase 2.5.6 — upload /data backups + price-dir snapshots to
+    Google Drive. Runs 30 minutes after the DB backup so the new
+    tarball is in /data/db_backups/ before mirror-mode looks for it.
+    Sync wrapper for APScheduler."""
+    import asyncio
+    asyncio.run(_execute_scheduled_task("cloud_upload"))
 
 
 async def _execute_scheduled_task(command: str, universe: str = None, args: dict = None):

@@ -76,8 +76,13 @@ CONFIG_DIR = Path.home() / ".config" / "kite-lab"
 CLIENT_SECRET_PATH = CONFIG_DIR / "gdrive_client_secret.json"
 TOKEN_PATH = CONFIG_DIR / "gdrive_token.json"
 
-# Local source root and Drive destination root.
-SOURCE_ROOT = Path.home() / "Documents" / "stock_data"
+# Source-root resolution order:
+#   1. KITE_BACKUP_SOURCE_ROOT env var (Railway: set to /data)
+#   2. ~/Documents/stock_data/  (Mac-local default)
+SOURCE_ROOT = Path(os.environ.get(
+    "KITE_BACKUP_SOURCE_ROOT",
+    str(Path.home() / "Documents" / "stock_data"),
+))
 DRIVE_ROOT_FOLDER = "kite-lab-backups"
 
 # Top-level dirs that get the "file-by-file mirror" treatment.
@@ -92,11 +97,14 @@ SNAPSHOT_DIRS = (
 )
 SNAPSHOT_RETENTION = 7  # Keep last N daily tarballs in Drive per dir
 
-# Drive API scope — full drive access is needed to create folders, upload
-# files, and (for snapshot rotation) delete old ones.  We could narrow to
-# drive.file but that would prevent rotation of files we didn't create
-# in the same OAuth session.
-SCOPES = ["https://www.googleapis.com/auth/drive"]
+# Drive API scope.
+# drive.file restricts the app to files it creates or that the user
+# explicitly opens via a Drive picker. Sufficient for our use because
+# we create both the kite-lab-backups folder and all files within it,
+# and rotation only deletes files this app created. This minimises
+# blast radius if the OAuth refresh token leaks (notably: when stored
+# on Railway as an env var).
+SCOPES = ["https://www.googleapis.com/auth/drive.file"]
 
 
 # ---------------------------------------------------------------------------
@@ -106,39 +114,74 @@ SCOPES = ["https://www.googleapis.com/auth/drive"]
 def _load_credentials():
     """Load cached OAuth credentials, refreshing if expired.
 
-    Returns the ``google.oauth2.credentials.Credentials`` object or None
-    if first-time auth is needed.
+    Credential resolution order:
+      1. GDRIVE_REFRESH_TOKEN_JSON env var (Railway-style: full
+         authorized-user JSON pasted in as a single env-var value)
+      2. ~/.config/kite-lab/gdrive_token.json (Mac-local default)
+
+    Returns the Credentials object, or None if first-time auth is needed.
     """
     from google.oauth2.credentials import Credentials
     from google.auth.transport.requests import Request
 
-    if not TOKEN_PATH.exists():
+    env_token = os.environ.get("GDRIVE_REFRESH_TOKEN_JSON", "").strip()
+    if env_token:
+        creds = Credentials.from_authorized_user_info(
+            json.loads(env_token), SCOPES,
+        )
+    elif TOKEN_PATH.exists():
+        creds = Credentials.from_authorized_user_file(str(TOKEN_PATH), SCOPES)
+    else:
         return None
-    creds = Credentials.from_authorized_user_file(str(TOKEN_PATH), SCOPES)
+
     if creds.expired and creds.refresh_token:
         creds.refresh(Request())
-        TOKEN_PATH.write_text(creds.to_json())
+        # Only persist refreshed token back to disk in local-file mode;
+        # on Railway the env var is the source of truth and we don't
+        # touch the container filesystem (it's ephemeral anyway).
+        if not env_token and TOKEN_PATH.exists():
+            TOKEN_PATH.write_text(creds.to_json())
     return creds
 
 
 def _run_oauth_flow():
-    """Interactive OAuth: open browser, grant scope, cache refresh token."""
+    """Interactive OAuth: open browser, grant scope, cache refresh token.
+
+    Always runs from the operator's Mac (Railway containers have no
+    browser). After this completes, the resulting JSON can either be
+    left at ~/.config/kite-lab/gdrive_token.json (local use) or copied
+    into the GDRIVE_REFRESH_TOKEN_JSON env var on Railway (production
+    use). See RAILWAY_BACKUP_SETUP.md for the copy-to-Railway step.
+    """
     from google_auth_oauthlib.flow import InstalledAppFlow
 
-    if not CLIENT_SECRET_PATH.exists():
+    # Allow env-var override of the client-secret file path so the
+    # operator can keep multiple OAuth clients (e.g. one with old
+    # drive scope, one with drive.file).
+    secret_path = Path(os.environ.get(
+        "GDRIVE_CLIENT_SECRET_PATH", str(CLIENT_SECRET_PATH),
+    ))
+    if not secret_path.exists():
         raise SystemExit(
-            f"Missing {CLIENT_SECRET_PATH}.\n"
+            f"Missing {secret_path}.\n"
             f"Download the OAuth client-secret JSON from Google Cloud Console "
             f"(APIs & Services → Credentials → Create credentials → OAuth client "
             f"ID, Desktop app) and save it there. See the top-of-file docstring "
             f"for the full setup steps."
         )
-    flow = InstalledAppFlow.from_client_secrets_file(str(CLIENT_SECRET_PATH), SCOPES)
+    flow = InstalledAppFlow.from_client_secrets_file(str(secret_path), SCOPES)
     creds = flow.run_local_server(port=0)
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
     TOKEN_PATH.write_text(creds.to_json())
     os.chmod(TOKEN_PATH, 0o600)
     print(f"[upload] saved refresh token to {TOKEN_PATH}")
+    print(f"[upload] scope granted: {SCOPES[0]}")
+    print()
+    print("To use this token on Railway, copy the JSON below into a new")
+    print("env var named GDRIVE_REFRESH_TOKEN_JSON (single-line value):")
+    print()
+    print(f"  cat {TOKEN_PATH} | tr -d '\\n'")
+    print()
     return creds
 
 
@@ -406,14 +449,17 @@ def main() -> int:
     sub = ap.add_subparsers(dest="cmd")
 
     sub.add_parser("auth", help="Run the one-time OAuth flow")
-    sub.add_parser("upload", help="Mirror ~/Documents/stock_data/ to Drive")
+    sub.add_parser("upload", help="Mirror source dir to Drive (default action)")
     sub.add_parser("status", help="Print the current Drive backup state")
 
     args = ap.parse_args()
+    # No subcommand → default to upload. Lets schedulers (kite-api
+    # APScheduler, Mac cron) invoke the script without an explicit
+    # action. Auth and status remain CLI-only.
+    if args.cmd is None or args.cmd == "upload":
+        return cmd_upload(args)
     if args.cmd == "auth":
         return cmd_auth(args)
-    if args.cmd == "upload":
-        return cmd_upload(args)
     if args.cmd == "status":
         return cmd_status(args)
     ap.print_help()

@@ -30,6 +30,15 @@ COMMANDS = {
     "fetch_prices": "scripts/fetch_nse500_history.py",
     "build_signals": "scripts/build_momentum_signals_flexible.py",
     "sync_database": "scripts/sync_to_database.py",
+    # Phase 2.5.6 — Railway-side backup & cloud-upload jobs.
+    # Both rely on env vars set on Railway:
+    #   DATABASE_URL (already set)              — for db_backup
+    #   KITE_BACKUP_OUTPUT_DIR=/data/db_backups — for db_backup
+    #   KITE_BACKUP_SOURCE_ROOT=/data           — for cloud_upload
+    #   GDRIVE_CLIENT_SECRET_JSON               — for cloud_upload
+    #   GDRIVE_REFRESH_TOKEN_JSON               — for cloud_upload
+    "db_backup": "scripts/backup_database.py",
+    "cloud_upload": "scripts/upload_to_gdrive.py",
 }
 
 
