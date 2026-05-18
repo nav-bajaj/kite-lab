@@ -20,7 +20,7 @@ import tempfile
 import requests
 
 
-TARGETS = ["nse500_data", "indices_data"]
+TARGETS = ["nse500_data", "nse500_data_hourly", "nse500_data_historical", "indices_data"]
 
 
 def compress_directory(source_dir, target_name):

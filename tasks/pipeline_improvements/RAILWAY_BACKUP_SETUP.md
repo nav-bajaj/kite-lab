@@ -103,24 +103,58 @@ The Railway-side backup will mirror `/data/{nse500_data, indices_data,
 nse500_data_hourly}`, but `nse500_data_historical/` doesn't exist on
 Railway yet. Push it there once so future daily backups capture it.
 
-There's already a script for this — `kite-api/scripts/upload_price_data.py`.
-Get a JWT token from the dashboard first (log in to https://kite-lab.vercel.app,
-DevTools → Network → look for the `Authorization: Bearer ...` header
-on any `/api/...` request, or call `/api/auth/token`).
+The script is `scripts/upload_price_data.py` (note: in repo root, not
+`kite-api/scripts/`). `nse500_data_historical` is allowed as a target
+as of the same Phase 2.5.6 deploy.
+
+First, get a JWT token. Easiest path: log in to
+https://kite-lab.vercel.app, open DevTools → Network, click any
+`/api/...` request, copy the `Authorization: Bearer ...` value (just
+the token part after "Bearer ").
+
+The script expects the source directory to live under your local
+`kite-lab/` data dir, but `nse500_data_historical` lives under
+`~/Documents/stock_data/`. Two options:
+
+**Option A — temporary symlink (cleanest, easy to undo):**
 
 ```bash
 cd ~/kite-lab
-python kite-api/scripts/upload_price_data.py \
+ln -s ~/Documents/stock_data/nse500_data_historical nse500_data_historical
+
+python scripts/upload_price_data.py \
     --api-url https://kite-lab-production.up.railway.app \
-    --token "YOUR_JWT_TOKEN" \
-    --local-dir ~/Documents/stock_data/nse500_data_historical \
-    --remote-dir nse500_data_historical
+    --token "YOUR_JWT_TOKEN_HERE" \
+    --target nse500_data_historical
+
+rm nse500_data_historical  # remove the symlink when done
 ```
 
-(If the existing `upload_price_data.py` doesn't accept these flags as
-written, the moral equivalent: tarball the local dir, POST it to
-`/api/sync/upload-data` per the existing endpoint contract. Either way
-you only do this once.)
+**Option B — point `--data-dir` at the external location:**
+
+```bash
+python scripts/upload_price_data.py \
+    --api-url https://kite-lab-production.up.railway.app \
+    --token "YOUR_JWT_TOKEN_HERE" \
+    --target nse500_data_historical \
+    --data-dir ~/Documents/stock_data
+```
+
+Either way, expect output like:
+
+```
+Data directory: /Users/.../stock_data
+API: https://kite-lab-production.up.railway.app
+Targets: nse500_data_historical
+
+[nse500_data_historical] 500 CSV files
+  Compressing /Users/.../nse500_data_historical ...
+  Archive: 33.4 MB
+  Uploading to https://.../api/sync/upload-data?target=nse500_data_historical ...
+  Success: 500 files written to /data/nse500_data_historical
+
+Done.
+```
 
 ---
 
