@@ -63,8 +63,9 @@ ALLOWED_UPLOAD_DIRS = {
     "nse500_data_hourly",
     "nse500_data_historical",
     "nse500_data_gdf_full",   # 2009-2023 deep GDF backfill (raw)
-    "nse500_data_full",       # GDF backfill stitched with Kite live (comprehensive)
+    "nse500_data_full",       # stocks: GDF + Kite stitched (comprehensive)
     "indices_data",
+    "indices_data_full",      # indices: historical + Kite stitched (comprehensive)
 }
 
 

@@ -17,9 +17,9 @@ from pathlib import Path
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
-HIST_DIR = ROOT / "indices_data_historical"
-KITE_DIR = ROOT / "indices_data"
-OUT_DIR = ROOT / "indices_data_merged"
+DEFAULT_HIST_DIR = ROOT / "indices_data_historical"
+DEFAULT_KITE_DIR = ROOT / "indices_data"
+DEFAULT_OUT_DIR = ROOT / "indices_data_merged"
 
 OHLCV = ["open", "high", "low", "close", "volume"]
 
@@ -32,19 +32,20 @@ def load_csv(path: Path) -> pd.DataFrame:
     return df.sort_values("date").reset_index(drop=True)
 
 
-def stitch_one(stem: str, warn_pct: float) -> dict:
-    hist = load_csv(HIST_DIR / f"{stem}.csv")
-    kite = load_csv(KITE_DIR / f"{stem}.csv")
+def stitch_one(stem: str, *, hist_dir: Path, kite_dir: Path,
+                out_dir: Path, warn_pct: float) -> dict:
+    hist = load_csv(hist_dir / f"{stem}.csv")
+    kite = load_csv(kite_dir / f"{stem}.csv")
 
     if hist.empty and kite.empty:
         return {"index": stem, "status": "no_data"}
 
     if hist.empty:
-        kite.to_csv(OUT_DIR / f"{stem}.csv", index=False, date_format="%Y-%m-%d")
+        kite.to_csv(out_dir / f"{stem}.csv", index=False, date_format="%Y-%m-%d")
         return {"index": stem, "status": "kite_only", "kite_rows": len(kite)}
 
     if kite.empty:
-        hist.to_csv(OUT_DIR / f"{stem}.csv", index=False, date_format="%Y-%m-%d")
+        hist.to_csv(out_dir / f"{stem}.csv", index=False, date_format="%Y-%m-%d")
         return {"index": stem, "status": "hist_only", "hist_rows": len(hist)}
 
     kite_first = kite["date"].min()
@@ -64,7 +65,7 @@ def stitch_one(stem: str, warn_pct: float) -> dict:
 
     pre = hist[hist["date"] < kite_first].copy()
     if pre.empty:
-        kite.to_csv(OUT_DIR / f"{stem}.csv", index=False, date_format="%Y-%m-%d")
+        kite.to_csv(out_dir / f"{stem}.csv", index=False, date_format="%Y-%m-%d")
         return {"index": stem, "status": "no_pre_history",
                 "kite_rows": len(kite), "rescale_pct": 0.0}
 
@@ -78,8 +79,8 @@ def stitch_one(stem: str, warn_pct: float) -> dict:
     merged = pd.concat([pre, kite_keep], ignore_index=True)
     merged = merged.drop_duplicates(subset=["date"]).sort_values("date").reset_index(drop=True)
 
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    merged.to_csv(OUT_DIR / f"{stem}.csv", index=False, date_format="%Y-%m-%d")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    merged.to_csv(out_dir / f"{stem}.csv", index=False, date_format="%Y-%m-%d")
 
     return {
         "index": stem,
@@ -95,29 +96,41 @@ def stitch_one(stem: str, warn_pct: float) -> dict:
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--hist-dir", type=Path, default=DEFAULT_HIST_DIR,
+                    help=f"Historical source dir (default: {DEFAULT_HIST_DIR})")
+    ap.add_argument("--kite-dir", type=Path, default=DEFAULT_KITE_DIR,
+                    help=f"Kite source dir (default: {DEFAULT_KITE_DIR})")
+    ap.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR,
+                    help=f"Stitched output dir (default: {DEFAULT_OUT_DIR})")
     ap.add_argument("--warn", type=float, default=2.0,
                     help="Warn when rescale > this percent")
     ap.add_argument("--stems", nargs="*", default=None)
     args = ap.parse_args()
 
+    hist_dir, kite_dir, out_dir = args.hist_dir, args.kite_dir, args.out_dir
+    print(f"[stitch] hist-dir = {hist_dir}")
+    print(f"[stitch] kite-dir = {kite_dir}")
+    print(f"[stitch] out-dir  = {out_dir}")
+
     if args.stems:
         stems = args.stems
     else:
-        hist_stems = {p.stem for p in HIST_DIR.glob("*.csv")} if HIST_DIR.exists() else set()
-        kite_stems = {p.stem for p in KITE_DIR.glob("*.csv")} if KITE_DIR.exists() else set()
+        hist_stems = {p.stem for p in hist_dir.glob("*.csv")} if hist_dir.exists() else set()
+        kite_stems = {p.stem for p in kite_dir.glob("*.csv")} if kite_dir.exists() else set()
         stems = sorted(hist_stems | kite_stems)
 
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
     rows = []
     for stem in stems:
         try:
-            r = stitch_one(stem, args.warn)
+            r = stitch_one(stem, hist_dir=hist_dir, kite_dir=kite_dir,
+                           out_dir=out_dir, warn_pct=args.warn)
         except Exception as e:
             r = {"index": stem, "status": f"error: {e}"}
         rows.append(r)
 
     summary = pd.DataFrame(rows)
-    summary.to_csv(OUT_DIR / "_stitch_summary.csv", index=False)
+    summary.to_csv(out_dir / "_stitch_summary.csv", index=False)
 
     n = len(summary)
     by_status = summary["status"].value_counts().to_dict()
