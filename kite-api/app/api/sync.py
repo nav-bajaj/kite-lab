@@ -55,8 +55,15 @@ async def sync_all_universes(user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=f"Sync failed: {e}")
 
 
-# Allowed directories for upload (whitelist)
-ALLOWED_UPLOAD_DIRS = {"nse500_data", "nse500_data_hourly", "indices_data"}
+# Allowed directories for upload (whitelist).
+# nse500_data_historical holds the 2009-2019 GDF backfill that can't
+# be re-fetched from Zerodha — see tasks/pipeline_improvements/CRITICAL_DATA.md.
+ALLOWED_UPLOAD_DIRS = {
+    "nse500_data",
+    "nse500_data_hourly",
+    "nse500_data_historical",
+    "indices_data",
+}
 
 
 @router.post("/upload-data")
