@@ -101,22 +101,26 @@ python scripts/run_daily_pipeline.py --with-login
 
 # This runs (actual pipeline as of May 2026):
 #  1. Login to Kite API (optional, with --with-login)
-#  2. Cache instruments list (symbol → token mapping)
-#  3. Fetch NSE 500 + indices data (parallel)
-#  4. Apply corporate actions to nse500_data/*.csv (idempotent)
-#  5. Update Nifty 100 benchmark
-#  6. Build momentum rankings → data/momentum/top25_signals.csv
-#       (legacy step — output not consumed by any later pipeline step;
-#        only used by ad-hoc validate_signals/compare_signals/backtest_momentum.
-#        Candidate for removal from daily pipeline — see tasks/pipeline_improvements/)
-#  7. Build OM25 v3 portfolio   → data/om25_v3_portfolios/om25_v3_portfolio_<ts>/
-#  8. Build TL25 v3 portfolio   → data/tl25_v3_portfolios/tl25_v3_portfolio_<ts>/
-#  9. Build L6 v2 portfolio     → data/l6_v2_portfolios/l6_v2_portfolio_<ts>/
-# 10. Build COMBO Defensive    → data/combo_defensive_portfolios/combo_defensive_portfolio_<ts>/
-# 11. Sync to database (sync_to_database.py syncs 7 universes:
-#       nse500, nifty100, nifty250, om25_v3, tl25_v3, l6_v2, combo_defensive
-#       + open_positions + corporate-action adjustments)
-# 12. Backup price data to /Users/navdeep/Documents/stock_data/
+#  2. Preflight: Kite token check (<1s)
+#  3. Cache instruments list (symbol → token mapping)
+#  4. Fetch NSE 500 + indices data (parallel)
+#  5. Apply corporate actions to nse500_data/*.csv (idempotent)
+#  6. Update Nifty 100 benchmark
+#  7. Prepare shared-state cache (close/trade/benchmark/regime panels)
+#  8. Build all 7 portfolios + sync DB — delegates to
+#       scripts/update_all_portfolios.py
+#       (--skip-fetch --skip-corporate-actions --shared-state-file)
+#       Portfolios built in this step:
+#         Legacy (run_final_momentum_portfolio.py): nse500, nifty100, nifty250
+#         v3:                                       OM25 v3, TL25 v3, L6 v2, COMBO Defensive
+#       Sync covers all 7 universes + open_positions + corporate-action
+#       adjustments.
+#  9. Backup price data to /Users/navdeep/Documents/stock_data/
+#
+# This delegation to update_all_portfolios.py (added May 2026) keeps the
+# daily cron and the dashboard's "Update Portfolios" button in lock-step.
+# Before, the cron skipped the legacy 3 universes — the dashboard's
+# default nse500 view stayed frozen between manual clicks.
 ```
 
 ### Final Portfolio Generation

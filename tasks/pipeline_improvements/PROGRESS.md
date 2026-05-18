@@ -270,7 +270,7 @@ run completed cleanly on 2026-05-15). No script needed.
   Mac gone / GitHub repo lost). Each has explicit restore commands
   and a quarterly dry-run test.
 
-### Phase 2.5.4 — Google Drive cloud upload — READY FOR OPERATOR
+### Phase 2.5.4 — Google Drive cloud upload — DONE
 
 - `scripts/upload_to_gdrive.py` written. Uses
   google-api-python-client (installed into local .venv).
@@ -283,5 +283,232 @@ run completed cleanly on 2026-05-15). No script needed.
 - `auth`, `upload`, `status` sub-commands.
 - `GDRIVE_SETUP.md` is a 10-min runbook covering the Google Cloud
   Console OAuth setup + first auth + first upload.
-- Pending: operator runs through GDRIVE_SETUP.md and confirms the
-  first upload lands in `My Drive/kite-lab-backups/`.
+- Operator completed setup 2026-05-16; confirmed 5 subfolders
+  visible in `My Drive/kite-lab-backups/`.
+
+## 2026-05-17 — Phase 2.5.6 (Railway-side migration)
+
+User flagged the Mac-cron weakness: Mac isn't always on at 20:00 IST.
+Moved both backup steps into the Railway APScheduler so the offsite
+chain runs without a local machine.
+
+- Added `daily_db_backup` (20:00 IST) + `daily_cloud_upload`
+  (20:30 IST) entries to `kite-api/app/scheduler/tasks.py`.
+- Added `db_backup` + `cloud_upload` commands to
+  `kite-api/app/services/job_service.py` (so Admin → Jobs can
+  trigger them manually).
+- OAuth scope narrowed from `drive` to `drive.file`. Required a
+  fresh refresh token (the old `drive`-scoped token can't be
+  downgraded in place). New token + client secret stored as
+  `GDRIVE_REFRESH_TOKEN_JSON` and `GDRIVE_CLIENT_SECRET_JSON`
+  env vars on Railway.
+- Expanded `scripts/init_persistent_storage.sh` to mkdir + symlink
+  `nse500_data_historical`, `nse500_data_gdf_full`,
+  `nse500_data_full`, and `indices_data_full` into `/app/`.
+- One-time upload of the 2009-2019 backfill to Railway via
+  `scripts/upload_price_data.py --target nse500_data_historical`.
+  Required fixing the allowlists:
+  - Added `nse500_data_historical` (and the GDF/full variants) to
+    `scripts/upload_price_data.py:TARGETS` and to
+    `kite-api/app/api/sync.py:ALLOWED_UPLOAD_DIRS`.
+- Hit and fixed two rollout bugs:
+  - `backup_database.py` initially tried
+    `postgres.railway.internal` (Railway-internal hostname) from
+    the Mac; added a fail-fast probe in `_engine_from_env` with a
+    Railway-specific error message pointing at `DATABASE_PUBLIC_URL`.
+  - Cloud-upload job failed on Railway with
+    `ModuleNotFoundError: No module named 'google'`. Added
+    `google-api-python-client==2.196.0`,
+    `google-auth-httplib2==0.3.1`, and
+    `google-auth-oauthlib==1.3.1` to `kite-api/requirements.txt`.
+- `RAILWAY_BACKUP_SETUP.md` written as a 20-minute operator runbook
+  (env vars, the JWT token capture, the symlink trick, smoke test).
+
+After Railway redeploy + manual triggers:
+- `db_backup` job: ran cleanly, tarball written under
+  `/data/db_backups/`, smoke test OK.
+- `cloud_upload` job: completed, 7 files visible in
+  `kite-lab-backups/` under the new `drive.file`-scoped folder.
+
+### Phase 2.5.6 deliverables
+
+- `kite-api/app/scheduler/tasks.py` (2 new APScheduler entries)
+- `kite-api/app/services/job_service.py` (2 new commands)
+- `kite-api/app/api/sync.py` (`ALLOWED_UPLOAD_DIRS` expanded)
+- `kite-api/requirements.txt` (google-* deps)
+- `scripts/init_persistent_storage.sh` (4 new dirs + symlinks)
+- `scripts/upload_price_data.py` (`TARGETS` expanded)
+- `scripts/backup_database.py` (`_engine_from_env` fail-fast)
+- `scripts/upload_to_gdrive.py` (drive.file scope + env-var creds)
+- `tasks/pipeline_improvements/RAILWAY_BACKUP_SETUP.md` (new)
+
+## 2026-05-17/18 — GDF deep-backfill side task
+
+User opted to capture the deepest possible price history while GDF
+API access was live, as insurance against subscription lapse. Tracked
+in `tasks/gdf_full_backfill/`.
+
+- Phase A — probed GDF limits: no per-request bar cap; no 100-symbol
+  cap; earliest data ~2009-03-05; 2024-25 gap on most names.
+  Decision: cap GDF window at 2023-12-31 and use Kite for 2024+.
+- Phase B — `scripts/gdf_full_backfill.py` fetched a 765-symbol
+  universe (Nifty 500 + Microcap 250 + dropped names) into
+  `~/Documents/stock_data/nse500_data_gdf_full/`.
+- Phase C — `scripts/stitch_gdf_kite.py` refactored to accept
+  `--gdf-dir/--kite-dir/--out-dir`; stitched output landed in
+  `nse500_data_full/`. Indices similarly via
+  `scripts/stitch_gdf_indices.py` → `indices_data_full/`. GDF index
+  fetch returned "Data for requested exchange is disabled" for non-
+  stock exchanges; worked around by discovering the existing
+  `indices_data_historical/` already had comprehensive 2010-present
+  coverage.
+- Phase D — `scripts/gdf_backfill_validate.py` produced
+  `coverage_report.csv`. Found 265 stocks with zero GDF history.
+  `scripts/fetch_missing_from_kite.py` gap-filled 258 of those from
+  Kite live (7 unavailable: 5 dummies + PFOCUS + STLTECH).
+- Final stitched panel: **760 stocks**, **141 indices**, both in
+  `~/Documents/stock_data/`. 22 corporate-action rescale outliers
+  (CGCL +300%, METROPOLIS +300%, VEDL -66%) handled correctly by
+  the rescale-anchored anchor.
+- The `_full` directories are picked up automatically by the
+  Railway-side cloud upload (per Phase 2.5.6 symlinks).
+
+### Validation Gate 2.5 — PASSED
+
+- `daily_pipeline` next-fire = next weekday 07:00 IST (verified via
+  Admin → Schedule).
+- `daily_db_backup` and `daily_cloud_upload` registered, both
+  triggered manually with success.
+- `backup_database.py --dry-run` against Railway via the public
+  proxy: 31,537 rows across 10 tables.
+- `pg_restore` smoke test on the produced tarball succeeds; first
+  real backup written and stored.
+- `CRITICAL_DATA.md` checklist: 4 of 5 gaps resolved (smallcap
+  universe tracked, rebalances empty by design, single-Mac risk
+  closed by Drive + Railway upload, historical-backfill risk closed
+  by `nse500_data_full/`). One gap deferred to operator:
+  `DATABASE_PUBLIC_URL` password-manager entry.
+- `RECOVERY.md` exists; quarterly dry-run test scheduled as an
+  ongoing operator item.
+
+### Final state of offsite copies (3 independent locations)
+
+1. Mac: `~/Documents/stock_data/` (rsync + Mac-local backup scripts)
+2. Railway volume: `/data/` (persistent, survives container rebuild)
+3. Google Drive: `kite-lab-backups/` (drive.file scoped, Railway-driven)
+
+A failure of any single one of these doesn't take down the chain.
+
+## 2026-05-18 — Documentation refresh + status review
+
+User requested a status review. Folder contents reconciled with
+live state; PLAN.md now lists Phase 2.5.6 + GDF side-task; PROGRESS.md
+extended through 2026-05-18 (this entry); RESULTS.md gained a
+Gate 2.5 record.
+
+## 2026-05-18 — Production bug: daily cron didn't refresh dashboard's nse500 view
+
+User flagged: positions and trades only updated after clicking "Update
+Portfolios" — daily cron never refreshed them despite running cleanly.
+
+**Root cause:** `run_daily_pipeline.py` built the 4 v3 portfolios (OM25/TL25/L6 v2/COMBO)
+but skipped the legacy `run_final_momentum_portfolio.py --universe {nse500,nifty100,nifty250}`.
+`sync_to_database.py` looped over all 7 universes but the legacy 3
+were syncing yesterday's stale CSVs. Dashboard defaults to `nse500`
+(legacy) → looked frozen.
+
+**Evidence:** Latest `experiments/final_portfolio/` was 5/12; latest
+`data/l6_v2_portfolios/` was 5/14. Five-day age gap between cron-only
+and manual-button outputs.
+
+**Fix:**
+- Extended `scripts/update_all_portfolios.py` to build all 7 portfolios
+  (3 legacy + 4 v3). Added `--skip-fetch`, `--skip-corporate-actions`,
+  `--shared-state-file` flags so the cron can call it without
+  duplicating earlier pipeline steps.
+- Simplified `scripts/run_daily_pipeline.py` to a single subprocess
+  call to `update_all_portfolios.py --skip-fetch --skip-corporate-actions
+  --shared-state-file`. Removed the four v3 portfolio commands and the
+  inline `sync_to_database.py` step — they now live inside
+  `update_all_portfolios.py`.
+- Updated `CLAUDE.md` "Daily Production Pipeline" section.
+- Verified end-to-end: live run produced fresh
+  `final_portfolio_20260518201402` and
+  `l6_v2_portfolio_20260518_201542` in the same invocation.
+
+Net effect: daily cron and the manual "Update Portfolios" button are
+now in lock-step. The button is preserved as a manual override.
+
+## 2026-05-18 — Phase 3.2 + 3.3 (engine consolidation, scoped down)
+
+User decision: do 3.2 + 3.3 only, skip 3.1 — `run_final_momentum_portfolio.py`
+is now production-critical (per the cron bug fix above), and migrating
+it onto `_clean_engine` carries production risk for marginal payoff.
+
+### Phase 3.2 — loader extraction — DONE
+
+- Created `data_pipeline/loaders.py` (47 LOC) housing `load_price_panels`
+  and `load_benchmark`, lifted verbatim from `scripts/backtest_momentum.py`.
+- `scripts/backtest_momentum.py` now re-exports both names from
+  `data_pipeline.loaders` so the 20+ existing callers
+  (`pipeline_core.py`, `run_om25_v3_portfolio.py`, every research
+  script, etc.) keep working with zero import changes.
+- Validated bit-identical output: loading nse500_data through both
+  import paths returns `DataFrame.equals() == True`.
+- All 27 pipeline-improvements unit tests still pass.
+
+### Phase 3.3 — latest.json pointers — DONE
+
+- `kite-api/app/services/sync_service.py` now keeps a single
+  `UNIVERSE_DIRS` dict (parent dir + glob pattern per universe) — the
+  only place that knows the on-disk layout.
+- `get_latest_experiment_dir(universe)` prefers reading
+  `<parent_dir>/latest.json`. If the pointed-at run dir still has its
+  holdings CSV, returns it immediately (one stat, ~0.03ms/lookup).
+  Otherwise falls back to the timestamp glob and lazily writes
+  `latest.json` for the next caller.
+- `portfolio_service.py` and `positions_service.py` now import
+  `get_latest_experiment_dir` from `sync_service` — all three services
+  share the pointer cache, so they can't disagree about which run is
+  latest.
+- `positions_service.sync_from_csv` lost its bespoke regex-based glob
+  (15+ LOC) in favour of the shared helper.
+- `**/latest.json` added to `.gitignore` — these files are
+  per-deployment caches, not source-of-truth.
+- Verified live across all 7 universes: each resolves to the right
+  timestamped dir on first call, then writes `latest.json` into its
+  parent.
+
+### Phase 3 deliverables
+
+- `data_pipeline/loaders.py` (new)
+- `scripts/backtest_momentum.py` (loaders → re-export shim)
+- `kite-api/app/services/sync_service.py` (UNIVERSE_DIRS + pointer
+  read/write helpers + cached `get_latest_experiment_dir`)
+- `kite-api/app/services/portfolio_service.py` (delegates to
+  sync_service)
+- `kite-api/app/services/positions_service.py` (replaced bespoke
+  glob with shared helper)
+- `.gitignore` (latest.json line)
+- `CLAUDE.md` (daily-pipeline section reflects new orchestration)
+
+### Validation Gate 3 — PASSED
+
+- All 27 unit tests still pass.
+- Bit-identical loader output between old and new import paths.
+- Three services resolve to the same run dir per universe.
+- Live `update_all_portfolios.py` end-to-end run succeeded with the
+  refactored sync path.
+
+### Remaining work — open
+
+1. **Phase 3.1 (legacy-L6 engine migration)** — SKIPPED by user
+   decision. Legacy script kept on `backtest_momentum.run_backtest`.
+   Revisit only if the engine divergence (rf=0 vs rf=5%) becomes a
+   problem.
+2. **Operator items (recurring):**
+   - `DATABASE_PUBLIC_URL` password-manager entry (CRITICAL_DATA.md gap)
+   - Quarterly DR dry-run restore (RECOVERY.md)
+
+Pipeline-improvements project is now **fully shipped**. The remaining
+items are durability / hygiene polish, not coding work.

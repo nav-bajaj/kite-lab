@@ -117,3 +117,7 @@ nifty_100_tests/nifty100_portfolio_*/
 nifty_250_tests/nifty250_portfolio_*/
 experiments/oos_walkthrough/
 experiments/oos_retune/
+
+# Phase 3.3 latest.json pointer files — regenerated lazily on every
+# sync; no value in tracking.
+**/latest.json

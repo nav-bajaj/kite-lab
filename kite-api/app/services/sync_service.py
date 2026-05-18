@@ -2,6 +2,8 @@
 Sync Service - Import CSV data into PostgreSQL database
 """
 import glob
+import json
+import logging
 from datetime import datetime, date
 from pathlib import Path
 from typing import Optional
@@ -14,33 +16,84 @@ from app.models.database import get_session_local
 from app.models.models import Holding, EquityCurve, Metric, Trade, Signal
 
 
-def get_latest_experiment_dir(universe: str = "nse500") -> Optional[Path]:
-    """Find the most recent experiment directory for a universe."""
-    base_dir = settings.data_dir
+logger = logging.getLogger(__name__)
 
-    if universe == "nse500":
-        pattern = base_dir / "experiments" / "final_portfolio" / "final_portfolio_202*"
-    elif universe == "nifty100":
-        pattern = base_dir / "nifty_100_tests" / "nifty100_portfolio_202*"
-    elif universe == "nifty250":
-        pattern = base_dir / "nifty_250_tests" / "nifty250_portfolio_202*"
-    elif universe == "om25_v3":
-        pattern = base_dir / "data" / "om25_v3_portfolios" / "om25_v3_portfolio_202*"
-    elif universe == "tl25_v3":
-        pattern = base_dir / "data" / "tl25_v3_portfolios" / "tl25_v3_portfolio_202*"
-    elif universe == "l6_v2":
-        pattern = base_dir / "data" / "l6_v2_portfolios" / "l6_v2_portfolio_202*"
-    elif universe == "combo_defensive":
-        pattern = base_dir / "data" / "combo_defensive_portfolios" / "combo_defensive_portfolio_202*"
-    else:
+
+# Phase 3.3 — single source of truth for where each universe's timestamped
+# run dirs live. `(parent_dir, glob_pattern)` per universe.
+UNIVERSE_DIRS = {
+    "nse500":           ("experiments/final_portfolio",      "final_portfolio_202*"),
+    "nifty100":         ("nifty_100_tests",                  "nifty100_portfolio_202*"),
+    "nifty250":         ("nifty_250_tests",                  "nifty250_portfolio_202*"),
+    "om25_v3":          ("data/om25_v3_portfolios",          "om25_v3_portfolio_202*"),
+    "tl25_v3":          ("data/tl25_v3_portfolios",          "tl25_v3_portfolio_202*"),
+    "l6_v2":            ("data/l6_v2_portfolios",            "l6_v2_portfolio_202*"),
+    "combo_defensive":  ("data/combo_defensive_portfolios",  "combo_defensive_portfolio_202*"),
+}
+
+
+def _holdings_present(run_dir: Path) -> bool:
+    return (run_dir / "backtests" / "baseline" / "momentum_holdings.csv").exists()
+
+
+def _read_latest_pointer(parent_dir: Path) -> Optional[Path]:
+    """Read parent_dir/latest.json. Returns the pointed-at run dir if it
+    still exists on disk and contains the expected holdings CSV; else None.
+    """
+    pointer = parent_dir / "latest.json"
+    if not pointer.is_file():
         return None
+    try:
+        data = json.loads(pointer.read_text())
+        run_name = data.get("path")
+        if not run_name:
+            return None
+        run_dir = parent_dir / run_name
+        if run_dir.is_dir() and _holdings_present(run_dir):
+            return run_dir
+    except (json.JSONDecodeError, OSError) as e:
+        logger.warning(f"Could not read {pointer}: {e}")
+    return None
 
-    dirs = sorted(glob.glob(str(pattern)), reverse=True)
 
-    for d in dirs:
-        holdings_path = Path(d) / "backtests" / "baseline" / "momentum_holdings.csv"
-        if holdings_path.exists():
-            return Path(d)
+def _write_latest_pointer(parent_dir: Path, run_dir: Path) -> None:
+    """Persist {path: <run-dir-name>, timestamp: <iso>} as latest.json.
+    Failure is non-fatal — the next call will just re-glob."""
+    pointer = parent_dir / "latest.json"
+    payload = {
+        "path": run_dir.name,
+        "timestamp": datetime.now().isoformat(timespec="seconds"),
+    }
+    try:
+        pointer.write_text(json.dumps(payload, indent=2))
+    except OSError as e:
+        logger.warning(f"Could not write {pointer}: {e}")
+
+
+def get_latest_experiment_dir(universe: str = "nse500") -> Optional[Path]:
+    """Find the most recent experiment directory for a universe.
+
+    Phase 3.3 — prefer the `latest.json` pointer file in the parent dir
+    when it exists and points at a still-valid run; otherwise fall back
+    to the timestamp glob and lazily write the pointer so the next call
+    is one stat instead of a full glob.
+    """
+    spec = UNIVERSE_DIRS.get(universe)
+    if spec is None:
+        return None
+    parent_rel, pattern = spec
+    parent_dir = settings.data_dir / parent_rel
+
+    pointed = _read_latest_pointer(parent_dir)
+    if pointed is not None:
+        return pointed
+
+    candidates = sorted(glob.glob(str(parent_dir / pattern)), reverse=True)
+    for d in candidates:
+        run_dir = Path(d)
+        if _holdings_present(run_dir):
+            _write_latest_pointer(parent_dir, run_dir)
+            return run_dir
 
     return None
 

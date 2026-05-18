@@ -3,7 +3,14 @@
 **Branch:** `pipeline-improvements`
 **Started:** 2026-05-15
 **Owner:** navdeep
-**Status:** Phase 0 in progress
+**Status (2026-05-18):** Phases 0, 1, 2, 2.5 (incl. 2.5.6 Railway migration) shipped.
+GDF backfill side-task complete (760 stocks / 141 indices stitched).
+Phase 3.2 (loader extraction) + 3.3 (latest.json pointers) shipped.
+Phase 3.1 (legacy-L6 engine migration) **skipped** —
+`run_final_momentum_portfolio.py` is now production-critical (daily cron
+refreshes nse500/nifty100/nifty250 through it after the 2026-05-18 fix);
+migrating it onto `_clean_engine` would carry production risk for
+marginal payoff.
 
 ---
 
@@ -296,6 +303,67 @@ Document the disaster-recovery procedure in
 - `CRITICAL_DATA.md` checklist is fully green.
 - `RECOVERY.md` exists and a dry-run restore from the latest backup
   into a scratch DB succeeds end-to-end.
+
+### Phase 2.5.6 — Move backup cron to Railway (added 2026-05-17)
+
+Mac-local 21:00 cron is fragile — the laptop isn't always on at that
+time. Move the two backup steps into the same APScheduler instance
+that runs the 7am pipeline, so daily redundancy doesn't depend on a
+laptop being awake.
+
+Scope:
+
+- Add `daily_db_backup` (20:00 IST) + `daily_cloud_upload` (20:30 IST)
+  jobs to `kite-api/app/scheduler/tasks.py`.
+- Add `db_backup` and `cloud_upload` commands to
+  `kite-api/app/services/job_service.py` so they're triggerable from
+  Admin → Jobs.
+- Backup writes into `/data/db_backups/` on the Railway volume; cloud
+  upload mirrors that plus per-day tarballs of `/data/nse500_data`,
+  `/data/nse500_data_hourly`, `/data/indices_data`, and
+  `/data/nse500_data_historical` to Google Drive.
+- Switch Drive OAuth scope from `drive` → `drive.file` (Railway app
+  only sees files it itself created — narrower blast radius).
+- One-time push of the 2009-2019 GDF backfill to the Railway volume
+  via `scripts/upload_price_data.py --target nse500_data_historical`
+  so the daily cloud upload picks it up going forward.
+- Documented in `RAILWAY_BACKUP_SETUP.md` (operator runbook).
+
+Operator-side bugs encountered during rollout:
+
+- `nse500_data_historical` was missing from
+  `scripts/upload_price_data.py:TARGETS` and from
+  `kite-api/app/api/sync.py:ALLOWED_UPLOAD_DIRS`; both fixed.
+- Mac initially pointed `DATABASE_URL` at `postgres.railway.internal`
+  (Railway-only hostname). Added fail-fast probe in
+  `backup_database.py:_engine_from_env` with a Railway-specific error
+  pointing at `DATABASE_PUBLIC_URL`.
+- `init_persistent_storage.sh` didn't `mkdir`/symlink
+  `nse500_data_historical` / `nse500_data_gdf_full` /
+  `nse500_data_full` / `indices_data_full`; added.
+- `cloud_upload` failed with `ModuleNotFoundError: No module named
+  'google'` because `google-api-python-client` etc. weren't in
+  `kite-api/requirements.txt`. Added the three google-* deps.
+
+### Phase 2.5.7 — GDF deep backfill (side task, see `tasks/gdf_full_backfill/`)
+
+While GDF API access was live, captured the deepest possible history
+across NSE 500 + indices in case the subscription lapses. End state:
+
+- `~/Documents/stock_data/nse500_data_full/` — **760 stocks**, GDF
+  (2009 → 2023-12-31) + Kite (2020 → present) stitched with the
+  rescale-anchored anchor in `scripts/stitch_gdf_kite.py`. 265
+  symbols that were blank in GDF were gap-filled from Kite via
+  `scripts/fetch_missing_from_kite.py` (258 succeeded; 7 = 5 dummies
+  + PFOCUS + STLTECH unavailable).
+- `~/Documents/stock_data/indices_data_full/` — **141 indices**,
+  comprehensive 2010-present, stitched via `scripts/stitch_gdf_indices.py`.
+- 22 corporate-action rescale outliers logged but correctly handled
+  by the rescale-anchored stitch.
+
+Status: **complete**. Both directories are now part of the daily
+Drive cloud upload via the Railway-side `daily_cloud_upload` job
+(symlinked into `/data/` by `init_persistent_storage.sh`).
 
 ---
 

@@ -1,8 +1,6 @@
 """
 Portfolio Service - Reads holdings and calculates portfolio metrics
 """
-import os
-import glob
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -10,30 +8,9 @@ from typing import Optional
 import pandas as pd
 
 from app.config import settings, UNIVERSE_DEFAULTS
-
-
-def get_latest_experiment_dir(universe: str = "nse500") -> Optional[Path]:
-    """Find the most recent experiment directory for a universe."""
-    base_dir = settings.data_dir
-
-    if universe == "nse500":
-        pattern = base_dir / "experiments" / "final_portfolio" / "final_portfolio_202*"
-    elif universe == "nifty100":
-        pattern = base_dir / "nifty_100_tests" / "nifty100_portfolio_202*"
-    elif universe == "nifty250":
-        pattern = base_dir / "nifty_250_tests" / "nifty250_portfolio_202*"
-    else:
-        return None
-
-    dirs = sorted(glob.glob(str(pattern)), reverse=True)
-
-    # Find one that has the holdings file
-    for d in dirs:
-        holdings_path = Path(d) / "backtests" / "baseline" / "momentum_holdings.csv"
-        if holdings_path.exists():
-            return Path(d)
-
-    return None
+# Phase 3.3 — single source of truth in sync_service. Other services
+# delegate so they share the latest.json pointer cache.
+from app.services.sync_service import get_latest_experiment_dir  # noqa: F401
 
 
 def get_holdings_path(universe: str = "nse500") -> Optional[Path]:
