@@ -43,3 +43,12 @@ cachetools==6.2.6
 
 # File upload support (required by FastAPI UploadFile)
 python-multipart==0.0.20
+
+# Google Drive (cloud_upload scheduled job — Phase 2.5.4 / 2.5.6).
+# Required by scripts/upload_to_gdrive.py for the daily 20:30 IST job
+# that mirrors /data backups + price-dir snapshots to Drive.
+# Without these the cloud_upload job exits with
+# ModuleNotFoundError: No module named 'google'.
+google-api-python-client==2.196.0
+google-auth-httplib2==0.3.1
+google-auth-oauthlib==1.3.1
