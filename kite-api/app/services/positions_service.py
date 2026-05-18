@@ -381,52 +381,23 @@ class PositionsService:
                 message=f"Unknown universe: {universe}"
             )
 
-        # Find portfolio CSV - check both data/ and experiments/ paths
+        # Phase 3.3 — share the latest.json pointer cache with sync_service
+        # so all three services agree on which run dir is "latest" for a
+        # universe.
+        from app.services.sync_service import get_latest_experiment_dir
+
         portfolio_dir = settings.data_dir / universe_config["portfolio_dir"]
+        latest_run = get_latest_experiment_dir(universe)
 
-        # Also check experiments folder
-        if universe == "nse500":
-            experiments_dir = settings.data_dir / "experiments" / "final_portfolio"
-        elif universe == "nifty100":
-            experiments_dir = settings.data_dir / "nifty_100_tests"
-        elif universe == "nifty250":
-            experiments_dir = settings.data_dir / "nifty_250_tests"
-        elif universe == "om25_v3":
-            experiments_dir = settings.data_dir / "data" / "om25_v3_portfolios"
-        elif universe == "tl25_v3":
-            experiments_dir = settings.data_dir / "data" / "tl25_v3_portfolios"
-        elif universe == "l6_v2":
-            experiments_dir = settings.data_dir / "data" / "l6_v2_portfolios"
-        elif universe == "combo_defensive":
-            experiments_dir = settings.data_dir / "data" / "combo_defensive_portfolios"
-        else:
-            experiments_dir = portfolio_dir
-
-        # Try different file patterns - holdings files only (not signals)
         csv_patterns = []
-
-        # Check experiments folder for timestamped runs first (most likely location)
-        import re
-        # Matches: final_portfolio_<14-digit-ts>, nifty\d+_portfolio_<14-digit-ts>,
-        # om25_v3_portfolio / tl25_v3_portfolio / l6_v2_portfolio /
-        # combo_defensive_portfolio with <YYYYMMDD>_<HHMMSS>
-        # (underscore-separated date/time).
-        dir_pattern = re.compile(
-            r'(final_portfolio|nifty\d+_portfolio|om25_v3_portfolio|tl25_v3_portfolio|l6_v2_portfolio|combo_defensive_portfolio)_\d{8}(_\d{6}|\d{6})'
-        )
-        for search_dir in [experiments_dir, portfolio_dir]:
-            if search_dir.exists():
-                timestamped_dirs = []
-                for subdir in search_dir.iterdir():
-                    if subdir.is_dir() and dir_pattern.match(subdir.name):
-                        timestamped_dirs.append(subdir)
-
-                # Sort by name (timestamp) descending to get latest first
-                for subdir in sorted(timestamped_dirs, key=lambda x: x.name, reverse=True):
-                    # Check backtests/baseline subfolder first (most common location)
-                    csv_patterns.append(subdir / "backtests" / "baseline" / "momentum_holdings.csv")
-                    csv_patterns.append(subdir / "momentum_holdings.csv")
-                    csv_patterns.append(subdir / "holdings.csv")
+        if latest_run is not None:
+            csv_patterns.append(latest_run / "backtests" / "baseline" / "momentum_holdings.csv")
+            csv_patterns.append(latest_run / "momentum_holdings.csv")
+            csv_patterns.append(latest_run / "holdings.csv")
+        # Legacy fallback — flat holdings file in the universe's portfolio_dir
+        # (used when no timestamped run dir exists).
+        csv_patterns.append(portfolio_dir / "momentum_holdings.csv")
+        csv_patterns.append(portfolio_dir / "holdings.csv")
 
         csv_path = None
         for pattern in csv_patterns:

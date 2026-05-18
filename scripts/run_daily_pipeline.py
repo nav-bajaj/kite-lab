@@ -32,45 +32,22 @@ PRE_PORTFOLIO_STEPS = [
 ]
 
 
-def portfolio_steps(shared_state_file):
-    """Build the four portfolio commands, appending --shared-state-file to each.
-
-    Phase 2: each portfolio script accepts --shared-state-file <path> to skip
-    its own price/benchmark/regime panel loads and read the pre-built cache
-    instead. Saves ~5-8s per portfolio × 4 ≈ 20-30s total wall-clock per run.
-    """
-    cache_args = ["--shared-state-file", str(shared_state_file)]
-    return [
-        # OM25 v3 production run — locked-in May 2026 OOS retune stack.
-        ("Build OM25 v3 portfolio", [
-            sys.executable, "scripts/run_om25_v3_portfolio.py",
-            "--prices-dir", "nse500_data",
-            "--regime-index", "indices_data/NIFTY_100.csv",
-            "--start", "2020-01-01",
-        ] + cache_args),
-        # TL25 v3 production run — locked-in May 2026 OOS retune stack.
-        ("Build TL25 v3 portfolio", [
-            sys.executable, "scripts/run_tl25_v3_portfolio.py",
-            "--prices-dir", "nse500_data",
-            "--start", "2020-01-01",
-        ] + cache_args),
-        # L6 v2 — same L6 momentum config on the new _momentum_engine.
-        ("Build L6 v2 portfolio", [
-            sys.executable, "scripts/run_l6_v2_portfolio.py",
-            "--prices-dir", "nse500_data",
-            "--start", "2020-01-01",
-        ] + cache_args),
-        # COMBO Defensive — 50-50 L6 + OM25 with regime overlay.
-        ("Build COMBO Defensive portfolio", [
-            sys.executable, "scripts/run_combo_defensive_portfolio.py",
-            "--prices-dir", "nse500_data",
-            "--start", "2020-01-01",
-        ] + cache_args),
+# Portfolio builds + DB sync are delegated to update_all_portfolios.py so the
+# legacy nse500/nifty100/nifty250 portfolios refresh on every cron run too.
+# Without this, the dashboard's default nse500 view stayed frozen between
+# manual "Update Portfolios" clicks even though the cron itself was healthy.
+def update_portfolios_step(shared_state_file):
+    cmd = [
+        sys.executable, "scripts/update_all_portfolios.py",
+        "--skip-fetch",              # already fetched above
+        "--skip-corporate-actions",  # already applied above
     ]
+    if shared_state_file:
+        cmd += ["--shared-state-file", str(shared_state_file)]
+    return ("Build all portfolios + sync DB", cmd)
 
 
 POST_PORTFOLIO_STEPS = [
-    ("Sync data to database", [sys.executable, "scripts/sync_to_database.py"]),
     ("Backup data to external location", [sys.executable, "scripts/sync_data_backup.py"]),
 ]
 
@@ -238,16 +215,15 @@ def main():
                   "Re-run with --no-shared-state to fall back to per-portfolio loads.")
             sys.exit(1)
 
-    # Portfolio builds — each picks up the shared state cache (if built).
-    portfolio_cmds = portfolio_steps(shared_state_file) if shared_state_file \
-                     else _portfolio_steps_without_cache()
-    for name, cmd in portfolio_cmds:
-        _, success, _ = run_command(name, cmd, dry_run=args.dry_run,
-                                     timings=timings)
-        if not success:
-            sys.exit(1)
+    # All 7 portfolios + DB sync — single subprocess call to keep this
+    # orchestrator and the manual "Update Portfolios" button in lock-step.
+    name, cmd = update_portfolios_step(shared_state_file)
+    _, success, _ = run_command(name, cmd, dry_run=args.dry_run,
+                                 timings=timings)
+    if not success:
+        sys.exit(1)
 
-    # Post-portfolio: sync to DB, backup to external dir.
+    # Post-portfolio: external-dir backup.
     for name, cmd in POST_PORTFOLIO_STEPS:
         _, success, _ = run_command(name, cmd, dry_run=args.dry_run,
                                      timings=timings)
@@ -257,33 +233,6 @@ def main():
     total_time = time.time() - start_time
     print(f"\nDaily pipeline completed successfully in {total_time:.1f}s")
     print_timing_summary(timings, total_time)
-
-
-def _portfolio_steps_without_cache():
-    """Fallback when --no-shared-state is set: portfolios load panels independently."""
-    return [
-        ("Build OM25 v3 portfolio", [
-            sys.executable, "scripts/run_om25_v3_portfolio.py",
-            "--prices-dir", "nse500_data",
-            "--regime-index", "indices_data/NIFTY_100.csv",
-            "--start", "2020-01-01",
-        ]),
-        ("Build TL25 v3 portfolio", [
-            sys.executable, "scripts/run_tl25_v3_portfolio.py",
-            "--prices-dir", "nse500_data",
-            "--start", "2020-01-01",
-        ]),
-        ("Build L6 v2 portfolio", [
-            sys.executable, "scripts/run_l6_v2_portfolio.py",
-            "--prices-dir", "nse500_data",
-            "--start", "2020-01-01",
-        ]),
-        ("Build COMBO Defensive portfolio", [
-            sys.executable, "scripts/run_combo_defensive_portfolio.py",
-            "--prices-dir", "nse500_data",
-            "--start", "2020-01-01",
-        ]),
-    ]
 
 
 def _cleanup_cache(path):

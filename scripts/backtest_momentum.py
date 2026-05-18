@@ -1,32 +1,17 @@
 import argparse
 import math
+import os
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-
-def load_price_panels(prices_dir: Path):
-    rows = []
-    for csv_path in sorted(prices_dir.glob("*_day.csv")):
-        symbol = csv_path.stem.replace("_day", "")
-        df = pd.read_csv(csv_path, parse_dates=["date"])
-        if df.empty or "close" not in df.columns:
-            continue
-        df["symbol"] = symbol
-        if {"open", "high", "low", "close"}.issubset(df.columns):
-            df["trade_price"] = df[["open", "high", "low", "close"]].mean(axis=1)
-        else:
-            df["trade_price"] = df["close"]
-        rows.append(df[["date", "symbol", "close", "trade_price"]])
-    if not rows:
-        raise RuntimeError(f"No price files found in {prices_dir}")
-    combined = pd.concat(rows, ignore_index=True)
-    close_panel = combined.pivot(index="date", columns="symbol", values="close").sort_index()
-    trade_panel = combined.pivot(index="date", columns="symbol", values="trade_price").sort_index()
-    close_panel = close_panel.ffill()
-    trade_panel = trade_panel.ffill()
-    return close_panel, trade_panel
+# Phase 3.2 — loaders moved to data_pipeline/loaders.py; re-export here so
+# the 20+ callers that import these names from scripts.backtest_momentum
+# keep working unchanged.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from data_pipeline.loaders import load_price_panels, load_benchmark  # noqa: E402,F401
 
 
 def load_signals(path: Path, top_n: int, exit_buffer: int = 0):
@@ -73,13 +58,6 @@ def build_streak_map(signals_df: pd.DataFrame, top_n: int) -> dict:
         prev_symbols = current_symbols
 
     return result
-
-
-def load_benchmark(path: Path):
-    df = pd.read_csv(path, parse_dates=["date"])
-    df = df.sort_values("date")
-    df = df.set_index("date")
-    return df["close"].ffill()
 
 
 def map_signal_to_trade(signal_date, calendar):

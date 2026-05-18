@@ -161,3 +161,135 @@ and incremental backup turned out to already be correctly handled by
 existing code. The "Audit corrections" section in PLAN.md now documents
 this so future work doesn't re-litigate. Phase 2.5 (data redundancy)
 remains the meaningful unmet need and is the next phase.
+
+## Validation Gate 2.5 (Phase 2.5 — Data redundancy & resilience) — PASSED
+
+**Date:** 2026-05-17 (2.5.1–2.5.5 + 2.5.6) / 2026-05-18 (final live verify)
+
+### Outcome
+
+Daily redundancy now runs unattended on Railway. The chain that
+matters for survival has **three independent offsite copies**:
+
+| Location | Contains | Refreshed by |
+|---|---|---|
+| Mac (`~/Documents/stock_data/`) | Prices + DB tarballs + GDF backfill (`nse500_data_full`, `indices_data_full`) | Mac-local backup scripts (manual / belt-and-suspenders) |
+| Railway volume (`/data/`) | Prices + DB tarballs + symlinked GDF backfill | `init_persistent_storage.sh` + Railway-side jobs |
+| Google Drive (`kite-lab-backups/`) | DB tarballs (mirrored) + daily tarballs of each price dir | `daily_cloud_upload` @ 20:30 IST (Railway APScheduler, `drive.file` scope) |
+
+### Live verification (2026-05-17/18)
+
+- `daily_pipeline` (07:00 IST Mon-Fri) — confirmed live via Admin → Schedule.
+- `daily_db_backup` (20:00 IST every day) — registered; manual
+  trigger succeeded; `/data/db_backups/kitelab_db_<ts>.tar.gz`
+  written; `pg_restore --list` smoke test OK.
+- `daily_cloud_upload` (20:30 IST every day) — registered; manual
+  trigger succeeded after the `google-*` deps fix; 7 files visible
+  in `My Drive/kite-lab-backups/` under the new `drive.file` scope.
+- `backup_database.py --dry-run` against the public Postgres proxy:
+  31,537 rows across 10 tables.
+
+### CRITICAL_DATA.md gaps — status
+
+| Gap | Status |
+|---|---|
+| `nse500_data_historical/` single-Mac risk | **CLOSED** — uploaded to Railway, mirrored to Drive |
+| `data/static/nifty_smallcap_universe.csv` untracked | **CLOSED** (committed 2026-05-16) |
+| `rebalances` table empty | **EXPECTED BEHAVIOUR** (operator uses Zerodha Console directly) |
+| Backup is local-only | **CLOSED** — Drive cloud upload live |
+| `DATABASE_PUBLIC_URL` password-manager entry | **OPEN** — operator action |
+
+### Side-task: GDF deep backfill
+
+Captured while GDF API access was live; documented in
+`tasks/gdf_full_backfill/`. Final state on disk:
+
+- `nse500_data_full/` — 760 stocks (GDF 2009 → 2023-12-31 + Kite
+  2020 → present, rescale-anchored stitch).
+- `indices_data_full/` — 141 indices, 2010-present.
+- 265 stocks blank in GDF were gap-filled from Kite (258 succeeded,
+  7 unavailable: 5 dummies + PFOCUS + STLTECH).
+- 22 corporate-action rescale outliers correctly handled by the
+  rescale-anchored stitch.
+
+Both directories are now part of the daily Drive cloud upload.
+
+### Phase 2.5 + 2.5.6 deliverables
+
+- `scripts/backup_database.py`, `scripts/restore_database.py`
+- `scripts/upload_to_gdrive.py` (with `drive.file` scope + env-var creds)
+- `scripts/upload_price_data.py` (`TARGETS` allowlist expanded)
+- `scripts/init_persistent_storage.sh` (4 new volume mounts)
+- `kite-api/app/scheduler/tasks.py` (2 new APScheduler entries)
+- `kite-api/app/services/job_service.py` (`db_backup` + `cloud_upload` commands)
+- `kite-api/app/api/sync.py` (`ALLOWED_UPLOAD_DIRS` expanded)
+- `kite-api/requirements.txt` (google-* deps)
+- `tasks/pipeline_improvements/CRITICAL_DATA.md`,
+  `GDRIVE_SETUP.md`, `RAILWAY_BACKUP_SETUP.md`, `RECOVERY.md`
+- 9 new tests on rotation + `parse_ts` in `backup_database` (all
+  pipeline-improvements tests pass: 36 of 36 at last run).
+
+## Production fix (2026-05-18) — daily cron didn't refresh dashboard's default view
+
+**Bug:** dashboard's nse500 view stayed frozen between manual "Update
+Portfolios" clicks. Daily cron only built the 4 v3 portfolios; the
+legacy nse500/nifty100/nifty250 sync was a no-op against yesterday's CSVs.
+
+**Fix:** `scripts/run_daily_pipeline.py` now delegates its portfolio +
+DB-sync block to `scripts/update_all_portfolios.py` (extended to build
+all 7 portfolios — 3 legacy + 4 v3). Cron and the manual button now
+share one orchestrator.
+
+**Verified live (2026-05-18):** single invocation produced fresh
+`experiments/final_portfolio/final_portfolio_20260518201402` and
+`data/l6_v2_portfolios/l6_v2_portfolio_20260518_201542` — both refresh
+in the same cron run.
+
+## Validation Gate 3 (Phase 3.2 + 3.3 — Engine consolidation, scoped) — PASSED
+
+**Date:** 2026-05-18
+**Scope:** Loader extraction + `latest.json` pointer files.
+**Out of scope (user decision):** Phase 3.1 — legacy-L6 migration onto
+`_clean_engine`. The cron bug fix made `run_final_momentum_portfolio.py`
+production-critical; engine migration would risk breaking it for marginal
+payoff.
+
+### Outcome
+
+| Sub-part | Result |
+|---|---|
+| 3.2 Loader extraction (`data_pipeline/loaders.py` + re-export shim) | Bit-identical output between old and new import paths; 20+ existing callers unchanged |
+| 3.3 `latest.json` pointers + service consolidation | All three services (sync, portfolio, positions) share one resolver; ~0.03ms cached lookup vs full glob; verified across all 7 universes |
+
+### Test results
+
+```
+tests/test_pipeline_core.py + test_metrics_common.py + test_sync_validation.py:
+  27 tests, 0 failures (post-3.2 + 3.3)
+```
+
+### Phase 3 deliverables
+
+- `data_pipeline/loaders.py` (47 LOC) — `load_price_panels`, `load_benchmark`
+- `scripts/backtest_momentum.py` — re-export shim, 30 LOC deleted
+- `kite-api/app/services/sync_service.py` — `UNIVERSE_DIRS` registry +
+  pointer read/write helpers + cached `get_latest_experiment_dir`
+- `kite-api/app/services/portfolio_service.py` — delegates to
+  sync_service (15 LOC deleted)
+- `kite-api/app/services/positions_service.py` — replaced bespoke
+  regex-based glob with the shared helper (25 LOC deleted)
+- `.gitignore` — `**/latest.json` (regenerated on every sync)
+- `CLAUDE.md` — daily pipeline section reflects the new orchestration
+
+### What was explicitly NOT done (Phase 3.1)
+
+`scripts/run_final_momentum_portfolio.py` continues to use the legacy
+`backtest_momentum.run_backtest()` engine. The two engines remain
+divergent on Sharpe rf rate (legacy: 0; `_clean_engine`: 5%) and minor
+implementation details. The legacy path is the production daily-cron
+path for the dashboard's default nse500 view, and the user opted to
+not gamble on a 1bps-tolerance bit-equivalence migration.
+
+If a future need (e.g., feature parity for the legacy path) forces the
+migration, the validation gate from PLAN.md Phase 3.1 stands: 1bps daily
+equity tolerance + ≥99% trade match across a full 2020-2026 backtest.
