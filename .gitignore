@@ -51,7 +51,9 @@ data/*
 !experiments/final_portfolio/**
 *.csv
 !data/static/*.csv
+!data/static/**/*.csv
 !data/static/*.md
+!data/static/**/*.md
 !data/final_portfolio/*.csv
 !data/final_portfolio/*.md
 !experiments/final_portfolio/**/*.csv
