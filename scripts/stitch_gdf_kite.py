@@ -1,20 +1,25 @@
-"""Stitch GDF historical [2009-2019] + Kite live [2020-now] into a unified panel.
+"""Stitch GDF historical + Kite live into a unified panel.
 
 GDF and Kite differ in how they handle corporate actions (e.g. GDF adjusted
 the RIL Jio Financial demerger retroactively; Kite did not). Naively
 concatenating creates a price discontinuity at the boundary.
 
-Fix: rescale GDF prices by the ratio (kite_first_close / gdf_overlap_close)
-so the two series join continuously. We use the **most recent overlapping
-trading day** present in both sources as the anchor — typically a date
-in the first week of January 2020, since GDF reaches 2019-12-30 and
-Kite usually starts 2020-01-01.
-
-Output: nse500_data_merged/{SYM}_day.csv with same schema as Kite files.
+Fix: rescale GDF prices by the ratio (kite_close / gdf_close) at the
+most recent overlapping trading day. That anchor handles both
+calculation differences and corporate-action treatment.
 
 Usage:
+    # Default — use the legacy 2009-2019 GDF dir, write to nse500_data_merged
     python scripts/stitch_gdf_kite.py
-    python scripts/stitch_gdf_kite.py --boundary-jump-warn 5  # warn if >5% gap remains
+
+    # Stitch the new 2009-2023 deep backfill with current Kite data
+    python scripts/stitch_gdf_kite.py \\
+        --gdf-dir ~/Documents/stock_data/nse500_data_gdf_full \\
+        --out-dir ~/Documents/stock_data/nse500_data_full
+
+    # Warn when rescale ratio exceeds 5% (likely a corporate-action
+    # difference worth investigating)
+    python scripts/stitch_gdf_kite.py --boundary-jump-warn 5
 
 Reports symbols where the rescale anchor needed >2% adjustment (signals
 likely corporate actions handled differently by the two sources).
@@ -28,9 +33,9 @@ from pathlib import Path
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
-KITE_DIR = ROOT / "nse500_data"
-GDF_DIR = ROOT / "nse500_data_historical"
-OUT_DIR = ROOT / "nse500_data_merged"
+DEFAULT_KITE_DIR = ROOT / "nse500_data"
+DEFAULT_GDF_DIR = ROOT / "nse500_data_historical"
+DEFAULT_OUT_DIR = ROOT / "nse500_data_merged"
 
 OHLCV = ["open", "high", "low", "close", "volume"]
 
@@ -39,25 +44,32 @@ def load_csv(path: Path) -> pd.DataFrame:
     if not path.exists():
         return pd.DataFrame()
     df = pd.read_csv(path, parse_dates=["date"])
+    # GDF backfill writes header-only marker CSVs for symbols with no
+    # data in the requested range (e.g. post-2024 IPOs). pandas leaves
+    # the empty 'date' column with object dtype, so .dt accessors blow
+    # up. Treat empty in / empty out.
+    if df.empty:
+        return df
     df["date"] = df["date"].dt.tz_localize(None).dt.normalize()
     return df.sort_values("date").reset_index(drop=True)
 
 
-def stitch_one(symbol: str, warn_pct: float) -> dict:
-    kite = load_csv(KITE_DIR / f"{symbol}_day.csv")
-    gdf = load_csv(GDF_DIR / f"{symbol}_day.csv")
+def stitch_one(symbol: str, *, gdf_dir: Path, kite_dir: Path,
+                out_dir: Path, warn_pct: float) -> dict:
+    kite = load_csv(kite_dir / f"{symbol}_day.csv")
+    gdf = load_csv(gdf_dir / f"{symbol}_day.csv")
 
     if kite.empty and gdf.empty:
         return {"symbol": symbol, "status": "no_data"}
 
     if gdf.empty:
         # nothing to stitch; just copy kite
-        kite.to_csv(OUT_DIR / f"{symbol}_day.csv", index=False,
+        kite.to_csv(out_dir / f"{symbol}_day.csv", index=False,
                     date_format="%Y-%m-%d")
         return {"symbol": symbol, "status": "kite_only", "kite_rows": len(kite)}
 
     if kite.empty:
-        gdf.to_csv(OUT_DIR / f"{symbol}_day.csv", index=False,
+        gdf.to_csv(out_dir / f"{symbol}_day.csv", index=False,
                    date_format="%Y-%m-%d")
         return {"symbol": symbol, "status": "gdf_only", "gdf_rows": len(gdf)}
 
@@ -82,7 +94,7 @@ def stitch_one(symbol: str, warn_pct: float) -> dict:
     pre = gdf[gdf["date"] < kite_first].copy()
     if pre.empty:
         # all GDF data is on/after Kite first date; fall back to Kite only
-        kite.to_csv(OUT_DIR / f"{symbol}_day.csv", index=False,
+        kite.to_csv(out_dir / f"{symbol}_day.csv", index=False,
                     date_format="%Y-%m-%d")
         return {"symbol": symbol, "status": "no_pre_history",
                 "kite_rows": len(kite), "rescale_pct": 0.0}
@@ -97,8 +109,8 @@ def stitch_one(symbol: str, warn_pct: float) -> dict:
     merged = pd.concat([pre, kite_keep], ignore_index=True)
     merged = merged.drop_duplicates(subset=["date"]).sort_values("date").reset_index(drop=True)
 
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    out_path = OUT_DIR / f"{symbol}_day.csv"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"{symbol}_day.csv"
     merged.to_csv(out_path, index=False, date_format="%Y-%m-%d")
 
     # boundary jump check (post-rescale)
@@ -123,30 +135,43 @@ def stitch_one(symbol: str, warn_pct: float) -> dict:
 
 
 def main():
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(description=__doc__,
+                                  formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--gdf-dir", type=Path, default=DEFAULT_GDF_DIR,
+                    help=f"GDF source dir (default: {DEFAULT_GDF_DIR})")
+    ap.add_argument("--kite-dir", type=Path, default=DEFAULT_KITE_DIR,
+                    help=f"Kite source dir (default: {DEFAULT_KITE_DIR})")
+    ap.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR,
+                    help=f"Stitched output dir (default: {DEFAULT_OUT_DIR})")
     ap.add_argument("--boundary-jump-warn", type=float, default=2.0,
                     help="Warn when rescale > this percent")
     ap.add_argument("--symbols", nargs="*", default=None)
     args = ap.parse_args()
 
+    gdf_dir, kite_dir, out_dir = args.gdf_dir, args.kite_dir, args.out_dir
+    print(f"[stitch] gdf-dir  = {gdf_dir}")
+    print(f"[stitch] kite-dir = {kite_dir}")
+    print(f"[stitch] out-dir  = {out_dir}")
+
     if args.symbols:
         symbols = args.symbols
     else:
-        gdf_syms = {p.stem.replace("_day", "") for p in GDF_DIR.glob("*_day.csv")}
-        kite_syms = {p.stem.replace("_day", "") for p in KITE_DIR.glob("*_day.csv")}
+        gdf_syms = {p.stem.replace("_day", "") for p in gdf_dir.glob("*_day.csv")}
+        kite_syms = {p.stem.replace("_day", "") for p in kite_dir.glob("*_day.csv")}
         symbols = sorted(gdf_syms | kite_syms)
 
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
     rows = []
     for sym in symbols:
         try:
-            r = stitch_one(sym, args.boundary_jump_warn)
+            r = stitch_one(sym, gdf_dir=gdf_dir, kite_dir=kite_dir,
+                           out_dir=out_dir, warn_pct=args.boundary_jump_warn)
         except Exception as e:
             r = {"symbol": sym, "status": f"error: {e}"}
         rows.append(r)
 
     summary = pd.DataFrame(rows)
-    summary.to_csv(OUT_DIR / "_stitch_summary.csv", index=False)
+    summary.to_csv(out_dir / "_stitch_summary.csv", index=False)
 
     n = len(summary)
     by_status = summary["status"].value_counts().to_dict()

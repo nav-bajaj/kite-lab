@@ -21,7 +21,8 @@ echo "[init-storage] Persistent volume detected at $VOLUME"
 mkdir -p "$VOLUME/nse500_data"
 mkdir -p "$VOLUME/nse500_data_hourly"
 mkdir -p "$VOLUME/nse500_data_historical"  # 2009-2019 GDF backfill (Phase 2.5.6)
-mkdir -p "$VOLUME/nse500_data_gdf_full"    # 2009-2023 deep GDF backfill side task
+mkdir -p "$VOLUME/nse500_data_gdf_full"    # 2009-2023 deep GDF backfill (raw)
+mkdir -p "$VOLUME/nse500_data_full"        # GDF + Kite stitched (comprehensive)
 mkdir -p "$VOLUME/indices_data"
 mkdir -p "$VOLUME/instruments"
 mkdir -p "$VOLUME/benchmarks"
@@ -63,6 +64,7 @@ link "$VOLUME/nse500_data"             "$APP/nse500_data"
 link "$VOLUME/nse500_data_hourly"      "$APP/nse500_data_hourly"
 link "$VOLUME/nse500_data_historical"  "$APP/nse500_data_historical"
 link "$VOLUME/nse500_data_gdf_full"    "$APP/nse500_data_gdf_full"
+link "$VOLUME/nse500_data_full"        "$APP/nse500_data_full"
 link "$VOLUME/indices_data"      "$APP/data/indices_data"
 link "$VOLUME/instruments"       "$APP/data/instruments"
 link "$VOLUME/benchmarks"        "$APP/data/benchmarks"
