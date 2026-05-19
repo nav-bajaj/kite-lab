@@ -127,7 +127,7 @@ or adding a new register row.
 After Vercel redeploys this PR:
 
 ```bash
-curl -sI https://kite-lab.vercel.app/ | grep -iE '(content-security|x-frame|strict-transport|permissions|referrer)'
+curl -sI https://marketworks.in/ | grep -iE '(content-security|x-frame|strict-transport|permissions|referrer)'
 ```
 
 Expected: every header listed (`Content-Security-Policy`,
