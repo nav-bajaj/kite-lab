@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(source:*)",
+      "Bash(source *)",
+      "Bash(railway status)",
+      "Bash(railway whoami)",
+      "Bash(railway service)",
+      "Bash(railway service --help)",
+      "Bash(railway deployment list)",
+      "Bash(railway --version)",
+      "Bash(railway logs:*)",
+      "Bash(railway variables:*)",
+      "Bash(pip show:*)",
+      "Bash(pip freeze)",
+      "Bash(pip freeze:*)",
+      "Bash(alembic current:*)",
+      "Bash(crontab -l)",
+      "Bash(pg_isready:*)",
+      "Bash(nslookup:*)",
+      "Bash(docker info)",
+      "Bash(docker compose ps)",
+      "Bash(docker compose ps:*)",
+      "Bash(docker --version)",
+      "Bash(docker compose version)",
+      "Bash(docker-compose version)",
+      "Bash(pg_dump --version)",
+      "Bash(source .venv/bin/activate && python:*)",
+      "Bash(source .venv/bin/activate && python *)",
+      "Bash(source .venv/bin/activate && python3:*)",
+      "Bash(source .venv/bin/activate && python3 *)",
+      "Bash(source .venv/bin/activate && pip:*)",
+      "Bash(source .venv/bin/activate && pip install:*)",
+      "Bash(source .venv/bin/activate && pip show:*)",
+      "Bash(source .venv/bin/activate && pip freeze:*)",
+      "Bash(source .venv/bin/activate && pytest:*)",
+      "Bash(source .venv/bin/activate && echo:*)",
+      "Bash(source .venv/bin/activate && alembic:*)",
+      "Bash(source /Users/navdeep/kite-lab/.venv/bin/activate && python:*)",
+      "Bash(source /Users/navdeep/kite-lab/.venv/bin/activate && python *)"
+    ]
+  }
+}
