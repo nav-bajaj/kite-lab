@@ -1,0 +1,240 @@
+# Semgrep rules for kite-lab.
+#
+# Project-specific rules that enforce invariants documented in
+# docs/security/threat-model.md and docs/security/attack-surface.md.
+#
+# These complement the public Semgrep registry (p/owasp-top-ten, p/python,
+# p/javascript). Run via:
+#   semgrep --config tools/security/semgrep.yml \
+#           --config p/owasp-top-ten \
+#           --config p/python \
+#           --config p/javascript .
+
+rules:
+  # -------------------------------------------------------------------------
+  # FastAPI: route must declare auth dependency (except documented exceptions)
+  # -------------------------------------------------------------------------
+  - id: fastapi-route-missing-auth
+    message: |
+      FastAPI route appears to lack `Depends(get_current_user)` or equivalent.
+      Only /api/health and /api/system/* are intentionally unauthenticated
+      (see docs/security/attack-surface.md and AD-1 in threat-model.md).
+      If this is intentional, add a row to risk-register.md and suppress.
+    severity: ERROR
+    languages: [python]
+    paths:
+      include:
+        - kite-api/app/api/
+      exclude:
+        - kite-api/app/api/system.py
+        - kite-api/app/api/health.py
+    patterns:
+      - pattern-either:
+          - pattern: |
+              @$ROUTER.get($PATH, ...)
+              def $FUNC(...):
+                ...
+          - pattern: |
+              @$ROUTER.post($PATH, ...)
+              def $FUNC(...):
+                ...
+          - pattern: |
+              @$ROUTER.put($PATH, ...)
+              def $FUNC(...):
+                ...
+          - pattern: |
+              @$ROUTER.delete($PATH, ...)
+              def $FUNC(...):
+                ...
+          - pattern: |
+              @$ROUTER.patch($PATH, ...)
+              def $FUNC(...):
+                ...
+      # Standard auth dependency
+      - pattern-not: |
+          @$ROUTER.$METHOD($PATH, ...)
+          def $FUNC(..., current_user: ... = Depends(get_current_user), ...):
+            ...
+      - pattern-not: |
+          @$ROUTER.$METHOD($PATH, ...)
+          def $FUNC(..., user: ... = Depends(get_current_user), ...):
+            ...
+      - pattern-not: |
+          @$ROUTER.$METHOD($PATH, ...)
+          async def $FUNC(..., current_user: ... = Depends(get_current_user), ...):
+            ...
+      - pattern-not: |
+          @$ROUTER.$METHOD($PATH, ...)
+          async def $FUNC(..., user: ... = Depends(get_current_user), ...):
+            ...
+      # get_optional_user — used on endpoints that accept either header Bearer
+      # or query-param token (SSE-friendly). Auth still enforced inside the
+      # handler; the dependency just doesn't 401 on missing header. R-005.
+      - pattern-not: |
+          @$ROUTER.$METHOD($PATH, ...)
+          def $FUNC(..., user: ... = Depends(get_optional_user), ...):
+            ...
+      - pattern-not: |
+          @$ROUTER.$METHOD($PATH, ...)
+          async def $FUNC(..., user: ... = Depends(get_optional_user), ...):
+            ...
+
+  # -------------------------------------------------------------------------
+  # NEXT_PUBLIC_* must never carry a secret-like value (it ships to browser)
+  # -------------------------------------------------------------------------
+  - id: next-public-secret-leak
+    message: |
+      Variable name combines NEXT_PUBLIC_ prefix with SECRET/KEY/PASSWORD/TOKEN.
+      NEXT_PUBLIC_* env vars are baked into the client bundle and ship to the
+      browser. See docs/security/attack-surface.md → "Environment variables".
+    severity: ERROR
+    languages: [typescript, javascript]
+    pattern-regex: 'NEXT_PUBLIC_(\w*(?:SECRET|PASSWORD|API_SECRET|PRIVATE_KEY|TOKEN_SECRET|CLIENT_SECRET)\w*)'
+
+  # -------------------------------------------------------------------------
+  # subprocess with shell=True (we use exec() pattern; shell=True is a smell)
+  # -------------------------------------------------------------------------
+  - id: subprocess-shell-true
+    message: |
+      subprocess called with shell=True. Use a list of args without shell=True
+      to avoid shell-injection (existing pattern: job_service.py uses
+      asyncio.create_subprocess_exec).
+    severity: ERROR
+    languages: [python]
+    patterns:
+      - pattern-either:
+          - pattern: subprocess.run(..., shell=True, ...)
+          - pattern: subprocess.Popen(..., shell=True, ...)
+          - pattern: subprocess.call(..., shell=True, ...)
+          - pattern: subprocess.check_output(..., shell=True, ...)
+          - pattern: os.system(...)
+
+  # -------------------------------------------------------------------------
+  # Token files must be written with mode=0o600
+  # -------------------------------------------------------------------------
+  - id: token-file-write-no-mode
+    message: |
+      Writing access_token.txt or session.json without explicit 0o600 mode.
+      Existing pattern: see kite-api/app/services/system_service.py:367-376.
+      Use Path(...).write_text(...) followed by Path(...).chmod(0o600), or
+      open(..., 'w', opener=...) with O_RDONLY|O_CREAT.
+    severity: WARNING
+    languages: [python]
+    patterns:
+      - pattern-either:
+          - pattern: |
+              $PATH.write_text(...)
+          - pattern: |
+              open($P, "w", ...).write(...)
+      - metavariable-regex:
+          metavariable: $P
+          regex: '.*(?:access_token|session\.json).*'
+
+  # -------------------------------------------------------------------------
+  # Raw SQL with string interpolation (ORM is the standard)
+  # -------------------------------------------------------------------------
+  - id: sql-string-interpolation
+    message: |
+      Raw SQL with string formatting / f-string / concat — high injection risk.
+      Use SQLAlchemy ORM (existing pattern in kite-api/app/services/*).
+      If raw SQL is unavoidable, use parameterized text() with bind params.
+    severity: ERROR
+    languages: [python]
+    patterns:
+      - pattern-either:
+          - pattern: text(f"...{$X}...")
+          - pattern: |
+              text("..." + $X + "...")
+          - pattern: |
+              $DB.execute(f"...{$X}...")
+          - pattern: |
+              $DB.execute("..." % $X)
+
+  # -------------------------------------------------------------------------
+  # Eval / exec on dynamic input
+  # -------------------------------------------------------------------------
+  - id: dynamic-code-execution
+    message: |
+      Dynamic code execution. Forbidden in this codebase.
+      setTimeout/setInterval flagged only when the first argument is a
+      string (which JS engines `eval()`); arrow/function callbacks are safe.
+    severity: ERROR
+    languages: [python, javascript, typescript]
+    patterns:
+      - pattern-either:
+          - pattern: eval(...)
+          - pattern: exec($X)
+          - pattern: Function($X)
+          - patterns:
+              - pattern-either:
+                  - pattern: setTimeout($STR, ...)
+                  - pattern: setInterval($STR, ...)
+              - metavariable-regex:
+                  metavariable: $STR
+                  regex: '^["''`].*["''`]$'
+
+  # -------------------------------------------------------------------------
+  # Logging that may emit secrets
+  # -------------------------------------------------------------------------
+  - id: log-emits-secret-field
+    message: |
+      Logger call references a field name that matches our secret pattern.
+      Confirm the value is masked before logging.
+    severity: WARNING
+    languages: [python]
+    pattern-either:
+      - pattern-regex: 'log(?:ger)?\.(?:info|debug|warning|error|critical)\([^)]*\b(?:password|api_secret|jwt_secret|access_token|session_token|nextauth_secret|totp_secret)\b[^)]*\)'
+
+  # -------------------------------------------------------------------------
+  # dangerouslySetInnerHTML on React components
+  # -------------------------------------------------------------------------
+  - id: react-dangerously-set-inner-html
+    message: |
+      dangerouslySetInnerHTML used. Confirm the input is sanitized (DOMPurify
+      or equivalent). Document in risk register if accepted.
+    severity: WARNING
+    languages: [typescript, javascript]
+    pattern: |
+      dangerouslySetInnerHTML={$X}
+
+  # -------------------------------------------------------------------------
+  # FastAPI: routes returning request-supplied URL content (SSRF guard)
+  # -------------------------------------------------------------------------
+  - id: ssrf-via-requests
+    message: |
+      requests.get/post invoked with a URL derived from a request parameter —
+      potential SSRF. Confirm URL is validated against an allowlist.
+    severity: WARNING
+    languages: [python]
+    patterns:
+      - pattern-either:
+          - pattern: requests.get($URL, ...)
+          - pattern: requests.post($URL, ...)
+          - pattern: httpx.get($URL, ...)
+          - pattern: httpx.post($URL, ...)
+      - metavariable-pattern:
+          metavariable: $URL
+          patterns:
+            - pattern-not-regex: '^["''].*["'']$'   # exclude literal strings
+
+  # -------------------------------------------------------------------------
+  # Missing Pydantic validation on Body() params
+  # -------------------------------------------------------------------------
+  - id: fastapi-body-raw-dict
+    message: |
+      Endpoint accepts a raw dict in the body. Use a Pydantic BaseModel with
+      explicit fields + max_length constraints (existing pattern: see
+      kite-api/app/api/jobs.py CreateJobRequest).
+    severity: WARNING
+    languages: [python]
+    patterns:
+      - pattern-either:
+          - pattern: |
+              def $FUNC(..., body: dict = Body(...), ...):
+                ...
+          - pattern: |
+              def $FUNC(..., body: Dict = Body(...), ...):
+                ...
+          - pattern: |
+              async def $FUNC(..., body: dict = Body(...), ...):
+                ...

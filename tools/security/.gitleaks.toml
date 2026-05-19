@@ -1,0 +1,120 @@
+# Gitleaks config for kite-lab.
+#
+# Extends the default ruleset (which covers AWS, Azure, GCP, Stripe, Slack,
+# generic high-entropy strings, etc.) and adds project-specific allowlists
+# for places we know to contain templated or sanitized values.
+#
+# Run via: pre-commit, or `gitleaks detect --source . --config tools/security/.gitleaks.toml`
+
+title = "Kite-Lab gitleaks config"
+
+[extend]
+useDefault = true
+
+# ---------------------------------------------------------------------------
+# Project-specific custom rules
+# ---------------------------------------------------------------------------
+
+[[rules]]
+id = "kite-api-key-pattern"
+description = "Zerodha Kite API key (typically 8-12 alphanumeric chars assigned by Kite Console). Heuristic only — relies on adjacent context."
+regex = '''(?i)(kite[_-]?api[_-]?key|KITE_API_KEY)\s*[:=]\s*["']?([a-z0-9]{6,16})["']?'''
+secretGroup = 2
+tags = ["secret", "kite-lab"]
+keywords = ["KITE_API_KEY", "kite_api_key"]
+
+[[rules]]
+id = "kite-api-secret-pattern"
+description = "Zerodha Kite API secret"
+regex = '''(?i)(kite[_-]?api[_-]?secret|KITE_API_SECRET)\s*[:=]\s*["']?([a-z0-9]{20,40})["']?'''
+secretGroup = 2
+tags = ["secret", "kite-lab"]
+keywords = ["KITE_API_SECRET", "kite_api_secret"]
+
+[[rules]]
+id = "totp-secret-pattern"
+description = "TOTP secret (base32, length 16-32 typical for Authenticator apps)"
+regex = '''(?i)TOTP_SECRET\s*[:=]\s*["']?([A-Z2-7]{16,32})["']?'''
+tags = ["secret", "kite-lab"]
+keywords = ["TOTP_SECRET"]
+
+[[rules]]
+id = "jwt-secret-pattern"
+description = "JWT_SECRET / NEXTAUTH_SECRET assignment. Placeholders are filtered via [allowlist].regexes — Go's RE2 doesn't support negative lookahead, so we can't exclude them in the rule regex directly. Use secretGroup = 2 so the value (not the var name) is what gets matched against the allowlist."
+regex = '''(?i)(JWT_SECRET|NEXTAUTH_SECRET)\s*[:=]\s*["']?([A-Za-z0-9_\-+/=]{16,})["']?'''
+secretGroup = 2
+tags = ["secret", "kite-lab"]
+keywords = ["JWT_SECRET", "NEXTAUTH_SECRET"]
+
+[[rules]]
+id = "access-token-content"
+description = "Zerodha access_token file content leaked in code (32+ hex/alnum string in a file referencing access_token)"
+regex = '''access[_-]?token\s*[:=]\s*["']?([a-zA-Z0-9]{32,})["']?'''
+tags = ["secret", "kite-lab"]
+keywords = ["access_token"]
+
+# ---------------------------------------------------------------------------
+# Allowlist — paths and patterns that are intentionally templated
+# ---------------------------------------------------------------------------
+
+[allowlist]
+description = "Files known to contain templated/sanitized values, or documentation that names secrets without leaking them"
+paths = [
+  # Template files
+  '''^\.env\.docker\.example$''',
+  '''^kite-dashboard/\.env\.example$''',
+  '''^kite-api/\.env\.example$''',
+
+  # Security documentation may discuss secrets by name without leaking them
+  '''^docs/security/''',
+  '''^tasks/security/''',
+  '''^tasks/security_agent/''',
+
+  # Scanner configs reference rule patterns; not real secrets
+  '''^tools/security/''',
+  '''^\.gitleaks\.toml$''',
+
+  # Tests can contain obviously-fake credentials
+  '''^kite-api/tests/''',
+  '''^.*/test_.*\.py$''',
+
+  # Lockfiles + minified bundles can match high-entropy heuristics
+  '''^kite-dashboard/package-lock\.json$''',
+  '''.*\.min\.js$''',
+  '''.*\.min\.css$''',
+
+  # Generated frontend assets
+  '''^kite-dashboard/\.next/''',
+
+  # Reports/audits embed scanner output (already triaged)
+  '''^reports/security/''',
+  '''^docs/security/audits/''',
+]
+
+regexes = [
+  # Placeholder values we use in templates
+  '''change-me-in-production''',
+  '''your-api-key-here''',
+  '''your-secret-here''',
+  '''REPLACE_ME''',
+  '''placeholder''',
+  '''xxxx+''',
+
+  # Documentation that quotes the env var name rather than the value
+  '''KITE_API_KEY=<''',
+  '''JWT_SECRET=<''',
+  '''NEXTAUTH_SECRET=<''',
+
+  # Instruction text in onboarding docs and dev defaults in docker-compose.
+  # Each was an audited false-positive in the May 2026 baseline run.
+  '''your-32-character-(secret|secret-key-here)''',
+  '''generate-(a-32|32)-character-(random-string|secret-key)''',
+  '''local-dev-jwt-secret-not-for-production''',
+  '''dev-secret-local''',
+  '''dev-secret-for-docker-compose''',
+  '''(?i)\b(dev|test|example|sample)-(secret|password|key)\b''',
+]
+
+# Per-rule allowlist examples (uncomment + extend if a real false positive arises)
+# [[rules.allowlist]]
+# regexes = ['''specific-string-known-safe''']

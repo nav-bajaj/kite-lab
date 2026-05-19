@@ -164,7 +164,9 @@ def _table_to_csv_gz_bytes(engine: Engine, table: str) -> tuple[bytes, int]:
     which round-trips cleanly through ``pd.read_csv(..., parse_dates=...)``
     on restore.
     """
-    df = pd.read_sql_query(text(f"SELECT * FROM {table}"), engine)
+    if table not in TABLES:
+        raise ValueError(f"unknown table: {table!r} (not in TABLES whitelist)")
+    df = pd.read_sql_query(text(f"SELECT * FROM {table}"), engine)  # noqa: S608  # nosemgrep: tools.security.sql-string-interpolation,python.sqlalchemy.security.audit.avoid-sqlalchemy-text.avoid-sqlalchemy-text  # table validated against TABLES whitelist above
     buf = io.BytesIO()
     df.to_csv(buf, index=False, compression="gzip")
     return buf.getvalue(), len(df)
@@ -354,7 +356,9 @@ def run(output_dir: Path, dry_run: bool = False) -> BackupReport:
         for tbl in TABLES:
             try:
                 with engine.connect() as conn:
-                    n = conn.execute(text(f"SELECT COUNT(*) FROM {tbl}")).scalar()
+                    # tbl is iterated directly from the TABLES whitelist constant —
+                    # not user input. Safe to interpolate.
+                    n = conn.execute(text(f"SELECT COUNT(*) FROM {tbl}")).scalar()  # noqa: S608  # nosemgrep: tools.security.sql-string-interpolation,python.sqlalchemy.security.audit.avoid-sqlalchemy-text.avoid-sqlalchemy-text
             except Exception as exc:
                 rep.warnings.append(f"{tbl}: count failed ({exc!s})")
                 rep.row_counts[tbl] = -1

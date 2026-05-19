@@ -107,9 +107,14 @@ def dump_to_cache(state: PipelineState, path: Path) -> None:
 
 
 def load_from_cache(path: Path) -> PipelineState:
-    """Read a previously written cache. Raises on schema mismatch."""
+    """Read a previously written cache. Raises on schema mismatch.
+
+    The pickle file is written by ``save_to_cache`` (this same process tree)
+    and lives on local disk under our control. We do not load pickles from
+    user-supplied or network-fetched paths. R-015.
+    """
     with Path(path).open("rb") as f:
-        state = pickle.load(f)
+        state = pickle.load(f)  # noqa: S301  # local cache file written by us; not untrusted data; R-015
     if not isinstance(state, PipelineState):
         raise TypeError(
             f"shared-state cache at {path} is not a PipelineState "

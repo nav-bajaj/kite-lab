@@ -52,7 +52,7 @@ async def verify_token(user: dict = Depends(get_current_user)):
     }
 
 
-@router.post("/token", response_model=TokenResponse)
+@router.post("/token", response_model=TokenResponse)  # nosemgrep: tools.security.fastapi-route-missing-auth  # JWT-issuing endpoint; cannot require Depends(get_current_user). Rate-limited 5/min; email checked against ALLOWED_EMAILS inside.
 @limiter.limit("5/minute")
 async def create_token(request: Request, body: TokenRequest):
     """

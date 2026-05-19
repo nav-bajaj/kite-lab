@@ -43,7 +43,8 @@ class TrueDataClient:
         self._token_expiry: Optional[dt.datetime] = None
 
     def login(self) -> str:
-        resp = requests.post(
+        # AUTH_URL is a fixed module constant — no user-controlled URL. R-017.
+        resp = requests.post(  # nosemgrep: tools.security.ssrf-via-requests
             AUTH_URL,
             data={"username": self.username, "password": self.password, "grant_type": "password"},
             headers={"Content-Type": "application/x-www-form-urlencoded"},
@@ -80,7 +81,8 @@ class TrueDataClient:
             "response": response_format,
             "interval": interval,
         }
-        resp = requests.get(
+        # HISTORY_BASE is a fixed module constant; only the path varies. R-017.
+        resp = requests.get(  # nosemgrep: tools.security.ssrf-via-requests
             f"{HISTORY_BASE}/getbars",
             params=params,
             headers={"Authorization": f"bearer {token}"},

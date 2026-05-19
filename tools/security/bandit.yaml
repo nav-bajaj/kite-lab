@@ -1,0 +1,45 @@
+# Bandit config for kite-lab.
+#
+# Bandit's defaults are reasonable for Python; we skip a small set of
+# checks that are noisy in this codebase or that we've reviewed and
+# accepted by design.
+#
+# Run via:
+#   bandit -r . -c tools/security/bandit.yaml -f json -o reports/security/<date>/raw/bandit.json
+
+exclude_dirs:
+  - .venv
+  - venv
+  - node_modules
+  - .git
+  - kite-dashboard/.next
+  - kite-dashboard/node_modules
+  - reports
+  - nse500_data
+  - nse500_data_hourly
+  - nse500_data_historical
+  - indices_data
+  - data/instruments_full.csv
+
+# Tests to skip with rationale (each skip should have a register row if
+# the skip is a design decision rather than a noise filter).
+skips:
+  # Asserts in test files are fine; bandit can't always tell test from prod.
+  - B101   # assert_used
+
+  # We use subprocess intentionally and safely — args list, no shell=True.
+  # The custom semgrep rule `subprocess-shell-true` enforces the safe form.
+  - B404   # import_subprocess
+  - B603   # subprocess_without_shell_equals_true (exec is our intentional pattern)
+  - B607   # start_process_with_partial_path (we resolve paths explicitly)
+
+  # B105 (hardcoded_password_string) is generally good, but bandit also flags
+  # variable names containing "password" without a real value (e.g.,
+  # `password=os.getenv("KITE_PASSWORD")`). Our gitleaks rules + semgrep cover
+  # the real risk; bandit's heuristic is too noisy here.
+  - B105
+
+# Set confidence/severity thresholds (default is LOW for both — too noisy).
+# Effective filter for /security-audit JSON output:
+#   confidence >= MEDIUM AND severity >= LOW
+# Bandit doesn't natively filter; parse_findings.py applies the threshold.

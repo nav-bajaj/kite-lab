@@ -1,0 +1,100 @@
+# Pre-commit hooks for kite-lab.
+#
+# Tight scope — only the fast, low-false-positive checks live here. Deeper
+# scanners (bandit deep, semgrep, pip-audit, npm audit, trufflehog, trivy)
+# run via `/security-audit` on demand.
+#
+# Setup:
+#   source .venv/bin/activate
+#   pip install pre-commit
+#   pre-commit install
+#
+# Run on all files (e.g. after editing this config):
+#   pre-commit run --all-files
+
+default_install_hook_types: [pre-commit]
+fail_fast: false
+
+repos:
+  # ---------------------------------------------------------------------------
+  # gitleaks — secret scan (config: tools/security/.gitleaks.toml)
+  # ---------------------------------------------------------------------------
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.0
+    hooks:
+      - id: gitleaks
+        args: ["--config", "tools/security/.gitleaks.toml"]
+
+  # ---------------------------------------------------------------------------
+  # ruff — Python lint + S-rules (security subset)
+  # ---------------------------------------------------------------------------
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        # Mirror bandit.yaml's skip list (S101=B101 assert, S603=B603/B607
+        # subprocess.exec safe pattern, S105 hardcoded password names being
+        # noisy near env var refs). Plus S311 (non-crypto random — used for
+        # legitimate statistics/Monte-Carlo) and S108/S110/S112/S324 (debug
+        # /tmp paths, broad except in legacy scripts, hash-without-
+        # usedforsecurity for content hashing). The remaining rules
+        # (notably S202, S301, S608) still fire.
+        args:
+          - "--select"
+          - "S"
+          - "--ignore"
+          - "S101,S105,S108,S110,S112,S311,S324,S603"
+          - "--no-fix"
+        types: [python]
+        exclude: |
+          (?x)^(
+            \.venv/.*
+            | venv/.*
+            | node_modules/.*
+            | kite-dashboard/\.next/.*
+            | nse500_data/.*
+            | indices_data/.*
+            | experiments/.*
+            | reports/.*
+          )$
+
+  # ---------------------------------------------------------------------------
+  # Local hooks (sanity checks)
+  # ---------------------------------------------------------------------------
+  - repo: local
+    hooks:
+      # Prevent accidentally committing .env or token files even if they slip
+      # past .gitignore (e.g. a developer disables ignore for a moment).
+      - id: no-env-files
+        name: Block committing .env / token files
+        entry: |
+          bash -c '
+            blocked=$(git diff --cached --name-only |
+              grep -E "^\.env$|^\.env\.[^d]|access_token\.txt$|^session\.json$|gdrive_(client_secret|token)\.json$")
+            if [[ -n "$blocked" ]]; then
+              echo "Refusing to commit secret-bearing files:" >&2
+              echo "$blocked" >&2
+              exit 1
+            fi
+          '
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
+
+      # Run ESLint security checks on staged TS/JS files only (fast).
+      # Skips entirely if no relevant files in the diff.
+      - id: eslint-security-staged
+        name: ESLint (kite-dashboard staged files)
+        entry: |
+          bash -c '
+            staged=$(git diff --cached --name-only --diff-filter=ACM |
+              grep -E "^kite-dashboard/.*\.(ts|tsx|js|jsx|mjs)$" || true)
+            if [[ -z "$staged" ]]; then exit 0; fi
+            # Strip the kite-dashboard/ prefix and run eslint from there
+            rel=$(echo "$staged" | sed "s|^kite-dashboard/||")
+            ( cd kite-dashboard && npx --no-install eslint --max-warnings 0 $rel )
+          '
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
+        # No `files:` filter — the script itself decides whether to run.

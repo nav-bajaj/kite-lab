@@ -96,7 +96,10 @@ Thumbs.db
 *.jpeg
 
 # Generated reports
-reports/
+reports/*
+!reports/security
+reports/security/*
+!reports/security/.gitkeep
 
 # Vercel
 .vercel/

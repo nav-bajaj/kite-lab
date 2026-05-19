@@ -70,7 +70,9 @@ class EODHDClient:
         for attempt in range(retries):
             self._throttle()
             try:
-                resp = requests.get(url, params=params, timeout=self.timeout)
+                # url = f"{BASE}/{path}" where BASE is a fixed module constant —
+                # path can only vary the URL path component, not the host. R-017.
+                resp = requests.get(url, params=params, timeout=self.timeout)  # nosemgrep: tools.security.ssrf-via-requests
             except (requests.Timeout, requests.ConnectionError) as e:
                 last_err = f"{type(e).__name__}: {e}"
                 time.sleep(backoff)

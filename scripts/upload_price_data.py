@@ -49,7 +49,9 @@ def upload_archive(api_url, token, archive_path, target):
     print(f"  Uploading to {url} ...")
 
     with open(archive_path, "rb") as f:
-        response = requests.post(
+        # url = f"{api_url}/api/sync/upload-data?target={target}" — api_url is a
+        # CLI arg pointing at our own Railway backend. R-017.
+        response = requests.post(  # nosemgrep: tools.security.ssrf-via-requests
             url,
             headers=headers,
             files={"file": (filename, f, "application/gzip")},
