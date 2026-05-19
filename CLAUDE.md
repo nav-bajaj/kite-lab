@@ -23,8 +23,8 @@ A web-based dashboard provides monitoring and control of the momentum portfolio 
 **Production URLs:**
 | Service | URL |
 |---------|-----|
-| Frontend | https://kite-lab.vercel.app |
-| Backend API | https://kite-lab-production.up.railway.app |
+| Frontend | https://marketworks.in *(custom domain on Vercel; old `kite-lab.vercel.app` 308-redirects here)* |
+| Backend API | https://kite-lab-production.up.railway.app *(Railway service name kept as `kite-lab-production`; move to `api.marketworks.in` is a future task)* |
 | API Docs | Disabled in production (available locally with DEBUG=true) |
 
 **Tech Stack:**
@@ -822,6 +822,6 @@ python scripts/validate_signals.py --signals <path> --top-n 24
 **Last updated:** May 2026 (pipeline-improvements branch)
 **Production portfolios (built daily):** OM25 v3 (Nifty 250), TL25 v3 (NSE 500), L6 v2 (NSE 500), COMBO Defensive (NSE 500)
 **Manual / alt portfolios:** Legacy L6-1W via `run_final_momentum_portfolio.py` (NSE 500 / Nifty 100 / Nifty 250)
-**Dashboard:** https://kite-lab.vercel.app
+**Dashboard:** https://marketworks.in *(formerly kite-lab.vercel.app — 308-redirects to apex)*
 **Backend:** https://kite-lab-production.up.railway.app (persistent volume at /data)
 **Status:** Production-ready with full security hardening, DB sync pipeline, and persistent storage. Active refactor: see `tasks/pipeline_improvements/PLAN.md`.
