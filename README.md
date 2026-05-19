@@ -1,10 +1,10 @@
-# Kite-Lab
+# Marketworks
 
-A Python toolkit for Indian stock market analysis using the Zerodha KiteConnect API.
+A momentum-based quantitative trading platform for Indian equities, built on the Zerodha KiteConnect API. The directory layout, Railway service, and Vercel deployment are still named `kite-lab` for historical reasons; the user-facing product is Marketworks.
 
 ## Overview
 
-Kite-Lab provides tools for:
+Marketworks provides tools for:
 - Secure OAuth2 authentication with Zerodha
 - Automated instrument data caching (125K+ securities)
 - Historical OHLC data fetching with rate-limiting protection

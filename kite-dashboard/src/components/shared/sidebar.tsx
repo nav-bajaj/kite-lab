@@ -40,14 +40,14 @@ export function Sidebar() {
         {!collapsed && (
           <Link href="/" className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold">K</span>
+              <span className="text-primary-foreground font-bold">M</span>
             </div>
-            <span className="font-semibold text-sidebar-foreground">Kite-Lab</span>
+            <span className="font-semibold text-sidebar-foreground">Marketworks</span>
           </Link>
         )}
         {collapsed && (
           <div className="mx-auto h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold">K</span>
+            <span className="text-primary-foreground font-bold">M</span>
           </div>
         )}
       </div>
@@ -101,7 +101,7 @@ export function Sidebar() {
       {!collapsed && (
         <div className="border-t border-sidebar-border p-4">
           <p className="text-xs text-sidebar-foreground/60">
-            Kite-Lab v1.0
+            Marketworks v1.0
           </p>
         </div>
       )}

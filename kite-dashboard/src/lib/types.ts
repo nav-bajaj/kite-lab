@@ -1,5 +1,17 @@
 // Universe types
-export type UniverseId = "nse500" | "nifty250" | "nifty100";
+//
+// Internal IDs are stable references for the backend, DB rows, and CSV
+// columns. The display names rendered in the UI live in
+// kite-dashboard/src/lib/universes.ts. Don't change the IDs; do change
+// the labels there if a portfolio gets renamed for users.
+export type UniverseId =
+  | "om25_v3"
+  | "tl25_v3"
+  | "l6_v2"
+  | "combo_defensive"
+  | "nse500"
+  | "nifty250"
+  | "nifty100";
 
 export interface Universe {
   id: UniverseId;

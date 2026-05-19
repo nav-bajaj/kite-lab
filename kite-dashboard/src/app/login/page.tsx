@@ -21,9 +21,9 @@ function LoginContent() {
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
-          <span className="text-xl font-bold text-primary-foreground">K</span>
+          <span className="text-xl font-bold text-primary-foreground">M</span>
         </div>
-        <CardTitle className="text-2xl">Kite-Lab Dashboard</CardTitle>
+        <CardTitle className="text-2xl">Marketworks Dashboard</CardTitle>
         <CardDescription>
           Sign in to access your portfolio dashboard
         </CardDescription>
@@ -76,9 +76,9 @@ function LoginFallback() {
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
-          <span className="text-xl font-bold text-primary-foreground">K</span>
+          <span className="text-xl font-bold text-primary-foreground">M</span>
         </div>
-        <CardTitle className="text-2xl">Kite-Lab Dashboard</CardTitle>
+        <CardTitle className="text-2xl">Marketworks Dashboard</CardTitle>
         <CardDescription>Loading...</CardDescription>
       </CardHeader>
     </Card>

@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kite-Lab Dashboard",
+  title: "Marketworks Dashboard",
   description: "Momentum Portfolio Management Dashboard",
 };
 
