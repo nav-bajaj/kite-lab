@@ -19,7 +19,24 @@ from app.models.models import Rebalance, Signal, Holding
 
 
 def get_latest_signals_dir(universe: str = "nse500") -> Optional[Path]:
-    """Find the most recent signals/changes directory."""
+    """Find the most recent signals/changes directory.
+
+    For the legacy L6 portfolios (nse500/nifty100/nifty250) this resolves
+    to the timestamped experiment dir written by
+    ``run_final_momentum_portfolio.py`` — those dirs contain
+    ``changes_<date>.csv`` and ``orders_<date>.csv`` files that the
+    rebalance UI consumes directly.
+
+    For the 4 new v3 portfolios (om25_v3 / tl25_v3 / l6_v2 /
+    combo_defensive) this returns the most recent timestamped run dir
+    written by their respective runner scripts. Those dirs contain
+    ``<strategy>_signals.csv`` / ``<strategy>_exits.csv`` etc. — not
+    the legacy ``changes_*.csv`` / ``orders_*.csv`` format. The
+    downstream rebalance functions handle the missing files gracefully
+    (returning a "No changes file found" message rather than erroring),
+    which is the documented degradation path until those strategies grow
+    rebalance-UI output of their own.
+    """
     base_dir = settings.data_dir
 
     if universe == "nse500":
@@ -28,6 +45,14 @@ def get_latest_signals_dir(universe: str = "nse500") -> Optional[Path]:
         pattern = base_dir / "nifty_100_tests" / "nifty100_portfolio_202*"
     elif universe == "nifty250":
         pattern = base_dir / "nifty_250_tests" / "nifty250_portfolio_202*"
+    elif universe == "om25_v3":
+        pattern = base_dir / "data" / "om25_v3_portfolios" / "om25_v3_portfolio_202*"
+    elif universe == "tl25_v3":
+        pattern = base_dir / "data" / "tl25_v3_portfolios" / "tl25_v3_portfolio_202*"
+    elif universe == "l6_v2":
+        pattern = base_dir / "data" / "l6_v2_portfolios" / "l6_v2_portfolio_202*"
+    elif universe == "combo_defensive":
+        pattern = base_dir / "data" / "combo_defensive_portfolios" / "combo_defensive_portfolio_202*"
     else:
         return None
 

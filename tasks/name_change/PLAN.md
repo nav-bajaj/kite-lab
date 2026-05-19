@@ -95,16 +95,39 @@ text, mobile sidebar, browser tab title, README header).
    (`tasks/name_change/VERIFICATION.md`) for any page that doesn't
    support a new universe — recorded as follow-up, not a blocker.
 
-## Known gap to flag
+## Known gap — addressed in follow-up commit
 
-`kite-api/app/services/rebalance_service.py:21-29` has hardcoded
-`if/elif` for `nse500`/`nifty100`/`nifty250` to locate the signals
-directory. The new portfolios live under `data/om25_v3_portfolios/`,
-`data/tl25_v3_portfolios/`, etc. Selecting one of the new portfolios on
-the Rebalance page will likely show "no data" or error. Decision: if it
-errors gracefully (handled by existing 404 path), document it for a
-follow-up PR. If it crashes the page, add a frontend guard that hides
-or disables the Rebalance tab for the 4 new portfolios.
+**Resolved:** `kite-api/app/services/rebalance_service.py` was extended
+with 4 new `elif` branches mapping each new universe to its
+`data/<strategy>_portfolios/<strategy>_portfolio_202*` directory. All 7
+universes now resolve cleanly via `get_latest_signals_dir` (verified by
+direct call — see commit message).
+
+**Caveat preserved:** the new v3 portfolio runners
+(`run_om25_v3_portfolio.py`, `run_tl25_v3_portfolio.py`, etc.) emit
+`<strategy>_signals.csv` / `<strategy>_exits.csv` / `<strategy>_trades.csv`
+— **not** the legacy `changes_<date>.csv` / `orders_<date>.csv` format the
+rebalance UI consumes. Result: on /rebalance for any of the 4 new
+portfolios, the dashboard will show the "No changes file found" /
+"No orders file found" message rather than crashing. Full rebalance-UI
+support for the v3 strategies requires either:
+
+- Adding `changes_*.csv` + `orders_*.csv` output to the v3 runner
+  scripts, OR
+- Adapting `rebalance_service.get_rebalance_preview` /
+  `get_rebalance_orders` to read the v3 `<strategy>_signals.csv` format
+  directly.
+
+Either path is a separate task — graceful degradation is in place.
+
+## React 19 lint errors — addressed in follow-up commit
+
+**Resolved:** `kite-dashboard/src/components/positions/positions-table.tsx`
+was refactored to move the inline `SortableHeader` arrow-function
+component out of `PositionsTable`'s render body and up to module scope.
+`handleSort` is now passed as the `onSort` prop. Closes the 10
+`react-hooks/static-components` lint errors surfaced by the Next 16 +
+React 19 strict-mode rules.
 
 ## Out of scope (future work)
 
