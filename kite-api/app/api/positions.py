@@ -129,7 +129,7 @@ async def get_quotes(
         )
 
 
-@router.get("/market-status", response_model=MarketStatus)
+@router.get("/market-status", response_model=MarketStatus)  # nosemgrep: tools.security.fastapi-route-missing-auth  # AD-1: NSE market open/closed; no user data — see docs/security/attack-surface.md
 async def get_market_status_endpoint():
     """
     Get current NSE market status.
@@ -168,7 +168,7 @@ async def sync_from_csv(
     return PositionsService.sync_from_csv(universe)
 
 
-@router.get("/stream")
+@router.get("/stream")  # nosemgrep: tools.security.fastapi-route-missing-auth  # SSE endpoint — token validated inside handler via query param (EventSource limitation). See R-005.
 async def positions_stream(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     interval: int = Query(default=3, ge=2, le=10, description="Update interval in seconds"),

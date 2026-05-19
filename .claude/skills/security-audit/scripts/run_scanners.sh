@@ -101,6 +101,15 @@ if have semgrep; then
     --config p/owasp-top-ten \
     --config p/python \
     --config p/javascript \
+    --exclude design_ideas \
+    --exclude experiments \
+    --exclude nifty_100_tests \
+    --exclude nifty_250_tests \
+    --exclude reports \
+    --exclude nse500_data \
+    --exclude nse500_data_hourly \
+    --exclude nse500_data_historical \
+    --exclude indices_data \
     --json --quiet \
     --output "$RAW/semgrep.json" 2>/dev/null
   log_exit semgrep $?
@@ -149,7 +158,7 @@ if have trufflehog; then
   echo "[run]  trufflehog"
   trufflehog filesystem . \
     --json \
-    --exclude-paths <(printf "%s\n" "node_modules" ".venv" ".next" "nse500_data" "indices_data" "reports") \
+    --exclude-paths tools/security/trufflehog-exclude.txt \
     > "$RAW/trufflehog.json" 2>/dev/null
   log_exit trufflehog $?
 else
@@ -167,7 +176,7 @@ if have trivy; then
     --scanners vuln,misconfig,secret \
     --format json \
     --output "$RAW/trivy.json" \
-    --skip-dirs node_modules,.venv,.next,nse500_data,nse500_data_hourly,indices_data,reports \
+    --skip-dirs node_modules,.venv,.next,nse500_data,nse500_data_hourly,nse500_data_historical,indices_data,reports,kite-api/venv,kite-api/.venv,kite-dashboard/node_modules,kite-dashboard/.next,design_ideas,experiments \
     --quiet \
     . 2>/dev/null
   log_exit trivy $?

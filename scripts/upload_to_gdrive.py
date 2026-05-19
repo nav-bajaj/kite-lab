@@ -244,7 +244,10 @@ def _drive_list_files(svc, folder_id: str) -> list[dict]:
 
 
 def _md5_local(path: Path) -> str:
-    h = hashlib.md5()
+    # md5 used here only to match Google Drive's md5Checksum for upload
+    # dedup / integrity comparison. Not security-relevant; usedforsecurity=False
+    # marks this intent for SAST scanners (Python 3.9+).
+    h = hashlib.md5(usedforsecurity=False)
     with path.open("rb") as f:
         for chunk in iter(lambda: f.read(1024 * 1024), b""):
             h.update(chunk)

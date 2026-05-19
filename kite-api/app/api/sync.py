@@ -101,9 +101,11 @@ async def upload_price_data(
                 if member.name.startswith("/") or ".." in member.name:
                     raise HTTPException(status_code=400, detail=f"Unsafe path in archive: {member.name}")
 
-            # Extract to a temp dir first, then move files into target
+            # Extract to a temp dir first, then move files into target.
+            # Member names were validated against path-traversal above (lines
+            # 100-102); the temp dir bounds the blast radius further. R-014.
             with tempfile.TemporaryDirectory() as extract_dir:
-                tar.extractall(extract_dir)
+                tar.extractall(extract_dir)  # noqa: S202  # nosec B202  # validated members, sandboxed temp dir; R-014
 
                 # Find the extracted content (might be in a subdirectory matching target name)
                 extracted = Path(extract_dir)

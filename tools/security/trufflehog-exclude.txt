@@ -1,0 +1,58 @@
+# Paths excluded from trufflehog filesystem scans.
+# One pattern (regex) per line. # comments and blank lines are ignored.
+#
+# Rationale per group:
+# - Build artifacts and vendored: zero source value, all false positives.
+# - Generated HTML reports: high-entropy numeric data triggers detectors.
+# - Git internals: trufflehog filesystem mode walks .git/objects unless told
+#   not to; those are packed binary blobs, not source.
+# - Test fixtures: contain obviously-fake credentials by design.
+
+# Build / vendored
+^node_modules/
+^.venv/
+^venv/
+^kite-dashboard/.next/
+^kite-dashboard/node_modules/
+^kite-api/.venv/
+^kite-api/venv/
+^kite-api/node_modules/
+
+# Generated data — large, gitignored, but trufflehog crawls the working tree
+^nse500_data/
+^nse500_data_hourly/
+^nse500_data_historical/
+^indices_data/
+^data/instruments_full.csv$
+
+# Generated HTML reports (these embed random-looking experimental data)
+^experiments/.*/report\.html$
+^experiments/.*\.html$
+^nifty_100_tests/.*/report\.html$
+^nifty_250_tests/.*/report\.html$
+
+# Documentation containing placeholder Postgres / connection-string URLs
+# in code samples (postgresql://user:pass@host:5432 etc.)
+^docs/production_dashboard_plan\.md$
+^tasks/security/
+^tasks/pipeline_improvements/.*\.md$
+^tasks/phase1/
+
+# Our own audit output — already triaged content
+^reports/
+
+# Git internals
+^\.git/
+
+# Lockfiles + package-lock — secret-scan via npm/pip-audit, not trufflehog
+^kite-dashboard/package-lock\.json$
+
+# Local Claude Code permissions (contains railway deployment IDs that match
+# RailwayApp token heuristics) and the trufflehog exclude file itself
+# (placeholder URLs in comments trigger Postgres detector).
+^\.claude/settings\.local\.json$
+^tools/security/trufflehog-exclude\.txt$
+^tools/security/\.gitleaks\.toml$
+
+# Exploratory Figma export — not deployed, has its own node_modules
+^design_ideas/

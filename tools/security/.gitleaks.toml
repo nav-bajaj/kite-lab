@@ -19,6 +19,7 @@ useDefault = true
 id = "kite-api-key-pattern"
 description = "Zerodha Kite API key (typically 8-12 alphanumeric chars assigned by Kite Console). Heuristic only — relies on adjacent context."
 regex = '''(?i)(kite[_-]?api[_-]?key|KITE_API_KEY)\s*[:=]\s*["']?([a-z0-9]{6,16})["']?'''
+secretGroup = 2
 tags = ["secret", "kite-lab"]
 keywords = ["KITE_API_KEY", "kite_api_key"]
 
@@ -26,6 +27,7 @@ keywords = ["KITE_API_KEY", "kite_api_key"]
 id = "kite-api-secret-pattern"
 description = "Zerodha Kite API secret"
 regex = '''(?i)(kite[_-]?api[_-]?secret|KITE_API_SECRET)\s*[:=]\s*["']?([a-z0-9]{20,40})["']?'''
+secretGroup = 2
 tags = ["secret", "kite-lab"]
 keywords = ["KITE_API_SECRET", "kite_api_secret"]
 
@@ -38,8 +40,9 @@ keywords = ["TOTP_SECRET"]
 
 [[rules]]
 id = "jwt-secret-pattern"
-description = "JWT_SECRET assignment with a value that doesn't look like a placeholder"
-regex = '''(?i)(JWT_SECRET|NEXTAUTH_SECRET)\s*[:=]\s*["']?(?!change-me|your-secret|placeholder|REPLACE_ME|[A-Z_]+)([A-Za-z0-9_\-+/=]{16,})["']?'''
+description = "JWT_SECRET / NEXTAUTH_SECRET assignment. Placeholders are filtered via [allowlist].regexes — Go's RE2 doesn't support negative lookahead, so we can't exclude them in the rule regex directly. Use secretGroup = 2 so the value (not the var name) is what gets matched against the allowlist."
+regex = '''(?i)(JWT_SECRET|NEXTAUTH_SECRET)\s*[:=]\s*["']?([A-Za-z0-9_\-+/=]{16,})["']?'''
+secretGroup = 2
 tags = ["secret", "kite-lab"]
 keywords = ["JWT_SECRET", "NEXTAUTH_SECRET"]
 
@@ -101,6 +104,15 @@ regexes = [
   '''KITE_API_KEY=<''',
   '''JWT_SECRET=<''',
   '''NEXTAUTH_SECRET=<''',
+
+  # Instruction text in onboarding docs and dev defaults in docker-compose.
+  # Each was an audited false-positive in the May 2026 baseline run.
+  '''your-32-character-(secret|secret-key-here)''',
+  '''generate-(a-32|32)-character-(random-string|secret-key)''',
+  '''local-dev-jwt-secret-not-for-production''',
+  '''dev-secret-local''',
+  '''dev-secret-for-docker-compose''',
+  '''(?i)\b(dev|test|example|sample)-(secret|password|key)\b''',
 ]
 
 # Per-rule allowlist examples (uncomment + extend if a real false positive arises)

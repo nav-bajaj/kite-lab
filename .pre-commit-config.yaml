@@ -32,9 +32,20 @@ repos:
     rev: v0.6.9
     hooks:
       - id: ruff
-        args: ["--select", "S", "--no-fix"]
+        # Mirror bandit.yaml's skip list (S101=B101 assert, S603=B603/B607
+        # subprocess.exec safe pattern, S105 hardcoded password names being
+        # noisy near env var refs). Plus S311 (non-crypto random — used for
+        # legitimate statistics/Monte-Carlo) and S108/S110/S112/S324 (debug
+        # /tmp paths, broad except in legacy scripts, hash-without-
+        # usedforsecurity for content hashing). The remaining rules
+        # (notably S202, S301, S608) still fire.
+        args:
+          - "--select"
+          - "S"
+          - "--ignore"
+          - "S101,S105,S108,S110,S112,S311,S324,S603"
+          - "--no-fix"
         types: [python]
-        # Don't lint generated, vendored, or experiment dirs
         exclude: |
           (?x)^(
             \.venv/.*

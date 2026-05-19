@@ -83,7 +83,9 @@ def restore(tar_path: Path, truncate: bool, dry_run: bool) -> int:
 
             with engine.begin() as conn:
                 if truncate:
-                    conn.execute(text(f"TRUNCATE TABLE {tbl} RESTART IDENTITY CASCADE"))
+                    # tbl is iterated from TABLES (line 67) — controlled whitelist,
+                    # not user input. Safe to interpolate.
+                    conn.execute(text(f"TRUNCATE TABLE {tbl} RESTART IDENTITY CASCADE"))  # noqa: S608  # nosemgrep: tools.security.sql-string-interpolation,python.sqlalchemy.security.audit.avoid-sqlalchemy-text.avoid-sqlalchemy-text
                 if not df.empty:
                     df.to_sql(tbl, conn, if_exists="append", index=False,
                               method="multi", chunksize=1000)

@@ -10,6 +10,13 @@ Usage:
     python scripts/walk_forward_report.py
     python scripts/walk_forward_report.py --input <other_phase_dir>
 """
+
+# ruff: noqa: S608
+# This module emits HTML reports via f-string templates. Ruff's S608 detector
+# matches on words like "FROM" appearing in any f-string and so misfires here
+# — there is no SQL in this file. Disabling at file scope rather than
+# polluting every f-string opener with inline noqa.
+
 from __future__ import annotations
 
 import argparse
