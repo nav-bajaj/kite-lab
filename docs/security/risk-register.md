@@ -32,17 +32,18 @@
 | ID | Title | Asset | Sev | Likelihood | Status | Control | Compensating | Opened | Last reviewed |
 |---|---|---|---|---|---|---|---|---|---|
 | R-001 | No SAST in pre-commit/CI | cross-cutting | Med | Med | Mitigating | This branch: pre-commit (gitleaks, ruff S, eslint-sec) + `/security-audit` skill | n/a | 2026-05-19 | 2026-05-19 |
-| R-002 | `autobahn==19.11.2` abandoned transitive dep | A1, A3 (via supply chain) | Med | Low | Open | Evaluate parent dep; `pip-audit` to flag if CVE published | Pinned version; not directly imported | 2026-05-19 | 2026-05-19 |
+| R-002 | `autobahn==19.11.2` abandoned transitive dep | A1, A3 (via supply chain) | Med | Low | Accepted | Hard-pinned by `kiteconnect==5.0.1` itself (`autobahn[twisted] ==19.11.2`). Cannot upgrade without changing the SDK. Monitor `kiteconnect` releases for a newer pin. | `pip-audit` flags CVEs; not directly imported in our code | 2026-05-19 | 2026-05-19 |
 | R-003 | `/api/system/*` unauthenticated by design (OAuth bootstrap) | A2, A8 (state leak) | Med | Low | Accepted | Documented as AD-1. New routes under this prefix must pass review. | Endpoints return minimal state (status, login URL, callback handler only) | 2026-05-19 | 2026-05-19 |
 | R-004 | OAuth callback (`/api/system/callback`) lacks state/nonce | A2 | Low | Low | Accepted | Documented as AD-1. Zerodha `request_token` is single-use, ~5 min TTL | Token exchange happens server-side only | 2026-05-19 | 2026-05-19 |
 | R-005 | SSE token (`/api/positions/stream`) passed as query param | A3 | Med | Low | Accepted | EventSource API limitation; documented as AD-2 | Short JWT TTL (24h); audit log review; no logging of full URL | 2026-05-19 | 2026-05-19 |
-| R-006 | No CSP header on Next.js frontend | A4 (XSS escalation) | Med | Low | Mitigating | This branch: add CSP to `next.config.ts` | Existing X-Frame-Options DENY + X-XSS-Protection (legacy) | 2026-05-19 | 2026-05-19 |
-| R-007 | No `eslint-plugin-security` on dashboard | A4 (XSS) | Low | Low | Mitigating | This branch: add plugin + lint rules | Pre-commit + `/security-audit` would catch on Python; gap is JS/TS only | 2026-05-19 | 2026-05-19 |
+| R-006 | No CSP header on Next.js frontend | A4 (XSS escalation) | Med | Low | Mitigating | `next.config.ts` now sets CSP + Permissions-Policy + HSTS + COOP/CORP (this branch). Verify after deploy: `curl -I https://kite-lab.vercel.app` shows `Content-Security-Policy`. Flip to `Closed` after verification. | Existing X-Frame-Options DENY + X-XSS-Protection | 2026-05-19 | 2026-05-19 |
+| R-007 | No `eslint-plugin-security` on dashboard | A4 (XSS) | Low | Low | Mitigating | Plugin installed (`kite-dashboard/package.json`) and configured in `eslint.config.mjs` with `recommended` preset + eval/non-literal-require pinned to error. Verify: `npm run lint` finds no new errors and the plugin loads. | Pre-commit + `/security-audit` would catch on Python; gap is JS/TS only | 2026-05-19 | 2026-05-19 |
 | R-008 | No codified threat model + register | meta | High | n/a | Closing | This branch delivers `docs/security/*` | n/a | 2026-05-19 | 2026-05-19 |
 | R-009 | No CI security gates on PRs | cross-cutting | Med | Med | Open | Future: `.github/workflows/security.yml` running pre-commit hooks + `/security-audit` scanners | Pre-commit + skill catch locally; solo dev reduces risk window | 2026-05-19 | 2026-05-19 |
 | R-010 | Job cancellation marks status but doesn't kill subprocess | A9 (DoS, not direct) | Low | Low | Accepted | Documented as AD-3 | Single-user, single-host; long-running jobs are bounded by `nohup` parent | 2026-05-19 | 2026-05-19 |
 | R-011 | Branch protection on `main` not enforced (solo dev convention) | TB7 | Med | Low | Accepted | None | Small commit cadence; pre-commit on dev machine | 2026-05-19 | 2026-05-19 |
 | R-012 | Logs ephemeral on Railway (no log shipping) | repudiation | Low | Med | Open | Future: ship to a log aggregator | Audit log written + read via `/api/jobs/logs` short-term | 2026-05-19 | 2026-05-19 |
+| R-013 | `npm audit` reports 14 vulnerabilities (1 low / 4 moderate / 9 high) after eslint-plugin-security install | A4 | Med | Low | Open | Triage via `/security-audit` — likely all transitive deps of dev tooling (ESLint, build chain), not in runtime bundle | Vulns not in shipped JS; only affect build env on dev machine | 2026-05-19 | 2026-05-19 |
 
 ## Closed rows
 
