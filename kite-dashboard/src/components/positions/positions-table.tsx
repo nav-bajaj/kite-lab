@@ -29,6 +29,33 @@ interface PositionsTableProps {
 type SortField = keyof Position;
 type SortOrder = "asc" | "desc";
 
+// Defined at module scope to satisfy react-hooks/static-components — creating
+// this component inline inside PositionsTable triggered the rule because the
+// component identity changes on every render.
+function SortableHeader({
+  field,
+  children,
+  className = "",
+  onSort,
+}: {
+  field: SortField;
+  children: React.ReactNode;
+  className?: string;
+  onSort: (field: SortField) => void;
+}) {
+  return (
+    <TableHead className={className}>
+      <button
+        onClick={() => onSort(field)}
+        className="flex items-center gap-1 hover:text-foreground transition-colors"
+      >
+        {children}
+        <ArrowUpDown className="h-3 w-3" />
+      </button>
+    </TableHead>
+  );
+}
+
 export function PositionsTable({ positions, isLoading }: PositionsTableProps) {
   const [sortField, setSortField] = useState<SortField>("total_pnl");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
@@ -64,7 +91,9 @@ export function PositionsTable({ positions, isLoading }: PositionsTableProps) {
 
   const sortedPositions = [...positions].sort((a, b) => {
     const modifier = sortOrder === "asc" ? 1 : -1;
+    // eslint-disable-next-line security/detect-object-injection -- sortField is typed `keyof Position`, Position is a closed interface
     const aVal = a[sortField];
+    // eslint-disable-next-line security/detect-object-injection -- sortField is typed `keyof Position`, Position is a closed interface
     const bVal = b[sortField];
 
     if (typeof aVal === "string" && typeof bVal === "string") {
@@ -87,26 +116,6 @@ export function PositionsTable({ positions, isLoading }: PositionsTableProps) {
   const totalPnlPct = (totals.total_pnl / totals.invested) * 100;
   const dayPnlPct = (totals.day_pnl / totals.invested) * 100;
 
-  const SortableHeader = ({
-    field,
-    children,
-    className = "",
-  }: {
-    field: SortField;
-    children: React.ReactNode;
-    className?: string;
-  }) => (
-    <TableHead className={className}>
-      <button
-        onClick={() => handleSort(field)}
-        className="flex items-center gap-1 hover:text-foreground transition-colors"
-      >
-        {children}
-        <ArrowUpDown className="h-3 w-3" />
-      </button>
-    </TableHead>
-  );
-
   return (
     <Card>
       <CardHeader>
@@ -120,32 +129,32 @@ export function PositionsTable({ positions, isLoading }: PositionsTableProps) {
           <Table>
             <TableHeader>
               <TableRow>
-                <SortableHeader field="symbol">Symbol</SortableHeader>
-                <SortableHeader field="qty" className="text-right">
+                <SortableHeader field="symbol" onSort={handleSort}>Symbol</SortableHeader>
+                <SortableHeader field="qty" className="text-right" onSort={handleSort}>
                   Qty
                 </SortableHeader>
-                <SortableHeader field="avg_price" className="text-right">
+                <SortableHeader field="avg_price" className="text-right" onSort={handleSort}>
                   Entry
                 </SortableHeader>
-                <SortableHeader field="ltp" className="text-right">
+                <SortableHeader field="ltp" className="text-right" onSort={handleSort}>
                   LTP
                 </SortableHeader>
-                <SortableHeader field="invested" className="text-right">
+                <SortableHeader field="invested" className="text-right" onSort={handleSort}>
                   Invested
                 </SortableHeader>
-                <SortableHeader field="current_value" className="text-right">
+                <SortableHeader field="current_value" className="text-right" onSort={handleSort}>
                   Current
                 </SortableHeader>
-                <SortableHeader field="total_pnl" className="text-right">
+                <SortableHeader field="total_pnl" className="text-right" onSort={handleSort}>
                   Total P&L
                 </SortableHeader>
-                <SortableHeader field="total_pnl_pct" className="text-right">
+                <SortableHeader field="total_pnl_pct" className="text-right" onSort={handleSort}>
                   Total %
                 </SortableHeader>
-                <SortableHeader field="day_pnl" className="text-right">
+                <SortableHeader field="day_pnl" className="text-right" onSort={handleSort}>
                   Day P&L
                 </SortableHeader>
-                <SortableHeader field="day_pnl_pct" className="text-right">
+                <SortableHeader field="day_pnl_pct" className="text-right" onSort={handleSort}>
                   Day %
                 </SortableHeader>
               </TableRow>
