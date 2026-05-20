@@ -61,5 +61,8 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 COPY scripts/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Start as root (entrypoint inits storage, then drops to appuser for server)
-ENTRYPOINT ["/entrypoint.sh"]
+# Start as root (entrypoint inits storage, then drops to appuser for server).
+# Use explicit sh invocation rather than relying on Railway's catatonit init
+# to honor the shebang — that path broke for us on 2026-05-20 with a
+# "failed to exec pid1: No such file or directory" loop.
+ENTRYPOINT ["/bin/sh", "/entrypoint.sh"]
