@@ -1,5 +1,13 @@
 # Client Portal — Task List
 
+> **Status (2026-05-20):** Phases 0–3 shipped to production on `main`.
+> R-022 closed. Private Beta live at <https://marketworks.in>. See
+> [`RESULTS.md`](./RESULTS.md) for the full delta of what was built vs.
+> planned, the commit log, and the deferred-items list.
+>
+> Open follow-ups: SEBI registration (business), Clerk live-key promotion
+> (when opening signups), Phase 4 features, UI redesign (separate task).
+
 Concrete actionable breakdown of `PLAN.md`. Tasks are grouped by phase
 and tagged for **owner** (👤 = you, 🤖 = me/Claude, ⚙️ = both/coordination)
 and **risk** (⚠️ = security-critical, must verify; ⏱️ = blocking).
