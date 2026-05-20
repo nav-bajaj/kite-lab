@@ -31,7 +31,13 @@ from app.services.quotes_service import (
     QuotesFetchError,
 )
 from app.services.market_service import get_market_status, is_market_open
-from app.auth import get_current_user, require_admin, validate_token_string, AuthError
+from app.auth import (
+    get_current_user,
+    require_admin,
+    validate_token_string,
+    check_universe_access,
+    AuthError,
+)
 from app.middleware.cache import cache_live
 
 logger = logging.getLogger(__name__)
@@ -57,6 +63,7 @@ async def get_positions(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     try:
         return PositionsService.get_positions(universe)
@@ -84,6 +91,7 @@ async def get_holdings(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     return PositionsService.get_holdings_response(universe)
 
@@ -100,6 +108,7 @@ async def get_quotes(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     holdings = PositionsService.get_holdings(universe)
     if not holdings:
@@ -165,6 +174,7 @@ async def sync_from_csv(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     return PositionsService.sync_from_csv(universe)
 
@@ -190,12 +200,13 @@ async def positions_stream(
     if not token:
         raise HTTPException(status_code=401, detail="Token required (pass as ?token=...)")
     try:
-        validate_token_string(token)
+        user = validate_token_string(token)
     except AuthError:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     async def event_generator():
         last_heartbeat = datetime.now(IST)

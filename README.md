@@ -2,6 +2,13 @@
 
 A momentum-based quantitative trading platform for Indian equities, built on the Zerodha KiteConnect API. The directory layout, Railway service, and Vercel deployment are still named `kite-lab` for historical reasons; the user-facing product is Marketworks.
 
+> **Status: Private Beta.** Production lives at <https://marketworks.in>. SEBI Research Analyst registration is currently applied for. All content and functionality is for research and educational purposes; nothing on the platform is investment advice.
+
+## Two halves of the project
+
+1. **Quantitative research toolkit** (Python, `scripts/` + `data_pipeline/`): fetches NSE data via Zerodha KiteConnect, builds momentum signals, backtests strategies, applies corporate actions, runs the daily production pipeline. See the rest of this README for the toolkit's CLI surface.
+2. **Web product** (`kite-dashboard/` + `kite-api/`): Next.js 16 + Tailwind frontend on Vercel, FastAPI backend on Railway, Postgres for trade/portfolio data. Authentication via Clerk (Google sign-in, role-gated). Clients see 4 production portfolios (Quality Momentum, Trend Leaders, Core Momentum, Defensive Blend); admins see all 7. Architecture is documented in [`CLAUDE.md`](./CLAUDE.md) and per-task plans live under [`tasks/`](./tasks/).
+
 ## Overview
 
 Marketworks provides tools for:

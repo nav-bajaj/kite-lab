@@ -208,31 +208,37 @@ ADMIN_ENDPOINTS: list[tuple[str, str]] = [
 # 20 client-read endpoints. A client-role token must get a non-403 here
 # (200, 404 with-payload, 400 invalid-arg etc. all count — anything but
 # 401/403 means auth passed).
+#
+# Endpoints with a universe param hit `l6_v2` (a client-visible universe)
+# because R-022's check_universe_access 403s a client-role token that
+# requests an admin-only universe (which `nse500`, the route default, is).
+_U = "?universe=l6_v2"
+
 CLIENT_READ_ENDPOINTS: list[tuple[str, str]] = [
     # portfolio.py
-    ("GET", "/api/portfolio"),
-    ("GET", "/api/portfolio/holdings"),
-    ("GET", "/api/portfolio/allocation"),
+    ("GET", f"/api/portfolio{_U}"),
+    ("GET", f"/api/portfolio/holdings{_U}"),
+    ("GET", f"/api/portfolio/allocation{_U}"),
     # metrics.py
-    ("GET", "/api/metrics"),
-    ("GET", "/api/metrics/equity-curve"),
-    ("GET", "/api/metrics/monthly-returns"),
+    ("GET", f"/api/metrics{_U}"),
+    ("GET", f"/api/metrics/equity-curve{_U}"),
+    ("GET", f"/api/metrics/monthly-returns{_U}"),
     # trades.py
-    ("GET", "/api/trades"),
-    ("GET", "/api/trades/summary"),
-    ("GET", "/api/trades/recent"),
-    ("GET", "/api/trades/export"),
+    ("GET", f"/api/trades{_U}"),
+    ("GET", f"/api/trades/summary{_U}"),
+    ("GET", f"/api/trades/recent{_U}"),
+    ("GET", f"/api/trades/export{_U}"),
     # rebalance.py
-    ("GET", "/api/rebalance/status"),
-    ("GET", "/api/rebalance/preview"),
-    ("GET", "/api/rebalance/orders"),
-    ("GET", "/api/rebalance/orders/export"),
-    ("GET", "/api/rebalance/history"),
+    ("GET", f"/api/rebalance/status{_U}"),
+    ("GET", f"/api/rebalance/preview{_U}"),
+    ("GET", f"/api/rebalance/orders{_U}"),
+    ("GET", f"/api/rebalance/orders/export{_U}"),
+    ("GET", f"/api/rebalance/history{_U}"),
     # positions.py reads
-    ("GET", "/api/positions"),
-    ("GET", "/api/positions/holdings"),
-    ("GET", "/api/positions/quotes"),
-    # auth_routes.py (any authenticated user)
+    ("GET", f"/api/positions{_U}"),
+    ("GET", f"/api/positions/holdings{_U}"),
+    ("GET", f"/api/positions/quotes{_U}"),
+    # auth_routes.py (any authenticated user; no universe param)
     ("GET", "/api/auth/me"),
     ("GET", "/api/auth/verify"),
 ]
@@ -396,6 +402,86 @@ def test_missing_role_defaults_to_client(test_client, rsa_keypair):
         "/api/jobs", headers={"Authorization": f"Bearer {token}"}
     )
     assert resp.status_code == 403
+
+
+# ---------------------------------------------------------------------------
+# R-022: Universe access (client role can't fetch admin-only universes)
+# ---------------------------------------------------------------------------
+
+ADMIN_ONLY_UNIVERSES = ["nse500", "nifty100", "nifty250"]
+CLIENT_VISIBLE_UNIVERSES = ["om25_v3", "tl25_v3", "l6_v2", "combo_defensive"]
+
+# Endpoints that take a universe query param and must enforce
+# check_universe_access. Each gets 403 for a client-role token + admin
+# universe; non-401/403 for a client-role token + client universe.
+UNIVERSE_ENDPOINTS = [
+    "/api/portfolio",
+    "/api/portfolio/holdings",
+    "/api/portfolio/allocation",
+    "/api/metrics",
+    "/api/metrics/equity-curve",
+    "/api/metrics/monthly-returns",
+    "/api/trades",
+    "/api/trades/summary",
+    "/api/trades/recent",
+    "/api/trades/export",
+    "/api/rebalance/status",
+    "/api/rebalance/preview",
+    "/api/rebalance/orders",
+    "/api/rebalance/orders/export",
+    "/api/rebalance/history",
+    "/api/positions",
+    "/api/positions/holdings",
+    "/api/positions/quotes",
+]
+
+
+@pytest.mark.parametrize("path", UNIVERSE_ENDPOINTS)
+@pytest.mark.parametrize("admin_universe", ADMIN_ONLY_UNIVERSES)
+def test_client_token_blocked_on_admin_universe(
+    test_client, client_token, path, admin_universe
+):
+    """A client-role caller MUST get 403 when requesting an admin-only universe."""
+    resp = test_client.get(
+        f"{path}?universe={admin_universe}",
+        headers={"Authorization": f"Bearer {client_token}"},
+    )
+    assert resp.status_code == 403, (
+        f"GET {path}?universe={admin_universe} returned {resp.status_code} for "
+        f"a client-role token; expected 403. Body: {resp.text[:200]}"
+    )
+
+
+@pytest.mark.parametrize("path", UNIVERSE_ENDPOINTS)
+@pytest.mark.parametrize("client_universe", CLIENT_VISIBLE_UNIVERSES)
+def test_client_token_passes_on_client_universe(
+    test_client, client_token, path, client_universe
+):
+    """A client-role caller MUST NOT get 401/403 on a client-visible universe."""
+    resp = test_client.get(
+        f"{path}?universe={client_universe}",
+        headers={"Authorization": f"Bearer {client_token}"},
+    )
+    assert resp.status_code not in (401, 403), (
+        f"GET {path}?universe={client_universe} returned {resp.status_code} for "
+        f"a client-role token; expected auth to pass (any non-401/403)."
+    )
+
+
+@pytest.mark.parametrize("path", UNIVERSE_ENDPOINTS)
+@pytest.mark.parametrize("admin_universe", ADMIN_ONLY_UNIVERSES)
+def test_admin_token_passes_on_admin_universe(
+    test_client, admin_token, path, admin_universe
+):
+    """An admin-role caller MUST NOT be blocked from any universe."""
+    resp = test_client.get(
+        f"{path}?universe={admin_universe}",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert resp.status_code not in (401, 403), (
+        f"GET {path}?universe={admin_universe} returned {resp.status_code} for "
+        f"an admin token; expected auth to pass."
+    )
 
 
 def test_wrong_issuer_returns_401(test_client, rsa_keypair):

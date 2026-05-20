@@ -7,7 +7,7 @@ All endpoints require authentication.
 from fastapi import APIRouter, Query, HTTPException, Depends
 
 from app.config import is_valid_universe, UniverseId
-from app.auth import get_current_user
+from app.auth import get_current_user, check_universe_access
 from app.middleware.cache import cache_daily
 
 router = APIRouter(prefix="/api/portfolio", tags=["portfolio"])
@@ -63,6 +63,7 @@ async def portfolio_summary(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     service = get_portfolio_service()
 
@@ -101,6 +102,7 @@ async def portfolio_holdings(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     service = get_portfolio_service()
 
@@ -128,6 +130,7 @@ async def portfolio_allocation(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     service = get_portfolio_service()
 

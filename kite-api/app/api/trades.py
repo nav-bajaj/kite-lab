@@ -18,7 +18,7 @@ from app.services.trade_service import (
     export_trades_csv,
     get_recent_trades,
 )
-from app.auth import get_current_user
+from app.auth import get_current_user, check_universe_access
 from app.middleware.cache import cache_daily
 
 router = APIRouter(prefix="/api/trades", tags=["trades"])
@@ -42,6 +42,7 @@ async def list_trades(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     if side and side.upper() not in ["BUY", "SELL"]:
         raise HTTPException(status_code=400, detail="Side must be BUY or SELL")
@@ -70,6 +71,7 @@ async def trade_summary(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     result = get_trade_summary(universe)
     return result
@@ -86,6 +88,7 @@ async def recent_trades(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     result = get_recent_trades(universe, days)
     return result
@@ -107,6 +110,7 @@ async def export_trades(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     csv_content = export_trades_csv(
         universe=universe,

@@ -16,7 +16,7 @@ from app.services.rebalance_service import (
     get_rebalance_history,
     export_orders_csv,
 )
-from app.auth import get_current_user
+from app.auth import get_current_user, check_universe_access
 from app.middleware.cache import cache_daily, cache_rebalance
 
 router = APIRouter(prefix="/api/rebalance", tags=["rebalance"])
@@ -34,6 +34,7 @@ async def rebalance_status(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     result = get_rebalance_status(universe)
     return result
@@ -51,6 +52,7 @@ async def rebalance_preview(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     result = get_rebalance_preview(universe)
     return result
@@ -68,6 +70,7 @@ async def rebalance_orders(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     result = get_rebalance_orders(universe)
     return result
@@ -85,6 +88,7 @@ async def export_orders(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     csv_content = export_orders_csv(universe)
 
@@ -116,6 +120,7 @@ async def rebalance_history(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     result = get_rebalance_history(universe, limit)
     return result

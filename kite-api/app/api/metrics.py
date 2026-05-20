@@ -11,7 +11,7 @@ from fastapi import APIRouter, Query, HTTPException, Depends
 
 from app.config import is_valid_universe, UniverseId
 from app.services.metrics_service import get_metrics, get_equity_curve, get_monthly_returns
-from app.auth import get_current_user
+from app.auth import get_current_user, check_universe_access
 from app.middleware.cache import cache_daily
 
 router = APIRouter(prefix="/api/metrics", tags=["metrics"])
@@ -29,6 +29,7 @@ async def metrics_summary(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     result = get_metrics(universe)
 
@@ -73,6 +74,7 @@ async def equity_curve(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     result = get_equity_curve(universe, start, end)
     return result
@@ -90,6 +92,7 @@ async def monthly_returns(
     """
     if not is_valid_universe(universe):
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
 
     result = get_monthly_returns(universe)
     return result

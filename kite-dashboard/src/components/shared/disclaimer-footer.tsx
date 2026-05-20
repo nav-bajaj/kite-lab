@@ -12,8 +12,8 @@ export function DisclaimerFooter() {
     <footer className="border-t border-border bg-background/50 px-4 py-3 text-xs text-muted-foreground lg:px-6">
       <div className="flex flex-col items-center justify-between gap-2 sm:flex-row">
         <p>
-          Model portfolios — research output, not investment advice. Past
-          performance is not indicative of future returns.
+          Private Beta · SEBI RA registration applied for · All content for
+          research and education only · Not investment advice.
         </p>
         <nav className="flex items-center gap-4">
           <Link href="/disclaimer" className="hover:text-foreground">

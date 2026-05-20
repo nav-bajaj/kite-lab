@@ -224,6 +224,49 @@ def require_admin(user: dict = Depends(get_current_user)) -> dict:
     return user
 
 
+# ---------------------------------------------------------------------------
+# Universe access (R-022 defense in depth)
+# ---------------------------------------------------------------------------
+#
+# The frontend universe selector filters to the 4 production products for
+# client-role users (see ``kite-dashboard/src/lib/universes.ts``). Without
+# the check below, a determined client could still craft a request like
+# ``GET /api/portfolio?universe=nse500`` directly via DevTools and bypass
+# the UI filter. The data isn't secret, but it's a UX-consistency hole
+# and tracked as register row R-022.
+
+CLIENT_VISIBLE_UNIVERSES = frozenset({
+    "om25_v3",        # Quality Momentum
+    "tl25_v3",        # Trend Leaders
+    "l6_v2",          # Core Momentum
+    "combo_defensive",  # Defensive Blend
+})
+
+# Admin-only legacy research universes (kept here as a constant for clarity
+# but not actually used — the check below just verifies membership in
+# CLIENT_VISIBLE_UNIVERSES for non-admin callers, so any new universe added
+# to ``app/config.py:UNIVERSES`` is admin-only by default unless explicitly
+# tagged client-visible above.)
+ADMIN_ONLY_UNIVERSES = frozenset({"nse500", "nifty100", "nifty250"})
+
+
+def check_universe_access(universe: str, user: dict) -> None:
+    """Raise 403 if the caller doesn't have access to the universe.
+
+    Admin role: all universes. Client role: only the 4 production products
+    in ``CLIENT_VISIBLE_UNIVERSES``. Anything else from a non-admin caller
+    is refused.
+
+    Closes R-022 in ``docs/security/risk-register.md``.
+    """
+    if user.get("role") == "admin":
+        return
+    if universe not in CLIENT_VISIBLE_UNIVERSES:
+        raise ForbiddenError(
+            f"Universe '{universe}' is not available to your role"
+        )
+
+
 # Convenience aliases — back-compat with existing imports.
 require_auth = Depends(get_current_user)
 optional_auth = Depends(get_optional_user)

@@ -31,7 +31,7 @@ A web-based dashboard provides monitoring and control of the momentum portfolio 
 - **Frontend:** Next.js 16, TypeScript, Tailwind CSS, shadcn/ui, Recharts
 - **Backend:** FastAPI, PostgreSQL, SQLAlchemy 2.0, Alembic
 - **Hosting:** Vercel (frontend) + Railway (backend + database)
-- **Auth:** Google OAuth with email whitelist
+- **Auth:** Clerk (managed) — Google OAuth sign-in; role lives in `publicMetadata.role` ("client" default, "admin" for operator). Backend verifies Clerk session JWTs via JWKS (RS256, issuer-pinned). Currently in private beta with Clerk sign-up allowlist enabled. Old NextAuth + email-whitelist path retired.
 
 **Key Features:**
 - Portfolio view with holdings, P&L, allocation pie chart
@@ -39,8 +39,15 @@ A web-based dashboard provides monitoring and control of the momentum portfolio 
 - Performance metrics with equity curves and benchmark comparison
 - Trade history with search, filter, and CSV export
 - Rebalance workflow (Thursday preview, Friday orders)
-- Admin panel with job execution and scheduling
+- Admin panel with job execution and scheduling (admin-role only)
 - Real-time streaming via SSE (logs and live prices)
+- **Role-gated client portal:** clients see only the 4 production
+  portfolios (Quality Momentum, Trend Leaders, Core Momentum, Defensive
+  Blend); admins see all 7 (including the legacy nse500/nifty100/nifty250
+  research universes). 17 backend admin endpoints (jobs, schedule, sync,
+  positions mutations, headless-login) gated by `require_admin`. Universe
+  filter enforced both frontend (`getVisibleUniverseIds`) and backend
+  (`check_universe_access`, R-022).
 
 **Dashboard Commands:**
 ```bash
@@ -297,13 +304,13 @@ Script: `scripts/sync_data_backup.py`
 - `open_positions` - Live portfolio positions (actual holdings)
 - `rebalances` - Rebalance action history
 - `jobs` - Job execution logs
-- `allowed_users` - Email whitelist for dashboard access
+- `allowed_users` - *Legacy* — Clerk now owns identity; table is unused but kept for rollback safety
 
 **Railway Deployment:**
 - Persistent volume mounted at `/data` for price CSVs, tokens, experiments
 - `scripts/init_persistent_storage.sh` symlinks `/data` dirs into `/app` at startup
 - `scripts/entrypoint.sh` runs storage init as root, then drops to appuser via gosu
-- All API endpoints require JWT authentication (except health, login, market-status)
+- All non-bootstrap API endpoints require a Clerk session JWT in the `Authorization: Bearer …` header. Public exceptions: `/api/health`, `/api/positions/market-status`, and the `/api/system/*` Zerodha OAuth bootstrap surface (status, token, database, sync, login-url, callback).
 
 ## Current Portfolio Configuration
 
