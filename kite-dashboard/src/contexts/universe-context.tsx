@@ -6,10 +6,17 @@ import {
   useState,
   useEffect,
   useCallback,
+  useMemo,
   ReactNode,
 } from "react";
+import { useUser } from "@clerk/nextjs";
 import { UniverseId, Universe } from "@/lib/types";
-import { UNIVERSES, DEFAULT_UNIVERSE, isValidUniverse } from "@/lib/universes";
+import {
+  UNIVERSES,
+  DEFAULT_UNIVERSE,
+  isValidUniverse,
+  getVisibleUniverseIds,
+} from "@/lib/universes";
 
 const STORAGE_KEY = "marketworks-universe";
 // One-shot migration: existing users had their selection stored under
@@ -21,14 +28,31 @@ interface UniverseContextValue {
   universeId: UniverseId;
   universe: Universe;
   setUniverse: (id: UniverseId) => void;
+  /** Universes the current user can pick — admins see all 7, clients
+   *  see only the 4 production products. */
+  visibleUniverseIds: UniverseId[];
   isLoading: boolean;
 }
 
 const UniverseContext = createContext<UniverseContextValue | null>(null);
 
 export function UniverseProvider({ children }: { children: ReactNode }) {
+  const { user, isLoaded } = useUser();
   const [universeId, setUniverseId] = useState<UniverseId>(DEFAULT_UNIVERSE);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Role from Clerk publicMetadata. Admins see all 7 universes; everyone
+  // else (signed-in clients OR signed-out visitors who hit a page that
+  // shouldn't normally render) gets the 4-product client surface.
+  const role = useMemo(() => {
+    const meta = user?.publicMetadata as { role?: string } | undefined;
+    return meta?.role === "admin" ? "admin" : "client";
+  }, [user]);
+
+  const visibleUniverseIds = useMemo(
+    () => getVisibleUniverseIds(role),
+    [role],
+  );
 
   // Load saved universe from localStorage on mount (with legacy-key migration).
   // setState inside useEffect is intentional: localStorage is unavailable during
@@ -53,6 +77,20 @@ export function UniverseProvider({ children }: { children: ReactNode }) {
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
 
+  // If the role changes (e.g. an admin signs in / out) and the currently
+  // selected universe is no longer visible to them, fall back to the
+  // default. Runs once Clerk's user state is loaded so we don't bounce on
+  // first paint before role is known.
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (!visibleUniverseIds.includes(universeId)) {
+      setUniverseId(DEFAULT_UNIVERSE);
+      localStorage.setItem(STORAGE_KEY, DEFAULT_UNIVERSE);
+    }
+  }, [isLoaded, visibleUniverseIds, universeId]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
   const setUniverse = useCallback((id: UniverseId) => {
     setUniverseId(id);
     localStorage.setItem(STORAGE_KEY, id);
@@ -63,6 +101,7 @@ export function UniverseProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line security/detect-object-injection -- universeId is a typed UniverseId literal, UNIVERSES is a closed Record
     universe: UNIVERSES[universeId],
     setUniverse,
+    visibleUniverseIds,
     isLoading,
   };
 

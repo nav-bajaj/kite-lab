@@ -20,6 +20,9 @@ export interface Universe {
   description: string;
   stocks: number;
   riskProfile: string;
+  /** Whether non-admin clients can see and select this universe. Legacy
+   *  research universes (nse500/nifty100/nifty250) are admin-only. */
+  clientVisible: boolean;
 }
 
 // Portfolio types
