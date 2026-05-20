@@ -17,11 +17,12 @@ from app.services.rebalance_service import (
     export_orders_csv,
 )
 from app.auth import get_current_user
+from app.middleware.cache import cache_daily, cache_rebalance
 
 router = APIRouter(prefix="/api/rebalance", tags=["rebalance"])
 
 
-@router.get("/status")
+@router.get("/status", dependencies=[Depends(cache_rebalance)])
 async def rebalance_status(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     user: dict = Depends(get_current_user)
@@ -38,7 +39,7 @@ async def rebalance_status(
     return result
 
 
-@router.get("/preview")
+@router.get("/preview", dependencies=[Depends(cache_rebalance)])
 async def rebalance_preview(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     user: dict = Depends(get_current_user)
@@ -55,7 +56,7 @@ async def rebalance_preview(
     return result
 
 
-@router.get("/orders")
+@router.get("/orders", dependencies=[Depends(cache_rebalance)])
 async def rebalance_orders(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     user: dict = Depends(get_current_user)
@@ -72,7 +73,7 @@ async def rebalance_orders(
     return result
 
 
-@router.get("/orders/export")
+@router.get("/orders/export", dependencies=[Depends(cache_rebalance)])
 async def export_orders(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     user: dict = Depends(get_current_user)
@@ -102,7 +103,7 @@ async def export_orders(
     )
 
 
-@router.get("/history")
+@router.get("/history", dependencies=[Depends(cache_daily)])
 async def rebalance_history(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     limit: int = Query(default=20, ge=1, le=100, description="Number of records to return"),

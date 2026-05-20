@@ -8,6 +8,7 @@ from fastapi import APIRouter, Query, HTTPException, Depends
 
 from app.config import is_valid_universe, UniverseId
 from app.auth import get_current_user
+from app.middleware.cache import cache_daily
 
 router = APIRouter(prefix="/api/portfolio", tags=["portfolio"])
 
@@ -50,7 +51,7 @@ def get_portfolio_service():
         }
 
 
-@router.get("")
+@router.get("", dependencies=[Depends(cache_daily)])
 async def portfolio_summary(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     user: dict = Depends(get_current_user)
@@ -88,7 +89,7 @@ async def portfolio_summary(
     return result
 
 
-@router.get("/holdings")
+@router.get("/holdings", dependencies=[Depends(cache_daily)])
 async def portfolio_holdings(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     user: dict = Depends(get_current_user)
@@ -115,7 +116,7 @@ async def portfolio_holdings(
     return result
 
 
-@router.get("/allocation")
+@router.get("/allocation", dependencies=[Depends(cache_daily)])
 async def portfolio_allocation(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     user: dict = Depends(get_current_user)
