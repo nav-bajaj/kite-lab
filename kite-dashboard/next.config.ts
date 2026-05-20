@@ -19,16 +19,26 @@ const apiUrl =
 // - `connect-src` includes the backend API origin and the Google OAuth
 //   endpoints; `frame-ancestors 'none'` enforces clickjacking protection
 //   (already covered by X-Frame-Options below for older browsers).
+// Clerk needs the per-app `*.clerk.accounts.dev` subdomain plus the
+// shared `*.clerk.com` API/CDN domain in script-src + connect-src.
+// img.clerk.com serves user-uploaded avatars. Clerk also spins up web
+// workers from blob URLs for crypto operations.
+//
+// Reference (Clerk docs, allowed CSP origins):
+//   https://clerk.com/docs/security/clerk-csp
+const clerkOrigins = "https://*.clerk.accounts.dev https://*.clerk.com";
+
 const cspDirectives = [
   `default-src 'self'`,
-  `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://*.gstatic.com`,
+  `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${clerkOrigins} https://accounts.google.com https://*.gstatic.com`,
   `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
   `img-src 'self' data: blob: https:`,
   `font-src 'self' data: https://fonts.gstatic.com`,
-  `connect-src 'self' ${apiUrl} https://accounts.google.com https://oauth2.googleapis.com https://*.googleapis.com`,
-  `frame-src 'self' https://accounts.google.com`,
+  `connect-src 'self' ${apiUrl} ${clerkOrigins} https://accounts.google.com https://oauth2.googleapis.com https://*.googleapis.com`,
+  `frame-src 'self' ${clerkOrigins} https://accounts.google.com`,
+  `worker-src 'self' blob:`,
   `frame-ancestors 'none'`,
-  `form-action 'self' https://accounts.google.com`,
+  `form-action 'self' ${clerkOrigins} https://accounts.google.com`,
   `base-uri 'self'`,
   `object-src 'none'`,
   `upgrade-insecure-requests`,
