@@ -1,20 +1,11 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { Menu, Moon, Sun, LogOut } from "lucide-react";
+import { Menu, Moon, Sun } from "lucide-react";
 import { MobileSidebar } from "./mobile-sidebar";
 import { UniverseSelector } from "./universe-selector";
 
@@ -24,15 +15,15 @@ const pathNames: Record<string, string> = {
   "/rebalance": "Rebalance",
   "/trades": "Trades",
   "/admin": "Admin",
+  "/account": "Account",
 };
 
 export function Navbar() {
-  const { data: session } = useSession();
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
 
+  // eslint-disable-next-line security/detect-object-injection -- pathname is from Next's router (closed set of known route strings); pathNames is a module-level constant Record
   const pageName = pathNames[pathname] || "Dashboard";
-  const userInitial = session?.user?.name?.charAt(0) || "U";
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 lg:px-6">
@@ -71,32 +62,9 @@ export function Navbar() {
         <span className="sr-only">Toggle theme</span>
       </Button>
 
-      {/* User menu */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-            <Avatar className="h-9 w-9">
-              <AvatarImage src={session?.user?.image || ""} alt="User" />
-              <AvatarFallback>{userInitial}</AvatarFallback>
-            </Avatar>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56" align="end">
-          <DropdownMenuLabel>
-            <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium">{session?.user?.name}</p>
-              <p className="text-xs text-muted-foreground">
-                {session?.user?.email}
-              </p>
-            </div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/login" })}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Sign out
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      {/* User menu — Clerk-managed avatar, profile, sign-out. On sign-out
+          the middleware redirects unauthed users to /sign-in automatically. */}
+      <UserButton appearance={{ elements: { avatarBox: "h-9 w-9" } }} />
     </header>
   );
 }

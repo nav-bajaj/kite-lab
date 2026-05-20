@@ -8,8 +8,18 @@ import {
   ReactNode,
   useCallback,
 } from "react";
-import { useSession } from "next-auth/react";
+import { useAuth } from "@clerk/nextjs";
 import { setGlobalAuthToken } from "@/lib/api-client";
+
+// Bridges Clerk's session token into the existing global-token slot that
+// `api-client.ts` reads. Clerk default tokens have ~60s TTL, so we
+// refresh on a ~50s interval to keep the cached value fresh.
+//
+// The global-token pattern is kept (rather than rewriting api-client.ts
+// to use a React hook) so server-side fetch callsites and any non-React
+// consumers keep working unchanged.
+
+const REFRESH_INTERVAL_MS = 50_000;
 
 interface ApiAuthContextType {
   token: string | null;
@@ -26,14 +36,16 @@ const ApiAuthContext = createContext<ApiAuthContextType>({
 });
 
 export function ApiAuthProvider({ children }: { children: ReactNode }) {
-  const { data: session, status } = useSession();
+  const { getToken, isSignedIn, isLoaded } = useAuth();
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const refreshToken = useCallback(async () => {
-    if (status !== "authenticated" || !session?.user?.email) {
+    if (!isLoaded) return;
+    if (!isSignedIn) {
       setToken(null);
+      setGlobalAuthToken(null);
       setIsLoading(false);
       return;
     }
@@ -42,39 +54,26 @@ export function ApiAuthProvider({ children }: { children: ReactNode }) {
     setError(null);
 
     try {
-      const response = await fetch("/api/backend-token");
-
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({ error: "Unknown error" }));
-        throw new Error(data.error || "Failed to get token");
-      }
-
-      const data = await response.json();
-      setToken(data.access_token);
-      setGlobalAuthToken(data.access_token);
+      const fresh = await getToken();
+      setToken(fresh);
+      setGlobalAuthToken(fresh);
     } catch (err) {
-      console.error("Failed to get backend token:", err);
+      console.error("Failed to fetch Clerk session token:", err);
       setError(err instanceof Error ? err.message : "Failed to get token");
       setToken(null);
       setGlobalAuthToken(null);
     } finally {
       setIsLoading(false);
     }
-  }, [session, status]);
+  }, [getToken, isLoaded, isSignedIn]);
 
-  // Sync token to global state whenever it changes
+  // Initial fetch + periodic refresh while signed in
   useEffect(() => {
-    setGlobalAuthToken(token);
-  }, [token]);
-
-  // Get token when session changes
-  useEffect(() => {
-    if (status === "loading") {
-      return;
-    }
-
     refreshToken();
-  }, [status, refreshToken]);
+    if (!isSignedIn) return;
+    const id = setInterval(refreshToken, REFRESH_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, [refreshToken, isSignedIn]);
 
   return (
     <ApiAuthContext.Provider value={{ token, isLoading, error, refreshToken }}>
