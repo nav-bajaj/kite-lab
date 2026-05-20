@@ -6,6 +6,13 @@ import type { NextConfig } from "next";
 const apiUrl =
   process.env.NEXT_PUBLIC_API_URL ?? "https://kite-lab-production.up.railway.app";
 
+// In `next dev` we additionally allow the locally-running backend. Without
+// this the CSP `connect-src` blocks calls to localhost:8000 even though
+// `src/lib/api-client.ts` falls back to it. NODE_ENV is "development" only
+// under `next dev` — production builds (including `next start`) omit it.
+const devApiOrigin =
+  process.env.NODE_ENV === "development" ? "http://localhost:8000" : "";
+
 // CSP policy. Closes R-006 in docs/security/risk-register.md.
 //
 // Notes on the permissive parts:
@@ -39,7 +46,7 @@ const cspDirectives = [
   `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
   `img-src 'self' data: blob: https:`,
   `font-src 'self' data: https://fonts.gstatic.com`,
-  `connect-src 'self' ${apiUrl} ${clerkOrigins} ${turnstileOrigin} https://accounts.google.com https://oauth2.googleapis.com https://*.googleapis.com`,
+  `connect-src 'self' ${apiUrl} ${devApiOrigin} ${clerkOrigins} ${turnstileOrigin} https://accounts.google.com https://oauth2.googleapis.com https://*.googleapis.com`,
   `frame-src 'self' ${clerkOrigins} ${turnstileOrigin} https://accounts.google.com`,
   `worker-src 'self' blob:`,
   `frame-ancestors 'none'`,
