@@ -37,7 +37,12 @@ const devApiOrigin =
 //
 // Reference (Clerk docs, allowed CSP origins):
 //   https://clerk.com/docs/security/clerk-csp
-const clerkOrigins = "https://*.clerk.accounts.dev https://*.clerk.com";
+// Clerk SDK lives on `*.clerk.accounts.dev`; the user-facing accounts portal
+// is on the bare `*.accounts.dev`. Both need allowlisting for sign-in flows
+// to navigate through cleanly (cross-domain session sync, satellite-domain
+// redirects, etc.).
+const clerkOrigins =
+  "https://*.clerk.accounts.dev https://*.accounts.dev https://*.clerk.com";
 const turnstileOrigin = "https://challenges.cloudflare.com";
 
 const cspDirectives = [
