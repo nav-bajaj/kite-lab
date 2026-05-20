@@ -107,6 +107,9 @@ reports/security/*
 # Logs
 logs/
 
+# Local scratch (per-session secrets, debug dumps)
+tmp/
+
 # Experimental data
 commodities_data/
 
