@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Query
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
-from app.auth import get_current_user
+from app.auth import require_admin
 from app.services.system_service import (
     SystemService,
     SystemStatus,
@@ -104,7 +104,7 @@ async def get_login_url():
 
 
 @router.post("/headless-login", response_model=TokenStatus)
-async def headless_login(user=Depends(get_current_user)):
+async def headless_login(user=Depends(require_admin)):
     """
     Perform automated Zerodha login without browser.
 

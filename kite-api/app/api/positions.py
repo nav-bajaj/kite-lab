@@ -31,7 +31,8 @@ from app.services.quotes_service import (
     QuotesFetchError,
 )
 from app.services.market_service import get_market_status, is_market_open
-from app.auth import get_current_user, validate_token_string, AuthError
+from app.auth import get_current_user, require_admin, validate_token_string, AuthError
+from app.middleware.cache import cache_live
 
 logger = logging.getLogger(__name__)
 IST = pytz.timezone("Asia/Kolkata")
@@ -39,7 +40,7 @@ IST = pytz.timezone("Asia/Kolkata")
 router = APIRouter(prefix="/api/positions", tags=["positions"])
 
 
-@router.get("", response_model=PositionsResponse)
+@router.get("", response_model=PositionsResponse, dependencies=[Depends(cache_live)])
 async def get_positions(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     user: dict = Depends(get_current_user)
@@ -71,7 +72,7 @@ async def get_positions(
         )
 
 
-@router.get("/holdings", response_model=HoldingsOnlyResponse)
+@router.get("/holdings", response_model=HoldingsOnlyResponse, dependencies=[Depends(cache_live)])
 async def get_holdings(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     user: dict = Depends(get_current_user)
@@ -87,7 +88,7 @@ async def get_holdings(
     return PositionsService.get_holdings_response(universe)
 
 
-@router.get("/quotes", response_model=QuotesResponse)
+@router.get("/quotes", response_model=QuotesResponse, dependencies=[Depends(cache_live)])
 async def get_quotes(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     user: dict = Depends(get_current_user)
@@ -129,7 +130,7 @@ async def get_quotes(
         )
 
 
-@router.get("/market-status", response_model=MarketStatus)  # nosemgrep: tools.security.fastapi-route-missing-auth  # AD-1: NSE market open/closed; no user data — see docs/security/attack-surface.md
+@router.get("/market-status", response_model=MarketStatus, dependencies=[Depends(cache_live)])  # nosemgrep: tools.security.fastapi-route-missing-auth  # AD-1: NSE market open/closed; no user data — see docs/security/attack-surface.md
 async def get_market_status_endpoint():
     """
     Get current NSE market status.
@@ -140,7 +141,7 @@ async def get_market_status_endpoint():
 
 
 @router.post("/sync", response_model=SyncResponse)
-async def sync_positions(request: PositionsSyncRequest, user: dict = Depends(get_current_user)):
+async def sync_positions(request: PositionsSyncRequest, user: dict = Depends(require_admin)):
     """
     Sync positions from provided data.
 
@@ -155,7 +156,7 @@ async def sync_positions(request: PositionsSyncRequest, user: dict = Depends(get
 @router.post("/sync-from-csv", response_model=SyncResponse)
 async def sync_from_csv(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(require_admin)
 ):
     """
     Sync positions from the portfolio CSV file.

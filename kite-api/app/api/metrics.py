@@ -12,11 +12,12 @@ from fastapi import APIRouter, Query, HTTPException, Depends
 from app.config import is_valid_universe, UniverseId
 from app.services.metrics_service import get_metrics, get_equity_curve, get_monthly_returns
 from app.auth import get_current_user
+from app.middleware.cache import cache_daily
 
 router = APIRouter(prefix="/api/metrics", tags=["metrics"])
 
 
-@router.get("")
+@router.get("", dependencies=[Depends(cache_daily)])
 async def metrics_summary(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     user: dict = Depends(get_current_user)
@@ -57,7 +58,7 @@ async def metrics_summary(
     return result
 
 
-@router.get("/equity-curve")
+@router.get("/equity-curve", dependencies=[Depends(cache_daily)])
 async def equity_curve(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     start: Optional[date] = Query(default=None, description="Start date (YYYY-MM-DD)"),
@@ -77,7 +78,7 @@ async def equity_curve(
     return result
 
 
-@router.get("/monthly-returns")
+@router.get("/monthly-returns", dependencies=[Depends(cache_daily)])
 async def monthly_returns(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     user: dict = Depends(get_current_user)

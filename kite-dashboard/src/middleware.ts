@@ -1,47 +1,45 @@
-import { auth } from "@/lib/auth";
-import { NextResponse } from "next/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-// SECURITY: SKIP_AUTH is ONLY for local development
-// It is NEVER allowed in production, regardless of env var
-const IS_PRODUCTION = process.env.NODE_ENV === "production";
-const SKIP_AUTH = !IS_PRODUCTION && process.env.SKIP_AUTH === "true";
+// Public routes — no auth required. Anything not in this list (and not in
+// `config.matcher` exclusions below) requires a signed-in Clerk session.
+//
+// `/` is the authenticated dashboard for now; unauthenticated visitors
+// get bounced to /sign-in. A marketing landing page replacing `/` is a
+// future task — when it lands, add `/` back here.
+const isPublicRoute = createRouteMatcher([
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+  "/terms",
+  "/privacy",
+  "/disclaimer",
+]);
 
-// Log warning if someone tries to enable SKIP_AUTH in production
-if (IS_PRODUCTION && process.env.SKIP_AUTH === "true") {
-  console.error(
-    "SECURITY WARNING: SKIP_AUTH=true is ignored in production. Authentication is enforced."
-  );
-}
+// Admin-only routes. Checked against publicMetadata.role exposed via the
+// session token's `metadata` claim (configured in Clerk dashboard).
+const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 
-export default auth((req) => {
-  const { pathname } = req.nextUrl;
-
-  // Skip auth ONLY in development mode (never in production)
-  if (SKIP_AUTH) {
-    return NextResponse.next();
+export default clerkMiddleware(async (auth, req) => {
+  if (!isPublicRoute(req)) {
+    await auth.protect();
   }
 
-  // Public routes that don't require auth
-  const publicRoutes = ["/login", "/api/auth"];
-  const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
-
-  if (isPublicRoute) {
-    return NextResponse.next();
+  if (isAdminRoute(req)) {
+    const { sessionClaims } = await auth();
+    const role = (sessionClaims as { metadata?: { role?: string } } | null)
+      ?.metadata?.role;
+    if (role !== "admin") {
+      // Not an admin → push them back to the dashboard root rather than
+      // throwing a 404. Clerk's auth.protect() above already enforced auth.
+      return Response.redirect(new URL("/", req.url));
+    }
   }
-
-  // Check if user is authenticated
-  if (!req.auth) {
-    const loginUrl = new URL("/login", req.url);
-    loginUrl.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  return NextResponse.next();
 });
 
 export const config = {
   matcher: [
-    // Match all routes except static files and api routes (except auth)
-    "/((?!_next/static|_next/image|favicon.ico|api/(?!auth)).*)",
+    // Skip Next internals and static assets
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // Always run for API routes
+    "/(api|trpc)(.*)",
   ],
 };

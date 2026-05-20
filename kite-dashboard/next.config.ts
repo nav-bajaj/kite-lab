@@ -6,6 +6,13 @@ import type { NextConfig } from "next";
 const apiUrl =
   process.env.NEXT_PUBLIC_API_URL ?? "https://kite-lab-production.up.railway.app";
 
+// In `next dev` we additionally allow the locally-running backend. Without
+// this the CSP `connect-src` blocks calls to localhost:8000 even though
+// `src/lib/api-client.ts` falls back to it. NODE_ENV is "development" only
+// under `next dev` — production builds (including `next start`) omit it.
+const devApiOrigin =
+  process.env.NODE_ENV === "development" ? "http://localhost:8000" : "";
+
 // CSP policy. Closes R-006 in docs/security/risk-register.md.
 //
 // Notes on the permissive parts:
@@ -19,16 +26,31 @@ const apiUrl =
 // - `connect-src` includes the backend API origin and the Google OAuth
 //   endpoints; `frame-ancestors 'none'` enforces clickjacking protection
 //   (already covered by X-Frame-Options below for older browsers).
+// Clerk needs the per-app `*.clerk.accounts.dev` subdomain plus the
+// shared `*.clerk.com` API/CDN domain in script-src + connect-src.
+// img.clerk.com serves user-uploaded avatars. Clerk also spins up web
+// workers from blob URLs for crypto operations.
+//
+// Cloudflare Turnstile (`challenges.cloudflare.com`) is Clerk's default
+// bot-protection on sign-up — it injects an iframe + a script that
+// must be CSP-allowed for sign-up to complete.
+//
+// Reference (Clerk docs, allowed CSP origins):
+//   https://clerk.com/docs/security/clerk-csp
+const clerkOrigins = "https://*.clerk.accounts.dev https://*.clerk.com";
+const turnstileOrigin = "https://challenges.cloudflare.com";
+
 const cspDirectives = [
   `default-src 'self'`,
-  `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://*.gstatic.com`,
+  `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${clerkOrigins} ${turnstileOrigin} https://accounts.google.com https://*.gstatic.com`,
   `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
   `img-src 'self' data: blob: https:`,
   `font-src 'self' data: https://fonts.gstatic.com`,
-  `connect-src 'self' ${apiUrl} https://accounts.google.com https://oauth2.googleapis.com https://*.googleapis.com`,
-  `frame-src 'self' https://accounts.google.com`,
+  `connect-src 'self' ${apiUrl} ${devApiOrigin} ${clerkOrigins} ${turnstileOrigin} https://accounts.google.com https://oauth2.googleapis.com https://*.googleapis.com`,
+  `frame-src 'self' ${clerkOrigins} ${turnstileOrigin} https://accounts.google.com`,
+  `worker-src 'self' blob:`,
   `frame-ancestors 'none'`,
-  `form-action 'self' https://accounts.google.com`,
+  `form-action 'self' ${clerkOrigins} https://accounts.google.com`,
   `base-uri 'self'`,
   `object-src 'none'`,
   `upgrade-insecure-requests`,

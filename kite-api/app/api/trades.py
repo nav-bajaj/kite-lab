@@ -19,11 +19,12 @@ from app.services.trade_service import (
     get_recent_trades,
 )
 from app.auth import get_current_user
+from app.middleware.cache import cache_daily
 
 router = APIRouter(prefix="/api/trades", tags=["trades"])
 
 
-@router.get("")
+@router.get("", dependencies=[Depends(cache_daily)])
 async def list_trades(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     limit: int = Query(default=50, ge=1, le=500, description="Number of trades to return"),
@@ -57,7 +58,7 @@ async def list_trades(
     return result
 
 
-@router.get("/summary")
+@router.get("/summary", dependencies=[Depends(cache_daily)])
 async def trade_summary(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     user: dict = Depends(get_current_user)
@@ -74,7 +75,7 @@ async def trade_summary(
     return result
 
 
-@router.get("/recent")
+@router.get("/recent", dependencies=[Depends(cache_daily)])
 async def recent_trades(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     days: int = Query(default=7, ge=1, le=90, description="Number of days to look back"),
@@ -90,7 +91,7 @@ async def recent_trades(
     return result
 
 
-@router.get("/export")
+@router.get("/export", dependencies=[Depends(cache_daily)])
 async def export_trades(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
     symbol: Optional[str] = Query(default=None, description="Filter by symbol"),

@@ -1,7 +1,7 @@
 "use client";
 
 import { useUniverse } from "@/contexts/universe-context";
-import { UNIVERSE_IDS, UNIVERSES } from "@/lib/universes";
+import { UNIVERSES } from "@/lib/universes";
 import { UniverseId } from "@/lib/types";
 import {
   Select,
@@ -13,7 +13,7 @@ import {
 import { Globe } from "lucide-react";
 
 export function UniverseSelector() {
-  const { universeId, setUniverse, isLoading } = useUniverse();
+  const { universeId, setUniverse, isLoading, visibleUniverseIds } = useUniverse();
 
   if (isLoading) {
     return (
@@ -31,7 +31,8 @@ export function UniverseSelector() {
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        {UNIVERSE_IDS.map((id) => {
+        {visibleUniverseIds.map((id) => {
+          // eslint-disable-next-line security/detect-object-injection -- id is a typed UniverseId from a closed list
           const u = UNIVERSES[id];
           return (
             <SelectItem key={id} value={id}>

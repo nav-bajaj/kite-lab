@@ -18,7 +18,7 @@ from app.scheduler.scheduler import (
 )
 from app.scheduler.tasks import create_task_wrapper, SCHEDULED_TASKS
 from app.services.job_service import COMMANDS
-from app.auth import get_current_user
+from app.auth import require_admin
 
 router = APIRouter(prefix="/api/schedule", tags=["schedule"])
 
@@ -74,7 +74,7 @@ class DeleteResponse(BaseModel):
 
 
 @router.get("", response_model=ScheduleListResponse)
-async def list_scheduled_jobs(user: dict = Depends(get_current_user)):
+async def list_scheduled_jobs(user: dict = Depends(require_admin)):
     """
     List all scheduled jobs.
 
@@ -94,7 +94,7 @@ async def list_scheduled_jobs(user: dict = Depends(get_current_user)):
 
 
 @router.post("", response_model=ScheduledJobResponse)
-async def create_scheduled_job(request: CreateScheduleRequest, user: dict = Depends(get_current_user)):
+async def create_scheduled_job(request: CreateScheduleRequest, user: dict = Depends(require_admin)):
     """
     Create a new scheduled job.
 
@@ -167,7 +167,7 @@ async def create_scheduled_job(request: CreateScheduleRequest, user: dict = Depe
 
 
 @router.delete("/{job_id}", response_model=DeleteResponse)
-async def delete_scheduled_job(job_id: str, user: dict = Depends(get_current_user)):
+async def delete_scheduled_job(job_id: str, user: dict = Depends(require_admin)):
     """
     Remove a scheduled job.
 
@@ -190,7 +190,7 @@ async def delete_scheduled_job(job_id: str, user: dict = Depends(get_current_use
 
 
 @router.post("/{job_id}/run", response_model=RunNowResponse)
-async def run_scheduled_job_now(job_id: str, user: dict = Depends(get_current_user)):
+async def run_scheduled_job_now(job_id: str, user: dict = Depends(require_admin)):
     """
     Run a scheduled job immediately.
 
@@ -214,7 +214,7 @@ async def run_scheduled_job_now(job_id: str, user: dict = Depends(get_current_us
 
 
 @router.get("/defaults")
-async def get_default_schedules(user: dict = Depends(get_current_user)):
+async def get_default_schedules(user: dict = Depends(require_admin)):
     """
     Get list of default scheduled tasks.
 

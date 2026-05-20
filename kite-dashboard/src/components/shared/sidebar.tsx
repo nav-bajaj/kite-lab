@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -15,17 +16,22 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
+// `adminOnly` items are filtered out for non-admin clients in the render.
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Open Positions", href: "/positions", icon: Wallet },
-  { name: "Performance", href: "/performance", icon: TrendingUp },
-  { name: "Rebalance", href: "/rebalance", icon: RefreshCw },
-  { name: "Trades", href: "/trades", icon: History },
-  { name: "Admin", href: "/admin", icon: Settings },
+  { name: "Dashboard", href: "/", icon: LayoutDashboard, adminOnly: false },
+  { name: "Open Positions", href: "/positions", icon: Wallet, adminOnly: false },
+  { name: "Performance", href: "/performance", icon: TrendingUp, adminOnly: false },
+  { name: "Rebalance", href: "/rebalance", icon: RefreshCw, adminOnly: false },
+  { name: "Trades", href: "/trades", icon: History, adminOnly: false },
+  { name: "Admin", href: "/admin", icon: Settings, adminOnly: true },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { user } = useUser();
+  const role = (user?.publicMetadata as { role?: string } | undefined)?.role;
+  const isAdmin = role === "admin";
+  const visibleNav = navigation.filter((item) => !item.adminOnly || isAdmin);
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -75,7 +81,7 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-2 py-2">
-        {navigation.map((item) => {
+        {visibleNav.map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link
