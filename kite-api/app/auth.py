@@ -1,25 +1,35 @@
 """
-Authentication middleware and utilities.
+Clerk session-token verification.
 
-Handles JWT validation and email whitelist checking.
+Verifies Clerk-issued JWTs against the project's JWKS endpoint. Exposes
+the same ``get_current_user`` interface the route layer has always
+depended on, so swapping from the legacy NextAuth HS256 path is a
+zero-touch change for endpoint signatures.
+
+Also exposes ``require_admin``: a FastAPI dependency that 403s any
+caller whose ``publicMetadata.role`` (surfaced via the ``metadata``
+session-token claim configured in the Clerk dashboard) is not
+``"admin"``.
 """
+
+import time
+from typing import Any, Optional
+
+import httpx
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
-from sqlalchemy.orm import Session
-from datetime import datetime
-from typing import Optional
 
 from app.config import get_settings
-from app.models.database import get_db
-from app.models.models import AllowedUser
 
-# Security scheme for Swagger UI
+
+# Security scheme for Swagger UI + Authorization header extraction.
 security = HTTPBearer(auto_error=False)
 
 
 class AuthError(HTTPException):
-    """Custom authentication error."""
+    """401 — no/invalid/expired token."""
+
     def __init__(self, detail: str):
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -29,7 +39,8 @@ class AuthError(HTTPException):
 
 
 class ForbiddenError(HTTPException):
-    """Custom authorization error."""
+    """403 — token is valid but the caller lacks the required role."""
+
     def __init__(self, detail: str):
         super().__init__(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -37,165 +48,203 @@ class ForbiddenError(HTTPException):
         )
 
 
-def decode_token(token: str) -> dict:
-    """
-    Decode and validate JWT token.
+# ---------------------------------------------------------------------------
+# JWKS cache
+# ---------------------------------------------------------------------------
+#
+# Clerk's JWKS rotates rarely. We cache for an hour. On a `kid` miss we
+# force a re-fetch once before giving up — covers the rotation case.
 
-    Args:
-        token: JWT token string
+_JWKS_CACHE_TTL_SECONDS = 3600
+_JWKS_CACHE: dict[str, Any] = {"keys": None, "fetched_at": 0.0}
 
-    Returns:
-        Decoded token payload
 
-    Raises:
-        AuthError: If token is invalid or expired
-    """
+def _fetch_jwks(force: bool = False) -> dict:
+    """Fetch (and cache) the Clerk JWKS."""
     settings = get_settings()
+    now = time.time()
+    cached_keys = _JWKS_CACHE["keys"]
+    cached_at = _JWKS_CACHE["fetched_at"]
+
+    if (
+        not force
+        and cached_keys is not None
+        and now - cached_at < _JWKS_CACHE_TTL_SECONDS
+    ):
+        return cached_keys
+
+    if not settings.clerk_jwks_url:
+        raise AuthError("CLERK_JWKS_URL is not configured on the server")
 
     try:
+        resp = httpx.get(settings.clerk_jwks_url, timeout=5.0)
+        resp.raise_for_status()
+        keys = resp.json()
+    except Exception as exc:
+        # If the upstream fetch fails but we have a stale cache, prefer that
+        # over a hard 401 — better to keep serving than to take the whole
+        # API down on a transient Clerk-side blip.
+        if cached_keys is not None:
+            return cached_keys
+        raise AuthError(f"Unable to fetch Clerk JWKS: {exc}")
+
+    _JWKS_CACHE["keys"] = keys
+    _JWKS_CACHE["fetched_at"] = now
+    return keys
+
+
+def _find_signing_key(token: str) -> dict:
+    """Locate the JWK matching the token's ``kid`` header."""
+    try:
+        headers = jwt.get_unverified_header(token)
+    except JWTError as exc:
+        raise AuthError(f"Malformed token header: {exc}")
+
+    kid = headers.get("kid")
+    if not kid:
+        raise AuthError("Token header missing kid")
+
+    # First look in the cache; on miss, force a refresh and try once more.
+    for force in (False, True):
+        jwks = _fetch_jwks(force=force)
+        for key in jwks.get("keys", []):
+            if key.get("kid") == kid:
+                return key
+    raise AuthError("Unable to find Clerk signing key (kid not in JWKS)")
+
+
+# ---------------------------------------------------------------------------
+# Token decode + role extraction
+# ---------------------------------------------------------------------------
+
+
+def decode_token(token: str) -> dict:
+    """Verify a Clerk session JWT and return its payload."""
+    settings = get_settings()
+
+    if not settings.clerk_jwks_url or not settings.clerk_issuer:
+        raise AuthError("Clerk auth is not configured on the server")
+
+    try:
+        key = _find_signing_key(token)
         payload = jwt.decode(
             token,
-            settings.jwt_secret,
-            algorithms=[settings.jwt_algorithm]
+            key,
+            algorithms=["RS256"],
+            issuer=settings.clerk_issuer,
+            options={
+                # Clerk session tokens don't carry an `aud` claim by default
+                "verify_aud": False,
+            },
         )
         return payload
     except JWTError:
         raise AuthError("Invalid or expired token")
 
 
+def _extract_role(payload: dict) -> str:
+    """Pull ``role`` from the Clerk ``publicMetadata`` claim. Defaults to
+    ``"client"`` if missing/unknown — defense in depth so a bad role string
+    can never accidentally land us as ``"admin"``."""
+    metadata = payload.get("metadata") or {}
+    role = metadata.get("role")
+    if role in ("admin", "client"):
+        return role
+    return "client"
+
+
+# ---------------------------------------------------------------------------
+# FastAPI dependencies
+# ---------------------------------------------------------------------------
+
+
 def get_current_user(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
-    db: Session = Depends(get_db),
 ) -> dict:
+    """Validate the Clerk session token; raise on failure.
+
+    Returns a dict with: sub, role, metadata, claims, source.
     """
-    Validate token and check email whitelist.
-
-    This is a FastAPI dependency that:
-    1. Extracts Bearer token from Authorization header
-    2. Decodes and validates the JWT
-    3. Checks if the email is in the allowed_users table or env whitelist
-
-    Args:
-        credentials: Bearer token from request header
-        db: Database session
-
-    Returns:
-        User info dict with email, name, picture
-
-    Raises:
-        AuthError: If no token or invalid token
-        ForbiddenError: If user not authorized
-    """
-    # Dev mode: skip auth entirely
     settings = get_settings()
+
+    # Dev-only bypass — guarded by BOTH DEBUG and DISABLE_AUTH so it
+    # cannot be flipped on in production by accident.
     if settings.disable_auth and settings.debug:
         return {
+            "sub": "dev-user",
             "email": "dev@localhost",
-            "name": "Dev User",
-            "picture": "",
+            "role": "admin",  # Dev bypass has admin rights
+            "metadata": {"role": "admin"},
+            "claims": {},
             "source": "dev_bypass",
         }
 
     if credentials is None:
         raise AuthError("Missing authentication token")
 
-    # Decode token
     payload = decode_token(credentials.credentials)
 
-    # Extract email from token
-    email = payload.get("email")
-    if not email:
-        raise AuthError("Token missing email claim")
+    sub = payload.get("sub")
+    if not sub:
+        raise AuthError("Token missing sub claim")
 
-    # Check against allowed_users table first
-    user = db.query(AllowedUser).filter(
-        AllowedUser.email == email,
-        AllowedUser.is_active == True,
-    ).first()
-
-    if user:
-        return {
-            "email": email,
-            "name": user.name or payload.get("name", ""),
-            "picture": payload.get("picture", ""),
-            "source": "database",
-        }
-
-    # Fallback: check against environment variable whitelist
-    settings = get_settings()
-    allowed_emails = [e.strip() for e in settings.allowed_emails.split(",") if e.strip()]
-
-    if email in allowed_emails:
-        return {
-            "email": email,
-            "name": payload.get("name", ""),
-            "picture": payload.get("picture", ""),
-            "source": "env_whitelist",
-        }
-
-    # User not authorized
-    raise ForbiddenError("User is not authorized to access this application")
+    return {
+        "sub": sub,
+        "role": _extract_role(payload),
+        "metadata": payload.get("metadata") or {},
+        "claims": payload,
+        "source": "clerk",
+    }
 
 
 def get_optional_user(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
-    db: Session = Depends(get_db),
 ) -> Optional[dict]:
-    """
-    Get current user if authenticated, None otherwise.
+    """Return current user if authenticated, else None.
 
-    Use this for endpoints that work with or without auth.
+    Used by endpoints (e.g. SSE) that accept an optional token.
     """
     if credentials is None:
         return None
-
     try:
-        return get_current_user(credentials, db)
+        return get_current_user(credentials)
     except (AuthError, ForbiddenError):
         return None
 
 
-# Convenience dependency aliases
+def require_admin(user: dict = Depends(get_current_user)) -> dict:
+    """Require the caller to have ``role == "admin"``.
+
+    Any other role (including the default ``"client"``) gets a 403.
+    Use this on every mutation / admin / engine endpoint. Inventory:
+    see ``tasks/client_portal/TASKS.md``.
+    """
+    if user.get("role") != "admin":
+        raise ForbiddenError("Admin role required")
+    return user
+
+
+# Convenience aliases — back-compat with existing imports.
 require_auth = Depends(get_current_user)
 optional_auth = Depends(get_optional_user)
 
 
 def validate_token_string(token: str) -> dict:
-    """
-    Validate a raw JWT token string (for SSE endpoints where
-    EventSource can't send Authorization headers).
+    """Validate a raw JWT string (used by SSE endpoints that can't send
+    Authorization headers and pass the token via query param instead).
 
-    Returns decoded payload or raises AuthError.
+    Returns the same dict shape as ``get_current_user``.
     """
     if not token:
         raise AuthError("Missing authentication token")
-    return decode_token(token)
-
-
-def create_access_token(data: dict, expires_delta: Optional[int] = None) -> str:
-    """
-    Create a new JWT access token.
-
-    This is primarily for testing. In production, tokens come from NextAuth.
-
-    Args:
-        data: Payload data (must include 'email')
-        expires_delta: Expiration in seconds (default: 1 hour)
-
-    Returns:
-        Encoded JWT token
-    """
-    from datetime import timedelta
-
-    settings = get_settings()
-
-    to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(seconds=expires_delta or 3600)
-    to_encode.update({"exp": expire})
-
-    encoded_jwt = jwt.encode(
-        to_encode,
-        settings.jwt_secret,
-        algorithm=settings.jwt_algorithm
-    )
-    return encoded_jwt
+    payload = decode_token(token)
+    sub = payload.get("sub")
+    if not sub:
+        raise AuthError("Token missing sub claim")
+    return {
+        "sub": sub,
+        "role": _extract_role(payload),
+        "metadata": payload.get("metadata") or {},
+        "claims": payload,
+        "source": "clerk_query_param",
+    }

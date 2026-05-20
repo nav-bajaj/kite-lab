@@ -31,7 +31,7 @@ from app.services.quotes_service import (
     QuotesFetchError,
 )
 from app.services.market_service import get_market_status, is_market_open
-from app.auth import get_current_user, validate_token_string, AuthError
+from app.auth import get_current_user, require_admin, validate_token_string, AuthError
 
 logger = logging.getLogger(__name__)
 IST = pytz.timezone("Asia/Kolkata")
@@ -140,7 +140,7 @@ async def get_market_status_endpoint():
 
 
 @router.post("/sync", response_model=SyncResponse)
-async def sync_positions(request: PositionsSyncRequest, user: dict = Depends(get_current_user)):
+async def sync_positions(request: PositionsSyncRequest, user: dict = Depends(require_admin)):
     """
     Sync positions from provided data.
 
@@ -155,7 +155,7 @@ async def sync_positions(request: PositionsSyncRequest, user: dict = Depends(get
 @router.post("/sync-from-csv", response_model=SyncResponse)
 async def sync_from_csv(
     universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(require_admin)
 ):
     """
     Sync positions from the portfolio CSV file.

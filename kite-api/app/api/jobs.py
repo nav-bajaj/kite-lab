@@ -11,7 +11,12 @@ from pydantic import BaseModel, Field
 
 from app.services.job_service import JobService, COMMANDS
 from app.schemas.jobs import JobResponse, JobListResponse
-from app.auth import get_current_user, get_optional_user, validate_token_string, AuthError
+from app.auth import (
+    get_optional_user,
+    require_admin,
+    validate_token_string,
+    AuthError,
+)
 
 router = APIRouter(prefix="/api/jobs", tags=["jobs"])
 
@@ -42,7 +47,7 @@ class CancelResponse(BaseModel):
 async def create_job(
     request: CreateJobRequest,
     background_tasks: BackgroundTasks,
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(require_admin)
 ):
     """
     Create and start a new job.
@@ -92,7 +97,7 @@ async def list_jobs(
     limit: int = Query(default=20, ge=1, le=100),
     universe: Optional[str] = None,
     status: Optional[str] = None,
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(require_admin)
 ):
     """
     List recent jobs with optional filters.
@@ -126,7 +131,7 @@ async def list_jobs(
 
 
 @router.get("/{job_id}", response_model=JobResponse)
-async def get_job(job_id: str, user: dict = Depends(get_current_user)):
+async def get_job(job_id: str, user: dict = Depends(require_admin)):
     """Get details for a specific job."""
     job = JobService.get_job(job_id)
 
@@ -161,15 +166,19 @@ async def get_job_logs(
 
     Auth: accepts token via query param (for EventSource) or Authorization header.
     """
-    # Authenticate via header or query param token
+    # Authenticate via header or query param token, then require admin role.
+    # Job logs may contain subprocess output that could leak operational
+    # data, so they're admin-only just like the other job endpoints.
     if user is None:
         if token:
             try:
-                validate_token_string(token)
+                user = validate_token_string(token)
             except AuthError:
                 raise HTTPException(status_code=401, detail="Invalid or expired token")
         else:
             raise HTTPException(status_code=401, detail="Authentication required")
+    if user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
     job = JobService.get_job(job_id)
 
     if not job:
@@ -195,7 +204,7 @@ async def get_job_logs(
 
 
 @router.post("/{job_id}/cancel", response_model=CancelResponse)
-async def cancel_job(job_id: str, user: dict = Depends(get_current_user)):
+async def cancel_job(job_id: str, user: dict = Depends(require_admin)):
     """
     Cancel a running or queued job.
 

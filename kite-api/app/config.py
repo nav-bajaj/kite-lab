@@ -16,10 +16,17 @@ class Settings(BaseSettings):
     # CORS
     allowed_origins: str = "http://localhost:3000"
 
-    # Authentication
+    # Authentication — Clerk (session-token verification via JWKS)
+    clerk_jwks_url: str = ""
+    clerk_issuer: str = ""
+    clerk_secret_key: str = ""  # For Clerk Backend API calls (future)
+
+    # Legacy authentication settings (kept during transition; the NextAuth
+    # HS256 path was retired in the Clerk migration. Safe to remove once
+    # we're sure no code path references them.)
     jwt_secret: str = "change-me-in-production"
     jwt_algorithm: str = "HS256"
-    allowed_emails: str = ""  # Comma-separated list
+    allowed_emails: str = ""  # Comma-separated list (legacy whitelist; unused with Clerk)
 
     # Kite API (optional - for live data fetch)
     kite_api_key: str = ""

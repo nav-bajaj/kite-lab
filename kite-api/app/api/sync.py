@@ -12,7 +12,7 @@ from pathlib import Path
 from fastapi import APIRouter, Query, HTTPException, Depends, UploadFile, File
 
 from app.config import is_valid_universe, UniverseId, settings
-from app.auth import get_current_user
+from app.auth import require_admin
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ router = APIRouter(prefix="/api/sync", tags=["sync"])
 @router.post("")
 async def sync_universe(
     universe: UniverseId = Query(default="nse500", description="Universe to sync"),
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(require_admin)
 ):
     """
     Sync data from CSVs to database for a universe.
@@ -41,7 +41,7 @@ async def sync_universe(
 
 
 @router.post("/all")
-async def sync_all_universes(user: dict = Depends(get_current_user)):
+async def sync_all_universes(user: dict = Depends(require_admin)):
     """
     Sync data for all universes.
     """
@@ -73,7 +73,7 @@ ALLOWED_UPLOAD_DIRS = {
 async def upload_price_data(
     file: UploadFile = File(...),
     target: str = Query(..., description="Target directory (nse500_data, indices_data, etc.)"),
-    user: dict = Depends(get_current_user)
+    user: dict = Depends(require_admin)
 ):
     """
     Upload a tar.gz archive of price data and extract to the target directory.
