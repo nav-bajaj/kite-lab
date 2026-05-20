@@ -1,0 +1,20 @@
+name: streamline
+status: shipped
+opened: 2026-05-20
+closed: 2026-05-21
+related_commits:
+  - 2fd3a3a  # AUDIT.md
+  - 568438c  # Remove tracked bloat
+  - 118d48f  # Archive 26 closed task folders
+  - dc76cad  # scripts/ — keep 37 production files
+  - ee1f3ab  # Archive root .md + closed docs/
+  - 1b6ec3b  # Archive heavy tracked data + alt-universe dirs
+  - 64a0b08  # MAP.md + tasks conventions + .claude/workflows
+  - bef6a36  # Rewrite CLAUDE.md (826 → 89 lines)
+  - 6886f2a  # RESULTS.md
+  - 5ca487d  # Review fixes (endpoint counts + lean README)
+  - e4066f3  # Merge streamline to main
+supersedes: []
+depends_on: []
+register_rows: []
+archive_branch: repo-snapshot-2026-05-20

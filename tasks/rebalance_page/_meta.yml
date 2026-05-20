@@ -1,0 +1,10 @@
+name: rebalance_page
+status: planned
+opened: 2026-05-19
+closed: null
+related_commits:
+  - 77d4067  # TASKS.md backlog documented
+supersedes: []
+depends_on:
+  - client_portal
+register_rows: []

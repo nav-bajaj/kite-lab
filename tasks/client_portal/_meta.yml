@@ -1,0 +1,17 @@
+name: client_portal
+status: shipped
+opened: 2026-05-20
+closed: 2026-05-20
+related_commits:
+  - fef2d1d  # PLAN.md
+  - 09e1e1f  # Phase 0: NextAuth → Clerk on frontend
+  - 2ffdc41  # Phase 1: backend Clerk JWKS + require_admin
+  - 2fdb35d  # R-022 register row
+  - fdf4a39  # Merge client-portal to main
+  - e5e0057  # R-022 close (backend universe filter live)
+  - d2cc754  # RESULTS.md + status banner
+supersedes:
+  - nextauth_email_whitelist
+depends_on: []
+register_rows:
+  - R-022

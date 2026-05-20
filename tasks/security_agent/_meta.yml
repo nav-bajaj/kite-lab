@@ -1,0 +1,11 @@
+name: security_agent
+status: shipped
+opened: 2026-05-19
+closed: 2026-05-19
+related_commits:
+  - 9d5f570  # /security-audit skill + security-reviewer subagent
+  - d4d005c  # threat model + risk register + auth-flow docs
+  - 82ba003  # SETUP.md install + verification runbook
+supersedes: []
+depends_on: []
+register_rows: []
