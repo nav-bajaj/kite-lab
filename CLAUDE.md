@@ -42,7 +42,7 @@ script, or removed `.md`. Don't push to that branch.
 
 ## Active invariants — do not break
 
-- **Auth:** Clerk verifies session JWTs via JWKS (RS256, issuer-pinned). Role in `publicMetadata.role` (`client`/`admin`). 17 backend mutation/engine endpoints behind `require_admin`. 19 client-read endpoints behind `check_universe_access` (clients can't query admin-only universes). Tests at `kite-api/tests/test_clerk_authz.py` (277 assertions) — don't weaken.
+- **Auth:** Clerk verifies session JWTs via JWKS (RS256, issuer-pinned). Role in `publicMetadata.role` (`client`/`admin`). 15 backend mutation/engine endpoints behind `require_admin`. 20 client-read endpoints behind `check_universe_access` (clients can't query admin-only universes). Tests at `kite-api/tests/test_clerk_authz.py` (277 assertions) — don't weaken.
 - **Universe IDs are stable.** `nse500`, `nifty250`, `nifty100`, `om25_v3`, `tl25_v3`, `l6_v2`, `combo_defensive`. Never rename — they're in DB rows, CSV columns, and URLs. Display names live in `kite-dashboard/src/lib/universes.ts`.
 - **CSP, security headers, rate limiting** on the backend are R-006/R-007 risk-register closures. Loosening any requires a register row first — see `docs/security/risk-register.md`.
 - **Token files** (`access_token.txt`, `session.json`) written with mode 0o600. Pattern in `kite-api/app/services/system_service.py`.
