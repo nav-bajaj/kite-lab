@@ -124,6 +124,12 @@ nifty_250_tests/nifty250_portfolio_*/
 experiments/oos_walkthrough/
 experiments/oos_retune/
 
+# Breadth-atlas experiment runs (large, regenerable from the scripts)
+tasks/breadth_atlas/experiments/runs/
+tasks/breadth_atlas/experiments/runs_3state/
+tasks/breadth_atlas/experiments/portfolios_3state/
+tasks/breadth_atlas/experiments/__pycache__/
+
 # Phase 3.3 latest.json pointer files — regenerated lazily on every
 # sync; no value in tracking.
 **/latest.json

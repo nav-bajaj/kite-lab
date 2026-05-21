@@ -395,7 +395,11 @@ def run_strategy(*,
                            if sym in atr_20_panel.columns else 0.02)
                     if pd.isna(atr):
                         atr = 0.02
-                    trail = max(atr_mult * atr, atr_min_floor)
+                    if hasattr(atr_min_floor, 'get'):
+                        floor = float(atr_min_floor.get(signal_date, 0.0) or 0.0)
+                    else:
+                        floor = float(atr_min_floor)
+                    trail = max(atr_mult * atr, floor)
 
                     hit_dma = use_dma_exit and (sc < s200)
                     hit_atr = use_trailing_stop and (op < -trail)
