@@ -129,6 +129,8 @@ tasks/breadth_atlas/experiments/runs/
 tasks/breadth_atlas/experiments/runs_3state/
 tasks/breadth_atlas/experiments/portfolios_3state/
 tasks/breadth_atlas/experiments/__pycache__/
+tasks/breadth_atlas/combo_3state/runs/
+tasks/breadth_atlas/combo_3state/__pycache__/
 
 # OM25 alternatives experiment runs (regenerable)
 tasks/om25_alt/runs/
