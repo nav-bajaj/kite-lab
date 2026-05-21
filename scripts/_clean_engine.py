@@ -214,6 +214,13 @@ def run_strategy(*,
                                              # don't add new positions during bear regime.
                                              # if False: allow entries at bear-scaled size
                                              # (target_exposure / top_n weight per stock).
+                 regime_redeploy_on_increase=False,  # if True, when target_exposure
+                                             # increases vs the prior day (e.g. bear→bull
+                                             # or bear→deep with 3-state breadth gate),
+                                             # top up existing holdings pro-rata to the
+                                             # new target weight. Symmetric to the
+                                             # existing pro-rata-sell on target decrease.
+                                             # Default False preserves drift-after-entry.
                  ):
     """Generic clean (no-lookahead) backtest.
 
@@ -274,6 +281,7 @@ def run_strategy(*,
     eq_records = []
     trade_records = []
     exit_records = []
+    prev_target_exposure = 1.0
 
     for date in active_cal:
         cr = close_panel.loc[date]
@@ -371,6 +379,57 @@ def run_strategy(*,
                             'slippage': shares_to_sell * exec_price * slippage,
                             'reason': 'regime_bear'
                         })
+
+        # Regime topup: when target_exposure increases vs prior day (e.g. bear→bull
+        # or bear→deep with the 3-state breadth gate), redeploy cash pro-rata
+        # across existing holdings to bring gross exposure up to the new target.
+        # Symmetric to the pro-rata-sell-on-decrease block above. Gated by the
+        # opt-in flag so production strategies that rely on "drift after entry"
+        # remain byte-identical.
+        if (regime_redeploy_on_increase and regime_panel is not None
+                and target_exposure > prev_target_exposure + 1e-9 and holdings):
+            invested = pv - cash
+            target_invested = pv * target_exposure
+            deficit = target_invested - invested
+            if deficit > 0 and cash > 0:
+                # Pro-rata top-up: split the deficit across holdings by current
+                # value so each position scales proportionally toward the new target.
+                holding_values = {}
+                for sym, sh in holdings.items():
+                    p = cr.get(sym, last_prices.get(sym, np.nan))
+                    if pd.isna(p) or p <= 0:
+                        continue
+                    holding_values[sym] = float(sh * p)
+                total_held_value = sum(holding_values.values())
+                if total_held_value > 0:
+                    for sym, hv in holding_values.items():
+                        share_of_deficit = deficit * (hv / total_held_value)
+                        budget = min(share_of_deficit, cash * 0.99)
+                        if budget <= 0:
+                            continue
+                        exec_price = (trade_panel.loc[date, sym]
+                                      if sym in trade_panel.columns else np.nan)
+                        if pd.isna(exec_price) or exec_price <= 0:
+                            continue
+                        shares_to_buy = int(budget / (exec_price * (1 + slippage)))
+                        if shares_to_buy < 1:
+                            continue
+                        cost = shares_to_buy * exec_price * (1 + slippage)
+                        if cost > cash:
+                            continue
+                        holdings[sym] = holdings.get(sym, 0) + shares_to_buy
+                        cost_basis[sym] = cost_basis.get(sym, 0) + cost
+                        cash -= cost
+                        trade_records.append({
+                            'date': date, 'symbol': sym, 'side': 'BUY',
+                            'shares': shares_to_buy, 'price': exec_price,
+                            'notional': shares_to_buy * exec_price,
+                            'slippage': shares_to_buy * exec_price * slippage,
+                            'reason': 'regime_topup'
+                        })
+
+        # Persist the target for the next iteration's increase-detection.
+        prev_target_exposure = target_exposure
 
         # Weekly exit check: signal date close + indicators, execute today.
         # Peak already reflects all closes through signal_date (updated daily
