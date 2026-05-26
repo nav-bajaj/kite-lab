@@ -140,6 +140,11 @@ tasks/om25_alt/__pycache__/
 tasks/tax_study/runs/
 tasks/tax_study/__pycache__/
 
+# Nifty trader signal cache + backtest outputs (regenerable)
+tasks/nifty_trader/cache/
+tasks/nifty_trader/runs/
+tasks/nifty_trader/__pycache__/
+
 # Phase 3.3 latest.json pointer files — regenerated lazily on every
 # sync; no value in tracking.
 **/latest.json
