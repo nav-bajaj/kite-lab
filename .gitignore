@@ -145,6 +145,11 @@ tasks/nifty_trader/cache/
 tasks/nifty_trader/runs/
 tasks/nifty_trader/__pycache__/
 
+# Insight engine — signal cache + generated note outputs (regenerable)
+tasks/insight_engine/cache/
+tasks/insight_engine/runs/
+tasks/insight_engine/__pycache__/
+
 # Phase 3.3 latest.json pointer files — regenerated lazily on every
 # sync; no value in tracking.
 **/latest.json

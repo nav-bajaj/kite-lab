@@ -1,0 +1,7 @@
+name: insight_engine
+status: in-progress
+opened: 2026-05-26
+closed: null
+branch: insight-engine
+related_commits: []
+supersedes: nifty_trader  # research line closed; data engines repurposed for insights product
