@@ -305,6 +305,106 @@ def render_charts(ctxs: dict[str, StrategyContext],
 
 # ---------- HTML ----------
 
+def _per_fy_compact_html(ctxs: dict[str, StrategyContext]) -> str:
+    """Compact table: FY × 4 strategies showing total tax in ₹ lakhs."""
+    all_fys = sorted(set(fy.fy_start for c in ctxs.values() for fy in c.fy_results))
+    strategy_names = list(ctxs.keys())
+    short_names = [n.split(" (")[0] for n in strategy_names]
+
+    rows = []
+    running_totals = [0.0] * len(strategy_names)
+    for fy in all_fys:
+        fy_label = f"FY{fy.year}-{str(fy.year + 1)[-2:]}"
+        cells = []
+        row_total = 0.0
+        for i, name in enumerate(strategy_names):
+            fy_tax = next((x for x in ctxs[name].fy_results if x.fy_start == fy), None)
+            t = fy_tax.total_tax if fy_tax else 0.0
+            running_totals[i] += t
+            row_total += t
+            css = "tax-zero" if t < 1 else ("tax-low" if t < 5_00_000 else ("tax-mid" if t < 20_00_000 else "tax-high"))
+            cells.append(f'<td class="{css}">{("—" if t < 1 else f"₹{t/1e5:.1f}L")}</td>')
+        rows.append(f'<tr><td class="fy-label">{fy_label}</td>{"".join(cells)}<td class="row-total"><strong>₹{row_total/1e5:.1f}L</strong></td></tr>')
+
+    # Final cumulative row
+    cum_cells = [f'<td class="cum-total"><strong>₹{rt/1e5:.1f}L</strong></td>' for rt in running_totals]
+    cum_total = sum(running_totals)
+    rows.append(f'<tr class="cum-row"><td class="fy-label"><strong>Total</strong></td>{"".join(cum_cells)}<td class="row-total"><strong>₹{cum_total/1e5:.1f}L</strong></td></tr>')
+
+    header_cells = "".join(f"<th>{n}</th>" for n in short_names)
+    return f"""<table class="per-fy-compact">
+  <thead>
+    <tr><th>FY</th>{header_cells}<th>Row total</th></tr>
+  </thead>
+  <tbody>
+{chr(10).join(rows)}
+  </tbody>
+</table>"""
+
+
+def _per_fy_detail_html(name: str, ctx: StrategyContext) -> str:
+    """Per-strategy detail table — ST/LT gross, exemption, CF use, taxes."""
+    rows = []
+    totals = {"st_gross": 0.0, "lt_gross": 0.0, "ltcg_exempt": 0.0,
+              "cf_used": 0.0, "stcg_tax": 0.0, "ltcg_tax": 0.0, "total": 0.0}
+    for fy in ctx.fy_results:
+        cf_used = fy.cf_stcl_used + fy.cf_ltcl_used + fy.intra_fy_stcl_used_against_lt
+        totals["st_gross"] += fy.st_gross
+        totals["lt_gross"] += fy.lt_gross
+        totals["ltcg_exempt"] += fy.ltcg_exemption_used
+        totals["cf_used"] += cf_used
+        totals["stcg_tax"] += fy.stcg_tax
+        totals["ltcg_tax"] += fy.ltcg_tax
+        totals["total"] += fy.total_tax
+
+        def _fmt(x: float, blank_below: float = 0.5) -> str:
+            if abs(x) < blank_below:
+                return "—"
+            sign = "−" if x < 0 else ""
+            return f"{sign}₹{abs(x)/1e5:.1f}L"
+
+        rows.append(f"""<tr>
+  <td>{fy.fy_label}</td>
+  <td>{_fmt(fy.st_gross)}</td>
+  <td>{_fmt(fy.lt_gross)}</td>
+  <td>{_fmt(cf_used)}</td>
+  <td>{_fmt(fy.ltcg_exemption_used)}</td>
+  <td>{_fmt(fy.stcg_tax)}</td>
+  <td>{_fmt(fy.ltcg_tax)}</td>
+  <td class="row-total"><strong>{_fmt(fy.total_tax)}</strong></td>
+</tr>""")
+    # Totals row
+    rows.append(f"""<tr class="cum-row">
+  <td><strong>Total</strong></td>
+  <td><strong>₹{totals['st_gross']/1e5:.1f}L</strong></td>
+  <td><strong>₹{totals['lt_gross']/1e5:.1f}L</strong></td>
+  <td><strong>₹{totals['cf_used']/1e5:.1f}L</strong></td>
+  <td><strong>₹{totals['ltcg_exempt']/1e5:.1f}L</strong></td>
+  <td><strong>₹{totals['stcg_tax']/1e5:.1f}L</strong></td>
+  <td><strong>₹{totals['ltcg_tax']/1e5:.1f}L</strong></td>
+  <td class="row-total"><strong>₹{totals['total']/1e5:.1f}L</strong></td>
+</tr>""")
+
+    return f"""<h3>{name}</h3>
+<table class="per-fy-detail">
+  <thead>
+    <tr>
+      <th>FY</th>
+      <th>ST gross</th>
+      <th>LT gross</th>
+      <th>Losses offset</th>
+      <th>LTCG exempt</th>
+      <th>STCG tax</th>
+      <th>LTCG tax</th>
+      <th>Total tax</th>
+    </tr>
+  </thead>
+  <tbody>
+{chr(10).join(rows)}
+  </tbody>
+</table>"""
+
+
 def _window_row_html(r: WindowResult) -> str:
     drag = r.drag_bps
     css = "drag-low" if drag < 600 else ("drag-mid" if drag < 800 else "drag-high")
@@ -401,11 +501,16 @@ def main() -> None:
     window_rows = [_window_row_html(r) for r in window_results]
     bh_window_rows = [_window_row_html(r) for r in bh_window_results]
 
+    per_fy_compact = _per_fy_compact_html(ctxs)
+    per_fy_detail = "\n".join(_per_fy_detail_html(n, c) for n, c in ctxs.items())
+
     generated = datetime.now().strftime("%Y-%m-%d %H:%M")
     html = TEMPLATE.format(
         full_rows="\n".join(full_rows),
         window_rows="\n".join(window_rows),
         bh_window_rows="\n".join(bh_window_rows),
+        per_fy_compact=per_fy_compact,
+        per_fy_detail=per_fy_detail,
         chart_cagr=charts["cagr_bars"],
         chart_curves=charts["equity_curves"],
         chart_per_fy=charts["per_fy_tax"],
@@ -449,6 +554,14 @@ TEMPLATE = """<!DOCTYPE html>
     .pill-oos {{ background: #f7e2d8; color: #b54e1c; }}
     .pill-preIS {{ background: #ececec; color: #555; }}
     .pill-full {{ background: #ddf3df; color: #297a3b; }}
+    .per-fy-compact td.fy-label, .per-fy-detail td:first-child {{ font-weight: 600; }}
+    .per-fy-compact td.tax-zero {{ color: #aaa; }}
+    .per-fy-compact td.tax-low {{ color: #2a7747; }}
+    .per-fy-compact td.tax-mid {{ color: #c07a00; }}
+    .per-fy-compact td.tax-high {{ color: #b03020; font-weight: 600; }}
+    .per-fy-compact td.row-total, .per-fy-detail td.row-total {{ background: #fafafb; }}
+    tr.cum-row {{ background: #f0f0f2; border-top: 2px solid #aaa; }}
+    .per-fy-detail {{ margin-bottom: 1.5em; font-size: 0.84em; }}
     .chart {{ margin: 1.2em 0 1.8em; text-align: center; }}
     .chart img {{ max-width: 100%; height: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border-radius: 4px; }}
     .chart-note {{ font-size: 0.85em; color: var(--muted); margin: -0.6em 0 1.5em; text-align: center; }}
@@ -569,6 +682,14 @@ TEMPLATE = """<!DOCTYPE html>
   <h2>Year-by-year tax bills</h2>
   <div class="chart"><img src="data:image/png;base64,{chart_per_fy}" alt="Per-FY tax bars"></div>
   <p class="chart-note">Per-FY STCG (blue shades) and LTCG (orange shades) for each strategy in ₹ lakhs. Note the FY2023-24 spike — strong realization year across all four strategies, driven by the 2023 mid-cap rally.</p>
+
+  <h3>Per-FY total tax — cross-strategy comparison</h3>
+  <p style="font-size:0.9em; color:var(--muted)">Total tax paid each FY by each strategy, in ₹ lakhs. Empty (—) cells mean no tax was due (gains absorbed by losses / exemption). Heatmap: green = low, amber = medium, red = high tax bill.</p>
+{per_fy_compact}
+
+  <h3>Per-FY detail by strategy</h3>
+  <p style="font-size:0.9em; color:var(--muted)">For each strategy, the full breakdown per FY: realized ST/LT gross gains (signed — negative = losses), losses offset (intra-FY + carry-forward), LTCG exemption used, and the resulting STCG/LTCG tax. All amounts in ₹ lakhs.</p>
+{per_fy_detail}
 
   <div class="caveats">
     <strong>Caveats — read before using these numbers</strong>
