@@ -150,6 +150,9 @@ tasks/insight_engine/cache/
 tasks/insight_engine/runs/
 tasks/insight_engine/__pycache__/
 
+# Insight engine runtime cache (kite-api/app/insights/* uses this)
+cache/insights/
+
 # Phase 3.3 latest.json pointer files — regenerated lazily on every
 # sync; no value in tracking.
 **/latest.json
