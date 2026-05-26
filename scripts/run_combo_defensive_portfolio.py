@@ -121,6 +121,7 @@ def parse_args():
     ap.add_argument("--regime-index", type=Path,
                     default=ROOT / LOCKED["regime_index_path"])
     ap.add_argument("--initial-capital", type=float, default=1_000_000)
+    ap.add_argument("--slippage", type=float, default=LOCKED["slippage"])
     ap.add_argument("--output-dir", type=Path, default=None)
     ap.add_argument("--shared-state-file", type=Path, default=None,
                     help="Pickle cache from scripts/pipeline_core.py; if set, "
@@ -239,7 +240,7 @@ def main():
         signal_function=combo_score, signal_function_args={},
         sma_200_panel=sma_200, atr_20_panel=atr_20,
         top_n=LOCKED["top_n"], exit_buffer=LOCKED["exit_buffer"],
-        max_weight=LOCKED["max_weight"], slippage=LOCKED["slippage"],
+        max_weight=LOCKED["max_weight"], slippage=args.slippage,
         atr_mult=0.0, atr_min_floor=0.0,
         use_trailing_stop=False, use_dma_exit=False,
         weekly_rank_check=False,
@@ -265,7 +266,7 @@ def main():
     write_dashboard_outputs(
         dashboard_dir=dashboard_dir,
         eq=eq, trades=trades, exits=exits,
-        close_panel=close_panel, slippage=LOCKED["slippage"],
+        close_panel=close_panel, slippage=args.slippage,
     )
 
     pv = eq.set_index("date")["pv"].astype(float)
