@@ -13,8 +13,9 @@ See `PLAN.md` for full context, design decisions, and editorial guidelines.
 |---|---|---|---|---|
 | 0.0 | Rename branch `nifty-trader` → `insight-engine`, push, delete old remote | 🤖 | 🟢 | ✅ |
 | 0.1 | Stand up `tasks/insight_engine/` task folder (PLAN/TASKS/_meta) | 🤖 | 🟢 | ✅ |
-| 0.2 | Promote `tasks/nifty_trader/breadth_signals.py` → `kite-api/app/insights/breadth.py` (with caching layer) | 🤖 | 🟡 | ☐ |
-| 0.3 | Promote `tasks/nifty_trader/macro_signals.py` → `kite-api/app/insights/macro.py` | 🤖 | 🟡 | ☐ |
+| 0.2 | Promote `tasks/nifty_trader/breadth_signals.py` → `kite-api/app/insights/breadth.py` — paths via `settings.data_dir`, disk cache + `@lru_cache`, mtime-based invalidation | 🤖 | 🟡 | ✅ |
+| 0.3 | Promote `tasks/nifty_trader/macro_signals.py` → `kite-api/app/insights/macro.py` — same caching/path treatment | 🤖 | 🟡 | ✅ |
+| 0.3a | Test `kite-api/tests/test_insights_breadth_macro.py` — 13 tests verify schema, value ranges, cache mechanics. All passing. | 🤖 | 🟡 | ✅ |
 | 0.4 | Write `scripts/fetch_sector_constituents.py` (NSE sector index constituent CSV ingestion, monthly snapshots) — done, includes DUMMY-placeholder filter | 🤖 | 🔴 | ✅ |
 | 0.4a | Write `tests/test_sector_constituents.py` — 11 tests covering schema, size, hygiene, price-data cross-ref, anchor stocks. All passing. | 🤖 | 🔴 | ✅ |
 | 0.5 | Initial sector constituent snapshots committed at `data/static/sector_constituents/2026-05/` (12 sectors, 212 total constituents) | 🤖 | 🔴 | ✅ |
