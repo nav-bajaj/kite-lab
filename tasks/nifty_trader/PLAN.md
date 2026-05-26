@@ -53,11 +53,27 @@ research line so we stop wondering.
 - **Phase 2 (if alpha validates):** import NIFTY F1 (front-month futures)
   history, re-run with real futures prices and roll costs.
 
-### Position structure — LOCKED
-**Symmetric long/short:** position ∈ {−100%, 0, +100%} of notional capital.
-Bets either way based on signal. Tests whether breadth predicts declines as
-well as rallies. The "long/short" framing of the initiative gets the cleanest
-expression.
+### Position structure — REVISED post Phase 1 EDA
+
+**Pivot: long-bias stress-buyer with filtered shorts.**
+
+Original plan: symmetric long/short (±100%). Phase 1 EDA showed pure
+breadth signals don't generate stable short-side alpha — sign instability
+between IS (2010-18) and OOS (2019-26) is severe. The robust alpha is
+mean-reversion off stress signals (VIX, 52w lows, cumulative A/D).
+
+New design:
+- **Long signal:** primary driver = VIX high (z-score > threshold) OR
+  cumulative_ad sharply declining (panic). Position sized by signal
+  strength.
+- **Short signal:** requires MULTIPLE bearish signals to align —
+  e.g., VIX rising + sector breadth deteriorating + cumulative A/D
+  rolling over. Conservative because the data says short alpha is rare;
+  we only take shorts with high specificity.
+- **Default state:** cash (no position). The strategy is "off" most of
+  the time, "on" during identifiable stress or overheating.
+- **Position range:** continuous in [-50%, +100%]. Asymmetric ceiling
+  reflects Indian market's structural long-drift.
 
 ### Capital scale — LOCKED
 **₹25L starting capital.** Above the ~₹6L single-lot threshold for Nifty
