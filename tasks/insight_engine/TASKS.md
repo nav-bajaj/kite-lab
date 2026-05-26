@@ -15,8 +15,9 @@ See `PLAN.md` for full context, design decisions, and editorial guidelines.
 | 0.1 | Stand up `tasks/insight_engine/` task folder (PLAN/TASKS/_meta) | 🤖 | 🟢 | ✅ |
 | 0.2 | Promote `tasks/nifty_trader/breadth_signals.py` → `kite-api/app/insights/breadth.py` (with caching layer) | 🤖 | 🟡 | ☐ |
 | 0.3 | Promote `tasks/nifty_trader/macro_signals.py` → `kite-api/app/insights/macro.py` | 🤖 | 🟡 | ☐ |
-| 0.4 | Write `scripts/fetch_sector_constituents.py` (NSE sector index constituent CSV ingestion, monthly snapshots) | 🤖 | 🔴 | ☐ |
-| 0.5 | Initial sector constituent snapshots committed at `data/static/sector_constituents/YYYY-MM/` (11 sectors) | 🤖 | 🔴 | ☐ |
+| 0.4 | Write `scripts/fetch_sector_constituents.py` (NSE sector index constituent CSV ingestion, monthly snapshots) — done, includes DUMMY-placeholder filter | 🤖 | 🔴 | ✅ |
+| 0.4a | Write `tests/test_sector_constituents.py` — 11 tests covering schema, size, hygiene, price-data cross-ref, anchor stocks. All passing. | 🤖 | 🔴 | ✅ |
+| 0.5 | Initial sector constituent snapshots committed at `data/static/sector_constituents/2026-05/` (12 sectors, 212 total constituents) | 🤖 | 🔴 | ✅ |
 | 0.6 | Build `kite-api/app/insights/sector_constituents.py` (load + serve current mapping) | 🤖 | 🟡 | ☐ |
 | 0.7 | Build `kite-api/app/insights/sector_breadth.py` — % above 50/200-DMA on constituents, internal dispersion, top/bottom by RS, sector thrust detector | 🤖 | 🔴 | ☐ |
 | 0.8 | Build `kite-api/app/insights/sector_rs.py` — rank sectors by 5/20/60/120/252d RS, week-over-week movement, narrow-vs-broad overlay using sector_breadth | 🤖 | 🟡 | ☐ |
