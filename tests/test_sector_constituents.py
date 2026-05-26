@@ -208,6 +208,17 @@ class TestSectorConstituentsSchema(unittest.TestCase):
     # constituents outside our NSE 500 panel; downstream breadth computations
     # should treat them as "low-confidence" sectors. Documented here so the
     # coverage gap is explicit and tracked.
+    #
+    # Tracked follow-up: tasks/insight_engine/TASKS.md task 0.5a — fetch the
+    # missing price data via Kite Connect (we have access). Once that lands,
+    # NIFTY_MEDIA should graduate out of this set.
+    #
+    # Current state per snapshot 2026-05:
+    #   NIFTY_MEDIA              40% (4/10) — 6 small-caps to fetch
+    #   NIFTY_CONSUMER_DURABLES  92% (12/13) — LGEINDIA to fetch
+    #   NIFTY_IT                 90% (9/10) — LTM to fetch
+    # CD and IT both clear the 70% default threshold, so don't need to be
+    # listed here; they're just noted for the follow-up task.
     PARTIAL_COVERAGE_SECTORS = {"NIFTY_MEDIA"}
 
     def test_symbols_have_price_data(self):
