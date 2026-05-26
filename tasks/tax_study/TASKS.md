@@ -70,6 +70,6 @@ Risk tags: 🔴 high (can invalidate the report), 🟡 medium (changes numbers b
 
 | # | Task | Owner | Risk | Done |
 |---|---|---|---|---|
-| 7.1 | Commit + push to `tax-study` branch | 🤖 | 🟢 | ☐ |
-| 7.2 | Open PR back to main | 👤 | 🟢 | ☐ |
-| 7.3 | Write `RESULTS.md` | 🤖 | 🟢 | ☐ |
+| 7.1 | Commit + push to `tax-study` branch (commit `a435210`, pushed) | 🤖 | 🟢 | ✅ |
+| 7.2 | Open PR back to main — `gh pr create` or via https://github.com/nav-bajaj/kite-lab/pull/new/tax-study | 👤 | 🟢 | ☐ |
+| 7.3 | `RESULTS.md` written; `_meta.yml` status → `shipped` | 🤖 | 🟢 | ✅ |

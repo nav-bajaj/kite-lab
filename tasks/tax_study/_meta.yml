@@ -3,4 +3,5 @@ status: shipped
 opened: 2026-05-26
 closed: 2026-05-26
 branch: tax-study
-related_commits: []
+related_commits:
+  - a435210  # tax_study: per-trade Indian CG tax model + NIFTY 50 B&H benchmark

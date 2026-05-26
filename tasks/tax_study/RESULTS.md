@@ -69,7 +69,7 @@ All gates passed:
 
 ## Commits
 
-(Filled in at commit time)
+- `a435210` — tax_study: per-trade Indian CG tax model + NIFTY 50 B&H benchmark (initial)
 
 ## Files changed
 
