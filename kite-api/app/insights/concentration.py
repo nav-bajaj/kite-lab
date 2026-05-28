@@ -13,9 +13,15 @@ Surfaces:
     returns) spread — large positive spread = narrow tape driven by big names;
     large negative spread = broad participation lifting equal weights more
 
-Weights live in `data/static/nifty50_weights.csv` — refresh quarterly from
-the NSE Nifty 50 factsheet. Constituent prices come from
-`nse500_data_merged/<SYMBOL>_day.csv` (all 50 Nifty 50 names are in NSE 500).
+Weights come from dated NSE factsheet snapshots under
+`data/static/index_weights/NIFTY_50/<YYYY-MM-DD>.csv`. The loader picks
+the most recent dated file. Refresh = drop a new factsheet CSV in the
+folder; the loader auto-discovers it.
+
+Constituent prices come from `nse500_data_merged/<SYMBOL>_day.csv`.
+Names that aren't in our panel (e.g., very recent IPOs) are silently
+dropped from attribution with `n_constituents_covered` reflecting the
+coverage.
 
 Caching: `@lru_cache` on the loaders; per-date attribution is cheap so no
 disk pickle.
@@ -36,8 +42,20 @@ def _data_root() -> Path:
     return get_settings().data_dir
 
 
-def _weights_file() -> Path:
-    return _data_root() / "data" / "static" / "nifty50_weights.csv"
+def _weights_dir() -> Path:
+    return _data_root() / "data" / "static" / "index_weights" / "NIFTY_50"
+
+
+def _latest_weights_file() -> Path:
+    """Most recent `<YYYY-MM-DD>.csv` factsheet snapshot in the weights dir."""
+    candidates = sorted(_weights_dir().glob("[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].csv"))
+    if not candidates:
+        raise FileNotFoundError(
+            f"No factsheet snapshot CSVs found in {_weights_dir()}. "
+            "Expected files named YYYY-MM-DD.csv (e.g., 2026-04-30.csv) — "
+            "see data/static/index_weights/README.md."
+        )
+    return candidates[-1]
 
 
 def _prices_dir() -> Path:
@@ -52,13 +70,14 @@ def _index_file() -> Path:
 def load_weights() -> pd.Series:
     """Symbol → weight (normalised to sum to exactly 100).
 
-    Source CSV weights are approximate (NSE factsheet snapshot, refreshed
-    quarterly); we normalise on load so attribution math is invariant to
-    minor drift in the snapshot.
+    Reads the most recent dated factsheet snapshot under
+    `data/static/index_weights/NIFTY_50/`. Source weights from the NSE
+    factsheet sum to ~100 with rounding; we re-normalise so attribution
+    math is exactly invariant.
     """
-    df = pd.read_csv(_weights_file(), comment="#")
+    df = pd.read_csv(_latest_weights_file())
     df["symbol"] = df["symbol"].astype(str).str.strip()
-    raw = pd.Series(df["weight"].astype(float).values, index=df["symbol"].values)
+    raw = pd.Series(df["weight_pct"].astype(float).values, index=df["symbol"].values)
     return raw * (100.0 / raw.sum())
 
 

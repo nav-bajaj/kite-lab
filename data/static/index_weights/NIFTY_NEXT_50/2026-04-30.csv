@@ -1,0 +1,55 @@
+symbol,security_name,industry,close_price,index_mcap_cr,weight_pct
+ABB,ABB India Ltd.,Capital Goods,7230.00,37816,1.54
+ADANIENSOL,Adani Energy Solutions Ltd.,Power,1342.25,46434,1.89
+ADANIGREEN,Adani Green Energy Ltd.,Power,1227.15,41026,1.67
+ADANIPOWER,Adani Power Ltd.,Power,221.85,91503,3.72
+AMBUJACEM,Ambuja Cements Ltd.,Construction Materials,444.20,27014,1.10
+DMART,Avenue Supermarts Ltd.,Consumer Services,4585.90,67329,2.74
+BAJAJHLDNG,Bajaj Holdings & Investment Ltd.,Financial Services,10267.00,44325,1.80
+BANKBARODA,Bank of Baroda,Financial Services,263.46,48741,1.98
+BPCL,Bharat Petroleum Corporation Ltd.,Oil Gas & Consumable Fuels,300.45,60721,2.47
+BOSCHLTD,Bosch Ltd.,Automobile and Auto Components,35995.00,31132,1.27
+BRITANNIA,Britannia Industries Ltd.,Fast Moving Consumer Goods,5726.00,67273,2.73
+CGPOWER,CG Power and Industrial Solutions Ltd.,Capital Goods,813.35,55647,2.26
+CANBK,Canara Bank,Financial Services,134.65,45270,1.84
+CHOLAFIN,Cholamandalam Investment and Finance Company Ltd.,Financial Services,1562.90,66746,2.71
+CUMMINSIND,Cummins India Ltd.,Capital Goods,5266.40,70939,2.88
+DLF,DLF Ltd.,Realty,587.00,37550,1.53
+DIVISLAB,Divi's Laboratories Ltd.,Healthcare,6502.50,82402,3.35
+DUMMYVEDL1,Dummy Vedanta Ltd. 1,Metals & Mining,121.03,20507,0.83
+DUMMYVEDL2,Dummy Vedanta Ltd. 2,Power,121.03,20507,0.83
+DUMMYVEDL3,Dummy Vedanta Ltd. 3,Oil Gas & Consumable Fuels,121.03,20507,0.83
+DUMMYVEDL4,Dummy Vedanta Ltd. 4,Metals & Mining,121.03,20507,0.83
+GAIL,GAIL (India) Ltd.,Oil Gas & Consumable Fuels,163.23,43906,1.78
+GODREJCP,Godrej Consumer Products Ltd.,Fast Moving Consumer Goods,1067.10,42805,1.74
+HDFCAMC,HDFC Asset Management Company Ltd.,Financial Services,2712.60,55110,2.24
+HAL,Hindustan Aeronautics Ltd.,Capital Goods,4338.80,82087,3.34
+HINDZINC,Hindustan Zinc Ltd.,Metals & Mining,595.95,25763,1.05
+HYUNDAI,Hyundai Motor India Ltd.,Automobile and Auto Components,1817.60,25844,1.05
+INDHOTEL,Indian Hotels Co. Ltd.,Consumer Services,635.85,55678,2.26
+IOC,Indian Oil Corporation Ltd.,Oil Gas & Consumable Fuels,142.25,53000,2.15
+IRFC,Indian Railway Finance Corporation Ltd.,Financial Services,104.21,20903,0.85
+JINDALSTEL,Jindal Steel Ltd.,Metals & Mining,1223.10,45171,1.84
+LTM,LTM Ltd.,Information Technology,4269.60,39505,1.61
+LODHA,Lodha Developers Ltd.,Realty,897.90,25210,1.02
+MAZDOCK,Mazagoan Dock Shipbuilders Ltd.,Capital Goods,2733.20,20706,0.84
+MUTHOOTFIN,Muthoot Finance Ltd.,Financial Services,3424.20,36619,1.49
+PIDILITIND,Pidilite Industries Ltd.,Chemicals,1375.70,42547,1.73
+PFC,Power Finance Corporation Ltd.,Financial Services,448.40,65108,2.65
+PNB,Punjab National Bank,Financial Services,109.36,37602,1.53
+RECLTD,REC Ltd.,Financial Services,354.30,44129,1.79
+MOTHERSON,Samvardhana Motherson International Ltd.,Automobile and Auto Components,121.21,53494,2.17
+SHREECEM,Shree Cement Ltd.,Construction Materials,24195.00,32270,1.31
+ENRIN,Siemens Energy India Ltd.,Capital Goods,3278.80,28917,1.18
+SIEMENS,Siemens Ltd.,Capital Goods,3808.20,33564,1.36
+SOLARINDS,Solar Industries India Ltd.,Chemicals,15439.00,37504,1.52
+TVSMOTOR,TVS Motor Company Ltd.,Automobile and Auto Components,3492.90,81800,3.32
+TATACAP,Tata Capital Ltd.,Financial Services,333.15,14351,0.58
+TMCV,Tata Motors Ltd.,Capital Goods,409.90,85427,3.47
+TATAPOWER,Tata Power Co. Ltd.,Power,444.55,74213,3.02
+TORNTPHARM,Torrent Pharmaceuticals Ltd.,Healthcare,4185.10,43651,1.77
+UNIONBANK,Union Bank of India,Financial Services,165.94,31975,1.30
+UNITDSPR,United Spirits Ltd.,Fast Moving Consumer Goods,1325.60,39045,1.59
+VBL,Varun Beverages Ltd.,Fast Moving Consumer Goods,513.70,70108,2.85
+VEDL,Vedanta Ltd.,Metals & Mining,271.55,46012,1.87
+ZYDUSLIFE,Zydus Lifesciences Ltd.,Healthcare,891.90,22249,0.90

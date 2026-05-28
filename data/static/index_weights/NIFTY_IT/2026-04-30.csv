@@ -1,0 +1,11 @@
+symbol,security_name,industry,close_price,index_mcap_cr,weight_pct
+COFORGE,Coforge Ltd.,Information Technology,1195.90,55273,4.84
+HCLTECH,HCL Technologies Ltd.,Information Technology,1199.10,122472,10.73
+INFY,Infosys Ltd.,Information Technology,1181.80,312189,27.34
+LTM,LTM Ltd.,Information Technology,4269.60,54517,4.77
+MPHASIS,MphasiS Ltd.,Information Technology,2276.70,41460,3.63
+OFSS,Oracle Financial Services Software Ltd.,Information Technology,9726.50,31888,2.79
+PERSISTENT,Persistent Systems Ltd.,Information Technology,4800.00,71868,6.29
+TCS,Tata Consultancy Services Ltd.,Information Technology,2473.90,244516,21.41
+TECHM,Tech Mahindra Ltd.,Information Technology,1473.50,128731,11.27
+WIPRO,Wipro Ltd.,Information Technology,200.65,78909,6.91

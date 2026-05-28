@@ -1,0 +1,21 @@
+symbol,security_name,industry,close_price,index_mcap_cr,weight_pct
+AXISBANK,Axis Bank Ltd.,Financial Services,1268.30,440291,10.02
+BSE,BSE Ltd.,Financial Services,3640.50,214428,4.88
+BAJFINANCE,Bajaj Finance Ltd.,Financial Services,937.00,361302,8.22
+BAJAJFINSV,Bajaj Finserv Ltd.,Financial Services,1747.20,145355,3.31
+CHOLAFIN,Cholamandalam Investment and Finance Company Ltd.,Financial Services,1562.90,96477,2.19
+HDFCBANK,HDFC Bank Ltd.,Financial Services,771.70,804135,18.30
+HDFCLIFE,HDFC Life Insurance Company Ltd.,Financial Services,586.90,90969,2.07
+ICICIBANK,ICICI Bank Ltd.,Financial Services,1263.40,593026,13.49
+ICICIGI,ICICI Lombard General Insurance Company Ltd.,Financial Services,1763.20,56483,1.29
+JIOFIN,Jio Financial Services Ltd.,Financial Services,246.37,116462,2.65
+KOTAKBANK,Kotak Mahindra Bank Ltd.,Financial Services,383.30,406738,9.25
+LICHSGFIN,LIC Housing Finance Ltd.,Financial Services,554.70,33712,0.77
+MFSL,Max Financial Services Ltd.,Financial Services,1585.70,60961,1.39
+MUTHOOTFIN,Muthoot Finance Ltd.,Financial Services,3424.20,48311,1.10
+PFC,Power Finance Corporation Ltd.,Financial Services,448.40,92362,2.10
+RECLTD,REC Ltd.,Financial Services,354.30,55188,1.26
+SBICARD,SBI Cards and Payment Services Ltd.,Financial Services,643.90,37346,0.85
+SBILIFE,SBI Life Insurance Company Ltd.,Financial Services,1819.00,117755,2.68
+SHRIRAMFIN,Shriram Finance Ltd.,Financial Services,937.35,189205,4.30
+SBIN,State Bank of India,Financial Services,1068.45,434822,9.89

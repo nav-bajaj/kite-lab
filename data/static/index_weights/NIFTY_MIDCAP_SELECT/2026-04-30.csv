@@ -1,0 +1,26 @@
+symbol,security_name,industry,close_price,index_mcap_cr,weight_pct
+AUBANK,AU Small Finance Bank Ltd.,Financial Services,1015.95,57303,4.57
+ASHOKLEY,Ashok Leyland Ltd.,Capital Goods,162.09,46247,3.68
+AUROPHARMA,Aurobindo Pharma Ltd.,Healthcare,1389.50,38733,3.09
+BSE,BSE Ltd.,Financial Services,3640.50,148349,11.82
+BHARATFORG,Bharat Forge Ltd.,Automobile and Auto Components,1881.60,50015,3.98
+BHEL,Bharat Heavy Electricals Ltd.,Capital Goods,352.41,51298,4.09
+DIXON,Dixon Technologies (India) Ltd.,Consumer Durables,11166.50,45946,3.66
+FORTIS,Fortis Healthcare Ltd.,Healthcare,922.95,47962,3.82
+HEROMOTOCO,Hero MotoCorp Ltd.,Automobile and Auto Components,5099.00,66003,5.26
+HINDPETRO,Hindustan Petroleum Corporation Ltd.,Oil Gas & Consumable Fuels,374.55,35867,2.86
+INDIANB,Indian Bank,Financial Services,851.85,30020,2.39
+INDUSTOWER,Indus Towers Ltd.,Telecommunication,409.95,52913,4.22
+INDUSINDBK,IndusInd Bank Ltd.,Financial Services,916.05,60160,4.79
+NAUKRI,Info Edge (India) Ltd.,Consumer Services,972.85,37070,2.95
+LICI,Life Insurance Corporation of India,Financial Services,797.90,17662,1.41
+LUPIN,Lupin Ltd.,Healthcare,2305.20,55753,4.44
+MARICO,Marico Ltd.,Fast Moving Consumer Goods,775.00,40900,3.26
+PAYTM,One 97 Communications Ltd.,Financial Services,1095.80,45957,3.66
+POLICYBZR,PB Fintech Ltd.,Financial Services,1666.20,56611,4.51
+PERSISTENT,Persistent Systems Ltd.,Information Technology,4800.00,52078,4.15
+POLYCAB,Polycab India Ltd.,Capital Goods,8110.50,42682,3.40
+SRF,SRF Ltd.,Chemicals,2518.60,36460,2.90
+SUZLON,Suzlon Energy Ltd.,Capital Goods,55.58,67276,5.36
+SWIGGY,Swiggy Ltd.,Consumer Services,270.30,36987,2.95
+YESBANK,Yes Bank Ltd.,Financial Services,19.93,34901,2.78
