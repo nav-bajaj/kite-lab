@@ -100,6 +100,7 @@ class TestMarketReading:
             "sector_breadth", "sector_rs", "sector_leaderboard_60d",
             "analogs", "analog_distribution", "conditional", "watchlists",
             "concentration",
+            "subgroups", "sibling_spreads",  # Phase 4.3
         }
         assert set(d.keys()) == expected_keys
 

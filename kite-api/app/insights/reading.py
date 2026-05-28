@@ -31,6 +31,7 @@ from app.insights import (
     sector_breadth,
     sector_rs,
     stress,
+    subgroups,
     watchlists,
 )
 
@@ -69,6 +70,10 @@ class MarketReading:
     # Structural — concentration / attribution of today's Nifty 50 move
     concentration: concentration.ConcentrationReading
 
+    # Sector subgroup tracker — within-sector splits
+    subgroups: dict[str, subgroups.SubgroupSnapshot]
+    sibling_spreads: list[subgroups.SubgroupSpread]
+
     def to_dict(self) -> dict[str, Any]:
         """Fully JSON-serializable nested dict. Used by the API layer."""
         return {
@@ -94,6 +99,8 @@ class MarketReading:
                 for k, entries in self.watchlists.items()
             },
             "concentration": self.concentration.to_dict(),
+            "subgroups": {k: v.to_dict() for k, v in self.subgroups.items()},
+            "sibling_spreads": [s.to_dict() for s in self.sibling_spreads],
         }
 
 
@@ -157,6 +164,8 @@ def get_market_reading(asof: pd.Timestamp | None = None) -> MarketReading:
     macro_panel = macro.get_macro_panel()
 
     conc = concentration.compute_concentration(asof)
+    subgroup_snaps = subgroups.get_subgroup_snapshot(asof)
+    spreads = subgroups.get_sibling_spreads(asof)
 
     return MarketReading(
         date=asof,
@@ -172,6 +181,8 @@ def get_market_reading(asof: pd.Timestamp | None = None) -> MarketReading:
         conditional=conditional,
         watchlists=wl,
         concentration=conc,
+        subgroups=subgroup_snaps,
+        sibling_spreads=spreads,
     )
 
 
@@ -193,3 +204,4 @@ def clear_all_caches() -> None:
     concentration.load_weights.cache_clear()
     concentration.load_constituent_closes.cache_clear()
     concentration.load_nifty50_index.cache_clear()
+    subgroups.clear_cache()

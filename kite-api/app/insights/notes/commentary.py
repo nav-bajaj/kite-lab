@@ -442,7 +442,27 @@ def _indicator_spotlight(reading: MarketReading) -> str:
             "least that long."
         )
 
-    # 5. Multi-year breakout cluster
+    # 5. Notable sibling-subgroup spread
+    big_spreads = [
+        sp for sp in reading.sibling_spreads
+        if sp.spread_60d_pp is not None and abs(sp.spread_60d_pp) >= 7.0
+    ]
+    if big_spreads:
+        sp = max(big_spreads, key=lambda s: abs(s.spread_60d_pp))
+        a_label, b_label = sp.label.split(" vs ")
+        if sp.spread_60d_pp > 0:
+            leader, laggard, mag = a_label, b_label, sp.spread_60d_pp
+        else:
+            leader, laggard, mag = b_label, a_label, -sp.spread_60d_pp
+        return (
+            f"Inside their parent sectors, {leader} have outpaced "
+            f"{laggard} by {mag:.1f}pp over 60 days — a meaningful split. "
+            "Sector headlines can hide subgroup divergences like this. "
+            "When sibling subgroups disagree, the sector index is less "
+            "informative than either side."
+        )
+
+    # 6. Multi-year breakout cluster
     mybs = reading.watchlists.get("multi_year_breakouts", [])
     if len(mybs) >= 3:
         names = ", ".join(e.symbol for e in mybs[:3])

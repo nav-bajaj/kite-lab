@@ -144,6 +144,38 @@ export interface ConcentrationReading {
   constituents: ConstituentContribution[];
 }
 
+export interface SubgroupSnapshot {
+  subgroup: string;
+  label: string;
+  parent_sector: string;
+  n_total: number;
+  n_covered: number;
+  today_chg_pct: number | null;
+  rs_5d: number | null;
+  rs_20d: number | null;
+  rs_60d: number | null;
+  rs_60d_prev_week: number | null;
+  rs_60d_wow_delta: number | null;
+  pct_above_200dma: number | null;
+  members_covered: string[];
+}
+
+export interface SubgroupSpread {
+  pair: [string, string];
+  spread_60d_pp: number | null;
+  label: string;
+}
+
+export interface SubgroupsResponse {
+  subgroups: Record<string, SubgroupSnapshot>;
+  sibling_spreads: SubgroupSpread[];
+}
+
+export async function getSubgroups(date?: string): Promise<SubgroupsResponse> {
+  const q = date ? `?date=${encodeURIComponent(date)}` : "";
+  return getJson<SubgroupsResponse>(`/api/insights/subgroups${q}`);
+}
+
 export interface MarketReading {
   date: string;
   regime: RegimeSnapshot;
@@ -158,6 +190,8 @@ export interface MarketReading {
   conditional: Record<string, unknown>;
   watchlists: Record<string, WatchlistEntry[]>;
   concentration: ConcentrationReading;
+  subgroups: Record<string, SubgroupSnapshot>;
+  sibling_spreads: SubgroupSpread[];
 }
 
 // ---------- fetchers ----------

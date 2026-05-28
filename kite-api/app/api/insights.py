@@ -40,6 +40,7 @@ from app.insights import (
     sector_breadth,
     sector_rs,
     stress,
+    subgroups,
     watchlists,
 )
 from app.insights.reading import get_market_reading
@@ -318,6 +319,30 @@ async def concentration_endpoint(
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
     return r.to_dict()
+
+
+# ---------- sector subgroups ----------
+
+@router.get("/subgroups")
+async def subgroups_endpoint(
+    response: Response,
+    date: Optional[str] = Query(None, description="As-of date, ISO YYYY-MM-DD. Default: latest."),
+) -> dict:
+    """Sector-subgroup snapshot (PSU vs private banks, large vs mid pharma,
+    auto OEMs vs ancillaries, etc.) and the pair-level 60d RS spreads.
+    See `data/static/`-style notes in `app/insights/subgroups.py` for
+    membership definitions."""
+    _set_cache(response)
+    asof = _parse_date(date)
+    try:
+        snaps = subgroups.get_subgroup_snapshot(asof)
+        spreads = subgroups.get_sibling_spreads(asof)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+    return {
+        "subgroups": {k: v.to_dict() for k, v in snaps.items()},
+        "sibling_spreads": [s.to_dict() for s in spreads],
+    }
 
 
 # ---------- regime history ----------

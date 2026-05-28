@@ -19,8 +19,9 @@ that drove the analog retirement and the resulting design principles.
 | 3 | Automation + multi-channel | 🔲 not started |
 | **4.1** | **Concentration / Reliance impact widget** | ✅ shipped 2026-05-28 |
 | **4.2** | **Pattern watchlists + validity studies** | ✅ shipped 2026-05-28 — 3 new detectors, reusable validity harness, honest findings (1 PASS / 1 MARGINAL / 1 FAIL), Watchlists UI with validity badges |
-| **4.3-4.5** | **Structural expansion (remaining)** | 🔲 subgroups, calendar, cross-asset |
-| **5.C** | **Teach-while-broadcasting** | ✅ shipped 2026-05-28 — learn_moment field on Commentary, indicator-spotlight + pattern-of-the-week generators, all 3 templates updated |
+| **4.3** | **Sector subgroup tracker** | ✅ shipped 2026-05-28 — 11 subgroups, 5 sibling pairs, RS+breadth+WoW per subgroup, validated against 2018 NBFC PSU/private divergence |
+| **4.4-4.5** | **Structural expansion (remaining)** | 🔲 calendar, cross-asset |
+| **5.C** | **Teach-while-broadcasting** | ✅ shipped 2026-05-28 — learn_moment field on Commentary, indicator-spotlight + pattern-of-the-week generators, all 3 templates updated. Spotlight now also surfaces big sibling-subgroup spreads. |
 | **5.A** | **Inline explainers (Learn layer)** | ✅ shipped 2026-05-28 — 13 explainers prerendered, "What is this?" links on Pulse/Sectors/Watchlists, Learn tab in nav |
 | **5.B** | **Learn hub — glossary + deep-dives + pattern guides** | ✅ shipped 2026-05-28 — 38-term glossary, "Historical context" + "Common misreadings" on every indicator, transparent detection rules on patterns |
 | **5.C-D** | **Knowledge layer remainder** | 🔲 teach-while-broadcasting, validity protocol |
@@ -134,12 +135,12 @@ Total tests passing on this branch: **223**.
 
 | # | Task | Owner | Risk | Done |
 |---|---|---|---|---|
-| 4.3.1 | Define subgroup membership manually in `data/static/sector_subgroups.yaml`: private banks (HDFCBANK / ICICIBANK / AXISBANK / KOTAKBANK / INDUSINDBK) vs PSU banks (SBIN / PNB / CANBK / BANKBARODA / UNIONBANK); large-cap pharma (SUNPHARMA / DRREDDY / CIPLA) vs mid-cap pharma (etc.); auto-OEMs (MARUTI / TATAMOTORS / M&M / TVSMOTOR) vs auto-ancillaries (MOTHERSON / BHARATFORG / etc.) | 👤 + 🤖 | 🟡 | ☐ |
-| 4.3.2 | Build `kite-api/app/insights/subgroups.py` — for each subgroup: RS vs Nifty (5/20/60d), breadth (% above 200-DMA), today's chg, WoW delta. Pattern matches sector_rs.py / sector_breadth.py | 🤖 | 🟡 | ☐ |
-| 4.3.3 | Tests verifying subgroup membership integrity + spot-check historical episodes (e.g., 2018 NBFC — PSU banks should show extreme weakness) | 🤖 | 🟡 | ☐ |
-| 4.3.4 | Add to MarketReading + API endpoint `/api/insights/subgroups` | 🤖 | 🟡 | ☐ |
-| 4.3.5 | Add to Sectors page — second section below sector cards | 🤖 | 🟢 | ☐ |
-| 4.3.6 | Commentary integration — subgroup spread paragraph when >5pp divergence between sibling subgroups | 🤖 | 🟡 | ☐ |
+| 4.3.1 | Subgroup membership defined in-code in `kite-api/app/insights/subgroups.py` (no YAML — single source of truth, no extra dep). 11 subgroups across 5 parent sectors: private vs PSU banks, large vs mid pharma, auto OEMs vs ancillaries, oil-marketing vs private vs PSU power, large vs mid IT. TATAMOTORS replaced with TMPV post-demerger. | 👤 + 🤖 | 🟡 | ✅ |
+| 4.3.2 | `subgroups.py` module — per-subgroup: 5/20/60d RS vs Nifty (equal-weighted mean constituent return minus index return), % above 200-DMA breadth, today_chg_pct, rs_60d_prev_week, rs_60d_wow_delta, members_covered. `get_subgroup_snapshot(asof)` + `get_sibling_spreads(asof)` for the pair-level view. | 🤖 | 🟡 | ✅ |
+| 4.3.3 | `test_insights_subgroups.py` — 13 tests covering membership integrity, snapshot shape, JSON serialisation, sibling-spread helper, **2018 NBFC historical-episode check (PSU banks must not outperform private banks on 2018-10-31)**. All passing. | 🤖 | 🟡 | ✅ |
+| 4.3.4 | `MarketReading.subgroups` + `MarketReading.sibling_spreads` fields added; API route `GET /api/insights/subgroups?date=...` returns both. `clear_all_caches()` wired. | 🤖 | 🟡 | ✅ |
+| 4.3.5 | Sectors page renders a new "Subgroup tracker" section with a sibling-spread leaderboard (sorted by magnitude) and per-parent-sector subgroup tables. Parallel `Promise.all` fetch so the page doesn't double its load time. | 🤖 | 🟢 | ✅ |
+| 4.3.6 | Commentary `_indicator_spotlight` cascade now includes a "sibling-subgroup spread" branch — fires when any sibling pair has \|spread\| ≥ 7pp over 60d. Slots in between regime-transition and multi-year-breakout-cluster branches. | 🤖 | 🟡 | ✅ |
 
 ### 4.4 — Anniversary / calendar content
 
@@ -232,7 +233,8 @@ When you say "let's keep going":
 3. ~~**5.B** (Learn hub)~~ ✅ shipped 2026-05-28
 4. ~~**4.2** (pattern watchlists with validity checks)~~ ✅ shipped 2026-05-28 — 1 passed, 1 marginal, 1 failed; UI reflects findings honestly
 5. ~~**5.C** (teach-while-broadcasting)~~ ✅ shipped 2026-05-28 — Daily Notes now teach one micro-moment each
-6. **4.3 / 4.4 / 4.5** (subgroups / calendar / cross-asset) — in any order; each is self-contained. 4.4 also unblocks the deferred `on_this_day` generator inside 5.C.
+6. ~~**4.3** (sector subgroups)~~ ✅ shipped 2026-05-28
+7. **4.4 / 4.5** (calendar / cross-asset) — in any order. 4.4 also unblocks the deferred `on_this_day` generator inside 5.C.
 7. **5.D** (validity protocol document) — formalise the rule that's now embedded in the 4.2 harness. ~30 min of writing.
 8. **Phase 3** (automation) — defer until design-engine integrates; manual broadcast workflow handles current scale.
 
