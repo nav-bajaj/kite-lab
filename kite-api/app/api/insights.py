@@ -34,6 +34,7 @@ from fastapi import APIRouter, HTTPException, Query, Response
 from app.insights import (
     analog_finder,
     breadth,
+    calendar_content,
     concentration,
     macro,
     regime as regime_mod,
@@ -319,6 +320,33 @@ async def concentration_endpoint(
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
     return r.to_dict()
+
+
+# ---------- anniversary / calendar ----------
+
+@router.get("/calendar/on-this-day")
+async def calendar_on_this_day(
+    response: Response,
+    date: Optional[str] = Query(None, description="As-of date, ISO YYYY-MM-DD. Default: latest reading date."),
+) -> dict:
+    """For the given date, return anniversaries at 1/3/5/10 years back
+    annotated with regime + stress + any matching curated event tag.
+    Used by the premarket note's on_this_day learn-moment."""
+    _set_cache(response)
+    asof = _parse_date(date)
+    if asof is None:
+        # Use latest stress-panel date as 'today' for the lookback
+        panel = stress.compute_stress_panel()
+        asof = panel.index.max() if not panel.empty else pd.Timestamp.today()
+    try:
+        anns = calendar_content.get_on_this_day(asof)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+    return {
+        "asof": asof.isoformat(),
+        "anniversaries": {str(years): snap.to_dict()
+                          for years, snap in anns.items()},
+    }
 
 
 # ---------- sector subgroups ----------

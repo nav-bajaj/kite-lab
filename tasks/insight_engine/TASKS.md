@@ -19,8 +19,9 @@ that drove the analog retirement and the resulting design principles.
 | 3 | Automation + multi-channel | 🔲 not started |
 | **4.1** | **Concentration / Reliance impact widget** | ✅ shipped 2026-05-28 |
 | **4.2** | **Pattern watchlists + validity studies** | ✅ shipped 2026-05-28 — 3 new detectors, reusable validity harness, honest findings (1 PASS / 1 MARGINAL / 1 FAIL), Watchlists UI with validity badges |
-| **4.3** | **Sector subgroup tracker** | ✅ shipped 2026-05-28 — 11 subgroups, 5 sibling pairs, RS+breadth+WoW per subgroup, validated against 2018 NBFC PSU/private divergence |
-| **4.4-4.5** | **Structural expansion (remaining)** | 🔲 calendar, cross-asset |
+| **4.3** | **Sector subgroup tracker** | ✅ shipped 2026-05-28 |
+| **4.4** | **Anniversary / calendar (on_this_day)** | ✅ shipped 2026-05-28 — calendar_content engine, 13 curated events, premarket commentary wired, /calendar/on-this-day API. **First fully TDD-driven phase on this branch.** |
+| **4.5** | **Cross-asset + FII/DII** | 🔲 |
 | **5.C** | **Teach-while-broadcasting** | ✅ shipped 2026-05-28 — learn_moment field on Commentary, indicator-spotlight + pattern-of-the-week generators, all 3 templates updated. Spotlight now also surfaces big sibling-subgroup spreads. |
 | **5.A** | **Inline explainers (Learn layer)** | ✅ shipped 2026-05-28 — 13 explainers prerendered, "What is this?" links on Pulse/Sectors/Watchlists, Learn tab in nav |
 | **5.B** | **Learn hub — glossary + deep-dives + pattern guides** | ✅ shipped 2026-05-28 — 38-term glossary, "Historical context" + "Common misreadings" on every indicator, transparent detection rules on patterns |
@@ -146,13 +147,13 @@ Total tests passing on this branch: **223**.
 
 | # | Task | Owner | Risk | Done |
 |---|---|---|---|---|
-| 4.4.1 | Build `kite-api/app/insights/calendar_content.py`. For any date D, finds: 1y / 3y / 5y / 10y ago today. For each anniversary, returns regime + stress + notable event tag (manual annotations file). | 🤖 | 🟡 | ☐ |
-| 4.4.2 | Manual annotations file `data/static/historical_events.yaml` — ~50 notable dates with one-line event descriptors (COVID lockdown, demonetization, NBFC crisis, election results, RBI surprises, etc.) | 👤 + 🤖 | 🟢 | ☐ |
-| 4.4.3 | Seasonality computation — historical median/IQR by calendar week + by trading-day-of-month | 🤖 | 🟡 | ☐ |
-| 4.4.4 | Pre-event helper — given a known event-day (RBI dates, budget date, large earnings days), compute historical typical move + sector winners | 🤖 | 🟡 | ☐ |
-| 4.4.5 | API endpoint `/api/insights/calendar?date=...` | 🤖 | 🟡 | ☐ |
-| 4.4.6 | Commentary integration — "On this day" paragraph for weekly digest; pre-event paragraph for premarket on known event days | 🤖 | 🟡 | ☐ |
-| 4.4.7 | Optional Pulse-page calendar strip: "5 years ago today: VIX 75 (COVID). Today: VIX 17." | 🤖 | 🟢 | ☐ |
+| 4.4.1 | `kite-api/app/insights/calendar_content.py` — `get_on_this_day(date)` returns `dict[horizon_years → AnniversarySnapshot]` for 1/3/5/10 years back, annotated with regime + stress + event_tag. **Built test-first per TDD policy** — tests authored at `tests/test_insights_calendar.py` before any implementation. 10 calendar tests passing. | 🤖 | 🟡 | ✅ |
+| 4.4.2 | Curated events file at `data/static/historical_events.csv` — 13 well-documented Indian-market events (Lehman, demonetization, GST, 2019 + 2024 election results, COVID lockdown, vaccine news, Russia/Ukraine, RBI surprise, Hindenburg, multiple budgets). CSV with quoted tags so commas inside descriptors are safe. User-extensible. | 👤 + 🤖 | 🟢 | ✅ |
+| 4.4.3 | Seasonality computation — calendar-week historical median/IQR | 🤖 | 🟡 | 🔲 deferred — scope grew past 4.4 hour budget; smaller follow-up |
+| 4.4.4 | Pre-event helper for known event days | 🤖 | 🟡 | 🔲 deferred |
+| 4.4.5 | API endpoint `GET /api/insights/calendar/on-this-day?date=...` returns anniversaries dict | 🤖 | 🟡 | ✅ |
+| 4.4.6 | Commentary integration — `_on_this_day` generator wired into premarket routing. Falls through to `_indicator_spotlight` if no anniversary matches a curated event. End-to-end verified on 2025-03-24: premarket fires "**5 years ago today** (24 Mar 2020): Nationwide COVID-19 lockdown announced... stress at 99/100." | 🤖 | 🟡 | ✅ |
+| 4.4.7 | Pulse-page calendar strip | 🤖 | 🟢 | 🔲 deferred to design integration |
 
 ### 4.5 — Cross-asset + FII/DII (formerly Phase 0.9-0.11)
 
@@ -234,7 +235,8 @@ When you say "let's keep going":
 4. ~~**4.2** (pattern watchlists with validity checks)~~ ✅ shipped 2026-05-28 — 1 passed, 1 marginal, 1 failed; UI reflects findings honestly
 5. ~~**5.C** (teach-while-broadcasting)~~ ✅ shipped 2026-05-28 — Daily Notes now teach one micro-moment each
 6. ~~**4.3** (sector subgroups)~~ ✅ shipped 2026-05-28
-7. **4.4 / 4.5** (calendar / cross-asset) — in any order. 4.4 also unblocks the deferred `on_this_day` generator inside 5.C.
+7. ~~**4.4** (calendar / anniversaries)~~ ✅ shipped 2026-05-28 — also unblocked the deferred `on_this_day` learn-moment in 5.C
+8. **4.5** (cross-asset + FII/DII) — last structural piece. Heavier than the others because it needs external data fetching.
 7. **5.D** (validity protocol document) — formalise the rule that's now embedded in the 4.2 harness. ~30 min of writing.
 8. **Phase 3** (automation) — defer until design-engine integrates; manual broadcast workflow handles current scale.
 

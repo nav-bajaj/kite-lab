@@ -477,6 +477,35 @@ def _indicator_spotlight(reading: MarketReading) -> str:
     return ""
 
 
+def _on_this_day(reading: MarketReading) -> str:
+    """Anniversary learn-moment for the premarket note.
+
+    Looks at 1/3/5/10 years back from today's date and returns a teaching
+    moment if any of those anniversaries lands on a curated historical
+    event. Returns "" if no anniversary has a tag, so callers can fall
+    through to indicator_spotlight.
+    """
+    from app.insights import calendar_content as _cal
+    anniversaries = _cal.get_on_this_day(reading.date)
+    tagged = [
+        (years, snap) for years, snap in anniversaries.items()
+        if snap.event_tag
+    ]
+    if not tagged:
+        return ""
+    # Prefer the longest meaningful horizon (10y > 5y > 3y > 1y) — older
+    # anniversaries usually carry the most teaching value.
+    tagged.sort(key=lambda kv: -kv[0])
+    years, snap = tagged[0]
+    horizon_phrase = f"{years} year{'s' if years > 1 else ''} ago today"
+    return (
+        f"**{horizon_phrase}** ({snap.date.strftime('%d %b %Y')}): "
+        f"{snap.event_tag}. The regime that day was {snap.regime} with "
+        f"stress at {snap.stress_score:.0f}/100. Useful context for "
+        "today's reading."
+    )
+
+
 def _pattern_of_the_week(reading: MarketReading) -> str:
     """Rotate through pattern explainers, one per ISO week.
 
@@ -500,7 +529,11 @@ def compose(reading: MarketReading, mode: str = "postclose") -> Commentary:
     """
     if mode == "weekly":
         learn = _pattern_of_the_week(reading)
-    elif mode in ("postclose", "premarket"):
+    elif mode == "premarket":
+        # Premarket prefers on_this_day when an anniversary matches a
+        # curated event; otherwise falls through to indicator_spotlight.
+        learn = _on_this_day(reading) or _indicator_spotlight(reading)
+    elif mode == "postclose":
         learn = _indicator_spotlight(reading)
     else:
         learn = ""

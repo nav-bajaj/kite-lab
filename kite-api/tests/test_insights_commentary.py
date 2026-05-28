@@ -378,3 +378,58 @@ class TestLearnMoment:
         assert "stress" in lm or "panic" in lm, (
             f"Expected stress/panic mention; got: {c.learn_moment!r}"
         )
+
+
+class TestOnThisDayLearnMoment:
+    """Phase 4.4 wiring — premarket mode should prefer an on_this_day
+    moment when an anniversary lands on a curated event.
+
+    Spec test written before the routing change in commentary.py — per
+    the TDD policy."""
+
+    def test_premarket_fires_on_this_day_when_anniversary_matches_event(self):
+        """COVID lockdown was 2020-03-24. Premarket note on 2025-03-24
+        should fire an on-this-day moment (5y back lands on a curated
+        event) rather than falling through to indicator_spotlight."""
+        from app.insights.reading import get_market_reading
+        r = get_market_reading(pd.Timestamp("2025-03-24"))
+        c = commentary.compose(r, mode="premarket")
+        lm = c.learn_moment.lower()
+        assert lm, "Expected non-empty premarket learn_moment on COVID anniversary"
+        # The moment should mention "ago" + an event-related word
+        assert "ago" in lm, (
+            f"Expected anniversary phrasing; got: {c.learn_moment!r}"
+        )
+        # And reference the event (covid, lockdown, or pandemic)
+        assert any(t in lm for t in ("covid", "lockdown", "pandemic")), (
+            f"Expected COVID-event reference; got: {c.learn_moment!r}"
+        )
+
+    def test_premarket_falls_through_to_spotlight_when_no_anniversary_event(self):
+        """When no anniversary has a curated event_tag, premarket should
+        behave like postclose (indicator_spotlight or empty).
+
+        Distinguishing on_this_day from regime-transition spotlight needs
+        a more specific signal than 'ago' alone — both use that word. We
+        rely on the on_this_day-specific prefix pattern '** N year(s) ago
+        today **'."""
+        from app.insights.reading import get_market_reading
+        # Pick a recent date where 1y/3y/5y/10y back are unlikely to be
+        # curated events (most ordinary days)
+        r = get_market_reading(pd.Timestamp("2025-08-15"))
+        c_pre = commentary.compose(r, mode="premarket")
+        c_post = commentary.compose(r, mode="postclose")
+        # Reliable signal that on_this_day specifically fired: the
+        # opening "** N year(s) ago today **" phrase
+        on_this_day_fired = "year" in c_pre.learn_moment.lower() and \
+            "ago today" in c_pre.learn_moment.lower()
+        if on_this_day_fired:
+            # If on_this_day fired, an event_tag MUST be referenced
+            assert any(t in c_pre.learn_moment.lower()
+                       for t in ("budget", "election", "covid", "lockdown",
+                                 "hindenburg", "gst", "lehman", "ukraine",
+                                 "demonetization", "vaccine", "rbi"))
+        else:
+            # Otherwise it should match the postclose spotlight (both run
+            # _indicator_spotlight on the same reading)
+            assert c_pre.learn_moment == c_post.learn_moment

@@ -1,0 +1,21 @@
+# Curated Indian-market historical events used by app.insights.calendar_content.
+# Format: date (YYYY-MM-DD), tag (one-line descriptor).
+#
+# Inclusion criteria: events whose date is unambiguously documented in
+# public reporting and meaningful for Indian equity markets. Per the
+# no-fabrication discipline in `tasks/insight_engine/RESULTS.md`,
+# extend this file from verifiable sources only.
+date,tag
+2008-09-15,"Lehman Brothers files for bankruptcy — global financial crisis intensifies"
+2016-11-08,"Demonetization — INR 500 and 1000 notes invalidated overnight"
+2017-07-01,"Goods and Services Tax (GST) regime takes effect across India"
+2019-05-23,"2019 General Election results — BJP / Modi second-term landslide"
+2020-02-01,"Union Budget — final pre-COVID fiscal blueprint"
+2020-03-24,"Nationwide COVID-19 lockdown announced (effective midnight Mar 25)"
+2020-11-09,"First Pfizer COVID vaccine efficacy announcement — global risk-on reaction"
+2021-02-01,"Union Budget — first post-COVID expansionary plan"
+2022-02-24,"Russia invades Ukraine — global commodity shock begins"
+2022-05-04,"RBI surprise off-cycle 40bp repo hike — start of rate-hike cycle"
+2023-01-25,"Hindenburg Research report on Adani Group published"
+2024-06-04,"2024 General Election results — BJP loses outright majority; NDA forms coalition"
+2024-07-23,"Union Budget 2024 — first of NDA-3 government"
