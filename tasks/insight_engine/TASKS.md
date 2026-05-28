@@ -23,7 +23,8 @@ See `PLAN.md` for full context, design decisions, and editorial guidelines.
 | 0.6 | Build `kite-api/app/insights/sector_constituents.py` — Sector dataclass, latest-snapshot loader, reverse symbol→sectors mapping, PARTIAL_COVERAGE flag | 🤖 | 🟡 | ✅ |
 | 0.7 | Build `kite-api/app/insights/sector_breadth.py` — constituent-level pct_above_DMA, dispersion, top/bottom RS vs Nifty 6m, thrust detector, leaders/laggards guaranteed disjoint | 🤖 | 🔴 | ✅ |
 | 0.7a | Test `kite-api/tests/test_insights_sectors.py` — 19 tests (loader + panel + snapshot + JSON-serializability). All passing. | 🤖 | 🟡 | ✅ |
-| 0.8 | Build `kite-api/app/insights/sector_rs.py` — rank sectors by 5/20/60/120/252d RS, week-over-week movement, narrow-vs-broad overlay using sector_breadth | 🤖 | 🟡 | ☐ |
+| 0.8 | Build `kite-api/app/insights/sector_rs.py` — rank sectors by 5/20/60/120/252d RS, week-over-week movement, narrow-vs-broad overlay using sector_breadth | 🤖 | 🟡 | ✅ |
+| 0.8a | Test `kite-api/tests/test_insights_sector_rs.py` — 18 tests (panel + snapshot + leaderboard helper + WoW consistency). All passing. | 🤖 | 🟡 | ✅ |
 | 0.9 | Write `scripts/fetch_macro_extras.py` — USDINR (RBI/FRED), gold backfill (Yahoo), US 10y (FRED DGS10), crude (FRED DCOILBRENTEU), FII/DII (NSE scrape) | 🤖 | 🟡 | ☐ |
 | 0.10 | Build `kite-api/app/insights/cross_asset.py` — load + transform cross-asset signals | 🤖 | 🟡 | ☐ |
 | 0.11 | Build `kite-api/app/insights/fii_dii.py` — load + transform FII/DII flows | 🤖 | 🟡 | ☐ |
