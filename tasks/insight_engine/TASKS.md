@@ -17,7 +17,8 @@ that drove the analog retirement and the resulting design principles.
 | 1 | Daily Quant Note | ✅ shipped (8 modules + CLI, 72 tests) |
 | 2 | Web dashboard | ✅ shipped (4 pages + API, 32 tests; design polish deferred to design-engine integration) |
 | 3 | Automation + multi-channel | 🔲 not started |
-| **4** | **Pattern + structural expansion** | 🔲 next — concentration widget queued |
+| **4.1** | **Concentration / Reliance impact widget** | ✅ shipped 2026-05-28 — engine + API + Pulse widget + Learn explainer (14 tests) |
+| **4.2-4.5** | **Pattern + structural expansion (remaining)** | 🔲 patterns, subgroups, calendar, cross-asset |
 | **5.A** | **Inline explainers (Learn layer)** | ✅ shipped 2026-05-28 — 12 explainers prerendered, "What is this?" links on Pulse/Sectors/Watchlists, Learn tab in nav |
 | **5.B-D** | **Knowledge layer remainder** | 🔲 Learn hub, teach-while-broadcasting, validity protocol |
 | 6 | Close-out | 🔲 not started |
@@ -106,13 +107,14 @@ Total tests passing on this branch: **223**.
 
 | # | Task | Owner | Risk | Done |
 |---|---|---|---|---|
-| 4.1.1 | Build `kite-api/app/insights/concentration.py`. Daily computation of: each Nifty 50 constituent's contribution to today's Nifty move (using cap-weighted index methodology); top-3 / top-5 cumulative contribution; specific RIL share; cap-weighted vs equal-weighted spread (1d, 5d, 20d) | 🤖 | 🟡 | ☐ |
-| 4.1.2 | Tests: covers historical days where the move was famously concentrated (e.g., RIL earnings days) vs broadly shared days; verify the contribution percentages sum to 100% within rounding | 🤖 | 🔴 | ☐ |
-| 4.1.3 | Add `concentration` field to `MarketReading` orchestrator | 🤖 | 🟡 | ☐ |
-| 4.1.4 | Add API route `/api/insights/concentration` (returns latest + 60d history) | 🤖 | 🟡 | ☐ |
-| 4.1.5 | Surface on Pulse page header: "Today's Nifty move was X% real, Y% RIL-driven" or "8 of top 10 contributors aligned — broad participation" | 🤖 | 🟢 | ☐ |
-| 4.1.6 | Update commentary engine — concentration_paragraph() that flags days where >50% of move came from top 3 names | 🤖 | 🟡 | ☐ |
-| 4.1.7 | Inline explainer link "What is concentration?" → `/insights/learn/indicators/concentration` (created in Phase 5.A) | 🤖 | 🟢 | ☐ |
+| 4.1.0 | Static Nifty 50 weights snapshot CSV at `data/static/nifty50_weights.csv` (NSE factsheet, quarterly refresh) — auto-normalised to sum to 100 on load | 🤖 | 🟡 | ✅ |
+| 4.1.1 | `kite-api/app/insights/concentration.py` — per-constituent contribution attribution (weight × return), top-3 / top-5 / Reliance shares, cap-vs-equal-weighted spread | 🤖 | 🟡 | ✅ |
+| 4.1.2 | Tests at `tests/test_insights_concentration.py` — 14 covering weight normalisation, attribution math, sorting invariants, JSON serialisation, COVID-day shape, calm-day shape, weekend snap-forward, future-date clamp | 🤖 | 🔴 | ✅ |
+| 4.1.3 | `concentration` field added to `MarketReading.to_dict()` + `clear_all_caches()` hook | 🤖 | 🟡 | ✅ |
+| 4.1.4 | API route `/api/insights/concentration?date=YYYY-MM-DD` (single-date attribution; 60d history endpoint deferred — not needed for current Pulse widget) | 🤖 | 🟡 | ✅ |
+| 4.1.5 | Pulse page widget "Who drove today's Nifty 50 move" — auto-narrated headline (narrow/concentrated/broad), 3 stat cards (cap-wt, cap-vs-eq spread, top-3 share), collapsible top-10 contributor table | 🤖 | 🟢 | ✅ |
+| 4.1.6 | Commentary engine `concentration_paragraph()` for the Daily Quant Note | 🤖 | 🟡 | 🔲 deferred — Notes pipeline due for refresh alongside 5.C |
+| 4.1.7 | Learn explainer `/insights/learn/concentration` + "What is this?" link on widget | 🤖 | 🟢 | ✅ |
 
 ### 4.2 — Pattern-based watchlists (validity-checked)
 
@@ -223,11 +225,11 @@ Total tests passing on this branch: **223**.
 When you say "let's keep going":
 
 1. ~~**5.A** (inline explainers)~~ ✅ shipped 2026-05-28
-2. **4.1** (concentration / Reliance impact) — **next up**. Small, unique, immediately resonant on Pulse page. Earns its own validity check (Phase 5.D protocol).
-3. **5.B** (Learn hub) — long-form versions of the 12 inline pieces + glossary. Mostly authoring.
+2. ~~**4.1** (concentration / Reliance impact)~~ ✅ shipped 2026-05-28
+3. **5.B** (Learn hub) — long-form versions of the inline pieces + glossary. Mostly authoring. **next**
 4. **4.2** (pattern watchlists with validity checks) — careful work; each pattern goes through the validity protocol before publishing fwd-return framing.
 5. **5.C** (teach-while-broadcasting) — once 5.B exists, this is template work.
 6. **4.3 / 4.4 / 4.5** (subgroups / calendar / cross-asset) — in any order; each is self-contained.
 7. **Phase 3** (automation) — defer until design-engine integrates; manual broadcast workflow handles current scale.
 
-Total estimated effort for remainder of Phase 4 + 5: ~8-12 working days.
+Total estimated effort for remainder of Phase 4 + 5: ~7-10 working days.

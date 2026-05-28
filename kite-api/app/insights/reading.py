@@ -24,6 +24,7 @@ import pandas as pd
 from app.insights import (
     analog_finder,
     breadth,
+    concentration,
     conditional_dist,
     macro,
     regime as regime_mod,
@@ -65,6 +66,9 @@ class MarketReading:
     # Action content for the "WATCH" section
     watchlists: dict[str, list[watchlists.WatchlistEntry]]
 
+    # Structural — concentration / attribution of today's Nifty 50 move
+    concentration: concentration.ConcentrationReading
+
     def to_dict(self) -> dict[str, Any]:
         """Fully JSON-serializable nested dict. Used by the API layer."""
         return {
@@ -89,6 +93,7 @@ class MarketReading:
                 k: [e.to_dict() for e in entries]
                 for k, entries in self.watchlists.items()
             },
+            "concentration": self.concentration.to_dict(),
         }
 
 
@@ -151,6 +156,8 @@ def get_market_reading(asof: pd.Timestamp | None = None) -> MarketReading:
     breadth_panel = breadth.get_breadth_panel()
     macro_panel = macro.get_macro_panel()
 
+    conc = concentration.compute_concentration(asof)
+
     return MarketReading(
         date=asof,
         regime=regime_snap,
@@ -164,6 +171,7 @@ def get_market_reading(asof: pd.Timestamp | None = None) -> MarketReading:
         analog_distribution=analog_dist,
         conditional=conditional,
         watchlists=wl,
+        concentration=conc,
     )
 
 
@@ -182,3 +190,6 @@ def clear_all_caches() -> None:
     analog_finder.clear_cache()
     conditional_dist.clear_cache()
     watchlists.clear_cache()
+    concentration.load_weights.cache_clear()
+    concentration.load_constituent_closes.cache_clear()
+    concentration.load_nifty50_index.cache_clear()

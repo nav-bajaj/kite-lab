@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { getReading, fmtPct, fmtNum, regimeLabel } from "@/lib/insights-api";
+import {
+  getReading,
+  fmtPct,
+  fmtNum,
+  regimeLabel,
+  ConcentrationReading,
+} from "@/lib/insights-api";
 import { RegimeLegend } from "./_components/regime-legend";
 
 function LearnLink({ slug, label = "What is this?" }: { slug: string; label?: string }) {
@@ -23,7 +29,7 @@ export default async function PulsePage({
 }) {
   const { date } = await searchParams;
   const reading = await getReading(date);
-  const { regime, stress, sector_leaderboard_60d } = reading;
+  const { regime, stress, sector_leaderboard_60d, concentration } = reading;
 
   return (
     <main className="space-y-8">
@@ -75,6 +81,9 @@ export default async function PulsePage({
           </p>
         )}
       </section>
+
+      {/* ──────────────── CONCENTRATION ──────────────── */}
+      <ConcentrationSection concentration={concentration} />
 
       {/* ──────────────── STRESS COMPONENTS ──────────────── */}
       <section>
@@ -181,6 +190,118 @@ function Stat({
       {help && <div className="mt-2">{help}</div>}
     </div>
   );
+}
+
+function ConcentrationSection({ concentration: c }: { concentration: ConcentrationReading }) {
+  const indexFlat = c.top_3_share_of_move === null;
+  const headline = buildConcentrationHeadline(c);
+
+  return (
+    <section>
+      <div className="flex items-baseline justify-between">
+        <h3 className="text-base font-semibold">Who drove today&apos;s Nifty 50 move</h3>
+        <Link
+          href="/insights/learn/concentration"
+          className="text-xs text-neutral-500 underline-offset-2 hover:underline"
+        >
+          What is this?
+        </Link>
+      </div>
+
+      <p className="mt-2 text-sm text-neutral-700 dark:text-neutral-300">
+        {headline}
+      </p>
+
+      <div className="mt-3 grid gap-3 sm:grid-cols-3">
+        <Stat
+          label="Nifty 50 (cap-wt)"
+          value={fmtPct(c.nifty_return_pct / 100, 2, true)}
+          sub={`Equal-weighted: ${fmtPct(c.equal_weighted_return_pct / 100, 2, true)}`}
+        />
+        <Stat
+          label="Cap vs equal spread"
+          value={fmtPct(c.cap_vs_equal_spread_pp / 100, 2, true)}
+          sub={
+            Math.abs(c.cap_vs_equal_spread_pp) > 0.3
+              ? c.cap_vs_equal_spread_pp > 0
+                ? "Mega-caps led"
+                : "Broad participation"
+              : "Even tape"
+          }
+        />
+        <Stat
+          label="Top-3 share of move"
+          value={indexFlat ? "—" : fmtPct(c.top_3_share_of_move, 0)}
+          sub={indexFlat ? "Index ~flat today" : c.top_3_symbols.join(" · ")}
+        />
+      </div>
+
+      {/* Per-constituent contribution table — top 10 by absolute contribution */}
+      <details className="mt-4">
+        <summary className="cursor-pointer text-xs text-neutral-600 underline-offset-2 hover:underline">
+          Show top 10 contributors (by absolute impact on the index)
+        </summary>
+        <table className="mt-2 w-full text-sm">
+          <thead className="border-b text-left text-neutral-500">
+            <tr>
+              <th className="py-2">Symbol</th>
+              <th className="py-2 text-right">Weight</th>
+              <th className="py-2 text-right">Stock %</th>
+              <th className="py-2 text-right">Contribution (bps)</th>
+              <th className="py-2 text-right">Share of move</th>
+            </tr>
+          </thead>
+          <tbody>
+            {c.constituents.slice(0, 10).map((row) => (
+              <tr key={row.symbol} className="border-b last:border-0">
+                <td className="py-2 font-medium">{row.symbol}</td>
+                <td className="py-2 text-right">{row.weight.toFixed(2)}%</td>
+                <td className="py-2 text-right">
+                  {fmtPct(row.return_pct / 100, 2, true)}
+                </td>
+                <td className="py-2 text-right">
+                  {row.contribution_bps >= 0 ? "+" : ""}
+                  {row.contribution_bps.toFixed(1)}
+                </td>
+                <td className="py-2 text-right">
+                  {row.share_of_move === null
+                    ? "—"
+                    : fmtPct(row.share_of_move, 0)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className="mt-2 text-xs text-neutral-500">
+          Weights from NSE NIFTY 50 monthly factsheet (current snapshot, not
+          historical). Coverage: {c.n_constituents_covered}/{c.n_constituents_total} constituents.
+        </p>
+      </details>
+    </section>
+  );
+}
+
+function buildConcentrationHeadline(c: ConcentrationReading): string {
+  const niftyMove = c.nifty_return_pct;
+  const moveDir = niftyMove > 0 ? "rose" : niftyMove < 0 ? "fell" : "was flat";
+  const sign = niftyMove > 0 ? "+" : "";
+  const absMove = `${sign}${niftyMove.toFixed(2)}%`;
+
+  if (Math.abs(niftyMove) < 0.05) {
+    return `Nifty 50 was essentially flat (${absMove}). Attribution is not meaningful when the index barely moves.`;
+  }
+
+  const top3 = c.top_3_share_of_move ?? 0;
+  const top3Pct = Math.abs(top3 * 100).toFixed(0);
+
+  // If top-3 explains > 80% of the move, leadership is narrow
+  if (Math.abs(top3) > 0.8) {
+    return `Nifty ${moveDir} ${absMove} — but ${top3Pct}% of the move came from just ${c.top_3_symbols.join(", ")}. Narrow tape.`;
+  }
+  if (Math.abs(top3) > 0.5) {
+    return `Nifty ${moveDir} ${absMove}. Top 3 (${c.top_3_symbols.join(", ")}) drove ${top3Pct}% of the move — concentrated but not extreme.`;
+  }
+  return `Nifty ${moveDir} ${absMove} with broad participation — no single name dominated (top-3 share ${top3Pct}%).`;
 }
 
 function Row({ label, component, raw }: { label: string; component: number | null; raw: string }) {

@@ -95,6 +95,7 @@ class TestMarketReading:
             "date", "regime", "stress", "breadth", "macro",
             "sector_breadth", "sector_rs", "sector_leaderboard_60d",
             "analogs", "analog_distribution", "conditional", "watchlists",
+            "concentration",
         }
         assert set(d.keys()) == expected_keys
 

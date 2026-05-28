@@ -34,6 +34,7 @@ from fastapi import APIRouter, HTTPException, Query, Response
 from app.insights import (
     analog_finder,
     breadth,
+    concentration,
     macro,
     regime as regime_mod,
     sector_breadth,
@@ -293,6 +294,30 @@ async def watchlist_drill(
         "date": asof.isoformat() if asof else None,
         "entries": [e.to_dict() for e in entries],
     }
+
+
+# ---------- concentration / attribution ----------
+
+@router.get("/concentration")
+async def concentration_endpoint(
+    response: Response,
+    date: Optional[str] = Query(None, description="As-of date, ISO YYYY-MM-DD. Default: latest."),
+) -> dict:
+    """Nifty 50 cap-weighted contribution attribution for the given date.
+
+    Decomposes today's Nifty 50 move into per-constituent contributions
+    (`weight * return`), aggregates top-3 / top-5 / Reliance shares, and
+    compares cap-weighted vs equal-weighted returns to detect narrow vs
+    broad rallies. Weights are loaded from a static factsheet snapshot at
+    `data/static/nifty50_weights.csv` — current weights only; not
+    historical."""
+    _set_cache(response)
+    asof = _parse_date(date)
+    try:
+        r = concentration.compute_concentration(asof)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+    return r.to_dict()
 
 
 # ---------- regime history ----------

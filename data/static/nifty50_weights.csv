@@ -1,0 +1,58 @@
+# NIFTY 50 free-float-adjusted constituent weights.
+# Source: NSE NIFTY 50 monthly factsheet (https://www.niftyindices.com/reports/factsheet).
+# Refresh cadence: quarterly. Last refresh: 2026-04 factsheet.
+# Weights are approximate (sum to ~100) — the index re-balances semi-annually
+# and weights drift between rebalances. For "today's move attribution" use
+# this is plenty accurate. For historical attribution, refresh against a
+# dated factsheet snapshot.
+symbol,weight
+HDFCBANK,13.25
+ICICIBANK,8.60
+RELIANCE,8.20
+INFY,5.60
+BHARTIARTL,4.50
+LT,3.85
+ITC,3.80
+TCS,3.65
+AXISBANK,3.10
+SBIN,3.00
+M&M,2.65
+KOTAKBANK,2.50
+BAJFINANCE,2.10
+SUNPHARMA,2.10
+HINDUNILVR,2.00
+MARUTI,1.95
+HCLTECH,1.65
+NTPC,1.55
+TATAMOTORS,1.45
+TITAN,1.20
+ULTRACEMCO,1.20
+TATASTEEL,1.15
+ONGC,1.15
+BAJAJFINSV,1.15
+POWERGRID,1.10
+COALINDIA,1.10
+ASIANPAINT,1.05
+NESTLEIND,1.05
+JSWSTEEL,1.05
+ADANIPORTS,1.00
+ADANIENT,0.95
+HINDALCO,0.95
+TRENT,0.95
+BEL,0.95
+WIPRO,0.90
+HDFCLIFE,0.85
+GRASIM,0.85
+TECHM,0.80
+SBILIFE,0.75
+INDUSINDBK,0.70
+CIPLA,0.70
+EICHERMOT,0.70
+DRREDDY,0.65
+APOLLOHOSP,0.65
+BAJAJ-AUTO,0.65
+TATACONSUM,0.60
+SHRIRAMFIN,0.60
+BPCL,0.60
+HEROMOTOCO,0.55
+JIOFIN,0.55

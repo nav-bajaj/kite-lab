@@ -121,6 +121,29 @@ export interface WatchlistEntry {
   sectors: string[];
 }
 
+export interface ConstituentContribution {
+  symbol: string;
+  weight: number;
+  return_pct: number;
+  contribution_bps: number;
+  share_of_move: number | null;
+}
+
+export interface ConcentrationReading {
+  date: string;
+  nifty_return_pct: number;
+  equal_weighted_return_pct: number;
+  cap_vs_equal_spread_pp: number;
+  top_3_share_of_move: number | null;
+  top_5_share_of_move: number | null;
+  reliance_share_of_move: number | null;
+  top_3_symbols: string[];
+  top_5_symbols: string[];
+  n_constituents_covered: number;
+  n_constituents_total: number;
+  constituents: ConstituentContribution[];
+}
+
 export interface MarketReading {
   date: string;
   regime: RegimeSnapshot;
@@ -134,6 +157,7 @@ export interface MarketReading {
   analog_distribution: Record<string, AnalogDistribution>;
   conditional: Record<string, unknown>;
   watchlists: Record<string, WatchlistEntry[]>;
+  concentration: ConcentrationReading;
 }
 
 // ---------- fetchers ----------
