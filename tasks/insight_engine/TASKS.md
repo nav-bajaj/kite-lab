@@ -28,8 +28,9 @@ See `PLAN.md` for full context, design decisions, and editorial guidelines.
 | 0.9 | Write `scripts/fetch_macro_extras.py` — USDINR (RBI/FRED), gold backfill (Yahoo), US 10y (FRED DGS10), crude (FRED DCOILBRENTEU), FII/DII (NSE scrape) | 🤖 | 🟡 | ☐ |
 | 0.10 | Build `kite-api/app/insights/cross_asset.py` — load + transform cross-asset signals | 🤖 | 🟡 | ☐ |
 | 0.11 | Build `kite-api/app/insights/fii_dii.py` — load + transform FII/DII flows | 🤖 | 🟡 | ☐ |
-| 0.12 | Build `kite-api/app/insights/regime.py` — 4-state classifier with persistence tracking, reusing NIFTY 100 100-DMA + 3-conf gate from `scripts/combo_defensive.py` | 🤖 | 🔴 | ☐ |
-| 0.13 | Build `kite-api/app/insights/stress.py` — 0-100 composite score (VIX percentile + drawdown depth + %200-DMA + dispersion z) | 🤖 | 🟡 | ☐ |
+| 0.12 | Build `kite-api/app/insights/regime.py` — 4-state classifier (TREND_BULL / DRIFT / STRETCHED / STRESS) with 3-day smoothing + persistence tracking. Validated on COVID/NBFC/2022 historical dates. | 🤖 | 🔴 | ✅ |
+| 0.13 | Build `kite-api/app/insights/stress.py` — 0-100 composite (35% VIX pctile + 25% drawdown + 20% below-200DMA + 20% dispersion z) with 5y historical percentile context | 🤖 | 🟡 | ✅ |
+| 0.13a | Test `kite-api/tests/test_insights_regime_stress.py` — 17 tests, all passing | 🤖 | 🟡 | ✅ |
 | 0.14 | Build `kite-api/app/insights/analog_finder.py` — KNN over multi-factor reading vs 16y history, returns top-5 most-similar dates + their forward returns | 🤖 | 🔴 | ☐ |
 | 0.15 | Build `kite-api/app/insights/conditional_dist.py` — given regime/stress bucket, return historical fwd-return distribution (mean/median/IQR/5-95) over 5/10/20/60d | 🤖 | 🔴 | ☐ |
 | 0.16 | Build `kite-api/app/insights/watchlists.py` — breakouts, RS leaders, coiled springs, stretched, recent breakdowns | 🤖 | 🟡 | ☐ |
