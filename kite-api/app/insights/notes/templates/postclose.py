@@ -30,9 +30,10 @@ def render(reading: MarketReading, commentary: Commentary) -> str:
         "",
         f"📊 *Sectors*",
         commentary.sector,
-        "",
-        f"🕰 *Historical context*",
-        commentary.analog,
+    ]
+    if commentary.conditional:
+        parts.extend(["", f"📈 *Historical base-rate*", commentary.conditional])
+    parts.extend([
         "",
         f"👀 *Watch tomorrow*",
         commentary.watch,
@@ -40,5 +41,5 @@ def render(reading: MarketReading, commentary: Commentary) -> str:
         f"_{CTA}_",
         "",
         f"_{commentary.disclaimer}_",
-    ]
+    ])
     return "\n".join(parts)

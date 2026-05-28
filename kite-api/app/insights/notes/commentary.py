@@ -38,12 +38,19 @@ DISCLAIMER = (
 
 @dataclass
 class Commentary:
-    """Structured narrative output. Templates pick which sections to render."""
+    """Structured narrative output. Templates pick which sections to render.
+
+    Note: an `analog` section was dropped after the validity study
+    (`tasks/insight_engine/ANALOG_STUDY.md`) showed the analog forward-return
+    content has no actionable signal beyond Nifty's unconditional drift.
+    Conditional-distribution content (`conditional`) survives because that
+    engine uses hundreds-to-thousands of observations per bucket and does
+    carry real signal at the regime level.
+    """
     date: pd.Timestamp
     headline: str          # one-line, suitable as WhatsApp first line
     regime: str            # 1-2 sentences on today's regime + stress
     sector: str            # 1-2 sentences on sector rotation
-    analog: str            # 1-2 sentences with a specific historical date
     conditional: str       # 1-2 sentences on historical-conditional outcomes
     watch: str             # 1-2 sentences naming specific stocks to watch
     disclaimer: str = DISCLAIMER
@@ -241,56 +248,6 @@ def _sector_paragraph(reading: MarketReading) -> str:
     return " ".join(parts)
 
 
-def _analog_paragraph(reading: MarketReading) -> str:
-    """1-2 sentences naming the closest historical analog + what happened next."""
-    if not reading.analogs:
-        return "Historical analogs not available for today's reading."
-
-    top = reading.analogs[0]
-    match_date_str = top.match_date.strftime("%B %Y")
-    # Forward-return outcome for the top match (prefer 20d, fall back to 60d)
-    fwd = top.fwd_return_20d if top.fwd_return_20d is not None else top.fwd_return_60d
-    horizon_label = "20 trading days" if top.fwd_return_20d is not None else "60 trading days"
-
-    sentence1 = f"Today's market reading most closely resembles {match_date_str}."
-
-    if fwd is not None:
-        if fwd > 0.05:
-            outcome = f"From that setup, Nifty added {fwd*100:.1f}% over the following {horizon_label}."
-        elif fwd > 0.01:
-            outcome = f"From that setup, Nifty drifted modestly higher (+{fwd*100:.1f}% over {horizon_label})."
-        elif fwd > -0.01:
-            outcome = f"From that setup, Nifty moved sideways over the following {horizon_label}."
-        elif fwd > -0.05:
-            outcome = f"From that setup, Nifty drifted lower ({fwd*100:.1f}% over {horizon_label})."
-        else:
-            outcome = f"From that setup, Nifty fell {abs(fwd)*100:.1f}% over the following {horizon_label}."
-    else:
-        outcome = ""
-
-    # Widen the view: what's the median across the top 20 analogs?
-    dist_20 = reading.analog_distribution.get(20)
-    distribution_sentence = ""
-    if dist_20 and dist_20.median is not None and dist_20.n_with_forward_return >= 10:
-        med = dist_20.median * 100
-        n = dist_20.n_with_forward_return
-        # Spread context (p25 to p75 = middle half)
-        if dist_20.p25 is not None and dist_20.p75 is not None:
-            spread = f"{dist_20.p25*100:+.1f}% to {dist_20.p75*100:+.1f}%"
-            distribution_sentence = (
-                f"Across the {n} closest historical analogs, Nifty's median 20-day "
-                f"return from these setups was {med:+.1f}%, with the middle half "
-                f"of outcomes between {spread}."
-            )
-
-    parts = [sentence1]
-    if outcome:
-        parts.append(outcome)
-    if distribution_sentence:
-        parts.append(distribution_sentence)
-    return " ".join(parts)
-
-
 def _conditional_paragraph(reading: MarketReading) -> str:
     """1-2 sentences on what historically happened in this regime/stress combo."""
     cond = reading.conditional
@@ -358,7 +315,6 @@ def compose(reading: MarketReading) -> Commentary:
         headline=_headline(reading),
         regime=_regime_paragraph(reading),
         sector=_sector_paragraph(reading),
-        analog=_analog_paragraph(reading),
         conditional=_conditional_paragraph(reading),
         watch=_watch_paragraph(reading),
     )

@@ -10,7 +10,6 @@ export const metadata = {
 const TABS = [
   { href: "/insights", label: "Pulse" },
   { href: "/insights/sectors", label: "Sectors" },
-  { href: "/insights/analogs", label: "Analogs" },
   { href: "/insights/watchlists", label: "Watchlists" },
 ];
 

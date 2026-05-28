@@ -37,12 +37,9 @@ def render(reading: MarketReading, commentary: Commentary) -> str:
         "",
         f"📊 *Sector rotation*",
         commentary.sector,
-        "",
-        f"🕰 *Historical analog*",
-        commentary.analog,
     ]
 
-    # Conditional stats only render if we have enough data
+    # Conditional base-rate stats only render if we have enough data
     if commentary.conditional:
         parts.extend([
             "",

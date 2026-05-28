@@ -49,7 +49,9 @@ def commentary_obj(reading) -> commentary.Commentary:
 
 class TestCommentaryStructure:
     def test_has_all_sections(self, commentary_obj):
-        for field in ["headline", "regime", "sector", "analog",
+        # 'analog' section was retired after the validity study showed it
+        # had no predictive content (see tasks/insight_engine/ANALOG_STUDY.md)
+        for field in ["headline", "regime", "sector",
                       "conditional", "watch", "disclaimer"]:
             assert getattr(commentary_obj, field), f"missing or empty: {field}"
 
@@ -73,7 +75,6 @@ class TestEditorialVoice:
             commentary_obj.headline,
             commentary_obj.regime,
             commentary_obj.sector,
-            commentary_obj.analog,
             commentary_obj.conditional,
             commentary_obj.watch,
         ]).lower()
@@ -139,17 +140,6 @@ class TestSectionContent:
             f"sector paragraph must name a sector by short name: {commentary_obj.sector!r}"
         )
 
-    def test_analog_paragraph_contains_month_year(self, commentary_obj):
-        # Analog must reference a specific historical date (e.g., "March 2018")
-        month_year_pattern = re.compile(
-            r"(January|February|March|April|May|June|July|August|"
-            r"September|October|November|December)\s+\d{4}",
-            re.IGNORECASE,
-        )
-        assert month_year_pattern.search(commentary_obj.analog), (
-            f"analog paragraph should name a month+year: {commentary_obj.analog!r}"
-        )
-
     def test_watch_paragraph_names_specific_stocks(self, commentary_obj):
         # At least one capitalized ticker-like token should appear
         # (rough check — actual NSE tickers vary in format)
@@ -175,7 +165,7 @@ class TestHistoricalDatesProduceCleanOutput:
         r = get_market_reading(pd.Timestamp(date))
         c = commentary.compose(r)
         # Every section must be non-empty
-        for field in ["headline", "regime", "sector", "analog",
+        for field in ["headline", "regime", "sector",
                       "conditional", "watch"]:
             assert getattr(c, field), f"{label}: empty {field}"
         # JSON-roundtrips

@@ -60,7 +60,8 @@ class TestBundleStructure:
 class TestTextContent:
     def test_postclose_has_section_headings(self, latest_reading):
         b = assemble("postclose", latest_reading)
-        for heading in ("Post-close", "*Sectors*", "*Historical", "*Watch tomorrow*"):
+        # 'Historical' (analog) section retired — see ANALOG_STUDY.md
+        for heading in ("Post-close", "*Sectors*", "*Watch tomorrow*"):
             assert heading in b.text, f"missing heading: {heading!r}"
 
     def test_premarket_has_section_headings(self, latest_reading):
@@ -70,8 +71,9 @@ class TestTextContent:
 
     def test_weekly_includes_conditional_section(self, latest_reading):
         b = assemble("weekly", latest_reading)
+        # 'Historical analog' section retired — see ANALOG_STUDY.md
         for heading in ("Weekly digest", "*Market state*",
-                        "*Sector rotation*", "*Historical analog*",
+                        "*Sector rotation*",
                         "*Watch next week*"):
             assert heading in b.text, f"missing heading: {heading!r}"
 
