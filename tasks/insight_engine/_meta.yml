@@ -3,5 +3,33 @@ status: in-progress
 opened: 2026-05-26
 closed: null
 branch: insight-engine
-related_commits: []
 supersedes: nifty_trader  # research line closed; data engines repurposed for insights product
+
+# Snapshot at last update (2026-05-28)
+phases_shipped:
+  - "0 — data engines (12 modules, 119 tests)"
+  - "1 — daily quant note (8 modules + CLI, 72 tests)"
+  - "2 — web dashboard (4 pages + 32 API tests)"
+  - "4.1 — concentration / Reliance widget (14 tests)"
+  - "4.2 — pattern watchlists + validity studies (1 pass / 1 marginal / 1 fail)"
+  - "4.3 — sector subgroup tracker (13 tests)"
+  - "5.A — inline learn explainers (14 prerendered pages)"
+  - "5.B — learn hub (38-term glossary, indicator deep-dives, pattern guides)"
+  - "5.C — teach-while-broadcasting (learn_moment on every daily note)"
+
+phases_pending:
+  - "3 — automation (Meta WhatsApp API approval is the bottleneck)"
+  - "4.4 — anniversary / calendar (also unblocks 5.C on_this_day)"
+  - "4.5 — cross-asset + FII/DII data layer"
+  - "5.D — validity-protocol document (formalisation; protocol is already embedded in 4.2 harness)"
+
+tests_passing: 261  # insights suite on this branch
+total_tests_in_kite_api: 545
+
+key_docs:
+  plan: PLAN.md
+  tasks: TASKS.md
+  results: RESULTS.md
+  analog_retirement: ANALOG_STUDY.md
+  pattern_validity: PATTERN_VALIDITY/
+  tdd_review: TDD_REVIEW.md  # added 2026-05-28
