@@ -1,4 +1,16 @@
+import Link from "next/link";
 import { getSectors, fmtPct } from "@/lib/insights-api";
+
+function LearnLink({ slug, label = "What is this?" }: { slug: string; label?: string }) {
+  return (
+    <Link
+      href={`/insights/learn/${slug}`}
+      className="text-xs text-neutral-500 underline-offset-2 hover:underline"
+    >
+      {label}
+    </Link>
+  );
+}
 
 export const dynamic = "force-dynamic";
 export const revalidate = 900;
@@ -25,7 +37,10 @@ export default async function SectorsPage({
 
       {/* ──────────────── RS LEADERBOARD ──────────────── */}
       <section>
-        <h3 className="text-base font-semibold">RS leaderboard</h3>
+        <div className="flex items-baseline justify-between">
+          <h3 className="text-base font-semibold">RS leaderboard</h3>
+          <LearnLink slug="sector-rs" label="What is RS?" />
+        </div>
         <table className="mt-3 w-full text-sm">
           <thead className="border-b text-left text-neutral-500">
             <tr>
@@ -68,7 +83,10 @@ export default async function SectorsPage({
 
       {/* ──────────────── CONSTITUENT-LEVEL BREADTH ──────────────── */}
       <section>
-        <h3 className="text-base font-semibold">Constituent-level breadth</h3>
+        <div className="flex items-baseline justify-between">
+          <h3 className="text-base font-semibold">Constituent-level breadth</h3>
+          <LearnLink slug="sector-breadth" label="Why constituent-level?" />
+        </div>
         <p className="mt-1 text-xs text-neutral-500">
           How broad is each sector&apos;s rally? % of the sector&apos;s
           constituent stocks above key moving averages, plus the top and

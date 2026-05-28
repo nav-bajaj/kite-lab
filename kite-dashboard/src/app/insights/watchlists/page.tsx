@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getWatchlists, fmtPct, WatchlistEntry } from "@/lib/insights-api";
 
 export const dynamic = "force-dynamic";
@@ -7,18 +8,21 @@ interface PageProps {
   searchParams: Promise<{ date?: string }>;
 }
 
-const LIST_LABELS: Record<string, { title: string; blurb: string }> = {
+const LIST_LABELS: Record<string, { title: string; blurb: string; learn?: string }> = {
   breakouts: {
     title: "Breakouts",
     blurb: "Stocks closing above their trailing 20-day high AND above their 50-DMA.",
+    learn: "breakout",
   },
   rs_leaders: {
     title: "RS Leaders",
     blurb: "Top NSE 500 names by 126-day return vs Nifty 50.",
+    learn: "rs-leader",
   },
   coiled_springs: {
     title: "Coiled Springs",
     blurb: "Tight consolidations: above 50+200 DMA with 20-day volatility in the stock's own bottom quartile.",
+    learn: "coiled-spring",
   },
   stretched: {
     title: "Stretched",
@@ -58,7 +62,17 @@ export default async function WatchlistsPage({ searchParams }: PageProps) {
 
         return (
           <section key={listName}>
-            <h3 className="text-base font-semibold">{meta.title}</h3>
+            <div className="flex items-baseline justify-between">
+              <h3 className="text-base font-semibold">{meta.title}</h3>
+              {meta.learn && (
+                <Link
+                  href={`/insights/learn/${meta.learn}`}
+                  className="text-xs text-neutral-500 underline-offset-2 hover:underline"
+                >
+                  What is this?
+                </Link>
+              )}
+            </div>
             <p className="mt-1 text-xs text-neutral-500">{meta.blurb}</p>
             <WatchlistTable entries={entries} />
           </section>

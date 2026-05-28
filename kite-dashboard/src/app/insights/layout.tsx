@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { SnapshotPicker } from "./_components/snapshot-picker";
 
@@ -11,6 +12,7 @@ const TABS = [
   { href: "/insights", label: "Pulse" },
   { href: "/insights/sectors", label: "Sectors" },
   { href: "/insights/watchlists", label: "Watchlists" },
+  { href: "/insights/learn", label: "Learn" },
 ];
 
 export default function InsightsLayout({ children }: { children: React.ReactNode }) {
@@ -38,7 +40,9 @@ export default function InsightsLayout({ children }: { children: React.ReactNode
             </Link>
           ))}
         </nav>
-        <SnapshotPicker />
+        <Suspense fallback={null}>
+          <SnapshotPicker />
+        </Suspense>
       </header>
 
       {children}

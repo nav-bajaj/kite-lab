@@ -1,5 +1,17 @@
+import Link from "next/link";
 import { getReading, fmtPct, fmtNum, regimeLabel } from "@/lib/insights-api";
 import { RegimeLegend } from "./_components/regime-legend";
+
+function LearnLink({ slug, label = "What is this?" }: { slug: string; label?: string }) {
+  return (
+    <Link
+      href={`/insights/learn/${slug}`}
+      className="text-xs text-neutral-500 underline-offset-2 hover:underline"
+    >
+      {label}
+    </Link>
+  );
+}
 
 export const dynamic = "force-dynamic"; // always fetch latest reading
 export const revalidate = 900;
@@ -30,19 +42,29 @@ export default async function PulsePage({
             value={regimeLabel(regime.regime)}
             sub={`Day ${regime.persistence_days}`}
             help={
-              <a
-                href="#regime-legend"
-                className="text-xs text-neutral-500 underline-offset-2 hover:underline"
-              >
-                What do these mean?
-              </a>
+              <div className="flex gap-3">
+                <a
+                  href="#regime-legend"
+                  className="text-xs text-neutral-500 underline-offset-2 hover:underline"
+                >
+                  What do these mean?
+                </a>
+                <LearnLink slug="regime" label="Deep-dive →" />
+              </div>
             }
           />
-          <Stat label="Stress" value={stress.score.toFixed(0)}
-                sub={`/100 · pctile ${stress.score_percentile.toFixed(0)}`} />
-          <Stat label="NIFTY 100 vs 100-DMA"
-                value={regime.nifty100_above_100dma ? "Above" : "Below"}
-                sub={`Breadth ${fmtPct(regime.pct_above_200dma, 0)} above 200-DMA`} />
+          <Stat
+            label="Stress"
+            value={stress.score.toFixed(0)}
+            sub={`/100 · pctile ${stress.score_percentile.toFixed(0)}`}
+            help={<LearnLink slug="stress-score" />}
+          />
+          <Stat
+            label="NIFTY 100 vs 100-DMA"
+            value={regime.nifty100_above_100dma ? "Above" : "Below"}
+            sub={`Breadth ${fmtPct(regime.pct_above_200dma, 0)} above 200-DMA`}
+            help={<LearnLink slug="pct-above-200dma" label="What is breadth?" />}
+          />
         </div>
 
         {regime.prev_regime && regime.persistence_days <= 10 && (
@@ -56,7 +78,10 @@ export default async function PulsePage({
 
       {/* ──────────────── STRESS COMPONENTS ──────────────── */}
       <section>
-        <h3 className="text-base font-semibold">Stress breakdown</h3>
+        <div className="flex items-baseline justify-between">
+          <h3 className="text-base font-semibold">Stress breakdown</h3>
+          <LearnLink slug="stress-score" label="How is this computed?" />
+        </div>
         <table className="mt-3 w-full text-sm">
           <thead className="border-b text-left text-neutral-500">
             <tr>
@@ -84,7 +109,13 @@ export default async function PulsePage({
 
       {/* ──────────────── SECTOR LEADERBOARD ──────────────── */}
       <section>
-        <h3 className="text-base font-semibold">Sector leaderboard (60-day RS)</h3>
+        <div className="flex items-baseline justify-between">
+          <h3 className="text-base font-semibold">Sector leaderboard (60-day RS)</h3>
+          <div className="flex gap-3">
+            <LearnLink slug="sector-rs" label="What is RS?" />
+            <LearnLink slug="sector-breadth" label="What is breadth?" />
+          </div>
+        </div>
         <p className="mt-1 text-xs text-neutral-500">
           Relative strength vs Nifty 50. Right column shows breadth — % of
           sector constituents above their 200-DMA.
