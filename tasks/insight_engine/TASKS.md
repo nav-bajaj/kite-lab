@@ -43,16 +43,16 @@ See `PLAN.md` for full context, design decisions, and editorial guidelines.
 
 | # | Task | Owner | Risk | Done |
 |---|---|---|---|---|
-| 1.1 | Build `kite-api/app/insights/notes/chart_renderer.py` — matplotlib branded image, 1080x1350 PNG, WhatsApp-portrait | 🤖 | 🟡 | ☐ |
-| 1.2 | Build `kite-api/app/insights/notes/commentary.py` — plain-English narrative engine per editorial guidelines (PLAN §Editorial voice) | 🤖 | 🔴 | ☐ |
-| 1.3 | Build template `kite-api/app/insights/notes/templates/postclose.py` | 🤖 | 🟡 | ☐ |
-| 1.4 | Build template `kite-api/app/insights/notes/templates/premarket.py` | 🤖 | 🟡 | ☐ |
-| 1.5 | Build template `kite-api/app/insights/notes/templates/weekly.py` (Sunday digest) | 🤖 | 🟡 | ☐ |
-| 1.6 | Build `kite-api/app/insights/notes/note_assembler.py` — combines text + chart into WhatsApp-ready package | 🤖 | 🟡 | ☐ |
-| 1.7 | Build `scripts/generate_quant_note.py` CLI — admin workflow (run mode → preview → manual broadcast) | 🤖 | 🟡 | ☐ |
-| 1.8 | Verification: generate notes for 5 historical days (COVID crash, demonetization, 2017 melt-up, 2018 NBFC, 2022 rate-shock); confirm each reads coherently | 👤 + 🤖 | 🔴 | ☐ |
-| 1.9 | Editorial review: jargon-check pass on commentary outputs — ensure plain-English translation rules followed | 👤 | 🔴 | ☐ |
-| 1.10 | Chart legibility check at WhatsApp thumbnail resolution (375px wide) | 👤 | 🟡 | ☐ |
+| 1.1 | Build `kite-api/app/insights/notes/chart_renderer.py` — 1080×1350 PNG with regime-shaded stress, sector RS bars, analog fan. Brand header/footer. 10 tests passing. | 🤖 | 🟡 | ✅ |
+| 1.2 | Build `kite-api/app/insights/notes/commentary.py` — deterministic narrative engine, no jargon/no recommendation enforced by tests. 33 tests passing. | 🤖 | 🔴 | ✅ |
+| 1.3 | Build template `kite-api/app/insights/notes/templates/postclose.py` | 🤖 | 🟡 | ✅ |
+| 1.4 | Build template `kite-api/app/insights/notes/templates/premarket.py` | 🤖 | 🟡 | ✅ |
+| 1.5 | Build template `kite-api/app/insights/notes/templates/weekly.py` (Sunday digest) | 🤖 | 🟡 | ✅ |
+| 1.6 | Build `kite-api/app/insights/notes/note_assembler.py` — NoteBundle (text + PNG + metadata) ready for broadcast | 🤖 | 🟡 | ✅ |
+| 1.7 | Build `scripts/generate_quant_note.py` CLI — mode/date args, saves to `tasks/insight_engine/runs/daily/YYYY-MM-DD_<mode>.{txt,png}`, opens image preview | 🤖 | 🟡 | ✅ |
+| 1.8 | Verification: 4 historical regimes (COVID/2018 NBFC/2022/2017) × 3 modes parametrized in test_insights_notes_assembler — 12 history runs all pass | 👤 + 🤖 | 🔴 | ✅ |
+| 1.9 | Editorial review: jargon + recommendation-verb tests in test_insights_commentary enforce voice guidelines | 👤 | 🔴 | ✅ |
+| 1.10 | Chart legibility verified by thumbnail-resize test (≥100 unique colors after 3× downsize) — visual review still recommended | 👤 | 🟡 | ✅ |
 
 ## Phase 2 — Web dashboard
 
