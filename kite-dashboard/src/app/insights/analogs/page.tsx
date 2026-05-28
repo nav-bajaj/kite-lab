@@ -5,8 +5,13 @@ export const revalidate = 900;
 
 const HORIZONS = ["5", "20", "60", "120"];
 
-export default async function AnalogsPage() {
-  const { matches, distribution } = await getAnalogs({ k: 20 });
+export default async function AnalogsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>;
+}) {
+  const { date } = await searchParams;
+  const { matches, distribution } = await getAnalogs({ date, k: 20 });
 
   return (
     <main className="space-y-8">

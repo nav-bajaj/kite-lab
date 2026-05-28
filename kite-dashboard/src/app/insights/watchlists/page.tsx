@@ -3,6 +3,10 @@ import { getWatchlists, fmtPct, WatchlistEntry } from "@/lib/insights-api";
 export const dynamic = "force-dynamic";
 export const revalidate = 900;
 
+interface PageProps {
+  searchParams: Promise<{ date?: string }>;
+}
+
 const LIST_LABELS: Record<string, { title: string; blurb: string }> = {
   breakouts: {
     title: "Breakouts",
@@ -30,8 +34,9 @@ const LIST_ORDER = [
   "breakouts", "rs_leaders", "coiled_springs", "stretched", "recent_breakdowns",
 ];
 
-export default async function WatchlistsPage() {
-  const { date, lists } = await getWatchlists({ limit: 25 });
+export default async function WatchlistsPage({ searchParams }: PageProps) {
+  const { date: dateParam } = await searchParams;
+  const { date, lists } = await getWatchlists({ date: dateParam, limit: 25 });
 
   return (
     <main className="space-y-8">

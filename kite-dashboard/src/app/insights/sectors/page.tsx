@@ -3,8 +3,13 @@ import { getSectors, fmtPct } from "@/lib/insights-api";
 export const dynamic = "force-dynamic";
 export const revalidate = 900;
 
-export default async function SectorsPage() {
-  const { date, leaderboard_60d, sector_breadth } = await getSectors();
+export default async function SectorsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>;
+}) {
+  const params = await searchParams;
+  const { date, leaderboard_60d, sector_breadth } = await getSectors(params.date);
 
   return (
     <main className="space-y-8">

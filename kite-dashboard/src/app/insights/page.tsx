@@ -1,10 +1,16 @@
 import { getReading, fmtPct, fmtNum, regimeLabel } from "@/lib/insights-api";
+import { RegimeLegend } from "./_components/regime-legend";
 
 export const dynamic = "force-dynamic"; // always fetch latest reading
 export const revalidate = 900;
 
-export default async function PulsePage() {
-  const reading = await getReading();
+export default async function PulsePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>;
+}) {
+  const { date } = await searchParams;
+  const reading = await getReading(date);
   const { regime, stress, sector_leaderboard_60d } = reading;
 
   return (
@@ -19,8 +25,19 @@ export default async function PulsePage() {
         </p>
 
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
-          <Stat label="Regime" value={regimeLabel(regime.regime)}
-                sub={`Day ${regime.persistence_days}`} />
+          <Stat
+            label="Regime"
+            value={regimeLabel(regime.regime)}
+            sub={`Day ${regime.persistence_days}`}
+            help={
+              <a
+                href="#regime-legend"
+                className="text-xs text-neutral-500 underline-offset-2 hover:underline"
+              >
+                What do these mean?
+              </a>
+            }
+          />
           <Stat label="Stress" value={stress.score.toFixed(0)}
                 sub={`/100 · pctile ${stress.score_percentile.toFixed(0)}`} />
           <Stat label="NIFTY 100 vs 100-DMA"
@@ -107,16 +124,30 @@ export default async function PulsePage() {
           </tbody>
         </table>
       </section>
+
+      {/* ──────────────── REGIME GLOSSARY ──────────────── */}
+      <RegimeLegend />
     </main>
   );
 }
 
-function Stat({ label, value, sub }: { label: string; value: string; sub: string }) {
+function Stat({
+  label,
+  value,
+  sub,
+  help,
+}: {
+  label: string;
+  value: string;
+  sub: string;
+  help?: React.ReactNode;
+}) {
   return (
     <div className="rounded border p-4">
       <div className="text-xs uppercase tracking-wide text-neutral-500">{label}</div>
       <div className="mt-1 text-2xl font-semibold">{value}</div>
       <div className="mt-1 text-xs text-neutral-500">{sub}</div>
+      {help && <div className="mt-2">{help}</div>}
     </div>
   );
 }

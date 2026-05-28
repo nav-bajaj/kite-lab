@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SnapshotPicker } from "./_components/snapshot-picker";
 
 export const metadata = {
   title: "Insights — Marketworks",
@@ -38,6 +39,7 @@ export default function InsightsLayout({ children }: { children: React.ReactNode
             </Link>
           ))}
         </nav>
+        <SnapshotPicker />
       </header>
 
       {children}
