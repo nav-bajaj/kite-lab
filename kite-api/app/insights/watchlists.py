@@ -298,6 +298,159 @@ def get_recent_breakdowns(
     return out
 
 
+# ---------- Phase 4.2 candidate patterns ----------
+#
+# These detectors are wired into the validity-study harness in
+# tasks/insight_engine/pattern_validity_study.py. Whether they end up in
+# the live watchlist depends on their study findings — see
+# tasks/insight_engine/PATTERN_VALIDITY/ for the per-pattern reports.
+
+def get_multi_year_breakouts(
+    asof: pd.Timestamp | None = None,
+    lookback_days: int = 1260,  # ~5 trading years
+    limit: int = DEFAULT_LIMIT,
+) -> list[WatchlistEntry]:
+    """Close today above the highest close of the prior `lookback_days`
+    sessions (excluding today) AND above the 50-DMA. The 'no overhead
+    supply for years' setup — historically the strongest variant of a
+    breakout signal."""
+    panel = _stock_panel()
+    asof = _asof_index(panel, asof)
+    sub = panel.loc[:asof]
+    if len(sub) < lookback_days + 1:
+        return []
+
+    close = sub.iloc[-1]
+    prev_close = sub.iloc[-2] if len(sub) >= 2 else None
+    chg = (close / prev_close - 1) if prev_close is not None else pd.Series(np.nan, index=close.index)
+
+    high_long = sub.iloc[-(lookback_days + 1):-1].max()
+    sma_50 = sub.iloc[-50:].mean() if len(sub) >= 50 else pd.Series(np.nan, index=close.index)
+
+    fires = (close > high_long) & (close > sma_50) & close.notna() & high_long.notna()
+    pct_above = (close - high_long) / high_long
+    candidates = pct_above[fires].sort_values(ascending=False).head(limit)
+
+    out: list[WatchlistEntry] = []
+    for sym, score in candidates.items():
+        if pd.isna(score):
+            continue
+        out.append(WatchlistEntry(
+            symbol=sym,
+            close=float(close[sym]),
+            chg_today_pct=float(chg[sym]) if pd.notna(chg[sym]) else None,
+            score=float(score),
+            note=f"{score*100:+.1f}% above {lookback_days // 252}y high",
+            sectors=_sectors_for(sym),
+        ))
+    return out
+
+
+def get_pullback_to_50dma(
+    asof: pd.Timestamp | None = None,
+    proximity_pct: float = 0.02,  # within 2% of the 50-DMA
+    uptrend_lookback: int = 20,
+    limit: int = DEFAULT_LIMIT,
+) -> list[WatchlistEntry]:
+    """Stock above 200-DMA AND has been above its 50-DMA at least once in
+    the trailing `uptrend_lookback` sessions AND today's close is within
+    `proximity_pct` of the 50-DMA. The classic 'reset to trend' setup
+    within an established uptrend."""
+    panel = _stock_panel()
+    asof = _asof_index(panel, asof)
+    sub = panel.loc[:asof]
+    if len(sub) < 200:
+        return []
+
+    close = sub.iloc[-1]
+    sma_50 = sub.iloc[-50:].mean()
+    sma_200 = sub.iloc[-200:].mean()
+
+    # Distance from 50-DMA today (signed). Negative = pulled back below.
+    dist = (close / sma_50) - 1.0
+
+    # Was the stock above its 50-DMA at any point in the prior window?
+    # (Rolling 50-DMA needed across the lookback.)
+    sma_50_rolling = sub.rolling(50, min_periods=50).mean()
+    above_recent = (sub > sma_50_rolling).iloc[-uptrend_lookback:].any(axis=0)
+
+    chg_today = (close / sub.iloc[-2]) - 1 if len(sub) >= 2 else pd.Series(np.nan, index=close.index)
+
+    fires = (
+        (close > sma_200)
+        & above_recent
+        & (dist.abs() < proximity_pct)
+        & close.notna() & sma_50.notna() & sma_200.notna()
+    )
+    # Score by absolute distance — smaller = cleaner pullback to the line
+    candidates = dist[fires].abs().sort_values(ascending=True).head(limit)
+
+    out: list[WatchlistEntry] = []
+    for sym, _abs_score in candidates.items():
+        signed = float(dist[sym])
+        out.append(WatchlistEntry(
+            symbol=sym,
+            close=float(close[sym]),
+            chg_today_pct=float(chg_today[sym]) if pd.notna(chg_today.get(sym, np.nan)) else None,
+            score=abs(signed),
+            note=f"{signed*100:+.1f}% from 50-DMA; above 200-DMA",
+            sectors=_sectors_for(sym),
+        ))
+    return out
+
+
+def get_sustained_uptrend(
+    asof: pd.Timestamp | None = None,
+    min_252d_return: float = 0.20,
+    max_60d_drawdown: float = 0.08,
+    limit: int = DEFAULT_LIMIT,
+) -> list[WatchlistEntry]:
+    """Clean, durable uptrend: trailing 252-day return ≥ +20%, max drawdown
+    over the last 60 days ≤ 8%, close above 200-DMA. Captures stocks in
+    persistent uptrends without recent corrective episodes."""
+    panel = _stock_panel()
+    asof = _asof_index(panel, asof)
+    sub = panel.loc[:asof]
+    if len(sub) < 252:
+        return []
+
+    end_close = sub.iloc[-1]
+    start_close = sub.iloc[-252]
+    ret_252 = (end_close / start_close) - 1.0
+
+    sma_200 = sub.iloc[-200:].mean()
+
+    # 60-day max drawdown: peak-to-trough over the trailing 60 sessions
+    last_60 = sub.iloc[-60:]
+    rolling_max = last_60.cummax()
+    drawdown_pct = (last_60 / rolling_max) - 1.0
+    max_dd = drawdown_pct.min()  # negative number; -0.08 means 8% drawdown
+
+    chg_today = (end_close / sub.iloc[-2]) - 1 if len(sub) >= 2 else pd.Series(np.nan, index=end_close.index)
+
+    fires = (
+        (ret_252 >= min_252d_return)
+        & (max_dd >= -max_60d_drawdown)
+        & (end_close > sma_200)
+        & end_close.notna() & sma_200.notna() & max_dd.notna()
+    )
+    # Score: prefer cleanest trend (smallest drawdown ÷ largest return)
+    cleanliness = ret_252 / (-max_dd).clip(lower=0.01)
+    candidates = cleanliness[fires].sort_values(ascending=False).head(limit)
+
+    out: list[WatchlistEntry] = []
+    for sym, _score in candidates.items():
+        out.append(WatchlistEntry(
+            symbol=sym,
+            close=float(end_close[sym]),
+            chg_today_pct=float(chg_today[sym]) if pd.notna(chg_today.get(sym, np.nan)) else None,
+            score=float(ret_252[sym]),
+            note=f"+{ret_252[sym]*100:.0f}% over 1y; max-DD {max_dd[sym]*100:+.1f}% in 60d",
+            sectors=_sectors_for(sym),
+        ))
+    return out
+
+
 # ---------- bundled snapshot ----------
 
 def get_all_watchlists(
@@ -306,11 +459,16 @@ def get_all_watchlists(
 ) -> dict[str, list[WatchlistEntry]]:
     """All 5 watchlists in one call. Convenience for the snapshot orchestrator."""
     return {
-        "breakouts":        get_breakouts(asof, limit=limit),
-        "rs_leaders":       get_rs_leaders(asof, limit=limit),
-        "coiled_springs":   get_coiled_springs(asof, limit=limit),
-        "stretched":        get_stretched(asof, limit=limit),
-        "recent_breakdowns": get_recent_breakdowns(asof, limit=limit),
+        "breakouts":          get_breakouts(asof, limit=limit),
+        "rs_leaders":         get_rs_leaders(asof, limit=limit),
+        "coiled_springs":     get_coiled_springs(asof, limit=limit),
+        "stretched":          get_stretched(asof, limit=limit),
+        "recent_breakdowns":  get_recent_breakdowns(asof, limit=limit),
+        # Phase 4.2 — added after passing validity studies (see
+        # tasks/insight_engine/PATTERN_VALIDITY/). pullback_to_50dma failed
+        # its check and is intentionally not surfaced.
+        "multi_year_breakouts": get_multi_year_breakouts(asof, limit=limit),
+        "sustained_uptrend":    get_sustained_uptrend(asof, limit=limit),
     }
 
 

@@ -13,6 +13,7 @@ import { rsLeader } from "./rs-leader";
 import { drawdown } from "./drawdown";
 import { vix } from "./vix";
 import { concentration } from "./concentration";
+import { sustainedUptrend } from "./sustained-uptrend";
 
 const ALL: LearnExplainer[] = [
   stressScore,
@@ -28,6 +29,7 @@ const ALL: LearnExplainer[] = [
   drawdown,
   vix,
   concentration,
+  sustainedUptrend,
 ];
 
 export const EXPLAINERS: Record<string, LearnExplainer> = Object.fromEntries(

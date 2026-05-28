@@ -142,11 +142,15 @@ class TestAnalogsEndpoint:
 
 
 class TestWatchlistsEndpoints:
-    def test_all_five_lists_returned(self, client):
+    def test_all_lists_returned(self, client):
+        # Phase 4.2 added 2 validity-tested patterns to the bundled snapshot.
         r = client.get("/api/insights/watchlists?limit=5")
         b = r.json()
-        expected = {"breakouts", "rs_leaders", "coiled_springs",
-                    "stretched", "recent_breakdowns"}
+        expected = {
+            "breakouts", "rs_leaders", "coiled_springs",
+            "stretched", "recent_breakdowns",
+            "multi_year_breakouts", "sustained_uptrend",
+        }
         assert set(b["lists"].keys()) == expected
         for entries in b["lists"].values():
             assert len(entries) <= 5

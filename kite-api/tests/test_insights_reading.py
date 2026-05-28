@@ -64,9 +64,13 @@ class TestMarketReading:
         from app.insights.analog_finder import FORWARD_HORIZONS
         assert set(market_reading.analog_distribution.keys()) == set(FORWARD_HORIZONS)
 
-    def test_watchlists_has_five_lists(self, market_reading):
-        expected = {"breakouts", "rs_leaders", "coiled_springs",
-                     "stretched", "recent_breakdowns"}
+    def test_watchlists_has_seven_lists(self, market_reading):
+        # Phase 4.2 added 2 validity-tested patterns alongside the original 5.
+        expected = {
+            "breakouts", "rs_leaders", "coiled_springs",
+            "stretched", "recent_breakdowns",
+            "multi_year_breakouts", "sustained_uptrend",
+        }
         assert set(market_reading.watchlists.keys()) == expected
 
     def test_conditional_dict_well_formed(self, market_reading):

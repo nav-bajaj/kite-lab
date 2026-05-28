@@ -8,7 +8,18 @@ interface PageProps {
   searchParams: Promise<{ date?: string }>;
 }
 
-const LIST_LABELS: Record<string, { title: string; blurb: string; learn?: string }> = {
+const LIST_LABELS: Record<
+  string,
+  {
+    title: string;
+    blurb: string;
+    learn?: string;
+    /** Set when the pattern passed its validity study and we publish
+     * forward-return narrative confidently. */
+    validityBadge?: "validated" | "names-only";
+    validityNote?: string;
+  }
+> = {
   breakouts: {
     title: "Breakouts",
     blurb: "Stocks closing above their trailing 20-day high AND above their 50-DMA.",
@@ -24,6 +35,20 @@ const LIST_LABELS: Record<string, { title: string; blurb: string; learn?: string
     blurb: "Tight consolidations: above 50+200 DMA with 20-day volatility in the stock's own bottom quartile.",
     learn: "coiled-spring",
   },
+  multi_year_breakouts: {
+    title: "Multi-year breakouts",
+    blurb: "Close today above the highest close of the prior 5 years AND above the 50-DMA. The 'no overhead supply for years' setup.",
+    learn: "breakout",
+    validityBadge: "validated",
+    validityNote: "Validity-tested: top-25 firings historically beat NSE 500 baseline by +1.4pp at 20d and +6.0pp at 120d in our 14-year sample.",
+  },
+  sustained_uptrend: {
+    title: "Sustained uptrend",
+    blurb: "Trailing 1-year return ≥ +20% with max drawdown ≤ 8% over the last 60 days. Stocks in clean, persistent uptrends.",
+    learn: "sustained-uptrend",
+    validityBadge: "names-only",
+    validityNote: "Validity-tested: positive direction lift at all horizons (+4.9pp at 20d, +6.3pp at 120d) but baseline-excess is modest. Published as a names list without forward-return claims.",
+  },
   stretched: {
     title: "Stretched",
     blurb: "Names trading > 20% above their 200-DMA — historically a mean-reversion zone.",
@@ -35,7 +60,13 @@ const LIST_LABELS: Record<string, { title: string; blurb: string; learn?: string
 };
 
 const LIST_ORDER = [
-  "breakouts", "rs_leaders", "coiled_springs", "stretched", "recent_breakdowns",
+  "breakouts",
+  "multi_year_breakouts",  // validated — sits next to its sibling
+  "rs_leaders",
+  "coiled_springs",
+  "sustained_uptrend",
+  "stretched",
+  "recent_breakdowns",
 ];
 
 export default async function WatchlistsPage({ searchParams }: PageProps) {
@@ -62,8 +93,26 @@ export default async function WatchlistsPage({ searchParams }: PageProps) {
 
         return (
           <section key={listName}>
-            <div className="flex items-baseline justify-between">
-              <h3 className="text-base font-semibold">{meta.title}</h3>
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <div className="flex flex-wrap items-baseline gap-2">
+                <h3 className="text-base font-semibold">{meta.title}</h3>
+                {meta.validityBadge === "validated" && (
+                  <span
+                    className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-medium text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200"
+                    title={meta.validityNote}
+                  >
+                    validity-tested ✓
+                  </span>
+                )}
+                {meta.validityBadge === "names-only" && (
+                  <span
+                    className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-200"
+                    title={meta.validityNote}
+                  >
+                    names-only · no fwd-return claims
+                  </span>
+                )}
+              </div>
               {meta.learn && (
                 <Link
                   href={`/insights/learn/${meta.learn}`}
@@ -74,6 +123,11 @@ export default async function WatchlistsPage({ searchParams }: PageProps) {
               )}
             </div>
             <p className="mt-1 text-xs text-neutral-500">{meta.blurb}</p>
+            {meta.validityNote && (
+              <p className="mt-1 text-xs italic text-neutral-500">
+                {meta.validityNote}
+              </p>
+            )}
             <WatchlistTable entries={entries} />
           </section>
         );

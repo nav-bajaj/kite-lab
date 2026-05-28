@@ -47,11 +47,15 @@ class TestWatchlists:
                 f"breakdown {e.symbol} score should be negative (was {e.score})"
             )
 
-    def test_all_watchlists_returns_five(self):
+    def test_all_watchlists_returns_seven(self):
+        # Phase 4.2 added 2 validity-tested patterns alongside the original 5.
+        # pullback_to_50dma failed its validity study (see
+        # tasks/insight_engine/PATTERN_VALIDITY/) and is intentionally not here.
         all_lists = watchlists.get_all_watchlists(limit=5)
         assert set(all_lists.keys()) == {
             "breakouts", "rs_leaders", "coiled_springs",
             "stretched", "recent_breakdowns",
+            "multi_year_breakouts", "sustained_uptrend",
         }
         for name, entries in all_lists.items():
             assert isinstance(entries, list)

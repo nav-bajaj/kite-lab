@@ -17,8 +17,9 @@ that drove the analog retirement and the resulting design principles.
 | 1 | Daily Quant Note | ✅ shipped (8 modules + CLI, 72 tests) |
 | 2 | Web dashboard | ✅ shipped (4 pages + API, 32 tests; design polish deferred to design-engine integration) |
 | 3 | Automation + multi-channel | 🔲 not started |
-| **4.1** | **Concentration / Reliance impact widget** | ✅ shipped 2026-05-28 — engine + API + Pulse widget + Learn explainer (14 tests) |
-| **4.2-4.5** | **Pattern + structural expansion (remaining)** | 🔲 patterns, subgroups, calendar, cross-asset |
+| **4.1** | **Concentration / Reliance impact widget** | ✅ shipped 2026-05-28 |
+| **4.2** | **Pattern watchlists + validity studies** | ✅ shipped 2026-05-28 — 3 new detectors, reusable validity harness, honest findings (1 PASS / 1 MARGINAL / 1 FAIL), Watchlists UI with validity badges |
+| **4.3-4.5** | **Structural expansion (remaining)** | 🔲 subgroups, calendar, cross-asset |
 | **5.A** | **Inline explainers (Learn layer)** | ✅ shipped 2026-05-28 — 13 explainers prerendered, "What is this?" links on Pulse/Sectors/Watchlists, Learn tab in nav |
 | **5.B** | **Learn hub — glossary + deep-dives + pattern guides** | ✅ shipped 2026-05-28 — 38-term glossary, "Historical context" + "Common misreadings" on every indicator, transparent detection rules on patterns |
 | **5.C-D** | **Knowledge layer remainder** | 🔲 teach-while-broadcasting, validity protocol |
@@ -121,12 +122,12 @@ Total tests passing on this branch: **223**.
 
 | # | Task | Owner | Risk | Done |
 |---|---|---|---|---|
-| 4.2.1 | Define 5 new detectors in `kite-api/app/insights/watchlists.py` (one function each): multi_year_breakout, pullback_to_50dma, golden_cross_5d_old, sustained_higher_highs_lows_60d, sector_thrust_day_constituents | 🤖 | 🟡 | ☐ |
-| 4.2.2 | Per-pattern validity study script template (mirror `analog_validity_study.py`): for each detector, sample 200+ historical fire days, compute fwd 5/20/60/120d returns, compare against unconditional baseline. Honest report: IC, direction-lift, baseline-excess. | 🤖 | 🔴 | ☐ |
-| 4.2.3 | Run validity study for each of the 5 new patterns; write findings into `tasks/insight_engine/PATTERN_VALIDITY/{name}.md` | 🤖 | 🔴 | ☐ |
-| 4.2.4 | Promote validated patterns (those with baseline-excess > 1pp AND positive direction lift) to live watchlists; mark borderline/failed patterns as "names only, no forward stats" | 🤖 | 🔴 | ☐ |
-| 4.2.5 | Update Watchlists page to add the new lists with brief explainers per-pattern | 🤖 | 🟡 | ☐ |
-| 4.2.6 | Update commentary engine to surface notable pattern fires (e.g., "5 stocks just broke out of multi-year bases — a cluster like this last happened in...") | 🤖 | 🟡 | ☐ |
+| 4.2.1 | 3 new detectors in `watchlists.py`: `multi_year_breakout` (5y high + 50-DMA), `pullback_to_50dma` (above-200 trending stock within 2% of 50-DMA), `sustained_uptrend` (1y +20%, 60d max-DD ≤ 8%, above 200-DMA). golden_cross + sector_thrust deferred (lower-priority slow indicators) | 🤖 | 🟡 | ✅ |
+| 4.2.2 | Reusable validity-study harness at `tasks/insight_engine/pattern_validity_study.py`. For any detector function, samples 165 historical dates (every 21 trading days), records top-25 fire stocks per date, compares fwd 5/20/60/120d returns to NSE 500 unconditional baseline. Produces ValidityReport with excess-pp + direction-lift per horizon. | 🤖 | 🔴 | ✅ |
+| 4.2.3 | Validity studies ran on all 3 patterns; results in `PATTERN_VALIDITY/{multi_year_breakout, pullback_to_50dma, sustained_uptrend}.md`. **multi_year_breakout PASSES** (+1.41pp / +3.5pp at 20d). **pullback_to_50dma FAILS** (-0.28pp at 20d). **sustained_uptrend MARGINAL** (+0.75pp / +4.9pp at 20d). | 🤖 | 🔴 | ✅ |
+| 4.2.4 | Promotion per validity findings: multi_year_breakout live with forward-return narrative ("validity-tested ✓" badge), sustained_uptrend live as "names-only · no fwd-return claims" badge, pullback_to_50dma intentionally not surfaced. | 🤖 | 🔴 | ✅ |
+| 4.2.5 | Watchlists page renders 7 lists (was 5). Both new ones have validity badges and per-list validity notes. multi_year_breakout reuses the breakout Learn explainer; sustained_uptrend has its own at `/insights/learn/sustained-uptrend`. | 🤖 | 🟡 | ✅ |
+| 4.2.6 | Commentary engine integration for "X stocks just broke out of multi-year bases" paragraph | 🤖 | 🟡 | 🔲 deferred — Notes pipeline due for refresh in 5.C |
 
 ### 4.3 — Sector subgroup tracker
 
@@ -227,11 +228,11 @@ When you say "let's keep going":
 
 1. ~~**5.A** (inline explainers)~~ ✅ shipped 2026-05-28
 2. ~~**4.1** (concentration / Reliance impact)~~ ✅ shipped 2026-05-28
-3. ~~**5.B** (Learn hub)~~ ✅ shipped 2026-05-28 (glossary + deep-dives + pattern guides; SEO + chart renders deferred)
-4. **4.2** (pattern watchlists with validity checks) — **next**. Careful work; each pattern goes through the validity protocol before publishing fwd-return framing.
-5. **5.C** (teach-while-broadcasting) — Daily Note template enhancements; once we have a learn corpus to rotate.
+3. ~~**5.B** (Learn hub)~~ ✅ shipped 2026-05-28
+4. ~~**4.2** (pattern watchlists with validity checks)~~ ✅ shipped 2026-05-28 — 1 passed, 1 marginal, 1 failed; UI reflects findings honestly
+5. **5.C** (teach-while-broadcasting) — **next**. Daily Note template enhancements; we now have the learn corpus + validity protocol to rotate through.
 6. **4.3 / 4.4 / 4.5** (subgroups / calendar / cross-asset) — in any order; each is self-contained.
-7. **5.D** (validity protocol document + harness) — small, can ship alongside 4.2.
+7. **5.D** (validity protocol document) — formalise the rule that's now embedded in the 4.2 harness. ~30 min of writing.
 8. **Phase 3** (automation) — defer until design-engine integrates; manual broadcast workflow handles current scale.
 
 ## Actual development pace — calibration note
