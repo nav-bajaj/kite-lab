@@ -26,6 +26,7 @@ from app.insights import (
     breadth,
     concentration,
     conditional_dist,
+    cross_asset,
     macro,
     regime as regime_mod,
     sector_breadth,
@@ -74,6 +75,10 @@ class MarketReading:
     subgroups: dict[str, subgroups.SubgroupSnapshot]
     sibling_spreads: list[subgroups.SubgroupSpread]
 
+    # Cross-asset features (India 10y today; USDINR / gold / US10y / crude
+    # are registered but data_available=False pending sourcing)
+    cross_asset: dict[str, cross_asset.CrossAssetEntry]
+
     def to_dict(self) -> dict[str, Any]:
         """Fully JSON-serializable nested dict. Used by the API layer."""
         return {
@@ -101,6 +106,7 @@ class MarketReading:
             "concentration": self.concentration.to_dict(),
             "subgroups": {k: v.to_dict() for k, v in self.subgroups.items()},
             "sibling_spreads": [s.to_dict() for s in self.sibling_spreads],
+            "cross_asset": {k: v.to_dict() for k, v in self.cross_asset.items()},
         }
 
 
@@ -166,6 +172,7 @@ def get_market_reading(asof: pd.Timestamp | None = None) -> MarketReading:
     conc = concentration.compute_concentration(asof)
     subgroup_snaps = subgroups.get_subgroup_snapshot(asof)
     spreads = subgroups.get_sibling_spreads(asof)
+    cross = cross_asset.get_cross_asset_snapshot()
 
     return MarketReading(
         date=asof,
@@ -183,6 +190,7 @@ def get_market_reading(asof: pd.Timestamp | None = None) -> MarketReading:
         concentration=conc,
         subgroups=subgroup_snaps,
         sibling_spreads=spreads,
+        cross_asset=cross,
     )
 
 
@@ -205,3 +213,4 @@ def clear_all_caches() -> None:
     concentration.load_constituent_closes.cache_clear()
     concentration.load_nifty50_index.cache_clear()
     subgroups.clear_cache()
+    cross_asset.clear_cache()

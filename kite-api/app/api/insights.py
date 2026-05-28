@@ -36,6 +36,7 @@ from app.insights import (
     breadth,
     calendar_content,
     concentration,
+    cross_asset,
     macro,
     regime as regime_mod,
     sector_breadth,
@@ -320,6 +321,23 @@ async def concentration_endpoint(
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
     return r.to_dict()
+
+
+# ---------- cross-asset ----------
+
+@router.get("/cross-asset")
+async def cross_asset_endpoint(response: Response) -> dict:
+    """Per-asset cross-asset feature snapshot (close, z-scores, ROCs,
+    distance-from-200DMA, percentile). India 10y is the only series
+    currently sourced; USDINR / gold / US 10y / crude are registered
+    but `data_available=False` pending data sourcing — see
+    `app/insights/cross_asset.py` for the registry."""
+    _set_cache(response)
+    try:
+        snap = cross_asset.get_cross_asset_snapshot()
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+    return {a: e.to_dict() for a, e in snap.items()}
 
 
 # ---------- anniversary / calendar ----------

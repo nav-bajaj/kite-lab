@@ -21,7 +21,7 @@ that drove the analog retirement and the resulting design principles.
 | **4.2** | **Pattern watchlists + validity studies** | ✅ shipped 2026-05-28 — 3 new detectors, reusable validity harness, honest findings (1 PASS / 1 MARGINAL / 1 FAIL), Watchlists UI with validity badges |
 | **4.3** | **Sector subgroup tracker** | ✅ shipped 2026-05-28 |
 | **4.4** | **Anniversary / calendar (on_this_day)** | ✅ shipped 2026-05-28 — calendar_content engine, 13 curated events, premarket commentary wired, /calendar/on-this-day API. **First fully TDD-driven phase on this branch.** |
-| **4.5** | **Cross-asset + FII/DII** | 🔲 |
+| **4.5** | **Cross-asset feature engine** | ✅ shipped 2026-05-28 — `cross_asset.py` engine with TDD spec tests, India 10y series live; USDINR / gold / US10y / crude registered as `data_available=False` with documented fetch sources. **No fabricated data.** |
 | **5.C** | **Teach-while-broadcasting** | ✅ shipped 2026-05-28 — learn_moment field on Commentary, indicator-spotlight + pattern-of-the-week generators, all 3 templates updated. Spotlight now also surfaces big sibling-subgroup spreads. |
 | **5.A** | **Inline explainers (Learn layer)** | ✅ shipped 2026-05-28 — 13 explainers prerendered, "What is this?" links on Pulse/Sectors/Watchlists, Learn tab in nav |
 | **5.B** | **Learn hub — glossary + deep-dives + pattern guides** | ✅ shipped 2026-05-28 — 38-term glossary, "Historical context" + "Common misreadings" on every indicator, transparent detection rules on patterns |
@@ -159,14 +159,14 @@ Total tests passing on this branch: **223**.
 
 | # | Task | Owner | Risk | Done |
 |---|---|---|---|---|
-| 4.5.1 | `scripts/fetch_macro_extras.py` — USDINR (RBI/FRED DEXINUS), gold (Yahoo / Investing), US 10y (FRED DGS10), crude (FRED DCOILBRENTEU) | 🤖 | 🟡 | ☐ |
-| 4.5.2 | `scripts/fetch_fii_dii.py` — scrape NSE T-1 FII/DII activity report | 🤖 | 🟡 | ☐ |
-| 4.5.3 | `kite-api/app/insights/cross_asset.py` — z-scores, ROCs, distance-from-200DMA per asset | 🤖 | 🟡 | ☐ |
-| 4.5.4 | `kite-api/app/insights/fii_dii.py` — daily/weekly/monthly cumulative flow, percentile vs history | 🤖 | 🟡 | ☐ |
-| 4.5.5 | Tests for both modules + cross-asset validity check (does crude crossing 200-DMA actually predict Nifty energy sector performance?) | 🤖 | 🟡 | ☐ |
-| 4.5.6 | Macro widget on Pulse page (4 mini cards: USDINR / Gold / US 10y / Crude with trend arrows) | 🤖 | 🟢 | ☐ |
-| 4.5.7 | FII/DII flow widget on Pulse page (last 5 days + 20-day cumulative) | 🤖 | 🟢 | ☐ |
-| 4.5.8 | Commentary integration — macro paragraph when one of the 4 assets makes an unusual move (z > 2) | 🤖 | 🟡 | ☐ |
+| 4.5.1 | `scripts/fetch_macro_extras.py` — documented stub with verified source URLs (FRED DEXINUS, DGS10, DCOILBRENTEU; Yahoo gold). No fabricated data committed. End-to-end fetch implementation deferred to a follow-up. | 🤖 | 🟡 | ✅ stub |
+| 4.5.2 | `scripts/fetch_fii_dii.py` — NSE FII/DII scraper | 🤖 | 🟡 | 🔲 deferred |
+| 4.5.3 | `kite-api/app/insights/cross_asset.py` — general per-asset feature engine (close, z_60d, z_252d, roc_5d/20d/60d, dist_from_200dma, pctile_252d). Asset registry pattern: add a CSV → engine picks it up. India 10y series wired with real data; USDINR/gold/US10y/crude registered but `data_available=False`. **Built test-first per TDD policy.** | 🤖 | 🟡 | ✅ |
+| 4.5.4 | `kite-api/app/insights/fii_dii.py` | 🤖 | 🟡 | 🔲 deferred — needs scraped data first |
+| 4.5.5 | Tests at `tests/test_insights_cross_asset.py` — 12 spec tests covering feature shape, z-score range, percentile bounds, dist-from-200DMA boundary, ROC arithmetic via fixture, multi-asset snapshot contract (incl. `data_available=False` graceful handling), integration on real India-10y series. Cross-asset validity study (does crude crossing 200-DMA predict Nifty energy?) deferred until crude data is sourced. | 🤖 | 🟡 | ✅ (12 spec tests; validity check deferred) |
+| 4.5.6 | Macro widget on Pulse page | 🤖 | 🟢 | 🔲 deferred until ≥3 of the 4 deferred series have real data |
+| 4.5.7 | FII/DII flow widget on Pulse page | 🤖 | 🟢 | 🔲 deferred |
+| 4.5.8 | Commentary integration — macro paragraph when one of 4 assets makes an unusual move (z > 2) | 🤖 | 🟡 | 🔲 deferred until macro data sourced |
 
 ---
 
@@ -236,7 +236,7 @@ When you say "let's keep going":
 5. ~~**5.C** (teach-while-broadcasting)~~ ✅ shipped 2026-05-28 — Daily Notes now teach one micro-moment each
 6. ~~**4.3** (sector subgroups)~~ ✅ shipped 2026-05-28
 7. ~~**4.4** (calendar / anniversaries)~~ ✅ shipped 2026-05-28 — also unblocked the deferred `on_this_day` learn-moment in 5.C
-8. **4.5** (cross-asset + FII/DII) — last structural piece. Heavier than the others because it needs external data fetching.
+8. ~~**4.5** (cross-asset engine)~~ ✅ shipped 2026-05-28 — engine + India 10y series live; rest of 4.5 (FII/DII engine, real data fetching for USDINR/gold/US10y/crude, Pulse widgets, commentary macro paragraph) deferred until real data is sourced — see fetch stub at `scripts/fetch_macro_extras.py` for URLs.
 7. **5.D** (validity protocol document) — formalise the rule that's now embedded in the 4.2 harness. ~30 min of writing.
 8. **Phase 3** (automation) — defer until design-engine integrates; manual broadcast workflow handles current scale.
 

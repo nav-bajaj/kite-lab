@@ -101,6 +101,7 @@ class TestMarketReading:
             "analogs", "analog_distribution", "conditional", "watchlists",
             "concentration",
             "subgroups", "sibling_spreads",  # Phase 4.3
+            "cross_asset",                    # Phase 4.5
         }
         assert set(d.keys()) == expected_keys
 
