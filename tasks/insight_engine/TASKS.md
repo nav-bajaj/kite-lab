@@ -58,16 +58,16 @@ See `PLAN.md` for full context, design decisions, and editorial guidelines.
 
 | # | Task | Owner | Risk | Done |
 |---|---|---|---|---|
-| 2.1 | Backend: `kite-api/app/api/insights.py` — public read-only routes (Reading, sectors, watchlists, analogs, conditional dist, notes archive) | 🤖 | 🟡 | ☐ |
-| 2.2 | Frontend: `kite-dashboard/src/app/insights/page.tsx` — Pulse page (regime/stress/tilt + key internals) | 🤖 | 🟡 | ☐ |
-| 2.3 | Frontend: `kite-dashboard/src/app/insights/sectors/page.tsx` — RS heatmap, sector breadth, constituent leaders | 🤖 | 🟡 | ☐ |
-| 2.4 | Frontend: `kite-dashboard/src/app/insights/analogs/page.tsx` — interactive analog finder | 🤖 | 🟡 | ☐ |
-| 2.5 | Frontend: `kite-dashboard/src/app/insights/watchlists/page.tsx` — sortable/filterable watchlist tables | 🤖 | 🟢 | ☐ |
-| 2.6 | Frontend: `kite-dashboard/src/app/insights/notes/page.tsx` + `[date]/page.tsx` — Notes archive (SEO surface) | 🤖 | 🟡 | ☐ |
-| 2.7 | Footer/sidebar portfolio CTAs across all `/insights/*` pages | 🤖 | 🟢 | ☐ |
-| 2.8 | SEO: structured data (Article schema for Notes, FAQ schema for Insights pages) | 🤖 | 🟡 | ☐ |
-| 2.9 | Public access verified (no Clerk auth required on `/insights/*`) | 🤖 | 🔴 | ☐ |
-| 2.10 | Lighthouse: mobile + SEO scores > 90 | 🤖 | 🟡 | ☐ |
+| 2.1 | Backend: `kite-api/app/api/insights.py` — 9 public read-only routes (reading / stress+breadth timeseries / sectors / analogs / watchlists / regime history). Cache-Control + 32 tests. | 🤖 | 🟡 | ✅ |
+| 2.2 | Frontend: `kite-dashboard/src/app/insights/page.tsx` — Pulse page (regime, stress, sector leaderboard). Structure-only; design pending. | 🤖 | 🟡 | ✅ |
+| 2.3 | Frontend: `kite-dashboard/src/app/insights/sectors/page.tsx` — RS leaderboard + constituent breadth cards. Structure-only. | 🤖 | 🟡 | ✅ |
+| 2.4 | Frontend: `kite-dashboard/src/app/insights/analogs/page.tsx` — analog matches + fwd distribution table. Structure-only. | 🤖 | 🟡 | ✅ |
+| 2.5 | Frontend: `kite-dashboard/src/app/insights/watchlists/page.tsx` — 5 watchlists as tables. Structure-only. | 🤖 | 🟢 | ✅ |
+| 2.6 | Frontend: `kite-dashboard/src/app/insights/notes/{page.tsx,[date]/page.tsx}` — Notes archive | 🤖 | 🟡 | 🔲 DEFERRED — needs a note-storage layer first; currently the CLI is the only producer of notes |
+| 2.7 | Footer/sidebar portfolio CTAs across all `/insights/*` pages | 🤖 | 🟢 | 🔲 DEFERRED to design integration |
+| 2.8 | SEO: structured data (Article schema for Notes, FAQ schema for Insights pages) | 🤖 | 🟡 | 🔲 DEFERRED to design integration |
+| 2.9 | Public access verified (no Clerk auth required on `/insights/*`) — middleware updated; API + frontend both reachable anon | 🤖 | 🔴 | ✅ |
+| 2.10 | Lighthouse: mobile + SEO scores > 90 | 🤖 | 🟡 | 🔲 DEFERRED to design integration |
 
 ## Phase 3 — Automation + multi-channel distribution
 
