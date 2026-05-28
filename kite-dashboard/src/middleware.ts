@@ -12,6 +12,7 @@ const isPublicRoute = createRouteMatcher([
   "/terms",
   "/privacy",
   "/disclaimer",
+  "/insights(.*)",  // Insight engine pages — public by design (acquisition funnel)
 ]);
 
 // Admin-only routes. Checked against publicMetadata.role exposed via the
