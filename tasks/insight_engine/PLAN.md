@@ -265,7 +265,7 @@ Two small data ingestion scripts:
 - Spot-check analog finder: pass historical date 2018-04-15, verify it recognizes its own neighbors
 - Conditional distribution sanity: histograms of forward returns in each regime should look distinct
 
-**Phase 0 estimated effort:** 8-12 working days (most of the work is the new modules; cross-asset/FII-DII ingestion adds 2-3 days; analog + conditional engines are 2-3 days each)
+**Phase 0 estimated effort:** ✅ already shipped — actual: ~1 day across two sessions. Original estimate of 8-12 days was 10× over.
 
 ## Phase 1 — Daily Quant Note (content generation + manual broadcast)
 
@@ -304,7 +304,7 @@ $ python scripts/generate_quant_note.py postclose
 - Run notes for several distinct regime days (COVID, calm, post-election) and confirm the templates produce sensible output
 - Check chart legibility at WhatsApp-share resolution (375px wide)
 
-**Phase 1 estimated effort:** 8-10 days
+**Phase 1 estimated effort:** ✅ already shipped — actual: ~half a day.
 
 ## Phase 2 — Web dashboard
 
@@ -331,7 +331,7 @@ $ python scripts/generate_quant_note.py postclose
 - Lighthouse: mobile + SEO scores > 90
 - Each Daily Quant Note has a stable URL (e.g., `marketworks.in/insights/notes/2026-05-26`)
 
-**Phase 2 estimated effort:** 12-15 days
+**Phase 2 estimated effort:** ✅ already shipped (structure-only) — actual: ~half a day. Visual design polish + Notes archive deferred to design integration phase.
 
 ## Phase 3 — Automation + multi-channel distribution
 
@@ -352,7 +352,7 @@ $ python scripts/generate_quant_note.py postclose
 - Event-trigger detects a known historical signal correctly on simulated playback
 - Click-through tracking captures conversion funnel
 
-**Phase 3 estimated effort:** 12-15 days
+**Phase 3 estimated effort:** Code-time ~half a day; calendar-time bottlenecked by WhatsApp Business API approval (Meta) and SendGrid/Mailgun setup. Not worth scheduling until 4.x is wrapped and the design integration lands.
 
 ## Phase 4 — Expansion (open-ended, post-launch)
 
@@ -437,19 +437,32 @@ Once Phase 0-3 are complete:
 - Voice/branding consistency: who reviews notes for tone (currently the user; may need a content lead long-term)
 - Pricing tier: this is currently free; revisit if engagement is high enough to support a premium tier
 
-## Estimated total timeline
+## Timeline (revised 2026-05-28)
 
-| Phase | Effort | Cumulative |
+The original estimates assumed solo human-led development. Actual pace
+with agentic execution + human steering has been much faster than those
+assumptions. As of this revision, Phases 0-2 and 4.1 + 5.A + 5.B are
+already shipped on `insight-engine`. Remaining estimates below are in
+working **hours**, not days.
+
+| Phase | Original estimate | Actual / remaining |
 |---|---|---|
-| 0 — Data engines (incl. sector-constituent breadth + cross-asset + FII/DII) | 10-14 days | ~3 weeks |
-| 1 — Daily Note + manual broadcast | 8-10 days | ~5 weeks |
-| 2 — Web dashboard | 12-15 days | ~8 weeks |
-| 3 — Automation + alerts | 12-15 days | ~11 weeks |
-| **Phases 0-3 total** | | **~11-13 weeks** |
+| 0 — Data engines (12 modules, 119 tests) | 10-14 days | ✅ ~1 day actual |
+| 1 — Daily Note + manual broadcast (72 tests) | 8-10 days | ✅ ~half a day actual |
+| 2 — Web dashboard (4 pages + API, 32 tests) | 12-15 days | ✅ ~half a day actual |
+| 4.1 — Concentration widget | — | ✅ ~1 hour |
+| 5.A + 5.B — Knowledge layer (13 explainers + glossary + deep-dives) | — | ✅ ~2 hours combined |
+| 4.2 — Pattern watchlists + validity studies | 2-3 hours |
+| 4.3 — Sector subgroup tracker | 1 hour |
+| 4.4 — Anniversary / calendar | 1-2 hours |
+| 4.5 — Cross-asset + FII/DII | 2-3 hours (data fetching is the heavy bit) |
+| 5.C — Teach-while-broadcasting | ~1 hour |
+| 5.D — Validity protocol doc + harness refactor | 30-60 min |
+| 3 — Automation (WhatsApp / cron / alerts) | 1-2 days of *people-time* (Meta API approval is the bottleneck, not coding) |
 
-(Slightly longer than the prior estimate to absorb the constituent-level sector work and the more careful editorial layer.)
-
-Sensible go-live target: Phase 0+1 (data + manual notes) shipped in ~5 weeks; Phase 2 web + automation by ~11 weeks; Phase 3 multi-channel by ~13 weeks. Phases can overlap modestly with multiple workstreams.
+**Phase 4+5 remainder: ~7-11 focused hours.** That can land in 2-3
+sessions. Phase 3 timeline depends entirely on Meta Cloud API approval
+turn-around, which is outside our control.
 
 ## Execution order — first steps once plan mode exits
 

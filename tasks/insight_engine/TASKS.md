@@ -234,4 +234,26 @@ When you say "let's keep going":
 7. **5.D** (validity protocol document + harness) — small, can ship alongside 4.2.
 8. **Phase 3** (automation) — defer until design-engine integrates; manual broadcast workflow handles current scale.
 
-Total estimated effort for remainder of Phase 4 + 5: ~6-8 working days.
+## Actual development pace — calibration note
+
+Original estimates assumed solo human-led development. Actual pace with
+agentic execution + human review/steering has been much faster:
+
+| Phase | Original estimate | Actual |
+|---|---|---|
+| Phase 0 (data engines, 12 modules, 119 tests) | 10-14 working days | ~1 day across two sessions |
+| Phase 1 (Daily Note + 72 tests) | 8-10 days | ~half a day |
+| Phase 2 (web dashboard + 32 API tests) | 12-15 days | ~half a day |
+| Phase 4.1 (concentration widget) | 1-2 days | ~1 hour |
+| Phase 5.A (12 inline explainers + wiring) | — | ~1 hour |
+| Phase 5.B (glossary + deep-dives + pattern guides) | — | ~30 min |
+
+**Estimates below are in working hours, not days.** Add roughly 30-50%
+buffer for review, design polish, and any data-fetching that hits rate
+limits or auth issues.
+
+Total remaining (Phase 4.2-4.5 + 5.C-D): **~5-8 hours of focused work**,
+spread across whatever cadence you want to run sessions at. Day-scale
+work items are now Phase 3 (automation needs WhatsApp Business API
+setup, which is people-time, not coding-time) and any open-ended
+content authoring you'd rather drive yourself.
