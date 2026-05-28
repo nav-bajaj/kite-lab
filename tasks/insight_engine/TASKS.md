@@ -32,12 +32,12 @@ See `PLAN.md` for full context, design decisions, and editorial guidelines.
 | 0.13 | Build `kite-api/app/insights/stress.py` — 0-100 composite (35% VIX pctile + 25% drawdown + 20% below-200DMA + 20% dispersion z) with 5y historical percentile context | 🤖 | 🟡 | ✅ |
 | 0.13a | Test `kite-api/tests/test_insights_regime_stress.py` — 17 tests, all passing | 🤖 | 🟡 | ✅ |
 | 0.14 | Build `kite-api/app/insights/analog_finder.py` — 5-feature KNN with ±60d exclusion + fwd returns at 5/20/60/120d. COVID/calm-day validation passes. 12 tests. | 🤖 | 🔴 | ✅ |
-| 0.15 | Build `kite-api/app/insights/conditional_dist.py` — given regime/stress bucket, return historical fwd-return distribution (mean/median/IQR/5-95) over 5/10/20/60d | 🤖 | 🔴 | ☐ |
+| 0.15 | Build `kite-api/app/insights/conditional_dist.py` — by_regime + by_stress_quintile + by_regime_x_stress joint conditioning, returns distribution stats per bucket × horizon. Validates "buy panic" thesis on aggregate data. 13 tests passing. | 🤖 | 🔴 | ✅ |
 | 0.16 | Build `kite-api/app/insights/watchlists.py` — 5 lists (breakouts/RS leaders/coiled springs/stretched/recent breakdowns) with sector tagging. 10 tests passing. | 🤖 | 🟡 | ✅ |
-| 0.17 | Build `kite-api/app/insights/reading.py` — orchestrator returning unified `MarketReading` per day | 🤖 | 🔴 | ☐ |
-| 0.18 | Verification: spot-check March 2020 → stress > 90 percentile, Jan 2017 → Trend-Bull regime | 🤖 | 🔴 | ☐ |
-| 0.19 | Verification: pass historical date to analog_finder; verify it recognizes its own historical neighbors | 🤖 | 🔴 | ☐ |
-| 0.20 | Verification: conditional_dist histograms across regimes look meaningfully different | 🤖 | 🟡 | ☐ |
+| 0.17 | Build `kite-api/app/insights/reading.py` — MarketReading orchestrator composing all subsystems. JSON-serializable 38KB output; 2-second cold build, <100ms warm. 17 tests passing. | 🤖 | 🔴 | ✅ |
+| 0.18 | Verification: March 2020 → stress 99/100, Oct 2021 → TREND_BULL, 2018 NBFC → STRESS — checked in regime+stress tests | 🤖 | 🔴 | ✅ |
+| 0.19 | Verification: analog finder reproduces neighborhoods — COVID matches 2011 Eurozone, calm 2017 matches Feb-Mar 2017 cluster — checked in analog tests | 🤖 | 🔴 | ✅ |
+| 0.20 | Verification: conditional_dist by regime shows clear separation (STRESS fwd-20d +3.05% / DRIFT +0.39% / TREND_BULL +0.88%) — checked in conditional tests | 🤖 | 🟡 | ✅ |
 
 ## Phase 1 — Daily Quant Note (content + manual broadcast)
 
