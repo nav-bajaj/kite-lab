@@ -37,5 +37,22 @@ The Watchlists page surfaces a daily breakout list. We're working on validity-ch
 
 Avoid chasing extended breakouts. The best risk-reward is on the day-of or first pullback to the breakout level.`,
     },
+    {
+      heading: "How we detect it on the Watchlists page",
+      body: `The transparent detection rule is in our codebase (\`watchlists.get_breakouts\`):
+
+- Close today is **above the highest close** of the prior 20 trading days (excluding today)
+- Close today is **above the 50-day moving average**
+- Sorted by % distance above the 20-day high — names extending further are listed first
+
+That's it. No volume filter, no proprietary scoring. The simplicity is intentional — we want the signal to be reproducible if you wanted to screen on your own data. Multi-year breakout variants (52-week, 5-year) are not yet on the live watchlist (Phase 4.2 — needs validity work before we publish forward-return claims).`,
+    },
+    {
+      heading: "When breakouts fail",
+      body: `- **STRESS or STRETCHED regime.** Failure rate is meaningfully higher; many breakouts immediately reverse below the breakout level.
+- **Low volume on the breakout day.** Quiet breakouts have historically faded more often than thrust breakouts. The Watchlists page doesn't filter by volume — that's a check you'd do yourself.
+- **Index-level breakouts in narrow tapes.** When a sector breakout depends on 1-2 mega-caps (high [concentration](/insights/learn/concentration), narrow [sector breadth](/insights/learn/sector-breadth)), the move is less structurally supported.
+- **Late-stage TREND_BULL.** Lots of stocks "break out" in extended uptrends; the signal-to-noise of any individual breakout falls because every name is making new highs.`,
+    },
   ],
 };

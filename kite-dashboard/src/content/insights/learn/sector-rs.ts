@@ -30,5 +30,20 @@ The week-over-week **delta in RS rank** is sometimes more informative than the a
 - Look at **dispersion across sectors** — when the top sector is +8% and the bottom is -8% over 60d, sector rotation is the dominant theme. When the spread compresses, it's an index-driven tape.
 - A simultaneous **RS leadership flip** (top → bottom or vice versa in 4-8 weeks) is rare and usually signals a meaningful regime change.`,
     },
+    {
+      heading: "Historical context",
+      body: `- **2020-2021 — IT leadership.** NIFTY IT held top-3 RS for most of the COVID recovery period, then faded sharply in 2022 as global tech sold off.
+- **2023-2024 — capital goods / defence run.** Capital Goods (and BEL within it) was a sustained RS leader; the kind of multi-quarter leadership that defines durable themes.
+- **Banks rotation, 2018 → 2019.** Private banks led, then PSU banks took over as the IL&FS aftermath shifted attention. RS rank changes preceded the absolute price differentiation.
+- **Auto, 2024.** Strong RS leadership as the post-EV inflection played through; M&M and TVSMOTOR were notable component winners.
+
+The 60-day window is our default surface; the longer windows (120d, 252d) capture more durable themes.`,
+    },
+    {
+      heading: "Common misreadings",
+      body: `- **"Top RS sector — buy it."** RS is observation, not recommendation. A leading sector might be late-cycle stretched; check the [sector breadth](/insights/learn/sector-breadth) reading inside the sector to see if leadership is broad or narrow.
+- **"Bottom RS sector — short it."** Lagging sectors often persist in lagging — but when they turn, the early move can be sharp. RS doesn't tell you when (or if) a turn comes.
+- **"Same RS rank for 6 months — nothing happening."** Persistence at the top is itself meaningful — it's compounding. Persistent leadership generally compounds; persistent lagging generally drains.`,
+    },
   ],
 };

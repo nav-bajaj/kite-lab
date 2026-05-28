@@ -36,5 +36,22 @@ We list 10-15 of the tightest coiled springs each day on the [Watchlists](/insig
 
 This is one of the rare patterns where you can have a clear plan in both directions: long on confirmed breakout, short / exit on close below 50-DMA. Always size for the regime — coiled springs in STRESS have lower win rates than the average.`,
     },
+    {
+      heading: "How we detect it on the Watchlists page",
+      body: `The transparent detection rule (\`watchlists.get_coiled_springs\`):
+
+- Close today is **above both 50-DMA and 200-DMA**
+- 20-day **realised volatility** of the stock's daily returns is **in the bottom quartile** of that stock's own 252-day distribution
+- Sorted ascending by recent volatility — tighter (more coiled) names first
+
+The "stock's own bottom quartile" framing matters — what counts as "tight" varies enormously by stock. A 1% daily volatility might be tight for HDFCBANK and loose for a small-cap. By using each stock as its own benchmark, the list captures genuine compression rather than just selecting low-vol stocks.`,
+    },
+    {
+      heading: "When the setup fails",
+      body: `- **Range break on low volume.** Quiet exits from the range are typically faded. The setup works best when the breakout day has visible volume thrust.
+- **Below 50-DMA close.** Once the stock closes below the 50-DMA, the "coiled" condition is invalidated — the spring released down. Re-evaluation needed.
+- **STRESS regime.** Coiled springs in STRESS resolve down more often than they resolve up — pattern + regime mismatch.
+- **Long time at the same level.** Setups that have been coiled for 6+ months sometimes "die" — the energy drains rather than releases. Newer coiled patterns (1-3 months tight) have historically resolved more cleanly.`,
+    },
   ],
 };

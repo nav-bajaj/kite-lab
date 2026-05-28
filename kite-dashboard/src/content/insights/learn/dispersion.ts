@@ -33,5 +33,20 @@ Falling dispersion in a rising market, by contrast, is often associated with bre
 
 **Sustained elevated dispersion** (z > +1 for many days) is the more meaningful signal — it means market regime has shifted to one where stock selection matters again.`,
     },
+    {
+      heading: "Historical context",
+      body: `- **Feb-Mar 2020 (COVID).** Dispersion spiked early and stayed elevated — different stocks were absorbing different risks (banks vs IT vs consumer staples).
+- **Sep-Oct 2018 (NBFC).** Dispersion rose persistently as the market started differentiating between solvent and stressed financials. The dispersion signal led the index breakdown by weeks.
+- **All of 2017.** Dispersion in its lower range — the broad melt-up phase. Almost everything went up together.
+- **2022.** Dispersion was a useful read — even on flat index days, rotation was active, which the cross-sectional measure surfaced.
+
+Dispersion appears as a 20% input to the [stress score](/insights/learn/stress-score).`,
+    },
+    {
+      heading: "Common misreadings",
+      body: `- **"Dispersion is high — be bearish."** Wrong framing. High dispersion = stock-picker conditions; it could resolve up (broad rally) or down (broad capitulation) depending on regime. Direction comes from regime, not dispersion.
+- **"Dispersion is low — passive will outperform."** Often true in the moment, but compressed dispersion often precedes expansion. "It's been calm" is not a forecast of continued calm.
+- **"One-day dispersion z > +2 means today was a regime shift."** Single-day outliers happen (event days, expiry days). Sustained elevation is what carries signal.`,
+    },
   ],
 };

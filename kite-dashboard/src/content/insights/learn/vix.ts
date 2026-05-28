@@ -35,5 +35,23 @@ It contributes 35% to the [stress score](/insights/learn/stress-score) — the l
 
 Don't read VIX in absolute terms only — always compare to its **trailing 252-day percentile**. We display both numbers on the stress breakdown table.`,
     },
+    {
+      heading: "Historical context",
+      body: `Notable VIX episodes in the India series:
+
+- **Oct 2008 — Lehman / GFC.** Highest VIX readings in the panel; multi-week sustained crisis-level uncertainty.
+- **Aug 2013 — Taper tantrum / rupee crisis.** VIX spiked into elevated range; resolved within months.
+- **Nov 2016 — Demonetization.** Sharp single-event spike; back to baseline within weeks.
+- **Mar 2020 — COVID.** Second-highest peak after 2008; the fastest VIX expansion in the panel.
+- **2022 rate shock.** VIX stayed in the 18-25 zone for months — elevated, but never crisis-level.
+
+In contrast, the calmest VIX environments in the panel were the 2017 melt-up and stretches of 2024.`,
+    },
+    {
+      heading: "Common misreadings",
+      body: `- **"VIX is high — markets are about to crash."** VIX measures perceived uncertainty, not direction. High VIX has historically coincided with bottoms more often than with further drops in our panel — but the timing is uncomfortable.
+- **"VIX is low — it's safe to take more risk."** Low VIX often persists for months before any expansion, but very low readings (below 12) have historically marked complacent peaks. Use it alongside the regime label.
+- **"This single VIX number is meaningful by itself."** Always read VIX as a **percentile vs trailing history**. A reading of 18 in a 12-15 environment is informative; the same 18 in a 22-25 environment is unremarkable.`,
+    },
   ],
 };

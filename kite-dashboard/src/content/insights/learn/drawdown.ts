@@ -36,5 +36,21 @@ For the broad Indian market, drawdowns have a relatively stable structure: most 
 
 Drawdown depth itself isn't a tradeable signal — it's a context input. The combination of "deep drawdown + breadth healing + volatility cooling" is what often marks the bottom, not drawdown alone.`,
     },
+    {
+      heading: "Historical context — major Nifty drawdowns",
+      body: `- **2008 GFC** — Nifty drawdown approached -60% intraday at the worst. Took years to fully recover. The deepest event in the modern panel.
+- **2015-2016 China / oil cycle.** Multi-quarter drawdown into the -20% range; resolved by mid-2016.
+- **2018-2019 NBFC aftermath.** Drawdown depth modest at the index level (~-15%) but mid/small caps had a much worse experience — emphasising that index drawdown understates broader pain.
+- **Feb-Mar 2020 COVID.** -35% in about a month — the fastest deep drawdown in the panel. The recovery from those lows was equally fast.
+- **2022 rate shock.** Shallow at the Nifty level (~-10%) but persistent — DRIFT regime characteristic.
+
+For per-portfolio drawdown (which is generally different from the index), see the performance pages.`,
+    },
+    {
+      heading: "Common misreadings",
+      body: `- **"-20% drawdown = capitulation."** Sometimes. Often it's a midway point and not a low. Capitulation usually requires stress + breadth + dispersion to all confirm together.
+- **"My portfolio drawdown should look like the Nifty drawdown."** Nope. Concentrated portfolios and smaller-cap portfolios usually run deeper drawdowns than the headline Nifty in the same episode. Plan for portfolio-specific drawdown expectations.
+- **"Drawdown is just a number."** It's a behavioral input. The deepest drawdown you can tolerate without forced selling is the actual limit of your strategy, regardless of how good the backtest looks.`,
+    },
   ],
 };

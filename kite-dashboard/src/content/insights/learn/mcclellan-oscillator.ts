@@ -31,5 +31,19 @@ It's a **momentum** measure of breadth, not a level — it's not asking "are mos
 
 Always use alongside regime: a slipping McClellan in TREND_BULL is a minor caution; the same in STRETCHED demands more attention.`,
     },
+    {
+      heading: "Historical context",
+      body: `- **Late March 2020.** Extreme negative McClellan readings during the COVID washout, followed by a rapid swing positive — historically a high-confidence reversal pattern, and it played out cleanly in the subsequent recovery.
+- **Aug-Sep 2018.** McClellan started fading well before the index broke down — bearish divergence ran for weeks before the NBFC crisis became headline news.
+- **Early 2021.** McClellan stayed positive for an unusually long stretch — the post-COVID broad re-rating.
+
+McClellan dovetails with [% above 200-DMA](/insights/learn/pct-above-200dma) (which measures the level of breadth) and the [stress score](/insights/learn/stress-score).`,
+    },
+    {
+      heading: "Common misreadings",
+      body: `- **"McClellan crossed zero — buy / sell."** The crossover itself isn't a trade; many small crossings happen in normal conditions. Sustained moves are the signal.
+- **"Negative McClellan = bearish."** Not always. Deep negative readings that quickly reverse have historically marked bullish reversals more often than further drops. Direction matters less than extremity and reversal.
+- **"McClellan and 200-DMA breadth tell the same story."** They don't. McClellan is *momentum* of breadth; 200-DMA breadth is *level* of breadth. They can disagree — and the disagreement often surfaces transition periods.`,
+    },
   ],
 };

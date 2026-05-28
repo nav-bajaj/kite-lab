@@ -37,5 +37,20 @@ Knowing that, say, 65% of stocks are above their 200-DMA tells you:
 
 **Divergence** is the most useful read: when index is making new highs but % above 200-DMA is dropping, leadership is narrowing — a yellow flag. When index is making new lows but % above 200-DMA is rising, more stocks are healing internally — an early green shoot.`,
     },
+    {
+      heading: "Historical context",
+      body: `- **March 2020 (COVID).** Breadth collapsed below 10% — the deepest washout in our panel. Recovery began before the index made new highs (a classic bullish divergence).
+- **Oct 2018 (NBFC crisis).** Breadth slid from ~70% to ~20% over a few months even as Nifty held up better than the broad market — narrowing leadership warned earlier than the index price did.
+- **All of 2017.** Breadth above 75% for most of the year — a textbook broad TREND_BULL.
+- **2022 sideways year.** Breadth oscillated between 40-60% while the index churned — a DRIFT regime characteristic.
+
+The breadth panel feeds into our [stress score](/insights/learn/stress-score) (20% weight on the "below 200-DMA" component) and the [regime classifier](/insights/learn/regime).`,
+    },
+    {
+      heading: "Common misreadings",
+      body: `- **"Breadth is 60% — that's good, right?"** It depends on direction. 60% trending up from 40% is great; 60% trending down from 80% is a warning. Look at the trajectory, not just the level.
+- **"Breadth is below 25% — bottom is in."** Often, but the path to the actual low can be choppy. Breadth below 25% identifies the *zone* where bottoms form historically — it doesn't time the exact day.
+- **"Index up, breadth flat — fine."** Index-only confirmation hides narrowing leadership. The divergence is the leading indicator; the index lags it.`,
+    },
   ],
 };

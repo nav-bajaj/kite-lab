@@ -19,8 +19,9 @@ that drove the analog retirement and the resulting design principles.
 | 3 | Automation + multi-channel | 🔲 not started |
 | **4.1** | **Concentration / Reliance impact widget** | ✅ shipped 2026-05-28 — engine + API + Pulse widget + Learn explainer (14 tests) |
 | **4.2-4.5** | **Pattern + structural expansion (remaining)** | 🔲 patterns, subgroups, calendar, cross-asset |
-| **5.A** | **Inline explainers (Learn layer)** | ✅ shipped 2026-05-28 — 12 explainers prerendered, "What is this?" links on Pulse/Sectors/Watchlists, Learn tab in nav |
-| **5.B-D** | **Knowledge layer remainder** | 🔲 Learn hub, teach-while-broadcasting, validity protocol |
+| **5.A** | **Inline explainers (Learn layer)** | ✅ shipped 2026-05-28 — 13 explainers prerendered, "What is this?" links on Pulse/Sectors/Watchlists, Learn tab in nav |
+| **5.B** | **Learn hub — glossary + deep-dives + pattern guides** | ✅ shipped 2026-05-28 — 38-term glossary, "Historical context" + "Common misreadings" on every indicator, transparent detection rules on patterns |
+| **5.C-D** | **Knowledge layer remainder** | 🔲 teach-while-broadcasting, validity protocol |
 | 6 | Close-out | 🔲 not started |
 
 **Retired:** the analog finder's forward-return user-facing content (page +
@@ -182,13 +183,13 @@ Total tests passing on this branch: **223**.
 
 | # | Task | Owner | Risk | Done |
 |---|---|---|---|---|
-| 5.B.1 | Index route `kite-dashboard/src/app/insights/learn/page.tsx` — directory of all explainer pieces grouped by category (Indicators / Patterns / Concepts / Glossary) | 🤖 | 🟡 | ☐ |
-| 5.B.2 | Glossary content — `kite-dashboard/src/content/insights/learn/glossary/<term>.md` files for ~40 terms (FII, DII, VIX, RS, breadth, regime, dispersion, basis, percentile, drawdown, coiled spring, golden cross, etc.) | 👤 + 🤖 | 🟢 | ☐ |
-| 5.B.3 | Glossary index page `/insights/learn/glossary` — alphabetical list with 1-line snippets | 🤖 | 🟢 | ☐ |
-| 5.B.4 | Indicator deep-dives — long-form versions of the inline explainers (5.A.3) for the 12 primary indicators. Each includes: definition, methodology, historical chart (uses chart_renderer primitives), extreme-readings table with dates, "how to read it" section | 🤖 + 👤 | 🟡 | ☐ |
-| 5.B.5 | Pattern guides — one piece per pattern from Phase 4.2 + the existing 5 watchlists. Each includes: definition, visual diagram (server-rendered PNG), detection rule (transparent), validity-study findings (honest), historical case studies | 🤖 + 👤 | 🟡 | ☐ |
-| 5.B.6 | Add "Learn" tab to the `/insights/*` layout navigation | 🤖 | 🟢 | ☐ |
-| 5.B.7 | SEO: structured data (Article schema) on each deep-dive piece — content is the SEO engine of the funnel | 🤖 | 🟡 | ☐ |
+| 5.B.1 | Index route at `/insights/learn` — directory grouped by category (Indicators / Patterns / Concepts) plus a featured Glossary card | 🤖 | 🟡 | ✅ (shipped in 5.A; glossary card added) |
+| 5.B.2 | Glossary content — `src/content/insights/learn/glossary/_data.ts` with 38 entries across 6 buckets (market-state, breadth-momentum, patterns, math, flows-structure, general). Each entry has term + anchor + plain-English definition + optional deep-dive link. | 👤 + 🤖 | 🟢 | ✅ |
+| 5.B.3 | Glossary page at `/insights/learn/glossary` — bucket-anchored sections, per-term anchors for deep-linking | 🤖 | 🟢 | ✅ |
+| 5.B.4 | Indicator deep-dives — added "Historical context" and "Common misreadings" sections to all 9 indicator/concept explainers (stress-score, regime, sector-rs, sector-breadth, mcclellan, pct-above-200dma, dispersion, vix, drawdown, concentration). Specific historical episodes referenced are qualitative (dated events, not invented numbers). Server-rendered historical charts deferred (chart_renderer primitives exist; integration is its own work). | 🤖 + 👤 | 🟡 | ✅ (text); 🔲 (charts deferred) |
+| 5.B.5 | Pattern guides — added "How we detect it" (quoting the actual watchlists.py code rule) and "When it fails" sections to breakout, coiled-spring, rs-leader. Validity-study sidebars wait for Phase 4.2 work. | 🤖 + 👤 | 🟡 | ✅ |
+| 5.B.6 | "Learn" tab in layout nav | 🤖 | 🟢 | ✅ (shipped in 5.A) |
+| 5.B.7 | SEO: Article schema structured data on each deep-dive | 🤖 | 🟡 | 🔲 deferred — design integration phase |
 
 ### 5.C — Teach-while-broadcasting (Daily Note enhancements)
 
@@ -226,10 +227,11 @@ When you say "let's keep going":
 
 1. ~~**5.A** (inline explainers)~~ ✅ shipped 2026-05-28
 2. ~~**4.1** (concentration / Reliance impact)~~ ✅ shipped 2026-05-28
-3. **5.B** (Learn hub) — long-form versions of the inline pieces + glossary. Mostly authoring. **next**
-4. **4.2** (pattern watchlists with validity checks) — careful work; each pattern goes through the validity protocol before publishing fwd-return framing.
-5. **5.C** (teach-while-broadcasting) — once 5.B exists, this is template work.
+3. ~~**5.B** (Learn hub)~~ ✅ shipped 2026-05-28 (glossary + deep-dives + pattern guides; SEO + chart renders deferred)
+4. **4.2** (pattern watchlists with validity checks) — **next**. Careful work; each pattern goes through the validity protocol before publishing fwd-return framing.
+5. **5.C** (teach-while-broadcasting) — Daily Note template enhancements; once we have a learn corpus to rotate.
 6. **4.3 / 4.4 / 4.5** (subgroups / calendar / cross-asset) — in any order; each is self-contained.
-7. **Phase 3** (automation) — defer until design-engine integrates; manual broadcast workflow handles current scale.
+7. **5.D** (validity protocol document + harness) — small, can ship alongside 4.2.
+8. **Phase 3** (automation) — defer until design-engine integrates; manual broadcast workflow handles current scale.
 
-Total estimated effort for remainder of Phase 4 + 5: ~7-10 working days.
+Total estimated effort for remainder of Phase 4 + 5: ~6-8 working days.

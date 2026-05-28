@@ -35,5 +35,22 @@ The score is also useful for **conditional thinking**: how have markets historic
 
 Single-day jumps of 15+ points in the score are themselves informative — they usually mark either a crystallising breakdown or the early phase of an event that will need several days to resolve.`,
     },
+    {
+      heading: "Historical context",
+      body: `Episodes in our 16-year panel where stress crossed 80:
+
+- **Feb-Mar 2020 — COVID lockdown.** Stress at its highest reading in the panel; VIX and drawdown both at extremes; breadth collapsed below 10%.
+- **Oct 2018 — IL&FS / NBFC crisis.** Stress elevated for weeks rather than days; breadth deteriorated more slowly than VIX spiked.
+- **Aug-Oct 2008 — global financial crisis.** Multi-month stress regime; the highest sustained readings outside COVID.
+- **May-Jun 2022 — global rate shock.** Stress rose into the 60-70 zone but didn't crack 80; an example of "elevated, not panic".
+
+For the live chart and the exact daily values, see the [stress timeseries on Pulse](/insights). The breakdown table shows each of the four components' current contributions.`,
+    },
+    {
+      heading: "Common misreadings",
+      body: `- **"Stress is rising fast — it must be a crash coming."** Not always. Rising stress is a warning, but most rises into 50-70 mean-revert without becoming a crisis. The full-blown crash regime requires stress to stay elevated for many days, not just spike for one.
+- **"Stress is below 30 — it's safe."** Calm conditions can persist for very long stretches AND complacency itself becomes a risk — readings below 20 with VIX at multi-year lows have historically preceded volatility expansions.
+- **"Component X is driving stress today, so I should watch X."** The whole point of the composite is that no single component is the signal — it's the convergence. A 70 driven by VIX alone (other components quiet) is different from a 70 driven by all four climbing together; the latter is far more meaningful.`,
+    },
   ],
 };

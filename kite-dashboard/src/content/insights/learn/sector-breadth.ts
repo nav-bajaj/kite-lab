@@ -37,5 +37,19 @@ Breadth divergence is one of the cleanest leading signals we track.`,
 - A **thrust day** (>80% of constituents up together) is often an early-stage signal that institutional money has stepped in.
 - Compare **breadth changes** week-over-week — improving breadth in a lagging sector is one of the earlier rotation signals.`,
     },
+    {
+      heading: "Historical context",
+      body: `- **2017-2018 banks divergence.** NIFTY BANK looked decent at the index level but private vs PSU breadth split meaningfully. PSU bank constituents weakened well before the IL&FS aftermath hit broader financials.
+- **2020 IT broad participation.** Almost every NIFTY IT constituent above 200-DMA simultaneously — one of the cleanest broad-sector setups in the panel.
+- **2024 capital goods narrowing.** Index strength was real but constituent breadth started narrowing — the top 3 names accounted for an outsized share of the move. Early caution.
+
+Coverage caveat: sectors with constituents outside our NSE 500 panel show a "partial coverage" badge. Treat those breadth numbers with proportionate caution.`,
+    },
+    {
+      heading: "Common misreadings",
+      body: `- **"Sector breadth and sector RS say the same thing."** They don't. RS is the index-level return; breadth is the constituent-level participation. A leading sector with narrow breadth is fragile; a lagging sector with improving breadth is interesting.
+- **"% above 200-DMA inside the sector = 60% is OK."** Inside a sector this is often weaker than it sounds — sectors with 12 constituents and 7 above 200-DMA isn't broad; it's 5 holdouts. Use breadth as a relative read between sectors, not an absolute threshold.
+- **"Leader / laggard lists are buy / sell calls."** They're observation lists. The RS leaders inside a sector are typically the names other quant systems (including our Quality Momentum portfolio) will already be holding — interesting context, not an entry signal.`,
+    },
   ],
 };

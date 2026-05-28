@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 import { explainersByCategory } from "@/lib/learn-content";
+import { GLOSSARY } from "@/content/insights/learn/glossary/_data";
 
 export const metadata: Metadata = {
   title: "Learn — Marketworks Insights",
@@ -29,11 +30,6 @@ const CATEGORY_ORDER: Array<{
     label: "Concepts",
     blurb: "Foundational ideas referenced throughout the platform.",
   },
-  {
-    key: "glossary",
-    label: "Glossary",
-    blurb: "One-line definitions of common terms.",
-  },
 ];
 
 export default function LearnIndexPage() {
@@ -48,6 +44,25 @@ export default function LearnIndexPage() {
           if you don&apos;t recognise a term, this is where you look.
         </p>
       </header>
+
+      {/* Glossary featured card — drives traffic to the term reference */}
+      <section className="rounded border bg-neutral-50 p-4 dark:bg-neutral-900/50">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <div>
+            <h3 className="text-base font-semibold">Glossary</h3>
+            <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-400">
+              {GLOSSARY.length} short definitions across market state,
+              breadth, patterns, math, flows, and general terms.
+            </p>
+          </div>
+          <Link
+            href="/insights/learn/glossary"
+            className="rounded border bg-white px-3 py-1 text-sm hover:bg-neutral-100 dark:bg-neutral-950 dark:hover:bg-neutral-800"
+          >
+            Open glossary →
+          </Link>
+        </div>
+      </section>
 
       {CATEGORY_ORDER.map((cat) => {
         const items = byCat[cat.key] ?? [];

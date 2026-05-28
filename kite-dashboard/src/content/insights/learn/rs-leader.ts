@@ -32,5 +32,27 @@ The RS Leaders list is a transparent, public version of what those portfolios sc
 
 This is observation, not prediction. We deliberately don't claim "RS leaders will return X% next month" — instead, we surface the list and let you draw your own conclusions about which names align with your process.`,
     },
+    {
+      heading: "How we detect it on the Watchlists page",
+      body: `The transparent detection rule (\`watchlists.get_rs_leaders\`):
+
+- For each NSE 500 stock, compute its return over the last **126 trading days** (~6 months)
+- Subtract Nifty 50's return over the same window
+- Top 25 by this **RS spread** are the published list
+
+Worth noting:
+
+- 126 days is a long-enough window that single-day noise washes out, short-enough that current themes still drive the result
+- We don't filter on price or market cap — small / mid / large all compete on the same RS metric
+- The 50 / 100 / 200-day windows give earlier signals but are noisier; the 252-day (1-year) window captures durable themes but lags
+- This list is the conceptual cousin of what our Quality Momentum and Trend Leaders portfolios screen for, but with a different ranking layer`,
+    },
+    {
+      heading: "When the screen misleads",
+      body: `- **Regime transitions.** A stock that led for 6 months and is now sliding could still be in the top-25 because of its earlier outperformance — it lags the actual leadership change by weeks.
+- **Mega-cap dominance.** When a few mega-caps lead, they crowd out the rest of the index, suppressing other names' RS. Cross-check against [concentration](/insights/learn/concentration).
+- **One-shot events.** A stock that gapped up 30% on a single corporate action and then went flat still shows high RS — but it isn't really "in a trend". Quick eyeball check on the chart guards against this.
+- **Sector concentration in the list.** If 12 of the 25 RS leaders are from one sector, the "leadership" might really be a single sector call. Check the sector distribution on the watchlist page.`,
+    },
   ],
 };
