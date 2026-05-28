@@ -77,6 +77,7 @@ class TestEditorialVoice:
             commentary_obj.sector,
             commentary_obj.conditional,
             commentary_obj.watch,
+            commentary_obj.learn_moment,  # Phase 5.C — same rules apply
         ]).lower()
 
     def test_no_jargon(self, all_text):
@@ -206,3 +207,82 @@ class TestTranslationHelpers:
     ])
     def test_stress_band(self, score, kw):
         assert kw in commentary._stress_band(score).lower()
+
+
+# ─────────────── Phase 5.C — teach-while-broadcasting ───────────────
+
+class TestLearnMoment:
+    """The learn_moment field should fire only when something is unusual
+    today (postclose/premarket) or rotate weekly (weekly digest).
+    """
+
+    def test_weekly_mode_always_has_learn_moment(self, reading):
+        c = commentary.compose(reading, mode="weekly")
+        assert c.learn_moment, "weekly mode must always carry pattern-of-the-week"
+        assert "Pattern this week" in c.learn_moment
+
+    def test_default_mode_is_postclose(self, reading):
+        # No mode arg should behave like postclose (indicator_spotlight,
+        # may be empty if nothing unusual today)
+        c1 = commentary.compose(reading)
+        c2 = commentary.compose(reading, mode="postclose")
+        assert c1.learn_moment == c2.learn_moment
+
+    def test_unknown_mode_yields_no_learn_moment(self, reading):
+        c = commentary.compose(reading, mode="not-a-mode")
+        assert c.learn_moment == ""
+
+    def test_pattern_of_the_week_rotates_across_iso_weeks(self):
+        """Different ISO weeks should hit different positions in the
+        rotation. We don't require every entry to differ from every
+        other — just that the rotation actually rotates."""
+        from app.insights.reading import get_market_reading
+        seen = set()
+        # 6 weeks at ~7 days apart should hit several positions
+        for date_str in ["2025-01-06", "2025-01-13", "2025-01-20",
+                         "2025-01-27", "2025-02-03", "2025-02-10"]:
+            r = get_market_reading(pd.Timestamp(date_str))
+            c = commentary.compose(r, mode="weekly")
+            # Extract the pattern title (first ** chunk after "Pattern this week: ")
+            tag = c.learn_moment.split(".", 1)[0]
+            seen.add(tag)
+        assert len(seen) >= 2, f"Pattern-of-the-week did not rotate: {seen}"
+
+    @pytest.mark.parametrize("date_str", [
+        "2020-03-23",  # COVID panic
+        "2018-10-05",  # NBFC stress
+        "2017-10-13",  # Calm rally
+        "2022-06-17",  # Rate-shock chop
+    ])
+    def test_learn_moment_jargon_free_across_history(self, date_str):
+        """Same jargon rules apply to learn_moment as to other sections."""
+        from app.insights.reading import get_market_reading
+        r = get_market_reading(pd.Timestamp(date_str))
+        for mode in ("postclose", "premarket", "weekly"):
+            c = commentary.compose(r, mode=mode)
+            text = c.learn_moment.lower()
+            offending = [t for t in JARGON_TERMS if t.lower() in text]
+            assert not offending, (
+                f"jargon in learn_moment ({date_str}, mode={mode}): {offending}"
+            )
+
+    def test_learn_moment_no_recommendation_verbs(self, reading):
+        for mode in ("postclose", "premarket", "weekly"):
+            c = commentary.compose(reading, mode=mode)
+            text = c.learn_moment.lower()
+            offending = [v for v in RECOMMENDATION_VERBS if v.lower() in text]
+            assert not offending, (
+                f"recommendation verb in learn_moment (mode={mode}): {offending}"
+            )
+
+    def test_covid_panic_day_fires_stress_spotlight(self):
+        """On a known very-high-stress day, the spotlight should mention
+        stress or panic by name."""
+        from app.insights.reading import get_market_reading
+        r = get_market_reading(pd.Timestamp("2020-03-23"))
+        c = commentary.compose(r, mode="postclose")
+        lm = c.learn_moment.lower()
+        assert lm, "Expected non-empty learn_moment on COVID panic day"
+        assert "stress" in lm or "panic" in lm, (
+            f"Expected stress/panic mention; got: {c.learn_moment!r}"
+        )

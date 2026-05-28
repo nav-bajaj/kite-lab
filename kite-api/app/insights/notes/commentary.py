@@ -53,6 +53,8 @@ class Commentary:
     sector: str            # 1-2 sentences on sector rotation
     conditional: str       # 1-2 sentences on historical-conditional outcomes
     watch: str             # 1-2 sentences naming specific stocks to watch
+    learn_moment: str = ""  # Phase 5.C teach-while-broadcasting micro-moment;
+                            # empty if nothing notable enough to teach today
     disclaimer: str = DISCLAIMER
 
     def to_dict(self) -> dict:
@@ -306,10 +308,183 @@ def _watch_paragraph(reading: MarketReading) -> str:
     return " ".join(parts) if parts else "No notable single-stock signals firing today."
 
 
+# ---------- Phase 5.C: teach-while-broadcasting ----------
+#
+# Each generator returns a short teaching micro-moment (≤ ~200 chars,
+# 1-2 sentences) that fires only when something in today's reading
+# actually triggers it. Returning "" means "nothing notable enough to
+# teach today — templates should skip the section". Avoids ritualised
+# filler that subscribers stop reading.
+
+# Pattern-of-the-week rotation. Indexed by ISO week number mod len.
+# Pulled from our published Learn explainers so the tone matches.
+_PATTERN_OF_THE_WEEK: list[tuple[str, str]] = [
+    (
+        "Multi-year breakout",
+        "A stock closing above its 5-year high is one of the cleanest setups: "
+        "no overhead supply for years means no trapped sellers above price. "
+        "Our validity study found these names beat the NSE 500 baseline by "
+        "roughly +1pp at 20d and +6pp at 120d in 14 years of data — small but "
+        "real.",
+    ),
+    (
+        "Coiled spring",
+        "Tight ranges in trending stocks usually release energy in one "
+        "direction or the other. The 'coiled spring' setup — above 50+200 DMA "
+        "with volatility in the stock's own bottom quartile — flags compression "
+        "points before the move. The broader regime is usually the tiebreaker "
+        "on direction.",
+    ),
+    (
+        "RS leader",
+        "Stocks that have beaten Nifty over the trailing 6 months show "
+        "persistent momentum. The top-25 are the conceptual cousin of what our "
+        "Quality Momentum portfolio screens for. Persistent leaders (months in "
+        "the top-25) are often higher-quality compounders than fresh entrants.",
+    ),
+    (
+        "Sustained uptrend",
+        "1-year return above 20% with shallow drawdowns. Quiet compounders. "
+        "Validity-tested but the baseline-excess is modest (+0.75pp at 20d), so "
+        "we publish the names without forward-return claims. The pattern "
+        "selects 'clean' over 'fast'.",
+    ),
+    (
+        "20-day breakout",
+        "The simplest variant of trend continuation: close above the prior "
+        "20-day high AND above the 50-DMA. Follow-through rates depend strongly "
+        "on the regime — TREND_BULL breakouts have meaningfully higher 20-day "
+        "follow-through than the same signal in STRESS or DRIFT.",
+    ),
+    (
+        "Stretched",
+        "More than 20% above a 200-DMA is the historical mean-reversion zone — "
+        "not a guaranteed reversal, but a context where forward returns thin "
+        "out. Stretched names that keep going have usually had an earnings "
+        "inflection or a structural re-rating.",
+    ),
+]
+
+
+def _indicator_spotlight(reading: MarketReading) -> str:
+    """Pick the most unusual single indicator in today's reading and teach it.
+
+    Returns "" if nothing is unusual enough to be worth spotlighting. The
+    order of checks reflects what's most worth teaching when it fires —
+    extreme stress / panic days get priority over routine breadth chatter.
+    """
+    stress = reading.stress
+    regime = reading.regime
+    conc = reading.concentration
+
+    # 1. Stress in panic / very-calm territory
+    if stress.score >= 80:
+        return (
+            f"Today's stress reading is {stress.score:.0f}/100 — panic / "
+            "capitulation zone. In 16 years of history, the highest stress "
+            "readings have produced the strongest 20-day forward returns "
+            "— uncomfortable but a documented pattern. The stress score "
+            "blends VIX, drawdown, breadth and dispersion."
+        )
+    if stress.score <= 15 and stress.score_percentile is not None and stress.score_percentile <= 10:
+        return (
+            f"Stress is unusually compressed today ({stress.score:.0f}/100, "
+            "around the calmest 10% of the trailing year). Very calm "
+            "readings have historically preceded volatility expansion more "
+            "often than continued calm. Complacency is itself a risk."
+        )
+
+    # 2. Concentration extremes (only meaningful if Nifty moved meaningfully)
+    if abs(conc.nifty_return_pct) >= 0.3 and conc.top_3_share_of_move is not None:
+        share = abs(conc.top_3_share_of_move)
+        if share >= 0.85:
+            return (
+                f"Today's Nifty move ({conc.nifty_return_pct:+.2f}%) was almost "
+                f"entirely driven by {', '.join(conc.top_3_symbols)} — "
+                f"{share*100:.0f}% of the move came from those three names. A "
+                "tape this narrow is fragile: a single mega-cap reversing can "
+                "unwind the headline quickly."
+            )
+        if share <= 0.25:
+            return (
+                f"Today's Nifty move ({conc.nifty_return_pct:+.2f}%) was "
+                "unusually broad — no single name dominated. Top-3 share was "
+                f"just {share*100:.0f}%. Broad participation in a move is "
+                "structurally stronger than narrow leadership."
+            )
+
+    # 3. VIX-driven moments
+    vix_z = regime.vix_zscore_252d
+    if vix_z is not None:
+        if vix_z >= 2.0:
+            return (
+                "VIX is unusually elevated today — running more than 2 standard "
+                "deviations above its trailing-year average. High VIX means "
+                "option markets are pricing wide ranges in both directions. "
+                "Historically aligns with mid-to-late stress regimes."
+            )
+        if vix_z <= -1.5:
+            return (
+                "VIX is unusually compressed — more than 1.5 standard "
+                "deviations below its trailing-year average. Long stretches "
+                "of low VIX can persist, but very low readings have also "
+                "preceded volatility expansion. A condition, not a forecast."
+            )
+
+    # 4. Regime persistence — a teaching moment around context
+    if regime.persistence_days <= 5 and regime.prev_regime:
+        return (
+            f"Markets shifted into {regime.regime} {regime.persistence_days} "
+            f"day(s) ago from {regime.prev_regime} (which lasted "
+            f"{regime.prev_regime_lasted_days} days). Regime transitions are "
+            "often more informative than the steady state — and we apply a "
+            "3-day confirmation smoothing, so the change has held for at "
+            "least that long."
+        )
+
+    # 5. Multi-year breakout cluster
+    mybs = reading.watchlists.get("multi_year_breakouts", [])
+    if len(mybs) >= 3:
+        names = ", ".join(e.symbol for e in mybs[:3])
+        return (
+            f"{len(mybs)} stocks broke out above their 5-year highs today, "
+            f"including {names}. Multi-year breakouts are the strongest variant "
+            "of the breakout signal — our validity study found these names "
+            "outpace the NSE 500 baseline by roughly +1pp at 20d and +6pp at "
+            "120d historically."
+        )
+
+    return ""
+
+
+def _pattern_of_the_week(reading: MarketReading) -> str:
+    """Rotate through pattern explainers, one per ISO week.
+
+    Used by the Sunday weekly digest. Same pattern week-to-week within
+    a calendar week so the broadcast feels coherent across subscribers.
+    """
+    iso_week = reading.date.isocalendar().week
+    title, body = _PATTERN_OF_THE_WEEK[iso_week % len(_PATTERN_OF_THE_WEEK)]
+    return f"**Pattern this week: {title}.** {body}"
+
+
 # ---------- composer ----------
 
-def compose(reading: MarketReading) -> Commentary:
-    """Compose the full Commentary object from a MarketReading."""
+def compose(reading: MarketReading, mode: str = "postclose") -> Commentary:
+    """Compose the full Commentary object from a MarketReading.
+
+    `mode` controls which learn_moment generator fires:
+      - postclose / premarket: indicator_spotlight (fires only when
+        something is actually unusual)
+      - weekly: pattern_of_the_week (always non-empty — rotating)
+    """
+    if mode == "weekly":
+        learn = _pattern_of_the_week(reading)
+    elif mode in ("postclose", "premarket"):
+        learn = _indicator_spotlight(reading)
+    else:
+        learn = ""
+
     return Commentary(
         date=reading.date,
         headline=_headline(reading),
@@ -317,4 +492,5 @@ def compose(reading: MarketReading) -> Commentary:
         sector=_sector_paragraph(reading),
         conditional=_conditional_paragraph(reading),
         watch=_watch_paragraph(reading),
+        learn_moment=learn,
     )

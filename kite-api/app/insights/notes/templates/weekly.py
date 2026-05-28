@@ -51,6 +51,11 @@ def render(reading: MarketReading, commentary: Commentary) -> str:
         "",
         f"👀 *Watch next week*",
         commentary.watch,
+    ])
+    # Phase 5.C — weekly digest always carries a pattern-of-the-week
+    if commentary.learn_moment:
+        parts.extend(["", f"💡 *Pattern of the week*", commentary.learn_moment])
+    parts.extend([
         "",
         f"_{CTA}_",
         "",

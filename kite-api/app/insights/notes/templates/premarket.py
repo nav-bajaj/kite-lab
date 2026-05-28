@@ -39,9 +39,14 @@ def render(reading: MarketReading, commentary: Commentary) -> str:
         "",
         f"👀 *Watch today*",
         commentary.watch,
+    ]
+    # Phase 5.C — learn_moment only when unusual
+    if commentary.learn_moment:
+        parts.extend(["", f"💡 *Indicator spotlight*", commentary.learn_moment])
+    parts.extend([
         "",
         f"_{CTA}_",
         "",
         f"_{commentary.disclaimer}_",
-    ]
+    ])
     return "\n".join(parts)

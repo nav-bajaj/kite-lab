@@ -77,6 +77,21 @@ class TestTextContent:
                         "*Watch next week*"):
             assert heading in b.text, f"missing heading: {heading!r}"
 
+    def test_weekly_always_has_pattern_of_the_week(self, latest_reading):
+        # Phase 5.C — weekly digest always carries a pattern-of-the-week
+        b = assemble("weekly", latest_reading)
+        assert "*Pattern of the week*" in b.text
+
+    def test_postclose_spotlight_when_unusual(self):
+        # COVID panic day — stress in panic zone — spotlight must fire
+        from app.insights.reading import get_market_reading
+        r = get_market_reading(pd.Timestamp("2020-03-23"))
+        b = assemble("postclose", r)
+        assert "*Indicator spotlight*" in b.text, (
+            "Expected indicator spotlight on COVID panic day; "
+            f"text was: {b.text[:500]!r}"
+        )
+
     def test_weekly_is_longer_than_premarket(self, latest_reading):
         pre = assemble("premarket", latest_reading)
         wk = assemble("weekly", latest_reading)

@@ -20,6 +20,7 @@ that drove the analog retirement and the resulting design principles.
 | **4.1** | **Concentration / Reliance impact widget** | ✅ shipped 2026-05-28 |
 | **4.2** | **Pattern watchlists + validity studies** | ✅ shipped 2026-05-28 — 3 new detectors, reusable validity harness, honest findings (1 PASS / 1 MARGINAL / 1 FAIL), Watchlists UI with validity badges |
 | **4.3-4.5** | **Structural expansion (remaining)** | 🔲 subgroups, calendar, cross-asset |
+| **5.C** | **Teach-while-broadcasting** | ✅ shipped 2026-05-28 — learn_moment field on Commentary, indicator-spotlight + pattern-of-the-week generators, all 3 templates updated |
 | **5.A** | **Inline explainers (Learn layer)** | ✅ shipped 2026-05-28 — 13 explainers prerendered, "What is this?" links on Pulse/Sectors/Watchlists, Learn tab in nav |
 | **5.B** | **Learn hub — glossary + deep-dives + pattern guides** | ✅ shipped 2026-05-28 — 38-term glossary, "Historical context" + "Common misreadings" on every indicator, transparent detection rules on patterns |
 | **5.C-D** | **Knowledge layer remainder** | 🔲 teach-while-broadcasting, validity protocol |
@@ -196,10 +197,10 @@ Total tests passing on this branch: **223**.
 
 | # | Task | Owner | Risk | Done |
 |---|---|---|---|---|
-| 5.C.1 | Add `learn_moment` field to `Commentary` dataclass — one rotating "teaching micro-moment" per note | 🤖 | 🟡 | ☐ |
-| 5.C.2 | Build 3 rotating learn-moment generators: indicator_spotlight (fires when an indicator does something unusual), pattern_of_the_week (Sunday digest), on_this_day (anniversary content from 4.4) | 🤖 | 🟡 | ☐ |
-| 5.C.3 | Integration with template engine — postclose gets indicator_spotlight (when applicable), weekly gets pattern_of_the_week, premarket gets on_this_day if a notable anniversary | 🤖 | 🟡 | ☐ |
-| 5.C.4 | Tests: each generator produces non-empty output for ≥5 sample dates; jargon-check on learn_moment text | 🤖 | 🟡 | ☐ |
+| 5.C.1 | `learn_moment: str` field added to `Commentary` dataclass | 🤖 | 🟡 | ✅ |
+| 5.C.2 | Two generators built: `_indicator_spotlight` (fires on stress extremes, concentration extremes, VIX z-score extremes, regime transitions, multi-year breakout clusters) + `_pattern_of_the_week` (ISO-week rotation across 6 patterns from our Learn corpus). `_on_this_day` deferred to Phase 4.4 since it depends on the historical-events calendar engine. | 🤖 | 🟡 | ✅ (2 of 3 generators) |
+| 5.C.3 | Templates wired: postclose + premarket get `*Indicator spotlight*` section when learn_moment fires; weekly digest always gets `*Pattern of the week*`. `compose()` signature now takes `mode` so the right generator runs. `note_assembler.assemble` passes the mode through. | 🤖 | 🟡 | ✅ |
+| 5.C.4 | Tests added — pattern-of-the-week rotates across ISO weeks; jargon check applied to learn_moment text across 4 historical regime days × 3 modes; COVID-day asserts stress/panic spotlight fires; weekly always carries pattern-of-the-week; default mode is postclose. Editorial-voice fixture now includes learn_moment. 73 tests passing. | 🤖 | 🟡 | ✅ |
 
 ### 5.D — Validity-first design principle (cross-cutting governance)
 
@@ -230,8 +231,8 @@ When you say "let's keep going":
 2. ~~**4.1** (concentration / Reliance impact)~~ ✅ shipped 2026-05-28
 3. ~~**5.B** (Learn hub)~~ ✅ shipped 2026-05-28
 4. ~~**4.2** (pattern watchlists with validity checks)~~ ✅ shipped 2026-05-28 — 1 passed, 1 marginal, 1 failed; UI reflects findings honestly
-5. **5.C** (teach-while-broadcasting) — **next**. Daily Note template enhancements; we now have the learn corpus + validity protocol to rotate through.
-6. **4.3 / 4.4 / 4.5** (subgroups / calendar / cross-asset) — in any order; each is self-contained.
+5. ~~**5.C** (teach-while-broadcasting)~~ ✅ shipped 2026-05-28 — Daily Notes now teach one micro-moment each
+6. **4.3 / 4.4 / 4.5** (subgroups / calendar / cross-asset) — in any order; each is self-contained. 4.4 also unblocks the deferred `on_this_day` generator inside 5.C.
 7. **5.D** (validity protocol document) — formalise the rule that's now embedded in the 4.2 harness. ~30 min of writing.
 8. **Phase 3** (automation) — defer until design-engine integrates; manual broadcast workflow handles current scale.
 

@@ -59,7 +59,7 @@ def assemble(mode: Mode, reading: MarketReading) -> NoteBundle:
     if mode not in VALID_MODES:
         raise ValueError(f"Unknown mode {mode!r}. Expected one of {VALID_MODES}")
 
-    commentary = commentary_mod.compose(reading)
+    commentary = commentary_mod.compose(reading, mode=mode)
 
     # Text (per-mode template)
     if mode == "premarket":
