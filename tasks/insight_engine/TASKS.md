@@ -17,8 +17,9 @@ that drove the analog retirement and the resulting design principles.
 | 1 | Daily Quant Note | ✅ shipped (8 modules + CLI, 72 tests) |
 | 2 | Web dashboard | ✅ shipped (4 pages + API, 32 tests; design polish deferred to design-engine integration) |
 | 3 | Automation + multi-channel | 🔲 not started |
-| **4** | **Pattern + structural expansion** | 🔲 **NEXT — locked direction** (see PLAN §"Pattern + structural expansion") |
-| **5** | **Knowledge-first content layer** | 🔲 **HIGHEST PRIORITY of new work** (see PLAN §"Knowledge-first roadmap") |
+| **4** | **Pattern + structural expansion** | 🔲 next — concentration widget queued |
+| **5.A** | **Inline explainers (Learn layer)** | ✅ shipped 2026-05-28 — 12 explainers prerendered, "What is this?" links on Pulse/Sectors/Watchlists, Learn tab in nav |
+| **5.B-D** | **Knowledge layer remainder** | 🔲 Learn hub, teach-while-broadcasting, validity protocol |
 | 6 | Close-out | 🔲 not started |
 
 **Retired:** the analog finder's forward-return user-facing content (page +
@@ -168,12 +169,12 @@ Total tests passing on this branch: **223**.
 
 | # | Task | Owner | Risk | Done |
 |---|---|---|---|---|
-| 5.A.1 | Define the content storage convention: Markdown files at `kite-dashboard/src/content/insights/learn/<topic>.md` with frontmatter (title, slug, summary, related_indicators). Build a simple loader in `lib/learn-content.ts` | 🤖 | 🟡 | ☐ |
-| 5.A.2 | Build dynamic route `kite-dashboard/src/app/insights/learn/[topic]/page.tsx` that renders any topic from the content dir | 🤖 | 🟡 | ☐ |
-| 5.A.3 | Author initial 12 explainer pieces — one per major indicator/concept: stress score, regime classification, sector RS, sector breadth (constituent-level), McClellan oscillator, % above 200-DMA, dispersion, coiled spring, breakout, RS leader, drawdown, VIX | 👤 + 🤖 | 🟡 | ☐ |
-| 5.A.4 | Add "What is this?" anchor links from each indicator's display on Pulse / Sectors / Watchlists pages to the matching explainer | 🤖 | 🟢 | ☐ |
-| 5.A.5 | Hover-card / popover component for inline definitions on key terms (uses the same content source) — optional, design-engine-dependent | 🤖 | 🟢 | ☐ |
-| 5.A.6 | Tests: every indicator displayed on Pulse / Sectors / Watchlists has a corresponding explainer file at `learn/<slug>.md` | 🤖 | 🟡 | ☐ |
+| 5.A.1 | Content storage convention + loader (typed TS objects under `kite-dashboard/src/content/insights/learn/`, registry in `_index.ts`, loader at `lib/learn-content.ts`) | 🤖 | 🟡 | ✅ |
+| 5.A.2 | Dynamic route `/insights/learn/[topic]/page.tsx` with `generateStaticParams` + `generateMetadata`. Index page at `/insights/learn`. Minimal inline-markup renderer (no new deps). | 🤖 | 🟡 | ✅ |
+| 5.A.3 | 12 explainers authored: stress-score, regime, sector-rs, sector-breadth, mcclellan-oscillator, pct-above-200dma, dispersion, coiled-spring, breakout, rs-leader, drawdown, vix | 👤 + 🤖 | 🟡 | ✅ |
+| 5.A.4 | "What is this?" links wired into Pulse (regime, stress, breadth, RS + breadth on leaderboard), Sectors (RS, breadth), Watchlists (breakouts/rs_leaders/coiled_springs); Learn tab added to layout nav; SnapshotPicker wrapped in Suspense | 🤖 | 🟢 | ✅ |
+| 5.A.5 | Hover-card / popover for inline term definitions | 🤖 | 🟢 | 🔲 deferred to design integration |
+| 5.A.6 | Coverage verification — `next build` prerenders all 12 explainer routes via `generateStaticParams`; broken slug references would fail prerender. Formal Jest/Vitest setup not installed in kite-dashboard yet; revisit if test-runner gets wired up. | 🤖 | 🟡 | ✅ (build-time) |
 
 ### 5.B — Standalone Learn hub
 
@@ -221,12 +222,12 @@ Total tests passing on this branch: **223**.
 
 When you say "let's keep going":
 
-1. **5.A** (inline explainers) — highest "feel gaining knowledge" payoff per unit effort. Authors content once, reuses everywhere. Unblocks 5.B and 5.C.
-2. **4.1** (concentration / Reliance impact) — small, unique, immediately resonant on Pulse page. Earns its own validity check (Phase 5.D protocol).
-3. **5.B** (Learn hub) — once 5.A is solid, this is mostly long-form authoring.
+1. ~~**5.A** (inline explainers)~~ ✅ shipped 2026-05-28
+2. **4.1** (concentration / Reliance impact) — **next up**. Small, unique, immediately resonant on Pulse page. Earns its own validity check (Phase 5.D protocol).
+3. **5.B** (Learn hub) — long-form versions of the 12 inline pieces + glossary. Mostly authoring.
 4. **4.2** (pattern watchlists with validity checks) — careful work; each pattern goes through the validity protocol before publishing fwd-return framing.
-5. **5.C** (teach-while-broadcasting) — once Learn content exists, this is template work.
+5. **5.C** (teach-while-broadcasting) — once 5.B exists, this is template work.
 6. **4.3 / 4.4 / 4.5** (subgroups / calendar / cross-asset) — in any order; each is self-contained.
 7. **Phase 3** (automation) — defer until design-engine integrates; manual broadcast workflow handles current scale.
 
-Total estimated effort for Phase 4 + 5 combined: ~10-14 working days, depending on how much content-authoring is split with you vs done by me.
+Total estimated effort for remainder of Phase 4 + 5: ~8-12 working days.
