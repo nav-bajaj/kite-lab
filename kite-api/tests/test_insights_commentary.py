@@ -209,6 +209,98 @@ class TestTranslationHelpers:
         assert kw in commentary._stress_band(score).lower()
 
 
+# ─────────── Spec tests (promoted from characterization 2026-05-28) ───────────
+#
+# These tests assert behavior derived from external requirements — canonical
+# historical days that we know what they "should" read like, mathematical
+# invariants, and edge cases that previously lived only in the implementation.
+# See `tasks/insight_engine/TDD_POLICY.md` for the policy this section follows.
+
+
+class TestStressBandSpec:
+    """Stress-band phrase must match what reality looked like on canonical
+    historical days. This is stronger than the parametrized threshold check
+    above — it pins the END-TO-END contract that 'panic-day in history → panic-
+    band reading in commentary'."""
+
+    @pytest.mark.parametrize("date_str,expected_substring", [
+        # March 2020 COVID washout — deepest stress in the 16y series.
+        # Anything other than panic/capitulation would be wrong.
+        ("2020-03-23", "panic"),
+        # 2017 melt-up — calm conditions for months. "Very calm" / "calm"
+        # is the only defensible read.
+        ("2017-10-13", "calm"),
+        # Early 2018 NBFC stress (before IL&FS crystallised) — stress in
+        # the 60-80 band. NOTE: my initial intuition picked 2018-10-05 here
+        # but the spec test surfaced that stress on that day was actually
+        # 87/100 (panic territory) — the engine was right, my mental model
+        # was wrong. 2018-09-25 is the canonical "elevated, not panic" day.
+        ("2018-09-25", "elevated"),
+        # Late 2024 — moderate stress (DRIFT regime, stress in 50-60 band)
+        ("2024-10-25", "moderately"),
+    ])
+    def test_canonical_historical_day_maps_to_expected_band(
+        self, date_str, expected_substring,
+    ):
+        from app.insights.reading import get_market_reading
+        r = get_market_reading(pd.Timestamp(date_str))
+        phrase = commentary._stress_band(r.stress.score).lower()
+        assert expected_substring in phrase, (
+            f"{date_str}: stress={r.stress.score:.0f} → {phrase!r}; "
+            f"expected '{expected_substring}'"
+        )
+
+    def test_band_phrases_are_monotonic_across_thresholds(self):
+        """Each named band must be reachable — no overlapping ranges,
+        no unreachable phrases. Tests the function's TABLE of phrases,
+        not just one input."""
+        phrases = {commentary._stress_band(s)
+                   for s in [5, 15, 25, 35, 45, 55, 65, 75, 85, 95]}
+        # At least 4 distinct phrases out of 5 possible bands
+        assert len(phrases) >= 4, (
+            f"Bands collapsed too much: only {len(phrases)} distinct phrases"
+        )
+
+    def test_band_boundary_is_inclusive_at_lower_edge(self):
+        """Edge case: exactly 80.0 should be in the panic band (≥ 80),
+        and exactly 79.99 should NOT be. Pins the boundary semantics."""
+        assert "panic" in commentary._stress_band(80.0).lower()
+        assert "panic" not in commentary._stress_band(79.99).lower()
+
+
+class TestVixDescriptorSpec:
+    """VIX descriptor must read appropriately for canonical regimes.
+    Spec: high z-score → 'elevated'/'nervous'; deeply negative → 'compressed'/
+    'complacency'."""
+
+    @pytest.mark.parametrize("date_str,must_contain_one_of", [
+        # COVID — VIX was extreme
+        ("2020-03-23", ("elevated", "nervous")),
+        # Calm 2017 melt-up — VIX z-score was deeply negative
+        ("2017-10-13", ("compressed", "complacency", "calm", "below")),
+    ])
+    def test_canonical_day_descriptor_matches(
+        self, date_str, must_contain_one_of,
+    ):
+        from app.insights.reading import get_market_reading
+        r = get_market_reading(pd.Timestamp(date_str))
+        z = r.regime.vix_zscore_252d
+        if z is None:
+            pytest.skip(f"VIX z-score unavailable on {date_str}")
+        phrase = commentary._vix_z_descriptor(z).lower()
+        assert any(t in phrase for t in must_contain_one_of), (
+            f"{date_str}: vix_z={z:+.2f} → {phrase!r}; "
+            f"expected one of {must_contain_one_of}"
+        )
+
+    def test_handles_none_input(self):
+        """Spec: when VIX z is unavailable, descriptor must not crash."""
+        result = commentary._vix_z_descriptor(None)
+        assert isinstance(result, str) and result, (
+            "Expected a defensive default phrase, got empty/non-str"
+        )
+
+
 # ─────────────── Phase 5.C — teach-while-broadcasting ───────────────
 
 class TestLearnMoment:

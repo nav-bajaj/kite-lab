@@ -162,3 +162,96 @@ class TestStressComposite:
         assert abs(snap.score - expected) < 0.5, (
             f"score {snap.score} != weighted components {expected}"
         )
+
+
+# ─────────── Spec tests (promoted from characterization 2026-05-28) ───────────
+#
+# Synthetic-input tests on the regime smoother + stress component
+# arithmetic. See `tasks/insight_engine/TDD_POLICY.md`.
+
+
+class TestRegimeSmoothingSpec:
+    """Spec: the smoother must NOT flip on a 1-day border crossing but
+    MUST flip on a `min_consecutive`-day persistent crossing."""
+
+    def test_single_day_anomaly_does_not_flip_regime(self):
+        """Spec: 1 anomalous day in the middle of a stable regime must not
+        change the smoothed series."""
+        idx = pd.date_range("2024-01-01", periods=20, freq="B")
+        raw = pd.Series(["TREND_BULL"] * 20, index=idx)
+        raw.iloc[10] = "DRIFT"
+
+        smoothed = regime._apply_smoothing(raw, min_consecutive=3)
+        assert smoothed.iloc[10] == "TREND_BULL", (
+            "Single-day border crossing must not flip the smoothed regime"
+        )
+
+    def test_two_day_anomaly_does_not_flip_regime(self):
+        """Spec: 2 consecutive anomalous days still below the 3-day
+        threshold — must not flip."""
+        idx = pd.date_range("2024-01-01", periods=20, freq="B")
+        raw = pd.Series(["TREND_BULL"] * 20, index=idx)
+        raw.iloc[10:12] = "DRIFT"
+
+        smoothed = regime._apply_smoothing(raw, min_consecutive=3)
+        assert smoothed.iloc[10] == "TREND_BULL"
+        assert smoothed.iloc[11] == "TREND_BULL"
+
+    def test_three_day_persistence_flips_regime(self):
+        """Spec: when 3 consecutive new-state days have accumulated, the
+        regime flips on the 3rd day and remains in the new state."""
+        idx = pd.date_range("2024-01-01", periods=20, freq="B")
+        raw = pd.Series(["TREND_BULL"] * 20, index=idx)
+        raw.iloc[10:15] = "DRIFT"  # 5 consecutive DRIFT days
+
+        smoothed = regime._apply_smoothing(raw, min_consecutive=3)
+        # The smoother flips once the candidate has held for min_consecutive
+        # days. Once flipped, subsequent days in that state stay flipped.
+        assert smoothed.iloc[14] == "DRIFT", (
+            f"Day 14 (5 consecutive DRIFT) should be DRIFT; got {smoothed.iloc[14]}"
+        )
+        # The transition into DRIFT must have happened — not still all TREND_BULL
+        unique_after_10 = set(smoothed.iloc[10:15].unique())
+        assert "DRIFT" in unique_after_10, (
+            "After 5 DRIFT days, smoothed series must contain DRIFT"
+        )
+
+    def test_empty_input_returns_empty(self):
+        """Spec: empty series in → empty series out, no crash."""
+        empty = pd.Series([], dtype=str)
+        out = regime._apply_smoothing(empty, min_consecutive=3)
+        assert out.empty
+
+    def test_first_day_takes_raw_value_directly(self):
+        """Spec: the very first day has nothing prior to smooth against,
+        so its smoothed value equals the raw value."""
+        idx = pd.date_range("2024-01-01", periods=5, freq="B")
+        raw = pd.Series(["STRESS", "STRESS", "STRESS", "STRESS", "STRESS"],
+                        index=idx)
+        out = regime._apply_smoothing(raw, min_consecutive=3)
+        assert out.iloc[0] == "STRESS"
+
+
+class TestStressBoundarySpec:
+    """Spec for stress panel boundary cases — missing components, weights."""
+
+    def test_all_four_components_have_weights(self):
+        """Spec: every component referenced in the score formula must
+        have a defined weight."""
+        required = {"vix_pctile", "drawdown", "below_200dma", "dispersion"}
+        assert set(stress.WEIGHTS.keys()) >= required
+
+    def test_score_is_in_0_to_100_range(self):
+        """Spec: the composite is 0-100 by construction. Pin it."""
+        snap = stress.get_stress_snapshot()
+        assert snap is not None
+        assert 0.0 <= snap.score <= 100.0, (
+            f"Score {snap.score} outside [0, 100]"
+        )
+
+    def test_panel_indexed_by_date(self):
+        """Spec: the panel must be a DataFrame with DatetimeIndex —
+        downstream code (commentary, charts) depends on this."""
+        panel = stress.compute_stress_panel()
+        assert isinstance(panel, pd.DataFrame)
+        assert isinstance(panel.index, pd.DatetimeIndex)

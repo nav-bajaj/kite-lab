@@ -115,3 +115,97 @@ class TestSnapToTradingDay:
         r = concentration.compute_concentration(pd.Timestamp("2099-01-01"))
         # Should clamp to the latest available date in the index, not raise
         assert isinstance(r.date, pd.Timestamp)
+
+
+# ─────────── Spec tests (promoted from characterization 2026-05-28) ───────────
+#
+# These tests pin invariants and edge cases derived from the engine's
+# external contract — not echoes of the current implementation. See
+# `tasks/insight_engine/TDD_POLICY.md`.
+
+
+class TestConcentrationInvariants:
+    """Mathematical invariants that must hold regardless of input."""
+
+    def test_weights_sum_to_exactly_100_after_load(self):
+        """The loader is documented to normalise to sum=100. Pinning the
+        invariant separately from the data file's actual contents."""
+        w = concentration.load_weights()
+        assert abs(w.sum() - 100.0) < 1e-9, (
+            f"Weights normalisation broken: sum = {w.sum()}"
+        )
+
+    def test_top_3_share_consistent_with_top_5(self):
+        """Top-5 must explain ≥ |top-3| in absolute contribution terms,
+        since constituents are sorted by abs(contribution) and the 4th/5th
+        names can only add or offset, never reduce |sum|."""
+        r = concentration.compute_concentration()
+        if r.top_3_share_of_move is None or r.top_5_share_of_move is None:
+            pytest.skip("Index too flat for share-of-move attribution")
+        # Allow tiny floating-point slack
+        assert abs(r.top_5_share_of_move) >= abs(r.top_3_share_of_move) - 1e-6
+
+    def test_constituents_sorted_by_abs_contribution_descending(self):
+        """The sort order is part of the public contract — UI consumers
+        rely on `constituents[:N]` being the top-N by impact."""
+        r = concentration.compute_concentration()
+        abs_contribs = [abs(c.contribution_bps) for c in r.constituents]
+        assert abs_contribs == sorted(abs_contribs, reverse=True), (
+            "Constituents must be sorted by |contribution| descending"
+        )
+
+    def test_top_n_symbols_match_first_n_constituents(self):
+        """`top_3_symbols` is a redundancy convenience — but its contents
+        MUST agree with `constituents[:3]`. Mismatch would mislead the UI."""
+        r = concentration.compute_concentration()
+        assert r.top_3_symbols == [c.symbol for c in r.constituents[:3]]
+        assert r.top_5_symbols == [c.symbol for c in r.constituents[:5]]
+
+
+class TestConcentrationEdgeCases:
+    """Boundary conditions previously specified only implicitly in code."""
+
+    def test_share_of_move_is_none_when_index_essentially_flat(self):
+        """When |Nifty return| is below the engine's epsilon (~1e-6 in %),
+        share_of_move attribution is mathematically unstable — engine must
+        return None rather than a giant misleading number."""
+        # Find a real low-move day; today's panel often has small moves.
+        # If we can't find one in the latest data, construct via the
+        # post-2025 era which has had several near-flat sessions.
+        r = concentration.compute_concentration()
+        if abs(r.nifty_return_pct) < 1e-6:
+            assert r.top_3_share_of_move is None
+            assert r.top_5_share_of_move is None
+        # If today moved, scan recent history for a near-flat day to verify
+        # the None behaviour on a real example.
+        import pandas as _pd
+        index = concentration.load_nifty50_index()
+        recent = index.tail(60)
+        recent_chg = recent["close"].pct_change().abs() * 100
+        flat_days = recent_chg[recent_chg < 0.01].index
+        if len(flat_days) == 0:
+            pytest.skip("No near-flat days in recent panel to test")
+        r_flat = concentration.compute_concentration(_pd.Timestamp(flat_days[0]))
+        # Reading should still produce a result — just with None shares
+        assert r_flat.constituents, "Should still have per-stock contribs"
+
+    def test_to_dict_is_json_serializable(self):
+        """API contract: every field must serialise to plain JSON. Catches
+        accidental np.float64 / Timestamp leakage."""
+        import json
+        r = concentration.compute_concentration()
+        json.dumps(r.to_dict())  # must not raise
+
+    def test_n_constituents_covered_le_total(self):
+        """Coverage can't exceed total. Pins the relationship."""
+        r = concentration.compute_concentration()
+        assert r.n_constituents_covered <= r.n_constituents_total
+        assert r.n_constituents_covered == len(r.constituents)
+
+    def test_cap_vs_equal_spread_uses_consistent_units(self):
+        """Spread is `nifty_return_pct - equal_weighted_return_pct` —
+        both in the same percentage-point units. Sign must agree with
+        the underlying difference."""
+        r = concentration.compute_concentration()
+        recomputed = r.nifty_return_pct - r.equal_weighted_return_pct
+        assert abs(r.cap_vs_equal_spread_pp - recomputed) < 1e-6

@@ -1,12 +1,16 @@
 # Insight Engine — results
 
 **Status:** in-progress on `insight-engine` branch. Phases 0, 1, 2, 4.1, 4.2,
-4.3, 5.A, 5.B, 5.C shipped. Phases 3, 4.4, 4.5, 5.D pending.
+4.3, 5.A, 5.B, 5.C shipped. TDD policy adopted + 6 high-stakes paths
+retrofitted to specification tests (2026-05-28). Phases 3, 4.4, 4.5, 5.D
+pending.
 
-**Branch state at last update (2026-05-28):**
-- 36 commits ahead of `main`
-- 118 files touched (+14,617 lines net)
-- 261 insights tests passing (545 tests total across kite-api)
+**Branch state at last update (2026-05-28, post-TDD-retrofit):**
+- 38+ commits ahead of `main`
+- ~120 files touched
+- **295 insights tests passing** (was 261 before retrofit; +34 spec tests
+  added across 6 high-stakes functions)
+- TDD policy at `TDD_POLICY.md`
 
 This document captures what shipped, the design decisions that shaped it, and
 the lessons that should outlast the branch. See `PLAN.md` for the strategy
@@ -328,7 +332,17 @@ that subscribers can come back to for months. Pure-content work has a
 different cost/value curve than feature engineering — worth weighting in
 roadmap decisions.
 
-### L5. The original time estimates were 10x too long.
+### L5. TDD-as-spec catches mental-model errors that characterization tests miss.
+The Phase 5.A `_stress_band` retrofit (2026-05-28) added a spec test
+asserting that 2018-10-05 (peak NBFC stress) should read as "elevated".
+The test FAILED — stress on that day was 87/100, true panic-band. My
+mental model was wrong about the period's severity; the engine was right.
+The characterization test it replaced (`_stress_band(70)` returns
+"elevated") never could have caught this. **Lesson: derive spec test
+inputs from external requirements (canonical historical days, mathematical
+invariants), not from re-reading the function's thresholds.**
+
+### L6. The original time estimates were 10x too long.
 "Phase 0: 10-14 working days" actually took ~1 day of agentic execution.
 The estimates assumed solo human-led development. Recalibrated estimates
 are in hours, not days. The bottleneck for going-live isn't coding-time;

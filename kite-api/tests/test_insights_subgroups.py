@@ -108,6 +108,80 @@ class TestSpreads:
             assert set(d.keys()) == {"pair", "spread_60d_pp", "label"}
 
 
+class TestSpreadSignConventionSpec:
+    """Spec test: the sign of `spread_60d_pp` is `group_a - group_b` and
+    a positive sign means `group_a` is leading. Pinned with a constructed
+    snapshot rather than reading live data — sign-convention bugs would
+    be invisible without this."""
+
+    def test_positive_spread_means_first_group_leading(self, monkeypatch):
+        """Construct two SubgroupSnapshot fixtures with known RS_60d values
+        and verify the spread direction."""
+        fake_a = sg.SubgroupSnapshot(
+            subgroup="private_banks", label="Private banks",
+            parent_sector="NIFTY_BANK",
+            n_total=5, n_covered=5, today_chg_pct=None,
+            rs_5d=None, rs_20d=None, rs_60d=0.05,  # +5% RS
+            rs_60d_prev_week=None, rs_60d_wow_delta=None,
+            pct_above_200dma=None, members_covered=[],
+        )
+        fake_b = sg.SubgroupSnapshot(
+            subgroup="psu_banks", label="PSU banks",
+            parent_sector="NIFTY_BANK",
+            n_total=5, n_covered=5, today_chg_pct=None,
+            rs_5d=None, rs_20d=None, rs_60d=-0.03,  # -3% RS
+            rs_60d_prev_week=None, rs_60d_wow_delta=None,
+            pct_above_200dma=None, members_covered=[],
+        )
+        fake_snaps = {"private_banks": fake_a, "psu_banks": fake_b}
+        # Patch get_subgroup_snapshot to return our fixture
+        monkeypatch.setattr(sg, "get_subgroup_snapshot",
+                            lambda asof=None: fake_snaps)
+
+        spreads = sg.get_sibling_spreads()
+        bank_spread = next(
+            (s for s in spreads if s.pair == ("private_banks", "psu_banks")),
+            None,
+        )
+        assert bank_spread is not None
+        # rs_60d[private] - rs_60d[psu] = 0.05 - (-0.03) = +0.08 → +8.0pp
+        assert abs(bank_spread.spread_60d_pp - 8.0) < 1e-6, (
+            f"Expected +8.0pp; got {bank_spread.spread_60d_pp}. "
+            "Sign convention: group_a - group_b."
+        )
+
+    def test_missing_rs_yields_none_spread(self, monkeypatch):
+        """If either side has rs_60d=None, the spread must be None
+        (not 0, not a crash)."""
+        fake_a = sg.SubgroupSnapshot(
+            subgroup="private_banks", label="Private banks",
+            parent_sector="NIFTY_BANK",
+            n_total=5, n_covered=5, today_chg_pct=None,
+            rs_5d=None, rs_20d=None, rs_60d=None,  # missing
+            rs_60d_prev_week=None, rs_60d_wow_delta=None,
+            pct_above_200dma=None, members_covered=[],
+        )
+        fake_b = sg.SubgroupSnapshot(
+            subgroup="psu_banks", label="PSU banks",
+            parent_sector="NIFTY_BANK",
+            n_total=5, n_covered=5, today_chg_pct=None,
+            rs_5d=None, rs_20d=None, rs_60d=0.02,
+            rs_60d_prev_week=None, rs_60d_wow_delta=None,
+            pct_above_200dma=None, members_covered=[],
+        )
+        monkeypatch.setattr(
+            sg, "get_subgroup_snapshot",
+            lambda asof=None: {"private_banks": fake_a, "psu_banks": fake_b},
+        )
+        spreads = sg.get_sibling_spreads()
+        bank_spread = next(
+            (s for s in spreads if s.pair == ("private_banks", "psu_banks")),
+            None,
+        )
+        assert bank_spread is not None
+        assert bank_spread.spread_60d_pp is None
+
+
 class TestHistoricalEpisodes:
     def test_2018_nbfc_psu_banks_weakness(self):
         """During Oct 2018 NBFC stress, PSU banks should show weak RS
