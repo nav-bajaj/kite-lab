@@ -1,4 +1,4 @@
-# Marketworks Insight Engine — quant-driven market intelligence product
+# Marketworks Insight Engine — quant-driven market intelligence + learning platform
 
 ## Context
 
@@ -6,24 +6,115 @@ Marketworks currently sells four long-only momentum portfolios via marketworks.i
 
 The opportunity: Indian retail platforms (Zerodha, Groww, Smallcase, MoneyControl, ETMoney) show prices and basic technicals but offer almost no quantitative breadth/regime context. Bloomberg has institutional content at institutional prices. **There's clear white space at the retail tier** for analytical depth at retail price.
 
-The strategy is an **acquisition funnel**, not a paid product: a free, auto-generated **Daily Quant Note broadcast on WhatsApp** becomes the signature offering. People who engage with the notes click through to a public web dashboard (insights area within the existing kite-dashboard app), where they see analytical depth + portfolio CTAs. The funnel converts WhatsApp readers → web visitors → paid portfolio subscribers.
+## Strategic re-orientation (2026-05-28)
 
-User decisions locked from discussion:
+After Phase 0-2 shipped and the analog feature was retired (see `ANALOG_STUDY.md` for the validity failure that drove this), we reframed the product's intent. The four things subscribers actually want from this surface, in order of importance:
+
+1. **Gauge the state of the market** — single-glance "where are we right now?" context
+2. **Discover interesting names** — what's quietly happening that they wouldn't see on price-only platforms
+3. **Recognise interesting patterns** — technical setups they can apply to their own thinking
+4. **Build market knowledge** — they walk away understanding more than they did before reading
+
+**Knowledge-building (4) is the leg most subscribers undervalue and competitors don't address — and the one we're best positioned to own.** Every observation we publish should teach as well as inform: "what is this indicator, why does it matter, how do you read it, what's the historical context." Done well, this turns the dashboard into a daily-habit destination, not a one-shot data screen.
+
+Two design rules tightened by the analog study:
+
+- **Show observation, not prediction.** "Stock X broke out of a 200-day base" is observation — true, useful, no claim about tomorrow. "Stocks in this setup gained 4% next month" is prediction — and unless that 4% beats the unconditional baseline by ~3pp+ it's drift dressed as insight. New features go through a validity check before any forward-return framing is published.
+- **Educate the underlying mechanic, not just the output.** When we surface "stress is elevated", we link to a short explainer of what stress means, what its components are, and how readers should think about it. Teaches the indicator AND builds trust in the platform.
+
+## Strategic pillars (locked)
+
+| # | Pillar | Status | Where it lives |
+|---|---|---|---|
+| 1 | **State-of-market** — regime / stress / sector leaderboard | ✅ shipped | Pulse + Sectors pages, all notes |
+| 2 | **Interesting names** — quant-driven watchlists | ✅ shipped (5 lists) | Watchlists page, Watch section of notes |
+| 3 | **Interesting patterns** — pattern-detection watchlists with validity checks | 🟡 partial (coiled springs only) | Phase 4 — expansion |
+| 4 | **Market knowledge** — educational explainers + glossary + case studies | 🔲 not started | Phase 5 — NEW (highest priority) |
+| 5 | **Structural observations** — concentration, subgroup spreads, FII/DII | 🔲 not started | Phase 4 — expansion |
+| 6 | **Anniversary / calendar** content — "X years ago today", event seasonality | 🔲 not started | Phase 4 — expansion |
+
+User decisions locked from earlier discussion (unchanged):
 
 | Choice | Locked value |
 |---|---|
 | Primary goal | Acquisition funnel — free content drives portfolio conversions |
 | Killer hook | **Daily Quant Note** auto-broadcast on WhatsApp |
 | Primary channel | WhatsApp (highest Indian penetration / open rates) |
-| Surface | New "Insights" tab in existing kite-dashboard app + public landing page |
+| Surface | New "Insights" tab in existing kite-dashboard app — **gated behind Clerk login** (free tier visible to all signed-in users; no paid-sub gate) |
 | Content cadence | Pre-market (8:30) + post-close (4:15) Mon-Fri + Sunday weekly digest |
-| Content categories | All four: regime/stress indicators · sector rotation · historical analogs · watchlists + auto-commentary |
-| Editorial voice | **Plain-English, broadly accessible, lightly actionable** — see "Editorial voice" section below for full guidelines |
+| Editorial voice | **Plain-English, broadly accessible, lightly actionable, EXPLICITLY teaching where natural** — see editorial section below |
 | Update cadence on web | Intraday (15-30 min) during market hours |
-| Cross-asset data | Add: USDINR, gold, US 10y, crude |
-| Flow data | Add: FII/DII daily flows |
-| Sectoral analysis | **Constituent-level**, not just sector-index level — see "Sector intelligence" section below |
-| Branch | **insight-engine** (renamed from `nifty-trader` to reflect the pivot) |
+| Cross-asset data | Add: USDINR, gold, US 10y, crude (deferred — Phase 4) |
+| Flow data | Add: FII/DII daily flows (deferred — Phase 4) |
+| Sectoral analysis | **Constituent-level**, not just sector-index level — already shipped |
+| Branch | **insight-engine** (renamed from `nifty-trader`) |
+
+**Retired (with study trail):** the original Phase 0 vision of an analog finder with forward-return projections — failed its validity check (IC ≈ +0.04 at 20d, direction lift NEGATIVE at 20d/60d). See `ANALOG_STUDY.md`. The KNN match module survives as a research artifact but is not consumed anywhere user-facing.
+
+## Knowledge-first roadmap (Phase 4 + 5 — locked direction 2026-05-28)
+
+The largest near-term build is a **learning layer**, not more data. Phase 0-2 already give us deep state-of-market content; what's missing is the connective tissue that turns those data points into things subscribers UNDERSTAND, not just consume. Three product surfaces will carry it:
+
+### A. Inline explainers (Phase 5.A)
+
+Every indicator the dashboard mentions gets a short, plain-English "what / why / how to read it" panel reachable from the indicator itself. Examples:
+
+- **Stress score** → "What is the stress score? It blends VIX percentile (35%), drawdown depth (25%), how many stocks are below their 200-day average (20%), and cross-sectional dispersion (20%) into a 0-100 reading. Below 30 = calm. 60-80 = elevated stress. 80+ = panic/capitulation, historically the strongest forward-return zone in our data."
+- **Sector RS** → "Relative strength compares a sector's 3-month return against Nifty's. Positive RS means the sector beat Nifty. Sustained RS leadership often precedes broader rally participation. Falling rank is sometimes more informative than absolute leadership."
+- **Coiled spring** → "Stocks in tight trading ranges (volatility in own bottom 25%) above their 50- and 200-DMAs. Historically the setup that precedes either a continuation breakout or a fast failure — high signal-to-noise direction is determined by the broader regime."
+
+These are author-once-reuse-everywhere. We'll write them as Markdown files under `kite-dashboard/src/content/insights/learn/` and the dashboard renders them via a `/insights/learn/<topic>` route. Each Pulse / Sectors / Watchlists page gets contextual deep-links ("What's this?" / "How is this computed?").
+
+### B. Standalone Learn section (Phase 5.B)
+
+A dedicated `/insights/learn` hub with three content types:
+
+- **Glossary** — alphabetical, 1-paragraph definitions of every term used elsewhere (FII, DII, VIX, RS, breadth, regime, dispersion, basis, percentile, drawdown, etc.). 30-50 entries.
+- **Indicator deep-dives** — longer pieces (5-10 minute reads) for the marquee indicators. Each includes:
+  - What it measures (plain-English)
+  - How we compute it (transparent methodology)
+  - Historical chart showing how it has behaved over 16 years
+  - "What does this look like at extremes?" — real historical episodes with dates
+  - "How readers should think about it" — uses, limits, common misreadings
+- **Pattern guides** — one piece per technical pattern (breakouts, golden cross, coiled springs, pullback to 50-DMA, multi-year breakouts). Each includes:
+  - Definition + visual diagram
+  - How we detect it (so subscribers can replicate the screen on their own data)
+  - Validity-study sidebar — what does the historical hit-rate actually look like? does this beat baseline? (lessons from the analog study apply: be honest about edge or absence thereof)
+
+### C. Teach-while-broadcasting (Phase 5.C)
+
+Modify the Daily Quant Note + weekly digest so each one **embeds one small learning moment**. Three formats rotated:
+
+- *"Indicator spotlight"* — when an indicator does something unusual today, one sentence explaining what it means: "Stress jumped from 42 to 58 today — a 16-point single-day move is the largest since [date]. Big single-day stress jumps historically resolve within 5-15 days as either a clear breakdown or a reversal."
+- *"Pattern of the week"* — Sunday digest names one pattern from the watchlists and explains it in 2-3 sentences. Rotates through breakouts / coiled springs / pullback-to-50-DMA / etc.
+- *"On this day"* — calendar anchor (Phase 4): "5 years ago today, India VIX was at 75 (COVID lockdown announcement). Today's stress reading of 58 is the 89th percentile of the last 5 years but is nowhere near that level."
+
+## Pattern + structural expansion (Phase 4 — locked direction 2026-05-28)
+
+Five concrete additions in priority order:
+
+### 1. Concentration / Reliance impact widget (Phase 4.1)
+Surfaces what % of any given day's Nifty 50 move came from the top 3/top 5 stocks, and what RIL contributed alone. Used in the Pulse page header and in the commentary engine. Turns "Nifty +0.4%" into "Nifty +0.4%, but 72% of the move was RIL + HDFC Bank — a narrow tape."
+
+### 2. Pattern-based watchlists (Phase 4.2)
+New entries alongside the existing 5 lists. Each pattern goes through a validity study (per the analog lesson) BEFORE its forward-return content is published — if it doesn't beat the unconditional baseline meaningfully, we publish the names but not the predictions.
+
+- Multi-year breakout (close above 5-year high)
+- Pullback to 50-DMA in established uptrend
+- Golden cross / death cross (50-DMA crossing 200-DMA)
+- Higher-highs-and-higher-lows over 60 days
+- 52-week-high cluster days (sector-level "thrust" signal)
+
+### 3. Sector subgroup tracker (Phase 4.3)
+Public-sector vs private-sector banks. Large-cap vs mid-cap pharma. Auto-OEMs vs auto-ancillaries. The default sector index hides these splits; they're often where the actual story lives. Each subgroup gets RS + breadth tracked like a sector.
+
+### 4. Anniversary / calendar content (Phase 4.4)
+- "X years ago today" generator using historical regime + stress at that date
+- Pre-event-day commentary (RBI, budget, earnings clusters) with historical move statistics
+- Seasonality patterns (e.g., "Median December performance: +X% over 16 years")
+
+### 5. Cross-asset + FII/DII data layer (Phase 4.5)
+Was originally Phase 0 task 0.9-0.11. USDINR, gold, US 10y, crude as macro context. FII/DII daily flows from NSE T-1 report. Once landed, enables a "macro" widget on the Pulse page and adds richer commentary on cross-asset moves.
 
 ## Editorial voice — plain English, lightly actionable
 
