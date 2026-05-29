@@ -176,6 +176,25 @@ export async function getSubgroups(date?: string): Promise<SubgroupsResponse> {
   return getJson<SubgroupsResponse>(`/api/insights/subgroups${q}`);
 }
 
+export interface AssetFeatures {
+  close: number | null;
+  z_60d: number | null;
+  z_252d: number | null;
+  roc_5d: number | null;
+  roc_20d: number | null;
+  roc_60d: number | null;
+  dist_from_200dma: number | null;
+  pctile_252d: number | null;
+}
+
+export interface CrossAssetEntry {
+  asset_id: string;
+  label: string;
+  data_available: boolean;
+  as_of_date: string | null;
+  features: AssetFeatures;
+}
+
 export interface MarketReading {
   date: string;
   regime: RegimeSnapshot;
@@ -192,6 +211,7 @@ export interface MarketReading {
   concentration: ConcentrationReading;
   subgroups: Record<string, SubgroupSnapshot>;
   sibling_spreads: SubgroupSpread[];
+  cross_asset: Record<string, CrossAssetEntry>;
 }
 
 // ---------- fetchers ----------

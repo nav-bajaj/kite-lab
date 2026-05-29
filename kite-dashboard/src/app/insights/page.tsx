@@ -5,6 +5,7 @@ import {
   fmtNum,
   regimeLabel,
   ConcentrationReading,
+  CrossAssetEntry,
 } from "@/lib/insights-api";
 import { RegimeLegend } from "./_components/regime-legend";
 
@@ -29,7 +30,7 @@ export default async function PulsePage({
 }) {
   const { date } = await searchParams;
   const reading = await getReading(date);
-  const { regime, stress, sector_leaderboard_60d, concentration } = reading;
+  const { regime, stress, sector_leaderboard_60d, concentration, cross_asset } = reading;
 
   return (
     <main className="space-y-8">
@@ -164,6 +165,9 @@ export default async function PulsePage({
           </tbody>
         </table>
       </section>
+
+      {/* ──────────────── CROSS-ASSET ──────────────── */}
+      <CrossAssetSection cross_asset={cross_asset} />
 
       {/* ──────────────── REGIME GLOSSARY ──────────────── */}
       <RegimeLegend />
@@ -302,6 +306,132 @@ function buildConcentrationHeadline(c: ConcentrationReading): string {
     return `Nifty ${moveDir} ${absMove}. Top 3 (${c.top_3_symbols.join(", ")}) drove ${top3Pct}% of the move — concentrated but not extreme.`;
   }
   return `Nifty ${moveDir} ${absMove} with broad participation — no single name dominated (top-3 share ${top3Pct}%).`;
+}
+
+function CrossAssetSection(
+  { cross_asset }: { cross_asset: Record<string, CrossAssetEntry> },
+) {
+  // Display order: most reader-relevant first
+  const order = ["usdinr", "gold", "crude", "india_10y", "us_10y"];
+  const available = order
+    // eslint-disable-next-line security/detect-object-injection
+    .map((k) => cross_asset[k])
+    .filter((e): e is CrossAssetEntry => Boolean(e));
+
+  const liveEntries = available.filter((e) => e.data_available);
+  const deferredEntries = available.filter((e) => !e.data_available);
+
+  // Notable assets — anything in the top or bottom 5% of its trailing year
+  // OR z252 above ±2. These are the conditions that fire commentary
+  // spotlights, so flagging them here keeps the dashboard and the notes in
+  // visual agreement.
+  const notable = liveEntries.filter((e) => {
+    const f = e.features;
+    const pctileExtreme = f.pctile_252d !== null
+      && (f.pctile_252d >= 0.95 || f.pctile_252d <= 0.05);
+    const zExtreme = (f.z_252d !== null && Math.abs(f.z_252d) >= 2.0);
+    return pctileExtreme || zExtreme;
+  });
+
+  return (
+    <section>
+      <div className="flex items-baseline justify-between">
+        <h3 className="text-base font-semibold">Cross-asset context</h3>
+        <Link
+          href="/insights/learn/glossary#flows-structure"
+          className="text-xs text-neutral-500 underline-offset-2 hover:underline"
+        >
+          What is this?
+        </Link>
+      </div>
+      <p className="mt-1 text-xs text-neutral-500">
+        Where four assets that influence Indian equities are sitting today,
+        each relative to its own trailing-year range. Reading: z-score
+        (today vs the past 252 days), distance from 200-day moving average,
+        and percentile within the trailing year.
+      </p>
+
+      {notable.length > 0 && (
+        <div className="mt-3 rounded border border-amber-200 bg-amber-50 p-3 text-sm dark:border-amber-900 dark:bg-amber-900/20">
+          <strong>Notable:</strong>{" "}
+          {notable.map((e, i) => (
+            <span key={e.asset_id}>
+              {i > 0 ? " · " : ""}
+              <span className="font-medium">{e.label.split(" (")[0]}</span>{" "}
+              {describeExtreme(e)}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <table className="mt-3 w-full text-sm">
+        <thead className="border-b text-left text-neutral-500">
+          <tr>
+            <th className="py-2">Asset</th>
+            <th className="py-2 text-right">Close</th>
+            <th className="py-2 text-right">5d</th>
+            <th className="py-2 text-right">20d</th>
+            <th className="py-2 text-right">60d</th>
+            <th className="py-2 text-right">z (1y)</th>
+            <th className="py-2 text-right">vs 200-DMA</th>
+            <th className="py-2 text-right">Percentile</th>
+          </tr>
+        </thead>
+        <tbody>
+          {liveEntries.map((e) => (
+            <tr key={e.asset_id} className="border-b last:border-0">
+              <td className="py-2 font-medium">{e.label.split(" (")[0]}</td>
+              <td className="py-2 text-right">{fmtNum(e.features.close, 2)}</td>
+              <td className="py-2 text-right">
+                {fmtPct(e.features.roc_5d, 1, true)}
+              </td>
+              <td className="py-2 text-right">
+                {fmtPct(e.features.roc_20d, 1, true)}
+              </td>
+              <td className="py-2 text-right">
+                {fmtPct(e.features.roc_60d, 1, true)}
+              </td>
+              <td className="py-2 text-right">
+                {e.features.z_252d === null
+                  ? "—"
+                  : `${e.features.z_252d >= 0 ? "+" : ""}${e.features.z_252d.toFixed(2)}`}
+              </td>
+              <td className="py-2 text-right">
+                {fmtPct(e.features.dist_from_200dma, 1, true)}
+              </td>
+              <td className="py-2 text-right">
+                {e.features.pctile_252d === null
+                  ? "—"
+                  : `${(e.features.pctile_252d * 100).toFixed(0)}%`}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {deferredEntries.length > 0 && (
+        <p className="mt-2 text-xs text-neutral-500">
+          Data pending for:{" "}
+          {deferredEntries.map((e) => e.label.split(" (")[0]).join(", ")}
+        </p>
+      )}
+    </section>
+  );
+}
+
+function describeExtreme(e: CrossAssetEntry): string {
+  const f = e.features;
+  if (f.pctile_252d !== null && f.pctile_252d >= 0.95) {
+    return `at the ${Math.round(f.pctile_252d * 100)}th percentile of its trailing year`;
+  }
+  if (f.pctile_252d !== null && f.pctile_252d <= 0.05) {
+    return `at the ${Math.round(f.pctile_252d * 100)}th percentile of its trailing year (very low)`;
+  }
+  if (f.z_252d !== null && Math.abs(f.z_252d) >= 2.0) {
+    const dir = f.z_252d > 0 ? "elevated" : "depressed";
+    return `z = ${f.z_252d >= 0 ? "+" : ""}${f.z_252d.toFixed(2)} (${dir})`;
+  }
+  return "notable";
 }
 
 function Row({ label, component, raw }: { label: string; component: number | null; raw: string }) {

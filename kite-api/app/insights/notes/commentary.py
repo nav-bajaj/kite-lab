@@ -366,6 +366,81 @@ _PATTERN_OF_THE_WEEK: list[tuple[str, str]] = [
 ]
 
 
+_MACRO_ASSET_PHRASES: dict[str, tuple[str, str, str]] = {
+    # asset_id -> (display label, high-side phrase, low-side phrase)
+    "usdinr": (
+        "USDINR",
+        "the rupee is near its weakest level of the trailing year (high USDINR percentile)",
+        "the rupee is near its strongest level of the trailing year (low USDINR percentile)",
+    ),
+    "gold":      ("Gold",       "gold is elevated", "gold is depressed"),
+    "crude":     ("Crude",      "crude oil is elevated", "crude oil is depressed"),
+    "india_10y": ("India 10y",  "Indian 10-year yields are elevated", "Indian 10-year yields are depressed"),
+}
+
+
+def _macro_spotlight(reading: MarketReading) -> str:
+    """Surface a cross-asset macro move when one of the tracked assets is
+    at extreme z_252d or pctile_252d. Empty string when nothing is
+    extreme — caller falls through the cascade."""
+    cross = getattr(reading, "cross_asset", None)
+    if not cross:
+        return ""
+
+    # Score each available asset by how unusual it is; pick the most
+    # unusual non-deferred entry to spotlight.
+    best_asset_id: str | None = None
+    best_magnitude: float = 0.0
+    best_direction: str = ""  # "high" or "low"
+    best_z: float | None = None
+    best_pctile: float | None = None
+    for aid, entry in cross.items():
+        if aid not in _MACRO_ASSET_PHRASES:
+            continue
+        if not getattr(entry, "data_available", False):
+            continue
+        feats = entry.features
+        z = feats.z_252d
+        pctile = feats.pctile_252d
+        magnitude = 0.0
+        direction = ""
+        if z is not None and abs(z) >= 2.0:
+            magnitude = abs(z)
+            direction = "high" if z >= 0 else "low"
+        if pctile is not None:
+            if pctile >= 0.95 and magnitude < (pctile - 0.5):
+                magnitude = pctile - 0.5
+                direction = "high"
+            elif pctile <= 0.05 and magnitude < (0.5 - pctile):
+                magnitude = 0.5 - pctile
+                direction = "low"
+        if magnitude > best_magnitude and direction:
+            best_magnitude = magnitude
+            best_asset_id = aid
+            best_direction = direction
+            best_z = z
+            best_pctile = pctile
+
+    if best_asset_id is None:
+        return ""
+
+    label, high_phrase, low_phrase = _MACRO_ASSET_PHRASES[best_asset_id]
+    direction_phrase = high_phrase if best_direction == "high" else low_phrase
+
+    head = f"Cross-asset note: {direction_phrase}"
+    if best_pctile is not None:
+        head += f" ({best_pctile*100:.0f}th percentile within its trailing year)"
+    elif best_z is not None:
+        sign = "+" if best_z >= 0 else ""
+        head += f" (z = {sign}{best_z:.2f} over 252 days)"
+    tail = (
+        "Indian equities don't move in isolation — currency, gold, and "
+        "rates shape risk premia and sector flows. When one of them is at "
+        "an extreme, it's a context to watch, not a directional call."
+    )
+    return f"{head}. {tail}"
+
+
 def _indicator_spotlight(reading: MarketReading) -> str:
     """Pick the most unusual single indicator in today's reading and teach it.
 
@@ -431,7 +506,13 @@ def _indicator_spotlight(reading: MarketReading) -> str:
                 "preceded volatility expansion. A condition, not a forecast."
             )
 
-    # 4. Regime persistence — a teaching moment around context
+    # 4. Cross-asset macro — surface USDINR / gold / crude / India 10y
+    # when one is at extreme z-score or percentile. Skip US 10y (deferred).
+    macro_msg = _macro_spotlight(reading)
+    if macro_msg:
+        return macro_msg
+
+    # 5. Regime persistence — a teaching moment around context
     if regime.persistence_days <= 5 and regime.prev_regime:
         return (
             f"Markets shifted into {regime.regime} {regime.persistence_days} "
@@ -442,7 +523,7 @@ def _indicator_spotlight(reading: MarketReading) -> str:
             "least that long."
         )
 
-    # 5. Notable sibling-subgroup spread
+    # 6. Notable sibling-subgroup spread
     big_spreads = [
         sp for sp in reading.sibling_spreads
         if sp.spread_60d_pp is not None and abs(sp.spread_60d_pp) >= 7.0
@@ -462,7 +543,7 @@ def _indicator_spotlight(reading: MarketReading) -> str:
             "informative than either side."
         )
 
-    # 6. Multi-year breakout cluster
+    # 7. Multi-year breakout cluster
     mybs = reading.watchlists.get("multi_year_breakouts", [])
     if len(mybs) >= 3:
         names = ", ".join(e.symbol for e in mybs[:3])

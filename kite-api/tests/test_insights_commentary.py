@@ -433,3 +433,144 @@ class TestOnThisDayLearnMoment:
             # Otherwise it should match the postclose spotlight (both run
             # _indicator_spotlight on the same reading)
             assert c_pre.learn_moment == c_post.learn_moment
+
+
+class TestMacroSpotlightSpec:
+    """Phase 4.5 wiring — _indicator_spotlight should call out a cross-asset
+    move when one of USDINR / gold / crude / india_10y is at z_252 >= 2 OR
+    pctile_252d >= 0.95 (top 5%). The current snapshot has USDINR in the
+    96th percentile, so this is testable on today's reading."""
+
+    def _calm_reading(self):
+        """Build a MarketReading where every earlier-in-cascade branch
+        is intentionally calm, so we can isolate the macro branch."""
+        from app.insights.reading import get_market_reading
+        from app.insights import cross_asset as ca
+        r = get_market_reading()
+        # Force stress into the calm-but-not-complacent zone (40)
+        r.stress.score = 40.0
+        r.stress.score_percentile = 50.0
+        # Force regime persistence high so the transition branch doesn't fire
+        r.regime.persistence_days = 60
+        r.regime.prev_regime = None
+        # Force concentration to broad participation, not narrow
+        r.concentration.nifty_return_pct = 0.3
+        r.concentration.top_3_share_of_move = 0.35
+        # Force VIX z to neutral
+        r.regime.vix_zscore_252d = 0.5
+        # Clear subgroup spreads
+        r.sibling_spreads = []
+        # Clear multi-year-breakout watchlist
+        r.watchlists["multi_year_breakouts"] = []
+        return r, ca
+
+    def test_macro_spotlight_fires_when_usdinr_in_top_percentile(self):
+        """With everything else tame, an extreme USDINR (z252 = 2.3,
+        pctile 0.97) MUST trigger the macro branch."""
+        r, ca = self._calm_reading()
+        extreme = ca.AssetFeatures(
+            close=96.5, z_60d=1.5, z_252d=2.3,
+            roc_5d=0.005, roc_20d=0.01, roc_60d=0.03,
+            dist_from_200dma=0.06, pctile_252d=0.97,
+        )
+        # All other assets tame
+        tame = ca.AssetFeatures(
+            close=100.0, z_60d=0.1, z_252d=0.5,
+            roc_5d=0.0, roc_20d=0.0, roc_60d=0.0,
+            dist_from_200dma=0.01, pctile_252d=0.55,
+        )
+        r.cross_asset = {
+            "usdinr":    ca.CrossAssetEntry(asset_id="usdinr", label="USDINR",
+                                            data_available=True, features=extreme,
+                                            as_of_date="2026-05-29"),
+            "gold":      ca.CrossAssetEntry(asset_id="gold", label="Gold",
+                                            data_available=True, features=tame,
+                                            as_of_date="2026-05-29"),
+            "crude":     ca.CrossAssetEntry(asset_id="crude", label="Crude",
+                                            data_available=True, features=tame,
+                                            as_of_date="2026-05-29"),
+            "india_10y": ca.CrossAssetEntry(asset_id="india_10y", label="India 10y",
+                                            data_available=True, features=tame,
+                                            as_of_date="2026-05-29"),
+        }
+        c = commentary.compose(r, mode="postclose")
+        lm = c.learn_moment.lower()
+        assert lm, "Expected a non-empty spotlight when USDINR is at 97th percentile"
+        assert ("usdinr" in lm or "rupee" in lm or "inr" in lm), (
+            f"Expected USDINR-related spotlight; got: {lm!r}"
+        )
+
+    def test_macro_spotlight_fires_when_crude_extreme(self):
+        """Same as above but for crude at the high end of the distribution."""
+        r, ca = self._calm_reading()
+        extreme = ca.AssetFeatures(
+            close=9500.0, z_60d=1.0, z_252d=2.5,
+            roc_5d=0.04, roc_20d=0.08, roc_60d=0.15,
+            dist_from_200dma=0.30, pctile_252d=0.98,
+        )
+        tame = ca.AssetFeatures(
+            close=100.0, z_60d=0.0, z_252d=0.0,
+            roc_5d=0.0, roc_20d=0.0, roc_60d=0.0,
+            dist_from_200dma=0.0, pctile_252d=0.5,
+        )
+        r.cross_asset = {
+            "usdinr":    ca.CrossAssetEntry(asset_id="usdinr", label="USDINR",
+                                            data_available=True, features=tame,
+                                            as_of_date="2026-05-29"),
+            "gold":      ca.CrossAssetEntry(asset_id="gold", label="Gold",
+                                            data_available=True, features=tame,
+                                            as_of_date="2026-05-29"),
+            "crude":     ca.CrossAssetEntry(asset_id="crude", label="Crude",
+                                            data_available=True, features=extreme,
+                                            as_of_date="2026-05-29"),
+            "india_10y": ca.CrossAssetEntry(asset_id="india_10y", label="India 10y",
+                                            data_available=True, features=tame,
+                                            as_of_date="2026-05-29"),
+        }
+        c = commentary.compose(r, mode="postclose")
+        lm = c.learn_moment.lower()
+        assert lm
+        assert "crude" in lm or "oil" in lm, (
+            f"Expected crude/oil-related spotlight; got: {lm!r}"
+        )
+
+    def test_no_extreme_macro_yields_no_macro_spotlight(self, monkeypatch):
+        """When no cross-asset is at z >= 2 and no pctile is extreme,
+        the macro branch should NOT fire (other branches may still fire)."""
+        from app.insights.reading import get_market_reading
+        from app.insights import cross_asset as ca
+
+        r = get_market_reading()
+
+        # Patch cross_asset snapshot to return middle-of-distribution
+        # values for every asset
+        tame_features = ca.AssetFeatures(
+            close=100.0, z_60d=0.0, z_252d=0.5,
+            roc_5d=0.0, roc_20d=0.0, roc_60d=0.0,
+            dist_from_200dma=0.02, pctile_252d=0.55,
+        )
+        tame_snap = {
+            k: ca.CrossAssetEntry(
+                asset_id=k, label=k, data_available=True,
+                features=tame_features, as_of_date="2026-05-29",
+            )
+            for k in ("usdinr", "gold", "crude", "india_10y")
+        }
+        # Replace the reading's cross_asset field with the tame snapshot
+        r_tame = r
+        r_tame.cross_asset = tame_snap
+
+        c = commentary.compose(r_tame, mode="postclose")
+        lm = c.learn_moment.lower()
+        # Macro keywords should not appear in the spotlight when nothing's
+        # extreme. Other branches may still fire (stress, regime transition,
+        # multi-year breakouts) — that's fine.
+        macro_keywords = ("usdinr", "rupee", "crude")
+        # Gold can appear in MULTI-YEAR BREAKOUT context (e.g., gold ETF
+        # in the breakout list), so we don't include "gold" in the
+        # exclusion set — only the explicit currency / oil terms.
+        for kw in macro_keywords:
+            assert kw not in lm, (
+                f"Macro spotlight should NOT fire on tame inputs; "
+                f"found {kw!r} in: {lm!r}"
+            )
