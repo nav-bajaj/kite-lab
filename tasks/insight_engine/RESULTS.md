@@ -1,16 +1,20 @@
 # Insight Engine — results
 
 **Status:** in-progress on `insight-engine` branch. Phases 0, 1, 2, 4.1, 4.2,
-4.3, 5.A, 5.B, 5.C shipped. TDD policy adopted + 6 high-stakes paths
-retrofitted to specification tests (2026-05-28). Phases 3, 4.4, 4.5, 5.D
-pending.
+4.3, 4.4, 4.5 (partial), 5.A, 5.B, 5.C, 5.D shipped. TDD policy adopted +
+6 high-stakes paths retrofitted (2026-05-28). Phase 3 (automation) and
+remaining 4.5 pieces (FII/DII) deferred.
 
-**Branch state at last update (2026-05-28, post-TDD-retrofit):**
-- 38+ commits ahead of `main`
-- ~120 files touched
-- **295 insights tests passing** (was 261 before retrofit; +34 spec tests
-  added across 6 high-stakes functions)
+**Branch state at last update (2026-05-29):**
+- **43 commits ahead of `main`**
+- 130+ files touched
+- **324 insights tests passing** (started this session at 261 → +63 net
+  spec tests, all written under the TDD policy)
 - TDD policy at `TDD_POLICY.md`
+- Validity protocol at `VALIDITY_PROTOCOL.md`
+- Dev environment verified working: `localhost:3000/insights` renders
+  the full Pulse page including the new Cross-Asset Context section
+  with real USDINR / Gold / Crude / India 10y data
 
 This document captures what shipped, the design decisions that shaped it, and
 the lessons that should outlast the branch. See `PLAN.md` for the strategy
@@ -229,16 +233,138 @@ End-to-end verified: on the latest reading, postclose fired the multi-year
 breakout cluster spotlight; weekly digest cleanly rotated to the 20-day
 breakout pattern for the current ISO week.
 
+### Phase 4.4 — Anniversary / calendar (first fully TDD-driven phase)
+
+`kite-api/app/insights/calendar_content.py` — built test-first per the
+TDD policy adopted earlier in the day. 10 spec tests authored BEFORE any
+implementation existed; saw red on ImportError; then minimum impl.
+
+- `get_on_this_day(date, horizons=(1,3,5,10))` returns
+  `dict[horizon_years → AnniversarySnapshot]`. Missing horizons (panel
+  doesn't reach back that far, or no curated event) are omitted from the
+  result — caller gets a dict that's safe to iterate without None checks.
+- `data/static/historical_events.csv` — 13 curated Indian-market events
+  with quoted tags (Lehman, demonetization, GST, 2019/2024 election
+  results, COVID lockdown, vaccine news, Ukraine, RBI rate-shock,
+  Hindenburg, multiple budgets). Extensible — drop new dated rows and
+  the engine picks them up.
+- Commentary integration: new `_on_this_day` generator wired into
+  premarket routing. Falls through to `_indicator_spotlight` if no
+  curated anniversary matches.
+- API endpoint `GET /api/insights/calendar/on-this-day?date=YYYY-MM-DD`.
+- End-to-end verified on 2025-03-24: premarket note fires *"**5 years
+  ago today** (24 Mar 2020): Nationwide COVID-19 lockdown announced...
+  stress at 99/100. Useful context for today's reading."*
+
+Deferred follow-ups: 4.4.3 seasonality engine, 4.4.4 pre-event helper,
+4.4.7 Pulse calendar strip.
+
+### Phase 4.5 — Cross-asset feature engine + real data
+
+Built test-first. 12 spec tests authored before the engine; minimum
+implementation; then real data sourcing.
+
+**Engine** at `kite-api/app/insights/cross_asset.py`:
+- `compute_asset_features(close_series)` → `AssetFeatures` with close,
+  z_60d, z_252d, roc_5d/20d/60d, dist_from_200dma, pctile_252d. All
+  numeric fields Optional, None when history is insufficient.
+- `get_cross_asset_snapshot()` returns a dict keyed by asset_id. Each
+  entry has `data_available` so deferred assets appear in the dict
+  with None features — UI consumers can iterate the whole registry
+  and gracefully render data-pending placeholders.
+- Asset registry pattern — drop a CSV at the documented path and the
+  engine picks it up. No code change needed for new series.
+
+**Real data sourcing (2026-05-29)** via Kite Connect:
+- `scripts/fetch_cross_asset_history.py` — three modes: probe (90 days),
+  --from YYYY-MM-DD (full), --incremental (daily-pipeline mode)
+- Dynamic contract resolution: reads `instruments_full.csv` at fetch
+  time, picks the soonest non-expired monthly contract. Prevents future
+  breakage as the hardcoded June 2026 anchors expire.
+- Wired into `scripts/run_daily_pipeline.py` as a parallel fetch step
+  in `--incremental` mode.
+
+**Two real findings caught by the probe** (documented in fetch script
+docstring):
+- MCX INDICES segment (MCXGOLDEX, MCXCRUDEX) returns ONLY today's row
+  via historical_data — not usable for time series. The short panel
+  we had was accumulated one row per day, not bulk-fetched.
+- USDINR `continuous=True` only works on the MONTHLY contract token
+  (e.g., USDINR26JUNFUT) — weekly contracts return 0 candles.
+
+**Series live on the dashboard** (4 of 5 — US 10y still deferred, needs
+FRED or yfinance which isn't part of Kite):
+- GOLD — 4,115 rows back to Oct 2010 (MCX continuous front-month)
+- CRUDEOIL — 4,108 rows back to Nov 2010 (MCX continuous front-month)
+- USDINR — 2,105 rows back to Sep 2017 (NSE CDS continuous front-month)
+- india_10y — pre-existing series (NIFTY GS 10YR, ~9y)
+
+**Pulse-page integration**:
+- New "Cross-asset context" section between sector leaderboard and the
+  regime legend. Table shows close + 5/20/60d ROC + z252 + distance-
+  from-200DMA + percentile per asset.
+- Amber "Notable" callout when any asset hits z |z| ≥ 2 OR pctile ≥
+  0.95 / ≤ 0.05. Same conditions as the commentary's macro spotlight.
+- "Data pending for:" footnote handles the deferred US 10y row.
+
+**Commentary integration**: new `_macro_spotlight(reading)` helper in
+the `_indicator_spotlight` cascade as step 4 (between VIX and regime
+persistence branches). Scores each cross-asset by deviation magnitude
+and picks the most-extreme to surface. End-to-end verified — postclose
+on the latest reading fires *"Cross-asset note: the rupee is near its
+weakest level of the trailing year (high USDINR percentile) (96th
+percentile within its trailing year). Indian equities don't move in
+isolation — currency, gold, and rates shape risk premia and sector
+flows. When one of them is at an extreme, it's a context to watch,
+not a directional call."*
+
+Deferred from original 4.5 scope: 4.5.2 FII/DII scraper, 4.5.4
+fii_dii engine, 4.5.6 Pulse macro widget (the table covers it for
+now), 4.5.7 FII/DII widget, 4.5.8 commentary FII/DII paragraph.
+User explicitly chose to skip FII/DII for now.
+
+### Phase 5.D — Validity protocol (governance close-out)
+
+`tasks/insight_engine/VALIDITY_PROTOCOL.md` — formalises the
+empirical-claim discipline that emerged from the analog retirement
+(`ANALOG_STUDY.md`) and Phase 4.2 pattern studies.
+
+- **Scope**: forward-return claims (NOT observations / present-state
+  statements / educational content)
+- **6-check checklist**: n ≥ 100, baseline excess ≥ +1.0pp at headline
+  horizon, positive direction lift, sign consistency across horizons,
+  survivorship hygiene, persistence across rolling halves
+- **3 promotion tiers**: validated (all 6) → `validity-tested ✓` badge.
+  names-only (direction positive but excess 0.3-1.0pp, or n in
+  [100, 200)) → `names-only` badge. Else → not surfaced.
+- **Governance triggers** — when to re-run the harness
+- **Anti-patterns to avoid** — cherry-picking horizons, treating
+  names-only as an escape hatch, re-using data for design + validation
+
+**Audit ran 2026-05-29 against live `conditional_dist` content:**
+
+| Bucket | n | 20d median | % positive | Tier |
+|---|---|---|---|---|
+| STRESS | 778 | +3.00% | 72% | ✅ Validated |
+| STRETCHED | 177 | +1.69% | 72% | 🟡 Marginal (small sample) |
+| TREND_BULL | 1795 | +0.88% | 60% | ✅ Validated |
+| DRIFT | 1293 | +0.37% | 54% | ⚠ No edge vs unconditional drift |
+
+**Audit triggered a real copy fix** — DRIFT regime's
+`_conditional_paragraph` now leads with *"no clear edge vs typical
+drift"* instead of implying edge where the data shows none. Small-sample
+buckets (n < 200) gain a *"limited history, treat this stat as
+directional only"* suffix. Both pinned by spec tests in
+`TestConditionalParagraphSpec` (TDD-first).
+
 ### What is deliberately NOT done
 
 - **Phase 3 (automation + WhatsApp).** Code-time is small; calendar bottleneck
   is Meta Cloud API approval. Manual broadcast workflow handles current scale.
-- **Phase 4.4 (calendar / anniversary).** "On this day" generator already
-  reserves the slot inside commentary.
-- **Phase 4.5 (cross-asset + FII/DII).** Macro widget + flow widget would
-  feed the Pulse page.
-- **Phase 5.D (validity protocol doc).** The protocol IS embedded in the 4.2
-  harness already; document is the formalisation.
+- **FII/DII data layer (4.5.2 / 4.5.4)** — user explicitly skipped.
+- **Seasonality + pre-event helpers (4.4.3 / 4.4.4)** — deferred follow-up.
+- **US 10y series** — needs FRED API key or yfinance dependency; not
+  available via Kite Connect.
 - **SEO structured data (5.B.7), historical-chart renders on each Learn
   explainer (5.B.4 sub-task), hover-card popovers (5.A.5), Notes archive
   (2.6), portfolio CTAs (2.7), Lighthouse polish (2.10)** — all wait for the
@@ -351,12 +477,36 @@ approvals (Meta WhatsApp API).
 
 ---
 
+## Handoff — picking this up in a future session
+
+The branch is at a clean checkpoint (2026-05-29). Next direction the
+user signalled: **bridging this repo with their content engine + brand
+assets repo** in a fresh chat context. When that work begins:
+
+- This branch can either continue accumulating (4.5 FII/DII, design
+  polish), or get merged to `main` as-is and reopened later. The
+  remaining scope (FII/DII + Phase 3 automation + design integration)
+  is independent enough to be its own initiative.
+- The Pulse page is reader-functional as of this commit — Cross-Asset
+  Context section is live, macro spotlight fires in commentary, all
+  324 insights tests pass.
+- For new computational work, use the TDD policy at `TDD_POLICY.md`.
+  For new forward-return claims, use the protocol at
+  `VALIDITY_PROTOCOL.md`.
+- Dev environment: `npm run dev` (port 3000) + `uvicorn app.main:app
+  --reload --port 8000` (kill any stale process listening on 8000
+  first — they hold old API shapes and the frontend crashes on
+  missing fields).
+
 ## Pointers
 
 - **Strategy + scope:** `PLAN.md`
 - **Per-task status:** `TASKS.md`
 - **Analog retirement story:** `ANALOG_STUDY.md`
 - **Pattern validity findings:** `PATTERN_VALIDITY/{multi_year_breakout,pullback_to_50dma,sustained_uptrend}.md`
+- **TDD policy + retrospective:** `TDD_POLICY.md`, `TDD_REVIEW.md`
+- **Validity protocol + audit:** `VALIDITY_PROTOCOL.md`
+- **Cross-asset fetch script:** `scripts/fetch_cross_asset_history.py`
 - **Live commits:** `git log main..insight-engine --oneline`
-- **Run live system:** `cd kite-dashboard && npm run dev` + `cd kite-api && uvicorn app.main:app --reload`
+- **Run live system:** `cd kite-dashboard && npm run dev` + `cd kite-api && source ../.venv/bin/activate && uvicorn app.main:app --reload --port 8000`
 - **Browse the surface:** `localhost:3000/insights`
