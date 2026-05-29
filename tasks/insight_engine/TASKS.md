@@ -23,6 +23,7 @@ that drove the analog retirement and the resulting design principles.
 | **4.4** | **Anniversary / calendar (on_this_day)** | ✅ shipped 2026-05-28 — calendar_content engine, 13 curated events, premarket commentary wired, /calendar/on-this-day API. **First fully TDD-driven phase on this branch.** |
 | **4.5** | **Cross-asset feature engine** | ✅ shipped 2026-05-28 — `cross_asset.py` engine with TDD spec tests, India 10y series live; USDINR / gold / US10y / crude registered as `data_available=False` with documented fetch sources. **No fabricated data.** |
 | **5.C** | **Teach-while-broadcasting** | ✅ shipped 2026-05-28 — learn_moment field on Commentary, indicator-spotlight + pattern-of-the-week generators, all 3 templates updated. Spotlight now also surfaces big sibling-subgroup spreads. |
+| **5.D** | **Validity protocol** | ✅ shipped 2026-05-29 — VALIDITY_PROTOCOL.md with 6-check checklist + 3 promotion tiers, audit of live conditional_dist content (STRESS confirmed +3.00% 20d median, n=778), and a copy tightening for DRIFT + small-sample buckets. |
 | **5.A** | **Inline explainers (Learn layer)** | ✅ shipped 2026-05-28 — 13 explainers prerendered, "What is this?" links on Pulse/Sectors/Watchlists, Learn tab in nav |
 | **5.B** | **Learn hub — glossary + deep-dives + pattern guides** | ✅ shipped 2026-05-28 — 38-term glossary, "Historical context" + "Common misreadings" on every indicator, transparent detection rules on patterns |
 | **5.C-D** | **Knowledge layer remainder** | 🔲 teach-while-broadcasting, validity protocol |
@@ -208,9 +209,9 @@ Total tests passing on this branch: **223**.
 
 | # | Task | Owner | Risk | Done |
 |---|---|---|---|---|
-| 5.D.1 | Refactor `analog_validity_study.py` into a reusable harness — any new forward-return-claim feature uses it before publishing | 🤖 | 🟡 | ☐ |
-| 5.D.2 | Add a `tasks/insight_engine/VALIDITY_PROTOCOL.md` document — the checklist any new "what historically happens after X" feature must pass before it's published with forward-return framing | 🤖 | 🟢 | ☐ |
-| 5.D.3 | Audit existing live forward-return content (conditional_dist regime/stress baselines) against the protocol — confirm STRESS regime → +3% fwd 20d remains validated. Document in `VALIDITY_PROTOCOL.md`. | 🤖 | 🔴 | ☐ |
+| 5.D.1 | Reusable validity harness — shipped in Phase 4.2 as `tasks/insight_engine/pattern_validity_study.py`. Sampling pattern (every 21 trading days, 165 samples, top-25 fires per date, baseline = NSE 500 unconditional at the same dates) generalises to any detector function. | 🤖 | 🟡 | ✅ |
+| 5.D.2 | `VALIDITY_PROTOCOL.md` shipped 2026-05-29 — scope (when the protocol applies), 6-check checklist, three promotion tiers (validated / names-only / not surfaced), how to run the harness, governance triggers, and anti-patterns to avoid. | 🤖 | 🟢 | ✅ |
+| 5.D.3 | Audit ran 2026-05-29 against live conditional_dist content. **STRESS regime confirmed: n=778, 20d median +3.00%, 72% positive — strong validation.** TREND_BULL mildly validated. STRETCHED marginal due to small sample (n=177). **DRIFT shows no edge vs unconditional drift — required and shipped a copy tightening**: `_conditional_paragraph` now leads with "no clear edge vs typical drift" for DRIFT and includes a "limited history" caveat when n<200. Both behaviours pinned by spec tests in `TestConditionalParagraphSpec`. | 🤖 | 🔴 | ✅ |
 
 ---
 
@@ -237,7 +238,7 @@ When you say "let's keep going":
 6. ~~**4.3** (sector subgroups)~~ ✅ shipped 2026-05-28
 7. ~~**4.4** (calendar / anniversaries)~~ ✅ shipped 2026-05-28 — also unblocked the deferred `on_this_day` learn-moment in 5.C
 8. ~~**4.5** (cross-asset engine)~~ ✅ shipped 2026-05-28 — engine + India 10y series live; rest of 4.5 (FII/DII engine, real data fetching for USDINR/gold/US10y/crude, Pulse widgets, commentary macro paragraph) deferred until real data is sourced — see fetch stub at `scripts/fetch_macro_extras.py` for URLs.
-7. **5.D** (validity protocol document) — formalise the rule that's now embedded in the 4.2 harness. ~30 min of writing.
+7. ~~**5.D** (validity protocol document)~~ ✅ shipped 2026-05-29 — `VALIDITY_PROTOCOL.md` + audit + copy tightening for DRIFT regime.
 8. **Phase 3** (automation) — defer until design-engine integrates; manual broadcast workflow handles current scale.
 
 ## Actual development pace — calibration note

@@ -217,6 +217,53 @@ class TestTranslationHelpers:
 # See `tasks/insight_engine/TDD_POLICY.md` for the policy this section follows.
 
 
+class TestConditionalParagraphSpec:
+    """Spec: the conditional-distribution copy must not over-promise on
+    regimes where the historical edge is weak. Added 2026-05-29 from the
+    VALIDITY_PROTOCOL.md audit — DRIFT regime needs explicit 'no edge'
+    framing; STRETCHED-regime small samples (n < 200) need a caveat."""
+
+    def test_drift_regime_explicitly_flags_no_edge(self):
+        """DRIFT regime's 20d median is +0.37% — basically Nifty's
+        unconditional drift. Copy must signal this rather than imply edge."""
+        from app.insights.reading import get_market_reading
+        # 2025-08-15 is verified-DRIFT in our panel
+        r = get_market_reading(pd.Timestamp("2025-08-15"))
+        if r.regime.regime != "DRIFT":
+            pytest.skip(f"Sample date wasn't DRIFT; got {r.regime.regime}")
+        c = commentary.compose(r)
+        copy = c.conditional.lower()
+        # Copy should hedge — phrases like 'typical', 'unconditional',
+        # 'baseline', 'no clear edge' are acceptable
+        hedges = ("typical", "unconditional", "baseline", "no clear",
+                  "without a clear", "broadly in line", "close to baseline",
+                  "near baseline", "no detectable")
+        assert any(h in copy for h in hedges), (
+            f"DRIFT-regime conditional copy must hedge ('typical' / "
+            f"'baseline' / 'no clear edge' / etc.); got: {copy!r}"
+        )
+
+    def test_small_sample_regime_includes_caveat(self):
+        """When the conditional bucket has n < 200, the copy must include
+        a small-sample caveat ('limited history', 'few comparable days',
+        etc.) so subscribers don't over-weight the stat."""
+        from app.insights.reading import get_market_reading
+        # 2023-10-25 was the last STRETCHED day; STRETCHED has n=177 (<200)
+        r = get_market_reading(pd.Timestamp("2023-10-25"))
+        if r.regime.regime != "STRETCHED":
+            pytest.skip(f"Sample date wasn't STRETCHED; got {r.regime.regime}")
+        c = commentary.compose(r)
+        copy = c.conditional.lower()
+        small_caveats = ("limited", "small sample", "few comparable",
+                         "fewer historical", "smaller sample",
+                         "limited history", "fewer past", "caveat",
+                         "small base")
+        assert any(k in copy for k in small_caveats), (
+            f"STRETCHED-regime copy with n<200 must carry small-sample "
+            f"caveat; got: {copy!r}"
+        )
+
+
 class TestStressBandSpec:
     """Stress-band phrase must match what reality looked like on canonical
     historical days. This is stronger than the parametrized threshold check

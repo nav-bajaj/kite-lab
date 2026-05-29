@@ -251,7 +251,17 @@ def _sector_paragraph(reading: MarketReading) -> str:
 
 
 def _conditional_paragraph(reading: MarketReading) -> str:
-    """1-2 sentences on what historically happened in this regime/stress combo."""
+    """1-2 sentences on what historically happened in this regime/stress combo.
+
+    Copy framing is matched to the regime's empirical strength, per the
+    validity protocol audit (tasks/insight_engine/VALIDITY_PROTOCOL.md):
+      - DRIFT: lead with explicit 'no clear edge vs baseline' framing,
+        since DRIFT's 20d median is basically Nifty's unconditional drift
+      - STRETCHED (n<200): include a 'limited history' caveat so
+        readers don't over-weight the stat
+      - STRESS / TREND_BULL: keep the original descriptive framing,
+        since their excess vs baseline is real and well-sampled
+    """
     cond = reading.conditional
     if not cond or not cond.get("by_regime"):
         return ""
@@ -272,11 +282,29 @@ def _conditional_paragraph(reading: MarketReading) -> str:
 
     regime_phrase = _regime_descriptor(regime_name).split(" — ")[0]
 
+    # DRIFT — lead with the 'no clear edge' frame because the empirical
+    # median is essentially unconditional Nifty drift
+    if regime_name == "DRIFT":
+        return (
+            f"Across {n} similar past days in {regime_phrase}, Nifty has "
+            f"shown no clear edge vs typical drift — the 20-day median is "
+            f"{median*100:+.2f}% (close to baseline) and "
+            f"{pct_pos*100:.0f}% of historical observations finished positive. "
+            f"Middle half of outcomes: {p25*100:+.1f}% to {p75*100:+.1f}%."
+        )
+
+    # Small-sample caveat — STRETCHED or any other slice with n<200
+    small_sample_suffix = (
+        " — limited history, treat this stat as directional only."
+        if n < 200 else ""
+    )
+
     s = (
         f"Across {n} similar past days in {regime_phrase}, Nifty's median "
         f"forward 20-day return has been {median*100:+.2f}%, with "
         f"{pct_pos*100:.0f}% of historical observations finishing in positive "
-        f"territory (middle half of outcomes: {p25*100:+.1f}% to {p75*100:+.1f}%)."
+        f"territory (middle half of outcomes: {p25*100:+.1f}% to "
+        f"{p75*100:+.1f}%){small_sample_suffix}."
     )
     return s
 
