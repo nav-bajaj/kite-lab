@@ -158,13 +158,21 @@ INDICES_DIR = Path("/Users/navdeep/Documents/stock_data/indices_data_full")
 
 
 # (asset_id, label, csv_filename or None for deferred)
+#
+# `csv_filename` is interpreted relative to INDICES_DIR. The engine
+# tolerates missing files: if the CSV isn't present, the asset appears
+# in the snapshot with data_available=False and all features None.
+# Drop a CSV at the named path and the engine picks it up automatically
+# on the next cache clear.
 REGISTERED_ASSETS: list[tuple[str, str, Optional[str]]] = [
     ("india_10y", "India 10y govt yield (NIFTY GS 10YR)", "NIFTY_GS_10YR.csv"),
-    # Deferred — see module docstring
-    ("usdinr",    "USD/INR exchange rate",  None),
-    ("gold",      "Gold (MCX, in INR)",     None),
+    # Phase 4.5 — fetcher at scripts/fetch_cross_asset_history.py lands
+    # these CSVs from Kite Connect continuous front-month futures.
+    ("usdinr",    "USDINR (continuous front-month future)",       "USDINR.csv"),
+    ("gold",      "Gold (MCX continuous front-month, INR/10g)",   "GOLD.csv"),
+    ("crude",     "Crude oil (MCX continuous front-month, INR/bbl)", "CRUDEOIL.csv"),
+    # Still deferred — US 10y has no Kite Connect path; needs FRED or yfinance.
     ("us_10y",    "US 10y Treasury yield",  None),
-    ("crude",     "Brent crude oil",        None),
 ]
 
 
