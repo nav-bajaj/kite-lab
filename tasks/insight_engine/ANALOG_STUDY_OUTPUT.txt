@@ -1,0 +1,61 @@
+Building feature panels…
+  feature panel: 4264 rows
+  candidates in [2012-01-01, 2025-11-28]: 3445
+  sampled (every 10th): 345
+
+Computing analog predictions for 345 dates (k=20, exclusion ±60d)…
+  50/345…
+  100/345…
+  150/345…
+  200/345…
+  250/345…
+  300/345…
+  built 345 (sample, prediction, actual) triples
+
+======================================================================
+A. Information Coefficient (Spearman rank correlation)
+======================================================================
+Horizon        IC raw   IC de-trended    ( unc. mean)
+5d            +0.0772         +0.0772    (   +0.40%)
+20d            +0.0397         +0.0397    (   +1.11%)
+60d            +0.0304         +0.0304    (   +3.17%)
+120d            +0.0601         +0.0601    (   +6.18%)
+
+======================================================================
+B. Quartile analysis — does top-pred-quartile actually beat bottom?
+======================================================================
+Horizon      Q1 actual   Q4 actual     Q4 − Q1      Q1 % pos   Q4 % pos
+5d              +0.46%      +1.01%      +0.55%           64%        66%
+20d              +0.95%      +2.05%      +1.11%           66%        65%
+60d              +2.84%      +3.75%      +0.91%           77%        72%
+120d              +5.95%      +7.88%      +1.93%           70%        79%
+
+======================================================================
+C. Direction accuracy — when analog says up vs down, was it?
+======================================================================
+Horizon      unc % pos    pred>0 % pos    pred<0 % pos     lift
+5d                 61%             63%             60%    +1.1%
+20d                 65%             62%             69%    -2.9%
+60d                 69%             66%             75%    -3.4%
+120d                 71%             73%             69%    +1.5%
+
+======================================================================
+D. Decomposition — analog median vs unconditional mean
+======================================================================
+Horizon      pred mean   unc. mean     excess      pred std   actual std
+5d              +0.19%      +0.40%     -0.20pp         0.89%        2.27%
+20d              +0.29%      +1.11%     -0.82pp         2.84%        4.75%
+60d              +1.46%      +3.17%     -1.71pp         4.84%        7.86%
+120d              +2.20%      +6.18%     -3.98pp         6.78%       10.55%
+
+======================================================================
+Verdict guide:
+======================================================================
+  - IC > 0.10 at h20 → strong signal; keep current framing
+  - IC 0.03-0.10    → modest signal; reframe with baseline comparison
+  - IC < 0.03       → no actionable signal; remove forward-return
+                      numbers from the page; reframe as descriptive
+                      (the analog DATES themselves are still useful)
+
+  - Q4-Q1 spread should be >>0 and direction lift should be ≥+3pp
+    for any meaningful predictive content.

@@ -14,6 +14,13 @@ const isPublicRoute = createRouteMatcher([
   "/disclaimer",
 ]);
 
+// Insight engine pages: behind Clerk login but available to ALL signed-in
+// users including free tier — no paid-subscription / admin gate. Acquisition
+// flow becomes: visitor → free signup → /insights → optional upgrade.
+// (Listed for clarity; no explicit matcher needed since these pages are
+// neither in isPublicRoute nor in isAdminRoute, so the default auth.protect()
+// gate applies and that's exactly what we want.)
+
 // Admin-only routes. Checked against publicMetadata.role exposed via the
 // session token's `metadata` claim (configured in Clerk dashboard).
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);

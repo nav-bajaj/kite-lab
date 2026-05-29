@@ -1,0 +1,134 @@
+"""Smoke tests for the promoted insight engines.
+
+`app.insights.breadth` and `app.insights.macro` were promoted from the
+`tasks/nifty_trader/` research folder into the kite-api runtime so the
+API routes (Phase 2) can import them. These tests verify the modules
+load cleanly, produce the expected schema, and cache correctly.
+
+Run from the kite-api dir: pytest tests/test_insights_breadth_macro.py
+"""
+from __future__ import annotations
+
+import time
+from pathlib import Path
+
+import pandas as pd
+import pytest
+
+from app.config import get_settings
+from app.insights import breadth, macro
+
+
+EXPECTED_BREADTH_COLUMNS = {
+    "pct_above_50dma", "pct_above_100dma", "pct_above_200dma",
+    "ad_diff_pct", "cumulative_ad", "mcclellan_osc",
+    "new_52w_highs_pct", "new_52w_lows_pct", "net_new_highs_pct",
+    "dispersion", "n_active",
+}
+
+EXPECTED_MACRO_COLUMNS = {
+    "vix_close", "vix_zscore_60d", "vix_zscore_252d", "vix_roc_5d",
+    "vix_above_20", "sector_pct_above_50dma", "sector_pct_above_200dma",
+    "sector_breadth_st_lt", "sector_dispersion_20d",
+}
+
+
+@pytest.fixture(scope="module")
+def breadth_panel() -> pd.DataFrame:
+    breadth.clear_cache()
+    return breadth.get_breadth_panel()
+
+
+@pytest.fixture(scope="module")
+def macro_panel() -> pd.DataFrame:
+    macro.clear_cache()
+    return macro.get_macro_panel()
+
+
+# ---------- breadth ----------
+
+class TestBreadthPanel:
+    def test_panel_loads_with_expected_schema(self, breadth_panel):
+        missing = EXPECTED_BREADTH_COLUMNS - set(breadth_panel.columns)
+        assert not missing, f"missing breadth columns: {sorted(missing)}"
+
+    def test_panel_has_meaningful_history(self, breadth_panel):
+        # We need at least 10 years of breadth history for the analog finder
+        # and conditional distribution engines to be useful.
+        years = (breadth_panel.index.max() - breadth_panel.index.min()).days / 365.25
+        assert years >= 10, f"breadth history is only {years:.1f} years; expected ≥10"
+
+    def test_pct_above_dma_in_valid_range(self, breadth_panel):
+        # Fractions must be in [0, 1]
+        for col in ["pct_above_50dma", "pct_above_100dma", "pct_above_200dma"]:
+            vals = breadth_panel[col].dropna()
+            assert vals.min() >= 0, f"{col}: negative value {vals.min()}"
+            assert vals.max() <= 1, f"{col}: value > 1 ({vals.max()})"
+
+    def test_ad_diff_pct_in_valid_range(self, breadth_panel):
+        # (advancers - decliners) / total ∈ [-1, +1]
+        vals = breadth_panel["ad_diff_pct"].dropna()
+        assert vals.min() >= -1.0001, f"ad_diff_pct min {vals.min()}"
+        assert vals.max() <= 1.0001, f"ad_diff_pct max {vals.max()}"
+
+    def test_n_active_is_positive(self, breadth_panel):
+        assert (breadth_panel["n_active"] > 0).all()
+
+    def test_cache_reload_is_fast(self):
+        """Second call should hit the lru_cache and be near-instant."""
+        # Prime: ensure cache is populated
+        breadth.clear_cache()
+        _ = breadth.get_breadth_panel()  # cold
+        t0 = time.time()
+        _ = breadth.get_breadth_panel()
+        elapsed_ms = (time.time() - t0) * 1000
+        assert elapsed_ms < 50, f"lru_cache hit took {elapsed_ms:.1f}ms (expected <50ms)"
+
+    def test_cache_file_lands_in_expected_location(self):
+        breadth.clear_cache()
+        _ = breadth.get_breadth_panel()
+        cache_path = get_settings().data_dir / "cache" / "insights" / "breadth_panel.pkl"
+        assert cache_path.exists(), f"cache file not at {cache_path}"
+
+
+# ---------- macro ----------
+
+class TestMacroPanel:
+    def test_panel_loads_with_expected_schema(self, macro_panel):
+        missing = EXPECTED_MACRO_COLUMNS - set(macro_panel.columns)
+        assert not missing, f"missing macro columns: {sorted(missing)}"
+
+    def test_vix_reasonable_range(self, macro_panel):
+        # India VIX has historically traded ~8 to ~90 over 16 years
+        v = macro_panel["vix_close"].dropna()
+        assert v.min() > 5, f"vix_close min {v.min()} — too low"
+        assert v.max() < 100, f"vix_close max {v.max()} — too high"
+
+    def test_vix_above_20_is_binary(self, macro_panel):
+        vals = set(macro_panel["vix_above_20"].dropna().unique())
+        assert vals.issubset({0.0, 1.0}), f"vix_above_20 has non-binary values: {vals}"
+
+    def test_sector_pct_above_dma_in_valid_range(self, macro_panel):
+        for col in ["sector_pct_above_50dma", "sector_pct_above_200dma"]:
+            vals = macro_panel[col].dropna()
+            assert vals.min() >= 0
+            assert vals.max() <= 1
+
+
+# ---------- combined: align breadth + macro ----------
+
+class TestCombinedPanels:
+    def test_overlapping_history_exists(self, breadth_panel, macro_panel):
+        common = breadth_panel.index.intersection(macro_panel.index)
+        assert len(common) > 1000, (
+            f"breadth × macro common history is only {len(common)} days; "
+            f"need at least 1000 for meaningful joint analysis"
+        )
+
+    def test_modules_use_same_repo_root(self):
+        """Both modules resolve paths via the same settings — protects
+        against the macro module accidentally pointing at a stale fork
+        of the data dir."""
+        # breadth uses `_repo_root()` internally; macro uses `get_settings().data_dir`
+        # They should be identical.
+        assert breadth._repo_root() == get_settings().data_dir

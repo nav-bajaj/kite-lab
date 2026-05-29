@@ -1,0 +1,15 @@
+symbol,security_name,industry,close_price,index_mcap_cr,weight_pct
+AUBANK,AU Small Finance Bank Ltd.,Financial Services,1015.95,181364,4.97
+AXISBANK,Axis Bank Ltd.,Financial Services,1268.30,365922,10.02
+BANKBARODA,Bank of Baroda,Financial Services,263.46,158368,4.34
+CANBK,Canara Bank,Financial Services,134.65,148093,4.05
+FEDERALBNK,Federal Bank Ltd.,Financial Services,286.95,228859,6.27
+HDFCBANK,HDFC Bank Ltd.,Financial Services,771.70,671030,18.37
+ICICIBANK,ICICI Bank Ltd.,Financial Services,1263.40,494865,13.55
+IDFCFIRSTB,IDFC First Bank Ltd.,Financial Services,69.64,150492,4.12
+INDUSINDBK,IndusInd Bank Ltd.,Financial Services,916.05,195471,5.35
+KOTAKBANK,Kotak Mahindra Bank Ltd.,Financial Services,383.30,353323,9.67
+PNB,Punjab National Bank,Financial Services,109.36,123010,3.37
+SBIN,State Bank of India,Financial Services,1068.45,362847,9.93
+UNIONBANK,Union Bank of India,Financial Services,165.94,104602,2.86
+YESBANK,Yes Bank Ltd.,Financial Services,19.93,114173,3.13

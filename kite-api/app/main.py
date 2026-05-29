@@ -10,7 +10,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from contextlib import asynccontextmanager
 
 from app.config import get_settings
-from app.api import health, auth_routes, portfolio, sync, metrics, trades, rebalance, jobs, system, schedule, positions
+from app.api import health, auth_routes, portfolio, sync, metrics, trades, rebalance, jobs, system, schedule, positions, insights
 from app.scheduler import start_scheduler, shutdown_scheduler, register_default_tasks, scheduler
 from app.middleware.error_handlers import register_error_handlers
 from app.middleware.request_logger import RequestLoggerMiddleware
@@ -117,6 +117,7 @@ app.include_router(jobs.router, tags=["jobs"])
 app.include_router(system.router, tags=["system"])
 app.include_router(schedule.router, tags=["schedule"])
 app.include_router(positions.router, tags=["positions"])
+app.include_router(insights.router, tags=["insights"])  # public, read-only — no auth required
 
 
 @app.get("/")

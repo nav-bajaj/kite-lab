@@ -74,6 +74,7 @@ script, or removed `.md`. Don't push to that branch.
 - Don't push to `main` without local `npm run build` + (if backend touched) `pytest tests/` clean.
 - Don't widen CSP or CORS without a register-row entry.
 - Don't change `data/static/*.csv` universe files without re-fetching the prices for any new symbols.
+- For work in `kite-api/app/insights/` (engines, detectors, threshold/classifier functions) and any new forward-return claim, default to TDD per `tasks/insight_engine/TDD_POLICY.md`: spec test first, see it fail, then implement. Out-of-scope for TDD: content authoring, UI layout, refactors, orchestrator field-plumbing.
 
 ## Quick references
 

@@ -15,6 +15,10 @@ INSTRUMENTS_STEP = ("Cache instruments list", [sys.executable, "scripts/cache_in
 PARALLEL_FETCH_STEPS = [
     ("Refresh NSE 500 data", [sys.executable, "scripts/fetch_nse500_history.py"]),
     ("Fetch indices data", [sys.executable, "scripts/fetch_indices_history.py"]),
+    # Phase 4.5 — cross-asset series (USDINR / Gold / Crude via Kite Connect
+    # continuous front-month futures). Incremental: only fetches new dates
+    # since the last file timestamp.
+    ("Fetch cross-asset data", [sys.executable, "scripts/fetch_cross_asset_history.py", "--incremental"]),
 ]
 
 # Pre-portfolio sequential steps (depend on fetched data, run before shared

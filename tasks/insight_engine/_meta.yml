@@ -1,0 +1,57 @@
+name: insight_engine
+status: in-progress
+opened: 2026-05-26
+closed: null
+branch: insight-engine
+supersedes: nifty_trader  # research line closed; data engines repurposed for insights product
+
+# Snapshot at last update (2026-05-29)
+phases_shipped:
+  - "0 — data engines (12 modules, 119 tests)"
+  - "1 — daily quant note (8 modules + CLI, 72 tests)"
+  - "2 — web dashboard (4 pages + 32 API tests)"
+  - "4.1 — concentration / Reliance widget (14 tests)"
+  - "4.2 — pattern watchlists + validity studies (1 pass / 1 marginal / 1 fail)"
+  - "4.3 — sector subgroup tracker (13 tests)"
+  - "4.4 — anniversary / calendar (first fully TDD-driven phase; 12 tests)"
+  - "4.5 (partial) — cross-asset engine + USDINR/Gold/Crude live via Kite Connect + Pulse widget + macro spotlight (12 tests + 3 macro)"
+  - "5.A — inline learn explainers (14 prerendered pages)"
+  - "5.B — learn hub (38-term glossary, indicator deep-dives, pattern guides)"
+  - "5.C — teach-while-broadcasting (learn_moment on every daily note)"
+  - "5.D — validity protocol + conditional_dist audit + DRIFT copy fix"
+
+governance_added_this_branch:
+  - "TDD policy (TDD_POLICY.md) — adopted 2026-05-28"
+  - "TDD retrospective (TDD_REVIEW.md) — honest assessment + Option B retrofit plan"
+  - "Surgical retrofit of 6 high-stakes paths from characterization to spec tests"
+  - "Validity protocol (VALIDITY_PROTOCOL.md) — 6-check checklist + 3 promotion tiers"
+
+phases_pending:
+  - "3 — automation (Meta WhatsApp API approval is the bottleneck)"
+  - "4.4.3 / 4.4.4 — seasonality + pre-event helpers (deferred follow-up)"
+  - "4.5.2 / 4.5.4 — FII/DII data layer (user explicitly skipped this session)"
+  - "US 10y cross-asset series (needs FRED API key or yfinance, not Kite)"
+  - "Design integration — SEO, Lighthouse polish, Notes archive, portfolio CTAs"
+
+tests_passing: 324  # insights suite on this branch
+tests_added_this_session: 63  # 261 → 324 net new under TDD discipline
+total_tests_in_kite_api: ~600
+commits_ahead_of_main: 43
+
+key_docs:
+  plan: PLAN.md
+  tasks: TASKS.md
+  results: RESULTS.md
+  analog_retirement: ANALOG_STUDY.md
+  pattern_validity: PATTERN_VALIDITY/
+  tdd_policy: TDD_POLICY.md
+  tdd_review: TDD_REVIEW.md
+  validity_protocol: VALIDITY_PROTOCOL.md
+
+handoff_note: |
+  Branch is at a clean checkpoint as of 2026-05-29. User is moving to a
+  fresh chat session to begin bridging this repo with their content
+  engine + brand assets. See RESULTS.md §"Handoff" for the next-session
+  context. The branch can either keep accumulating remaining 4.5 / 5.D
+  scope or get merged to main as-is — both are valid given the current
+  test coverage and the deferred-but-documented remaining items.

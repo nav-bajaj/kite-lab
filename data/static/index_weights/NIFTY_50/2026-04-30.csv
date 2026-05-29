@@ -1,0 +1,51 @@
+symbol,security_name,industry,close_price,index_mcap_cr,weight_pct
+ADANIENT,Adani Enterprises Ltd.,Metals & Mining,2408.40,68824,0.63
+ADANIPORTS,Adani Ports and Special Economic Zone Ltd.,Services,1657.30,121921,1.11
+APOLLOHOSP,Apollo Hospitals Enterprise Ltd.,Healthcare,7636.50,78361,0.71
+ASIANPAINT,Asian Paints Ltd.,Consumer Durables,2444.50,110217,1.00
+AXISBANK,Axis Bank Ltd.,Financial Services,1268.30,362885,3.31
+BAJAJ-AUTO,Bajaj Auto Ltd.,Automobile and Auto Components,9994.00,110424,1.01
+BAJFINANCE,Bajaj Finance Ltd.,Financial Services,937.00,249961,2.28
+BAJAJFINSV,Bajaj Finserv Ltd.,Financial Services,1747.20,100561,0.92
+BEL,Bharat Electronics Ltd.,Capital Goods,431.30,154047,1.40
+BHARTIARTL,Bharti Airtel Ltd.,Telecommunication,1886.80,577508,5.26
+CIPLA,Cipla Ltd.,Healthcare,1309.60,73471,0.67
+COALINDIA,Coal India Ltd.,Oil Gas & Consumable Fuels,481.45,109002,0.99
+DRREDDY,Dr. Reddy's Laboratories Ltd.,Healthcare,1322.90,80390,0.73
+EICHERMOT,Eicher Motors Ltd.,Automobile and Auto Components,7109.00,97558,0.89
+ETERNAL,Eternal Ltd.,Consumer Services,247.03,177445,1.62
+GRASIM,Grasim Industries Ltd.,Construction Materials,2794.50,106090,0.97
+HCLTECH,HCL Technologies Ltd.,Information Technology,1199.10,126181,1.15
+HDFCBANK,HDFC Bank Ltd.,Financial Services,771.70,1177735,10.73
+HDFCLIFE,HDFC Life Insurance Company Ltd.,Financial Services,586.90,62935,0.57
+HINDALCO,Hindalco Industries Ltd.,Metals & Mining,1038.00,149825,1.37
+HINDUNILVR,Hindustan Unilever Ltd.,Fast Moving Consumer Goods,2250.90,199188,1.81
+ICICIBANK,ICICI Bank Ltd.,Financial Services,1263.40,900697,8.21
+ITC,ITC Ltd.,Fast Moving Consumer Goods,314.90,302661,2.76
+INFY,Infosys Ltd.,Information Technology,1181.80,413191,3.76
+INDIGO,InterGlobe Aviation Ltd.,Services,4295.30,96894,0.88
+JSWSTEEL,JSW Steel Ltd.,Metals & Mining,1264.50,118225,1.08
+JIOFIN,Jio Financial Services Ltd.,Financial Services,246.37,80572,0.73
+KOTAKBANK,Kotak Mahindra Bank Ltd.,Financial Services,383.30,281396,2.56
+LT,Larsen & Toubro Ltd.,Construction,4014.00,469970,4.28
+M&M,Mahindra & Mahindra Ltd.,Automobile and Auto Components,3097.50,276017,2.51
+MARUTI,Maruti Suzuki India Ltd.,Automobile and Auto Components,13314.00,174212,1.59
+MAXHEALTH,Max Healthcare Institute Ltd.,Healthcare,993.05,73683,0.67
+NTPC,NTPC Ltd.,Power,399.15,188701,1.72
+NESTLEIND,Nestle India Ltd.,Fast Moving Consumer Goods,1458.60,104286,0.95
+ONGC,Oil & Natural Gas Corporation Ltd.,Oil Gas & Consumable Fuels,299.55,116036,1.06
+POWERGRID,Power Grid Corporation of India Ltd.,Power,318.35,143778,1.31
+RELIANCE,Reliance Industries Ltd.,Oil Gas & Consumable Fuels,1430.80,963704,8.78
+SBILIFE,SBI Life Insurance Company Ltd.,Financial Services,1819.00,81467,0.74
+SHRIRAMFIN,Shriram Finance Ltd.,Financial Services,937.35,130899,1.19
+SBIN,State Bank of India,Financial Services,1068.45,442137,4.03
+SUNPHARMA,Sun Pharmaceutical Industries Ltd.,Healthcare,1808.30,190927,1.74
+TCS,Tata Consultancy Services Ltd.,Information Technology,2473.90,251922,2.30
+TATACONSUM,Tata Consumer Products Ltd.,Fast Moving Consumer Goods,1144.60,74320,0.68
+TMPV,Tata Motors Passenger Vehicles Ltd.,Automobile and Auto Components,341.55,71332,0.65
+TATASTEEL,Tata Steel Ltd.,Metals & Mining,211.36,174206,1.59
+TECHM,Tech Mahindra Ltd.,Information Technology,1473.50,93283,0.85
+TITAN,Titan Company Ltd.,Consumer Durables,4385.20,180445,1.64
+TRENT,Trent Ltd.,Consumer Services,4144.60,91703,0.84
+ULTRACEMCO,UltraTech Cement Ltd.,Construction Materials,11586.00,136819,1.25
+WIPRO,Wipro Ltd.,Information Technology,200.65,57180,0.52
