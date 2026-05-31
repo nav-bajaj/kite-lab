@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marketworks Content System — Map</title>
+<style>
+  * { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+    background: #f8f7f3;
+    color: #1f2937;
+    line-height: 1.55;
+    padding: 32px 16px 80px;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  .mono {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    font-size: 0.85em;
+  }
+  code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    font-size: 0.85em;
+    background: #efece2;
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: #1f2937;
+  }
+
+  /* Header */
+  .hero {
+    border-bottom: 1px solid #e5e1d4;
+    padding-bottom: 28px;
+    margin-bottom: 48px;
+  }
+  .hero .kicker {
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin-bottom: 8px;
+  }
+  .hero h1 {
+    font-size: 2rem;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    font-weight: 600;
+  }
+  .hero .sub {
+    font-size: 1.05rem;
+    color: #4b5563;
+    margin: 0;
+    max-width: 760px;
+  }
+  .hero .date {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    margin-top: 14px;
+  }
+
+  /* Section */
+  section { margin-bottom: 56px; }
+  .section-title {
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #047857;
+    font-weight: 600;
+    margin: 0 0 6px;
+  }
+  .section-h {
+    font-size: 1.5rem;
+    margin: 0 0 10px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .section-lede {
+    color: #4b5563;
+    margin: 0 0 24px;
+    max-width: 760px;
+  }
+
+  /* Three places grid */
+  .places {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 720px) {
+    .places { grid-template-columns: 1fr; }
+  }
+  .place {
+    background: #ffffff;
+    border: 1px solid #e5e1d4;
+    border-radius: 10px;
+    padding: 22px 22px 24px;
+    position: relative;
+  }
+  .place .role {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin-bottom: 6px;
+  }
+  .place .name {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .place .path {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.74rem;
+    color: #6b7280;
+    margin-bottom: 14px;
+  }
+  .place .what { font-size: 0.92rem; margin-bottom: 14px; color: #374151; }
+  .place ul { margin: 0; padding-left: 18px; font-size: 0.86rem; color: #4b5563; }
+  .place ul li { margin-bottom: 4px; }
+  .place.engine { border-top: 3px solid #0e7490; }
+  .place.factory { border-top: 3px solid #047857; }
+  .place.store { border-top: 3px solid #b45309; }
+
+  /* Bridges */
+  .bridges {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 720px) {
+    .bridges { grid-template-columns: 1fr; }
+  }
+  .bridge {
+    background: #ffffff;
+    border: 1px solid #e5e1d4;
+    border-radius: 10px;
+    padding: 22px;
+  }
+  .bridge .bnum {
+    display: inline-block;
+    background: #047857;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 99px;
+    margin-bottom: 10px;
+  }
+  .bridge .btitle {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .bridge .barrow {
+    font-family: ui-monospace, monospace;
+    font-size: 0.84rem;
+    color: #047857;
+    margin-bottom: 12px;
+  }
+  .bridge .bdesc { font-size: 0.92rem; color: #374151; margin-bottom: 14px; }
+  .bridge .bdetail {
+    background: #f6f3e9;
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-size: 0.82rem;
+    color: #4b5563;
+  }
+  .bridge .bdetail strong { color: #1f2937; }
+  .bridge .bdetail .line { margin-bottom: 4px; }
+  .bridge .bdetail .line:last-child { margin-bottom: 0; }
+
+  /* Journey */
+  .journey { display: flex; flex-direction: column; gap: 0; }
+  .step {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 18px;
+    padding: 18px 0;
+    border-bottom: 1px solid #e5e1d4;
+  }
+  .step:last-child { border-bottom: none; }
+  .step .num {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .step .num span {
+    background: #ffffff;
+    color: #047857;
+    border: 1.5px solid #047857;
+    border-radius: 999px;
+    width: 36px; height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .step .body .h {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 2px;
+  }
+  .step .body .who {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin-bottom: 8px;
+  }
+  .step .body .who .ch { color: #0e7490; }
+  .step .body .who .cf { color: #047857; }
+  .step .body .who .cs { color: #b45309; }
+  .step .body .who .gate { color: #b91c1c; font-weight: 700; }
+  .step .body p { margin: 0 0 8px; font-size: 0.92rem; color: #374151; }
+  .step .body .what-you-see {
+    background: #f6f3e9;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 0.82rem;
+    color: #4b5563;
+  }
+  .step .body .what-you-see strong { color: #1f2937; }
+
+  /* Glossary */
+  .gloss {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 720px) {
+    .gloss { grid-template-columns: 1fr; }
+  }
+  .term {
+    background: #ffffff;
+    border: 1px solid #e5e1d4;
+    border-radius: 8px;
+    padding: 16px 18px;
+  }
+  .term .t {
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-size: 1rem;
+    letter-spacing: -0.005em;
+  }
+  .term .d {
+    font-size: 0.88rem;
+    color: #4b5563;
+    margin: 0;
+  }
+  .term .d code {
+    background: #efece2;
+  }
+
+  /* Status grid */
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  @media (max-width: 720px) {
+    .status-grid { grid-template-columns: 1fr; }
+  }
+  .status-card {
+    background: #fff;
+    border: 1px solid #e5e1d4;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .status-card .icon {
+    flex-shrink: 0;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .status-card.done .icon { background: #d1fae5; color: #047857; }
+  .status-card.next .icon { background: #fef3c7; color: #b45309; }
+  .status-card.later .icon { background: #f3f4f6; color: #6b7280; }
+  .status-card .text { font-size: 0.92rem; color: #374151; }
+  .status-card .text .h { font-weight: 600; margin-bottom: 2px; color: #1f2937; }
+  .status-card .text .m { font-size: 0.85rem; color: #6b7280; }
+
+  /* Footer */
+  footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid #e5e1d4;
+    font-size: 0.82rem;
+    color: #6b7280;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="kicker">Marketworks · System Map</div>
+    <h1>How content gets from MarketWorks to marketworks.in</h1>
+    <p class="sub">
+      Three places, two bridges, and a six-step journey for every piece.
+      This is the architecture we landed on for the content bridge — the
+      visual decoder for everything in <code>tasks/content_bridge/</code>.
+    </p>
+    <div class="date">As of 31 May 2026 · branch: <code>bridge</code> (kite-lab)</div>
+  </header>
+
+  <!-- The Three Places -->
+  <section>
+    <div class="section-title">The three places</div>
+    <h2 class="section-h">Each one has a job. None of them do the others' job.</h2>
+    <p class="section-lede">
+      You have two repos on your machine. The marketing surface lives
+      inside one of them (the dashboard). Together that's three distinct
+      "areas" with three distinct jobs.
+    </p>
+
+    <div class="places">
+
+      <div class="place engine">
+        <div class="role">The engine</div>
+        <div class="name">kite-lab</div>
+        <div class="path">~/kite-lab/</div>
+        <div class="what">
+          The substance. Your portfolios, daily data pipeline, insight engine,
+          backtests, FastAPI backend.
+        </div>
+        <ul>
+          <li>4 live portfolios (TL25, OM25, L6, COMBO)</li>
+          <li>Daily quant note (postclose / premarket / weekly)</li>
+          <li>Insight engine: regime, stress, sectors, watchlists, calendar</li>
+          <li>Knows nothing about content or marketing</li>
+        </ul>
+      </div>
+
+      <div class="place factory">
+        <div class="role">The factory</div>
+        <div class="name">finance-content-os</div>
+        <div class="path">~/finance-content-os/</div>
+        <div class="what">
+          The editorial engine. Brand voice, schemas, skills, design system,
+          Remotion compositions — your content production line.
+        </div>
+        <ul>
+          <li>7-stage pipeline (Signal → Insight → Hook → Script → ...)</li>
+          <li>11 schemas, 10 skills, 2 subagents</li>
+          <li>Brand: voice, pillars, design tokens, compliance rules</li>
+          <li>Knows kite-lab only as a file path it reads from</li>
+        </ul>
+      </div>
+
+      <div class="place store">
+        <div class="role">The storefront</div>
+        <div class="name">kite-dashboard</div>
+        <div class="path">~/kite-lab/kite-dashboard/</div>
+        <div class="what">
+          The marketing surface — Next.js, deploys to Vercel, serves
+          marketworks.in. The public pages where finished content lives.
+        </div>
+        <ul>
+          <li>Authenticated product (existing): client portfolios, insights</li>
+          <li>New public routes: <code>/library</code>, <code>/library/&lt;slug&gt;</code></li>
+          <li>Reads finished content at build time from a sync'd folder</li>
+          <li>Knows finance-content-os only as build-time data</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- The Two Bridges -->
+  <section>
+    <div class="section-title">The two bridges</div>
+    <h2 class="section-h">Two thin one-way streets between the three places.</h2>
+    <p class="section-lede">
+      A "bridge" is a small script that copies a specific kind of file
+      from one place to another. They are <em>one-way</em> — nothing
+      flows backwards. And they only deal in files, never in shared
+      code. That's what keeps the three places independent.
+    </p>
+
+    <div class="bridges">
+
+      <div class="bridge">
+        <span class="bnum">Bridge 1</span>
+        <div class="btitle">Engine → Factory</div>
+        <div class="barrow">kite-lab → finance-content-os</div>
+        <div class="bdesc">
+          "Here's something interesting that happened in the market today."
+          The engine packages a daily reading or portfolio change into a
+          single tidy file that the factory can read.
+        </div>
+        <div class="bdetail">
+          <div class="line"><strong>Publisher:</strong> <code>kite-lab/scripts/publish_signal.py</code></div>
+          <div class="line"><strong>Drop-off point:</strong> <code>kite-lab/data/published/signals/</code></div>
+          <div class="line"><strong>Importer:</strong> <code>finance-content-os/bridge/import_from_marketworks.py</code></div>
+          <div class="line"><strong>Carries:</strong> a Signal — see glossary</div>
+        </div>
+      </div>
+
+      <div class="bridge">
+        <span class="bnum">Bridge 2</span>
+        <div class="btitle">Factory → Storefront</div>
+        <div class="barrow">finance-content-os → kite-dashboard</div>
+        <div class="bdesc">
+          "Here's a finished piece, ready for the web." The factory takes a
+          fully-developed content pack and writes the web-ready version into
+          the dashboard so the next deploy puts it live.
+        </div>
+        <div class="bdetail">
+          <div class="line"><strong>Publisher:</strong> <code>finance-content-os/scripts/publish.py</code></div>
+          <div class="line"><strong>Drop-off point:</strong> <code>kite-dashboard/src/marketing-content/</code> + <code>public/marketing-content/assets/</code></div>
+          <div class="line"><strong>Consumer:</strong> the Next.js build, at build time</div>
+          <div class="line"><strong>Carries:</strong> a PublishedPiece — see glossary</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Three origination paths -->
+  <section>
+    <div class="section-title">Where content comes from</div>
+    <h2 class="section-h">Three origins, one pipeline.</h2>
+    <p class="section-lede">
+      The bridge from kite-lab is just one of three ways a piece can start.
+      Whichever way you start, everything from the content pack onwards is
+      identical — same skills, same publish, same <code>/library</code> URL.
+      The factory was always shaped for this.
+    </p>
+
+    <div class="places">
+
+      <div class="place engine">
+        <div class="role">Origin 1 · from the engine</div>
+        <div class="name">Bridge-imported</div>
+        <div class="path">kite-lab → factory</div>
+        <div class="what">
+          Pieces grounded in MarketWorks' own data — your moat. Auto-suggested
+          by what the insight engine surfaced today.
+        </div>
+        <ul>
+          <li>Daily reading commentary (drift mode, sector rotation)</li>
+          <li>Portfolio rebalance pieces (TL25 / OM25 changes)</li>
+          <li>Cross-asset moves picked up by the engine</li>
+          <li>signal_type: <code>momentum</code> · <code>portfolio</code> · <code>rotation</code> · <code>event</code></li>
+        </ul>
+      </div>
+
+      <div class="place factory">
+        <div class="role">Origin 2 · from your read</div>
+        <div class="name">Market commentary</div>
+        <div class="path">founder → factory</div>
+        <div class="what">
+          Time-sensitive pieces where you have a take the engine doesn't
+          surface — usually news, policy, or sentiment-driven.
+        </div>
+        <ul>
+          <li>"What the RBI move means for retail"</li>
+          <li>"Why this rally is different from 2021"</li>
+          <li>"Three FII flow misconceptions"</li>
+          <li>signal_type: <code>news</code> · <code>event</code> · <code>historical</code></li>
+        </ul>
+      </div>
+
+      <div class="place store">
+        <div class="role">Origin 3 · from your backlog</div>
+        <div class="name">Evergreen + marketing</div>
+        <div class="path">founder → factory</div>
+        <div class="what">
+          Pieces with no time pressure — term lessons, frameworks, and
+          marketing content about MarketWorks itself.
+        </div>
+        <ul>
+          <li>"What is Sharpe ratio" (term lesson, 20–30s)</li>
+          <li>"How Trend Leaders picks stocks" (product story)</li>
+          <li>"How RERA reshaped Indian real estate" (informational)</li>
+          <li>signal_type: <code>definition</code> · <code>historical</code></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div style="margin-top: 24px; background: #fff; border: 1px solid #e5e1d4; border-radius: 8px; padding: 18px 22px;">
+      <div style="font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: #047857; font-weight: 600; margin-bottom: 8px;">
+        How each origin creates a signal
+      </div>
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+        <thead>
+          <tr style="text-align: left; color: #6b7280; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;">
+            <th style="padding: 8px 12px 8px 0; border-bottom: 1px solid #e5e1d4;">Origin</th>
+            <th style="padding: 8px 12px; border-bottom: 1px solid #e5e1d4;">How the signal gets made</th>
+            <th style="padding: 8px 0 8px 12px; border-bottom: 1px solid #e5e1d4;">Variant in the pipeline</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 12px 12px 12px 0; border-bottom: 1px solid #f3efe2; color: #0e7490; font-weight: 600;">Engine</td>
+            <td style="padding: 12px; border-bottom: 1px solid #f3efe2; color: #374151;">
+              <code>publish_signal.py</code> → <code>import_from_marketworks.py</code> (built)
+            </td>
+            <td style="padding: 12px 0 12px 12px; border-bottom: 1px solid #f3efe2; color: #4b5563;">
+              Standard 6-step pipeline
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 12px 12px 12px 0; border-bottom: 1px solid #f3efe2; color: #047857; font-weight: 600;">Your read</td>
+            <td style="padding: 12px; border-bottom: 1px solid #f3efe2; color: #374151;">
+              <code>/generate-signals</code> skill with a topic prompt → pick the sharpest of 3–5
+            </td>
+            <td style="padding: 12px 0 12px 12px; border-bottom: 1px solid #f3efe2; color: #4b5563;">
+              Standard 6-step pipeline
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 12px 12px 12px 0; color: #b45309; font-weight: 600;">Backlog</td>
+            <td style="padding: 12px; color: #374151;">
+              Either <code>/generate-signals</code> for marketing angles, or hand-write <code>signal.json</code> for clean definitions
+            </td>
+            <td style="padding: 12px 0 12px 12px; color: #4b5563;">
+              Term lessons can skip hooks + repurpose → tighter 3-step
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top: 16px; padding: 16px 20px; background: #f6f3e9; border-left: 3px solid #b45309; border-radius: 0 6px 6px 0; font-size: 0.9rem; color: #4b5563;">
+      <strong style="color: #1f2937;">One small habit worth starting now:</strong>
+      keep a <code>data/memory/topic_backlog.md</code> in the factory — a flat
+      list of term lessons, marketing angles, and informational pieces you
+      want to ship someday. When inspiration runs dry on a publish day, you
+      scan the list, pick one, run the flow. Removes the "what should I
+      write?" friction.
+    </div>
+  </section>
+
+  <!-- Journey of One Piece -->
+  <section>
+    <div class="section-title">Journey of one content piece</div>
+    <h2 class="section-h">From "the market did something interesting" to a live URL.</h2>
+    <p class="section-lede">
+      Six steps. Two human gates (you decide before continuing). This is the
+      "from the engine" version; the founder-originated paths skip the
+      bridge import (steps 1–2) and start at step 3 with a signal you
+      created yourself. Everything from step 3 onwards is identical.
+    </p>
+
+    <div class="journey">
+
+      <div class="step">
+        <div class="num"><span>1</span></div>
+        <div class="body">
+          <div class="h">The engine produces a daily reading</div>
+          <div class="who"><span class="ch">Engine (kite-lab)</span> · automatic</div>
+          <p>
+            After market close, your insight engine has already built a "MarketReading"
+            — regime, stress, sector RS, watchlists, conditional distributions. The
+            Daily Quant Note assembles this into a paragraph + chart bundle.
+          </p>
+          <div class="what-you-see">
+            <strong>What you see:</strong> nothing new. This is what your pipeline
+            already does. Postclose runs by ~4:15 PM IST.
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num"><span>2</span></div>
+        <div class="body">
+          <div class="h">You publish that reading as a Signal</div>
+          <div class="who"><span class="ch">Engine (kite-lab)</span> · one command</div>
+          <p>
+            You run the publisher and it writes one JSON file describing what was
+            interesting in plain "this is the headline + the numbers" form.
+          </p>
+          <div class="what-you-see">
+            <strong>You run:</strong>
+            <code>python scripts/publish_signal.py from-daily-note --date 2026-05-31 --mode postclose</code><br>
+            <strong>Result:</strong> a file appears at <code>data/published/signals/2026-05-31_postclose_note.json</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num"><span>3</span></div>
+        <div class="body">
+          <div class="h">The factory imports the signal into a content pack</div>
+          <div class="who"><span class="cf">Factory (finance-content-os)</span> · one command</div>
+          <p>
+            You switch to a Claude Code session in the content repo and run the
+            importer. It validates the signal, scaffolds a new content pack folder,
+            and registers the topic in the index.
+          </p>
+          <div class="what-you-see">
+            <strong>You run:</strong>
+            <code>python bridge/import_from_marketworks.py --signal 2026-05-31_postclose_note.json --slug may31_drift_mode</code><br>
+            <strong>Result:</strong> a new folder at
+            <code>data/content_packs/may31_drift_mode/</code> with the signal lifted into it.
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num"><span>4</span></div>
+        <div class="body">
+          <div class="h">The pipeline turns the signal into a finished piece</div>
+          <div class="who"><span class="cf">Factory (finance-content-os)</span> · several skills</div>
+          <p>
+            In that same Claude Code session, you run the skills one at a time:
+            <code>/generate-insight</code> → <code>/generate-hooks</code> →
+            <code>/write-short-video-script</code> → <code>/repurpose-content</code>
+            → <code>/growth-review</code> → <code>/review-finance-content</code>.
+            Each one reads the previous output and writes its own.
+          </p>
+          <div class="what-you-see">
+            <strong>What lands in the pack:</strong>
+            insight.json, hook_set.json, script.json, compliance_report.json,
+            plus a finalize step that exports script.md + pack_summary.md
+            and renders thumbnails / carousel PNGs.
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num"><span>5</span></div>
+        <div class="body">
+          <div class="h">You approve, then the factory publishes to the storefront</div>
+          <div class="who"><span class="gate">⏸ Founder gate</span> · then one command</div>
+          <p>
+            You read the finished pack. If anything looks made-up, off-voice, or
+            shaky, you stop and fix it here — not later. Once you approve, the
+            publish script writes the web-ready version of the piece into the
+            dashboard repo.
+          </p>
+          <div class="what-you-see">
+            <strong>You run:</strong>
+            <code>python scripts/publish.py --slug may31_drift_mode</code><br>
+            <strong>Result:</strong> piece JSON + asset PNGs land in
+            <code>kite-dashboard/src/marketing-content/</code> and
+            <code>kite-dashboard/public/marketing-content/assets/</code>.
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num"><span>6</span></div>
+        <div class="body">
+          <div class="h">You commit + push, Vercel deploys, piece is live</div>
+          <div class="who"><span class="gate">⏸ Founder gate</span> · then git</div>
+          <p>
+            Commit the changes in both repos, push them, and Vercel auto-deploys
+            the dashboard. Within ~3–5 minutes,
+            <code>marketworks.in/library/may31_drift_mode</code> is a real URL
+            with the piece on it.
+          </p>
+          <div class="what-you-see">
+            <strong>Live result:</strong> a public, indexable page at
+            <code>marketworks.in/library/&lt;slug&gt;</code>, listed in
+            <code>marketworks.in/library</code>.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Glossary -->
+  <section>
+    <div class="section-title">Glossary — decoder for the new words</div>
+    <h2 class="section-h">If a term feels jargon-y, it's probably right here.</h2>
+    <p class="section-lede">
+      Every word in plain English. Each of these is a real concrete file
+      or folder on your machine.
+    </p>
+
+    <div class="gloss">
+
+      <div class="term">
+        <div class="t">Signal</div>
+        <p class="d">
+          A short JSON file that says "here's what happened, here's why it's
+          interesting, here's the numbers." It's the unit that crosses Bridge 1.
+          Roughly one page of structured notes.
+        </p>
+      </div>
+
+      <div class="term">
+        <div class="t">Content pack</div>
+        <p class="d">
+          A folder named after a topic slug, containing everything for one
+          piece: the signal, the insight, the hooks, the script, the
+          compliance check, the rendered images. Living workspace for one
+          content piece. Lives at <code>data/content_packs/&lt;slug&gt;/</code>.
+        </p>
+      </div>
+
+      <div class="term">
+        <div class="t">Pipeline</div>
+        <p class="d">
+          The 7-step process the factory runs on a content pack. Not a single
+          script — a sequence of Claude Code "skills" you invoke one at a
+          time, each writing its output back into the pack folder.
+        </p>
+      </div>
+
+      <div class="term">
+        <div class="t">Skill</div>
+        <p class="d">
+          A Markdown file at <code>finance-content-os/skills/&lt;name&gt;/SKILL.md</code>
+          that tells Claude how to do one specific job — generate hooks, write
+          a script, run compliance. You invoke them by typing <code>/skill-name</code>
+          in a Claude Code session.
+        </p>
+      </div>
+
+      <div class="term">
+        <div class="t">PublishedPiece</div>
+        <p class="d">
+          The web-ready form of a finished content pack. One JSON file with
+          the title, hook, body paragraphs, takeaway, CTA, and asset paths.
+          What the website actually renders. Lives at
+          <code>published/pieces/&lt;slug&gt;.json</code>.
+        </p>
+      </div>
+
+      <div class="term">
+        <div class="t">Manifest</div>
+        <p class="d">
+          A small index file — "here is the list of everything that exists."
+          The signals folder has one; the published folder has one; the
+          dashboard has one. Each lists what's there, sorted by date.
+          Consumers read the manifest first.
+        </p>
+      </div>
+
+      <div class="term">
+        <div class="t">Bridge</div>
+        <p class="d">
+          A small script (publisher) + a stable drop-off folder + a small
+          script (importer/consumer). Together they copy files from one place
+          to another, one-way. No shared code, no live API calls between
+          repos.
+        </p>
+      </div>
+
+      <div class="term">
+        <div class="t">/library</div>
+        <p class="d">
+          The new public route on marketworks.in where finished content
+          lives. The index page lists pieces by pillar; each piece has its
+          own URL at <code>/library/&lt;slug&gt;</code>. Public — no Clerk login
+          required.
+        </p>
+      </div>
+
+      <div class="term">
+        <div class="t">Pillar</div>
+        <p class="d">
+          The editorial category a piece belongs to — momentum, portfolio
+          construction, active frameworks, investor mistakes, backtest
+          realism, practical education. Used to group pieces on the library
+          index page and to keep your output diversified.
+        </p>
+      </div>
+
+      <div class="term">
+        <div class="t">Founder gate</div>
+        <p class="d">
+          A point in the journey where you stop and decide before the
+          process continues. Two of them: (1) after the insight, you check
+          numbers are real; (2) before publishing, you read the whole piece
+          and approve.
+        </p>
+      </div>
+
+      <div class="term">
+        <div class="t">Origin</div>
+        <p class="d">
+          How a content piece starts. Three options: from the engine (the
+          bridge), from your read of the market (commentary), or from your
+          backlog (evergreen + marketing). All three end at the same place —
+          a content pack — and run the same pipeline from there.
+        </p>
+      </div>
+
+      <div class="term">
+        <div class="t">Topic backlog</div>
+        <p class="d">
+          A flat markdown file at <code>data/memory/topic_backlog.md</code>
+          listing term lessons, marketing angles, and informational topics
+          you want to publish someday. Optional but recommended — removes
+          the "what should I write today?" friction on publish days.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Where we are right now -->
+  <section>
+    <div class="section-title">Where we are right now</div>
+    <h2 class="section-h">Built · in-progress · later</h2>
+    <p class="section-lede">
+      Current state of the content bridge initiative. Use this to know
+      what to do next without having to read every file.
+    </p>
+
+    <div class="status-grid">
+
+      <div class="status-card done">
+        <div class="icon">✓</div>
+        <div class="text">
+          <div class="h">Bridge 1 publisher (kite-lab)</div>
+          <div class="m">Built and smoke-tested on 2026-05-27 postclose note.</div>
+        </div>
+      </div>
+
+      <div class="status-card done">
+        <div class="icon">✓</div>
+        <div class="text">
+          <div class="h">Bridge 1 importer (finance-content-os)</div>
+          <div class="m">Pack <code>may27_drift_mode_note</code> created and waiting.</div>
+        </div>
+      </div>
+
+      <div class="status-card done">
+        <div class="icon">✓</div>
+        <div class="text">
+          <div class="h">Bridge 2 publisher (finance-content-os)</div>
+          <div class="m">Built. Will smoke-test once a pack is in <code>reviewed</code> status.</div>
+        </div>
+      </div>
+
+      <div class="status-card done">
+        <div class="icon">✓</div>
+        <div class="text">
+          <div class="h">/library public routes (kite-dashboard)</div>
+          <div class="m">Index + per-piece pages built. Type-check clean. Empty until pieces publish.</div>
+        </div>
+      </div>
+
+      <div class="status-card next">
+        <div class="icon">→</div>
+        <div class="text">
+          <div class="h">Run the pipeline (you, in finance-content-os)</div>
+          <div class="m">
+            Open a Claude Code session in <code>~/finance-content-os</code>.
+            Run the 6 skills + finalize + render visuals against the
+            <code>may27_drift_mode_note</code> pack.
+          </div>
+        </div>
+      </div>
+
+      <div class="status-card next">
+        <div class="icon">→</div>
+        <div class="text">
+          <div class="h">Publish, build, deploy (back here)</div>
+          <div class="m">
+            Once the pack is reviewed, return here. We run
+            <code>publish.py</code>, <code>npm run build</code>, commit both
+            repos, and you push.
+          </div>
+        </div>
+      </div>
+
+      <div class="status-card later">
+        <div class="icon">·</div>
+        <div class="text">
+          <div class="h">Courses infrastructure</div>
+          <div class="m">Deferred until 5+ individual pieces are live.</div>
+        </div>
+      </div>
+
+      <div class="status-card later">
+        <div class="icon">·</div>
+        <div class="text">
+          <div class="h">Auto-deploy on content push</div>
+          <div class="m">Manual two-repo commit is fine until you publish &gt;2/week.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    Map for <code>tasks/content_bridge/</code> — Marketworks content
+    integration · maintained by ops, not the system itself. Update when
+    architecture changes; not after every piece.
+  </footer>
+
+</div>
+</body>
+</html>

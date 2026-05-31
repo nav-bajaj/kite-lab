@@ -1,0 +1,18 @@
+{
+  "title": "Markets are in drift mode — neither trending strongly nor under pressure — 2026-05-27",
+  "signal_type": "rotation",
+  "ticker_or_theme": "Indian equity market — regime, sectors, watchlists",
+  "why_interesting": "Markets are in drift mode — neutral, neither trending nor under pressure; the current phase is a few weeks old (28 trading days). Overall stress reading is 62/100 (elevated stress), sitting in the top quarter of readings over the past five years. METAL is leading sectors over the past three months (+19.6% vs Nifty), with BANK lagging (-4.2%). Leadership is broad — more than 4 in 5 of its stocks are in an uptrend. FMCG fell 4 spots this week — a notable rotation.",
+  "why_now": "Across 1293 similar past days in drift mode, Nifty has shown no clear edge vs typical drift — the 20-day median is +0.37% (close to baseline) and 54% of historical observations finished positive. Middle half of outcomes: -2.9% to +3.1%. Fresh breakouts to watch: ATGL, JPPOWER, CUMMINSIND. Strongest names over the past six months: HFCL, SCHNEIDER, VEDL. Worth watching for trend break: CCL, LINDEINDIA just lost the 50-day average.",
+  "who_cares": "Indian retail investors who think in momentum + portfolio frameworks and want a daily quantitative read on the market without ticker-tip noise.",
+  "data_points": [
+    "Stress: 62/100 (89% of 5y readings)",
+    "Regime: DRIFT (28 trading days)",
+    "Sector RS 60d: NIFTY_METAL +19.6% (lead) / NIFTY_BANK -4.2% (lag)"
+  ],
+  "source": "Marketworks insight engine — daily quant note (postclose) 2026-05-27",
+  "date": "2026-05-27",
+  "strength": "strong",
+  "learn_moment": "Cross-asset note: the rupee is near its weakest level of the trailing year (high USDINR percentile) (96th percentile within its trailing year). Indian equities don't move in isolation — currency, gold, and rates shape risk premia and sector flows. When one of them is at an extreme, it's a context to watch, not a directional call.",
+  "published_at": "2026-05-31T08:42:19Z"
+}
