@@ -8,6 +8,16 @@ depends_on:
   - client_portal         # public routes coexist with Clerk-gated client app
 supersedes: []
 
+# kite-lab commits on the `bridge` branch
+related_commits:
+  - 9505922  # scaffold Bridge 1 — signal export contract + publisher
+  - ba424d6  # Bridge 2 consumer — /library public routes + content sync targets
+
+# Sibling repo commits (finance-content-os on the `content-bridge` branch)
+sibling_commits:
+  - 08f6cb8  # Phase 2 importer
+  - 07d5ed9  # Phase 4 publish.py
+
 # Sibling repo this initiative spans
 sibling_repo:
   path: /Users/navdeep/finance-content-os
