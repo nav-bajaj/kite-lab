@@ -12,6 +12,7 @@ const isPublicRoute = createRouteMatcher([
   "/terms",
   "/privacy",
   "/disclaimer",
+  "/library(.*)",
 ]);
 
 // Insight engine pages: behind Clerk login but available to ALL signed-in
