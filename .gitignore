@@ -51,6 +51,8 @@ data/*
 # Committed so we know what we said publicly on what date.
 !data/published/
 !data/published/**
+# Topic dossiers — regenerable, not committed. But keep the schema doc.
+!data/topic_dossiers/SCHEMA.md
 !experiments/final_portfolio/
 !experiments/final_portfolio/**
 *.csv

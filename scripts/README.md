@@ -17,7 +17,7 @@ Closed research / old experiments live on the archive branch
 | **Signal building** | `build_momentum_signals.py`, `build_momentum_signals_flexible.py` | Top-N momentum rankings; the `_flexible` variant is exposed as a dashboard COMMAND |
 | **DB + cloud sync** | `sync_to_database.py`, `backup_database.py`, `restore_database.py`, `upload_to_gdrive.py`, `upload_price_data.py` | Push results to Postgres, rotate DB backups, mirror data to Google Drive |
 | **Operator utils** | `headless_login.py`, `update_prices.py`, `utils.py`, `history_utils.py` | Manual ops, used from CLI or dashboard admin |
-| **Content bridge** | `publish_signal.py`, `generate_quant_note.py` | Emit Signal-shaped JSON to `data/published/signals/` for the content engine to import. See `tasks/content_bridge/` for the architecture. |
+| **Content bridge** | `publish_signal.py`, `generate_quant_note.py`, `analyse_topic.py` | `publish_signal.py` emits Signal-shaped JSON to `data/published/signals/` for the content engine. `analyse_topic.py` is the founder-facing "quick analysis" tool — takes a topic phrase and produces a verified-data dossier the content writers ground their pieces in. See `tasks/content_bridge/` + `tasks/content_redesign/`. |
 | **Docker** | `entrypoint.sh`, `init_persistent_storage.sh` | Run in `kite-api` container at boot |
 
 ## How to add a new script

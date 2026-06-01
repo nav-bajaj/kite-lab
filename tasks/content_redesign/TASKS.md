@@ -1,0 +1,182 @@
+# content_redesign — phased build
+
+Owner key: 🤖 Claude (unattended, modulo cross-repo permission prompts) ·
+👤 founder · 🤝 both (Claude executes, founder reviews + gates).
+
+Status key: ☐ todo · ◐ in-progress · ☑ done · ⊘ deferred
+
+Phases run roughly sequentially. Phase 1 (kite-lab tool) and Phase 2
+(content-repo foundations) can run in parallel if useful, but Phase 3
+needs both.
+
+---
+
+## Phase 0 — Lock decisions (👤)
+
+| # | Item | Status |
+|---|---|---|
+| 0.1 | CTA inventory (four real offerings) | ☑ |
+| 0.2 | Instagram handle (`@marketworks.in`) | ☑ |
+| 0.3 | Task folder location (`kite-lab/tasks/content_redesign/`) | ☑ |
+| 0.4 | Branch naming on both repos (`content-redesign`) | ☑ — kite-lab branched; finance-content-os pending Phase 2 |
+| 0.5 | Keep v1 skills alongside new ones as historical reference | ☑ |
+| 0.6 | First end-to-end target: snippet writer | ☑ |
+| 0.7 | Regression test: replay may27_drift_mode_note signal through new pipeline | ☑ |
+
+---
+
+## Phase 1 — Analyse-topic tool (🤖 · kite-lab)
+
+Build the founder-facing CLI that turns a topic phrase into a
+verified data dossier.
+
+| # | Item | Status |
+|---|---|---|
+| 1.1 | `TopicDossier` shape defined in `data/topic_dossiers/SCHEMA.md` — claim, verified_facts, data_points, chart_suggestions, related_signals, confidence | ☑ |
+| 1.2 | `scripts/analyse_topic.py` CLI: `--topic`, `--slug`, `--asof` | ☑ |
+| 1.3 | Keyword-based routing with 5 categories (sector, currency, concentration, watchlist, regime), plus an `unrouted` fallback to regime + concentration | ☑ |
+| 1.4 | Module wrappers — `analyse_sector` (sector_rs), `analyse_currency` (cross_asset), `analyse_concentration` (concentration), `analyse_watchlist` (watchlists), `analyse_regime` (regime + stress). Subgroups and calendar_content deferred to v2. | ☑ |
+| 1.5 | Claim verification fires for sector-leadership and currency-weakness/rally phrases; sets `claim.verified` true/false with specific evidence. Other categories return `not_applicable`. | ☑ |
+| 1.6 | Auto-slug from phrase; output to `data/topic_dossiers/<slug>.json` | ☑ |
+| 1.7 | `.gitignore` updated — dossiers gitignored as regenerable, schema doc excepted | ☑ |
+| 1.8 | Smoke-tested on three phrases (`defence sector momentum` · `rupee weakness this week` · `Reliance share of Nifty move`) — all return `confidence: high` with grounded data. Rupee weakness claim verified TRUE at the 96th percentile. | ☑ |
+| 1.9 | Brief usage row in `scripts/README.md` | ☐ |
+
+**Risk tag:** 🟡 medium. The routing logic is novel — phrase → module mapping has fuzzy edges. Start with explicit keyword routing, NLP refinement only if needed.
+
+---
+
+## Phase 2 — Content-repo foundations (🤖 · finance-content-os, cross-repo)
+
+Brand voice, CTA inventory, calibration references, SessionStart hook.
+These are the scaffolding the writers depend on.
+
+| # | Item | Status |
+|---|---|---|
+| 2.1 | Branched `content-redesign` from `content-bridge` in finance-content-os | ☑ |
+| 2.2 | `brand/voice_v2.md` written — locked stance, tone anchors (Sonia/Zerodha/Sharan-catchy/Ackman/Dalio/Chamath), the five voice principles, four V1 anti-patterns with concrete ✅/❌ examples from the may27 piece, voice-guard pass criteria | ☑ |
+| 2.3 | `brand/cta_inventory.md` written — four locked CTAs with wording variants, when-to-use rules, real-today status, and an explicit "what is NOT in the inventory" anti-list | ☑ |
+| 2.4 | `brand/calibration/` directory created with three validated reference scripts: snippet (index concentration), daily take (defence rally), weekly roundup (dollar strength). Each annotated with "why this works" and the writer's contract. | ☑ |
+| 2.5 | `brand/personas/karan.md` written — full persona doc (demographics, portfolio reality, the actual pain, consumption habits, literacy floor, voice fit, success definition). Directory is plural-ready. | ☑ |
+| 2.6 | `CLAUDE.md` updated with a top-level "V2 rebuild in progress" block pointing at the new structure and naming superseded files. V1 docs left in place for reference. | ☑ |
+| 2.7 | `.claude/hooks/load-brand-context.sh` + `.claude/settings.json` configured. SessionStart hook globs `personas/*.md` and `calibration/*.md` so future additions are picked up automatically. | ☑ |
+| 2.8 | Hook tested manually — produces 742 lines of brand context with all sections present and properly delimited | ☑ |
+
+**Risk tag:** 🟢 low — text files and a settings.json change. The hook
+is the only moving part; if it's a problem, fall back to manual `Read`
+at session start.
+
+---
+
+## Phase 3 — Snippet writer end-to-end (🤖 · finance-content-os)
+
+The first complete pipeline. Skills + agent + orchestration for the
+snippet format only. This is the most important phase — if this
+works at the bar, scaling to other formats is straightforward.
+
+| # | Item | Status |
+|---|---|---|
+| 3.1 | Write `skills/frame-piece/SKILL.md` — takes a dossier path, proposes 3 candidate frames, picks the sharpest, returns one-line frame statement | ☐ |
+| 3.2 | Write `skills/write-snippet/SKILL.md` — takes frame + dossier, produces a script with hook (3-5s) / body (15-18s) / takeaway (3s) / CTA (2s), plus stage directions | ☐ |
+| 3.3 | Write `.claude/agents/voice-guard.md` — subagent that reads a script, checks against voice_v2.md, cta_inventory.md, brand/personas/*.md (whichever persona is active for the piece), and the dossier's verified_facts; returns pass/fail + specific issues | ☐ |
+| 3.4 | Define the founder workflow as a single-message kickoff template in `docs/workflow_snippet.md` — "Write a snippet from `<dossier path>`" produces a script in N minutes | ☐ |
+| 3.5 | Smoke test: pick one of the 3 Phase 1 dossiers, run the founder workflow, evaluate output against the calibration snippet | ☐ |
+| 3.6 | Iterate the skills based on the smoke test — typical issues: hook too stat-heavy, takeaway not quotable, CTA mismatched to subject | ☐ |
+| 3.7 | Re-test until the snippet writer produces a publishable script in one pass on at least 3 distinct topics | ☐ |
+
+**Risk tag:** 🟡 medium. The hardest part is calibrating the skill
+prompts. Plan to iterate 5-10 times before locking.
+
+**Gate:** 🤝 founder reviews the output of 3.5 / 3.7. If it doesn't
+meet the bar, don't advance to Phase 4.
+
+---
+
+## Phase 4 — Voice guard hardening (🤖 · finance-content-os)
+
+The guard is the structural defence against voice drift. Make it
+fail loudly on real failure modes.
+
+| # | Item | Status |
+|---|---|---|
+| 4.1 | Build a small corpus of deliberately broken scripts: undefined jargon, fake CTA, made-up numbers, off-voice clinical tone, off-voice finfluencer tone | ☐ |
+| 4.2 | Run each through the voice guard, verify it fails with specific reasoning | ☐ |
+| 4.3 | Run the 3 calibration reference scripts through, verify it passes | ☐ |
+| 4.4 | Run the 3 Phase-3 produced scripts through, verify it passes | ☐ |
+| 4.5 | Document failure-mode taxonomy in `brand/voice_guard_taxonomy.md` for repeatability | ☐ |
+
+**Risk tag:** 🟢 low. This is a verification phase, not a build phase.
+
+---
+
+## Phase 5 — Replay drift-mode signal (🤝)
+
+The structural regression test. Take the original v1 failure case
+and run it through the new pipeline.
+
+| # | Item | Status |
+|---|---|---|
+| 5.1 | Convert the `may27_drift_mode_note` signal into a topic phrase a founder would type (e.g., *"drift regime + sector rotation this week"*) | ☐ |
+| 5.2 | Run analyse_topic.py with that phrase → dossier | ☐ |
+| 5.3 | Run the snippet workflow against the dossier | ☐ |
+| 5.4 | 👤 Founder reads the output. Compare against the v1 piece. Does the new version actually read like something Karan would watch? | ☐ |
+| 5.5 | If yes — rebuild has hit its bar. If no — back to Phase 3 with the specific failure modes documented. | ☐ |
+
+**Gate:** This is the "did we actually fix the problem" check. Don't
+move forward until this passes.
+
+---
+
+## Phase 6 — Daily take writer (🤖 · finance-content-os)
+
+| # | Item | Status |
+|---|---|---|
+| 6.1 | Write `skills/write-daily-take/SKILL.md` — 45s structure: hook (4s), body (30s, one clear upmove or observation), takeaway (5s), CTA (4s) | ☐ |
+| 6.2 | Test against the *"defence rally"* calibration script topic — does the writer reproduce that quality? | ☐ |
+| 6.3 | Test on a fresh kite-lab-sourced topic (e.g., import a current portfolio rebalance via Bridge 1, derive the topic, run the writer) | ☐ |
+| 6.4 | Iterate until at the bar | ☐ |
+
+---
+
+## Phase 7 — Weekly roundup writer (🤖 · finance-content-os)
+
+| # | Item | Status |
+|---|---|---|
+| 7.1 | Write `skills/write-weekly-roundup/SKILL.md` — 75s structure with the "three things tend to happen at once" or similar synthesis pattern; hook (5s), body (55s), takeaway (10s), CTA (5s) | ☐ |
+| 7.2 | Test against the *"week the dollar broke things"* calibration topic | ☐ |
+| 7.3 | Test on a real week of insight engine output | ☐ |
+| 7.4 | Iterate until at the bar | ☐ |
+
+---
+
+## Phase 8 — Documentation + handoff (🤖)
+
+| # | Item | Status |
+|---|---|---|
+| 8.1 | Write `tasks/content_redesign/OVERVIEW.html` — visual map of the rebuilt pipeline, parallel to `tasks/content_bridge/OVERVIEW.html` | ☐ |
+| 8.2 | Write `docs/founder_workflow.md` in finance-content-os — the daily / weekly operating model for the founder | ☐ |
+| 8.3 | Update `tasks/content_bridge/OVERVIEW.html` with a callout pointing at the redesign | ☐ |
+| 8.4 | `_meta.yml` → `status: shipped`, fill `related_commits`, fill `sibling_commits` | ☐ |
+| 8.5 | RESULTS.md — what was actually shipped vs. planned, deferred items, verification log | ☐ |
+
+---
+
+## Cross-cutting notes
+
+**Branch hygiene:** both repos use `content-redesign` branch. Merge
+each with `--no-ff` so the merge commit summarises the initiative.
+Don't push until Phase 5 passes — this whole rebuild is local until
+it's proven.
+
+**V1 skill fate:** the existing 10 skills in `finance-content-os/skills/`
+stay where they are during the rebuild. New skills sit alongside.
+After Phase 5 passes, archive the v1 ones (move to `skills/_archive_v1/`
+or delete on the branch).
+
+**Plugin packaging:** out of scope for v1, but every new skill +
+agent + hook is structured to be packageable later. Keep contracts
+clean.
+
+**Cross-repo execution notes:** writing into finance-content-os from
+this Claude session will trigger permission prompts. Approve each —
+they're additive changes in a sibling repo.
