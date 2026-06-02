@@ -1,4 +1,14 @@
 {
-  "pieces": [],
-  "last_updated": null
+  "pieces": [
+    {
+      "slug": "rupee_weakness_roundup",
+      "title": "A weak rupee isn't a market event \u2014 it's a slow tax on everything India imports.",
+      "pillar": "active frameworks",
+      "format": "weekly_roundup",
+      "published_at": "2026-06-02T17:23:42Z",
+      "thumbnail": null,
+      "hook": "The headline this week wasn't the rupee. But the rupee is quietly making everything imported a little more expensive \u2014 and that bill is bigger than it looks."
+    }
+  ],
+  "last_updated": "2026-06-02T17:23:42Z"
 }

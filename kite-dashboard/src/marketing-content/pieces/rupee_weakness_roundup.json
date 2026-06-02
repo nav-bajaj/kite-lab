@@ -1,0 +1,36 @@
+{
+  "slug": "rupee_weakness_roundup",
+  "title": "A weak rupee isn't a market event — it's a slow tax on everything India imports.",
+  "pillar": "active frameworks",
+  "format": "weekly_roundup",
+  "duration": "75s",
+  "published_at": "2026-06-02T17:23:42Z",
+  "hook": "The headline this week wasn't the rupee. But the rupee is quietly making everything imported a little more expensive — and that bill is bigger than it looks.",
+  "alternate_hooks": [],
+  "body": [
+    "Most weeks, the rupee moves a few paise and nobody notices. This week is different.",
+    "Over the last two months, the rupee has slid about 5% against the dollar — not a sudden break, a slow drift. It's now near its weakest level of the year. And here's what that quietly does.",
+    "One — the oil bill. India imports most of its crude. A weaker rupee means each barrel costs more in rupees. That feeds straight into fuel prices and into the margins of oil marketing companies.",
+    "Two — electronics. Phones, semiconductors, lithium-ion cells — most of it is imported. A weaker rupee raises the landed cost. Some of it shows up in your next upgrade. The rest shows up as margin pressure on companies that can't pass it on.",
+    "Three — foreign capital. When the rupee weakens, foreign investors face a built-in headwind. Their Indian stocks have to outperform the currency loss just to break even in dollars. So at the margin, they pull back.",
+    "Three different tax bills. All paid by India because one currency drifted."
+  ],
+  "key_takeaway": "Currencies don't move like news. They drift. And every drift, even one nobody is talking about, quietly raises a bill somewhere in the economy.",
+  "contrarian_angle": "Three fresh candidates were considered: (a) repeating the existing snippet's 'by the time the rupee is in the news, the move is months old' you-are-late frame, (b) the calibration's 'a slow-moving variable rippled through three parts of the market this week' synthesis frame, and (c) this one — reframing currency weakness as a continuous cost rather than a weekly event. Candidate (c) wins because it is distinct from both the shipped snippet AND the calibration anti-frame, and 'slow tax on everything India imports' gives the downstream writer a concrete cause-and-effect arc (one variable → multiple downstream cost effects) that maps cleanly to the weekly-roundup shape. It is grounded in the dossier's two load-bearing facts (USDINR +5.2% over 60 days; 96th percentile of trailing year) — a slow grind that has accumulated into a structural cost, not a one-week shock. 'Tax' is a metaphor a Karan-shaped viewer will read intuitively (cost passes through to prices), and it does not prescribe action.",
+  "cta": "For the daily read on what's actually moving — marketworks.in/insights.",
+  "assets": [],
+  "meta": {
+    "signal_type": "currency",
+    "source_repo": "kite-lab",
+    "source_signal": "rupee weakness this week",
+    "data_points": [
+      "USDINR (continuous front-month future): +0.7% over 20 days, +5.2% over 60 days",
+      "USDINR (continuous front-month future) sits at the 96th percentile of its trailing year"
+    ],
+    "confidence": "high",
+    "compliance_summary": "The script lands cleanly on its 'slow tax on everything India imports' frame and stays there throughout — it does not drift into the calibration's 'rippled through three parts of the market' frame, nor does it re-prosecute the sister snippet's 'you-are-late' framing. The hook is hidden-cause, no stat lead, no jargon. The three effects are matched constructions with concrete mechanisms (oil bill, electronics landed cost, dollar-return headwind on FII flows) and each mechanism is explained in-sentence rather than asserted. The two numeric claims ('about 5% over the last two months', 'near its weakest level of the year') both trace cleanly to dossier.verified_facts. The directional qualitative claims about import-share for crude and electronics are kept deliberately numberless, which is the right call given the dossier doesn't verify those shares — they read as common-knowledge mechanism context, not as smuggled-in stats. CTA #4 is the correct routing for a macro-plumbing piece. Takeaway is meta-level and quotable. No recommendation-shaped phrasing anywhere. Passes all eight criteria.",
+    "pipeline_version": "v2",
+    "frame": "A weak rupee isn't a market event — it's a slow tax on everything India imports.",
+    "format_arc": "weekly_roundup"
+  }
+}
