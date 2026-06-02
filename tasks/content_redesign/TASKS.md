@@ -116,11 +116,11 @@ and run it through the new pipeline.
 
 | # | Item | Status |
 |---|---|---|
-| 5.1 | Convert the `may27_drift_mode_note` signal into a topic phrase a founder would type (e.g., *"drift regime + sector rotation this week"*) | ☐ |
-| 5.2 | Run analyse_topic.py with that phrase → dossier | ☐ |
-| 5.3 | Run the snippet workflow against the dossier | ☐ |
-| 5.4 | 👤 Founder reads the output. Compare against the v1 piece. Does the new version actually read like something Karan would watch? | ☐ |
-| 5.5 | If yes — rebuild has hit its bar. If no — back to Phase 3 with the specific failure modes documented. | ☐ |
+| 5.1 | Topic phrase: *"metals beat banks while the Nifty went nowhere"*, asof 2026-05-27 | ☑ |
+| 5.2 | `analyse_topic.py` produced `data/topic_dossiers/may27_drift_replay.json` — category sector, high confidence, real NIFTY_METAL / NIFTY_BANK facts | ☑ |
+| 5.3 | Snippet workflow produced `may27_drift_replay` pack, guard PASS in one pass, 3 non-blocking polish notes | ☑ |
+| 5.4 | 👤 Founder + Claude comparison vs V1 `may27_drift_mode_note/script.json`: V1 used 11 numbers + 4-5 jargon terms + assumed-positions takeaway. V2 uses 2 numbers, zero jargon, position-agnostic takeaway. CTA correctly routed to #3 (momentum portfolios) for sector-leadership subject. Same dossier data, unrecognisable output. | ☑ |
+| 5.5 | Rebuild hit its bar. Editorial layer is fixed. | ☑ |
 
 **Gate:** This is the "did we actually fix the problem" check. Don't
 move forward until this passes.
