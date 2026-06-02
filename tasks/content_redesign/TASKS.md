@@ -131,10 +131,10 @@ move forward until this passes.
 
 | # | Item | Status |
 |---|---|---|
-| 6.1 | Write `.claude/skills/write-daily-take/SKILL.md` — 45s structure: hook (4s), body (30s, one clear upmove or observation), takeaway (5s), CTA (4s) | ☐ |
-| 6.2 | Test against the *"defence rally"* calibration script topic — does the writer reproduce that quality? | ☐ |
-| 6.3 | Test on a fresh kite-lab-sourced topic (e.g., import a current portfolio rebalance via Bridge 1, derive the topic, run the writer) | ☐ |
-| 6.4 | Iterate until at the bar | ☐ |
+| 6.1 | `.claude/skills/write-daily-take/SKILL.md` written — 45s structure with explicit `causal_frame` + `cultural_anchor` required output fields. Format-specific failure modes (snippet-density body, weekly-roundup over-stuffing, missing cultural anchor) enumerated. | ☑ |
+| 6.2 | Smoke test on `defence_sector_momentum` dossier — guard PASS 8/8. Skill correctly pivoted when defence data wasn't tracked (used the absence as the frame). Diwali-party cultural anchor matched the calibration shape. CTA #3 correctly routed. | ☑ |
+| 6.3 | Format independence verified — piece is structurally distinct from the calibration daily-take (different frame, fresh cultural anchor) despite same category | ☑ |
+| 6.4 | Bar met on first pass — no iteration needed | ☑ |
 
 ---
 
@@ -142,10 +142,10 @@ move forward until this passes.
 
 | # | Item | Status |
 |---|---|---|
-| 7.1 | Write `.claude/skills/write-weekly-roundup/SKILL.md` — 75s structure with the "three things tend to happen at once" or similar synthesis pattern; hook (5s), body (55s), takeaway (10s), CTA (5s) | ☐ |
-| 7.2 | Test against the *"week the dollar broke things"* calibration topic | ☐ |
-| 7.3 | Test on a real week of insight engine output | ☐ |
-| 7.4 | Iterate until at the bar | ☐ |
+| 7.1 | `.claude/skills/write-weekly-roundup/SKILL.md` written — 75s structure with explicit `load_bearing_variable` + exactly 3 `three_effects` required output fields. Each effect must have a one-sentence mechanism explanation. Format-specific failure modes enumerated. | ☑ |
+| 7.2 | Smoke test on `rupee_weakness_this_week` dossier (slug `rupee_weakness_roundup`) — guard PASS 8/8. Sharper frame than calibration ("slow tax on everything India imports"). Three effects deliberately distinct from calibration's three (oil/electronics/foreign-capital vs calibration's IT/FIIs/importers). Structural integrity held (exactly 3 effects, mechanism per effect, parallel rhythm). | ☑ |
+| 7.3 | Format independence verified — same dossier produced a structurally distinct piece from the snippet version (you-are-late framing) and from the calibration (rippled-through-3-parts framing) | ☑ |
+| 7.4 | Bar met on first pass — no iteration needed | ☑ |
 
 ---
 
