@@ -76,13 +76,13 @@ works at the bar, scaling to other formats is straightforward.
 
 | # | Item | Status |
 |---|---|---|
-| 3.1 | Write `skills/frame-piece/SKILL.md` — takes a dossier path, proposes 3 candidate frames, picks the sharpest, returns one-line frame statement | ☐ |
-| 3.2 | Write `skills/write-snippet/SKILL.md` — takes frame + dossier, produces a script with hook (3-5s) / body (15-18s) / takeaway (3s) / CTA (2s), plus stage directions | ☐ |
-| 3.3 | Write `.claude/agents/voice-guard.md` — subagent that reads a script, checks against voice_v2.md, cta_inventory.md, brand/personas/*.md (whichever persona is active for the piece), and the dossier's verified_facts; returns pass/fail + specific issues | ☐ |
-| 3.4 | Define the founder workflow as a single-message kickoff template in `docs/workflow_snippet.md` — "Write a snippet from `<dossier path>`" produces a script in N minutes | ☐ |
-| 3.5 | Smoke test: pick one of the 3 Phase 1 dossiers, run the founder workflow, evaluate output against the calibration snippet | ☐ |
-| 3.6 | Iterate the skills based on the smoke test — typical issues: hook too stat-heavy, takeaway not quotable, CTA mismatched to subject | ☐ |
-| 3.7 | Re-test until the snippet writer produces a publishable script in one pass on at least 3 distinct topics | ☐ |
+| 3.1 | `.claude/skills/frame-piece/SKILL.md` written — three candidate frames, picks the sharpest, output FrameStatement JSON. 3 worked examples drawn from the calibration scripts. Anti-patterns enumerated. | ☑ |
+| 3.2 | `.claude/skills/write-snippet/SKILL.md` written — full snippet arc spec (hook / body / takeaway / CTA + stage directions). Output ScriptDraft JSON with `anchor_fact` and `cta_inventory_id` fields. Quality-bar self-check before invoking voice-guard. 5 anti-patterns from V1 enumerated. | ☑ |
+| 3.3 | `.claude/agents/voice-guard.md` written — independent reviewer, 8 pass criteria each with specific failure rules. Output GuardVerdict JSON. Explicit "do not rewrite" / "do not soften" behavior contract. | ☑ |
+| 3.4 | `docs/workflow_snippet.md` — end-to-end founder workflow doc (analyse → frame → write → guard → publish). Troubleshooting table included. | ☑ |
+| 3.5 | 🤝 Smoke test (founder runs in finance-content-os session): pick one of the 3 dossiers in `~/kite-lab/data/topic_dossiers/`, run the workflow, evaluate against `brand/calibration/snippet_index_concentration.md` | ☐ |
+| 3.6 | 🤝 Iterate the skills based on smoke-test feedback | ☐ |
+| 3.7 | 🤝 Re-test on 2 more dossiers until the writer produces guard-passing output in one pass | ☐ |
 
 **Risk tag:** 🟡 medium. The hardest part is calibrating the skill
 prompts. Plan to iterate 5-10 times before locking.
@@ -131,7 +131,7 @@ move forward until this passes.
 
 | # | Item | Status |
 |---|---|---|
-| 6.1 | Write `skills/write-daily-take/SKILL.md` — 45s structure: hook (4s), body (30s, one clear upmove or observation), takeaway (5s), CTA (4s) | ☐ |
+| 6.1 | Write `.claude/skills/write-daily-take/SKILL.md` — 45s structure: hook (4s), body (30s, one clear upmove or observation), takeaway (5s), CTA (4s) | ☐ |
 | 6.2 | Test against the *"defence rally"* calibration script topic — does the writer reproduce that quality? | ☐ |
 | 6.3 | Test on a fresh kite-lab-sourced topic (e.g., import a current portfolio rebalance via Bridge 1, derive the topic, run the writer) | ☐ |
 | 6.4 | Iterate until at the bar | ☐ |
@@ -142,7 +142,7 @@ move forward until this passes.
 
 | # | Item | Status |
 |---|---|---|
-| 7.1 | Write `skills/write-weekly-roundup/SKILL.md` — 75s structure with the "three things tend to happen at once" or similar synthesis pattern; hook (5s), body (55s), takeaway (10s), CTA (5s) | ☐ |
+| 7.1 | Write `.claude/skills/write-weekly-roundup/SKILL.md` — 75s structure with the "three things tend to happen at once" or similar synthesis pattern; hook (5s), body (55s), takeaway (10s), CTA (5s) | ☐ |
 | 7.2 | Test against the *"week the dollar broke things"* calibration topic | ☐ |
 | 7.3 | Test on a real week of insight engine output | ☐ |
 | 7.4 | Iterate until at the bar | ☐ |

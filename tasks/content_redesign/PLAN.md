@@ -81,10 +81,10 @@ Voice principles extracted from these three (locked):
 ANALYZE  ──  kite-lab/scripts/analyse_topic.py
         │   produces a topic dossier (claim verification + data points + chart options)
         ▼
-FRAME    ──  finance-content-os/skills/frame-piece
+FRAME    ──  finance-content-os/.claude/skills/frame-piece
         │   produces the single frame the piece will hang on
         ▼
-WRITE    ──  finance-content-os/skills/write-{snippet,daily-take,weekly-roundup}
+WRITE    ──  finance-content-os/.claude/skills/write-{snippet,daily-take,weekly-roundup}
         │   produces a complete script (hook, body, takeaway, CTA, stage directions)
         ▼
 GUARD    ──  finance-content-os/.claude/agents/voice-guard
@@ -179,10 +179,10 @@ a `marketworks-content` plugin for portability. Defer until V1 ships.
 - `brand/cta_inventory.md` (new) — the four real CTAs
 - `brand/personas/` (new) — one .md per target persona. Karan today; the directory anticipates adding Priya / Anjali / advanced-trader personas later without restructure. Plural-by-design.
 - `brand/calibration/` (new) — the three reference scripts as the bar
-- `skills/frame-piece/SKILL.md` (new)
-- `skills/write-snippet/SKILL.md` (new) — first writer
-- `skills/write-daily-take/SKILL.md` (new — Phase 6)
-- `skills/write-weekly-roundup/SKILL.md` (new — Phase 7)
+- `.claude/skills/frame-piece/SKILL.md` (new) — canonical Claude Code skill location. V1 `skills/` was a 6-8-week-old layout that current Claude Code no longer discovers.
+- `.claude/skills/write-snippet/SKILL.md` (new) — first writer
+- `.claude/skills/write-daily-take/SKILL.md` (new — Phase 6)
+- `.claude/skills/write-weekly-roundup/SKILL.md` (new — Phase 7)
 
 ## Verification at close
 
