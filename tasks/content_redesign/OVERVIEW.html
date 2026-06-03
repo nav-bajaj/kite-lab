@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marketworks Content Redesign — Map</title>
+<style>
+  * { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+    background: #f8f7f3;
+    color: #1f2937;
+    line-height: 1.55;
+    padding: 32px 16px 80px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    font-size: 0.85em;
+    background: #efece2;
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: #1f2937;
+  }
+
+  /* Header */
+  .hero { border-bottom: 1px solid #e5e1d4; padding-bottom: 28px; margin-bottom: 48px; }
+  .hero .kicker {
+    font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #6b7280; margin-bottom: 8px;
+  }
+  .hero h1 {
+    font-size: 2rem; margin: 0 0 8px; letter-spacing: -0.01em; font-weight: 600;
+  }
+  .hero .sub { font-size: 1.05rem; color: #4b5563; margin: 0; max-width: 800px; }
+  .hero .date { font-size: 0.8rem; color: #9ca3af; margin-top: 14px; }
+
+  /* Section */
+  section { margin-bottom: 56px; }
+  .section-title {
+    font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: #047857; font-weight: 600; margin: 0 0 6px;
+  }
+  .section-h {
+    font-size: 1.5rem; margin: 0 0 10px; font-weight: 600; letter-spacing: -0.01em;
+  }
+  .section-lede { color: #4b5563; margin: 0 0 24px; max-width: 800px; }
+
+  /* The why-this-rebuild block */
+  .why {
+    background: #fff; border-left: 4px solid #b45309; border-radius: 0 8px 8px 0;
+    padding: 22px 26px; margin-bottom: 28px;
+  }
+  .why h3 { margin: 0 0 6px; font-size: 1rem; color: #b45309; letter-spacing: 0.02em; }
+  .why p { margin: 0 0 8px; color: #374151; font-size: 0.95rem; }
+  .why p:last-child { margin-bottom: 0; }
+  .why .quote {
+    font-style: italic; color: #6b7280; font-size: 0.9rem; padding: 8px 14px;
+    border-left: 2px solid #d1d5db; margin: 12px 0;
+  }
+
+  /* Pipeline diagram */
+  .pipeline {
+    background: #fff; border: 1px solid #e5e1d4; border-radius: 10px;
+    padding: 26px 28px; font-family: ui-monospace, monospace;
+    white-space: pre; font-size: 0.85rem; color: #374151;
+    overflow-x: auto;
+  }
+  .pipeline .stage { color: #047857; font-weight: 700; }
+  .pipeline .file  { color: #0e7490; }
+
+  /* Stage cards grid */
+  .stages {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+    margin-top: 20px;
+  }
+  @media (max-width: 720px) { .stages { grid-template-columns: 1fr; } }
+  .stage-card {
+    background: #fff; border: 1px solid #e5e1d4; border-radius: 8px;
+    padding: 18px 20px; position: relative;
+  }
+  .stage-card .pill {
+    font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: #6b7280; margin-bottom: 4px;
+  }
+  .stage-card .name {
+    font-size: 1rem; font-weight: 600; margin-bottom: 4px;
+  }
+  .stage-card .file {
+    font-family: ui-monospace, monospace; font-size: 0.78rem;
+    color: #6b7280; margin-bottom: 12px;
+  }
+  .stage-card .desc { font-size: 0.9rem; color: #374151; margin: 0 0 12px; }
+  .stage-card ul { margin: 0; padding-left: 18px; font-size: 0.85rem; color: #4b5563; }
+  .stage-card ul li { margin-bottom: 3px; }
+  .stage-card.analyze { border-top: 3px solid #0e7490; }
+  .stage-card.frame   { border-top: 3px solid #047857; }
+  .stage-card.write   { border-top: 3px solid #b45309; }
+  .stage-card.guard   { border-top: 3px solid #b91c1c; }
+  .stage-card.publish { border-top: 3px solid #6b21a8; }
+
+  /* Formats */
+  .formats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  }
+  @media (max-width: 720px) { .formats { grid-template-columns: 1fr; } }
+  .fmt {
+    background: #fff; border: 1px solid #e5e1d4; border-radius: 8px;
+    padding: 18px 20px;
+  }
+  .fmt .label {
+    font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #6b7280; margin-bottom: 4px;
+  }
+  .fmt .head { font-size: 1.05rem; font-weight: 600; margin-bottom: 2px; }
+  .fmt .dur { font-size: 0.85rem; color: #6b7280; margin-bottom: 10px; }
+  .fmt ul { margin: 0; padding-left: 18px; font-size: 0.85rem; color: #4b5563; }
+  .fmt ul li { margin-bottom: 3px; }
+  .fmt .cal {
+    margin-top: 12px; padding-top: 10px; border-top: 1px solid #f3efe2;
+    font-size: 0.78rem; color: #6b7280;
+  }
+  .fmt .cal code { font-size: 0.78rem; }
+
+  /* Defenses grid */
+  .defenses {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+  }
+  @media (max-width: 720px) { .defenses { grid-template-columns: 1fr; } }
+  .def {
+    background: #fff; border: 1px solid #e5e1d4; border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .def .n {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #d1fae5; color: #047857;
+    font-size: 0.75rem; font-weight: 700; margin-right: 8px;
+  }
+  .def .h {
+    font-weight: 600; font-size: 0.95rem; display: flex; align-items: center;
+    margin-bottom: 4px;
+  }
+  .def .d { font-size: 0.83rem; color: #4b5563; margin: 0; }
+  .def .impl {
+    margin-top: 6px; font-size: 0.75rem; color: #6b7280;
+  }
+  .def .impl code { font-size: 0.78rem; background: #f6f3e9; }
+
+  /* CTAs table */
+  .cta-table {
+    width: 100%; border-collapse: collapse; background: #fff;
+    border: 1px solid #e5e1d4; border-radius: 8px; overflow: hidden;
+  }
+  .cta-table th, .cta-table td {
+    text-align: left; padding: 12px 16px; font-size: 0.9rem;
+    border-bottom: 1px solid #f3efe2;
+  }
+  .cta-table th {
+    background: #f6f3e9; color: #6b7280;
+    font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+    font-weight: 600;
+  }
+  .cta-table tr:last-child td { border-bottom: none; }
+  .cta-table .num {
+    display: inline-block; background: #047857; color: #fff;
+    width: 22px; height: 22px; border-radius: 50%; text-align: center;
+    line-height: 22px; font-weight: 700; font-size: 0.8rem;
+  }
+
+  /* Founder workflow steps */
+  .workflow { display: flex; flex-direction: column; gap: 0; }
+  .step {
+    display: grid; grid-template-columns: 56px 1fr; gap: 18px;
+    padding: 18px 0; border-bottom: 1px solid #e5e1d4;
+  }
+  .step:last-child { border-bottom: none; }
+  .step .num { display: flex; align-items: flex-start; justify-content: center; }
+  .step .num span {
+    background: #ffffff; color: #047857; border: 1.5px solid #047857;
+    border-radius: 999px; width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 0.9rem;
+  }
+  .step .body .h { font-weight: 600; font-size: 1rem; margin-bottom: 2px; }
+  .step .body p { margin: 0 0 8px; font-size: 0.92rem; color: #374151; }
+  .step .body .cmd {
+    background: #f6f3e9; border-radius: 6px; padding: 8px 12px;
+    font-family: ui-monospace, monospace; font-size: 0.82rem;
+    color: #1f2937; margin: 6px 0;
+  }
+
+  /* Status grid */
+  .status-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+  }
+  @media (max-width: 720px) { .status-grid { grid-template-columns: 1fr; } }
+  .status-card {
+    background: #fff; border: 1px solid #e5e1d4; border-radius: 8px;
+    padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px;
+  }
+  .status-card .icon {
+    flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 700; margin-top: 2px;
+  }
+  .status-card.done .icon  { background: #d1fae5; color: #047857; }
+  .status-card.next .icon  { background: #fef3c7; color: #b45309; }
+  .status-card.later .icon { background: #f3f4f6; color: #6b7280; }
+  .status-card .text { font-size: 0.9rem; color: #374151; }
+  .status-card .text .h { font-weight: 600; margin-bottom: 1px; color: #1f2937; }
+  .status-card .text .m { font-size: 0.83rem; color: #6b7280; }
+
+  /* Pair link */
+  .pair {
+    background: #fff; border: 1px solid #e5e1d4; border-radius: 8px;
+    padding: 16px 20px; margin-top: 18px; font-size: 0.88rem; color: #4b5563;
+  }
+  .pair strong { color: #1f2937; }
+
+  /* Footer */
+  footer {
+    margin-top: 64px; padding-top: 24px; border-top: 1px solid #e5e1d4;
+    font-size: 0.82rem; color: #6b7280;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="kicker">Marketworks · Content Redesign Map</div>
+    <h1>The V2 editorial layer — pipeline, defenses, formats, workflow</h1>
+    <p class="sub">
+      Companion to <code>tasks/content_bridge/OVERVIEW.html</code>. The
+      bridge work shipped the plumbing between repos. This work
+      replaced the editorial layer the plumbing carried — voice,
+      personas, skills, guard. Read this once, refer to it when
+      anything in the V2 layer needs explanation.
+    </p>
+    <div class="date">As of 03 June 2026 · branches: kite-lab/content-redesign · finance-content-os/content-redesign</div>
+  </header>
+
+  <!-- Why this rebuild -->
+  <section>
+    <div class="section-title">Why this rebuild happened</div>
+    <h2 class="section-h">The bridge worked. The editorial layer didn't.</h2>
+    <p class="section-lede">
+      The first V1 piece through the full bridge — the
+      <code>may27_drift_mode_note</code> pack — was structurally
+      sound (signal in, pipeline ran, piece out, dashboard rendered).
+      But the piece itself was unreadable for a first-time viewer.
+    </p>
+
+    <div class="why">
+      <h3>What the V1 piece looked like (a 60-second reel)</h3>
+      <p class="quote">"The Nifty is in drift mode — and history says guessing the next move is a coin flip."</p>
+      <p>
+        Eleven numbers across the body. Four undefined jargon terms
+        in the first thirty seconds (drift mode · stress · 89th
+        percentile · RS / rotation). A takeaway that told viewers
+        to <em>"check your sector mix"</em> and <em>"right-size
+        positions while stress is elevated"</em> — which assumes the
+        viewer already has positions, a sector mix, and a sizing
+        framework. None of which Karan (the target persona) does.
+      </p>
+      <p>
+        That piece was technically correct and editorially useless.
+        The skills had been written 6-8 weeks earlier for a
+        subscriber audience, not for first-time viewers. The V2
+        rebuild fixes that gap from first principles.
+      </p>
+    </div>
+  </section>
+
+  <!-- The pipeline -->
+  <section>
+    <div class="section-title">The V2 pipeline</div>
+    <h2 class="section-h">Four stages. Tight contracts between them.</h2>
+    <p class="section-lede">
+      Every piece flows through the same four stages, plus a final
+      publish step. Each stage produces a strictly-shaped JSON
+      artifact that the next stage reads. Prose only lives
+      <em>inside</em> these artifacts, never between them.
+    </p>
+
+    <div class="pipeline"><span class="stage">[founder topic phrase]</span>
+        │
+        ▼
+<span class="stage">ANALYZE</span>  ── <span class="file">~/kite-lab/scripts/analyse_topic.py</span>
+        │   produces a verified-data TopicDossier
+        ▼
+<span class="stage">FRAME</span>    ── <span class="file">.claude/skills/frame-piece</span>
+        │   produces one-line FrameStatement
+        ▼
+<span class="stage">WRITE</span>    ── <span class="file">.claude/skills/write-{snippet,daily-take,weekly-roundup}</span>
+        │   produces a structured ScriptDraft
+        ▼
+<span class="stage">GUARD</span>    ── <span class="file">.claude/agents/voice-guard</span> (independent subagent)
+        │   returns a GuardVerdict
+        ▼
+<span class="stage">PUBLISH</span>  ── <span class="file">scripts/publish.py</span> (Bridge 2)
+        ▼
+<span class="stage">[live at marketworks.in/library/&lt;slug&gt;]</span></div>
+
+    <div class="stages">
+      <div class="stage-card analyze">
+        <div class="pill">Stage 1 · ANALYZE</div>
+        <div class="name">analyse_topic.py</div>
+        <div class="file">~/kite-lab/scripts/analyse_topic.py</div>
+        <p class="desc">
+          Founder runs the CLI with a one-line topic phrase. The script
+          routes the phrase to insight engine modules (5 categories),
+          verifies the implied claim against real data, and emits a
+          TopicDossier JSON.
+        </p>
+        <ul>
+          <li>5 routing categories: sector · currency · concentration · watchlist · regime</li>
+          <li>Claim verification: confirms or refutes the phrase's implicit claim</li>
+          <li>Output: <code>~/kite-lab/data/topic_dossiers/&lt;slug&gt;.json</code></li>
+        </ul>
+      </div>
+
+      <div class="stage-card frame">
+        <div class="pill">Stage 2 · FRAME</div>
+        <div class="name">frame-piece skill</div>
+        <div class="file">.claude/skills/frame-piece/SKILL.md</div>
+        <p class="desc">
+          Picks the single sharp frame the piece will hang on. Generates
+          three candidate frames internally, picks the sharpest, names
+          1-2 anti-frames the writer downstream should avoid.
+        </p>
+        <ul>
+          <li>One sentence, reducible to one feeling Karan walks away with</li>
+          <li>Defensible from at least one verified_fact in the dossier</li>
+          <li>Output: <code>data/content_packs/&lt;slug&gt;/frame.json</code></li>
+        </ul>
+      </div>
+
+      <div class="stage-card write">
+        <div class="pill">Stage 3 · WRITE</div>
+        <div class="name">write-{format} skill</div>
+        <div class="file">.claude/skills/write-{snippet,daily-take,weekly-roundup}/</div>
+        <p class="desc">
+          One writer skill per format. Each produces a structured
+          ScriptDraft with format-specific required fields the voice
+          guard checks against.
+        </p>
+        <ul>
+          <li>snippet: <code>anchor_fact</code> (one load-bearing number)</li>
+          <li>daily-take: <code>causal_frame</code> + <code>cultural_anchor</code></li>
+          <li>weekly-roundup: <code>load_bearing_variable</code> + exactly 3 <code>three_effects</code> with mechanism per effect</li>
+        </ul>
+      </div>
+
+      <div class="stage-card guard">
+        <div class="pill">Stage 4 · GUARD</div>
+        <div class="name">voice-guard subagent</div>
+        <div class="file">.claude/agents/voice-guard.md</div>
+        <p class="desc">
+          Runs in an independent context window — no author bias.
+          Walks 8 pass criteria against the script. Returns a
+          structured GuardVerdict. If any criterion fails, the piece
+          does not advance to publish.
+        </p>
+        <ul>
+          <li>Hard contract: do not rewrite · do not soften · do not pass conditionally</li>
+          <li>Cites a specific quote + criterion + fix for every failure</li>
+          <li>Output: <code>data/content_packs/&lt;slug&gt;/guard_verdict.json</code></li>
+        </ul>
+      </div>
+
+      <div class="stage-card publish">
+        <div class="pill">Stage 5 · PUBLISH (Bridge 2)</div>
+        <div class="name">publish.py</div>
+        <div class="file">scripts/publish.py</div>
+        <p class="desc">
+          Refuses to run unless guard verdict.pass == true. Builds a
+          PublishedPiece JSON in the shape the kite-dashboard expects
+          at build time, writes BOTH the canonical record and a sync
+          copy into the dashboard repo. Text-only — visual assets are
+          a separate initiative.
+        </p>
+        <ul>
+          <li>Canonical: <code>finance-content-os/published/pieces/&lt;slug&gt;.json</code></li>
+          <li>Sync: <code>kite-lab/kite-dashboard/src/marketing-content/pieces/&lt;slug&gt;.json</code></li>
+          <li>Updates both manifests; Vercel deploys on next push to main</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Three formats -->
+  <section>
+    <div class="section-title">Three formats, three calibration scripts</div>
+    <h2 class="section-h">Each format has a validated reference piece as its bar.</h2>
+    <p class="section-lede">
+      Skills pattern-match against validated examples, not abstract
+      rules. The calibration scripts in
+      <code>brand/calibration/</code> are the literal benchmark each
+      writer reproduces the density and arc of.
+    </p>
+
+    <div class="formats">
+      <div class="fmt">
+        <div class="label">Format 1</div>
+        <div class="head">Snippet</div>
+        <div class="dur">25-30 seconds</div>
+        <ul>
+          <li>One term · tip · or current event</li>
+          <li>Hook (3-4s) · Body (15-18s) · Takeaway (3s) · CTA (2s)</li>
+          <li>ONE anchor number, not stat-stacked</li>
+        </ul>
+        <div class="cal">
+          Bar: <code>brand/calibration/snippet_index_concentration.md</code><br>
+          <em>"Three stocks. The whole rally."</em>
+        </div>
+      </div>
+
+      <div class="fmt">
+        <div class="label">Format 2</div>
+        <div class="head">Daily Take</div>
+        <div class="dur">45 seconds</div>
+        <ul>
+          <li>Specific upmove · sector observation · structural pattern</li>
+          <li>Hook (4s) · Body (30s) · Takeaway (5s) · CTA (4s)</li>
+          <li>Causal frame + ONE cultural anchor line</li>
+        </ul>
+        <div class="cal">
+          Bar: <code>brand/calibration/daily_take_defence_rally.md</code><br>
+          <em>"The trade most retail is 2 years late to."</em>
+        </div>
+      </div>
+
+      <div class="fmt">
+        <div class="label">Format 3</div>
+        <div class="head">Weekly Roundup</div>
+        <div class="dur">75 seconds</div>
+        <ul>
+          <li>Synthesised view of the week with one big frame</li>
+          <li>Hook (5s) · Body (55s) · Takeaway (10s) · CTA (5s)</li>
+          <li>ONE load-bearing variable · exactly 3 parallel effects with mechanism</li>
+        </ul>
+        <div class="cal">
+          Bar: <code>brand/calibration/weekly_roundup_dollar_strength.md</code><br>
+          <em>"The week the dollar quietly broke things."</em>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The 8 defenses -->
+  <section>
+    <div class="section-title">The eight drift defenses</div>
+    <h2 class="section-h">How the rebuild doesn't fall off between runs.</h2>
+    <p class="section-lede">
+      Voice drift across sessions is the main risk for a creative
+      pipeline at scale. The V2 layer is structurally designed against
+      it. Each defense is implemented in code, not just hoped for.
+      Full reasoning in
+      <code>tasks/content_redesign/REPEATABILITY.md</code>.
+    </p>
+
+    <div class="defenses">
+      <div class="def">
+        <div class="h"><span class="n">1</span>Anchor by example</div>
+        <p class="d">Skills pattern-match against the 3 calibration scripts, not against rules in prose.</p>
+        <div class="impl">In: <code>brand/calibration/</code> + every SKILL.md cites them</div>
+      </div>
+      <div class="def">
+        <div class="h"><span class="n">2</span>Tight JSON contracts</div>
+        <p class="d">Each stage's output is strictly shaped (TopicDossier, FrameStatement, ScriptDraft, GuardVerdict). Prose lives inside fields, not between them.</p>
+        <div class="impl">In: every SKILL.md's output schema</div>
+      </div>
+      <div class="def">
+        <div class="h"><span class="n">3</span>Few-shot per skill</div>
+        <p class="d">Every SKILL.md has a worked-examples section with full input/output pairs from calibration. Examples beat rules.</p>
+        <div class="impl">In: <code>.claude/skills/*/SKILL.md</code></div>
+      </div>
+      <div class="def">
+        <div class="h"><span class="n">4</span>Independent guard subagent</div>
+        <p class="d">Voice-guard runs in a separate context window from the author. No shared rationalisation, no sunk-cost reasoning.</p>
+        <div class="impl">In: <code>.claude/agents/voice-guard.md</code></div>
+      </div>
+      <div class="def">
+        <div class="h"><span class="n">5</span>SessionStart hook</div>
+        <p class="d">Auto-loads voice + personas + CTA inventory + calibration into every Claude session. Author starts with the bar in context from message 1.</p>
+        <div class="impl">In: <code>.claude/hooks/load-brand-context.sh</code></div>
+      </div>
+      <div class="def">
+        <div class="h"><span class="n">6</span>PreToolUse hook (deferred)</div>
+        <p class="d">Designed-for: a hook that blocks <code>Write</code> on script.json paths unless voice-guard passes. Currently the write-* skills invoke the guard explicitly.</p>
+        <div class="impl">Deferred to v2.1</div>
+      </div>
+      <div class="def">
+        <div class="h"><span class="n">7</span>Anti-pattern lists</div>
+        <p class="d">Every SKILL.md has a Failure Modes section with concrete ❌ examples drawn from the V1 may27 piece. Negative examples sharpen the contrast.</p>
+        <div class="impl">In: every SKILL.md and <code>brand/voice_v2.md</code></div>
+      </div>
+      <div class="def">
+        <div class="h"><span class="n">8</span>Plugin packaging</div>
+        <p class="d">Designed-for: bundle skills + agents + hooks as a Claude Code plugin for portability across machines/collaborators. Defer until 5-10 pieces ship.</p>
+        <div class="impl">Deferred to v2.x</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA inventory -->
+  <section>
+    <div class="section-title">CTAs · what every piece can point at</div>
+    <h2 class="section-h">Four locked CTAs. No inventing new ones.</h2>
+    <p class="section-lede">
+      Every piece's call-to-action picks one of these four offerings.
+      Each maps to a real, live Marketworks surface. Inventing a fifth
+      is a guard-failure.
+    </p>
+
+    <table class="cta-table">
+      <thead>
+        <tr>
+          <th style="width: 40px;">#</th>
+          <th>Offering</th>
+          <th>When to use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="num">1</span></td>
+          <td><strong>Follow @marketworks.in</strong> on Instagram</td>
+          <td>Generic year-1 awareness CTA. Default if no other fits.</td>
+        </tr>
+        <tr>
+          <td><span class="num">2</span></td>
+          <td><strong>Sign up for the private beta</strong> — marketworks.in</td>
+          <td>Product-curious pieces. Viewer wants <em>more of the analysis</em>.</td>
+        </tr>
+        <tr>
+          <td><span class="num">3</span></td>
+          <td><strong>4 momentum portfolios</strong> — marketworks.in</td>
+          <td>Pieces about sector leadership, momentum, or portfolio thinking.</td>
+        </tr>
+        <tr>
+          <td><span class="num">4</span></td>
+          <td><strong>Daily market dashboard</strong> — marketworks.in/insights</td>
+          <td>Pieces about market state · breadth · regime · cross-asset.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Founder workflow -->
+  <section>
+    <div class="section-title">Founder workflow</div>
+    <h2 class="section-h">From topic phrase to live piece — about 10 minutes.</h2>
+
+    <div class="workflow">
+      <div class="step">
+        <div class="num"><span>1</span></div>
+        <div class="body">
+          <div class="h">Analyse the topic in kite-lab</div>
+          <p>You type a one-line phrase. The CLI routes it to insight engine modules and emits a verified-data dossier.</p>
+          <div class="cmd">cd ~/kite-lab<br>.venv/bin/python scripts/analyse_topic.py --topic "your phrase here"</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num"><span>2</span></div>
+        <div class="body">
+          <div class="h">Open Claude Code in finance-content-os</div>
+          <p>The SessionStart hook injects voice + persona + CTAs + calibration into context. No need to remember to load anything.</p>
+          <div class="cmd">cd ~/finance-content-os && claude</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num"><span>3</span></div>
+        <div class="body">
+          <div class="h">Pick the frame</div>
+          <p>In the session, invoke <code>frame-piece</code> on the dossier. Read the resulting frame. If it's not sharp, regenerate.</p>
+          <div class="cmd">Invoke frame-piece on ~/kite-lab/data/topic_dossiers/&lt;slug&gt;.json with slug &lt;pack-slug&gt;.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num"><span>4</span></div>
+        <div class="body">
+          <div class="h">Write the script + guard</div>
+          <p>Invoke the matching writer skill (snippet, daily-take, weekly-roundup) — based on the frame's <code>format_hint</code>. The skill auto-invokes voice-guard after writing.</p>
+          <div class="cmd">Invoke write-snippet using the frame.<br><em>Skill writes script.json and guard_verdict.json</em></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num"><span>5</span></div>
+        <div class="body">
+          <div class="h">Read the guard verdict + your own gut check</div>
+          <p>If <code>pass: true</code> and you'd watch this on Instagram, proceed. If <code>pass: false</code>, the verdict lists which criterion failed and the suggested fix. Iterate.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num"><span>6</span></div>
+        <div class="body">
+          <div class="h">Publish</div>
+          <p>Run the V2 publish script. Writes canonical record + syncs into the dashboard repo.</p>
+          <div class="cmd">cd ~/finance-content-os<br>.venv/bin/python scripts/publish.py --slug &lt;pack-slug&gt;</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num"><span>7</span></div>
+        <div class="body">
+          <div class="h">Commit + push, Vercel deploys</div>
+          <p>Commit both repos, push, and the dashboard auto-deploys. Live at marketworks.in/library/&lt;slug&gt; in ~3-5 min.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Current state -->
+  <section>
+    <div class="section-title">Current state · what's done and what's left</div>
+    <h2 class="section-h">Editorial rebuild is done. Visual rendering and a few hardenings are pending.</h2>
+
+    <div class="status-grid">
+      <div class="status-card done">
+        <div class="icon">✓</div>
+        <div class="text">
+          <div class="h">Foundations (Phase 0-2)</div>
+          <div class="m">Persona, voice_v2, CTA inventory, calibration scripts, SessionStart hook.</div>
+        </div>
+      </div>
+      <div class="status-card done">
+        <div class="icon">✓</div>
+        <div class="text">
+          <div class="h">analyse_topic.py (Phase 1)</div>
+          <div class="m">5-category keyword routing, claim verification, dossier output.</div>
+        </div>
+      </div>
+      <div class="status-card done">
+        <div class="icon">✓</div>
+        <div class="text">
+          <div class="h">All 3 writers + voice-guard (Phases 3, 6, 7)</div>
+          <div class="m">snippet · daily-take · weekly-roundup all validated on distinct dossiers, guard-passing in one pass.</div>
+        </div>
+      </div>
+      <div class="status-card done">
+        <div class="icon">✓</div>
+        <div class="text">
+          <div class="h">V2 publish.py (Bridge 2 for V2)</div>
+          <div class="m">Reads V2 pack shape, emits PublishedPiece JSON, syncs to dashboard.</div>
+        </div>
+      </div>
+      <div class="status-card done">
+        <div class="icon">✓</div>
+        <div class="text">
+          <div class="h">Drift-mode regression test (Phase 5)</div>
+          <div class="m">Same data that produced V1 failure now produces a guard-passing V2 piece.</div>
+        </div>
+      </div>
+      <div class="status-card done">
+        <div class="icon">✓</div>
+        <div class="text">
+          <div class="h">First V2 piece published</div>
+          <div class="m"><code>rupee_weakness_roundup</code> · waiting on the next main merge to go live.</div>
+        </div>
+      </div>
+      <div class="status-card done">
+        <div class="icon">✓</div>
+        <div class="text">
+          <div class="h">V1 layer fully removed</div>
+          <div class="m">Repo is V2-only — 10 V1 skills, 5 V1 brand docs, V1 schemas/scripts/docs all deleted.</div>
+        </div>
+      </div>
+      <div class="status-card next">
+        <div class="icon">→</div>
+        <div class="text">
+          <div class="h">Voice-guard hardening (Phase 4)</div>
+          <div class="m">Break-corpus + failure-mode taxonomy in <code>brand/voice_guard_taxonomy.md</code>.</div>
+        </div>
+      </div>
+      <div class="status-card later">
+        <div class="icon">·</div>
+        <div class="text">
+          <div class="h">V2 visual rendering</div>
+          <div class="m">Port Remotion compositions to V2 script.json. Separate initiative — see <code>design-system/</code>.</div>
+        </div>
+      </div>
+      <div class="status-card later">
+        <div class="icon">·</div>
+        <div class="text">
+          <div class="h">Plugin packaging</div>
+          <div class="m">Bundle skills + agents + hooks as <code>marketworks-content</code> plugin for portability.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pair">
+      <strong>Pair this with:</strong>
+      <code>tasks/content_bridge/OVERVIEW.html</code> for the bridge
+      plumbing between repos. Together the two docs cover the full
+      Marketworks content stack — bridge architecture, editorial
+      layer, founder workflow, current state.
+    </div>
+  </section>
+
+  <footer>
+    Map for <code>tasks/content_redesign/</code> — Marketworks
+    editorial layer V2 · maintained by ops, not the system itself.
+    Update when architecture changes; not after every piece.
+  </footer>
+
+</div>
+</body>
+</html>

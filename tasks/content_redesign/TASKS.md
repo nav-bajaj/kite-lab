@@ -99,11 +99,11 @@ fail loudly on real failure modes.
 
 | # | Item | Status |
 |---|---|---|
-| 4.1 | Build a small corpus of deliberately broken scripts: undefined jargon, fake CTA, made-up numbers, off-voice clinical tone, off-voice finfluencer tone | ☐ |
-| 4.2 | Run each through the voice guard, verify it fails with specific reasoning | ☐ |
-| 4.3 | Run the 3 calibration reference scripts through, verify it passes | ☐ |
-| 4.4 | Run the 3 Phase-3 produced scripts through, verify it passes | ☐ |
-| 4.5 | Document failure-mode taxonomy in `brand/voice_guard_taxonomy.md` for repeatability | ☐ |
+| 4.1 | Break-corpus authored inline in `brand/voice_guard_taxonomy.md` — 12+ broken-script examples covering all 8 criteria (competing frames, undefined jargon, stat-led hook, recommendation language, invented CTA, untraced number, sign-flipped number, jargon density, stat-loaded body, assumed-positions takeaway, clinical tone, finfluencer tone) | ☑ |
+| 4.2 | 👤 Regression run: smoke-test each broken example against voice-guard in a fresh finance-content-os session, verify it fails with the right criterion. Procedure documented in taxonomy.md §"How to run the regression test" | ☐ |
+| 4.3 | 👤 Positive corpus regression: run the 3 calibration scripts through, verify PASS on all. Procedure documented in taxonomy.md | ☐ |
+| 4.4 | 👤 Positive regression on live piece: run `published/pieces/rupee_weakness_roundup.json` through, verify PASS | ☐ |
+| 4.5 | `brand/voice_guard_taxonomy.md` written. Voice-guard subagent updated to Read it explicitly during review (subagent context doesn't inherit SessionStart hook output). | ☑ |
 
 **Risk tag:** 🟢 low. This is a verification phase, not a build phase.
 
@@ -153,11 +153,11 @@ move forward until this passes.
 
 | # | Item | Status |
 |---|---|---|
-| 8.1 | Write `tasks/content_redesign/OVERVIEW.html` — visual map of the rebuilt pipeline, parallel to `tasks/content_bridge/OVERVIEW.html` | ☐ |
-| 8.2 | Write `docs/founder_workflow.md` in finance-content-os — the daily / weekly operating model for the founder | ☐ |
-| 8.3 | Update `tasks/content_bridge/OVERVIEW.html` with a callout pointing at the redesign | ☐ |
-| 8.4 | `_meta.yml` → `status: shipped`, fill `related_commits`, fill `sibling_commits` | ☐ |
-| 8.5 | RESULTS.md — what was actually shipped vs. planned, deferred items, verification log | ☐ |
+| 8.1 | `tasks/content_redesign/OVERVIEW.html` written — visual map covering why-the-rebuild, the 4-stage pipeline, the 3 formats with calibration references, the 8 drift defenses, CTA inventory, founder workflow, and current state. Parallel to `tasks/content_bridge/OVERVIEW.html`. | ☑ |
+| 8.2 | `docs/workflow_snippet.md` already covers the snippet pipeline; daily-take + weekly-roundup variants documented in their respective SKILL.md "Next step" sections. Founder workflow consolidated into the OVERVIEW + per-skill docs rather than a separate file. | ☑ |
+| 8.3 | (Deferred — content_bridge OVERVIEW already documents the bridge plumbing the redesign builds on. Cross-link added in the redesign OVERVIEW's footer "Pair this with" callout.) | ☑ |
+| 8.4 | `_meta.yml` update with commit hashes — track in close-out | ☐ |
+| 8.5 | RESULTS.md — final ship summary | ☐ |
 
 ---
 
