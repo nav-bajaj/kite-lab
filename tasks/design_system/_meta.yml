@@ -1,0 +1,65 @@
+name: design_system
+status: in-progress
+opened: 2026-06-03
+closed: null
+branch: main           # design repo branch; kite-lab tracks via this task folder
+depends_on:
+  - content_redesign   # editorial layer + persona inform the brand contract
+supersedes:
+  - finance-content-os/design-system  # superseded by the new ~/marketworks-design repo
+
+# Sibling repo this initiative spans (new — its own repo, unlike content_*)
+sibling_repo:
+  path: /Users/navdeep/marketworks-design
+  role: canonical design system (tokens, components, brand contract)
+  package: "@marketworks/design"
+  visibility: private
+
+# Strategic frame
+target_viewer: |
+  Karan (see ~/finance-content-os/brand/personas/karan.md). Visual
+  decisions are judged by whether they land for him scrolling on
+  a phone — not for an analyst at a Bloomberg terminal.
+
+design_references:
+  emulate: [FT, NYT, The New Yorker, The Morning Context, Capitalmind, Zerodha Varsity]
+  avoid: [Linear/SaaS purple-gradient cards, finfluencer thumbnails, Bombay Shaving lifestyle photography]
+
+# Locked Phase 0 decisions
+foundations:
+  type_serif:  Newsreader
+  type_sans:   Outfit
+  brand_palette:
+    cream:        "#FAF7F2"
+    foreground:   "#14715F"
+    signal_green: "#55C374"     # the named brand accent
+    purple:       "#9750F8"     # accent only, not load-bearing
+    purple_soft:  "#D1A8EE"
+    ink:          "#1A1A1A"
+  semantic_palette:
+    positive:    "#0F8A3C"
+    negative:    "#B91C1C"
+    warning:     "#B45309"
+    info:        "#1D4ED8"
+  spacing_scale:  4px-modular
+  motion_default: 200ms-ease-out
+
+tools:
+  in_use:
+    - impeccable             # github.com/pbakaus/impeccable — installed as a Claude Code skill
+    - playwright             # visual regression + token contract tests
+  deferred:
+    - open_design            # github.com/nexu-io/open-design — not adopted; impeccable covers the agentic surface we need
+
+# Surfaces to design for, in priority order
+surfaces:
+  v1:
+    - instagram_assets       # carousel slides, thumbnails, reel overlays
+    - library_reading_page   # /library and /library/[slug]
+    - insights_dashboard     # /insights and its sub-pages
+  v2:
+    - landing_page
+    - signup_page
+  v3:
+    - main_dashboard         # authenticated app
+    - existing_migration     # replace ad-hoc styles in current kite-dashboard
