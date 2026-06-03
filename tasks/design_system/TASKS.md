@@ -56,16 +56,17 @@ Foundational React components every other component is built on.
 
 | # | Item | Status |
 |---|---|---|
-| 2.1 | Styling layer chosen: **vanilla CSS variables + scoped `mw-*` class names**. One stylesheet (`src/styles.css`) ships Google Fonts import + :root variables + class definitions; consumers `import "@marketworks/design/styles.css"` once. No build step. | ☑ |
-| 2.2 | `src/primitives/Text.tsx` — size + color + tabular props; refuses heading sizes (that's Heading's job) | ☑ |
+| 2.1 | Styling layer chosen: **Tailwind utility classes emitted from primitives via `cn()`, role tokens shipped as CSS variables**. Aligns with the existing kite-dashboard stack (Next.js 16 + Tailwind v4 + shadcn/ui). One stylesheet ships :root (light) + .dark blocks; consumers `import "@marketworks/design/styles.css"` once and existing shadcn components inherit brand automatically. | ☑ |
+| 2.2 | `src/primitives/Text.tsx` — size + color + tabular props; emits Tailwind utility classes | ☑ |
 | 2.3 | `src/primitives/Heading.tsx` — serif h1-h6 with semantic level vs visual size independence | ☑ |
-| 2.4 | `src/primitives/Box.tsx` · `src/primitives/Stack.tsx` — token-driven padding, container, gap, alignment | ☑ |
+| 2.4 | `src/primitives/Box.tsx` · `src/primitives/Stack.tsx` — token-driven padding, container, gap, alignment via Tailwind utilities | ☑ |
 | 2.5 | `src/primitives/Eyebrow.tsx` — uppercase label, 12px / 0.14em tracking / Outfit semibold | ☑ |
-| 2.6 | `tokens/css.ts` shipped — `buildRootVariables()` + `buildTypeClasses()` programmatic generators. `src/styles.css` is the rendered output committed to git. | ☑ |
-| 2.7 | Visual reference site scaffold — **needs founder call on tooling**: Ladle (lightweight, designed for this), custom Vite, or minimal Next.js. Recommendation: Ladle. | ☐ |
+| 2.6 | `tokens/css.ts` programmatic generators + `tokens/tailwind.ts` Tailwind v4 `@theme inline` preset | ☑ |
+| 2.7 | Visual reference site scaffold — **Ladle locked in**; install + minimal `*.stories.tsx` files for each primitive | ☐ |
 | 2.8 | First Playwright visual fixture — depends on 2.7 (needs a rendered surface to screenshot) | ☐ |
-| 2.9 | Token contract test suite — `tests/contract/tokens.spec.ts`, 12 tests passing in 476ms. Verifies brand + semantic palette values, type scale has the 11 locked tokens, weight count rule (max 3), spacing scale, styles.css :root block matches token source. **Token drift now fails the build.** | ☑ |
+| 2.9 | Token contract test suite — `tests/contract/tokens.spec.ts`, **18 tests passing in 443ms**. Verifies brand identity (5 tokens), semantic palette, light role tokens, dark role tokens (incl. lichen↔signal-green inversion), typography, spacing, motion, and styles.css↔tokens.ts sync. Token drift fails the build. | ☑ |
 | 2.10 | Impeccable `/audit` — pending 2.7 (nothing to audit without a rendered surface) | ☐ |
+| 2.11 | **Architectural re-alignment after dashboard survey** — color system reframed into three layers (brand identity / role tokens / semantic). Role tokens use shadcn variable names so existing dashboard components inherit brand automatically. Dark mode added for dashboard surfaces only; /library + social + landing + signup are light-locked. Fonts moved off CDN @import (CSP-blocked); next/font is the documented consumer path. Primitives emit Tailwind utility classes via cn() — scoped `mw-*` class system dropped. | ☑ |
 
 **Risk tag:** 🟡 medium. Styling-layer choice is sticky; pick once.
 
@@ -97,13 +98,14 @@ design-system components.
 
 | # | Item | Status |
 |---|---|---|
-| 4.1 | `src/components/Article.tsx` · `PieceHeader.tsx` · `Hook.tsx` · `BodyParagraph.tsx` · `Takeaway.tsx` · `CTA.tsx` — content-pack-shaped reading components | ☐ |
-| 4.2 | Add `@marketworks/design` as a `file:` dep in `kite-dashboard/package.json` | ☐ |
-| 4.3 | Refactor `kite-dashboard/src/app/library/page.tsx` to use design-system components | ☐ |
-| 4.4 | Refactor `kite-dashboard/src/app/library/[slug]/page.tsx` to use design-system components | ☐ |
-| 4.5 | Run Impeccable `/audit` against /library locally | ☐ |
-| 4.6 | Playwright visual regression on /library pages | ☐ |
-| 4.7 | Re-deploy preview branch and visual-check `/library/rupee_weakness_roundup` | 👤 ☐ |
+| 4.1 | Add `@marketworks/design` as a `file:` dep in `kite-dashboard/package.json`; import `styles.css` in `app/layout.tsx`; wire `next/font/google` for Newsreader + Outfit (DESIGN.md §3 snippet) | ☐ |
+| 4.2 | Verify shadcn components (Button, Card, Dialog, Input, etc.) inherit brand automatically — no per-component code change expected because they read `--background`, `--foreground`, `--primary`, etc. which our stylesheet now overrides | ☐ |
+| 4.3 | Lock `/library` and `/library/[slug]` routes to light mode (DESIGN.md §8.5) — either remove ThemeProvider from that subtree's layout or set `forcedTheme="light"` | ☐ |
+| 4.4 | `src/components/Article.tsx` · `PieceHeader.tsx` · `Hook.tsx` · `BodyParagraph.tsx` · `Takeaway.tsx` · `CTA.tsx` — content-pack-shaped reading components (ship from the design package) | ☐ |
+| 4.5 | Refactor `kite-dashboard/src/app/library/page.tsx` + `[slug]/page.tsx` to use design-system components | ☐ |
+| 4.6 | Run Impeccable `/audit` against /library locally | ☐ |
+| 4.7 | Playwright visual regression on /library pages | ☐ |
+| 4.8 | Re-deploy preview branch and visual-check `/library/rupee_weakness_roundup` | 👤 ☐ |
 
 **Risk tag:** 🟢 low. Component swap, dashboard already builds.
 
