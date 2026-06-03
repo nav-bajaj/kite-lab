@@ -56,16 +56,16 @@ Foundational React components every other component is built on.
 
 | # | Item | Status |
 |---|---|---|
-| 2.1 | Choose styling layer — vanilla CSS variables + cx() helper (simple, no build), vanilla-extract (type-safe CSS-in-TS, build needed), or Tailwind preset (familiar to kite-dashboard but couples consumers). Recommendation: vanilla CSS variables for V1 portability. | ☐ |
-| 2.2 | `src/primitives/Text.tsx` — typographic component honouring scale tokens, OpenType features, weights | ☐ |
-| 2.3 | `src/primitives/Heading.tsx` — serif heading 1-3 + display 1-2 | ☐ |
-| 2.4 | `src/primitives/Box.tsx` · `src/primitives/Stack.tsx` — layout primitives using spacing tokens | ☐ |
-| 2.5 | `src/primitives/Eyebrow.tsx` — uppercase label used above headings | ☐ |
-| 2.6 | Generate `tokens/css.ts` — programmatic CSS-variable injection helper | ☐ |
-| 2.7 | Visual reference site scaffold (`reference/`) — minimal Next.js app or Ladle showing each component on a route | ☐ |
-| 2.8 | First Playwright visual fixture — screenshot regression of each primitive | ☐ |
-| 2.9 | First Playwright contract test — every token value matches DESIGN.md | ☐ |
-| 2.10 | Run Impeccable `/audit` on the reference site — fix any violations before advancing | ☐ |
+| 2.1 | Styling layer chosen: **vanilla CSS variables + scoped `mw-*` class names**. One stylesheet (`src/styles.css`) ships Google Fonts import + :root variables + class definitions; consumers `import "@marketworks/design/styles.css"` once. No build step. | ☑ |
+| 2.2 | `src/primitives/Text.tsx` — size + color + tabular props; refuses heading sizes (that's Heading's job) | ☑ |
+| 2.3 | `src/primitives/Heading.tsx` — serif h1-h6 with semantic level vs visual size independence | ☑ |
+| 2.4 | `src/primitives/Box.tsx` · `src/primitives/Stack.tsx` — token-driven padding, container, gap, alignment | ☑ |
+| 2.5 | `src/primitives/Eyebrow.tsx` — uppercase label, 12px / 0.14em tracking / Outfit semibold | ☑ |
+| 2.6 | `tokens/css.ts` shipped — `buildRootVariables()` + `buildTypeClasses()` programmatic generators. `src/styles.css` is the rendered output committed to git. | ☑ |
+| 2.7 | Visual reference site scaffold — **needs founder call on tooling**: Ladle (lightweight, designed for this), custom Vite, or minimal Next.js. Recommendation: Ladle. | ☐ |
+| 2.8 | First Playwright visual fixture — depends on 2.7 (needs a rendered surface to screenshot) | ☐ |
+| 2.9 | Token contract test suite — `tests/contract/tokens.spec.ts`, 12 tests passing in 476ms. Verifies brand + semantic palette values, type scale has the 11 locked tokens, weight count rule (max 3), spacing scale, styles.css :root block matches token source. **Token drift now fails the build.** | ☑ |
+| 2.10 | Impeccable `/audit` — pending 2.7 (nothing to audit without a rendered surface) | ☐ |
 
 **Risk tag:** 🟡 medium. Styling-layer choice is sticky; pick once.
 
