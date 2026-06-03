@@ -94,6 +94,36 @@ finance-content-os to call.
 
 ---
 
+## Phase 3.5 — Rich visual library (🤖)
+
+After the v1 templates (3.1–3.7) shipped, the founder review surfaced
+that text-only carousel slides aren't publication-ready — a finance
+brand's identity is its data visualisation, not just typography. This
+phase brings chart primitives, composite chart-driven slides, and a
+deck-design skill that picks templates per slide instead of mechanically
+mapping body paragraphs.
+
+Decisions locked in conversation:
+- Chart library: **Recharts** (already a kite-dashboard dep; React-first; built on D3 so we can drop down for custom-graph cases without abandoning the stack)
+- Icons: **Lucide** (already in kite-dashboard); defer custom sector icons to a hired designer later
+- AI image gen: **out** for v1 (defer — the editorial references we anchor on are 95% programmatic data viz + typography)
+
+| # | Item | Status |
+|---|---|---|
+| 3.5.1 | Chart primitives — `LineChart`, `BarChart`, `Sparkline` (`src/charts/*.tsx`). Branded Recharts wrappers with Outfit ticks, no vertical grid, brand-primary stroke. `BarChart` `semantic` mode uses semantic.positive/negative for finance up/down (never the brand colors). 7 behavior tests + 4 visual baselines. | ☑ |
+| 3.5.2 | `ChartSlide` composite template — 1080×1080. Chart top, headline + caption bottom. Takes a discriminated `chart: { kind: "line" \| "bar"; … }` prop. 2 behavior tests + 2 visual baselines. End-to-end smoke-tested through the CLI on a synthetic USDINR series with annotation → 1080×1080 PNG. | ☑ |
+| 3.5.3 | `StatCalloutSlide` — giant number (160px serif primary) + label + small sparkline context | ☐ |
+| 3.5.4 | `ComparisonSlide` — two-column "A vs B" (e.g. METAL +19.6% / BANK -4.2%) | ☐ |
+| 3.5.5 | `QuoteSlide` — large pull quote on cream | ☐ |
+| 3.5.6 | `MechanismSlide` — arrow-flow / cause-effect layout with Lucide icons | ☐ |
+| 3.5.7 | `design-social-deck` skill in finance-content-os — picks per-slide template based on script + dossier, maps script body + dossier data into slide props. Replaces the mechanical body→carousel mapping in `render_social_assets.py`. | ☐ |
+| 3.5.8 | Re-render `rupee_weakness_roundup` with the rich library — proof point | ☐ |
+| 3.5.9 | Add a CLI-level smoke test to the regression suite (one that exercises render-asset.ts end-to-end for each template) — surfaced by the URL-decode double-bug that lived for 2 days because tests only ran against Ladle directly, not through the CLI | ☐ |
+
+**Risk tag:** 🟡 medium. The deck-design skill (3.5.7) is the largest piece and the hardest to validate — needs TDD shape similar to the V2 content_redesign work.
+
+---
+
 ## Phase 4 — V1 library reading pages (🤖)
 
 `/library` + `/library/[slug]` in kite-dashboard, rebuilt using
