@@ -62,11 +62,14 @@ Foundational React components every other component is built on.
 | 2.4 | `src/primitives/Box.tsx` · `src/primitives/Stack.tsx` — token-driven padding, container, gap, alignment via Tailwind utilities | ☑ |
 | 2.5 | `src/primitives/Eyebrow.tsx` — uppercase label, 12px / 0.14em tracking / Outfit semibold | ☑ |
 | 2.6 | `tokens/css.ts` programmatic generators + `tokens/tailwind.ts` Tailwind v4 `@theme inline` preset | ☑ |
-| 2.7 | Visual reference site scaffold — **Ladle locked in**; install + minimal `*.stories.tsx` files for each primitive | ☐ |
-| 2.8 | First Playwright visual fixture — depends on 2.7 (needs a rendered surface to screenshot) | ☐ |
-| 2.9 | Token contract test suite — `tests/contract/tokens.spec.ts`, **18 tests passing in 443ms**. Verifies brand identity (5 tokens), semantic palette, light role tokens, dark role tokens (incl. lichen↔signal-green inversion), typography, spacing, motion, and styles.css↔tokens.ts sync. Token drift fails the build. | ☑ |
-| 2.10 | Impeccable `/audit` — pending 2.7 (nothing to audit without a rendered surface) | ☐ |
-| 2.11 | **Architectural re-alignment after dashboard survey** — color system reframed into three layers (brand identity / role tokens / semantic). Role tokens use shadcn variable names so existing dashboard components inherit brand automatically. Dark mode added for dashboard surfaces only; /library + social + landing + signup are light-locked. Fonts moved off CDN @import (CSP-blocked); next/font is the documented consumer path. Primitives emit Tailwind utility classes via cn() — scoped `mw-*` class system dropped. | ☑ |
+| 2.7 | Ladle 5.1.1 reference site at `http://localhost:6006`. `.ladle/config.mjs` + `.ladle/components.tsx` + 30+ `*.stories.tsx` across the five primitives. Tailwind v4 via Play CDN dev-time only (consumers use proper compilation). Playwright `webServer` boots Ladle automatically. | ☑ |
+| 2.8 | Visual regression — `tests/visual/primitives.spec.ts` · **7 screenshot fixtures** across composite stories. Baselines in `tests/visual/primitives.spec.ts-snapshots/`. `maxDiffPixelRatio` 0.02. | ☑ |
+| 2.9 | Token contract suite — **18 tests passing**. Verifies brand identity (5 tokens), semantic palette, light + dark role tokens (incl. lichen↔signal-green inversion), typography, spacing, motion, styles.css↔tokens.ts sync. | ☑ |
+| 2.10 | TDD behavior suite — `tests/behavior/{heading,text,eyebrow,box,stack}.spec.ts` · **30 behavior tests** asserting DOM tags, utility-class application, and computed-style resolution against role tokens. Each test written red-first, then story written to make it green. | ☑ |
+| 2.11 | Impeccable `/audit` against the Ladle reference — 👤 founder runs `/impeccable audit reference` in a Claude session in `~/marketworks-design/` once primitives stabilise | ☐ |
+| 2.12 | **Architectural re-alignment after dashboard survey** — color system reframed into three layers (brand identity / role tokens / semantic). Role tokens use shadcn variable names so existing dashboard components inherit brand automatically. Dark mode added for dashboard surfaces only; /library + social + landing + signup are light-locked. Fonts moved off CDN @import (CSP-blocked); next/font is the documented consumer path. Primitives emit Tailwind utility classes via cn() — scoped `mw-*` class system dropped. | ☑ |
+
+**Phase 2 totals:** 55 tests passing in ~8s (18 contract + 30 behavior + 7 visual).
 
 **Risk tag:** 🟡 medium. Styling-layer choice is sticky; pick once.
 
