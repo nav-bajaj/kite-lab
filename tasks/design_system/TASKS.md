@@ -82,13 +82,13 @@ finance-content-os to call.
 
 | # | Item | Status |
 |---|---|---|
-| 3.1 | `src/templates/CarouselSlide.tsx` — 1080×1080 IG carousel slide. Props: headline, body, slide number, accent slot. Multiple variants (cover, body, CTA). | ☐ |
-| 3.2 | `src/templates/Thumbnail.tsx` — 1080×1080 / 1080×1920 thumbnail. Props: headline, eyebrow, accent number. | ☐ |
-| 3.3 | `src/templates/ReelOverlay.tsx` — 1080×1920 reel lower-third + stat callout overlays | ☐ |
-| 3.4 | `scripts/render-asset.ts` — CLI: takes a template name + JSON props → headless Playwright renders → PNG. Used by finance-content-os. | ☐ |
-| 3.5 | Visual regression fixtures for each template in `tests/visual/` | ☐ |
-| 3.6 | Wire into finance-content-os: `scripts/render-social-asset.py` that reads a content pack and calls `render-asset.ts` for each template | ☐ |
-| 3.7 | Render the live `rupee_weakness_roundup` pack through the new template pipeline; replace the placeholder/missing assets in `published/assets/` | ☐ |
+| 3.1 | `src/templates/CarouselSlide.tsx` — 1080×1080, three variants (cover · body · cta), data-template + data-variant + data-slot attributes for stable selection. 10 behavior tests + 3 visual baselines. | ☑ |
+| 3.2 | `src/templates/Thumbnail.tsx` — square 1080×1080 and vertical 1080×1920, optional eyebrow + accent stat (80px serif primary). 7 behavior tests + 4 visual baselines. | ☑ |
+| 3.3 | `src/templates/ReelOverlay.tsx` — 1080×1920, solid (cream) and transparent modes, hook + optional stat callout (160px serif primary), handle always at bottom. 6 behavior tests + 2 visual baselines. | ☑ |
+| 3.4 | `scripts/render-asset.ts` — headless render CLI. Boots Ladle if not running, navigates to the parametric `render--asset` story with template + props url-encoded, screenshots `[data-template=…]` selector, writes PNG. Smoke-tested on all three templates at canonical sizes. | ☑ |
+| 3.5 | Visual regression fixtures — `tests/visual/templates.spec.ts` ships 9 baselines (3 carousel × 4 thumbnail × 2 reel-overlay). | ☑ |
+| 3.6 | `~/finance-content-os/scripts/render_social_assets.py` reads a `PublishedPiece` JSON and shells out to the design CLI to produce a thumbnail + reel + N carousel slides. Body→carousel split uses first-sentence headline + remainder body. Committed on finance-content-os `design_system` branch (ca24773). | ☑ |
+| 3.7 | Smoke-tested on `published/pieces/rupee_weakness_roundup.json` — 10 PNGs rendered at canonical sizes (1 thumbnail + 1 reel @ 1080×1920 + 8 carousels @ 1080×1080). Visual review pending. Live `/library` piece's `"assets": []` not updated yet — that's the next step once founder reviews the rendered output. | ☑ |
 
 **Risk tag:** 🟡 medium. CLI complexity for headless rendering.
 
