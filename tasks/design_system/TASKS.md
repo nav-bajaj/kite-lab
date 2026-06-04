@@ -124,6 +124,29 @@ Decisions locked in conversation:
 
 ---
 
+## Phase 3.6 — Brand-guide validation + refinements (🤝 2026-06-04)
+
+The founder paused the code build to de-risk the *look* before going
+further: "I want to visually see what we make before committing to
+this process further." We built a Pencil brand guide, critiqued it
+with Impeccable, and shipped three token-level refinements.
+
+| # | Item | Status |
+|---|---|---|
+| 3.6.1 | Built a 9-board Pencil brand guide at `~/marketworks-design/reference/brand-guide.pen` — cover, color, typography, logo/space/motion + applied surfaces (social carousel, library reading page, dark insights dashboard), every value bound to the real tokens. | ☑ |
+| 3.6.2 | Impeccable critique pass. Finding: the system sat in the saturated **"editorial-typographic" lane** (italic serif + mono labels + monochrome restraint + no imagery). The "visually lacking" feeling was composition, not execution — fix = richer composition + real data viz + the refinements below. Also surfaced that Impeccable's `init`/PRODUCT.md is still unrun (Task 1.16). | ☑ |
+| 3.6.3 | **Surface migration** — warm cream `#FAF7F2` → cool **mist** `#ECF3EF` (tinted toward the lichen hue, off the AI warm-cream default). `--brand-cream` → `--brand-mist`. mw `6c6ffec`. | ☑ |
+| 3.6.4 | **Muted semantic palette** — positive/negative/warning/info desaturated to sit with the low-saturation brand (`#3F8059` / `#A64C42` / `#9E6A35` / `#42608E`). mw `c7596ae`. | ☑ |
+| 3.6.5 | **Serif swap** Newsreader → **Fraunces**, chosen from a three-way reading-page comparison mocked in the guide (Newsreader / Fraunces / Spectral). Outfit + IBM Plex Mono unchanged. mw `e245347`. | ☑ |
+| 3.6.6 | All three refinements shipped through the token-contract + behavior + visual-regression suites (re-baselined, full suite green). DESIGN.md changelog `2026.06.04` / `.04b` / `.04c`. `_meta.yml` foundations updated to the revised locked values. | ☑ |
+| 3.6.7 | **Phase 3.5 kickoff** — restructured the React `CarouselSlide` to match the guide (padded body + full-bleed lichen footer band + top row eyebrow/page-indicator + optional serif stat callout), fixing the "empty slide" at the source. +2 behavior tests; carousel baselines re-gen. mw `c2fc044`. | ☑ |
+
+**Outcome:** founder green-lit continuing the build in this direction.
+
+**Risk tag:** 🟢 low. Visual validation + token-level refinement, fully tested.
+
+---
+
 ## Phase 4 — V1 library reading pages (🤖)
 
 `/library` + `/library/[slug]` in kite-dashboard, rebuilt using

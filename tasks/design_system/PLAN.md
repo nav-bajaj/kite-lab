@@ -111,6 +111,13 @@ Confirmed in conversation 2026-06-03. The locked values are in
 `_meta.yml` and have already been encoded into `DESIGN.md` and the
 token files.
 
+**Revised 2026-06-04** after the Pencil brand-guide validation (see
+`TASKS.md` Phase 3.6): base surface warm cream `#FAF7F2` → cool mist
+`#ECF3EF`; semantic palette muted; headline serif Newsreader →
+Fraunces. The strategic-frame table above and other Newsreader/cream
+references in this file predate that revision — `_meta.yml`
+foundations and `DESIGN.md` are the current source of truth.
+
 ## Scope boundary
 
 **In scope (V1 — Phases 1-5):**
