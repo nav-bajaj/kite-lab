@@ -140,8 +140,10 @@ with Impeccable, and shipped three token-level refinements.
 | 3.6.5 | **Serif swap** Newsreader → **Fraunces**, chosen from a three-way reading-page comparison mocked in the guide (Newsreader / Fraunces / Spectral). Outfit + IBM Plex Mono unchanged. mw `e245347`. | ☑ |
 | 3.6.6 | All three refinements shipped through the token-contract + behavior + visual-regression suites (re-baselined, full suite green). DESIGN.md changelog `2026.06.04` / `.04b` / `.04c`. `_meta.yml` foundations updated to the revised locked values. | ☑ |
 | 3.6.7 | **Phase 3.5 kickoff** — restructured the React `CarouselSlide` to match the guide (padded body + full-bleed lichen footer band + top row eyebrow/page-indicator + optional serif stat callout), fixing the "empty slide" at the source. +2 behavior tests; carousel baselines re-gen. mw `c2fc044`. | ☑ |
+| 3.6.8 | **Template fidelity vs the Pencil guide (2026-06-04, founder-flagged after 3.5.8 renders).** Read the guide's Social boards (Cover/Data/Takeaway) node-by-node and reconciled the React templates. (a) **Bug:** on-lichen text (footer wordmarks, cta drench) used `text-[color:var(--color-primary-foreground)]`, but the theme is `@theme inline` so that var has no runtime value — text fell back to dark ink instead of mist; switched to `text-primary-foreground`. Baselines had frozen the bug. (b) Cover headline display-2 (48px) → display-1 (64px). (c) `Eyebrow` gains `size` prop; social slides use `lg` (18px). (d) Pull-quote: swashy Fraunces italic → roman (founder-flagged). (e) cta variant now matches the Takeaway board: signal-green eyebrow + big mist takeaway + mist `pill` button (CTA-inventory-compliant). (f) New `RankedBars` chart + `ChartSlide` `ranked-bars` kind; ChartSlide restructured to the Data board (footer band, headline-above). Full suite re-baselined — 121 green. mw `e4e1cdd`, fco `b70197a`. DESIGN.md `2026.06.04d`. | ☑ |
 
-**Outcome:** founder green-lit continuing the build in this direction.
+**Outcome:** founder green-lit continuing the build in this direction;
+the 3.5.8 renders were then fidelity-checked against the guide (3.6.8).
 
 **Risk tag:** 🟢 low. Visual validation + token-level refinement, fully tested.
 
