@@ -44,7 +44,7 @@ Brand contract, tokens, repo skeleton, hooks, skill install.
 | 1.13 | `README.md`, `.gitignore` | ☑ |
 | 1.14 | Initial commit | ☑ |
 | 1.15 | `npm install` to materialise `node_modules` + `package-lock.json` | 👤 ☐ |
-| 1.16 | Run Impeccable's `init` flow once to align it with our DESIGN.md | 👤 ☐ |
+| 1.16 | Run Impeccable's `init` flow once to align it with our DESIGN.md — **done 2026-06-04**: wrote `PRODUCT.md` (register: brand) from DESIGN.md + the Karan persona; `context.mjs` clean, so `/critique` `/audit` `/polish` work. mw `15b65f9`. | ☑ |
 
 **Risk tag:** 🟢 low. Scaffolding, no runtime impact.
 
@@ -112,9 +112,9 @@ Decisions locked in conversation:
 |---|---|---|
 | 3.5.1 | Chart primitives — `LineChart`, `BarChart`, `Sparkline` (`src/charts/*.tsx`). Branded Recharts wrappers with Outfit ticks, no vertical grid, brand-primary stroke. `BarChart` `semantic` mode uses semantic.positive/negative for finance up/down (never the brand colors). 7 behavior tests + 4 visual baselines. | ☑ |
 | 3.5.2 | `ChartSlide` composite template — 1080×1080. Chart top, headline + caption bottom. Takes a discriminated `chart: { kind: "line" \| "bar"; … }` prop. 2 behavior tests + 2 visual baselines. End-to-end smoke-tested through the CLI on a synthetic USDINR series with annotation → 1080×1080 PNG. | ☑ |
-| 3.5.3 | `StatCalloutSlide` — giant number (160px serif primary) + label + small sparkline context | ☐ |
+| 3.5.3 | `StatCalloutSlide` — giant figure (180px Fraunces, lichen) + label + context, on mist with the lichen footer band. Sparkline deferred. 3 behavior + 1 visual. mw `15b65f9`. | ☑ |
 | 3.5.4 | `ComparisonSlide` — two-column "A vs B" (e.g. METAL +19.6% / BANK -4.2%) | ☐ |
-| 3.5.5 | `QuoteSlide` — large pull quote on cream | ☐ |
+| 3.5.5 | `QuoteSlide` — large Fraunces italic pull quote on mist + signal-green rule + lichen footer band. 3 behavior + 1 visual. mw `15b65f9`. | ☑ |
 | 3.5.6 | `MechanismSlide` — arrow-flow / cause-effect layout with Lucide icons | ☐ |
 | 3.5.7 | `design-social-deck` skill in finance-content-os — picks per-slide template based on script + dossier, maps script body + dossier data into slide props. Replaces the mechanical body→carousel mapping in `render_social_assets.py`. | ☐ |
 | 3.5.8 | Re-render `rupee_weakness_roundup` with the rich library — proof point | ☐ |
