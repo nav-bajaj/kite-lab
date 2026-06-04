@@ -113,12 +113,12 @@ Decisions locked in conversation:
 | 3.5.1 | Chart primitives — `LineChart`, `BarChart`, `Sparkline` (`src/charts/*.tsx`). Branded Recharts wrappers with Outfit ticks, no vertical grid, brand-primary stroke. `BarChart` `semantic` mode uses semantic.positive/negative for finance up/down (never the brand colors). 7 behavior tests + 4 visual baselines. | ☑ |
 | 3.5.2 | `ChartSlide` composite template — 1080×1080. Chart top, headline + caption bottom. Takes a discriminated `chart: { kind: "line" \| "bar"; … }` prop. 2 behavior tests + 2 visual baselines. End-to-end smoke-tested through the CLI on a synthetic USDINR series with annotation → 1080×1080 PNG. | ☑ |
 | 3.5.3 | `StatCalloutSlide` — giant figure (180px Fraunces, lichen) + label + context, on mist with the lichen footer band. Sparkline deferred. 3 behavior + 1 visual. mw `15b65f9`. | ☑ |
-| 3.5.4 | `ComparisonSlide` — two-column "A vs B" (e.g. METAL +19.6% / BANK -4.2%) | ☐ |
+| 3.5.4 | `ComparisonSlide` — two-column "A vs B" (e.g. METAL +19.6% / BANK -4.2%); direction via muted semantic palette + `tone` prop, lichen footer band. 3 behavior + 1 visual. mw `11ae587`. | ☑ |
 | 3.5.5 | `QuoteSlide` — large Fraunces italic pull quote on mist + signal-green rule + lichen footer band. 3 behavior + 1 visual. mw `15b65f9`. | ☑ |
-| 3.5.6 | `MechanismSlide` — arrow-flow / cause-effect layout with Lucide icons | ☐ |
+| 3.5.6 | `MechanismSlide` — vertical cause→effect chain of step cards connected by lichen Lucide down-arrows (custom sector icons still deferred to a designer). 3 behavior + 1 visual. mw `11ae587`. | ☑ |
 | 3.5.7 | `design-social-deck` skill in finance-content-os — picks per-slide template based on script + dossier, maps script body + dossier data into slide props. Replaces the mechanical body→carousel mapping in `render_social_assets.py`. | ☐ |
 | 3.5.8 | Re-render `rupee_weakness_roundup` with the rich library — proof point | ☐ |
-| 3.5.9 | Add a CLI-level smoke test to the regression suite (one that exercises render-asset.ts end-to-end for each template) — surfaced by the URL-decode double-bug that lived for 2 days because tests only ran against Ladle directly, not through the CLI | ☐ |
+| 3.5.9 | CLI-level smoke test (`tests/smoke/render-cli.spec.ts`, tag `@smoke`, `npm run test:smoke`) — shells out to `render-asset.ts` for carousel-slide + comparison-slide, asserting non-trivial PNG output. Closes the URL-decode double-bug gap. mw `c94bb80`. | ☑ |
 
 **Risk tag:** 🟡 medium. The deck-design skill (3.5.7) is the largest piece and the hardest to validate — needs TDD shape similar to the V2 content_redesign work.
 
