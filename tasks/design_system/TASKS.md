@@ -225,13 +225,22 @@ screenshotted headlessly — verified via build + a mock-data component preview
 
 The authenticated app — portfolios, rebalances, account.
 
+**Approach (2026-06-05):** the existing `(dashboard)` shell + pages were
+already built on shadcn **role tokens** (`bg-card`, `text-foreground`,
+`bg-sidebar-primary`, …), so the role-token architecture (DESIGN.md §2.12)
+did the heavy lifting — no component rewrites needed. Wrapping the group in
+the themed `.mw-app` scope (extended with brand `--sidebar-*` + `--chart-*`
+values, light + dark) re-skins the entire authed app to the brand in one
+move. Only 6 hand-coded gain/loss colours across 3 files needed fixing.
+
 | # | Item | Status |
 |---|---|---|
-| 7.1 | `src/components/dashboard/` — TopNav, SidebarNav, PortfolioRow, RebalanceTable, AccountPanel | ☐ |
-| 7.2 | Refactor `/account`, `/positions`, `/rebalance`, `/trades`, `/performance` | ☐ |
-| 7.3 | Visual regression on each route | ☐ |
+| 7.1 | **Done (via tokens, not new components).** Extended `.mw-app` with brand `--sidebar-*` (white/lichen light · neutral-900/signal-green dark) + `--chart-*` (lichen·signal·info·purple·ochre, not the default rainbow), light+dark. The existing `Sidebar`/`Navbar`/`MobileSidebar`/portfolio components inherit the brand automatically. Verified the shell tokens in both themes via a throwaway mock preview. | ☑ |
+| 7.2 | **Done.** `(dashboard)/layout.tsx` wrapped in `.mw-app` → account/positions/rebalance/trades/performance/dashboard all brand (light+dark) with no per-page edits. 6 hard-coded `text-green-/red-` gain/loss colours → semantic `--positive`/`--negative` (value-cards, holdings-table, positions). Navbar page-title map `/`→`/dashboard`. `next build` green (32 routes). | ☑ |
+| 7.3 | Visual regression on each route — deferred (dashboard has no Playwright harness; auth+backend gated, verified via build + mock preview + founder review). | 👤 ☐ |
 
-**Risk tag:** 🟡 medium. Largest surface; do last.
+**Risk tag:** 🟡 medium. Auth+backend gated → verified via build + a shell-token
+mock preview (light+dark); founder to confirm the live signed-in app.
 
 ---
 

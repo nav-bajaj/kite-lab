@@ -221,6 +221,22 @@
   --negative: #A64C42;
   --warning: #9E6A35;
 
+  /* App shell (sidebar) + data-viz palette — brand-mapped so the authed
+   * dashboard chrome + allocation charts inherit the brand. */
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #1A1A1A;
+  --sidebar-primary: #14715F;
+  --sidebar-primary-foreground: #ECF3EF;
+  --sidebar-accent: #F5F5F5;
+  --sidebar-accent-foreground: #1A1A1A;
+  --sidebar-border: #D4D4D4;
+  --sidebar-ring: #14715F;
+  --chart-1: #14715F;
+  --chart-2: #55C374;
+  --chart-3: #42608E;
+  --chart-4: #9750F8;
+  --chart-5: #9E6A35;
+
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
@@ -247,4 +263,18 @@
   --positive: #4CA56C;           /* slightly lifted for dark legibility */
   --negative: #C2685C;
   --warning: #BC8A52;
+
+  --sidebar: #171717;
+  --sidebar-foreground: #ECF3EF;
+  --sidebar-primary: #55C374;
+  --sidebar-primary-foreground: #0A0A0A;
+  --sidebar-accent: #262626;
+  --sidebar-accent-foreground: #ECF3EF;
+  --sidebar-border: #404040;
+  --sidebar-ring: #55C374;
+  --chart-1: #55C374;
+  --chart-2: #14715F;
+  --chart-3: #6E8BC0;
+  --chart-4: #B07FF5;
+  --chart-5: #BC8A52;
 }

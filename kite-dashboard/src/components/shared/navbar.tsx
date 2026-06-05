@@ -10,7 +10,7 @@ import { MobileSidebar } from "./mobile-sidebar";
 import { UniverseSelector } from "./universe-selector";
 
 const pathNames: Record<string, string> = {
-  "/": "Dashboard",
+  "/dashboard": "Dashboard",
   "/performance": "Performance",
   "/rebalance": "Rebalance",
   "/trades": "Trades",

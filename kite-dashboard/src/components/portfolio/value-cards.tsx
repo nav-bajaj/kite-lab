@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePortfolio } from "@/lib/hooks";
 import { formatCurrency, formatPercentValue } from "@/lib/utils";
-import { TrendingUp, TrendingDown, Wallet, BarChart3, PieChart } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, BarChart3 } from "lucide-react";
 
 export function ValueCards() {
   const { data, isLoading, error } = usePortfolio();
@@ -69,9 +69,9 @@ export function ValueCards() {
             <p
               className={`text-xs ${
                 stat.trend === "up"
-                  ? "text-green-600 dark:text-green-400"
+                  ? "text-[color:var(--positive)]"
                   : stat.trend === "down"
-                  ? "text-red-600 dark:text-red-400"
+                  ? "text-[color:var(--negative)]"
                   : "text-muted-foreground"
               }`}
             >
