@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getWatchlists, fmtPct, WatchlistEntry } from "@/lib/insights-api";
+import { getWatchlists, WatchlistEntry } from "@/lib/insights-api";
+import { Pct } from "@/components/insights/ui";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 900;
@@ -14,8 +15,6 @@ const LIST_LABELS: Record<
     title: string;
     blurb: string;
     learn?: string;
-    /** Set when the pattern passed its validity study and we publish
-     * forward-return narrative confidently. */
     validityBadge?: "validated" | "names-only";
     validityNote?: string;
   }
@@ -61,7 +60,7 @@ const LIST_LABELS: Record<
 
 const LIST_ORDER = [
   "breakouts",
-  "multi_year_breakouts",  // validated — sits next to its sibling
+  "multi_year_breakouts",
   "rs_leaders",
   "coiled_springs",
   "sustained_uptrend",
@@ -74,13 +73,15 @@ export default async function WatchlistsPage({ searchParams }: PageProps) {
   const { date, lists } = await getWatchlists({ date: dateParam, limit: 25 });
 
   return (
-    <main className="space-y-8">
-      <section>
-        <h2 className="text-lg font-semibold">Watchlists</h2>
-        <p className="text-sm text-neutral-500">
-          {date && `As of ${new Date(date).toLocaleDateString("en-IN")}.`}{" "}
-          Quant-driven daily lists from the NSE 500 panel. Educational
-          context only — these are not buy or sell recommendations.
+    <main className="flex flex-col gap-12">
+      <section className="flex flex-col gap-1">
+        <h2 className="font-serif text-2xl font-medium tracking-[-0.01em] text-foreground">
+          Watchlists
+        </h2>
+        <p className="max-w-2xl text-[13px] leading-[1.55] text-muted-foreground">
+          {date && `As of ${new Date(date).toLocaleDateString("en-IN")}. `}
+          Quant-driven daily lists from the NSE 500 panel. Educational context
+          only — these are not buy or sell recommendations.
         </p>
       </section>
 
@@ -92,13 +93,15 @@ export default async function WatchlistsPage({ searchParams }: PageProps) {
         if (!meta) return null;
 
         return (
-          <section key={listName}>
+          <section key={listName} className="flex flex-col gap-3">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <div className="flex flex-wrap items-baseline gap-2">
-                <h3 className="text-base font-semibold">{meta.title}</h3>
+              <div className="flex flex-wrap items-baseline gap-3">
+                <h3 className="font-serif text-lg font-medium tracking-[-0.01em] text-foreground">
+                  {meta.title}
+                </h3>
                 {meta.validityBadge === "validated" && (
                   <span
-                    className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-medium text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200"
+                    className="rounded-full border border-[color:var(--positive)] px-2 py-0.5 text-[10px] font-medium text-[color:var(--positive)]"
                     title={meta.validityNote}
                   >
                     validity-tested ✓
@@ -106,7 +109,7 @@ export default async function WatchlistsPage({ searchParams }: PageProps) {
                 )}
                 {meta.validityBadge === "names-only" && (
                   <span
-                    className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-200"
+                    className="rounded-full border border-[color:var(--warning)] px-2 py-0.5 text-[10px] font-medium text-[color:var(--warning)]"
                     title={meta.validityNote}
                   >
                     names-only · no fwd-return claims
@@ -116,15 +119,15 @@ export default async function WatchlistsPage({ searchParams }: PageProps) {
               {meta.learn && (
                 <Link
                   href={`/insights/learn/${meta.learn}`}
-                  className="text-xs text-neutral-500 underline-offset-2 hover:underline"
+                  className="text-[13px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
                 >
                   What is this?
                 </Link>
               )}
             </div>
-            <p className="mt-1 text-xs text-neutral-500">{meta.blurb}</p>
+            <p className="text-[13px] leading-[1.5] text-muted-foreground">{meta.blurb}</p>
             {meta.validityNote && (
-              <p className="mt-1 text-xs italic text-neutral-500">
+              <p className="text-[13px] italic leading-[1.5] text-muted-foreground">
                 {meta.validityNote}
               </p>
             )}
@@ -139,38 +142,38 @@ export default async function WatchlistsPage({ searchParams }: PageProps) {
 function WatchlistTable({ entries }: { entries: WatchlistEntry[] }) {
   if (entries.length === 0) {
     return (
-      <p className="mt-3 text-sm text-neutral-500">
-        No names fit this setup today.
-      </p>
+      <p className="text-sm text-muted-foreground">No names fit this setup today.</p>
     );
   }
 
   return (
-    <table className="mt-3 w-full text-sm">
-      <thead className="border-b text-left text-neutral-500">
-        <tr>
-          <th className="py-2">Symbol</th>
-          <th className="py-2 text-right">Close</th>
-          <th className="py-2 text-right">Day %</th>
-          <th className="py-2">Note</th>
-          <th className="py-2">Sectors</th>
-        </tr>
-      </thead>
-      <tbody>
-        {entries.map((e) => (
-          <tr key={e.symbol} className="border-b last:border-0">
-            <td className="py-2 font-medium">{e.symbol}</td>
-            <td className="py-2 text-right">{e.close.toFixed(2)}</td>
-            <td className="py-2 text-right">{fmtPct(e.chg_today_pct, 2, true)}</td>
-            <td className="py-2 text-neutral-600">{e.note}</td>
-            <td className="py-2 text-xs text-neutral-500">
-              {e.sectors.length === 0
-                ? "—"
-                : e.sectors.map((s) => s.replace("NIFTY_", "")).join(", ")}
-            </td>
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm">
+        <thead className="border-b border-border text-left text-muted-foreground">
+          <tr>
+            <th className="py-2 font-medium">Symbol</th>
+            <th className="py-2 text-right font-medium">Close</th>
+            <th className="py-2 text-right font-medium">Day %</th>
+            <th className="py-2 font-medium">Note</th>
+            <th className="py-2 font-medium">Sectors</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {entries.map((e) => (
+            <tr key={e.symbol} className="border-b border-border last:border-0">
+              <td className="py-2 font-medium text-foreground">{e.symbol}</td>
+              <td className="py-2 text-right tabular-nums text-muted-foreground">{e.close.toFixed(2)}</td>
+              <td className="py-2 text-right tabular-nums"><Pct v={e.chg_today_pct} decimals={2} /></td>
+              <td className="py-2 text-foreground">{e.note}</td>
+              <td className="py-2 text-xs text-muted-foreground">
+                {e.sectors.length === 0
+                  ? "—"
+                  : e.sectors.map((s) => s.replace("NIFTY_", "")).join(", ")}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
