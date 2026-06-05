@@ -15,7 +15,7 @@ import {
 import { SheetClose } from "@/components/ui/sheet";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard, adminOnly: false },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, adminOnly: false },
   { name: "Open Positions", href: "/positions", icon: Wallet, adminOnly: false },
   { name: "Performance", href: "/performance", icon: TrendingUp, adminOnly: false },
   { name: "Rebalance", href: "/rebalance", icon: RefreshCw, adminOnly: false },
@@ -34,7 +34,7 @@ export function MobileSidebar() {
     <div className="flex flex-col h-full bg-sidebar">
       {/* Logo */}
       <div className="flex h-16 items-center px-4 border-b border-sidebar-border">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/dashboard" className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
             <span className="text-primary-foreground font-bold">M</span>
           </div>

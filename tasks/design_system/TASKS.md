@@ -200,14 +200,14 @@ with insight-engine response shapes.
 
 | # | Item | Status |
 |---|---|---|
-| 6.1 | `src/components/Hero.tsx` · `FeatureRow.tsx` · `PortfolioCard.tsx` · `TestimonialBlock.tsx` · `Footer.tsx` | ☐ |
-| 6.2 | New `kite-dashboard/src/app/(landing)/page.tsx` — public landing page replacing the current Clerk-redirect behaviour | ☐ |
-| 6.3 | `kite-dashboard/src/app/sign-up/page.tsx` refactor to design-system look | ☐ |
-| 6.4 | Update `middleware.ts` to make `/` public (replacing the current "/" → /sign-in redirect) | ☐ |
-| 6.5 | Impeccable `/polish landing` | ☐ |
-| 6.6 | Visual regression + Lighthouse score check | ☐ |
+| 6.1 | **Done 2026-06-05.** `src/components/marketing/`: `marketing-nav.tsx` (auth-aware — `useAuth()` swaps Sign in/Get-beta CTAs for Dashboard+`UserButton`; client comp since this Clerk build doesn't export `SignedIn`/`SignedOut`), `marketing-footer.tsx` (shared with /library), `portfolio-card.tsx` (fed by `lib/universes.ts` — never hand-typed). Hero + feature/portfolio/CTA sections inline in the landing page. **`TestimonialBlock` deliberately skipped** — no real testimonials, and fabricating social proof violates the no-made-up-data rule. | ☑ |
+| 6.2 | **Done.** Public landing at `src/app/page.tsx` (mw-brand scope): hero ("Indian markets, the calm way."), three value features, the 4 client portfolios from `UNIVERSES`, lichen CTA band. Compliance-safe copy — "model portfolios", "private beta", "not personalised advice", no performance claims, disclaimer in footer. Static-prerendered (`○ /`). | ☑ |
+| 6.3 | **Done.** `sign-up` + `sign-in` wrapped in the brand shell (wordmark + Fraunces heading + mist surface) with `lib/clerk-appearance.ts` theming the Clerk widget (lichen primary, Outfit, 8px radius). The widget correctly shows the real beta **allowlist gate** ("Access restricted"). | ☑ |
+| 6.4 | **Done.** `/` added to `isPublicRoute`; the authenticated dashboard home moved `/` → `/dashboard` (`(dashboard)/dashboard/page.tsx`); sidebar + mobile-sidebar + error "home" links repointed to `/dashboard`; `ClerkProvider` `signIn/signUpFallbackRedirectUrl="/dashboard"` so post-auth lands on the dashboard, not the marketing page. Full `next build` green (32 routes). | ☑ |
+| 6.5 | Impeccable `/polish landing` | 👤 ☐ |
+| 6.6 | Visual regression + Lighthouse score check | 👤 ☐ |
 
-**Risk tag:** 🟡 medium. Changes the auth-redirect behaviour for unauthenticated visitors.
+**Risk tag:** 🟡 medium. Changed the auth-redirect behaviour: `/` is now the public landing; the dashboard home is `/dashboard`; post-auth redirect points there. Build green; founder to smoke-test the signed-in flow.
 
 ---
 

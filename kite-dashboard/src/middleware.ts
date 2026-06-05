@@ -3,10 +3,11 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 // Public routes — no auth required. Anything not in this list (and not in
 // `config.matcher` exclusions below) requires a signed-in Clerk session.
 //
-// `/` is the authenticated dashboard for now; unauthenticated visitors
-// get bounced to /sign-in. A marketing landing page replacing `/` is a
-// future task — when it lands, add `/` back here.
+// `/` is the public marketing landing page (the authenticated dashboard
+// moved to `/dashboard`). Unauthenticated visitors see the landing; signed-in
+// users are sent to `/dashboard` post-auth (ClerkProvider fallback redirects).
 const isPublicRoute = createRouteMatcher([
+  "/",
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/terms",
