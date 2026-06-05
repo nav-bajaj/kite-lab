@@ -1,6 +1,5 @@
-import Link from "next/link";
-
 import { getManifest, groupByPillar } from "@/lib/library";
+import { PieceCard } from "@/components/library/PieceCard";
 
 export const metadata = {
   title: "Library — Marketworks",
@@ -19,18 +18,6 @@ const PILLAR_ORDER = [
   "practical education",
 ];
 
-function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  } catch {
-    return iso;
-  }
-}
-
 export default function LibraryIndex() {
   const manifest = getManifest();
   const groups = groupByPillar(manifest.pieces);
@@ -41,54 +28,37 @@ export default function LibraryIndex() {
   ];
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-12">
-      <header className="mb-12">
-        <h1 className="text-4xl font-semibold tracking-tight">Library</h1>
-        <p className="mt-3 max-w-2xl text-base text-neutral-600 dark:text-neutral-400">
-          Marketworks writing on momentum, portfolio construction, and Indian
-          equity markets. Each piece is grounded in our own portfolios and
-          insight engine.
+    <div className="mx-auto w-full max-w-[760px] px-6 py-16 sm:py-20">
+      <header className="mb-14 flex flex-col gap-4">
+        <span className="text-[13px] font-semibold uppercase tracking-[0.15em] text-primary">
+          Marketworks
+        </span>
+        <h1 className="font-serif text-[2.5rem] font-medium leading-[1.08] tracking-[-0.02em] text-foreground sm:text-5xl">
+          Library
+        </h1>
+        <p className="max-w-[560px] text-lg leading-[1.6] text-muted-foreground">
+          Writing on momentum, portfolio construction, and Indian equity
+          markets — each piece grounded in our own portfolios and live insight
+          engine, not opinions about other people&apos;s books.
         </p>
       </header>
 
       {manifest.pieces.length === 0 ? (
-        <div className="rounded-md border border-neutral-200 bg-neutral-50 p-8 text-center text-sm text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400">
+        <div className="rounded-xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
           <p>No pieces published yet. Check back soon.</p>
         </div>
       ) : (
-        <div className="space-y-12">
+        <div className="flex flex-col gap-14">
           {orderedPillars.map((pillar) => (
             <section key={pillar}>
-              <h2 className="mb-4 text-sm font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+              <h2 className="mb-5 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
                 {pillar}
               </h2>
-              <ul className="space-y-6">
+              <div className="flex flex-col gap-5">
                 {(groups.get(pillar) ?? []).map((piece) => (
-                  <li key={piece.slug}>
-                    <Link
-                      href={`/library/${piece.slug}`}
-                      className="group block rounded-lg border border-neutral-200 p-6 transition hover:border-neutral-400 dark:border-neutral-800 dark:hover:border-neutral-600"
-                    >
-                      <div className="flex items-baseline justify-between gap-4">
-                        <h3 className="text-xl font-medium tracking-tight group-hover:underline">
-                          {piece.title}
-                        </h3>
-                        <time className="shrink-0 text-xs text-neutral-500 dark:text-neutral-500">
-                          {formatDate(piece.published_at)}
-                        </time>
-                      </div>
-                      {piece.hook && (
-                        <p className="mt-3 text-sm text-neutral-700 dark:text-neutral-300">
-                          {piece.hook}
-                        </p>
-                      )}
-                      <p className="mt-3 text-xs uppercase tracking-wider text-neutral-500 dark:text-neutral-500">
-                        {piece.format}
-                      </p>
-                    </Link>
-                  </li>
+                  <PieceCard key={piece.slug} piece={piece} />
                 ))}
-              </ul>
+              </div>
             </section>
           ))}
         </div>

@@ -52,6 +52,9 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  /* Brand display serif — `font-serif` resolves to Fraunces (loaded in
+   * layout.tsx). Only the `.mw-brand` marketing surfaces use it. */
+  --font-serif: var(--font-fraunces);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -131,4 +134,52 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* ---------------------------------------------------------------------------
+ * Marketworks brand surface (.mw-brand)
+ *
+ * Light-locked editorial scope for the public marketing/content surfaces
+ * (/library now; landing + sign-up later). It REDEFINES the shadcn role
+ * tokens to the brand palette, so every Tailwind color utility and shadcn
+ * component nested inside inherits the brand automatically — without
+ * touching the authenticated dashboard (which keeps the greyscale :root
+ * theme until Phases 5-7). Values mirror @marketworks/design src/styles.css
+ * (DESIGN.md §2.2); the design package stays the source of truth.
+ *
+ * Because CSS custom properties resolve to the nearest ancestor, these
+ * light values also override any `.dark` on <html> for descendants — so the
+ * surface is light-locked without a forcedTheme.
+ * ------------------------------------------------------------------------ */
+.mw-brand {
+  --background: #ECF3EF;          /* mist */
+  --foreground: #1A1A1A;          /* ink */
+  --card: #FFFFFF;
+  --card-foreground: #1A1A1A;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1A1A;
+  --primary: #14715F;             /* lichen */
+  --primary-foreground: #ECF3EF;  /* mist */
+  --secondary: #55C374;           /* signal-green */
+  --secondary-foreground: #1A1A1A;
+  --accent: #9750F8;              /* purple — editorial accent only */
+  --accent-foreground: #FFFFFF;
+  --muted: #F5F5F5;               /* neutral-100 */
+  --muted-foreground: #737373;    /* neutral-500 */
+  --destructive: #A64C42;         /* semantic negative */
+  --destructive-foreground: #FFFFFF;
+  --border: #D4D4D4;              /* neutral-300 */
+  --input: #D4D4D4;
+  --ring: #14715F;
+  --radius: 0.5rem;
+
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Strong body ink (neutral-900) for long-form prose, per the guide's
+ * reading-page board. */
+.mw-brand {
+  --brand-prose: #171717;
 }

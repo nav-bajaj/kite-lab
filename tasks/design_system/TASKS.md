@@ -154,16 +154,25 @@ the 3.5.8 renders were then fidelity-checked against the guide (3.6.8).
 `/library` + `/library/[slug]` in kite-dashboard, rebuilt using
 design-system components.
 
+**Consumption decision (2026-06-05):** a cross-repo `file:` dep on
+`~/marketworks-design` can't resolve on Vercel (it builds kite-dashboard
+from the *kite-lab* repo only). So Phase 4 is **self-contained in the
+dashboard** — brand token *values* mirrored into `globals.css` under a
+`.mw-brand` scope, reading components built in `kite-dashboard/src/components/library/`,
+fonts via `next/font`. The design package stays the source of truth; the
+formal package dependency (registry vs vendor) is deferred to Phase 8.6/8.7.
+Net effect: `/library` **deploys to Vercel today** with no registry blocker.
+
 | # | Item | Status |
 |---|---|---|
-| 4.1 | Add `@marketworks/design` as a `file:` dep in `kite-dashboard/package.json`; import `styles.css` in `app/layout.tsx`; wire `next/font/google` for Newsreader + Outfit (DESIGN.md §3 snippet) | ☐ |
-| 4.2 | Verify shadcn components (Button, Card, Dialog, Input, etc.) inherit brand automatically — no per-component code change expected because they read `--background`, `--foreground`, `--primary`, etc. which our stylesheet now overrides | ☐ |
-| 4.3 | Lock `/library` and `/library/[slug]` routes to light mode (DESIGN.md §8.5) — either remove ThemeProvider from that subtree's layout or set `forcedTheme="light"` | ☐ |
-| 4.4 | `src/components/Article.tsx` · `PieceHeader.tsx` · `Hook.tsx` · `BodyParagraph.tsx` · `Takeaway.tsx` · `CTA.tsx` — content-pack-shaped reading components (ship from the design package) | ☐ |
-| 4.5 | Refactor `kite-dashboard/src/app/library/page.tsx` + `[slug]/page.tsx` to use design-system components | ☐ |
-| 4.6 | Run Impeccable `/audit` against /library locally | ☐ |
-| 4.7 | Playwright visual regression on /library pages | ☐ |
-| 4.8 | Re-deploy preview branch and visual-check `/library/rupee_weakness_roundup` | 👤 ☐ |
+| 4.1 | **Done 2026-06-05** (revised — see decision above). `next/font/google` wires **Fraunces** (display serif; not Newsreader — superseded by 3.6.5) + **Outfit** in `layout.tsx`. Brand role tokens mirrored into `globals.css` under `.mw-brand` (not a package import); `--font-serif`=Fraunces added to `@theme inline`. | ☑ |
+| 4.2 | Verified shadcn/Tailwind utilities inherit the brand — `.mw-brand` overrides the runtime role vars (`--primary`, `--background`, …) that `@theme inline` resolves to, so cards/buttons/text re-skin automatically inside the scope. Confirmed on the rendered index + reading pages. | ☑ |
+| 4.3 | Light-locked via the `.mw-brand` wrapper in `app/library/layout.tsx`: the brand's light token values resolve to the nearest ancestor, overriding any `.dark` on `<html>` for the subtree — no `forcedTheme` needed. | ☑ |
+| 4.4 | Reading components at `src/components/library/article.tsx` (Article, PieceHeader, Eyebrow, Lead, BodyParagraph, PullQuote, Figure, TakeawayCard, CtaCard, SourceData) + `PieceCard.tsx` + `MarketingNav.tsx` + `lib/library-format.ts`. Matched to the guide's "Library / Reading Page" board (680px column, eyebrow→Fraunces 54px→byline, Outfit lead/body, signal-green pull-quote, white figure card, lichen-tint takeaway). | ☑ |
+| 4.5 | `library/page.tsx` (index, grouped PieceCards) + `[slug]/page.tsx` (Article) refactored to the brand components. Full `next build` green — `/library` static, `/library/[slug]` SSG. | ☑ |
+| 4.6 | Run Impeccable `/audit` against /library locally | 👤 ☐ |
+| 4.7 | Playwright visual regression on /library pages (dashboard has no Playwright harness yet — optional) | ☐ |
+| 4.8 | Re-deploy preview branch and visual-check `/library/rupee_weakness_roundup` — **unblocked** (self-contained, build green) | 👤 ☐ |
 
 **Risk tag:** 🟢 low. Component swap, dashboard already builds.
 
