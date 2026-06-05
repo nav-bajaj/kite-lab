@@ -182,17 +182,27 @@ Net effect: `/library` **deploys to Vercel today** with no registry blocker.
 
 `/insights` and its sub-pages, redrawn against design-system primitives.
 
+**Theming (2026-06-05):** `/insights` is light **and** dark (DESIGN.md §8.5),
+so unlike the light-locked `.mw-brand` marketing scope it uses a new themed
+**`.mw-app`** scope in `globals.css` — brand role tokens for light + a
+`.dark .mw-app` block that inverts to the dark brand (signal-green primary,
+near-black surface, dark cards) per §2.2. Scoped to the insights subtree so
+the Phase-7 surfaces stay on the current theme until their turn. `--positive`/
+`--negative` are the semantic finance-direction colours (never the brand
+greens, §2.3). Verified light+dark via a throwaway mock-data preview.
+
 | # | Item | Status |
 |---|---|---|
-| 5.1 | `src/components/charts/Line.tsx` · `Bar.tsx` · `Sparkline.tsx` — chart primitives using semantic positive/negative for direction | ☐ |
-| 5.2 | `src/components/cards/RegimeCard.tsx` · `SectorCard.tsx` · `StressGauge.tsx` — dashboard cards consuming insight-engine data shapes | ☐ |
-| 5.3 | Refactor `kite-dashboard/src/app/insights/page.tsx` to use design-system components | ☐ |
-| 5.4 | Refactor `/insights/sectors`, `/insights/watchlists` to match | ☐ |
+| 5.1 | **Partial (2026-06-05).** Data viz delivered as `SectorBars` (ranked semantic horizontal bars, the guide's Insights/Data look) + the `StressGauge` bar in `src/components/insights/ui.tsx`. Recharts Line/Sparkline deferred — the `/reading` payload is a snapshot, not a series; they land when a history endpoint exists. | ◐ |
+| 5.2 | **Done.** `src/components/insights/ui.tsx`: `RegimeCard` (tone by regime), `StressGauge` (0–100 gauge), `MetricCard`, `SectorBars`, `Pct` (semantic-coloured %), `Section`, `Eyebrow` — all consuming the real `insights-api.ts` shapes. `SectorCard` folded into `SectorBars`. | ☑ |
+| 5.3 | **Done.** `insights/layout.tsx` (mw-app frame, Fraunces header, branded `InsightsTabs` client nav with active state) + `insights/page.tsx` (Pulse) rebuilt — every hard-coded `text-neutral-*`/`bg-amber-*` swapped for brand tokens; headline cards → RegimeCard/StressGauge/MetricCard; sector leaderboard → SectorBars + branded detail table. `next build` green (`/insights` dynamic). | ☑ |
+| 5.4 | Refactor `/insights/sectors`, `/insights/watchlists` (+ `RegimeLegend`, `SnapshotPicker`) — they inherit the brand frame + colors via `.mw-app`, but their internal tables still use hard-coded neutrals; same neutral→token pass as 5.3. | ◐ |
 | 5.5 | Visual regression fixtures for each card + chart variant | ☐ |
-| 5.6 | Impeccable `/audit` against /insights | ☐ |
+| 5.6 | Impeccable `/audit` against /insights | 👤 ☐ |
 
-**Risk tag:** 🟡 medium. Charts have real data dependencies; coordinate
-with insight-engine response shapes.
+**Risk tag:** 🟡 medium. `/insights` is auth + backend gated, so it can't be
+screenshotted headlessly — verified via build + a mock-data component preview
+(light+dark). Founder to visually confirm the live page (signed in, backend up).
 
 ---
 
