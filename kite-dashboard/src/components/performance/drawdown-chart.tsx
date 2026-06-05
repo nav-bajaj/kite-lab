@@ -82,8 +82,9 @@ export function DrawdownChart() {
               }
               formatter={(value) => [`${Number(value).toFixed(2)}%`, "Drawdown"]}
               contentStyle={{
-                backgroundColor: "hsl(var(--background))",
-                border: "1px solid hsl(var(--border))",
+                backgroundColor: "var(--popover)",
+                color: "var(--popover-foreground)",
+                border: "1px solid var(--border)",
                 borderRadius: "8px",
               }}
             />
@@ -91,26 +92,26 @@ export function DrawdownChart() {
             {/* Max drawdown reference line */}
             <ReferenceLine
               y={maxDrawdown}
-              stroke="#dc2626"
+              stroke="var(--negative)"
               strokeDasharray="4 4"
               label={{
                 value: `Max: ${maxDrawdown.toFixed(1)}%`,
                 position: "insideBottomLeft",
-                fill: "#dc2626",
+                fill: "var(--negative)",
                 fontSize: 11,
               }}
             />
 
             {/* Zero line */}
-            <ReferenceLine y={0} stroke="#6b7280" />
+            <ReferenceLine y={0} stroke="var(--border)" />
 
             {/* Drawdown area */}
             <Area
               type="monotone"
               dataKey="drawdown"
               name="Drawdown"
-              stroke="#dc2626"
-              fill="#dc2626"
+              stroke="var(--negative)"
+              fill="var(--negative)"
               fillOpacity={0.3}
             />
           </AreaChart>

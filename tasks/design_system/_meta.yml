@@ -1,8 +1,24 @@
 name: design_system
-status: in-progress
+status: shipped
 opened: 2026-06-03
-closed: null
+closed: 2026-06-05
 branch: main           # design repo branch; kite-lab tracks via this task folder
+
+# kite-lab consumer commits (branch design_system, not yet merged to main).
+# 17 commits d89c5eb..72e3aef + the Phase 8 close-out commit.
+related_commits:
+  - d89c5eb   # open task folder — strategic plan + phased build
+  - 21c790b   # Phase 3 — V1 social templates + headless render pipeline
+  - 46cb1b4   # Phase 4 — /library reading pages on the brand
+  - b3e23a9   # Phase 5 — /insights Pulse (light + dark)
+  - 4c8227b   # Phase 5.4 — branded insights sub-pages
+  - 455d50d   # Phase 6 — landing + branded auth + routing move
+  - 72e3aef   # Phase 7 — main authenticated app on the brand
+
+# Verified self-contained: kite-dashboard mirrors token VALUES into
+# globals.css (.mw-brand/.mw-app); no file:/package dep on the design
+# repo, so it deploys to Vercel as-is. Registry decision (8.6) deferred
+# as non-blocking. See RESULTS.md.
 depends_on:
   - content_redesign   # editorial layer + persona inform the brand contract
 supersedes:

@@ -248,15 +248,23 @@ mock preview (light+dark); founder to confirm the live signed-in app.
 
 | # | Item | Status |
 |---|---|---|
-| 8.1 | Audit `kite-dashboard/src/**` for hard-coded hex / px / font-family — replace with design-system tokens | ☐ |
-| 8.2 | Audit `finance-content-os/scripts/` for any remaining V1 Remotion asset paths — switch to design-system render CLI | ☐ |
-| 8.3 | Write `tasks/design_system/OVERVIEW.html` — visual map parallel to the existing OVERVIEWs for content_bridge and content_redesign | ☐ |
-| 8.4 | `_meta.yml` → `status: shipped`, fill `related_commits`, fill `sibling_commits` | ☐ |
-| 8.5 | `RESULTS.md` — what was shipped vs planned, deferred items, verification log | ☐ |
-| 8.6 | Decide on private npm registry — GitHub Packages vs self-hosted Verdaccio | 👤 ☐ |
-| 8.7 | Migrate consumers from `file:` deps to registry version | ☐ |
+| 8.1 | Audit `kite-dashboard/src/**` for hard-coded hex / px / font-family — replace with design-system tokens | ✅ |
+| 8.2 | Audit `finance-content-os/scripts/` for any remaining V1 Remotion asset paths — switch to design-system render CLI | ✅ (done in Phase 3.5.9 — render CLI smoke test) |
+| 8.3 | Write `tasks/design_system/OVERVIEW.html` — visual map parallel to the existing OVERVIEWs for content_bridge and content_redesign | ✅ |
+| 8.4 | `_meta.yml` → `status: shipped`, fill `related_commits`, fill `sibling_commits` | ✅ |
+| 8.5 | `RESULTS.md` — what was shipped vs planned, deferred items, verification log | ✅ |
+| 8.6 | Decide on private npm registry — GitHub Packages vs self-hosted Verdaccio | 👤 ⏸ deferred — **non-blocking** (dashboard mirrors values, doesn't import the package; only needed if that changes) |
+| 8.7 | Migrate consumers from `file:` deps to registry version | ✅ moot — `kite-dashboard` already self-contained (no `file:`/package dep; verified) |
 
 **Risk tag:** 🟢 low. Mostly bookkeeping.
+
+**8.1 audit findings (2026-06-05):** chart components used raw Tailwind hex
++ broken `hsl(var(--token))` (brand tokens are hex). Retokened
+`equity-curve`, `drawdown-chart` (→ `--chart-1`/`--negative`/`--popover`),
+`allocation-chart` (→ brand-derived 12-colour palette). Accepted exceptions:
+`global-error.tsx` (must be self-contained), `clerk-appearance.ts` (Clerk API
+takes raw colours). Placeholder sweep: only `/privacy` (founder writing legal
+copy). Full detail in `RESULTS.md` incl. the founder action items before beta.
 
 ---
 
