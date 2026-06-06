@@ -1,4 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 import { INSIGHTS_ENABLED } from "@/lib/flags";
 
 // Public routes — no auth required. Anything not in this list (and not in
@@ -36,7 +37,9 @@ const isInsightsRoute = createRouteMatcher(["/insights(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
   if (!INSIGHTS_ENABLED && isInsightsRoute(req)) {
-    return Response.redirect(new URL("/dashboard", req.url));
+    const url = req.nextUrl.clone();
+    url.pathname = "/dashboard";
+    return NextResponse.redirect(url);
   }
 
   if (!isPublicRoute(req)) {
@@ -50,7 +53,9 @@ export default clerkMiddleware(async (auth, req) => {
     if (role !== "admin") {
       // Not an admin → push them back to the dashboard root rather than
       // throwing a 404. Clerk's auth.protect() above already enforced auth.
-      return Response.redirect(new URL("/", req.url));
+      const url = req.nextUrl.clone();
+      url.pathname = "/";
+      return NextResponse.redirect(url);
     }
   }
 });
