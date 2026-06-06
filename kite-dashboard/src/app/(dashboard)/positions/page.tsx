@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, Download, Upload } from "lucide-react";
+import { RefreshCw, Upload } from "lucide-react";
 import { PositionsSummary, PositionsTable } from "@/components/positions";
 import { usePositions } from "@/lib/hooks";
 import { useUniverse } from "@/contexts/universe-context";
@@ -141,8 +141,8 @@ export default function PositionsPage() {
         </div>
         <div className="flex items-center gap-2">
           {isStreaming && (
-            <span className="flex items-center gap-1 text-sm text-green-600">
-              <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="flex items-center gap-1 text-sm text-[color:var(--positive)]">
+              <span className="h-2 w-2 rounded-full bg-[color:var(--positive)] animate-pulse" />
               Live
             </span>
           )}

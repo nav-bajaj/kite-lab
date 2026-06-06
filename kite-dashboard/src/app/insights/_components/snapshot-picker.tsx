@@ -42,17 +42,17 @@ export function SnapshotPicker() {
   }
 
   return (
-    <div className="mt-3 rounded border border-dashed border-neutral-300 p-3 text-sm">
+    <div className="rounded-xl border border-dashed border-border p-4 text-sm">
       <div className="flex items-baseline justify-between">
-        <div className="text-xs uppercase tracking-wide text-neutral-500">
+        <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           Snapshot date
         </div>
         {isPending && (
-          <span className="text-xs text-neutral-400">loading…</span>
+          <span className="text-xs text-muted-foreground">loading…</span>
         )}
       </div>
 
-      <div className="mt-2 flex flex-wrap gap-2">
+      <div className="mt-3 flex flex-wrap gap-2">
         {PRESETS.map((p) => {
           const active = currentDate === p.date;
           return (
@@ -60,10 +60,10 @@ export function SnapshotPicker() {
               key={p.label}
               onClick={() => navigate(p.date)}
               className={
-                "rounded border px-2 py-1 text-xs " +
+                "rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors " +
                 (active
-                  ? "border-neutral-900 bg-neutral-900 text-white"
-                  : "border-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-900")
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border text-muted-foreground hover:text-foreground hover:bg-muted")
               }
             >
               {p.label}
@@ -84,18 +84,18 @@ export function SnapshotPicker() {
             onChange={(e) => setDraft(e.target.value)}
             min="2010-01-04"
             max={new Date().toISOString().slice(0, 10)}
-            className="rounded border border-neutral-300 px-2 py-1 text-xs"
+            className="rounded-lg border border-input bg-card px-3 py-1.5 text-xs text-foreground"
           />
           <button
             type="submit"
-            className="rounded border border-neutral-300 px-2 py-1 text-xs hover:bg-neutral-100 dark:hover:bg-neutral-900"
+            className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             Go
           </button>
         </form>
       </div>
 
-      <p className="mt-2 text-xs text-neutral-500">
+      <p className="mt-3 text-xs text-muted-foreground">
         Pick a historical date to see what the dashboard read like that day.
         Data goes back to 2010.
       </p>

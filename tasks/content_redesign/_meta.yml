@@ -1,0 +1,46 @@
+name: content_redesign
+status: planned
+opened: 2026-06-01
+closed: null
+branch: content-redesign        # to be created on both repos
+depends_on:
+  - content_bridge              # builds on the plumbing shipped there
+  - insight_engine              # analyse-topic tool reads insight engine modules
+supersedes:
+  - finance-content-os editorial layer (v2 skills, voice docs, generate-* skills)
+
+# Sibling repo this initiative spans
+sibling_repo:
+  path: /Users/navdeep/finance-content-os
+  role: editorial engine — voice, format writers, guard subagent, SessionStart hook
+  branch: content-redesign
+
+# Strategic frame
+target_viewer: |
+  Karan, 28, Chandigarh. Self-picked stock portfolio (some good, some bad,
+  heard from friends/online), also holds mutual funds. Curious about
+  stock investing but no system for handling positions or market cycles.
+  Doesn't know whether to take profits, cut losses, or do nothing.
+
+tone_references:
+  emulate: [Sonia Shenoy (CNBC), Zerodha content, Sharan Hegde (hooks only), Ray Dalio, Bill Ackman, Chamath]
+  avoid: finfluencer tips, hype, meme content, clickbait
+
+primary_goal: awareness + intrigue (year-1 — maximum wide reach, not conversions)
+
+formats:
+  - snippet         # 25-30s — one term, tip, or current event
+  - daily_take      # 45s — specific upmove or market observation
+  - weekly_roundup  # 75s — synthesised view of the week
+
+calibration_references:
+  - "snippet: index concentration (Three stocks. The whole rally.)"
+  - "daily_take: defence rally (The trade most retail is 2 years late to)"
+  - "weekly_roundup: dollar strength (The week the dollar quietly broke things)"
+
+# Locked CTAs — every script must use one of these four (no inventing new offerings)
+cta_inventory:
+  - "Follow @marketworks.in on Instagram"
+  - "Sign up for the private beta — marketworks.in"
+  - "See our 4 momentum portfolios — marketworks.in"
+  - "Daily market dashboard — marketworks.in/insights (login required)"

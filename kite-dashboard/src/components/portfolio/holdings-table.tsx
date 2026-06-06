@@ -49,7 +49,9 @@ export function HoldingsTable() {
   }
 
   const sortedHoldings = [...data.holdings].sort((a, b) => {
+    // eslint-disable-next-line security/detect-object-injection -- sortField is a typed key of Holding (set by column-header clicks), not user input
     const aVal = a[sortField];
+    // eslint-disable-next-line security/detect-object-injection -- see above
     const bVal = b[sortField];
     const modifier = sortOrder === "asc" ? 1 : -1;
 
@@ -169,7 +171,7 @@ function PnLValue({ value }: { value: number }) {
   const isPositive = value >= 0;
 
   return (
-    <span className={cn("font-mono", isPositive ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400")}>
+    <span className={cn("font-mono", isPositive ? "text-[color:var(--positive)]" : "text-[color:var(--negative)]")}>
       {isPositive ? "+" : ""}{formatCurrency(value)}
     </span>
   );
@@ -179,7 +181,7 @@ function PnLPercent({ value }: { value: number }) {
   const isPositive = value >= 0;
 
   return (
-    <div className={cn("flex items-center justify-end gap-1", isPositive ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400")}>
+    <div className={cn("flex items-center justify-end gap-1", isPositive ? "text-[color:var(--positive)]" : "text-[color:var(--negative)]")}>
       {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
       <span className="font-mono">{formatPercentValue(value)}</span>
     </div>

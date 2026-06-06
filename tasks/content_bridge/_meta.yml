@@ -1,0 +1,38 @@
+name: content_bridge
+status: in-progress
+opened: 2026-05-31
+closed: null
+branch: bridge
+depends_on:
+  - insight_engine        # signals are sourced from the insight engine
+  - client_portal         # public routes coexist with Clerk-gated client app
+supersedes: []
+
+# kite-lab commits on the `bridge` branch
+related_commits:
+  - 9505922  # scaffold Bridge 1 — signal export contract + publisher
+  - ba424d6  # Bridge 2 consumer — /library public routes + content sync targets
+
+# Sibling repo commits (finance-content-os on the `content-bridge` branch)
+sibling_commits:
+  - 08f6cb8  # Phase 2 importer
+  - 07d5ed9  # Phase 4 publish.py
+
+# Sibling repo this initiative spans
+sibling_repo:
+  path: /Users/navdeep/finance-content-os
+  role: editorial engine + design system + brand voice
+  contract_in: data/published/signals/   # kite-lab → content-os (signal import)
+  contract_out: published/               # content-os → kite-dashboard (web publish)
+
+# Two thin bridges, both file-based, both one-way
+bridges:
+  - direction: kite-lab → finance-content-os
+    contract: kite-lab/data/published/signals/*.json
+    schema: finance-content-os/schemas/signal.schema.json
+    publisher: kite-lab/scripts/publish_signal.py
+    importer: finance-content-os/bridge/import_from_marketworks.py
+  - direction: finance-content-os → kite-dashboard
+    contract: finance-content-os/published/{pieces,courses,assets,manifest.json}
+    publisher: finance-content-os/scripts/publish.py
+    consumer: kite-lab/kite-dashboard/src/app/library/ (build-time read)

@@ -97,8 +97,8 @@ export function EquityCurve() {
           <AreaChart data={normalizedData}>
             <defs>
               <linearGradient id="portfolioGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                <stop offset="5%" stopColor="var(--chart-1)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="var(--chart-1)" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
@@ -127,8 +127,9 @@ export function EquityCurve() {
                 name === "portfolio_value" ? "Portfolio" : "Benchmark",
               ]}
               contentStyle={{
-                backgroundColor: "hsl(var(--background))",
-                border: "1px solid hsl(var(--border))",
+                backgroundColor: "var(--popover)",
+                color: "var(--popover-foreground)",
+                border: "1px solid var(--border)",
                 borderRadius: "8px",
               }}
             />
@@ -137,7 +138,7 @@ export function EquityCurve() {
               type="monotone"
               dataKey="portfolio_value"
               name="Portfolio"
-              stroke="#3b82f6"
+              stroke="var(--chart-1)"
               fill="url(#portfolioGradient)"
               strokeWidth={2}
             />
@@ -146,7 +147,7 @@ export function EquityCurve() {
                 type="monotone"
                 dataKey="benchmark_normalized"
                 name="Nifty 100"
-                stroke="#6b7280"
+                stroke="var(--muted-foreground)"
                 fill="transparent"
                 strokeWidth={1.5}
                 strokeDasharray="4 4"

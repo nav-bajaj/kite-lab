@@ -1,0 +1,225 @@
+import { cn } from "@/lib/utils";
+import {
+  fmtPct,
+  regimeLabel,
+  type RegimeSnapshot,
+  type StressSnapshot,
+  type SectorRSSnapshot,
+} from "@/lib/insights-api";
+
+/** Tone → text color, using the brand role tokens + semantic finance colors
+ *  provided by the `.mw-app` scope. */
+export type Tone = "default" | "positive" | "negative" | "warning" | "muted";
+
+const TONE_TEXT = new Map<Tone, string>([
+  ["default", "text-foreground"],
+  ["positive", "text-[color:var(--positive)]"],
+  ["negative", "text-[color:var(--negative)]"],
+  ["warning", "text-[color:var(--warning)]"],
+  ["muted", "text-muted-foreground"],
+]);
+
+function toneClass(tone: Tone): string {
+  return TONE_TEXT.get(tone) ?? "text-foreground";
+}
+
+export function Eyebrow({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground",
+        className,
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
+/** A page section with a Fraunces heading and optional right-aligned help. */
+export function Section({
+  title,
+  help,
+  children,
+}: {
+  title: string;
+  help?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="flex flex-col gap-4">
+      <div className="flex items-baseline justify-between gap-4">
+        <h3 className="font-serif text-xl font-medium tracking-[-0.01em] text-foreground">
+          {title}
+        </h3>
+        {help && <div className="flex shrink-0 gap-3 text-[13px]">{help}</div>}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+/** A stat card: small label, large value (tone-colored), sub-line + help. */
+export function MetricCard({
+  label,
+  value,
+  sub,
+  tone = "default",
+  help,
+}: {
+  label: string;
+  value: React.ReactNode;
+  sub?: React.ReactNode;
+  tone?: Tone;
+  help?: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5 rounded-xl border border-border bg-card p-5">
+      <Eyebrow>{label}</Eyebrow>
+      <span className={cn("text-3xl font-semibold leading-tight", toneClass(tone))}>
+        {value}
+      </span>
+      {sub && <span className="text-[13px] leading-snug text-muted-foreground">{sub}</span>}
+      {help && <div className="mt-1">{help}</div>}
+    </div>
+  );
+}
+
+/** Semantic-coloured percentage (green up / red down). `v` is a ratio. */
+export function Pct({
+  v,
+  decimals = 1,
+  signed = true,
+}: {
+  v: number | null | undefined;
+  decimals?: number;
+  signed?: boolean;
+}) {
+  if (v === null || v === undefined || Number.isNaN(v)) {
+    return <span className="text-muted-foreground">—</span>;
+  }
+  const tone: Tone = v > 0 ? "positive" : v < 0 ? "negative" : "muted";
+  return <span className={toneClass(tone)}>{fmtPct(v, decimals, signed)}</span>;
+}
+
+const REGIME_TONE = new Map<RegimeSnapshot["regime"], Tone>([
+  ["TREND_BULL", "positive"],
+  ["DRIFT", "muted"],
+  ["STRETCHED", "warning"],
+  ["STRESS", "negative"],
+]);
+
+export function RegimeCard({
+  regime,
+  help,
+}: {
+  regime: RegimeSnapshot;
+  help?: React.ReactNode;
+}) {
+  const transitioned =
+    regime.prev_regime && regime.persistence_days <= 10
+      ? `from ${regimeLabel(regime.prev_regime)} · day ${regime.persistence_days}`
+      : `Day ${regime.persistence_days}`;
+  return (
+    <MetricCard
+      label="Today's regime"
+      value={regimeLabel(regime.regime)}
+      tone={REGIME_TONE.get(regime.regime) ?? "default"}
+      sub={transitioned}
+      help={help}
+    />
+  );
+}
+
+/** Market-stress card with a 0–100 gauge bar. */
+export function StressGauge({
+  stress,
+  help,
+}: {
+  stress: StressSnapshot;
+  help?: React.ReactNode;
+}) {
+  const score = Math.max(0, Math.min(100, stress.score));
+  const level = score < 33 ? "Low" : score < 66 ? "Elevated" : "High";
+  const tone: Tone = score < 33 ? "positive" : score < 66 ? "warning" : "negative";
+  const barColor =
+    tone === "positive"
+      ? "var(--positive)"
+      : tone === "warning"
+        ? "var(--warning)"
+        : "var(--negative)";
+
+  return (
+    <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
+      <Eyebrow>Market stress</Eyebrow>
+      <div className="flex items-baseline gap-2">
+        <span className={cn("text-3xl font-semibold leading-tight", toneClass(tone))}>
+          {level}
+        </span>
+        <span className="font-mono text-sm text-muted-foreground">
+          {score.toFixed(0)}/100
+        </span>
+      </div>
+      <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-muted">
+        <div
+          className="h-full rounded-full"
+          style={{ width: `${score}%`, backgroundColor: barColor }}
+        />
+      </div>
+      <span className="text-[13px] text-muted-foreground">
+        {stress.score_percentile.toFixed(0)}th percentile of its history
+      </span>
+      {help && <div className="mt-1">{help}</div>}
+    </div>
+  );
+}
+
+/** Ranked sector RS leaderboard as horizontal semantic bars (the guide's
+ *  Insights/Data look). `rs` field is a ratio. */
+export function SectorBars({
+  sectors,
+  limit = 12,
+}: {
+  sectors: SectorRSSnapshot[];
+  limit?: number;
+}) {
+  const rows = sectors
+    .filter((s) => s.rs_60d !== null)
+    .slice(0, limit);
+  const maxAbs = Math.max(
+    1e-9,
+    ...rows.map((s) => Math.abs(s.rs_60d ?? 0)),
+  );
+
+  return (
+    <div className="flex flex-col gap-3">
+      {rows.map((s) => {
+        const v = s.rs_60d ?? 0;
+        const pct = Math.max(3, (Math.abs(v) / maxAbs) * 100);
+        const color = v >= 0 ? "var(--positive)" : "var(--negative)";
+        return (
+          <div key={s.sector} className="flex items-center gap-4">
+            <span className="w-[120px] shrink-0 truncate font-mono text-[13px] uppercase tracking-[0.04em] text-foreground">
+              {s.sector.replace("NIFTY_", "")}
+            </span>
+            <div className="h-6 flex-1">
+              <div
+                className="h-6 rounded-[4px]"
+                style={{ width: `${pct}%`, backgroundColor: color }}
+              />
+            </div>
+            <span className="w-[72px] shrink-0 text-right font-mono text-[13px]">
+              <Pct v={v} />
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}

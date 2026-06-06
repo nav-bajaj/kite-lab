@@ -4,15 +4,27 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 import { useHoldings } from "@/lib/hooks";
 import { formatCurrency } from "@/lib/utils";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
-// Color palette for the pie chart
+// Allocation-pie palette derived from the brand chart hues (DESIGN.md §
+// chart-1..5: lichen, signal-green, slate-blue, violet, ochre) plus
+// tints/shades, ordered for adjacent-slice contrast. Mid-tones only, so
+// every slice reads against both the light (#FFFFFF) and dark (#171717)
+// card. Static hex (not var()) because a 25-slice categorical scale needs
+// more steps than the five themeable --chart-* tokens provide.
 const COLORS = [
-  "#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6",
-  "#ec4899", "#06b6d4", "#84cc16", "#f97316", "#6366f1",
-  "#14b8a6", "#eab308", "#e11d48", "#7c3aed", "#0ea5e9",
-  "#22c55e", "#fbbf24", "#dc2626", "#a855f7", "#0891b2",
-  "#65a30d", "#d97706", "#be123c", "#6d28d9",
+  "#14715F", // lichen
+  "#9750F8", // violet
+  "#C39B5A", // ochre (light)
+  "#42608E", // slate-blue
+  "#55C374", // signal-green
+  "#2E9B7E", // teal (lichen tint)
+  "#B08CF0", // violet (light)
+  "#9E6A35", // ochre
+  "#6B8FC9", // slate-blue (light)
+  "#86D89E", // signal-green (light)
+  "#7A3FC9", // violet (deep)
+  "#3E8E78", // lichen (mid)
 ];
 
 export function AllocationChart() {

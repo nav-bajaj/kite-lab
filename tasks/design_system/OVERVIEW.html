@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marketworks Design System — Map</title>
+<style>
+  * { box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+    background: #ECF3EF;
+    color: #1A1A1A;
+    line-height: 1.55;
+    padding: 32px 16px 80px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    font-size: 0.85em; background: #dfeae4; padding: 1px 6px;
+    border-radius: 3px; color: #14715F;
+  }
+  .hero { border-bottom: 1px solid #cdded5; padding-bottom: 28px; margin-bottom: 48px; }
+  .hero .kicker {
+    font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #14715F; margin-bottom: 8px; font-weight: 600;
+  }
+  .hero h1 { font-size: 2.1rem; margin: 0 0 8px; letter-spacing: -0.02em; font-weight: 600; }
+  .hero .sub { font-size: 1.05rem; color: #4b5563; margin: 0; max-width: 820px; }
+  .hero .date { font-size: 0.8rem; color: #9ca3af; margin-top: 14px; }
+  section { margin-bottom: 56px; }
+  .section-title {
+    font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: #14715F; font-weight: 600; margin: 0 0 6px;
+  }
+  .section-h { font-size: 1.5rem; margin: 0 0 10px; font-weight: 600; letter-spacing: -0.01em; }
+  .section-lede { color: #4b5563; margin: 0 0 24px; max-width: 820px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+  .card {
+    background: #fff; border: 1px solid #e2ebe6; border-radius: 10px; padding: 18px 20px;
+  }
+  .card h3 { margin: 0 0 6px; font-size: 1rem; letter-spacing: -0.01em; }
+  .card .meta { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: #14715F; font-weight: 600; }
+  .card p { margin: 8px 0 0; font-size: 0.9rem; color: #4b5563; }
+  .ok { color: #3F8059; font-weight: 600; }
+  .pipeline {
+    background: #fff; border: 1px solid #e2ebe6; border-radius: 10px; padding: 24px 26px;
+    font-family: ui-monospace, monospace; white-space: pre; font-size: 0.84rem;
+    color: #374151; overflow-x: auto;
+  }
+  .pipeline .stage { color: #14715F; font-weight: 700; }
+  .swatches { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+  .sw { width: 96px; border-radius: 8px; overflow: hidden; border: 1px solid #e2ebe6; font-size: 0.7rem; }
+  .sw .chip { height: 48px; }
+  .sw .lab { padding: 4px 6px; background: #fff; color: #4b5563; }
+  .flag { background: #fff; border-left: 4px solid #9E6A35; border-radius: 0 8px 8px 0; padding: 18px 22px; margin-bottom: 14px; }
+  .flag h3 { margin: 0 0 4px; font-size: 0.98rem; color: #9E6A35; }
+  .flag p { margin: 0; font-size: 0.9rem; color: #374151; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="kicker">Initiative Map · design_system</div>
+    <h1>One brand contract, applied to every surface.</h1>
+    <p class="sub">A canonical design system (<code>~/marketworks-design</code>,
+    package <code>@marketworks/design</code>) and its application across the
+    Marketworks web product — social asset templates, the public library,
+    the insights dashboard, the landing + auth, and the authenticated app —
+    on one token contract, light and dark.</p>
+    <p class="date">Opened 2026-06-03 · Shipped 2026-06-05 · target viewer: Karan (mobile-first)</p>
+  </div>
+
+  <section>
+    <div class="section-title">Why</div>
+    <div class="section-h">The product looked ad-hoc; the brand wasn't load-bearing.</div>
+    <p class="section-lede">Each surface had grown its own styles. The design
+    system makes a single token contract the source of truth, validated on real
+    surfaces in a Pencil brand guide before engineering, then mirrored into the
+    app so it ships without a cross-repo dependency.</p>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#ECF3EF"></div><div class="lab">mist surface</div></div>
+      <div class="sw"><div class="chip" style="background:#14715F"></div><div class="lab">lichen</div></div>
+      <div class="sw"><div class="chip" style="background:#55C374"></div><div class="lab">signal green</div></div>
+      <div class="sw"><div class="chip" style="background:#1A1A1A"></div><div class="lab">ink</div></div>
+      <div class="sw"><div class="chip" style="background:#9750F8"></div><div class="lab">violet accent</div></div>
+      <div class="sw"><div class="chip" style="background:#A64C42"></div><div class="lab">negative</div></div>
+    </div>
+    <p class="section-lede" style="margin-top:14px">Type: <strong>Fraunces</strong>
+    (display serif) · <strong>Outfit</strong> (sans) · <strong>IBM Plex Mono</strong> (labels).</p>
+  </section>
+
+  <section>
+    <div class="section-title">Mechanism</div>
+    <div class="section-h">How the brand reaches the app without a package dep</div>
+    <div class="pipeline"><span class="stage">~/marketworks-design</span>  canonical tokens + components + Pencil brand guide
+        │  (token VALUES mirrored, not imported — Vercel can't resolve file: deps)
+        ▼
+<span class="stage">kite-dashboard/src/app/globals.css</span>
+        ├─ .mw-brand    light-locked marketing + library
+        ├─ .mw-app      light + dark authenticated app
+        └─ .dark .mw-app   dark inversion
+        ▼
+   nested shadcn / Tailwind utilities inherit the brand role tokens
+        ▼
+   /  ·  /library  ·  /insights  ·  /dashboard  ·  /positions  ·  /performance</div>
+  </section>
+
+  <section>
+    <div class="section-title">Surfaces shipped</div>
+    <div class="section-h">Every planned surface, on the system</div>
+    <div class="grid">
+      <div class="card"><div class="meta">Phase 3 / 3.5</div><h3>Social templates <span class="ok">✓</span></h3><p>Carousel / quote / chart / CTA templates + headless render CLI. Rupee piece rendered as proof.</p></div>
+      <div class="card"><div class="meta">Phase 4</div><h3>/library <span class="ok">✓</span></h3><p>Reading page + index on the brand. Article, blockquote, pillars.</p></div>
+      <div class="card"><div class="meta">Phase 5 / 5.4</div><h3>/insights <span class="ok">✓</span></h3><p>Pulse + sectors, watchlists, learn. Light + dark.</p></div>
+      <div class="card"><div class="meta">Phase 6</div><h3>Landing + auth <span class="ok">✓</span></h3><p>Public landing, branded sign-in/up, routing move to <code>/dashboard</code>.</p></div>
+      <div class="card"><div class="meta">Phase 7</div><h3>Main app <span class="ok">✓</span></h3><p>Dashboard, positions, performance — <code>.mw-app</code> scope, gain/loss tokens.</p></div>
+      <div class="card"><div class="meta">Phase 8</div><h3>Cleanup <span class="ok">✓</span></h3><p>Hex/token audit, chart retokening, self-contained verify, this map.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title">Before beta viewers</div>
+    <div class="section-h">Founder action items (outside the design system)</div>
+    <div class="flag"><h3>/privacy legal copy</h3><p>Body accurate; date + contact email + a "placeholder" line are stubs. Founder writing final text.</p></div>
+    <div class="flag"><h3>Copy review</h3><p>All copy is real (no lorem/fabrication) but is Claude's draft — read + edit for voice before viewers.</p></div>
+    <div class="flag"><h3>Prod /insights 500</h3><p>Insight engine is file-based; data files aren't on Railway, so the endpoint 500s in production. Fix before exposing /insights.</p></div>
+    <div class="flag"><h3>Library depth</h3><p>1 live piece, 0 social assets wired. CTA→library gate wants 3+ pieces.</p></div>
+  </section>
+
+  <p style="font-size:0.8rem;color:#9ca3af">See <code>RESULTS.md</code> for the full
+  shipped-vs-planned table, deferred items, and verification log ·
+  <code>_meta.yml</code> for metadata · <code>TASKS.md</code> for the phased checklist.</p>
+
+</div>
+</body>
+</html>

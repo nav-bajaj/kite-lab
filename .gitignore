@@ -47,6 +47,12 @@ data/*
 !data/final_portfolio/
 !data/final_portfolio/**
 !data/corporate_actions.json
+# Bridge 1 audit trail — signals exported to the content factory.
+# Committed so we know what we said publicly on what date.
+!data/published/
+!data/published/**
+# Topic dossiers — regenerable, not committed. But keep the schema doc.
+!data/topic_dossiers/SCHEMA.md
 !experiments/final_portfolio/
 !experiments/final_portfolio/**
 *.csv
@@ -94,6 +100,9 @@ Thumbs.db
 *.png
 *.jpg
 *.jpeg
+# Bridge 2 published assets — carousel/thumbnail PNGs synced from the
+# content factory for Vercel to serve. Must be committed.
+!kite-dashboard/public/marketing-content/**
 
 # Generated reports
 reports/*
