@@ -34,12 +34,14 @@ export function MobileSidebar() {
     <div className="flex flex-col h-full bg-sidebar">
       {/* Logo */}
       <div className="flex h-16 items-center px-4 border-b border-sidebar-border">
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold">M</span>
-          </div>
-          <span className="font-semibold text-sidebar-foreground">Marketworks</span>
-        </Link>
+        <SheetClose asChild>
+          <Link
+            href="/"
+            className="text-2xl font-semibold tracking-tight text-primary"
+          >
+            marketworks
+          </Link>
+        </SheetClose>
       </div>
 
       {/* Navigation */}
