@@ -1,4 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { INSIGHTS_ENABLED } from "@/lib/flags";
 
 // Public routes — no auth required. Anything not in this list (and not in
 // `config.matcher` exclusions below) requires a signed-in Clerk session.
@@ -27,7 +28,17 @@ const isPublicRoute = createRouteMatcher([
 // session token's `metadata` claim (configured in Clerk dashboard).
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 
+// Insights surface is gated off until the insight-engine data is provisioned
+// on the production backend (otherwise /insights 500s in prod). When disabled,
+// bounce /insights* to /dashboard so a direct URL doesn't hit the broken page.
+// Flip NEXT_PUBLIC_INSIGHTS_ENABLED=true to re-enable. See src/lib/flags.ts.
+const isInsightsRoute = createRouteMatcher(["/insights(.*)"]);
+
 export default clerkMiddleware(async (auth, req) => {
+  if (!INSIGHTS_ENABLED && isInsightsRoute(req)) {
+    return Response.redirect(new URL("/dashboard", req.url));
+  }
+
   if (!isPublicRoute(req)) {
     await auth.protect();
   }

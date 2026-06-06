@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useAuth, UserButton } from "@clerk/nextjs";
+import { INSIGHTS_ENABLED } from "@/lib/flags";
 
 const LINKS = [
   { label: "Library", href: "/library" },
-  { label: "Insights", href: "/insights" },
+  ...(INSIGHTS_ENABLED ? [{ label: "Insights", href: "/insights" }] : []),
   { label: "Portfolios", href: "/dashboard" },
 ];
 

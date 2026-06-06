@@ -1,8 +1,9 @@
 import Link from "next/link";
+import { INSIGHTS_ENABLED } from "@/lib/flags";
 
 const FOOTER_LINKS = [
   { label: "Library", href: "/library" },
-  { label: "Insights", href: "/insights" },
+  ...(INSIGHTS_ENABLED ? [{ label: "Insights", href: "/insights" }] : []),
   { label: "Terms", href: "/terms" },
   { label: "Privacy", href: "/privacy" },
   { label: "Disclaimer", href: "/disclaimer" },
