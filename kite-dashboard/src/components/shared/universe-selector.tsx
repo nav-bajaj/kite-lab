@@ -8,7 +8,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { Globe } from "lucide-react";
 
@@ -24,13 +23,24 @@ export function UniverseSelector() {
     );
   }
 
+  // eslint-disable-next-line security/detect-object-injection -- universeId is a typed UniverseId literal, UNIVERSES is a closed Record
+  const current = UNIVERSES[universeId];
+
   return (
     <Select value={universeId} onValueChange={(v) => setUniverse(v as UniverseId)}>
-      <SelectTrigger className="w-[140px]">
-        <Globe className="mr-2 h-4 w-4" />
-        <SelectValue />
+      {/* Single-line full name in the trigger — the two-line item markup was
+          clipping the name + stock count in the short trigger. The trigger
+          sizes to its content so the chevron sits next to the name; the stock
+          count stays in the dropdown items below. */}
+      <SelectTrigger>
+        <span className="flex items-center gap-2">
+          <Globe className="h-4 w-4 shrink-0" />
+          <span>{current?.name}</span>
+        </span>
       </SelectTrigger>
-      <SelectContent>
+      {/* popper + align end: anchor the menu under the trigger. The default
+          item-aligned positioning placed this top-right menu off-screen. */}
+      <SelectContent position="popper" align="end" sideOffset={6}>
         {visibleUniverseIds.map((id) => {
           // eslint-disable-next-line security/detect-object-injection -- id is a typed UniverseId from a closed list
           const u = UNIVERSES[id];

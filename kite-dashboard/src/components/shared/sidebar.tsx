@@ -14,7 +14,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useSidebar } from "@/contexts/sidebar-context";
 
 // `adminOnly` items are filtered out for non-admin clients in the render.
 const navigation = [
@@ -32,29 +32,34 @@ export function Sidebar() {
   const role = (user?.publicMetadata as { role?: string } | undefined)?.role;
   const isAdmin = role === "admin";
   const visibleNav = navigation.filter((item) => !item.adminOnly || isAdmin);
-  const [collapsed, setCollapsed] = useState(false);
+  const { collapsed, toggle } = useSidebar();
 
   return (
     <aside
       className={cn(
         "fixed left-0 top-0 z-40 h-screen hidden lg:flex flex-col border-r bg-sidebar transition-all duration-300",
-        collapsed ? "w-16" : "w-64"
+        collapsed ? "w-16" : "w-48"
       )}
     >
-      {/* Logo */}
+      {/* Logo — matches the marketing wordmark (MarketingNav): lowercase,
+          primary green, no icon mark. Collapsed shows just the "m". */}
       <div className="flex h-16 items-center justify-between px-4 border-b border-sidebar-border">
         {!collapsed && (
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold">M</span>
-            </div>
-            <span className="font-semibold text-sidebar-foreground">Marketworks</span>
+          <Link
+            href="/"
+            className="text-2xl font-semibold tracking-tight text-primary"
+          >
+            marketworks
           </Link>
         )}
         {collapsed && (
-          <div className="mx-auto h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold">M</span>
-          </div>
+          <Link
+            href="/"
+            aria-label="Marketworks home"
+            className="mx-auto text-2xl font-semibold tracking-tight text-primary"
+          >
+            m
+          </Link>
         )}
       </div>
 
@@ -63,7 +68,7 @@ export function Sidebar() {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={toggle}
           className={cn(
             "w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent",
             collapsed && "justify-center px-2"
