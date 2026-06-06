@@ -446,7 +446,14 @@ def run_strategy(*,
                     sc = signal_close_row.get(sym, np.nan)
                     s200 = (sma_200_panel.loc[signal_date, sym]
                             if sym in sma_200_panel.columns else np.nan)
-                    if pd.isna(sc) or pd.isna(s200):
+                    # Skip on missing price always; skip on missing 200-DMA
+                    # ONLY when the DMA exit is active. The trailing stop and
+                    # Donchian checks don't need s200 and must still run for
+                    # names with <200 days of history (the toggles really are
+                    # independent — see docstring above).
+                    if pd.isna(sc):
+                        continue
+                    if use_dma_exit and pd.isna(s200):
                         continue
                     pk = entry_meta.get(sym, {}).get('peak', sc)
                     op = sc / pk - 1 if pk > 0 else 0
