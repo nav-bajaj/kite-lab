@@ -165,3 +165,6 @@ cache/insights/
 # Phase 3.3 latest.json pointer files — regenerated lazily on every
 # sync; no value in tracking.
 **/latest.json
+
+# Playwright MCP browser debug artifacts (console logs + page snapshots)
+.playwright-mcp/
