@@ -5,6 +5,13 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 // Global token storage for authenticated requests
 let globalAuthToken: string | null = null;
 
+// Optional async resolver registered by ApiAuthContext. When present it
+// returns a guaranteed-fresh token (Clerk's getToken() caches internally
+// and only hits the network near expiry), so requests never ride on a
+// stale or not-yet-populated globalAuthToken. The global slot stays as a
+// synchronous fallback for any non-React caller.
+let tokenProvider: (() => Promise<string | null>) | null = null;
+
 /**
  * Set the global authentication token.
  * Called by ApiAuthContext when token changes.
@@ -18,6 +25,16 @@ export function setGlobalAuthToken(token: string | null) {
  */
 export function getGlobalAuthToken(): string | null {
   return globalAuthToken;
+}
+
+/**
+ * Register (or clear) the async token resolver. Called by ApiAuthContext
+ * once Clerk is loaded and signed in.
+ */
+export function setTokenProvider(
+  provider: (() => Promise<string | null>) | null
+) {
+  tokenProvider = provider;
 }
 
 export class ApiError extends Error {
@@ -47,8 +64,12 @@ async function apiFetch<T>(
     "Content-Type": "application/json",
   };
 
-  // Use provided token, fall back to global token
-  const authToken = token ?? (skipAuth ? null : globalAuthToken);
+  // Resolve the token at fetch time: explicit token wins, then the async
+  // provider (always fresh), then the synchronous global as a fallback.
+  let authToken: string | null = token ?? null;
+  if (!authToken && !skipAuth) {
+    authToken = tokenProvider ? await tokenProvider() : globalAuthToken;
+  }
   if (authToken) {
     headers["Authorization"] = `Bearer ${authToken}`;
   }
@@ -474,9 +495,7 @@ export async function headlessLogin() {
 
 // Positions endpoints (live portfolio tracking)
 import type {
-  Position,
   PositionsResponse,
-  PositionsSummary,
   MarketStatus,
   QuotesResponse,
 } from "./types";

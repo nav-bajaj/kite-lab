@@ -1,8 +1,8 @@
 "use client";
 
-import useSWR from "swr";
+import useSWR, { type SWRConfiguration, type Key, type Fetcher } from "swr";
 import { useUniverse } from "@/contexts/universe-context";
-import { useApiToken } from "@/contexts/api-auth-context";
+import { useApiAuth } from "@/contexts/api-auth-context";
 import {
   getPortfolio,
   getHoldings,
@@ -28,11 +28,29 @@ import {
   type ScheduleListResponse,
   type SystemStatus,
 } from "./api-client";
-import type { PositionsResponse, MarketStatus, UniverseId } from "./types";
+import type { PositionsResponse, MarketStatus } from "./types";
 
 // Refresh intervals
 const REFRESH_INTERVAL = 60_000; // 1 minute
 const SLOW_REFRESH = 300_000; // 5 minutes
+
+// SWR wrapper that holds the request until auth is ready. Passing a null
+// key makes SWR a no-op (no fetch, no error), so authed endpoints never
+// fire before a token can be attached — the root cause of the spurious
+// "session expired" toast on login. Callers pass the key they would have
+// passed to useSWR; it is nulled out while auth is not ready.
+function useAuthedSWR<Data = unknown, SWRKey extends Key = Key>(
+  key: SWRKey,
+  fetcher: Fetcher<Data, SWRKey>,
+  config?: SWRConfiguration<Data>
+) {
+  const { authReady } = useApiAuth();
+  return useSWR<Data>(
+    authReady ? key : null,
+    fetcher as Fetcher<Data>,
+    config
+  );
+}
 
 // Health check (no auth)
 export function useHealth() {
@@ -46,7 +64,7 @@ export function useHealth() {
 export function usePortfolio() {
   const { universeId } = useUniverse();
 
-  return useSWR(
+  return useAuthedSWR(
     ["portfolio", universeId],
     ([, universe]) => getPortfolio(universe),
     {
@@ -60,7 +78,7 @@ export function usePortfolio() {
 export function useHoldings() {
   const { universeId } = useUniverse();
 
-  return useSWR(
+  return useAuthedSWR(
     ["holdings", universeId],
     ([, universe]) => getHoldings(universe),
     {
@@ -74,7 +92,7 @@ export function useHoldings() {
 export function useMetrics() {
   const { universeId } = useUniverse();
 
-  return useSWR(
+  return useAuthedSWR(
     ["metrics", universeId],
     ([, universe]) => getMetrics(universe),
     {
@@ -88,7 +106,7 @@ export function useMetrics() {
 export function useEquityCurve() {
   const { universeId } = useUniverse();
 
-  return useSWR(
+  return useAuthedSWR(
     ["equity-curve", universeId],
     ([, universe]) => getEquityCurve(universe),
     {
@@ -102,7 +120,7 @@ export function useEquityCurve() {
 export function useMonthlyReturns() {
   const { universeId } = useUniverse();
 
-  return useSWR(
+  return useAuthedSWR(
     ["monthly-returns", universeId],
     ([, universe]) => getMonthlyReturns(universe),
     {
@@ -123,7 +141,7 @@ export function useTrades(params?: {
 }) {
   const { universeId } = useUniverse();
 
-  return useSWR(
+  return useAuthedSWR(
     ["trades", universeId, params],
     ([, universe, p]) => getTrades(universe, p),
     {
@@ -137,7 +155,7 @@ export function useTrades(params?: {
 export function useTradeSummary() {
   const { universeId } = useUniverse();
 
-  return useSWR(
+  return useAuthedSWR(
     ["trade-summary", universeId],
     ([, universe]) => getTradeSummary(universe),
     {
@@ -151,7 +169,7 @@ export function useTradeSummary() {
 export function useRebalanceStatus() {
   const { universeId } = useUniverse();
 
-  return useSWR(
+  return useAuthedSWR(
     ["rebalance-status", universeId],
     ([, universe]) => getRebalanceStatus(universe),
     {
@@ -165,7 +183,7 @@ export function useRebalanceStatus() {
 export function useRebalancePreview() {
   const { universeId } = useUniverse();
 
-  return useSWR(
+  return useAuthedSWR(
     ["rebalance-preview", universeId],
     ([, universe]) => getRebalancePreview(universe),
     {
@@ -179,7 +197,7 @@ export function useRebalancePreview() {
 export function useRebalanceOrders() {
   const { universeId } = useUniverse();
 
-  return useSWR(
+  return useAuthedSWR(
     ["rebalance-orders", universeId],
     ([, universe]) => getRebalanceOrders(universe),
     {
@@ -193,7 +211,7 @@ export function useRebalanceOrders() {
 export function useRebalanceHistory(limit: number = 20) {
   const { universeId } = useUniverse();
 
-  return useSWR(
+  return useAuthedSWR(
     ["rebalance-history", universeId, limit],
     ([, universe, l]) => getRebalanceHistory(universe, l),
     {
@@ -209,7 +227,7 @@ export function useJobs(params?: {
   universe?: string;
   status?: string;
 }) {
-  return useSWR<JobListResponse>(
+  return useAuthedSWR<JobListResponse>(
     ["jobs", params?.limit, params?.universe, params?.status],
     () => getJobs(params),
     {
@@ -221,7 +239,7 @@ export function useJobs(params?: {
 
 // Single job details
 export function useJob(jobId: string | null) {
-  return useSWR<Job>(
+  return useAuthedSWR<Job>(
     jobId ? ["job", jobId] : null,
     () => getJob(jobId!),
     {
@@ -233,7 +251,7 @@ export function useJob(jobId: string | null) {
 
 // Job logs
 export function useJobLogs(jobId: string | null, tail?: number) {
-  return useSWR<{ job_id: string; logs: string; status: string }>(
+  return useAuthedSWR<{ job_id: string; logs: string; status: string }>(
     jobId ? ["job-logs", jobId, tail] : null,
     () => getJobLogs(jobId!, tail),
     {
@@ -245,7 +263,7 @@ export function useJobLogs(jobId: string | null, tail?: number) {
 
 // Schedule list
 export function useSchedule() {
-  return useSWR<ScheduleListResponse>(
+  return useAuthedSWR<ScheduleListResponse>(
     "schedule",
     getSchedule,
     {
@@ -257,7 +275,7 @@ export function useSchedule() {
 
 // System status
 export function useSystemStatus() {
-  return useSWR<SystemStatus>(
+  return useAuthedSWR<SystemStatus>(
     "system-status",
     getSystemStatus,
     {
@@ -273,9 +291,9 @@ const POSITIONS_REFRESH = 10_000; // 10 seconds for live data
 export function usePositions() {
   const { universeId } = useUniverse();
 
-  return useSWR<PositionsResponse>(
+  return useAuthedSWR<PositionsResponse>(
     ["positions", universeId],
-    ([, universe]: [string, UniverseId]) => getPositions(universe),
+    () => getPositions(universeId),
     {
       refreshInterval: POSITIONS_REFRESH,
       revalidateOnFocus: true,
@@ -284,7 +302,7 @@ export function usePositions() {
 }
 
 export function useMarketStatus() {
-  return useSWR<MarketStatus>(
+  return useAuthedSWR<MarketStatus>(
     "market-status",
     getMarketStatus,
     {
