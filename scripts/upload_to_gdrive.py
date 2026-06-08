@@ -138,6 +138,11 @@ def _load_credentials():
         return None
 
     if creds.expired and creds.refresh_token:
+        # Let RefreshError (invalid_grant on a dead refresh token) propagate.
+        # Callers decide how to surface it: cmd_upload/cmd_status print
+        # actionable help and exit 1; cmd_auth catches it and falls through to
+        # a fresh interactive OAuth flow (so `auth` can recover a dead token
+        # rather than crashing on the cached one it's trying to replace).
         creds.refresh(Request())
         # Only persist refreshed token back to disk in local-file mode;
         # on Railway the env var is the source of truth and we don't
@@ -145,6 +150,27 @@ def _load_credentials():
         if not env_token and TOKEN_PATH.exists():
             TOKEN_PATH.write_text(creds.to_json())
     return creds
+
+
+def _print_token_dead_help(exc) -> None:
+    """Actionable guidance for a dead (invalid_grant) refresh token, instead of
+    a raw google-auth traceback. The usual cause of a recurring daily failure
+    is the OAuth consent screen sitting in "Testing" status, where Google
+    expires refresh tokens after 7 days."""
+    env_used = bool(os.environ.get("GDRIVE_REFRESH_TOKEN_JSON", "").strip())
+    src = "GDRIVE_REFRESH_TOKEN_JSON env var (Railway)" if env_used else str(TOKEN_PATH)
+    print(
+        f"\n[upload] FATAL: Google rejected the refresh token ({exc}).\n"
+        f"  Token source: {src}\n"
+        "  The cached refresh token is expired or revoked. To fix:\n"
+        "    1. On your Mac:  python scripts/upload_to_gdrive.py auth\n"
+        "    2. Copy the new token into Railway's GDRIVE_REFRESH_TOKEN_JSON:\n"
+        "         cat ~/.config/kite-lab/gdrive_token.json | tr -d '\\n'\n"
+        "    3. To stop this recurring: in Google Cloud Console -> APIs &\n"
+        "       Services -> OAuth consent screen, set Publishing status to\n"
+        "       'In production'. Testing-mode refresh tokens die after 7 days.\n",
+        file=sys.stderr,
+    )
 
 
 def _run_oauth_flow():
@@ -376,7 +402,14 @@ def snapshot_dir_to_drive(svc, root_folder_id: str, source_dir: Path,
 # ---------------------------------------------------------------------------
 
 def cmd_auth(args) -> int:
-    creds = _load_credentials()
+    from google.auth.exceptions import RefreshError
+
+    try:
+        creds = _load_credentials()
+    except RefreshError:
+        # Cached token is dead — that's exactly what we're here to replace, so
+        # don't abort: fall through to a fresh interactive OAuth flow.
+        creds = None
     if creds and not creds.expired:
         print(f"[upload] already authed; token at {TOKEN_PATH}")
         return 0
@@ -386,7 +419,13 @@ def cmd_auth(args) -> int:
 
 
 def cmd_upload(args) -> int:
-    creds = _load_credentials()
+    from google.auth.exceptions import RefreshError
+
+    try:
+        creds = _load_credentials()
+    except RefreshError as exc:
+        _print_token_dead_help(exc)
+        return 1
     if creds is None or (creds.expired and not creds.refresh_token):
         print("[upload] no valid credentials; run "
               "`python scripts/upload_to_gdrive.py auth` first", file=sys.stderr)
@@ -430,7 +469,13 @@ def cmd_upload(args) -> int:
 
 def cmd_status(args) -> int:
     """Print what's currently in the Drive backup folder."""
-    creds = _load_credentials()
+    from google.auth.exceptions import RefreshError
+
+    try:
+        creds = _load_credentials()
+    except RefreshError as exc:
+        _print_token_dead_help(exc)
+        return 1
     if creds is None:
         print("[upload] not authed yet — run `auth` first")
         return 1

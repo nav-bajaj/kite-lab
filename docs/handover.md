@@ -145,6 +145,7 @@ VS Code on the Mac mini:
 | Symptom | Fix |
 |---|---|
 | Kite "Token is invalid or has expired" | Re-run `python scripts/login_and_save_token.py` on whichever machine you're on. |
+| Cloud upload fails with `invalid_grant: Bad Request` | The Google Drive refresh token died. On your Mac: `python scripts/upload_to_gdrive.py auth`, then paste the new token into Railway's `GDRIVE_REFRESH_TOKEN_JSON` (`cat ~/.config/kite-lab/gdrive_token.json \| tr -d '\n'`). To stop it recurring weekly, set the OAuth consent screen to **In production** in Google Cloud Console — Testing-mode refresh tokens expire after 7 days. |
 | `ModuleNotFoundError` on a fresh setup | `pip install -r requirements.txt` again — the freeze list pins everything. |
 | Stock data CSVs missing | AirDrop `~/Documents/stock_data/` from the other Mac, or restore from `My Drive/kite-lab-backups/`. |
 | `instruments_full.csv` stale | `python scripts/login_and_save_token.py` (the login flow refreshes it), or run `run_daily_pipeline.py`. |
