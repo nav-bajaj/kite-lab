@@ -9,6 +9,7 @@ from fastapi import APIRouter, Query, HTTPException, Depends
 from app.config import is_valid_universe, UniverseId
 from app.auth import get_current_user, check_universe_access
 from app.middleware.cache import cache_daily
+from app.services.response_cache import cached_response
 
 router = APIRouter(prefix="/api/portfolio", tags=["portfolio"])
 
@@ -65,29 +66,30 @@ async def portfolio_summary(
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
     check_universe_access(universe, user)
 
-    service = get_portfolio_service()
+    def _produce():
+        service = get_portfolio_service()
+        if "error" in service:
+            return {
+                "error": f"Portfolio service not available: {service['error']}",
+                "total_value": 0,
+                "cash": 0,
+                "invested": 0,
+                "daily_pnl": 0,
+                "daily_pnl_pct": 0,
+                "total_return": 0,
+                "total_return_pct": 0,
+                "holdings_count": 0,
+                "as_of_date": "",
+                "universe": universe,
+                "cagr": None,
+                "max_drawdown": None,
+                "sharpe_ratio": None,
+            }
+        result = service["get_summary"](universe)
+        result["data_source"] = service["source"]
+        return result
 
-    if "error" in service:
-        return {
-            "error": f"Portfolio service not available: {service['error']}",
-            "total_value": 0,
-            "cash": 0,
-            "invested": 0,
-            "daily_pnl": 0,
-            "daily_pnl_pct": 0,
-            "total_return": 0,
-            "total_return_pct": 0,
-            "holdings_count": 0,
-            "as_of_date": "",
-            "universe": universe,
-            "cagr": None,
-            "max_drawdown": None,
-            "sharpe_ratio": None,
-        }
-
-    result = service["get_summary"](universe)
-    result["data_source"] = service["source"]
-    return result
+    return cached_response(("portfolio_summary", universe), _produce)
 
 
 @router.get("/holdings", dependencies=[Depends(cache_daily)])
@@ -104,18 +106,19 @@ async def portfolio_holdings(
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
     check_universe_access(universe, user)
 
-    service = get_portfolio_service()
+    def _produce():
+        service = get_portfolio_service()
+        if "error" in service:
+            return {
+                "holdings": [],
+                "summary": {"total_pnl": 0, "winners": 0, "losers": 0},
+                "error": f"Portfolio service not available: {service['error']}",
+            }
+        result = service["get_holdings"](universe)
+        result["data_source"] = service["source"]
+        return result
 
-    if "error" in service:
-        return {
-            "holdings": [],
-            "summary": {"total_pnl": 0, "winners": 0, "losers": 0},
-            "error": f"Portfolio service not available: {service['error']}",
-        }
-
-    result = service["get_holdings"](universe)
-    result["data_source"] = service["source"]
-    return result
+    return cached_response(("portfolio_holdings", universe), _produce)
 
 
 @router.get("/allocation", dependencies=[Depends(cache_daily)])
@@ -132,14 +135,15 @@ async def portfolio_allocation(
         raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
     check_universe_access(universe, user)
 
-    service = get_portfolio_service()
+    def _produce():
+        service = get_portfolio_service()
+        if "error" in service:
+            return {
+                "allocations": [],
+                "error": f"Portfolio service not available: {service['error']}",
+            }
+        result = service["get_allocation"](universe)
+        result["data_source"] = service["source"]
+        return result
 
-    if "error" in service:
-        return {
-            "allocations": [],
-            "error": f"Portfolio service not available: {service['error']}",
-        }
-
-    result = service["get_allocation"](universe)
-    result["data_source"] = service["source"]
-    return result
+    return cached_response(("portfolio_allocation", universe), _produce)

@@ -60,7 +60,45 @@ In progress. Phase 0 implemented, awaiting user sign-off before Phase 1.
   in localStorage — namespaced + purged as above; flagged for the audit.
 
 ### Phase 2 — smart caching
-_pending_
+- Planned: align refresh intervals, backend ETag/304, per-day in-process
+  cache, Redis decision.
+- Actual:
+  - **Frontend interval alignment** (`hooks.ts`) — daily endpoints
+    (portfolio, holdings, trades, rebalance-status) moved from 60s →
+    `SLOW_REFRESH` (5 min); they're once-a-day pipeline data, and live P&L
+    is on the SSE-backed Positions page. `REFRESH_INTERVAL` (60s) now only
+    drives market open/closed status. Cuts background polling substantially.
+  - **ETag / 304 middleware** (`middleware/etag.py`, wired in `main.py`) —
+    JSON GET 200s get a weak ETag; a matching `If-None-Match` returns a
+    bodiless 304. Scoped to `application/json` only, so SSE streams / CSV
+    downloads / errors are untouched. Placed inside SecurityHeaders so those
+    headers still apply to 304s.
+  - **In-process response cache** (`services/response_cache.py`) applied to
+    the daily DB endpoints in `portfolio.py` (summary/holdings/allocation)
+    and `metrics.py` (metrics/equity-curve/monthly-returns). TTL 120s,
+    keyed by (name, universe, params) — **never by user**. Access control
+    (`check_universe_access`) runs in the handler BEFORE the cache is
+    consulted, so it can't serve cross-universe data; error envelopes are
+    never cached.
+  - **Redis (2.5): deferred.** The in-process TTL cache is sufficient at
+    current (private-beta) scale. If Railway scales to >1 instance each
+    keeps its own cache — acceptable, since the cached payload is
+    universe-scoped and identical across instances; staleness stays bounded
+    by the 120s TTL. Revisit only if a shared invalidation signal is needed.
+- Commits: _pending_
+- Verification: backend `pytest tests/test_clerk_authz.py
+  tests/test_response_cache.py tests/test_trade_matching.py` → **292
+  passed** (277 authz assertions intact + 8 new + trade matching). New
+  ETag/cache behaviour covered by `tests/test_response_cache.py` (8 tests).
+  `npm run build` clean.
+  - Env note: the full `pytest tests/` could not run locally — only Python
+    3.14 is installed here, which has no wheels for the pinned numpy/pandas;
+    the `test_insights_*` suite fails to import under the newer
+    numpy 2.4/pandas 3.0 stand-ins + missing PIL. Those tests exercise
+    `app/insights/*`, which this phase never touched. Recommend a final
+    `pytest tests/` on a Python 3.12 venv (pinned deps) in CI before merge.
+- Security note for Phase 5: verify the cache key never includes user
+  identity and that the access-check-before-cache ordering holds.
 
 ### Phase 3 — smooth live prices
 _pending_

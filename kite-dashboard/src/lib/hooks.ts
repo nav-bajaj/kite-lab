@@ -30,7 +30,13 @@ import {
 } from "./api-client";
 import type { PositionsResponse, MarketStatus } from "./types";
 
-// Refresh intervals
+// Refresh intervals. Aligned with the backend Cache-Control windows so we
+// don't poll faster than the data can change:
+//  - Daily DB data (portfolio, holdings, trades, rebalance) is refreshed
+//    once a day by the pipeline → SLOW_REFRESH. Live P&L lives on the
+//    Positions page (SSE), not here.
+//  - REFRESH_INTERVAL is for genuinely minute-scale signals (market open/
+//    closed status).
 const REFRESH_INTERVAL = 60_000; // 1 minute
 const SLOW_REFRESH = 300_000; // 5 minutes
 
@@ -68,7 +74,7 @@ export function usePortfolio() {
     ["portfolio", universeId],
     ([, universe]) => getPortfolio(universe),
     {
-      refreshInterval: REFRESH_INTERVAL,
+      refreshInterval: SLOW_REFRESH,
       revalidateOnFocus: true,
     }
   );
@@ -82,7 +88,7 @@ export function useHoldings() {
     ["holdings", universeId],
     ([, universe]) => getHoldings(universe),
     {
-      refreshInterval: REFRESH_INTERVAL,
+      refreshInterval: SLOW_REFRESH,
       revalidateOnFocus: true,
     }
   );
@@ -145,7 +151,7 @@ export function useTrades(params?: {
     ["trades", universeId, params],
     ([, universe, p]) => getTrades(universe, p),
     {
-      refreshInterval: REFRESH_INTERVAL,
+      refreshInterval: SLOW_REFRESH,
       revalidateOnFocus: true,
     }
   );
@@ -173,7 +179,7 @@ export function useRebalanceStatus() {
     ["rebalance-status", universeId],
     ([, universe]) => getRebalanceStatus(universe),
     {
-      refreshInterval: REFRESH_INTERVAL,
+      refreshInterval: SLOW_REFRESH,
       revalidateOnFocus: true,
     }
   );
@@ -306,7 +312,7 @@ export function useMarketStatus() {
     "market-status",
     getMarketStatus,
     {
-      refreshInterval: 60_000, // 1 minute
+      refreshInterval: REFRESH_INTERVAL,
       revalidateOnFocus: true,
     }
   );

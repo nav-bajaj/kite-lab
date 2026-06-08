@@ -15,6 +15,7 @@ from app.scheduler import start_scheduler, shutdown_scheduler, register_default_
 from app.middleware.error_handlers import register_error_handlers
 from app.middleware.request_logger import RequestLoggerMiddleware
 from app.middleware.rate_limiter import register_rate_limiter
+from app.middleware.etag import ETagMiddleware
 
 # Configure logging
 logging.basicConfig(
@@ -99,6 +100,11 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         if not _settings.debug:
             response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
         return response
+
+# ETag / 304 handling for JSON GETs. Added before SecurityHeaders so it
+# sits *inside* it: SecurityHeaders then runs on the response ETag rebuilds
+# (or the 304 it emits), so security headers are never dropped.
+app.add_middleware(ETagMiddleware)
 
 app.add_middleware(SecurityHeadersMiddleware)
 
