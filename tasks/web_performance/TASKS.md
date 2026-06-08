@@ -78,5 +78,27 @@ data-fetching layer; does not touch backend auth.
 - [ ] **4.3** Add Vercel Speed Insights / Web Vitals reporting. 🟢
 - [ ] **4.4** Capture a Lighthouse baseline + after numbers; record
   LCP / INP / TTFB deltas in RESULTS.md. 🟢
-- [ ] **4.5** 👤 **CHECK-IN** + close-out (write RESULTS.md, flip
+- [ ] **4.5** 👤 **CHECK-IN**.
+
+## Phase 5 — Security audit of the changes 🟡 🤖
+
+Confirm the performance work introduced no security regressions before
+close-out. The data-fetching / caching / auth-readiness changes are
+exactly the kind of diff CLAUDE.md says must pass the threat model.
+
+- [ ] **5.1** Run the `security-reviewer` subagent over the full
+  `web_performance` diff (auth-context, api-client token provider, SWR
+  gating, persisted client cache, backend caching). 🟡
+- [ ] **5.2** Run the `/security-audit` skill for the deeper scan
+  (gitleaks / bandit / semgrep / npm audit, etc.). 🟢
+- [ ] **5.3** Specifically verify: (a) the `authReady` gating and token
+  provider never *weaken* authentication — they only change *when* the
+  client fetches; (b) the persisted localStorage SWR cache is namespaced
+  + cleared on sign-out and can't leak one user's portfolio to another or
+  one universe's data across the `check_universe_access` boundary; (c) any
+  backend cache keys include the universe + user-scope so cached responses
+  can't cross tenants; (d) no CSP / CORS widening crept in. 🟡
+- [ ] **5.4** Triage findings; record in RESULTS.md + risk register if a
+  row is warranted. 🟢
+- [ ] **5.5** 👤 **CHECK-IN** + close-out (write RESULTS.md, flip
   `_meta.yml` to shipped).

@@ -33,7 +33,31 @@ In progress. Phase 0 implemented, awaiting user sign-off before Phase 1.
   invariants intact.
 
 ### Phase 1 — perceived performance
-_pending_
+- Planned: persisted SWR cache, keepPreviousData, route loading.tsx,
+  dynamic Recharts, preload on hover.
+- Actual (all done):
+  - `swr-config.tsx` — localStorage-backed SWR cache provider, **namespaced
+    by Clerk userId** (`mw-swr-cache:v1:<userId>`), flushed on
+    beforeunload + tab-hidden, and **purged on sign-out / user-switch** so
+    one user's data can't surface for another on a shared device. Signed-out
+    sessions stay in-memory. `<SWRConfig key={userId}>` remounts per user.
+    Added `keepPreviousData: true` globally (no blanking on universe switch
+    / trade pagination).
+  - `src/app/(dashboard)/loading.tsx` — route-level skeleton for nav
+    transitions, sized to roughly match pages (minimize CLS).
+  - `components/charts/chart-fallbacks.tsx` (new) + barrel changes in
+    `performance/index.ts` and `portfolio/index.ts` — the three
+    recharts-backed charts (EquityCurve, DrawdownChart, AllocationChart)
+    now load via `next/dynamic` (`ssr:false`) with matching skeleton
+    fallbacks, keeping recharts out of the initial route bundle.
+  - `lib/preload.ts` (new) + `shared/sidebar.tsx` — hovering/focusing a nav
+    link warms that route's primary SWR data (gated on `authReady`).
+- Commits: _pending_
+- Verification: `npm run build` clean (32 routes, dynamic chart chunks
+  split). Runtime "feels instant on return" + no-blank-on-switch best
+  confirmed by user on a preview deploy.
+- Security note for Phase 5: persisted cache holds portfolio/holdings data
+  in localStorage — namespaced + purged as above; flagged for the audit.
 
 ### Phase 2 — smart caching
 _pending_
@@ -42,6 +66,9 @@ _pending_
 _pending_
 
 ### Phase 4 — mobile + measurement
+_pending_
+
+### Phase 5 — security audit of the changes
 _pending_
 
 ## Deferred / out of scope
