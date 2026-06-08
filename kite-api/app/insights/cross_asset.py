@@ -34,6 +34,7 @@ function will start producing real features automatically.
 """
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, asdict, field
 from functools import lru_cache
 from pathlib import Path
@@ -153,8 +154,25 @@ def compute_asset_features(close_series: pd.Series) -> AssetFeatures:
 
 # ─────────── registry + loading ───────────
 
-# Where the OHLC CSVs live.
-INDICES_DIR = Path("/Users/navdeep/Documents/stock_data/indices_data_full")
+# Where the OHLC CSVs live. Must stay in lockstep with the writer at
+# scripts/fetch_cross_asset_history.py (_resolve_output_dir) — same resolution
+# order so the engine reads the directory the fetcher just wrote. The old
+# hardcoded Mac path meant this engine never saw the data on Railway (the
+# /data volume), so cross-asset features were permanently data_available=False
+# in prod regardless of what the fetcher produced.
+def _resolve_indices_dir() -> Path:
+    override = os.environ.get("CROSS_ASSET_OUTPUT_DIR")
+    if override:
+        return Path(override)
+    root = os.environ.get("KITE_BACKUP_SOURCE_ROOT")
+    if root:
+        return Path(root) / "indices_data_full"
+    if Path("/data").is_dir():
+        return Path("/data") / "indices_data_full"
+    return Path.home() / "Documents" / "stock_data" / "indices_data_full"
+
+
+INDICES_DIR = _resolve_indices_dir()
 
 
 # (asset_id, label, csv_filename or None for deferred)

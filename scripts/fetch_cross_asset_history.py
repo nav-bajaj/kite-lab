@@ -37,10 +37,11 @@ USAGE
 
 OUTPUT
 ------
-Writes CSVs to `/Users/navdeep/Documents/stock_data/indices_data_full/`
-(same location the rest of the indices use). Schema:
-`date,open,high,low,close,volume` — matches the existing index files
-so `cross_asset.py` picks them up automatically.
+Writes CSVs to the `indices_data_full/` directory, resolved at runtime
+(see `_resolve_output_dir`): `$KITE_BACKUP_SOURCE_ROOT/indices_data_full`
+on Railway (the mounted /data volume), `~/Documents/stock_data/indices_data_full`
+on the Mac. Schema: `date,open,high,low,close,volume` — matches the
+existing index files so `cross_asset.py` picks them up automatically.
 
 After a successful fetch, clear the cross_asset engine cache and the
 snapshot's USDINR / gold / crude entries will populate with real data.
@@ -63,8 +64,33 @@ if str(SCRIPTS_DIR) not in sys.path:
 from history_utils import init_kite_client, to_local_naive  # noqa: E402
 
 
-# Where the rest of the index CSVs live. Keep these in lockstep.
-OUTPUT_DIR = Path("/Users/navdeep/Documents/stock_data/indices_data_full")
+# Where the rest of the index CSVs live. Keep these in lockstep with the
+# reader at kite-api/app/insights/cross_asset.py (_resolve_indices_dir).
+#
+# This used to be a hardcoded Mac absolute path, which crashed the daily
+# pipeline on Railway: the job runs as the non-root `appuser`, so
+# `mkdir(parents=True)` on /Users/... raised PermissionError after ~1.5s —
+# the "Fetch cross-asset data: FAILED (1.5s)" the daily cron kept reporting.
+# Resolve it instead so it lands on the persistent volume in prod and stays
+# put on the Mac.
+def _resolve_output_dir() -> Path:
+    # 1. Explicit override wins (tests, ad-hoc backfills).
+    override = os.environ.get("CROSS_ASSET_OUTPUT_DIR")
+    if override:
+        return Path(override)
+    # 2. Railway: KITE_BACKUP_SOURCE_ROOT is set to /data (the mounted volume),
+    #    which is also where upload_to_gdrive.py reads indices_data_full from.
+    root = os.environ.get("KITE_BACKUP_SOURCE_ROOT")
+    if root:
+        return Path(root) / "indices_data_full"
+    # 3. Railway volume present but env unset — still land on the volume.
+    if Path("/data").is_dir():
+        return Path("/data") / "indices_data_full"
+    # 4. Mac-local default (unchanged from the original hardcoded path).
+    return Path.home() / "Documents" / "stock_data" / "indices_data_full"
+
+
+OUTPUT_DIR = _resolve_output_dir()
 
 
 # Asset → (instrument_token, exchange/segment label, kite kwargs)

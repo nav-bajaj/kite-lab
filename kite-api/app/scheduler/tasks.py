@@ -164,8 +164,15 @@ def register_default_tasks(sched):
             logger.info(f"Task already registered: {job_id}")
             continue
 
-        # Create cron trigger
-        trigger = CronTrigger(**task["trigger_args"])
+        # Create cron trigger.
+        #
+        # IMPORTANT: pin the trigger to the scheduler's timezone (IST). A
+        # CronTrigger built without an explicit `timezone` falls back to the
+        # *container-local* zone (UTC on Railway, where no TZ is set), NOT the
+        # BackgroundScheduler's configured timezone. That silently shifted every
+        # job by 5h30m — daily_pipeline fired at 07:00 UTC (12:30 IST) instead
+        # of 07:00 IST. Passing sched.timezone makes the schedule env-independent.
+        trigger = CronTrigger(timezone=sched.timezone, **task["trigger_args"])
 
         # Add job using string reference for serialization
         sched.add_job(

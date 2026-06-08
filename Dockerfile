@@ -7,18 +7,26 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Set environment variables
+# TZ=Asia/Kolkata: this is an India-only market system. Without it the
+# container runs in UTC, which (a) made APScheduler cron triggers fire 5h30m
+# late, (b) printed job-log timestamps in UTC, and (c) broke the "token expires
+# 6 AM IST" check in system_service. DB timestamps are unaffected (they use
+# func.now() server-side / explicit utcnow()).
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PYTHONPATH=/app
+    PYTHONPATH=/app \
+    TZ=Asia/Kolkata
 
-# Install system dependencies
+# Install system dependencies (tzdata so $TZ resolves to a real zone)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libpq-dev \
     curl \
     gosu \
+    tzdata \
+    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
