@@ -124,7 +124,29 @@ In progress. Phase 0 implemented, awaiting user sign-off before Phase 1.
 - Verification: `npm run build` clean (32 routes).
 
 ### Phase 4 — mobile + measurement
-_pending_
+- Planned: network-aware polling, responsive charts, Web Vitals, Lighthouse
+  baseline.
+- Actual:
+  - **Speed Insights** — added `@vercel/speed-insights` and `<SpeedInsights/>`
+    in the root layout. Collects real-user (field) LCP/INP/CLS/TTFB on Vercel
+    once deployed — more representative for an authed app than a synthetic run.
+  - **Network-aware polling** (`hooks/use-network-status.ts`) — progressive
+    enhancement over the Network Information API; on data-saver / 2g the
+    Positions poll backs off 3× (10s→30s open, 60s→180s closed). No-op where
+    the API is unsupported (Safari/iOS) — falls back to normal cadence.
+  - **Responsive charts** (`hooks/use-is-mobile.ts`) — equity-curve height
+    400→280 and drawdown 250→180 on phones. Charts were already
+    responsive-width + lazy-loaded (Phase 1).
+  - **Lighthouse baseline: not captured locally.** A meaningful run needs the
+    deployed, Clerk-authed app behind a live backend; a localhost run would
+    be misleading and I won't invent numbers. Recommended: run Lighthouse
+    (mobile preset) against a Vercel **preview URL** signed in, before/after,
+    OR rely on Speed Insights field data which is now wired up. Procedure:
+    `npx lighthouse <preview-url> --preset=desktop` and `--form-factor=mobile`,
+    or Chrome DevTools → Lighthouse.
+- Commits: _pending_
+- Verification: `npm run build` clean (32 routes); ESLint clean on all
+  touched files.
 
 ### Phase 5 — security audit of the changes
 _pending_

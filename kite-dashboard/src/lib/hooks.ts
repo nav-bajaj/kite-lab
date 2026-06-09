@@ -3,6 +3,7 @@
 import useSWR, { type SWRConfiguration, type Key, type Fetcher } from "swr";
 import { useUniverse } from "@/contexts/universe-context";
 import { useApiAuth } from "@/contexts/api-auth-context";
+import { useNetworkStatus } from "@/hooks/use-network-status";
 import {
   getPortfolio,
   getHoldings,
@@ -302,6 +303,7 @@ const POSITIONS_CLOSED_REFRESH = 60_000; // 1min when closed (just to catch the 
 // the tab is hidden, so battery/data on mobile are covered too.)
 export function usePositions(opts?: { enablePolling?: boolean }) {
   const { universeId } = useUniverse();
+  const { isSlow } = useNetworkStatus();
   const enablePolling = opts?.enablePolling ?? true;
 
   return useAuthedSWR<PositionsResponse>(
@@ -310,9 +312,11 @@ export function usePositions(opts?: { enablePolling?: boolean }) {
     {
       refreshInterval: (latest?: PositionsResponse) => {
         if (!enablePolling) return 0;
-        return latest?.market_status?.is_open
+        const base = latest?.market_status?.is_open
           ? POSITIONS_REFRESH
           : POSITIONS_CLOSED_REFRESH;
+        // Back off on metered / slow mobile connections.
+        return isSlow ? base * 3 : base;
       },
       revalidateOnFocus: true,
     }

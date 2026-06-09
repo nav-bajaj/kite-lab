@@ -13,6 +13,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEquityCurve, useMetrics } from "@/lib/hooks";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
@@ -22,6 +23,7 @@ function formatDate(dateStr: string): string {
 export function DrawdownChart() {
   const { data: equityData, isLoading: equityLoading } = useEquityCurve();
   const { data: metricsData } = useMetrics();
+  const isMobile = useIsMobile();
 
   if (equityLoading) {
     return <DrawdownChartSkeleton />;
@@ -56,7 +58,7 @@ export function DrawdownChart() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={250}>
+        <ResponsiveContainer width="100%" height={isMobile ? 180 : 250}>
           <AreaChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
             <XAxis
