@@ -15,6 +15,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/contexts/sidebar-context";
+import { useUniverse } from "@/contexts/universe-context";
+import { useApiAuth } from "@/contexts/api-auth-context";
+import { preloadRoute } from "@/lib/preload";
 
 // `adminOnly` items are filtered out for non-admin clients in the render.
 const navigation = [
@@ -33,6 +36,15 @@ export function Sidebar() {
   const isAdmin = role === "admin";
   const visibleNav = navigation.filter((item) => !item.adminOnly || isAdmin);
   const { collapsed, toggle } = useSidebar();
+  const { universeId } = useUniverse();
+  const { authReady } = useApiAuth();
+
+  // Warm the destination's data on hover/focus so the page renders from
+  // cache on click. Gated on authReady so a hover never fires an
+  // unauthenticated request (which would 401).
+  const warm = (href: string) => {
+    if (authReady) preloadRoute(href, universeId);
+  };
 
   return (
     <aside
@@ -92,6 +104,8 @@ export function Sidebar() {
             <Link
               key={item.name}
               href={item.href}
+              onMouseEnter={() => warm(item.href)}
+              onFocus={() => warm(item.href)}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 isActive

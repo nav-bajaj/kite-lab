@@ -278,3 +278,18 @@
   --chart-4: #B07FF5;
   --chart-5: #BC8A52;
 }
+
+/* One-shot highlight for live value changes (see FlashOnChange). Restarted
+   by remounting the element via a changing `key`, so no JS effect is needed. */
+@keyframes mw-value-flash {
+  from {
+    background-color: color-mix(in oklab, var(--primary) 18%, transparent);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+.animate-value-flash {
+  animation: mw-value-flash 0.6s ease-out;
+}

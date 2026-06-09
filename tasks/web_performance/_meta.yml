@@ -1,0 +1,9 @@
+name: web_performance
+status: in-progress
+opened: 2026-06-08
+closed: null
+related_commits: []
+supersedes: []
+depends_on:
+  - client_portal
+register_rows: []

@@ -15,6 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useEquityCurve, useMetrics } from "@/lib/hooks";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 function formatCurrency(value: number): string {
   if (value >= 10000000) {
@@ -35,6 +36,7 @@ export function EquityCurve() {
   const { data: equityData, isLoading, error } = useEquityCurve();
   const { data: metricsData } = useMetrics();
   const [showBenchmark, setShowBenchmark] = useState(false);
+  const isMobile = useIsMobile();
 
   // Normalize benchmark to start at same value as portfolio
   const normalizedData = useMemo(() => {
@@ -93,7 +95,7 @@ export function EquityCurve() {
         </ToggleGroup>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={400}>
+        <ResponsiveContainer width="100%" height={isMobile ? 280 : 400}>
           <AreaChart data={normalizedData}>
             <defs>
               <linearGradient id="portfolioGradient" x1="0" y1="0" x2="0" y2="1">

@@ -9,7 +9,7 @@ import {
   useCallback,
 } from "react";
 import { useAuth } from "@clerk/nextjs";
-import { setGlobalAuthToken } from "@/lib/api-client";
+import { setGlobalAuthToken, setTokenProvider } from "@/lib/api-client";
 
 // Bridges Clerk's session token into the existing global-token slot that
 // `api-client.ts` reads. Clerk default tokens have ~60s TTL, so we
@@ -24,6 +24,11 @@ const REFRESH_INTERVAL_MS = 50_000;
 interface ApiAuthContextType {
   token: string | null;
   isLoading: boolean;
+  // True once Clerk has loaded and we have a usable token (signed in).
+  // SWR hooks gate their fetches on this so they never fire before a
+  // token can be attached — which is what produced the spurious 401
+  // "session expired" toast on login.
+  authReady: boolean;
   error: string | null;
   refreshToken: () => Promise<void>;
 }
@@ -31,6 +36,7 @@ interface ApiAuthContextType {
 const ApiAuthContext = createContext<ApiAuthContextType>({
   token: null,
   isLoading: true,
+  authReady: false,
   error: null,
   refreshToken: async () => {},
 });
@@ -50,7 +56,9 @@ export function ApiAuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    setIsLoading(true);
+    // Note: we deliberately do NOT flip isLoading back to true here. The
+    // periodic 50s refresh would otherwise re-trigger loading states and
+    // make the UI flicker even though valid data is already on screen.
     setError(null);
 
     try {
@@ -67,6 +75,13 @@ export function ApiAuthProvider({ children }: { children: ReactNode }) {
     }
   }, [getToken, isLoaded, isSignedIn]);
 
+  // Register an async token resolver so api-client can pull a fresh token
+  // at fetch time instead of relying on the global being populated yet.
+  useEffect(() => {
+    setTokenProvider(isLoaded && isSignedIn ? () => getToken() : null);
+    return () => setTokenProvider(null);
+  }, [isLoaded, isSignedIn, getToken]);
+
   // Initial fetch + periodic refresh while signed in
   useEffect(() => {
     refreshToken();
@@ -75,8 +90,15 @@ export function ApiAuthProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(id);
   }, [refreshToken, isSignedIn]);
 
+  // Ready to make authed requests once Clerk has loaded and either we have
+  // a token (signed in) or we know the user is signed out. Authed SWR keys
+  // stay null until this is true.
+  const authReady = isLoaded && isSignedIn === true && token !== null;
+
   return (
-    <ApiAuthContext.Provider value={{ token, isLoading, error, refreshToken }}>
+    <ApiAuthContext.Provider
+      value={{ token, isLoading, authReady, error, refreshToken }}
+    >
       {children}
     </ApiAuthContext.Provider>
   );
