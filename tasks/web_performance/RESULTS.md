@@ -155,4 +155,45 @@ _pending_
 - Redis distributed cache (only if >1 Railway dyno — see Phase 2.5).
 
 ## Verification log
-- _pending_
+
+### Local end-to-end (Playwright + live backend), 2026-06-09
+Ran the real frontend (`next dev`) + real backend (`uvicorn`, `DISABLE_AUTH=false`
+→ real Clerk JWKS verification) against the local Postgres (real data: 1082
+holdings, 12429 trades). Authenticated the Playwright browser as the admin
+user via a Clerk sign-in **ticket** (Backend API), since the dev instance is
+Google-OAuth-only and can't be scripted directly.
+
+- **Phase 0** — `/dashboard` loaded with NO "session expired"/"token expired"
+  toast. First `/api/portfolio` + `/api/portfolio/holdings` returned **200**
+  (zero 401s) and carried `Authorization: Bearer <Clerk JWT>` — proving the
+  token was attached before the request fired. Backend confirmed it 401s a
+  tokenless request, so 200 means the gating worked.
+- **Phase 1** — after navigating away from `/dashboard`, localStorage held the
+  persisted SWR cache `mw-swr-cache:v1:user_<id>` with 2 real entries
+  (portfolio + holdings, 5.2KB) → instant render on return. Cache is
+  **namespaced by Clerk user id** (multi-user safe).
+- **Phase 2** — real responses carried `Cache-Control: private, max-age=3600,
+  stale-while-revalidate=86400` + `ETag`, with security headers intact.
+  End-to-end conditional request: matching `If-None-Match` → **304**, stale →
+  **200**. Stable ETag across requests confirms the in-process cache.
+- **Phase 3** — `/positions` (market open) showed **SSE "Live"** connected,
+  "Live prices from Zerodha", an advancing "Updated HH:MM:SS" stamp, **4
+  `animate-value-flash` elements** mounted, 24 positions, no error banner.
+- **Phase 4** — equity-curve chart height **400px @1200w → 280px @390w**
+  (responsive); chart is a lazy Recharts chunk. Speed Insights is wired in the
+  root layout. Note: in dev the SDK loads its debug script from
+  `va.vercel-scripts.com` which the CSP blocks (console error) — but in
+  production `@vercel/speed-insights` serves same-origin
+  (`/_vercel/speed-insights/script.js`), covered by `script-src 'self'`, so
+  **no CSP change is needed for prod**. Verified via the package source.
+
+Non-issues observed locally: a Radix `aria-controls` hydration warning in the
+Navbar (pre-existing, unrelated) and `429` on the SSE stream (rate-limit
+exhaustion from the test run's own request volume on `127.0.0.1`, not a
+product defect). No regression attributable to Phases 0-4.
+
+### Backend unit tests
+`pytest test_clerk_authz.py test_response_cache.py test_trade_matching.py`
+→ **292 passed** (277 authz assertions intact + 8 new + trade matching).
+Full `pytest tests/` not runnable on this Python 3.14 box (no pinned
+numpy/pandas wheels); insights suite import-blocked — unrelated to this work.
