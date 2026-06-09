@@ -292,16 +292,28 @@ export function useSystemStatus() {
 }
 
 // Open Positions (live portfolio tracking)
-const POSITIONS_REFRESH = 10_000; // 10 seconds for live data
+const POSITIONS_REFRESH = 10_000; // 10s when market open and not streaming
+const POSITIONS_CLOSED_REFRESH = 60_000; // 1min when closed (just to catch the open)
 
-export function usePositions() {
+// `enablePolling` lets the Positions page turn polling off while its SSE
+// stream is healthy, so we don't double-fetch. Polling is also gated on
+// market hours via the refreshInterval function — no point hammering the
+// backend for prices that aren't moving. (SWR already pauses polling while
+// the tab is hidden, so battery/data on mobile are covered too.)
+export function usePositions(opts?: { enablePolling?: boolean }) {
   const { universeId } = useUniverse();
+  const enablePolling = opts?.enablePolling ?? true;
 
   return useAuthedSWR<PositionsResponse>(
     ["positions", universeId],
     () => getPositions(universeId),
     {
-      refreshInterval: POSITIONS_REFRESH,
+      refreshInterval: (latest?: PositionsResponse) => {
+        if (!enablePolling) return 0;
+        return latest?.market_status?.is_open
+          ? POSITIONS_REFRESH
+          : POSITIONS_CLOSED_REFRESH;
+      },
       revalidateOnFocus: true,
     }
   );

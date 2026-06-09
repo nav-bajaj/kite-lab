@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Upload } from "lucide-react";
 import { PositionsSummary, PositionsTable } from "@/components/positions";
@@ -12,87 +12,98 @@ import type { PositionsResponse } from "@/lib/types";
 
 export default function PositionsPage() {
   const { universeId } = useUniverse();
-  const { data, isLoading, error, mutate } = usePositions();
   const { toast } = useToast();
   const [isSyncing, setIsSyncing] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamData, setStreamData] = useState<PositionsResponse | null>(null);
+  const [reconnectNonce, setReconnectNonce] = useState(0);
 
-  // Use stream data if available, otherwise fall back to polled data
+  // Poll only while the SSE stream isn't carrying updates — no double-fetch.
+  const { data, isLoading, error, mutate } = usePositions({
+    enablePolling: !isStreaming,
+  });
+
+  // Prefer live stream data; fall back to polled data.
   const positionsData = streamData || data;
+  const marketOpen = positionsData?.market_status?.is_open ?? false;
 
-  // Start SSE stream for real-time updates
-  const startStream = useCallback(() => {
-    if (isStreaming) return;
-
-    const streamUrl = getPositionsStreamUrl(universeId, 3);
-    const eventSource = new EventSource(streamUrl);
-
-    eventSource.onopen = () => {
-      setIsStreaming(true);
-    };
-
-    eventSource.addEventListener("price_update", (event) => {
-      try {
-        const data = JSON.parse(event.data) as PositionsResponse;
-        setStreamData(data);
-      } catch (e) {
-        console.error("Failed to parse price update:", e);
-      }
-    });
-
-    eventSource.addEventListener("market_status", (event) => {
-      try {
-        const status = JSON.parse(event.data);
-        // Update just the market status
-        setStreamData((prev) =>
-          prev ? { ...prev, market_status: status } : null
-        );
-      } catch (e) {
-        console.error("Failed to parse market status:", e);
-      }
-    });
-
-    eventSource.addEventListener("error", (event) => {
-      try {
-        const errorData = JSON.parse((event as MessageEvent).data);
-        if (errorData.error === "token_expired") {
-          toast({
-            title: "Token Expired",
-            description: "Please login to Zerodha again.",
-            variant: "destructive",
-          });
-        }
-      } catch {
-        // Connection error
-      }
-    });
-
-    eventSource.onerror = () => {
-      setIsStreaming(false);
-      eventSource.close();
-      // Retry after a delay
-      setTimeout(() => {
-        if (positionsData?.market_status?.is_open) {
-          startStream();
-        }
-      }, 5000);
-    };
-
-    // Cleanup on unmount
-    return () => {
-      eventSource.close();
-      setIsStreaming(false);
-    };
-  }, [universeId, isStreaming, positionsData?.market_status?.is_open, toast]);
-
-  // Auto-start stream when market is open
+  // Live price stream. Open it only while the market is open AND the tab is
+  // visible — pausing on hidden saves mobile battery/data — and reconnect
+  // after transport errors via a nonce that re-runs this effect.
   useEffect(() => {
-    if (data?.market_status?.is_open && !isStreaming) {
-      const cleanup = startStream();
-      return cleanup;
-    }
-  }, [data?.market_status?.is_open, isStreaming, startStream]);
+    if (!marketOpen || typeof window === "undefined") return;
+
+    let eventSource: EventSource | null = null;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const close = () => {
+      if (eventSource) {
+        eventSource.close();
+        eventSource = null;
+      }
+      setIsStreaming(false);
+    };
+
+    const open = () => {
+      if (eventSource) return;
+      eventSource = new EventSource(getPositionsStreamUrl(universeId, 3));
+
+      eventSource.onopen = () => setIsStreaming(true);
+
+      eventSource.addEventListener("price_update", (event) => {
+        try {
+          setStreamData(
+            JSON.parse((event as MessageEvent).data) as PositionsResponse
+          );
+        } catch (e) {
+          console.error("Failed to parse price update:", e);
+        }
+      });
+
+      eventSource.addEventListener("market_status", (event) => {
+        try {
+          const status = JSON.parse((event as MessageEvent).data);
+          setStreamData((prev) => (prev ? { ...prev, market_status: status } : prev));
+        } catch (e) {
+          console.error("Failed to parse market status:", e);
+        }
+      });
+
+      eventSource.addEventListener("error", (event) => {
+        try {
+          const errorData = JSON.parse((event as MessageEvent).data);
+          if (errorData.error === "token_expired") {
+            toast({
+              title: "Token Expired",
+              description: "Please login to Zerodha again.",
+              variant: "destructive",
+            });
+          }
+        } catch {
+          // transport-level error — handled by onerror below
+        }
+      });
+
+      eventSource.onerror = () => {
+        close();
+        retryTimer = setTimeout(() => setReconnectNonce((n) => n + 1), 5000);
+      };
+    };
+
+    const syncToVisibility = () => {
+      if (document.visibilityState === "visible") open();
+      else close();
+    };
+
+    syncToVisibility();
+    document.addEventListener("visibilitychange", syncToVisibility);
+
+    return () => {
+      document.removeEventListener("visibilitychange", syncToVisibility);
+      if (retryTimer) clearTimeout(retryTimer);
+      close();
+    };
+  }, [marketOpen, universeId, reconnectNonce, toast]);
 
   // Handle sync from CSV
   const handleSync = async () => {

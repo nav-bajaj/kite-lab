@@ -101,7 +101,27 @@ In progress. Phase 0 implemented, awaiting user sign-off before Phase 1.
   identity and that the access-check-before-cache ordering holds.
 
 ### Phase 3 — smooth live prices
-_pending_
+- Planned: gate polling on market hours + visibility, kill SSE/poll
+  overlap, animate value changes + as-of stamp.
+- Actual:
+  - `usePositions({ enablePolling })` (`hooks.ts`) — `refreshInterval` is
+    now a function: `0` when streaming (no double-fetch) or when polling is
+    disabled; `10s` when market open; `60s` when closed (just to catch the
+    open). SWR already pauses polling while the tab is hidden, so mobile
+    battery/data are covered for the polled path.
+  - Positions page SSE rewrite (`positions/page.tsx`) — stream opens only
+    while market is open AND tab is visible; a `visibilitychange` listener
+    closes it when hidden and reopens on return; reconnect after transport
+    errors via a nonce-driven effect re-run. Polling is suppressed while the
+    stream is healthy (`enablePolling: !isStreaming`).
+  - `FlashOnChange` (`components/ui/flash-on-change.tsx`) — subtly
+    highlights a value's *background* (composes with P&L red/green) for
+    500ms when it changes, so live updates read as smooth. Applied to the
+    Positions summary cards (Current Value / Total P&L / Day P&L).
+  - As-of stamp already existed in `positions-summary.tsx` ("Updated
+    HH:MM:SS" + market-status banner) — left as is.
+- Commits: _pending_
+- Verification: `npm run build` clean (32 routes).
 
 ### Phase 4 — mobile + measurement
 _pending_

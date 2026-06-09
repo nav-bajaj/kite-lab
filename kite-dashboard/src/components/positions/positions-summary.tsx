@@ -12,6 +12,7 @@ import {
   Activity,
 } from "lucide-react";
 import { formatCurrency, formatPercentValue, getPnLClass } from "@/lib/utils";
+import { FlashOnChange } from "@/components/ui/flash-on-change";
 import type { PositionsSummary as PositionsSummaryType, MarketStatus } from "@/lib/types";
 
 interface PositionsSummaryProps {
@@ -37,18 +38,21 @@ export function PositionsSummary({
     {
       title: "Total Invested",
       value: formatCurrency(summary.total_invested),
+      flashValue: summary.total_invested,
       icon: PiggyBank,
       iconColor: "text-blue-500",
     },
     {
       title: "Current Value",
       value: formatCurrency(summary.total_current_value),
+      flashValue: summary.total_current_value,
       icon: DollarSign,
       iconColor: "text-purple-500",
     },
     {
       title: "Total P&L",
       value: formatCurrency(summary.total_pnl),
+      flashValue: summary.total_pnl,
       subValue: formatPercentValue(summary.total_pnl_pct),
       icon: summary.total_pnl >= 0 ? TrendingUp : TrendingDown,
       iconColor: summary.total_pnl >= 0 ? "text-green-500" : "text-red-500",
@@ -57,6 +61,7 @@ export function PositionsSummary({
     {
       title: "Day P&L",
       value: formatCurrency(summary.day_pnl),
+      flashValue: summary.day_pnl,
       subValue: formatPercentValue(summary.day_pnl_pct),
       icon: summary.day_pnl >= 0 ? TrendingUp : TrendingDown,
       iconColor: summary.day_pnl >= 0 ? "text-green-500" : "text-red-500",
@@ -100,7 +105,9 @@ export function PositionsSummary({
                 <div className="space-y-1">
                   <p className="text-sm text-muted-foreground">{card.title}</p>
                   <p className={`text-2xl font-bold ${card.valueColor || ""}`}>
-                    {card.value}
+                    <FlashOnChange value={card.flashValue}>
+                      {card.value}
+                    </FlashOnChange>
                   </p>
                   {card.subValue && (
                     <p className={`text-sm ${card.valueColor || ""}`}>
