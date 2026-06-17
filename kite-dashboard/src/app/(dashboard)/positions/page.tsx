@@ -205,6 +205,7 @@ export default function PositionsPage() {
       <PositionsSummary
         summary={positionsData?.summary || null}
         marketStatus={positionsData?.market_status || null}
+        holdingsAsOf={positionsData?.holdings_as_of || null}
         isLoading={isLoading && !positionsData}
       />
 
