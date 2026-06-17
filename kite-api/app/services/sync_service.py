@@ -70,6 +70,37 @@ def _write_latest_pointer(parent_dir: Path, run_dir: Path) -> None:
         logger.warning(f"Could not write {pointer}: {e}")
 
 
+def refresh_latest_pointer(universe: str) -> Optional[Path]:
+    """Re-point ``latest.json`` at the newest run dir that has a holdings CSV.
+
+    The pointer is a read cache that ``get_latest_experiment_dir`` trusts
+    without globbing (Phase 3.3). The daily pipeline creates a *new*
+    timestamped run dir every day but nothing here touches the pointer, so
+    once written it stays frozen on whatever run it first pointed at — for as
+    long as that dir survives on disk (which, on the persistent Railway
+    volume, is indefinitely). The result is that every DB sync and every
+    dashboard read (holdings, trades, equity, metrics, open positions) keeps
+    serving a stale run: rebalances and new trades never surface.
+
+    Call this from the producer side (the daily sync) so the pointer advances
+    to the latest run before anything reads it. Returns the run dir now
+    pointed at, or None if no valid run exists.
+    """
+    spec = UNIVERSE_DIRS.get(universe)
+    if spec is None:
+        return None
+    parent_rel, pattern = spec
+    parent_dir = settings.data_dir / parent_rel
+
+    candidates = sorted(glob.glob(str(parent_dir / pattern)), reverse=True)
+    for d in candidates:
+        run_dir = Path(d)
+        if _holdings_present(run_dir):
+            _write_latest_pointer(parent_dir, run_dir)
+            return run_dir
+    return None
+
+
 def get_latest_experiment_dir(universe: str = "nse500") -> Optional[Path]:
     """Find the most recent experiment directory for a universe.
 
@@ -305,6 +336,12 @@ def sync_all(universe: str = "nse500", full_trades: bool = False) -> dict:
 
     SessionLocal = get_session_local()
     db = SessionLocal()
+
+    # Advance the latest.json pointer to today's run before reading anything.
+    # Without this the sync (and the dashboard, which shares this pointer)
+    # keeps reading whatever run the pointer first cached — see
+    # refresh_latest_pointer for the full failure mode.
+    refresh_latest_pointer(universe)
 
     try:
         results = {
