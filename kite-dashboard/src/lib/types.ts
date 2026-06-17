@@ -243,6 +243,9 @@ export interface PositionsResponse {
   summary: PositionsSummary;
   market_status: MarketStatus;
   last_updated: string;
+  // When the holdings were last written by the daily sync (vs. last_updated,
+  // which is the live-price refresh time). Null when there are no holdings.
+  holdings_as_of?: string | null;
 }
 
 export interface QuotesResponse {

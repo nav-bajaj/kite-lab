@@ -163,6 +163,13 @@ class PositionsService:
         # Get holdings from DB
         holdings = PositionsService.get_holdings(universe)
 
+        # "Holdings as of" = when the daily sync last wrote these rows.
+        # sync_positions deletes + reinserts every run, so created_at tracks the
+        # last sync and stays old if a sync was skipped — surfacing real staleness.
+        holdings_as_of = max(
+            (h.created_at for h in holdings if h.created_at), default=None
+        )
+
         if not holdings:
             return PositionsResponse(
                 universe=universe,
@@ -179,7 +186,8 @@ class PositionsService:
                     losers=0
                 ),
                 market_status=market_status,
-                last_updated=now
+                last_updated=now,
+                holdings_as_of=holdings_as_of,
             )
 
         # Get symbols for quote fetching
@@ -293,7 +301,8 @@ class PositionsService:
             positions=positions,
             summary=summary,
             market_status=market_status,
-            last_updated=now
+            last_updated=now,
+            holdings_as_of=holdings_as_of,
         )
 
     @staticmethod

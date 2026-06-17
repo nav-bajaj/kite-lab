@@ -17,33 +17,52 @@ IST = pytz.timezone("Asia/Kolkata")
 MARKET_OPEN = time(9, 15)   # 9:15 AM IST
 MARKET_CLOSE = time(15, 30)  # 3:30 PM IST
 
-# NSE Holidays 2026 (approximate - should be updated annually)
-# Format: (month, day)
-NSE_HOLIDAYS_2026 = [
-    (1, 26),   # Republic Day
-    (3, 17),   # Holi
-    (4, 3),    # Good Friday
-    (4, 14),   # Ambedkar Jayanti
-    (4, 21),   # Ram Navami
-    (5, 1),    # May Day
-    (5, 12),   # Buddha Purnima
-    (6, 17),   # Eid ul-Fitr (approx)
-    (7, 17),   # Muharram
-    (8, 15),   # Independence Day
-    (8, 27),   # Janmashtami
-    (10, 2),   # Gandhi Jayanti
-    (10, 21),  # Dussehra
-    (10, 22),  # Dussehra
-    (11, 3),   # Diwali (Laxmi Puja)
-    (11, 4),   # Diwali (Balipratipada)
-    (11, 15),  # Guru Nanak Jayanti
-    (12, 25),  # Christmas
-]
+# NSE trading holidays — equity segment.
+#
+# This list MUST be updated annually from the official NSE circular
+# ("Holidays" under nseindia.com/resources/exchange-communication-holidays).
+# It is keyed by year because most entries are lunar festivals whose dates
+# shift year to year — applying one year's dates to another silently flags
+# the wrong days (the previous version did exactly that, hard-coding 2025-era
+# approximations that wrongly closed the market on real trading days).
+#
+# Weekend-falling 2026 holidays are intentionally omitted (the market is
+# already closed Sat/Sun and get_market_status handles that separately):
+#   - Mahashivratri      Sun 15 Feb 2026
+#   - Independence Day   Sat 15 Aug 2026
+#   - Diwali Laxmi Pujan Sun 08 Nov 2026 (special Muhurat session, not a full
+#     trading day; not modelled here)
+#
+# Format: {year: [(month, day), ...]}
+NSE_HOLIDAYS = {
+    2026: [
+        (1, 26),   # Republic Day               (Mon)
+        (3, 3),    # Holi                        (Tue)
+        (3, 26),   # Shri Ram Navami             (Thu)
+        (3, 31),   # Mahavir Jayanti             (Tue)
+        (4, 3),    # Good Friday                 (Fri)
+        (4, 14),   # Dr. Ambedkar Jayanti        (Tue)
+        (5, 1),    # Maharashtra Day / Buddha Purnima (Fri)
+        (5, 28),   # Bakri Id (Id-ul-Adha)       (Thu)
+        (6, 26),   # Muharram                    (Fri)
+        (9, 14),   # Ganesh Chaturthi            (Mon)
+        (10, 2),   # Mahatma Gandhi Jayanti      (Fri)
+        (10, 20),  # Dussehra (Vijaya Dashami)   (Tue)
+        (11, 10),  # Diwali Balipratipada        (Tue)
+        (11, 24),  # Guru Nanak Jayanti          (Tue)
+        (12, 25),  # Christmas                   (Fri)
+    ],
+}
 
 
 def is_nse_holiday(dt: datetime) -> bool:
-    """Check if given date is an NSE holiday."""
-    for month, day in NSE_HOLIDAYS_2026:
+    """Check if given date is an NSE holiday.
+
+    Only returns True for years explicitly listed in ``NSE_HOLIDAYS``. For an
+    unlisted year we return False rather than reuse a stale year's dates — see
+    the note on ``NSE_HOLIDAYS`` for why the list is year-keyed.
+    """
+    for month, day in NSE_HOLIDAYS.get(dt.year, []):
         if dt.month == month and dt.day == day:
             return True
     return False

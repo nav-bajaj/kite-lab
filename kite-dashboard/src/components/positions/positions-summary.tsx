@@ -10,6 +10,8 @@ import {
   PiggyBank,
   Clock,
   Activity,
+  CalendarDays,
+  AlertTriangle,
 } from "lucide-react";
 import { formatCurrency, formatPercentValue, getPnLClass } from "@/lib/utils";
 import { FlashOnChange } from "@/components/ui/flash-on-change";
@@ -18,12 +20,18 @@ import type { PositionsSummary as PositionsSummaryType, MarketStatus } from "@/l
 interface PositionsSummaryProps {
   summary: PositionsSummaryType | null;
   marketStatus: MarketStatus | null;
+  holdingsAsOf?: string | null;
   isLoading: boolean;
 }
+
+// Holdings refresh on trading days only, so a weekend + a holiday can leave a
+// legitimate ~4-day gap. Flag anything older than that as stale.
+const HOLDINGS_STALE_MS = 4 * 24 * 60 * 60 * 1000;
 
 export function PositionsSummary({
   summary,
   marketStatus,
+  holdingsAsOf,
   isLoading,
 }: PositionsSummaryProps) {
   if (isLoading) {
@@ -33,6 +41,15 @@ export function PositionsSummary({
   if (!summary) {
     return null;
   }
+
+  const holdingsDate = holdingsAsOf ? new Date(holdingsAsOf) : null;
+  // Reference "now" from the server response (market_status.last_updated)
+  // rather than the client clock: keeps render pure and avoids clock skew.
+  const serverNow = marketStatus ? new Date(marketStatus.last_updated) : null;
+  const holdingsStale =
+    holdingsDate !== null &&
+    serverNow !== null &&
+    serverNow.getTime() - holdingsDate.getTime() > HOLDINGS_STALE_MS;
 
   const cards = [
     {
@@ -136,8 +153,30 @@ export function PositionsSummary({
           <span className="text-red-600 font-medium">{summary.losers}</span>
           <span>Losers</span>
         </div>
+        {holdingsDate && (
+          <div
+            className={`flex items-center gap-2 ml-auto ${
+              holdingsStale ? "text-amber-600 font-medium" : ""
+            }`}
+            title={
+              holdingsStale
+                ? "Holdings have not refreshed recently — the daily sync may not have run."
+                : "When holdings were last synced by the daily pipeline"
+            }
+          >
+            {holdingsStale ? (
+              <AlertTriangle className="h-3 w-3" />
+            ) : (
+              <CalendarDays className="h-3 w-3" />
+            )}
+            <span>
+              Holdings as of {holdingsDate.toLocaleDateString()}
+              {holdingsStale && " (stale)"}
+            </span>
+          </div>
+        )}
         {marketStatus && (
-          <div className="flex items-center gap-2 ml-auto">
+          <div className={`flex items-center gap-2 ${holdingsDate ? "" : "ml-auto"}`}>
             <Clock className="h-3 w-3" />
             <span>
               Updated {new Date(marketStatus.last_updated).toLocaleTimeString()}

@@ -102,6 +102,10 @@ class PositionsResponse(BaseModel):
     summary: PositionsSummary
     market_status: MarketStatus
     last_updated: datetime
+    # When the holdings themselves were last written by the daily sync (distinct
+    # from last_updated, which is the live-price refresh time). Lets the UI show
+    # a true "holdings as of" date and flag stale data. None when no holdings.
+    holdings_as_of: Optional[datetime] = None
 
 
 class QuotesResponse(BaseModel):
