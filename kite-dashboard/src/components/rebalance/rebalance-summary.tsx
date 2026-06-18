@@ -11,7 +11,13 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRebalanceSummary } from "@/lib/hooks";
 import { formatCurrency } from "@/lib/utils";
-import { CalendarClock, History, ArrowRight, RefreshCw } from "lucide-react";
+import {
+  CalendarClock,
+  History,
+  ArrowRight,
+  RefreshCw,
+  Scissors,
+} from "lucide-react";
 
 export function RebalanceSummary() {
   const { data, isLoading, error } = useRebalanceSummary();
@@ -64,10 +70,15 @@ export function RebalanceSummary() {
             ) : (
               <div className="space-y-3">
                 <div>
+                  {upcoming.has_weekly_exit && (
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      Next entry
+                    </p>
+                  )}
                   <p className="text-2xl font-bold">{upcoming.signal_date}</p>
                   <p className="text-sm text-muted-foreground">
                     {upcoming.trading_days_until === 0
-                      ? "Rebalance is today or already underway"
+                      ? "Entry is today or already underway"
                       : `${upcoming.trading_days_until} trading day${
                           upcoming.trading_days_until === 1 ? "" : "s"
                         } away`}
@@ -78,6 +89,20 @@ export function RebalanceSummary() {
                   <ArrowRight className="h-3 w-3" />
                   <span>Trades take effect {upcoming.exec_date}</span>
                 </div>
+                {upcoming.has_weekly_exit && upcoming.exit_check_date && (
+                  <div className="flex items-start gap-2 rounded-md bg-amber-50 px-2 py-1.5 text-xs text-amber-700 dark:bg-amber-950/40 dark:text-amber-400">
+                    <Scissors className="mt-0.5 h-3 w-3 shrink-0" />
+                    <span>
+                      Holdings are also reviewed for exits every Friday — next
+                      check {upcoming.exit_check_date}
+                      {upcoming.exit_check_days_until !== null &&
+                        ` (${upcoming.exit_check_days_until} trading day${
+                          upcoming.exit_check_days_until === 1 ? "" : "s"
+                        } away)`}
+                      .
+                    </span>
+                  </div>
+                )}
               </div>
             )}
           </CardContent>
@@ -101,6 +126,9 @@ export function RebalanceSummary() {
               </p>
             ) : (
               <div className="space-y-3">
+                <Badge variant="outline" className="text-xs">
+                  {previous.buy_count > 0 ? "Entry rebalance" : "Weekly exit"}
+                </Badge>
                 <div className="flex items-center gap-4 text-sm">
                   <span>
                     <span className="font-medium text-green-600">

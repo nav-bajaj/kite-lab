@@ -7,7 +7,11 @@ from __future__ import annotations
 from datetime import date
 
 from app.services import market_service as ms
-from app.services.rebalance_service import project_next_signal
+from app.services.rebalance_service import (
+    project_next_signal,
+    project_next_exit_check,
+    CADENCE_META,
+)
 
 
 class TestTradingDayHelpers:
@@ -57,3 +61,25 @@ class TestProjectNextSignal:
         nxt = project_next_signal(date(2026, 1, 9), "biweekly_fri", today)
         assert nxt > today
         assert nxt.weekday() <= 4  # a weekday
+
+
+class TestWeeklyExitCadence:
+    def test_biweekly_strategies_have_weekly_exit_flag(self):
+        # Entries are biweekly but exits are checked weekly.
+        assert CADENCE_META["biweekly_fri"][3] is True
+        assert CADENCE_META["biweekly_fri_mon"][3] is True
+        # Weekly strategies check entry and exit on the same cadence.
+        assert CADENCE_META["weekly_thu_fri"][3] is False
+
+    def test_next_exit_check_is_next_friday(self):
+        # Thu 06-18 -> next Friday 06-19.
+        assert project_next_exit_check(date(2026, 6, 18)) == date(2026, 6, 19)
+
+    def test_exit_check_rolls_off_holiday_friday(self):
+        # Week of Muharram: Fri 06-26 is a holiday -> Thu 06-25.
+        assert project_next_exit_check(date(2026, 6, 22)) == date(2026, 6, 25)
+
+    def test_exit_check_is_strictly_after_today(self):
+        # On a Friday, the next check is the following week, not today.
+        nxt = project_next_exit_check(date(2026, 6, 19))
+        assert nxt > date(2026, 6, 19)

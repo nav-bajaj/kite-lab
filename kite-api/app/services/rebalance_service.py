@@ -23,33 +23,52 @@ from app.services.market_service import (
 )
 
 
-# Rebalance cadence metadata: cadence_key -> (display label, interval in weeks,
-# signal weekday Mon=0..Fri=4). Drives next-rebalance projection. The cadence
-# per universe is declared in config.UNIVERSES["rebalance_cadence"].
+# Rebalance cadence metadata: cadence_key -> (display label, entry interval in
+# weeks, signal weekday Mon=0..Fri=4, has_weekly_exit). Drives next-rebalance
+# projection. The cadence per universe is declared in
+# config.UNIVERSES["rebalance_cadence"].
+#
+# The biweekly strategies (om25_v3, tl25_v3, combo_defensive) ENTER every other
+# Friday but run a weekly rank/drawdown EXIT check on the off-week Fridays too,
+# so holdings can be trimmed weekly even though new entries are biweekly. The
+# weekly_thu_fri strategies check entries and exits on the same weekly cadence,
+# so they need no separate exit overlay.
+FRIDAY = 4
+
 CADENCE_META = {
-    "weekly_thu_fri":   ("Weekly · Thu signal → Fri", 1, 3),
-    "biweekly_fri":     ("Biweekly · Fridays", 2, 4),
-    "biweekly_fri_mon": ("Biweekly · Fri signal → Mon", 2, 4),
+    "weekly_thu_fri":   ("Weekly · Thu signal → Fri", 1, 3, False),
+    "biweekly_fri":     ("Biweekly entries · weekly exit checks", 2, 4, True),
+    "biweekly_fri_mon": ("Biweekly entries · weekly exit checks (Fri → Mon)", 2, 4, True),
 }
 DEFAULT_CADENCE = "weekly_thu_fri"
 
 
-def project_next_signal(last_signal: date, cadence_key: str, today: date) -> date:
-    """Project the next rebalance (signal) date after `today`.
-
-    Anchors on the engine's own last rebalance date, normalises it to its
-    week's signal weekday, then steps the cadence interval forward — snapping
-    each candidate back onto a real NSE trading day — until it lands strictly
-    after `today`. This matches the engine's biweekly/weekly Friday/Thursday
-    schedule without re-deriving its panel-anchored parity.
-    """
-    _, interval_weeks, signal_wd = CADENCE_META.get(cadence_key, CADENCE_META[DEFAULT_CADENCE])
-    nominal = last_signal + timedelta(days=(signal_wd - last_signal.weekday()))
+def _project(anchor: date, interval_weeks: int, signal_wd: int, today: date) -> date:
+    """Step the `signal_wd`-of-week from `anchor` by `interval_weeks` until it
+    lands strictly after `today`, snapping each candidate back onto a real NSE
+    trading day (so a holiday Friday falls to that week's Thursday, etc.)."""
+    nominal = anchor + timedelta(days=(signal_wd - anchor.weekday()))
     while True:
         candidate = snap_back_to_trading_day(nominal)
         if candidate > today:
             return candidate
         nominal += timedelta(weeks=interval_weeks)
+
+
+def project_next_signal(last_signal: date, cadence_key: str, today: date) -> date:
+    """Project the next ENTRY rebalance date after `today`.
+
+    Anchors on the engine's own last rebalance date and steps the entry cadence
+    forward. Weekly exit checks for the biweekly strategies are projected
+    separately (next weekly Friday) — see get_rebalance_summary.
+    """
+    _, interval_weeks, signal_wd, _ = CADENCE_META.get(cadence_key, CADENCE_META[DEFAULT_CADENCE])
+    return _project(last_signal, interval_weeks, signal_wd, today)
+
+
+def project_next_exit_check(today: date) -> date:
+    """Next weekly exit-check date (the next trading Friday after `today`)."""
+    return _project(today, 1, FRIDAY, today)
 
 
 def get_latest_signals_dir(universe: str = "nse500") -> Optional[Path]:
@@ -309,13 +328,23 @@ def get_rebalance_summary(universe: str = "nse500") -> dict:
             Trade.side == "BUY",
         ).scalar() or last_date
         upcoming = None
+        has_weekly_exit = CADENCE_META.get(cadence_key, CADENCE_META[DEFAULT_CADENCE])[3]
         if anchor:
             sig = project_next_signal(anchor, cadence_key, today)
             upcoming = {
                 "signal_date": str(sig),
                 "exec_date": str(next_trading_day_after(sig)),
                 "trading_days_until": trading_days_between(today, sig),
+                "has_weekly_exit": has_weekly_exit,
+                "exit_check_date": None,
+                "exit_check_days_until": None,
             }
+            # Biweekly strategies also trim holdings on a weekly exit check;
+            # surface the next one so the schedule isn't understated.
+            if has_weekly_exit:
+                exit_date = project_next_exit_check(today)
+                upcoming["exit_check_date"] = str(exit_date)
+                upcoming["exit_check_days_until"] = trading_days_between(today, exit_date)
 
         holdings_count = db.query(func.count(OpenPosition.id)).filter(
             OpenPosition.universe == universe

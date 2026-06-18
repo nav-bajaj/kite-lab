@@ -180,6 +180,12 @@ export interface RebalanceNextInfo {
   signal_date: string;
   exec_date: string;
   trading_days_until: number;
+  // Biweekly strategies also run a weekly rank/drawdown exit check on the
+  // off-week Fridays; these describe the next such check (null when the
+  // strategy's entry and exit cadence are the same).
+  has_weekly_exit: boolean;
+  exit_check_date: string | null;
+  exit_check_days_until: number | null;
 }
 
 export interface RebalanceSummary {
