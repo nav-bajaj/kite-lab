@@ -166,24 +166,38 @@ export interface Job {
 }
 
 // Rebalance types
-export interface RebalanceStatus {
-  status: "pending" | "preview" | "ready" | "executed";
+export interface RebalancePreviousInfo {
+  date: string;
+  added: string[];
+  removed: string[];
+  buy_count: number;
+  sell_count: number;
+  notional_traded: number;
+  turnover_pct: number | null;
+}
+
+export interface RebalanceNextInfo {
   signal_date: string;
-  order_date: string;
-  preview_available: boolean;
-  orders_available: boolean;
+  exec_date: string;
+  trading_days_until: number;
 }
 
-export interface RebalanceAddition {
-  symbol: string;
-  rank: number;
-  score: number;
+export interface RebalanceSummary {
+  universe: string;
+  cadence: string;
+  cadence_label: string;
+  today: string;
+  holdings_count: number;
+  previous: RebalancePreviousInfo | null;
+  next: RebalanceNextInfo | null;
 }
 
-export interface RebalanceRemoval {
-  symbol: string;
-  prev_rank: number;
-  reason: string;
+export interface RebalanceHistoryItem {
+  date: string;
+  additions: number;
+  removals: number;
+  notional: number;
+  turnover_pct: number | null;
 }
 
 // Open Positions types (live portfolio tracking)

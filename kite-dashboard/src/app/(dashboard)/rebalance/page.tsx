@@ -1,6 +1,6 @@
 "use client";
 
-import { StatusCard, ChangesPreview, OrdersTable } from "@/components/rebalance";
+import { RebalanceSummary, RebalanceHistory } from "@/components/rebalance";
 
 export default function RebalancePage() {
   return (
@@ -9,18 +9,15 @@ export default function RebalancePage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Rebalance</h1>
         <p className="text-muted-foreground">
-          Weekly portfolio rebalancing workflow
+          When this portfolio last rebalanced and when it&apos;s due next
         </p>
       </div>
 
-      {/* Status Card */}
-      <StatusCard />
+      {/* Previous + next rebalance, cadence */}
+      <RebalanceSummary />
 
-      {/* Changes Preview (Thursday) */}
-      <ChangesPreview />
-
-      {/* Orders Table (Friday) */}
-      <OrdersTable />
+      {/* History timeline */}
+      <RebalanceHistory />
     </div>
   );
 }

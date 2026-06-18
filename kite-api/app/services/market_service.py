@@ -3,7 +3,7 @@ Market status service.
 
 Provides market hours detection for NSE (National Stock Exchange of India).
 """
-from datetime import datetime, time, timedelta
+from datetime import datetime, date, time, timedelta
 from typing import Optional
 import pytz
 
@@ -153,3 +153,47 @@ def get_market_status() -> MarketStatus:
 def is_market_open() -> bool:
     """Quick check if market is currently open."""
     return get_market_status().is_open
+
+
+# ---------------------------------------------------------------------------
+# Trading-day helpers (date-based) — used by the rebalance schedule module to
+# project rebalance dates onto the NSE calendar. Pure functions over the
+# holiday table above; no Kite/network access.
+# ---------------------------------------------------------------------------
+
+def is_trading_day(d: date) -> bool:
+    """True if `d` is a weekday and not an NSE holiday."""
+    return d.weekday() < 5 and not is_nse_holiday(datetime(d.year, d.month, d.day))
+
+
+def snap_back_to_trading_day(d: date) -> date:
+    """Return `d` if it's a trading day, else the nearest trading day before it.
+
+    Mirrors the engine's ``resample('W-FRI').last()`` behaviour: a rebalance
+    nominally on a Friday that is a holiday falls back to that week's prior
+    trading day (Thursday, etc.).
+    """
+    while not is_trading_day(d):
+        d -= timedelta(days=1)
+    return d
+
+
+def next_trading_day_after(d: date) -> date:
+    """Return the first trading day strictly after `d`."""
+    d += timedelta(days=1)
+    while not is_trading_day(d):
+        d += timedelta(days=1)
+    return d
+
+
+def trading_days_between(start: date, end: date) -> int:
+    """Count trading days in the half-open interval (start, end]."""
+    if end <= start:
+        return 0
+    count = 0
+    d = start + timedelta(days=1)
+    while d <= end:
+        if is_trading_day(d):
+            count += 1
+        d += timedelta(days=1)
+    return count

@@ -13,6 +13,7 @@ import {
   getTrades,
   getTradeSummary,
   getRebalanceStatus,
+  getRebalanceSummary,
   getRebalancePreview,
   getRebalanceOrders,
   getRebalanceHistory,
@@ -179,6 +180,20 @@ export function useRebalanceStatus() {
   return useAuthedSWR(
     ["rebalance-status", universeId],
     ([, universe]) => getRebalanceStatus(universe),
+    {
+      refreshInterval: SLOW_REFRESH,
+      revalidateOnFocus: true,
+    }
+  );
+}
+
+// Rebalance summary — cadence-aware previous + next rebalance
+export function useRebalanceSummary() {
+  const { universeId } = useUniverse();
+
+  return useAuthedSWR(
+    ["rebalance-summary", universeId],
+    ([, universe]) => getRebalanceSummary(universe),
     {
       refreshInterval: SLOW_REFRESH,
       revalidateOnFocus: true,

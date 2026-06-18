@@ -230,6 +230,7 @@ CLIENT_READ_ENDPOINTS: list[tuple[str, str]] = [
     ("GET", f"/api/trades/export{_U}"),
     # rebalance.py
     ("GET", f"/api/rebalance/status{_U}"),
+    ("GET", f"/api/rebalance/summary{_U}"),
     ("GET", f"/api/rebalance/preview{_U}"),
     ("GET", f"/api/rebalance/orders{_U}"),
     ("GET", f"/api/rebalance/orders/export{_U}"),

@@ -85,6 +85,7 @@ UNIVERSES = {
         "data_dir": "nse500_data",
         "universe_file": "data/static/nse500_universe.csv",
         "portfolio_dir": "data/final_portfolio",
+        "rebalance_cadence": "weekly_thu_fri",
     },
     "nifty250": {
         "id": "nifty250",
@@ -96,6 +97,7 @@ UNIVERSES = {
         "data_dir": "nse500_data",
         "universe_file": "data/static/nifty250_universe.csv",
         "portfolio_dir": "nifty_250_tests",
+        "rebalance_cadence": "weekly_thu_fri",
     },
     "nifty100": {
         "id": "nifty100",
@@ -107,6 +109,7 @@ UNIVERSES = {
         "data_dir": "nse500_data",
         "universe_file": "data/static/nifty100_universe.csv",
         "portfolio_dir": "nifty_100_tests",
+        "rebalance_cadence": "weekly_thu_fri",
     },
     "om25_v3": {
         "id": "om25_v3",
@@ -118,6 +121,7 @@ UNIVERSES = {
         "data_dir": "nse500_data",
         "universe_file": "data/static/nifty250_universe.csv",
         "portfolio_dir": "data/om25_v3_portfolios",
+        "rebalance_cadence": "biweekly_fri",
     },
     "tl25_v3": {
         "id": "tl25_v3",
@@ -129,6 +133,7 @@ UNIVERSES = {
         "data_dir": "nse500_data",
         "universe_file": "data/static/nse500_universe.csv",
         "portfolio_dir": "data/tl25_v3_portfolios",
+        "rebalance_cadence": "biweekly_fri",
     },
     "l6_v2": {
         "id": "l6_v2",
@@ -140,6 +145,7 @@ UNIVERSES = {
         "data_dir": "nse500_data",
         "universe_file": "data/static/nse500_universe.csv",
         "portfolio_dir": "data/l6_v2_portfolios",
+        "rebalance_cadence": "weekly_thu_fri",
     },
     "combo_defensive": {
         "id": "combo_defensive",
@@ -151,6 +157,7 @@ UNIVERSES = {
         "data_dir": "nse500_data",
         "universe_file": "data/static/nse500_universe.csv",
         "portfolio_dir": "data/combo_defensive_portfolios",
+        "rebalance_cadence": "biweekly_fri_mon",
     },
 }
 

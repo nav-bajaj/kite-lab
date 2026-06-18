@@ -11,6 +11,7 @@ import io
 from app.config import is_valid_universe, UniverseId
 from app.services.rebalance_service import (
     get_rebalance_status,
+    get_rebalance_summary,
     get_rebalance_preview,
     get_rebalance_orders,
     get_rebalance_history,
@@ -38,6 +39,24 @@ async def rebalance_status(
 
     result = get_rebalance_status(universe)
     return result
+
+
+@router.get("/summary", dependencies=[Depends(cache_rebalance)])
+async def rebalance_summary(
+    universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
+    user: dict = Depends(get_current_user)
+):
+    """
+    Cadence-aware rebalance summary for the client view.
+
+    Returns the previous rebalance (adds/drops, turnover), the next projected
+    rebalance date, and the cadence label for the selected portfolio.
+    """
+    if not is_valid_universe(universe):
+        raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
+
+    return get_rebalance_summary(universe)
 
 
 @router.get("/preview", dependencies=[Depends(cache_rebalance)])
