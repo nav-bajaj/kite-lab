@@ -68,10 +68,27 @@ four production portfolios via the existing universe selector, that shows:
   (reconstructed `momentum_holdings.csv` / `Holding`), not a live Zerodha
   account. Clients see the strategy's model book; live-account divergence is
   an admin/execution concern for later.
-- **Sizing for clients: target *weights* and turnover %, not absolute share
-  counts** (clients deploy different capital). Absolute shares are an admin-
-  executor concern; the EOD artifact will carry both, the client view shows
-  weights.
+- **Action scope: membership changes only.** Subscribers act on **full exits**
+  (sell the entire position — universal, no math) and **new entries** (buy to
+  the model's target weight). Continuing holdings show **HOLD / no action** —
+  we deliberately do *not* ask subscribers to rebalance drifted weights every
+  cycle (different start dates → different weights; forcing it means per-
+  subscriber trades, cost, and tax for marginal benefit, and momentum wants
+  winners to run). "Tighten my weights to the model" is a deferred, optional
+  advanced feature (needs the subscriber's actual holdings).
+- **Express the model in *weights + membership*, not shares.** The model is one
+  notional book; subscribers have different rupee bases, so model share counts
+  are meaningless. Target weights come from the model's **actual** weights
+  (`momentum_holdings.csv:contribution_pct`), not assumed 1/N — this naturally
+  represents the bear-regime cash that om25_v3 / combo_defensive hold (weights
+  sum to <100%).
+- **Optional ₹ personalization, client-side only.** A single "your portfolio
+  value (₹)" input, stored in the browser and **never sent to the server**,
+  translates each BUY's target weight into an indicative ₹ amount + rounded
+  share count at the latest close (clearly caveated). Exits never need it
+  ("sell all"). Without the input the page still works in weights/percent.
+  The EOD artifact still carries absolute shares/notional for the admin
+  executor; the client view derives ₹ locally.
 - **Cadence: read it from the engine, don't hardcode.** Derive the next date
   from the gap between the last entry dates in the signals CSV; store a
   human-readable label per portfolio in `config.UNIVERSES` for display only.
@@ -91,6 +108,8 @@ four production portfolios via the existing universe selector, that shows:
 - Regime / drawdown-stop status surfaced via the runner → DB → API.
 
 **Out of scope (deferred, tracked in `TASKS.md`)**
+- "Tighten my weights to the model" — optional advanced rebalance of drifted
+  continuing holdings; needs the subscriber's actual current holdings.
 - Admin execution feedback / Kite order-book reconciliation (R-7).
 - Kite basket CSV format refresh (R-8).
 - Cross-strategy de-dup view (R-11), paper-trading mode (R-12), per-stock
@@ -100,8 +119,12 @@ four production portfolios via the existing universe selector, that shows:
 
 ## Phased approach
 
-### Phase 1 — Read-only page from data we already have (low risk)
-Maps to backlog R-2, R-4, R-9.
+### Phase 1 — Read-only page from data we already have (low risk) — SHIPPED
+Maps to backlog R-2, R-4, R-9. Shipped on `claude/dashboard-market-rebalancing-issues-y90ald`
+(cadence-aware summary + history from the Trade table, holiday-rolled next-date
+projection, rebuilt page). Follow-up also shipped: **dual cadence** — biweekly
+strategies surface the weekly exit check (`has_weekly_exit` + `exit_check_date`)
+in addition to the biweekly entry date.
 1. **Cadence/date module** (`rebalance_service` or new `rebalance_schedule.py`):
    `last_rebalance_date(universe)` and `next_rebalance_date(universe)` from
    the signals CSV gap, rolled off holidays via `market_service`. **TDD**:
@@ -123,8 +146,13 @@ Maps to backlog R-1 (reframed), R-3, R-5, R-6.
    score the universe as of the last data date, apply the *same* selection
    (top_n + exit_buffer + regime tilt + active drawdown-stop), diff vs the
    reconstructed current holdings → `proposed_orders_<next_date>.csv`
-   (symbol, side, target_weight, est_shares, est_notional) + a `regime`
-   and `drawdown_from_peak` summary. **TDD** the diff + sizing.
+   (symbol, side, target_weight from `contribution_pct`, est_shares,
+   est_notional) + a `regime` and `drawdown_from_peak` summary. **TDD** the
+   diff + sizing. Works for both event types: an **entry** week yields
+   BUYs (new names to target weight) + any rank/DD SELLs; an **off-week exit
+   check** yields SELLs only (or nothing). Per the membership-only decision,
+   the client view consumes exits + new entries; weight-only changes on
+   continuing holdings are not surfaced as actions.
 2. **EOD scheduled job** (`scheduler/tasks.py`): ~16:00 IST, **holiday-aware**
    (skip via `market_service`), and it only needs to compute a proposal when
    the next trading day is a rebalance day. Reuses the existing job runner.
@@ -133,8 +161,19 @@ Maps to backlog R-1 (reframed), R-3, R-5, R-6.
    `data_as_of` timestamp.
 4. **API**: `/api/rebalance/upcoming` → next date, proposed adds/drops +
    weights + turnover, regime + drawdown-stop status, `data_as_of`.
-5. **UI**: "Upcoming changes" + "Regime / risk" sections; clearly labelled
-   "indicative, finalises at T‑1 close."
+5. **UI — "Actionable trades" card** (membership-only, weight-based):
+   - **SELL (exit fully)** — list of names; "sell your entire position."
+     Identical for every subscriber; includes weekly off-week exit-check
+     SELLs, not just biweekly entries.
+   - **BUY (new positions)** — name + model target weight; with the optional
+     "your portfolio value" input, also ≈₹ amount and ≈ shares at last close
+     (caveated: rounded, indicative).
+   - **HOLD** — continuing names, collapsed, "no action."
+   - Plain-English one-liner ("exit 2, add 2, hold 22 · target ≈4.2%/stock").
+   - Plus the **Regime / risk** section (regime state, drawdown-from-peak).
+   - Clearly labelled "indicative, finalises at T‑1 close."
+   - Off-week exit-check Fridays are first-class: usually a SELL-only (or
+     empty) card, not an entry rebalance.
 
 ## Key technical notes / risks
 
