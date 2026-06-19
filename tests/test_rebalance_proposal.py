@@ -8,7 +8,11 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from data_pipeline.rebalance_proposal import build_proposal  # noqa: E402
+from data_pipeline.rebalance_proposal import (  # noqa: E402
+    build_proposal,
+    select_target_membership,
+    propose_next_rebalance,
+)
 
 
 def test_membership_diff():
@@ -90,3 +94,64 @@ def test_deterministic_sorted_order():
     p = build_proposal(["C", "A", "B"], {"Z": 0.5, "Y": 0.5})
     assert [o.symbol for o in p.sells] == ["A", "B", "C"]
     assert [o.symbol for o in p.buys] == ["Y", "Z"]
+
+
+# ---------------------------------------------------------------------------
+# select_target_membership — the engine's rank + exit-buffer rule
+# ---------------------------------------------------------------------------
+
+def test_entry_fills_to_top_n_keeping_held_in_buffer():
+    # top_n=3, buffer=2 -> keep_zone = top 5. Hold S03 (in buffer) and S99 (out).
+    ranked = ["S00", "S01", "S02", "S03", "S04"]  # +others irrelevant
+    target, entries, exits, retained = select_target_membership(
+        ranked, ["S03", "S99"], top_n=3, exit_buffer=2, is_entry=True,
+    )
+    assert exits == ["S99"]            # fell outside keep_zone
+    assert retained == ["S03"]         # in buffer -> kept
+    # fill to top_n=3: need 2 more from top_n (S00,S01,S02) not held
+    assert entries == ["S00", "S01"]
+    assert set(target) == {"S03", "S00", "S01"}
+
+
+def test_held_in_buffer_is_not_exited():
+    ranked = ["A", "B", "C", "D", "E"]  # top_n=3 -> keep_zone top5
+    _, entries, exits, retained = select_target_membership(
+        ranked, ["D"], top_n=3, exit_buffer=2, is_entry=True,
+    )
+    assert exits == []                 # D is rank 4, inside top_n+buffer(5)
+    assert "D" in retained
+
+
+def test_exit_only_week_adds_nothing():
+    ranked = ["A", "B", "C", "D", "E"]
+    target, entries, exits, retained = select_target_membership(
+        ranked, ["Z", "A"], top_n=3, exit_buffer=2, is_entry=False,
+    )
+    assert entries == []
+    assert exits == ["Z"]
+    assert target == ["A"]
+
+
+def test_bear_regime_skips_entries():
+    ranked = ["A", "B", "C", "D", "E"]
+    _, entries, exits, _ = select_target_membership(
+        ranked, ["A"], top_n=3, exit_buffer=2, is_entry=True,
+        is_bear=True, bear_skips_entries=True,
+    )
+    assert entries == []               # no new names in bear
+    assert exits == []                 # A still in keep_zone
+
+
+def test_propose_next_rebalance_respects_buffer_hysteresis():
+    # A naive top-N diff would exit S03; the buffer rule keeps it.
+    ranked = ["S00", "S01", "S02", "S03", "S04"]
+    p = propose_next_rebalance(
+        ranked, ["S03", "S99"], top_n=3, exit_buffer=2, is_entry=True,
+        prices={"S00": 100.0, "S01": 50.0}, capital=300_000,
+    )
+    assert [o.symbol for o in p.sells] == ["S99"]
+    assert [o.symbol for o in p.buys] == ["S00", "S01"]
+    assert p.holds == ["S03"]
+    # equal weight 1/3 of 300k = 100k; S00 @100 -> 1000 sh
+    s00 = next(o for o in p.buys if o.symbol == "S00")
+    assert s00.est_shares == 1000

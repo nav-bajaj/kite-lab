@@ -131,3 +131,91 @@ def build_proposal(
     holds = sorted(current & target)
 
     return RebalanceProposal(sells=sells, buys=buys, holds=holds, capital=capital)
+
+
+def select_target_membership(
+    ranked: list,
+    current_symbols: Iterable[str],
+    *,
+    top_n: int,
+    exit_buffer: int,
+    is_entry: bool,
+    is_bear: bool = False,
+    bear_skips_entries: bool = True,
+):
+    """Mirror the engine's rank + exit-buffer membership rule for one rebalance.
+
+    Reproduces the dominant entry/exit logic in ``scripts/_clean_engine.run_strategy``:
+    a held name survives while it stays inside the top ``top_n + exit_buffer``
+    by score (the buffer is hysteresis); names that fall outside are exited; on
+    an entry rebalance, the highest-ranked names not already held fill the book
+    back up to ``top_n``. On an exit-only (off-week) check, no new names enter.
+
+    Known limitation (validated on staging via the reconciliation test): this
+    does NOT model ad-hoc per-position exits — the 20%-from-peak trailing stop
+    (``atr_min_floor``) or DMA/Donchian exits — which can also sell a name
+    mid-cycle. Those surface as extra engine SELLs the rank rule misses.
+
+    Args:
+        ranked: symbols by descending score, length ``top_n + exit_buffer``
+            (i.e. the engine's ``signals[date]`` list).
+        current_symbols: symbols currently held.
+        is_entry: True for a biweekly entry rebalance, False for an off-week
+            exit-only check.
+        is_bear / bear_skips_entries: in a bear regime with entry-skip on
+            (om25_v3 / combo_defensive), no new names are added.
+
+    Returns:
+        (target_symbols, entries, exits, retained) — all lists, sorted where
+        order is not significant; ``entries`` preserves rank order.
+    """
+    keep_zone = set(ranked[:top_n + exit_buffer])
+    target_top = ranked[:top_n]
+    # Preserve order, drop dupes.
+    current = list(dict.fromkeys(current_symbols))
+
+    retained = [s for s in current if s in keep_zone]
+    exits = [s for s in current if s not in keep_zone]
+
+    entries: list = []
+    if is_entry and not (is_bear and bear_skips_entries):
+        slots = max(0, top_n - len(retained))
+        held = set(current)
+        for s in target_top:
+            if s not in held:
+                entries.append(s)
+                if len(entries) >= slots:
+                    break
+
+    target_symbols = retained + entries
+    return target_symbols, entries, exits, retained
+
+
+def propose_next_rebalance(
+    ranked: list,
+    current_symbols: Iterable[str],
+    *,
+    top_n: int,
+    exit_buffer: int,
+    is_entry: bool,
+    is_bear: bool = False,
+    bear_skips_entries: bool = True,
+    prices: Optional[Mapping[str, float]] = None,
+    capital: Optional[float] = None,
+    entry_weight: Optional[float] = None,
+) -> RebalanceProposal:
+    """Engine-faithful membership target → membership-only proposal.
+
+    Computes the post-rebalance target via ``select_target_membership`` and
+    feeds it to ``build_proposal``, so exits respect the exit-buffer hysteresis
+    (not a naive top-N set diff). New entries are sized at ``entry_weight``
+    (default equal weight ``1/top_n``).
+    """
+    target_symbols, _entries, _exits, _retained = select_target_membership(
+        ranked, current_symbols,
+        top_n=top_n, exit_buffer=exit_buffer, is_entry=is_entry,
+        is_bear=is_bear, bear_skips_entries=bear_skips_entries,
+    )
+    weight = entry_weight if entry_weight is not None else (1.0 / top_n if top_n else 0.0)
+    target_weights = {s: weight for s in target_symbols}
+    return build_proposal(current_symbols, target_weights, prices=prices, capital=capital)
