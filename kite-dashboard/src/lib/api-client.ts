@@ -301,17 +301,16 @@ export async function getRebalanceOrders(universe: UniverseId) {
   }>(`/api/rebalance/orders?universe=${universe}`);
 }
 
+export async function getRebalanceSummary(universe: UniverseId) {
+  return apiFetch<import("./types").RebalanceSummary>(
+    `/api/rebalance/summary?universe=${universe}`
+  );
+}
+
 export async function getRebalanceHistory(universe: UniverseId, limit: number = 20) {
   return apiFetch<{
     universe: string;
-    history: Array<{
-      signal_date: string;
-      order_date: string | null;
-      status: string;
-      additions: number;
-      removals: number;
-      turnover_pct: number | null;
-    }>;
+    history: import("./types").RebalanceHistoryItem[];
     count: number;
   }>(`/api/rebalance/history?universe=${universe}&limit=${limit}`);
 }

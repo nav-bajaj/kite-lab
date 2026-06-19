@@ -1,5 +1,12 @@
 # Rebalance Page — Backlog
 
+> **See `PLAN.md` for the decided direction (2026-06-18).** The page will be
+> rebuilt as a **client-informational** view (previous + next rebalance,
+> cadence, history) with accurate upcoming trades from a **post-close EOD
+> T‑1 run**. PLAN.md resolves the "open questions" below and reframes the
+> R-items into Phase 1 / Phase 2. This backlog stays as the detailed
+> reference for individual R-items.
+
 ## Current state
 
 The `/rebalance` page exists in the dashboard (frontend at

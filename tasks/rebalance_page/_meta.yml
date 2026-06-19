@@ -1,9 +1,10 @@
 name: rebalance_page
-status: planned
+status: in-progress
 opened: 2026-05-19
 closed: null
 related_commits:
   - 77d4067  # TASKS.md backlog documented
+  - 45fe311  # PLAN.md decided direction (v2)
 supersedes: []
 depends_on:
   - client_portal

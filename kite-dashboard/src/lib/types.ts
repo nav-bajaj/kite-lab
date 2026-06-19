@@ -166,24 +166,44 @@ export interface Job {
 }
 
 // Rebalance types
-export interface RebalanceStatus {
-  status: "pending" | "preview" | "ready" | "executed";
+export interface RebalancePreviousInfo {
+  date: string;
+  added: string[];
+  removed: string[];
+  buy_count: number;
+  sell_count: number;
+  notional_traded: number;
+  turnover_pct: number | null;
+}
+
+export interface RebalanceNextInfo {
   signal_date: string;
-  order_date: string;
-  preview_available: boolean;
-  orders_available: boolean;
+  exec_date: string;
+  trading_days_until: number;
+  // Biweekly strategies also run a weekly rank/drawdown exit check on the
+  // off-week Fridays; these describe the next such check (null when the
+  // strategy's entry and exit cadence are the same).
+  has_weekly_exit: boolean;
+  exit_check_date: string | null;
+  exit_check_days_until: number | null;
 }
 
-export interface RebalanceAddition {
-  symbol: string;
-  rank: number;
-  score: number;
+export interface RebalanceSummary {
+  universe: string;
+  cadence: string;
+  cadence_label: string;
+  today: string;
+  holdings_count: number;
+  previous: RebalancePreviousInfo | null;
+  next: RebalanceNextInfo | null;
 }
 
-export interface RebalanceRemoval {
-  symbol: string;
-  prev_rank: number;
-  reason: string;
+export interface RebalanceHistoryItem {
+  date: string;
+  additions: number;
+  removals: number;
+  notional: number;
+  turnover_pct: number | null;
 }
 
 // Open Positions types (live portfolio tracking)

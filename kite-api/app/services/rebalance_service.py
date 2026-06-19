@@ -10,12 +10,65 @@ from pathlib import Path
 import glob
 import json
 
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 from sqlalchemy.orm import Session
 
-from app.config import settings
+from app.config import settings, UNIVERSES
 from app.models.database import get_session_local
-from app.models.models import Rebalance, Signal, Holding
+from app.models.models import Rebalance, Signal, Holding, Trade, EquityCurve, OpenPosition
+from app.services.market_service import (
+    snap_back_to_trading_day,
+    next_trading_day_after,
+    trading_days_between,
+)
+
+
+# Rebalance cadence metadata: cadence_key -> (display label, entry interval in
+# weeks, signal weekday Mon=0..Fri=4, has_weekly_exit). Drives next-rebalance
+# projection. The cadence per universe is declared in
+# config.UNIVERSES["rebalance_cadence"].
+#
+# The biweekly strategies (om25_v3, tl25_v3, combo_defensive) ENTER every other
+# Friday but run a weekly rank/drawdown EXIT check on the off-week Fridays too,
+# so holdings can be trimmed weekly even though new entries are biweekly. The
+# weekly_thu_fri strategies check entries and exits on the same weekly cadence,
+# so they need no separate exit overlay.
+FRIDAY = 4
+
+CADENCE_META = {
+    "weekly_thu_fri":   ("Weekly · Thu signal → Fri", 1, 3, False),
+    "biweekly_fri":     ("Biweekly entries · weekly exit checks", 2, 4, True),
+    "biweekly_fri_mon": ("Biweekly entries · weekly exit checks (Fri → Mon)", 2, 4, True),
+}
+DEFAULT_CADENCE = "weekly_thu_fri"
+
+
+def _project(anchor: date, interval_weeks: int, signal_wd: int, today: date) -> date:
+    """Step the `signal_wd`-of-week from `anchor` by `interval_weeks` until it
+    lands strictly after `today`, snapping each candidate back onto a real NSE
+    trading day (so a holiday Friday falls to that week's Thursday, etc.)."""
+    nominal = anchor + timedelta(days=(signal_wd - anchor.weekday()))
+    while True:
+        candidate = snap_back_to_trading_day(nominal)
+        if candidate > today:
+            return candidate
+        nominal += timedelta(weeks=interval_weeks)
+
+
+def project_next_signal(last_signal: date, cadence_key: str, today: date) -> date:
+    """Project the next ENTRY rebalance date after `today`.
+
+    Anchors on the engine's own last rebalance date and steps the entry cadence
+    forward. Weekly exit checks for the biweekly strategies are projected
+    separately (next weekly Friday) — see get_rebalance_summary.
+    """
+    _, interval_weeks, signal_wd, _ = CADENCE_META.get(cadence_key, CADENCE_META[DEFAULT_CADENCE])
+    return _project(last_signal, interval_weeks, signal_wd, today)
+
+
+def project_next_exit_check(today: date) -> date:
+    """Next weekly exit-check date (the next trading Friday after `today`)."""
+    return _project(today, 1, FRIDAY, today)
 
 
 def get_latest_signals_dir(universe: str = "nse500") -> Optional[Path]:
@@ -223,30 +276,143 @@ def get_rebalance_orders(universe: str = "nse500") -> dict:
     }
 
 
+def get_rebalance_summary(universe: str = "nse500") -> dict:
+    """Cadence-aware summary: previous rebalance, next rebalance, holdings.
+
+    Derived from the Trade table (the uniform, DB-backed record of what each
+    portfolio actually traded) plus the per-universe cadence in config — not
+    the empty Rebalance table or legacy-only changes/orders CSVs.
+    """
+    cadence_key = UNIVERSES.get(universe, {}).get("rebalance_cadence", DEFAULT_CADENCE)
+    label = CADENCE_META.get(cadence_key, CADENCE_META[DEFAULT_CADENCE])[0]
+
+    SessionLocal = get_session_local()
+    db = SessionLocal()
+    try:
+        today = date.today()
+
+        # Latest portfolio value, for turnover %.
+        pv_row = db.query(EquityCurve.portfolio_value).filter(
+            EquityCurve.universe == universe
+        ).order_by(desc(EquityCurve.date)).first()
+        pv = float(pv_row[0]) if pv_row and pv_row[0] else None
+
+        # Previous rebalance = the most recent trade-date group.
+        last_date = db.query(func.max(Trade.trade_date)).filter(
+            Trade.universe == universe
+        ).scalar()
+        previous = None
+        if last_date:
+            rows = db.query(Trade).filter(
+                Trade.universe == universe,
+                Trade.trade_date == last_date,
+            ).all()
+            added = sorted({r.symbol for r in rows if r.side == "BUY"})
+            removed = sorted({r.symbol for r in rows if r.side == "SELL"})
+            notional = sum(abs(float(r.notional or 0)) for r in rows)
+            previous = {
+                "date": str(last_date),
+                "added": added,
+                "removed": removed,
+                "buy_count": len(added),
+                "sell_count": len(removed),
+                "notional_traded": round(notional, 2),
+                "turnover_pct": round(notional / pv * 100, 2) if pv else None,
+            }
+
+        # Next rebalance = projected from the last entry (BUY) date, which is
+        # the engine's last regular rebalance (weekly rank-exits are SELL-only
+        # and must not anchor the entry cadence).
+        anchor = db.query(func.max(Trade.trade_date)).filter(
+            Trade.universe == universe,
+            Trade.side == "BUY",
+        ).scalar() or last_date
+        upcoming = None
+        has_weekly_exit = CADENCE_META.get(cadence_key, CADENCE_META[DEFAULT_CADENCE])[3]
+        if anchor:
+            sig = project_next_signal(anchor, cadence_key, today)
+            upcoming = {
+                "signal_date": str(sig),
+                "exec_date": str(next_trading_day_after(sig)),
+                "trading_days_until": trading_days_between(today, sig),
+                "has_weekly_exit": has_weekly_exit,
+                "exit_check_date": None,
+                "exit_check_days_until": None,
+            }
+            # Biweekly strategies also trim holdings on a weekly exit check;
+            # surface the next one so the schedule isn't understated.
+            if has_weekly_exit:
+                exit_date = project_next_exit_check(today)
+                upcoming["exit_check_date"] = str(exit_date)
+                upcoming["exit_check_days_until"] = trading_days_between(today, exit_date)
+
+        holdings_count = db.query(func.count(OpenPosition.id)).filter(
+            OpenPosition.universe == universe
+        ).scalar() or 0
+
+        return {
+            "universe": universe,
+            "cadence": cadence_key,
+            "cadence_label": label,
+            "today": str(today),
+            "holdings_count": holdings_count,
+            "previous": previous,
+            "next": upcoming,
+        }
+    finally:
+        db.close()
+
+
 def get_rebalance_history(
     universe: str = "nse500",
     limit: int = 20,
 ) -> dict:
-    """
-    Get history of past rebalances.
+    """History of past rebalances, derived from the Trade table.
+
+    Groups trades by date (most recent first) into add/drop counts, notional
+    traded, and turnover %. Replaces the old implementation that read the
+    Rebalance table, which is never populated.
     """
     SessionLocal = get_session_local()
     db = SessionLocal()
-
     try:
-        rebalances = db.query(Rebalance).filter(
-            Rebalance.universe == universe
-        ).order_by(desc(Rebalance.signal_date)).limit(limit).all()
+        dates = [
+            r[0] for r in db.query(Trade.trade_date).filter(
+                Trade.universe == universe
+            ).distinct().order_by(desc(Trade.trade_date)).limit(limit).all()
+        ]
+        if not dates:
+            return {"universe": universe, "history": [], "count": 0}
+
+        rows = db.query(Trade).filter(
+            Trade.universe == universe,
+            Trade.trade_date.in_(dates),
+        ).all()
+        pv_map = {
+            d: float(v) for d, v in db.query(
+                EquityCurve.date, EquityCurve.portfolio_value
+            ).filter(EquityCurve.universe == universe).all() if v is not None
+        }
+
+        agg: dict = {}
+        for r in rows:
+            a = agg.setdefault(r.trade_date, {"buys": 0, "sells": 0, "notional": 0.0})
+            if r.side == "BUY":
+                a["buys"] += 1
+            elif r.side == "SELL":
+                a["sells"] += 1
+            a["notional"] += abs(float(r.notional or 0))
 
         history = []
-        for r in rebalances:
+        for d in sorted(agg.keys(), reverse=True):
+            a = agg[d]
+            pv = pv_map.get(d)
             history.append({
-                "signal_date": str(r.signal_date),
-                "order_date": str(r.order_date) if r.order_date else None,
-                "status": r.status,
-                "additions": len(r.additions) if r.additions else 0,
-                "removals": len(r.removals) if r.removals else 0,
-                "turnover_pct": round(float(r.turnover_pct) * 100, 2) if r.turnover_pct else None,
+                "date": str(d),
+                "additions": a["buys"],
+                "removals": a["sells"],
+                "notional": round(a["notional"], 2),
+                "turnover_pct": round(a["notional"] / pv * 100, 2) if pv else None,
             })
 
         return {
