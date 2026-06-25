@@ -59,11 +59,13 @@ four production portfolios via the existing universe selector, that shows:
   admin-mutation surface**, so the auth invariants in `CLAUDE.md` are
   untouched. Admin execution / reconciliation (backlog R-7, R-8) stays a
   separate, later, admin-only concern — out of scope here.
-- **T‑1 trades: accurate, via a post-close EOD run.** A new scheduled job
-  runs after 15:30 IST; the runner emits a *proposed orders* artifact from
-  the engine. This is the only way the preview matches the real rebalance
-  (it reuses top-N + exit-buffer + regime tilt + drawdown-stop + weekly
-  rank-exit instead of re-implementing them in the API).
+- **Signal-day EOD report, read from the engine (not predicted).** The
+  rebalance membership is fixed by the signal-day close, so a new scheduled job
+  at **16:00 IST** (after NSE close *and* Zerodha's adjusted closes) runs the
+  strategy and reads the rebalance the engine just decided. No re-implementation
+  of selection, no reconciliation harness — the engine is the source of truth.
+  (Superseded the earlier "re-implement the selection + verify it" plan, which
+  was the source of avoidable complexity.)
 - **"Current holdings" source of truth (backlog Q1): the model portfolio**
   (reconstructed `momentum_holdings.csv` / `Holding`), not a live Zerodha
   account. Clients see the strategy's model book; live-account divergence is
@@ -140,52 +142,54 @@ in addition to the biweekly entry date.
 5. New/updated API: `/api/rebalance/summary` (previous + next + cadence);
    keep `/history`.
 
-### Phase 2 — Accurate T‑1 proposed trades + regime/stop status
+### Phase 2 — Show the actual rebalance (read from the engine at EOD on the signal day)
 Maps to backlog R-1 (reframed), R-3, R-5, R-6.
-1. **Engine: proposed-orders output.** In each v3 runner, after the backtest,
-   score the universe as of the last data date, apply the *same* selection
-   (top_n + exit_buffer + regime tilt + active drawdown-stop), diff vs the
-   reconstructed current holdings → `proposed_orders_<next_date>.csv`
-   (symbol, side, target_weight from `contribution_pct`, est_shares,
-   est_notional) + a `regime` and `drawdown_from_peak` summary. **TDD** the
-   diff + sizing. Works for both event types: an **entry** week yields
-   BUYs (new names to target weight) + any rank/DD SELLs; an **off-week exit
-   check** yields SELLs only (or nothing). Per the membership-only decision,
-   the client view consumes exits + new entries; weight-only changes on
-   continuing holdings are not surfaced as actions.
-2. **EOD scheduled job** (`scheduler/tasks.py`): ~16:00 IST, **holiday-aware**
-   (skip via `market_service`), and it only needs to compute a proposal when
-   the next trading day is a rebalance day. Reuses the existing job runner.
-3. **New DB table** (`ProposedRebalance` or similar) + alembic migration +
-   `sync_service` function, keyed by `universe` + `target_date`, with a
-   `data_as_of` timestamp.
-4. **API**: `/api/rebalance/upcoming` → next date, proposed adds/drops +
-   weights + turnover, regime + drawdown-stop status, `data_as_of`.
-5. **UI — "Actionable trades" card** (membership-only, weight-based):
-   - **SELL (exit fully)** — list of names; "sell your entire position."
-     Identical for every subscriber; includes weekly off-week exit-check
-     SELLs, not just biweekly entries.
+
+**Approach (simplified 2026-06-19).** We do NOT predict or re-implement the
+strategy's stock selection. The rebalance *membership* (which names in/out) is
+fully determined by the signal-day close, so we run the engine after that close
+and read the decision it has already made. This deleted the earlier
+re-implementation (`select_target_membership` / `propose_next_rebalance`) and the
+whole reconciliation harness — there is nothing to "verify" when the engine is
+the source of truth. The pure membership-only *formatter* (`build_proposal` in
+`data_pipeline/rebalance_proposal.py`) is kept: it turns "current holdings vs
+engine target book" into SELL-all / BUY-to-weight / HOLD + optional ₹ sizing.
+
+1. **EOD run on the signal day → read the engine's rebalance.** A new scheduled
+   job at **16:00 IST** (after NSE close 15:30 *and* after Zerodha publishes
+   the adjusted official closes — important, the existing 07:00 run uses the
+   prior day's close and can't do this). On each strategy's signal weekday it
+   fetches the day's adjusted data and runs that strategy. The engine normally
+   waits for the next bar before recording a rebalance; a thin wrapper feeds it
+   a placeholder next-day bar (signal-day close as the fill) so it computes the
+   signal-day rebalance now — the *membership* is exact, only the fill price is
+   a stand-in (irrelevant, we size by weight). The wrapper writes
+   `proposed_orders_<exec_date>.csv` (entries/exits + target weights from the
+   engine's resulting holdings) + a `regime` / `drawdown_from_peak` summary.
+   Membership-only: partial trims on continuing holdings are not surfaced.
+2. **DB table** (`ProposedRebalance` or similar) + alembic migration +
+   `sync_service` function, keyed by `universe` + `exec_date`, with a
+   `data_as_of` timestamp. Read via the (refreshed) `latest.json` pointer.
+3. **API**: `/api/rebalance/upcoming` → exec date, exits + new entries +
+   weights, regime + drawdown status, `data_as_of`.
+4. **UI — "Actionable trades" card** (membership-only, weight-based):
+   - **SELL (exit fully)** — "sell your entire position." Universal.
    - **BUY (new positions)** — name + model target weight; with the optional
-     "your portfolio value" input, also ≈₹ amount and ≈ shares at last close
-     (caveated: rounded, indicative).
+     "your portfolio value" input, also ≈₹ amount and ≈ shares (caveated).
    - **HOLD** — continuing names, collapsed, "no action."
-   - Plain-English one-liner ("exit 2, add 2, hold 22 · target ≈4.2%/stock").
-   - Plus the **Regime / risk** section (regime state, drawdown-from-peak).
-   - Clearly labelled "indicative, finalises at T‑1 close."
-   - Off-week exit-check Fridays are first-class: usually a SELL-only (or
-     empty) card, not an entry rebalance.
+   - Plain-English one-liner + a **Regime / risk** line (regime, drawdown).
+   - Off-week exit-check days are first-class: usually SELL-only or empty.
 
 ## Key technical notes / risks
 
-- **T‑1 timing is the whole point.** The existing pipeline runs 07:00 IST
-  (pre-open) and therefore can't produce an end-of-T‑1 list during the day.
-  The new EOD run uses T‑1 *close* data → exact for a T‑1-close decision.
-  The usual signal→execution gap (execute at next open) still applies and
-  will be stated in the UI.
-- **Accuracy requires engine reuse.** The proposal must come from the
-  runner's own score/selection path; a re-implementation in the API would
-  drift from the real rebalance and mislead clients. This is why Phase 2
-  touches the runners, not just the service.
+- **Read from the engine, don't re-implement it.** The rebalance must come from
+  the engine's own output (via the placeholder-bar EOD run), not a copy of its
+  selection logic — the latter drifts (stops / re-entry / min-hold) and would
+  mislead clients. This is why Phase 2 runs the engine rather than scoring in
+  the API/service.
+- **EOD timing.** Run at **16:00 IST** so the membership reflects Zerodha's
+  *adjusted* closing prices (published after 15:30), not intraday/raw levels.
+  Only run on each strategy's signal weekday, and skip NSE holidays.
 - **Scheduler.** Adding an EOD job to the in-process APScheduler is fine
   (confirmed reliable in production). Make it holiday-aware so it doesn't
   emit stale proposals on closed days.
