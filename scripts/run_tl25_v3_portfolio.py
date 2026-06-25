@@ -289,6 +289,21 @@ def main():
         close_panel=close_panel, slippage=args.slippage,
     )
 
+    # Upcoming-rebalance proposal artifact (membership-only; consumed by the
+    # rebalance page once sync/API land). Guarded — must never break the pipeline.
+    # TL25 has no regime overlay; weekly rank-exit means off-week Fridays are
+    # exit-only (handled by is_entry inside emit_proposal).
+    try:
+        from scripts._proposal import emit_proposal
+        emit_proposal(
+            dashboard_dir=dashboard_dir, score_fn=score_fn,
+            close_panel=close_panel, calendar=calendar, entry_dates=entry_dates,
+            top_n=args.top_n, exit_buffer=args.exit_buffer, interval_weeks=2,
+            regime=None, bear_skips_entries=False,
+        )
+    except Exception as e:
+        print(f"[proposal] skipped: {e}")
+
     pv = eq.set_index("date")["pv"].astype(float)
     rets = pv.pct_change().dropna()
     days = (pv.index[-1] - pv.index[0]).days

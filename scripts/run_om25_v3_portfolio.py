@@ -311,6 +311,19 @@ def main():
         close_panel=close_panel, slippage=args.slippage,
     )
 
+    # Upcoming-rebalance proposal artifact (membership-only; consumed by the
+    # rebalance page once sync/API land). Guarded — must never break the pipeline.
+    try:
+        from scripts._proposal import emit_proposal
+        emit_proposal(
+            dashboard_dir=dashboard_dir, score_fn=score_fn,
+            close_panel=close_panel, calendar=calendar, entry_dates=entry_dates,
+            top_n=args.top_n, exit_buffer=args.exit_buffer, interval_weeks=2,
+            regime=regime, bear_skips_entries=True,
+        )
+    except Exception as e:
+        print(f"[proposal] skipped: {e}")
+
     # Compute headline metrics
     pv = eq.set_index("date")["pv"].astype(float)
     rets = pv.pct_change().dropna()
