@@ -25,6 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from collections import defaultdict  # noqa: E402
 from datetime import date as _date, timedelta  # noqa: E402
 
 from data_pipeline.rebalance_proposal import propose_next_rebalance  # noqa: E402
@@ -53,15 +54,31 @@ def reconcile(
 
     Returns ``{"results": [...per rebalance...], "summary": {...}}``.
     """
+    # Trades per date, keeping share quantities — partial trims (weight
+    # adjustments on continuing holdings, e.g. the regime de-risk / top-up) must
+    # NOT be read as full exits/entries.
     by_date: dict = {}
     for t in trades:
-        slot = by_date.setdefault(t["date"], {"BUY": set(), "SELL": set()})
-        slot[t["side"]].add(t["symbol"])
+        by_date.setdefault(t["date"], []).append(
+            (str(t["symbol"]), str(t["side"]), float(t.get("shares") or 0.0))
+        )
     trade_dates = sorted((_date.fromisoformat(d), d) for d in by_date)
+
+    def _held(shares: dict) -> set:
+        return {s for s, q in shares.items() if q > 1e-9}
 
     results = []
     for D in sorted(signals_by_date):
         d_parsed = _date.fromisoformat(D)
+
+        # Net share position just before this rebalance (replay earlier trades).
+        shares: dict = defaultdict(float)
+        for tp, ts in trade_dates:
+            if tp >= d_parsed:
+                break
+            for sym, side, qty in by_date[ts]:
+                shares[sym] += qty if side == "BUY" else -qty
+        before = _held(shares)
 
         # Execution trades for this rebalance: first trade date within the window.
         exec_d = None
@@ -70,25 +87,26 @@ def reconcile(
                 exec_d = ts
                 break
 
-        # Holdings just before this rebalance = replay all trades strictly before D
-        # (captures any off-week weekly-exit trades since the last entry).
-        holdings: set = set()
-        for tp, ts in trade_dates:
-            if tp >= d_parsed:
-                break
-            holdings |= by_date[ts]["BUY"]
-            holdings -= by_date[ts]["SELL"]
+        # Actual MEMBERSHIP change across the exec date: a name that crosses
+        # 0 -> held is an entry, held -> 0 a full exit; partial trims are neither.
+        if exec_d is not None:
+            after_shares = dict(shares)
+            for sym, side, qty in by_date[exec_d]:
+                after_shares[sym] = after_shares.get(sym, 0.0) + (qty if side == "BUY" else -qty)
+            after = _held(after_shares)
+            act_buys = after - before
+            act_sells = before - after
+        else:
+            act_buys, act_sells = set(), set()
 
         is_bear = bool(bear_by_date.get(D)) if bear_by_date else False
         prop = propose_next_rebalance(
-            signals_by_date[D], holdings,
+            signals_by_date[D], before,
             top_n=top_n, exit_buffer=exit_buffer, is_entry=True,
             is_bear=is_bear, bear_skips_entries=bear_skips_entries,
         )
         pred_buys = {o.symbol for o in prop.buys}
         pred_sells = {o.symbol for o in prop.sells}
-        act_buys = by_date[exec_d]["BUY"] if exec_d else set()
-        act_sells = by_date[exec_d]["SELL"] if exec_d else set()
 
         results.append({
             "signal_date": D,
@@ -132,9 +150,11 @@ def _load_signals(signals_csv: Path):
 def _load_trades(trades_csv: Path):
     import pandas as pd
     df = pd.read_csv(trades_csv)
+    has_shares = "shares" in df.columns
     return [
         {"date": str(pd.Timestamp(r["date"]).date()),
-         "symbol": str(r["symbol"]), "side": str(r["side"])}
+         "symbol": str(r["symbol"]), "side": str(r["side"]),
+         "shares": float(r["shares"]) if has_shares and pd.notna(r["shares"]) else 1.0}
         for _, r in df.iterrows()
     ]
 
