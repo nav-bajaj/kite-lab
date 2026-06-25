@@ -144,13 +144,37 @@ def _find(run_dir: Path, suffix: str):
     return hits[0] if hits else None
 
 
+def _config_from_metrics(run_dir: Path) -> dict:
+    """Read top_n / exit_buffer from the run's metrics.json config block."""
+    import json
+    mpath = run_dir / "metrics.json"
+    if not mpath.exists():
+        return {}
+    try:
+        return json.loads(mpath.read_text()).get("config", {}) or {}
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Reconcile proposals vs recorded trades")
     ap.add_argument("--run-dir", type=Path, required=True)
-    ap.add_argument("--top-n", type=int, required=True)
-    ap.add_argument("--exit-buffer", type=int, required=True)
-    ap.add_argument("--bear-skips-entries", action="store_true")
+    ap.add_argument("--top-n", type=int, default=None,
+                    help="default: read from <run-dir>/metrics.json")
+    ap.add_argument("--exit-buffer", type=int, default=None,
+                    help="default: read from <run-dir>/metrics.json")
+    ap.add_argument("--bear-skips-entries", action="store_true",
+                    help="set for regime strategies (om25_v3, combo_defensive)")
     args = ap.parse_args()
+
+    cfg = _config_from_metrics(args.run_dir)
+    top_n = args.top_n if args.top_n is not None else cfg.get("top_n")
+    exit_buffer = args.exit_buffer if args.exit_buffer is not None else cfg.get("exit_buffer")
+    if top_n is None or exit_buffer is None:
+        print("ERROR: top_n / exit_buffer not given and not found in metrics.json; "
+              "pass --top-n and --exit-buffer explicitly.")
+        return 1
+    print(f"Using top_n={top_n}, exit_buffer={exit_buffer}")
 
     signals_csv = _find(args.run_dir, "_signals.csv")
     trades_csv = _find(args.run_dir, "_trades.csv")
@@ -162,7 +186,7 @@ def main() -> int:
     trades = _load_trades(trades_csv)
     rep = reconcile(
         signals_by_date, trades,
-        top_n=args.top_n, exit_buffer=args.exit_buffer,
+        top_n=top_n, exit_buffer=exit_buffer,
         bear_by_date=bear_by_date, bear_skips_entries=args.bear_skips_entries,
     )
 
