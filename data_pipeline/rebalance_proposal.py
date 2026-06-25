@@ -182,10 +182,10 @@ def select_target_membership(
         slots = max(0, top_n - len(retained))
         held = set(current)
         for s in target_top:
+            if len(entries) >= slots:
+                break
             if s not in held:
                 entries.append(s)
-                if len(entries) >= slots:
-                    break
 
     target_symbols = retained + entries
     return target_symbols, entries, exits, retained

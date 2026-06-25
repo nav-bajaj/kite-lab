@@ -155,3 +155,16 @@ def test_propose_next_rebalance_respects_buffer_hysteresis():
     # equal weight 1/3 of 300k = 100k; S00 @100 -> 1000 sh
     s00 = next(o for o in p.buys if o.symbol == "S00")
     assert s00.est_shares == 1000
+
+
+def test_no_entries_when_book_already_full():
+    # All 3 held names stay in the keep-zone -> 0 free slots -> no new entries,
+    # even though a higher-ranked unheld name (F) exists. (Regression: the fill
+    # loop must check the slot budget BEFORE appending.)
+    ranked = ["A", "B", "F", "C", "D"]  # top_n=3, buffer=2 -> keep-zone top5
+    target, entries, exits, retained = select_target_membership(
+        ranked, ["A", "B", "C"], top_n=3, exit_buffer=2, is_entry=True,
+    )
+    assert entries == []
+    assert exits == []
+    assert sorted(retained) == ["A", "B", "C"]
