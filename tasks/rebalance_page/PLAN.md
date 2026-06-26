@@ -213,6 +213,28 @@ engine target book" into SELL-all / BUY-to-weight / HOLD + optional ₹ sizing.
    returns `available: false` (so unsupported strategies don't 404 the UI).
    `tsc` + `eslint` clean on touched files.
 
+### Phase 2 step 5 — 16:00 IST scheduled job (SHIPPED)
+
+A new `eod_proposed_orders` entry in `kite-api/app/scheduler/tasks.py` fires
+Mon–Fri at 16:00 IST. The wrapper `run_eod_proposed_orders` iterates
+`EOD_STRATEGIES = ("om25_v3", "tl25_v3")` and asks `_is_eod_signal_day` per
+strategy — signal-day gate anchored on the engine's most recent signal date
+(latest row of `<strategy>_signals.csv`) projected forward via
+`rebalance_service.project_next_signal` (already cadence-aware and
+holiday-rolled in Phase 1). Off-week exit-check Fridays are deliberately
+skipped: the producer only fires on entry-cadence Fridays. Each strategy
+that passes the gate gets its own `JobService` job so a producer failure on
+one doesn't block the other. The producer script (`scripts/run_eod_proposed_orders.py`)
+gained a `--universe` alias to `--strategy` so the job-service's uniform
+`--universe` arg works without special-casing. 7 unit tests cover the gate
+across the matrix: signal Friday ✓, off-week Friday ✗, weekday non-Friday ✗,
+NSE holiday ✗, missing run dir ✗, missing signals CSV ✗, holiday-rolled
+anchor (Thursday) handled cleanly.
+
+l6_v2 and combo_defensive don't yet have an EOD adapter; they're absent
+from `EOD_STRATEGIES` so the scheduler just doesn't fire for them, the API
+returns `available: false`, and the UI shows the empty state.
+
 ## Key technical notes / risks
 
 - **Read from the engine, don't re-implement it.** The rebalance must come from

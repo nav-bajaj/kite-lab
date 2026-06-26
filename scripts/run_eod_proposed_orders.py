@@ -66,8 +66,14 @@ def _latest_production_run_dir(strategy: str) -> Path:
 
 def parse_args():
     ap = argparse.ArgumentParser(description="EOD proposed-orders producer")
-    ap.add_argument("--strategy", required=True,
-                    choices=sorted(_STRATEGY_PARENT_DIR))
+    # Accept either --strategy (CLI-natural) or --universe (job-service-natural,
+    # since scheduler/job_service.py passes the universe arg uniformly). Both
+    # mean the same thing here — the strategy name *is* the universe ID.
+    group = ap.add_mutually_exclusive_group(required=True)
+    group.add_argument("--strategy", choices=sorted(_STRATEGY_PARENT_DIR))
+    group.add_argument("--universe", choices=sorted(_STRATEGY_PARENT_DIR),
+                       help="Alias for --strategy; used when invoked via the "
+                            "job-service scheduler.")
     ap.add_argument("--prices-dir", type=Path,
                     default=ROOT / "nse500_data_merged")
     ap.add_argument("--signal-date", type=str, default=None,
@@ -87,18 +93,19 @@ def parse_args():
 
 def main():
     args = parse_args()
+    strategy = args.strategy or args.universe
     signal_date = (pd.Timestamp(args.signal_date)
                    if args.signal_date else None)
 
     if args.output_dir is None:
-        run_dir = _latest_production_run_dir(args.strategy)
+        run_dir = _latest_production_run_dir(strategy)
         print(f"[eod] writing into latest production run: {run_dir.name}")
     else:
         run_dir = args.output_dir
     out_dir = run_dir / "backtests" / "baseline"
 
     summary = build_eod_artifact(
-        strategy=args.strategy,
+        strategy=strategy,
         prices_dir=args.prices_dir,
         output_dir=out_dir,
         signal_date=signal_date,
@@ -107,7 +114,7 @@ def main():
     )
 
     print()
-    print(f"=== {args.strategy} EOD readout ===")
+    print(f"=== {strategy} EOD readout ===")
     print(f"  signal_date  : {summary['signal_date']}")
     print(f"  exec_date    : {summary['exec_date']}")
     print(f"  regime       : {summary.get('regime')}")
