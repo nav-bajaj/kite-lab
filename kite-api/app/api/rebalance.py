@@ -10,12 +10,13 @@ import io
 
 from app.config import is_valid_universe, UniverseId
 from app.services.rebalance_service import (
+    export_orders_csv,
+    get_rebalance_history,
+    get_rebalance_orders,
+    get_rebalance_preview,
     get_rebalance_status,
     get_rebalance_summary,
-    get_rebalance_preview,
-    get_rebalance_orders,
-    get_rebalance_history,
-    export_orders_csv,
+    get_upcoming_rebalance,
 )
 from app.auth import get_current_user, check_universe_access
 from app.middleware.cache import cache_daily, cache_rebalance
@@ -124,6 +125,31 @@ async def export_orders(
         media_type="text/csv",
         headers={"Content-Disposition": f"attachment; filename={filename}"},
     )
+
+
+@router.get("/upcoming", dependencies=[Depends(cache_rebalance)])
+async def rebalance_upcoming(
+    universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
+    user: dict = Depends(get_current_user)
+):
+    """
+    Get the EOD-produced "Actionable trades" payload for the upcoming rebalance.
+
+    Membership-only (PLAN.md Phase 2 §3): sells = full exits, buys = new
+    entries with the model's target weight + indicative ₹ sizing on the
+    producer's notional base, holds = continuing names (no action). The
+    rebalance page derives the subscriber's own ₹ sizing client-side.
+
+    Returns ``available: false`` (with empty lists) when no proposal has been
+    produced for this universe yet — strategies whose EOD producer hasn't
+    been wired up land here, and the UI shows a "no upcoming rebalance" state
+    instead of 404'ing.
+    """
+    if not is_valid_universe(universe):
+        raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
+    check_universe_access(universe, user)
+
+    return get_upcoming_rebalance(universe)
 
 
 @router.get("/history", dependencies=[Depends(cache_daily)])

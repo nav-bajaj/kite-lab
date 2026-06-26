@@ -187,7 +187,13 @@ engine target book" into SELL-all / BUY-to-weight / HOLD + optional ₹ sizing.
    path, missing JSON (soft-skip), unknown universe, malformed JSON, and
    idempotent re-sync.
 3. **API**: `/api/rebalance/upcoming` → exec date, exits + new entries +
-   weights, regime + drawdown status, `data_as_of`.
+   weights, regime + drawdown status, `data_as_of`. *Shipped:* read endpoint
+   in `kite-api/app/api/rebalance.py` behind `check_universe_access` (no new
+   admin/mutation surface). Returns `available: false` with empty lists
+   when no proposal has been produced yet (for strategies whose EOD
+   producer isn't wired up), so the UI doesn't 404. Wired into
+   `test_clerk_authz.py` (12 new test cases — client-allowed universes
+   get 200; client-forbidden universes get 403; anon gets 401).
 4. **UI — "Actionable trades" card** (membership-only, weight-based):
    - **SELL (exit fully)** — "sell your entire position." Universal.
    - **BUY (new positions)** — name + model target weight; with the optional

@@ -15,7 +15,15 @@ from sqlalchemy.orm import Session
 
 from app.config import settings, UNIVERSES
 from app.models.database import get_session_local
-from app.models.models import Rebalance, Signal, Holding, Trade, EquityCurve, OpenPosition
+from app.models.models import (
+    EquityCurve,
+    Holding,
+    OpenPosition,
+    ProposedRebalance,
+    Rebalance,
+    Signal,
+    Trade,
+)
 from app.services.market_service import (
     snap_back_to_trading_day,
     next_trading_day_after,
@@ -358,6 +366,71 @@ def get_rebalance_summary(universe: str = "nse500") -> dict:
             "holdings_count": holdings_count,
             "previous": previous,
             "next": upcoming,
+        }
+    finally:
+        db.close()
+
+
+def get_upcoming_rebalance(universe: str = "nse500") -> dict:
+    """Return the EOD-produced "Actionable trades" payload for the page.
+
+    Reads the latest ``ProposedRebalance`` row for ``universe`` (populated by
+    ``sync_service.sync_proposed_rebalance`` from
+    ``proposed_regime.json``). PLAN.md Phase 2 §3.
+
+    Membership-only contract: ``sells`` are full exits, ``buys`` are new
+    entries carrying the model's target weight and optional ₹ sizing,
+    ``holds`` are continuing names. The page derives the subscriber's own ₹
+    sizing client-side from their portfolio value — the ``est_notional`` /
+    ``est_shares`` we hand back here are model-scale ballpark only, sized
+    against ``initial_capital`` from the producer.
+
+    Returns ``{"universe", "exec_date": null, "available": false, ...}`` when
+    no proposal has been produced yet, so the UI can show a "no upcoming
+    rebalance produced yet" state without 404'ing.
+    """
+    SessionLocal = get_session_local()
+    db = SessionLocal()
+    try:
+        row = db.query(ProposedRebalance).filter(
+            ProposedRebalance.universe == universe
+        ).order_by(desc(ProposedRebalance.exec_date)).first()
+
+        if row is None:
+            return {
+                "universe": universe,
+                "available": False,
+                "exec_date": None,
+                "signal_date": None,
+                "data_as_of": None,
+                "sells": [], "buys": [], "holds": [],
+                "sell_count": 0, "buy_count": 0, "hold_count": 0,
+                "regime": None,
+                "drawdown_from_peak": None,
+                "final_pv": None,
+                "initial_capital": None,
+            }
+
+        return {
+            "universe": universe,
+            "available": True,
+            "exec_date": str(row.exec_date),
+            "signal_date": str(row.signal_date),
+            "data_as_of": str(row.data_as_of),
+            "sells": row.sells or [],
+            "buys": row.buys or [],
+            "holds": row.holds or [],
+            "sell_count": row.sell_count,
+            "buy_count": row.buy_count,
+            "hold_count": row.hold_count,
+            "regime": row.regime,
+            "drawdown_from_peak": (float(row.drawdown_from_peak)
+                                    if row.drawdown_from_peak is not None
+                                    else None),
+            "final_pv": (float(row.final_pv)
+                         if row.final_pv is not None else None),
+            "initial_capital": (float(row.initial_capital)
+                                if row.initial_capital is not None else None),
         }
     finally:
         db.close()
