@@ -201,6 +201,17 @@ engine target book" into SELL-all / BUY-to-weight / HOLD + optional ₹ sizing.
    - **HOLD** — continuing names, collapsed, "no action."
    - Plain-English one-liner + a **Regime / risk** line (regime, drawdown).
    - Off-week exit-check days are first-class: usually SELL-only or empty.
+   *Shipped:* `ActionableTrades` card in
+   `kite-dashboard/src/components/rebalance/actionable-trades.tsx`, wired
+   into `/rebalance` page above the existing Previous/Next cards. Subscriber
+   capital is stored in `localStorage` per universe (key
+   `rebalance.portfolio_value.<universe>`) via `useSyncExternalStore` —
+   never sent to the server. BUYs re-derive ₹ via `weight × clientCapital`
+   on the client (mirrors `build_proposal`), falling back to the producer's
+   model-scale numbers when no capital is set. HOLDs collapsed by default.
+   Renders a "no upcoming rebalance produced yet" empty state when the API
+   returns `available: false` (so unsupported strategies don't 404 the UI).
+   `tsc` + `eslint` clean on touched files.
 
 ## Key technical notes / risks
 

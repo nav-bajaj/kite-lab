@@ -198,6 +198,39 @@ export interface RebalanceSummary {
   next: RebalanceNextInfo | null;
 }
 
+// Upcoming-rebalance "Actionable trades" types — see
+// tasks/rebalance_page/PLAN.md Phase 2.
+export interface ProposedBuy {
+  symbol: string;
+  target_weight: number;
+  // Producer-sized notional + share count on its `initial_capital` base —
+  // ballpark only. The client re-derives ₹ from the subscriber's own
+  // portfolio value entered in the BUY card (stored client-side, never
+  // sent to the server).
+  est_notional: number | null;
+  est_shares: number | null;
+}
+
+export interface RebalanceUpcoming {
+  universe: string;
+  available: boolean;
+  exec_date: string | null;
+  signal_date: string | null;
+  data_as_of: string | null;
+  sells: string[];
+  buys: ProposedBuy[];
+  holds: string[];
+  sell_count: number;
+  buy_count: number;
+  hold_count: number;
+  // Regime + drawdown strip — null for strategies without a regime panel
+  // (e.g. tl25_v3) or when the proposal is empty.
+  regime: "bull" | "bear" | null;
+  drawdown_from_peak: number | null;
+  final_pv: number | null;
+  initial_capital: number | null;
+}
+
 export interface RebalanceHistoryItem {
   date: string;
   additions: number;
