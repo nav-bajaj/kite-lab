@@ -155,18 +155,27 @@ the source of truth. The pure membership-only *formatter* (`build_proposal` in
 `data_pipeline/rebalance_proposal.py`) is kept: it turns "current holdings vs
 engine target book" into SELL-all / BUY-to-weight / HOLD + optional ₹ sizing.
 
-1. **EOD run on the signal day → read the engine's rebalance.** A new scheduled
-   job at **16:00 IST** (after NSE close 15:30 *and* after Zerodha publishes
-   the adjusted official closes — important, the existing 07:00 run uses the
-   prior day's close and can't do this). On each strategy's signal weekday it
-   fetches the day's adjusted data and runs that strategy. The engine normally
-   waits for the next bar before recording a rebalance; a thin wrapper feeds it
-   a placeholder next-day bar (signal-day close as the fill) so it computes the
-   signal-day rebalance now — the *membership* is exact, only the fill price is
-   a stand-in (irrelevant, we size by weight). The wrapper writes
-   `proposed_orders_<exec_date>.csv` (entries/exits + target weights from the
-   engine's resulting holdings) + a `regime` / `drawdown_from_peak` summary.
-   Membership-only: partial trims on continuing holdings are not surfaced.
+1. **EOD run on the signal day → read the engine's rebalance.** *Producer
+   shipped (om25_v3, tl25_v3) — scheduler / DB / API still to do.* A new
+   scheduled job at **16:00 IST** (after NSE close 15:30 *and* after Zerodha
+   publishes the adjusted official closes — important, the existing 07:00 run
+   uses the prior day's close and can't do this). On each strategy's signal
+   weekday it fetches the day's adjusted data and runs that strategy. The
+   engine normally waits for the next bar before recording a rebalance; a thin
+   wrapper feeds it a placeholder next-day bar (signal-day close as the fill)
+   so it computes the signal-day rebalance now — the *membership* is exact,
+   only the fill price is a stand-in (irrelevant, we size by weight). The
+   wrapper writes `proposed_orders_<exec_date>.csv` (entries/exits + target
+   weights from the engine's resulting holdings) + a `proposed_regime.json`
+   summary (regime, drawdown_from_peak, data_as_of) into
+   `<run-dir>/backtests/baseline/`. Membership-only: partial trims on
+   continuing holdings are not surfaced (derived from net-share transitions
+   via `data_pipeline.engine_readout.partition_membership_by_date`).
+   Implementation: `data_pipeline/eod_proposal.py` (producer module),
+   `scripts/run_eod_proposed_orders.py` (CLI entry),
+   `data_pipeline/engine_readout.py` (pure membership helper, 13 tests).
+   Verified via `tasks/rebalance_page/verify_eod_producer.py` — 5/5 past
+   signal dates produce identical membership to the real-bar engine run.
 2. **DB table** (`ProposedRebalance` or similar) + alembic migration +
    `sync_service` function, keyed by `universe` + `exec_date`, with a
    `data_as_of` timestamp. Read via the (refreshed) `latest.json` pointer.
