@@ -247,6 +247,56 @@ class Rebalance(Base):
         return f"<Rebalance({self.universe} {self.signal_date} {self.status})>"
 
 
+class ProposedRebalance(Base):
+    """Upcoming rebalance the engine has decided at signal-day EOD.
+
+    Populated by ``data_pipeline/eod_proposal.py`` (see
+    ``tasks/rebalance_page/PLAN.md`` Phase 2 §1) and synced into the API by
+    ``sync_service.sync_proposed_rebalance``. The page reads the latest row
+    per universe to show the "Actionable trades" card.
+
+    Membership-only: ``sells`` are full exits, ``buys`` are new entries with
+    the model's target weight + optional rupee sizing, ``holds`` are
+    continuing names (no action). Partial trims on continuing holdings are
+    deliberately not surfaced — see the gotcha in PLAN.md.
+    """
+
+    __tablename__ = "proposed_rebalances"
+
+    id = Column(Integer, primary_key=True)
+    universe = Column(String(20), nullable=False, index=True)
+    exec_date = Column(Date, nullable=False)
+    signal_date = Column(Date, nullable=False)
+    data_as_of = Column(Date, nullable=False)
+
+    sell_count = Column(Integer, nullable=False, default=0)
+    buy_count = Column(Integer, nullable=False, default=0)
+    hold_count = Column(Integer, nullable=False, default=0)
+
+    sells = Column(JSONB)   # ["SYM1", "SYM2", ...]
+    buys = Column(JSONB)    # [{"symbol", "target_weight", "est_notional", "est_shares"}, ...]
+    holds = Column(JSONB)   # ["SYM3", "SYM4", ...]
+
+    regime = Column(String(10))                # "bull" | "bear" | None
+    drawdown_from_peak = Column(Numeric(18, 10))
+    final_pv = Column(Numeric(18, 4))
+    initial_capital = Column(Numeric(18, 4))
+
+    created_at = Column(DateTime, default=func.now())
+
+    __table_args__ = (
+        Index(
+            "idx_proposed_rebalances_universe_exec",
+            "universe", "exec_date", unique=True,
+        ),
+        Index("idx_proposed_rebalances_exec", "exec_date"),
+    )
+
+    def __repr__(self):
+        return (f"<ProposedRebalance({self.universe} exec={self.exec_date} "
+                f"S={self.sell_count} B={self.buy_count} H={self.hold_count})>")
+
+
 class Signal(Base):
     """Momentum signal rankings for each universe."""
 

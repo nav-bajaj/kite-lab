@@ -179,6 +179,13 @@ engine target book" into SELL-all / BUY-to-weight / HOLD + optional ₹ sizing.
 2. **DB table** (`ProposedRebalance` or similar) + alembic migration +
    `sync_service` function, keyed by `universe` + `exec_date`, with a
    `data_as_of` timestamp. Read via the (refreshed) `latest.json` pointer.
+   *Shipped:* `ProposedRebalance` in `kite-api/app/models/models.py`,
+   alembic `0005_add_proposed_rebalances`, `sync_proposed_rebalance` in
+   `sync_service.py` (called from `sync_all`). The producer now writes
+   into the latest `<strategy>_portfolio_<ts>/backtests/baseline/` next to
+   `momentum_*.csv` so no new pointer is needed. 6 unit tests cover happy
+   path, missing JSON (soft-skip), unknown universe, malformed JSON, and
+   idempotent re-sync.
 3. **API**: `/api/rebalance/upcoming` → exec date, exits + new entries +
    weights, regime + drawdown status, `data_as_of`.
 4. **UI — "Actionable trades" card** (membership-only, weight-based):

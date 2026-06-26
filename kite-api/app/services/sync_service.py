@@ -13,7 +13,14 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.models.database import get_session_local
-from app.models.models import Holding, EquityCurve, Metric, Trade, Signal
+from app.models.models import (
+    EquityCurve,
+    Holding,
+    Metric,
+    ProposedRebalance,
+    Signal,
+    Trade,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -325,6 +332,80 @@ def sync_trades(db: Session, universe: str = "nse500", full: bool = False) -> di
     return {"universe": universe, "count": count, "mode": mode}
 
 
+def sync_proposed_rebalance(db: Session, universe: str) -> dict:
+    """Sync the EOD-produced ``proposed_regime.json`` into ProposedRebalance.
+
+    Reads from the latest run dir's ``backtests/baseline/proposed_regime.json``
+    (written by ``data_pipeline/eod_proposal.py``). Upserts by
+    ``(universe, exec_date)``: if a row for this exec date already exists it's
+    overwritten so re-runs on the same day update in place. Strategies
+    without a producer yet (``l6_v2``, ``combo_defensive``) just no-op until
+    the JSON appears — no error, no churn.
+
+    See ``tasks/rebalance_page/PLAN.md`` Phase 2 §2.
+    """
+    exp_dir = get_latest_experiment_dir(universe)
+    if not exp_dir:
+        return {"universe": universe, "count": 0,
+                "skipped": "no experiment dir"}
+
+    json_path = exp_dir / "backtests" / "baseline" / "proposed_regime.json"
+    if not json_path.exists():
+        return {"universe": universe, "count": 0,
+                "skipped": "no proposed_regime.json"}
+
+    try:
+        payload = json.loads(json_path.read_text())
+    except (json.JSONDecodeError, OSError) as e:
+        return {"universe": universe, "count": 0, "error": str(e)}
+
+    try:
+        exec_date = pd.to_datetime(payload["exec_date"]).date()
+        signal_date = pd.to_datetime(payload["signal_date"]).date()
+        data_as_of = pd.to_datetime(payload.get("data_as_of",
+                                                 payload["signal_date"])).date()
+    except (KeyError, ValueError) as e:
+        return {"universe": universe, "count": 0,
+                "error": f"malformed JSON: {e}"}
+
+    db.query(ProposedRebalance).filter(
+        ProposedRebalance.universe == universe,
+        ProposedRebalance.exec_date == exec_date,
+    ).delete()
+
+    drawdown = payload.get("drawdown_from_peak")
+    final_pv = payload.get("final_pv")
+    initial_capital = payload.get("initial_capital")
+
+    row = ProposedRebalance(
+        universe=universe,
+        exec_date=exec_date,
+        signal_date=signal_date,
+        data_as_of=data_as_of,
+        sell_count=int(payload.get("sell_count", 0)),
+        buy_count=int(payload.get("buy_count", 0)),
+        hold_count=int(payload.get("hold_count", 0)),
+        sells=payload.get("sells", []),
+        buys=payload.get("buys", []),
+        holds=payload.get("holds", []),
+        regime=payload.get("regime"),
+        drawdown_from_peak=float(drawdown) if drawdown is not None else None,
+        final_pv=float(final_pv) if final_pv is not None else None,
+        initial_capital=(float(initial_capital)
+                          if initial_capital is not None else None),
+    )
+    db.add(row)
+    db.commit()
+    return {
+        "universe": universe, "count": 1,
+        "exec_date": str(exec_date),
+        "signal_date": str(signal_date),
+        "sells": row.sell_count,
+        "buys": row.buy_count,
+        "holds": row.hold_count,
+    }
+
+
 def sync_all(universe: str = "nse500", full_trades: bool = False) -> dict:
     """
     Sync all data for a universe.
@@ -350,6 +431,7 @@ def sync_all(universe: str = "nse500", full_trades: bool = False) -> dict:
             "equity_curve": sync_equity_curve(db, universe),
             "metrics": sync_metrics(db, universe),
             "trades": sync_trades(db, universe, full=full_trades),
+            "proposed_rebalance": sync_proposed_rebalance(db, universe),
         }
         try:
             match_result = rebuild_matches(universe, db)

@@ -17,6 +17,7 @@ Typical usage:
 from __future__ import annotations
 
 import argparse
+import glob
 import sys
 from pathlib import Path
 
@@ -29,26 +30,56 @@ if str(ROOT) not in sys.path:
 from data_pipeline.eod_proposal import build_eod_artifact
 
 
-_STRATEGY_OUT_ROOT = {
-    "om25_v3": "data/om25_v3_portfolios",
-    "tl25_v3": "data/tl25_v3_portfolios",
+# Match the UNIVERSE_DIRS spec in kite-api/app/services/sync_service.py so
+# the producer writes into the same run dir the API's latest.json pointer
+# already advances to. That way the dashboard sync picks up
+# `proposed_regime.json` next to `momentum_*.csv` without any extra glob.
+_STRATEGY_PARENT_DIR = {
+    "om25_v3": ROOT / "data/om25_v3_portfolios",
+    "tl25_v3": ROOT / "data/tl25_v3_portfolios",
 }
+_STRATEGY_RUN_GLOB = {
+    "om25_v3": "om25_v3_portfolio_202*",
+    "tl25_v3": "tl25_v3_portfolio_202*",
+}
+
+
+def _latest_production_run_dir(strategy: str) -> Path:
+    """Return the newest <strategy>_portfolio_<ts> dir, or raise.
+
+    Mirrors sync_service.get_latest_experiment_dir's filter: only dirs that
+    contain ``backtests/baseline/momentum_holdings.csv`` qualify, so we
+    never write into an empty/aborted run.
+    """
+    parent = _STRATEGY_PARENT_DIR[strategy]
+    pattern = _STRATEGY_RUN_GLOB[strategy]
+    candidates = sorted(glob.glob(str(parent / pattern)), reverse=True)
+    for d in candidates:
+        run = Path(d)
+        if (run / "backtests" / "baseline" / "momentum_holdings.csv").exists():
+            return run
+    raise RuntimeError(
+        f"No completed production run found under {parent}; run the "
+        f"daily pipeline (scripts/run_{strategy}_portfolio.py) first."
+    )
 
 
 def parse_args():
     ap = argparse.ArgumentParser(description="EOD proposed-orders producer")
     ap.add_argument("--strategy", required=True,
-                    choices=sorted(_STRATEGY_OUT_ROOT))
+                    choices=sorted(_STRATEGY_PARENT_DIR))
     ap.add_argument("--prices-dir", type=Path,
                     default=ROOT / "nse500_data_merged")
     ap.add_argument("--signal-date", type=str, default=None,
                     help="Override signal date (YYYY-MM-DD). "
                          "Default: latest cadence date in panels.")
     ap.add_argument("--output-dir", type=Path, default=None,
-                    help="Where to write the artifacts. Default: a fresh "
-                         "<strategy>_eod_<ts> run dir under the strategy's "
-                         "portfolio root, with the same backtests/baseline/ "
-                         "layout the dashboard sync reads.")
+                    help="Where to write the artifacts. Default: the latest "
+                         "<strategy>_portfolio_<ts>/backtests/baseline/ dir "
+                         "so the dashboard sync (which already advances "
+                         "latest.json to that run) picks it up alongside "
+                         "momentum_*.csv. Override to a fresh dir when "
+                         "verifying a past signal date in isolation.")
     ap.add_argument("--initial-capital", type=float, default=1_000_000)
     ap.add_argument("--backtest-start", type=str, default="2018-01-01")
     return ap.parse_args()
@@ -60,9 +91,8 @@ def main():
                    if args.signal_date else None)
 
     if args.output_dir is None:
-        ts = pd.Timestamp.now().strftime("%Y%m%d_%H%M%S")
-        run_dir = (ROOT / _STRATEGY_OUT_ROOT[args.strategy]
-                   / f"{args.strategy}_eod_{ts}")
+        run_dir = _latest_production_run_dir(args.strategy)
+        print(f"[eod] writing into latest production run: {run_dir.name}")
     else:
         run_dir = args.output_dir
     out_dir = run_dir / "backtests" / "baseline"
