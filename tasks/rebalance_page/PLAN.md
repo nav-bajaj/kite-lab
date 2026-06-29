@@ -155,23 +155,45 @@ the source of truth. The pure membership-only *formatter* (`build_proposal` in
 `data_pipeline/rebalance_proposal.py`) is kept: it turns "current holdings vs
 engine target book" into SELL-all / BUY-to-weight / HOLD + optional ₹ sizing.
 
-1. **EOD run on the signal day → read the engine's rebalance.** A new scheduled
-   job at **16:00 IST** (after NSE close 15:30 *and* after Zerodha publishes
-   the adjusted official closes — important, the existing 07:00 run uses the
-   prior day's close and can't do this). On each strategy's signal weekday it
-   fetches the day's adjusted data and runs that strategy. The engine normally
-   waits for the next bar before recording a rebalance; a thin wrapper feeds it
-   a placeholder next-day bar (signal-day close as the fill) so it computes the
-   signal-day rebalance now — the *membership* is exact, only the fill price is
-   a stand-in (irrelevant, we size by weight). The wrapper writes
-   `proposed_orders_<exec_date>.csv` (entries/exits + target weights from the
-   engine's resulting holdings) + a `regime` / `drawdown_from_peak` summary.
-   Membership-only: partial trims on continuing holdings are not surfaced.
+1. **EOD run on the signal day → read the engine's rebalance.** *Producer
+   shipped (om25_v3, tl25_v3) — scheduler / DB / API still to do.* A new
+   scheduled job at **16:00 IST** (after NSE close 15:30 *and* after Zerodha
+   publishes the adjusted official closes — important, the existing 07:00 run
+   uses the prior day's close and can't do this). On each strategy's signal
+   weekday it fetches the day's adjusted data and runs that strategy. The
+   engine normally waits for the next bar before recording a rebalance; a thin
+   wrapper feeds it a placeholder next-day bar (signal-day close as the fill)
+   so it computes the signal-day rebalance now — the *membership* is exact,
+   only the fill price is a stand-in (irrelevant, we size by weight). The
+   wrapper writes `proposed_orders_<exec_date>.csv` (entries/exits + target
+   weights from the engine's resulting holdings) + a `proposed_regime.json`
+   summary (regime, drawdown_from_peak, data_as_of) into
+   `<run-dir>/backtests/baseline/`. Membership-only: partial trims on
+   continuing holdings are not surfaced (derived from net-share transitions
+   via `data_pipeline.engine_readout.partition_membership_by_date`).
+   Implementation: `data_pipeline/eod_proposal.py` (producer module),
+   `scripts/run_eod_proposed_orders.py` (CLI entry),
+   `data_pipeline/engine_readout.py` (pure membership helper, 13 tests).
+   Verified via `tasks/rebalance_page/verify_eod_producer.py` — 5/5 past
+   signal dates produce identical membership to the real-bar engine run.
 2. **DB table** (`ProposedRebalance` or similar) + alembic migration +
    `sync_service` function, keyed by `universe` + `exec_date`, with a
    `data_as_of` timestamp. Read via the (refreshed) `latest.json` pointer.
+   *Shipped:* `ProposedRebalance` in `kite-api/app/models/models.py`,
+   alembic `0005_add_proposed_rebalances`, `sync_proposed_rebalance` in
+   `sync_service.py` (called from `sync_all`). The producer now writes
+   into the latest `<strategy>_portfolio_<ts>/backtests/baseline/` next to
+   `momentum_*.csv` so no new pointer is needed. 6 unit tests cover happy
+   path, missing JSON (soft-skip), unknown universe, malformed JSON, and
+   idempotent re-sync.
 3. **API**: `/api/rebalance/upcoming` → exec date, exits + new entries +
-   weights, regime + drawdown status, `data_as_of`.
+   weights, regime + drawdown status, `data_as_of`. *Shipped:* read endpoint
+   in `kite-api/app/api/rebalance.py` behind `check_universe_access` (no new
+   admin/mutation surface). Returns `available: false` with empty lists
+   when no proposal has been produced yet (for strategies whose EOD
+   producer isn't wired up), so the UI doesn't 404. Wired into
+   `test_clerk_authz.py` (12 new test cases — client-allowed universes
+   get 200; client-forbidden universes get 403; anon gets 401).
 4. **UI — "Actionable trades" card** (membership-only, weight-based):
    - **SELL (exit fully)** — "sell your entire position." Universal.
    - **BUY (new positions)** — name + model target weight; with the optional
@@ -179,6 +201,39 @@ engine target book" into SELL-all / BUY-to-weight / HOLD + optional ₹ sizing.
    - **HOLD** — continuing names, collapsed, "no action."
    - Plain-English one-liner + a **Regime / risk** line (regime, drawdown).
    - Off-week exit-check days are first-class: usually SELL-only or empty.
+   *Shipped:* `ActionableTrades` card in
+   `kite-dashboard/src/components/rebalance/actionable-trades.tsx`, wired
+   into `/rebalance` page above the existing Previous/Next cards. Subscriber
+   capital is stored in `localStorage` per universe (key
+   `rebalance.portfolio_value.<universe>`) via `useSyncExternalStore` —
+   never sent to the server. BUYs re-derive ₹ via `weight × clientCapital`
+   on the client (mirrors `build_proposal`), falling back to the producer's
+   model-scale numbers when no capital is set. HOLDs collapsed by default.
+   Renders a "no upcoming rebalance produced yet" empty state when the API
+   returns `available: false` (so unsupported strategies don't 404 the UI).
+   `tsc` + `eslint` clean on touched files.
+
+### Phase 2 step 5 — 16:00 IST scheduled job (SHIPPED)
+
+A new `eod_proposed_orders` entry in `kite-api/app/scheduler/tasks.py` fires
+Mon–Fri at 16:00 IST. The wrapper `run_eod_proposed_orders` iterates
+`EOD_STRATEGIES = ("om25_v3", "tl25_v3")` and asks `_is_eod_signal_day` per
+strategy — signal-day gate anchored on the engine's most recent signal date
+(latest row of `<strategy>_signals.csv`) projected forward via
+`rebalance_service.project_next_signal` (already cadence-aware and
+holiday-rolled in Phase 1). Off-week exit-check Fridays are deliberately
+skipped: the producer only fires on entry-cadence Fridays. Each strategy
+that passes the gate gets its own `JobService` job so a producer failure on
+one doesn't block the other. The producer script (`scripts/run_eod_proposed_orders.py`)
+gained a `--universe` alias to `--strategy` so the job-service's uniform
+`--universe` arg works without special-casing. 7 unit tests cover the gate
+across the matrix: signal Friday ✓, off-week Friday ✗, weekday non-Friday ✗,
+NSE holiday ✗, missing run dir ✗, missing signals CSV ✗, holiday-rolled
+anchor (Thursday) handled cleanly.
+
+l6_v2 and combo_defensive don't yet have an EOD adapter; they're absent
+from `EOD_STRATEGIES` so the scheduler just doesn't fire for them, the API
+returns `available: false`, and the UI shows the empty state.
 
 ## Key technical notes / risks
 

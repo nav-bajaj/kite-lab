@@ -1,6 +1,10 @@
 "use client";
 
-import { RebalanceSummary, RebalanceHistory } from "@/components/rebalance";
+import {
+  ActionableTrades,
+  RebalanceHistory,
+  RebalanceSummary,
+} from "@/components/rebalance";
 
 export default function RebalancePage() {
   return (
@@ -12,6 +16,9 @@ export default function RebalancePage() {
           When this portfolio last rebalanced and when it&apos;s due next
         </p>
       </div>
+
+      {/* Actionable trades — what to do at the upcoming rebalance */}
+      <ActionableTrades />
 
       {/* Previous + next rebalance, cadence */}
       <RebalanceSummary />

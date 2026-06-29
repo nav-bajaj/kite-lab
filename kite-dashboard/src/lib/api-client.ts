@@ -315,6 +315,12 @@ export async function getRebalanceHistory(universe: UniverseId, limit: number = 
   }>(`/api/rebalance/history?universe=${universe}&limit=${limit}`);
 }
 
+export async function getRebalanceUpcoming(universe: UniverseId) {
+  return apiFetch<import("./types").RebalanceUpcoming>(
+    `/api/rebalance/upcoming?universe=${universe}`
+  );
+}
+
 // Jobs endpoints
 export interface Job {
   id: string;

@@ -17,6 +17,7 @@ import {
   getRebalancePreview,
   getRebalanceOrders,
   getRebalanceHistory,
+  getRebalanceUpcoming,
   getJobs,
   getJob,
   getJobLogs,
@@ -225,6 +226,21 @@ export function useRebalanceOrders() {
     {
       refreshInterval: SLOW_REFRESH,
       revalidateOnFocus: false,
+    }
+  );
+}
+
+// Upcoming rebalance — EOD-produced "Actionable trades" payload
+// (PLAN.md Phase 2 §3-§4).
+export function useRebalanceUpcoming() {
+  const { universeId } = useUniverse();
+
+  return useAuthedSWR(
+    ["rebalance-upcoming", universeId],
+    ([, universe]) => getRebalanceUpcoming(universe),
+    {
+      refreshInterval: SLOW_REFRESH,
+      revalidateOnFocus: true,
     }
   );
 }

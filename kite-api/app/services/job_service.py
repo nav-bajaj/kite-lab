@@ -39,6 +39,11 @@ COMMANDS = {
     #   GDRIVE_REFRESH_TOKEN_JSON               — for cloud_upload
     "db_backup": "scripts/backup_database.py",
     "cloud_upload": "scripts/upload_to_gdrive.py",
+    # Phase 2 §5 of the rebalance_page initiative — EOD producer that reads
+    # the engine's signal-day decision and writes proposed_orders_<exec>.csv
+    # + proposed_regime.json into the latest production run dir. Driven by
+    # the 16:00 IST scheduled task in scheduler/tasks.py.
+    "eod_proposed_orders": "scripts/run_eod_proposed_orders.py",
 }
 
 

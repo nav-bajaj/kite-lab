@@ -5,8 +5,15 @@ These tasks run automatically based on their schedule.
 Uses module-level functions for APScheduler serialization compatibility.
 """
 import logging
+from datetime import date
 
 logger = logging.getLogger(__name__)
+
+
+# Strategies that have an EOD proposed-orders producer wired up — see
+# data_pipeline/eod_proposal.py and tasks/rebalance_page/PLAN.md Phase 2.
+# l6_v2 and combo_defensive land here once their score adapters land.
+EOD_STRATEGIES = ("om25_v3", "tl25_v3")
 
 
 # Predefined scheduled tasks configuration
@@ -65,6 +72,28 @@ SCHEDULED_TASKS = [
             "minute": 30,
         },
     },
+    # rebalance_page Phase 2 §5 — EOD producer. 16:00 IST = NSE close 15:30
+    # IST + 30min for Zerodha to publish the adjusted official closes the
+    # engine needs. The 07:00 daily_pipeline run uses *prior-day* closes and
+    # can't produce a today-signal-day proposal. Mon–Fri trigger; the task
+    # function gates per-strategy on signal-day + NSE holiday.
+    {
+        "id": "eod_proposed_orders",
+        "name": "EOD proposed orders",
+        "description": (
+            "After-close (16:00 IST) producer of the upcoming rebalance — "
+            "writes proposed_orders_<exec>.csv + proposed_regime.json next "
+            "to momentum_*.csv so the rebalance page picks it up."
+        ),
+        "command": "eod_proposed_orders",
+        "func_ref": "app.scheduler.tasks:run_eod_proposed_orders",
+        "trigger": "cron",
+        "trigger_args": {
+            "hour": 16,
+            "minute": 0,
+            "day_of_week": "mon-fri",
+        },
+    },
 ]
 
 
@@ -100,6 +129,92 @@ def run_daily_cloud_upload():
     Sync wrapper for APScheduler."""
     import asyncio
     asyncio.run(_execute_scheduled_task("cloud_upload"))
+
+
+def _is_eod_signal_day(strategy: str, today: date) -> bool:
+    """True if ``today`` is the next entry-cadence date for ``strategy``.
+
+    Anchors on the engine's own most recent signal date (last row of the
+    strategy's ``<strategy>_signals.csv``) and projects the next signal
+    date forward via ``rebalance_service.project_next_signal``. That uses
+    the cadence in ``config.UNIVERSES["rebalance_cadence"]`` and the
+    holiday-roll helpers in ``market_service`` so a holiday Friday falls
+    back to that week's prior trading day — same logic Phase 1 already
+    surfaces in the "Next rebalance" card.
+
+    Returns False (with a log line) when we can't determine the cadence:
+    missing run dir, missing signals CSV, or the strategy isn't registered
+    in ``UNIVERSES``. The scheduler treats that as "skip today" rather
+    than risking a spurious run on a non-cadence day.
+    """
+    from datetime import timedelta
+
+    from app.config import UNIVERSES
+    from app.services.market_service import is_trading_day
+    from app.services.rebalance_service import (
+        DEFAULT_CADENCE, get_latest_signals_dir, project_next_signal,
+    )
+
+    if not is_trading_day(today):
+        logger.info(f"[eod] {strategy}: skip — {today} is not an NSE trading day")
+        return False
+
+    cadence_key = (UNIVERSES.get(strategy, {})
+                   .get("rebalance_cadence", DEFAULT_CADENCE))
+
+    run_dir = get_latest_signals_dir(strategy)
+    if run_dir is None:
+        logger.info(f"[eod] {strategy}: skip — no run dir found")
+        return False
+
+    signals_csv = run_dir / f"{strategy.split('_')[0]}_signals.csv"
+    # om25_v3 → om25_signals.csv; tl25_v3 → tl25_signals.csv.
+    if not signals_csv.exists():
+        logger.info(f"[eod] {strategy}: skip — no signals CSV at {signals_csv}")
+        return False
+
+    try:
+        import pandas as pd
+
+        df = pd.read_csv(signals_csv, parse_dates=["date"], usecols=["date"])
+        if df.empty:
+            return False
+        last_signal = df["date"].max().date()
+    except (OSError, KeyError, ValueError) as e:
+        logger.info(f"[eod] {strategy}: skip — couldn't read {signals_csv}: {e}")
+        return False
+
+    # project_next_signal returns the next entry date strictly AFTER `today`.
+    # To ask "is today itself the next signal date?", probe with yesterday.
+    projected = project_next_signal(last_signal, cadence_key,
+                                     today - timedelta(days=1))
+    return projected == today
+
+
+def run_eod_proposed_orders():
+    """Fire one EOD proposed-orders job per signal-day strategy.
+
+    Cron triggers this every weekday at 16:00 IST. For each strategy in
+    ``EOD_STRATEGIES`` we check whether today is on that strategy's
+    entry-cadence (biweekly Friday, holiday-rolled) and, if so, dispatch
+    the producer as its own job so per-strategy failures stay isolated.
+    """
+    import asyncio
+
+    today = date.today()
+    fired = []
+    for strategy in EOD_STRATEGIES:
+        if not _is_eod_signal_day(strategy, today):
+            continue
+        asyncio.run(_execute_scheduled_task(
+            "eod_proposed_orders",
+            universe=strategy,
+        ))
+        fired.append(strategy)
+    if fired:
+        logger.info(f"[eod] dispatched producers for: {', '.join(fired)}")
+    else:
+        logger.info("[eod] no strategies on signal-day today — nothing dispatched")
 
 
 async def _execute_scheduled_task(command: str, universe: str = None, args: dict = None):
