@@ -79,6 +79,82 @@ def project_next_exit_check(today: date) -> date:
     return _project(today, 1, FRIDAY, today)
 
 
+def _exec_to_signal(exec_date: date) -> date:
+    """Reverse ``next_trading_day_after``: signal_date is the most recent
+    trading day strictly before ``exec_date``."""
+    return snap_back_to_trading_day(exec_date - timedelta(days=1))
+
+
+def expected_cadence_history(
+    *, today: date, anchor_exec: date, cadence_key: str, lookback_count: int,
+) -> List[tuple]:
+    """Expected ``(signal_date, exec_date)`` pairs for this strategy.
+
+    Walks the cadence anchored on the engine's own most recent entry-bearing
+    exec date (which fixes the [::2] parity the engine uses on the price
+    panel — see ``scripts/_clean_engine.biweekly_fridays``). Each step is
+    ``interval_weeks`` **in the week-bucket domain**, *not* in the day
+    domain: the engine uses ``resample('W-FRI').last()`` so each cycle
+    lands in the same weekly bucket regardless of where in the week the
+    previous one's last trading day fell. Concretely, if the previous
+    signal was Thu 2026-04-30 (Fri 5/1 = Labour Day), the next biweekly
+    cycle is in the week ending Sun 2026-05-17, whose last trading day is
+    Fri 2026-05-15 — *not* Thu 2026-05-14 (a naïve ``+14`` would land
+    there).
+
+    Adds forward cycles up to ``today`` so a no-action cycle that just
+    fired isn't missed, and backward cycles until we have ``lookback_count``
+    entries. Returned most-recent-exec-first.
+    """
+    _, interval_weeks, signal_wd, _ = CADENCE_META.get(
+        cadence_key, CADENCE_META[DEFAULT_CADENCE]
+    )
+    anchor_signal = _exec_to_signal(anchor_exec)
+    # Project the anchor onto its nominal ``signal_wd``-of-week: this
+    # de-rotates any holiday shift so subsequent ``+weeks`` arithmetic
+    # stays on the same weekday and the snap-back applies cleanly per
+    # bucket.
+    anchor_nominal = anchor_signal + timedelta(
+        days=(signal_wd - anchor_signal.weekday()) % 7
+    )
+
+    pairs: list = []
+
+    # Step forward from anchor — picks up cadence cycles that fired between
+    # the latest known trade and today (e.g. no-action / not-yet-synced).
+    n = 0
+    while True:
+        target_nominal = anchor_nominal + timedelta(weeks=n * interval_weeks)
+        sig = snap_back_to_trading_day(target_nominal)
+        exec_d = next_trading_day_after(sig)
+        if exec_d > today:
+            break
+        pairs.append((sig, exec_d))
+        n += 1
+
+    # Step backward.
+    n = -1
+    while len(pairs) < lookback_count:
+        target_nominal = anchor_nominal + timedelta(weeks=n * interval_weeks)
+        sig = snap_back_to_trading_day(target_nominal)
+        exec_d = next_trading_day_after(sig)
+        if exec_d <= today:
+            pairs.append((sig, exec_d))
+        n -= 1
+        # Hard floor against pathological inputs (anchor decades old).
+        if target_nominal.year < 2009:
+            break
+
+    # Dedupe (anchor itself appears in the forward loop) and sort desc.
+    seen: set = set()
+    unique = []
+    for sig, exec_d in pairs:
+        if exec_d not in seen:
+            seen.add(exec_d)
+            unique.append((sig, exec_d))
+    return sorted(unique, key=lambda p: p[1], reverse=True)
+
+
 def get_latest_signals_dir(universe: str = "nse500") -> Optional[Path]:
     """Find the most recent signals/changes directory.
 
@@ -305,28 +381,70 @@ def get_rebalance_summary(universe: str = "nse500") -> dict:
         ).order_by(desc(EquityCurve.date)).first()
         pv = float(pv_row[0]) if pv_row and pv_row[0] else None
 
-        # Previous rebalance = the most recent trade-date group.
-        last_date = db.query(func.max(Trade.trade_date)).filter(
+        # Previous rebalance = most recent EVENT, where an "event" is either
+        # an observed trade-bearing date OR the most recent expected cadence
+        # exec_date. Picking just the latest trade hides no-action cycles
+        # that fired AFTER the last trade — e.g. the engine reviewed the book
+        # on the latest signal day and held (rotations stayed inside the exit
+        # buffer). Subscribers then see a stale "Previous rebalance" until
+        # the next non-no-action cycle.
+        last_trade = db.query(func.max(Trade.trade_date)).filter(
             Trade.universe == universe
         ).scalar()
+        anchor_exec = db.query(func.max(Trade.trade_date)).filter(
+            Trade.universe == universe,
+            Trade.side == "BUY",
+        ).scalar() or last_trade
+
         previous = None
-        if last_date:
+        if last_trade or anchor_exec:
+            # Walk cadence forward from the entry-bearing anchor to surface
+            # any no-action cycle that fired after `last_trade`.
+            candidate_cycles = (expected_cadence_history(
+                today=today, anchor_exec=anchor_exec,
+                cadence_key=cadence_key, lookback_count=1,
+            ) if anchor_exec else [])
+            latest_cycle_exec = candidate_cycles[0][1] if candidate_cycles else None
+
+            # Most recent event = max(latest trade, latest cadence exec).
+            event_date = max(d for d in (last_trade, latest_cycle_exec)
+                              if d is not None)
+
             rows = db.query(Trade).filter(
                 Trade.universe == universe,
-                Trade.trade_date == last_date,
+                Trade.trade_date == event_date,
             ).all()
-            added = sorted({r.symbol for r in rows if r.side == "BUY"})
-            removed = sorted({r.symbol for r in rows if r.side == "SELL"})
-            notional = sum(abs(float(r.notional or 0)) for r in rows)
-            previous = {
-                "date": str(last_date),
-                "added": added,
-                "removed": removed,
-                "buy_count": len(added),
-                "sell_count": len(removed),
-                "notional_traded": round(notional, 2),
-                "turnover_pct": round(notional / pv * 100, 2) if pv else None,
-            }
+
+            if rows:
+                added = sorted({r.symbol for r in rows if r.side == "BUY"})
+                removed = sorted({r.symbol for r in rows if r.side == "SELL"})
+                notional = sum(abs(float(r.notional or 0)) for r in rows)
+                kind = "entry" if added else "weekly_exit"
+                previous = {
+                    "date": str(event_date),
+                    "added": added,
+                    "removed": removed,
+                    "buy_count": len(added),
+                    "sell_count": len(removed),
+                    "notional_traded": round(notional, 2),
+                    "turnover_pct": (round(notional / pv * 100, 2)
+                                     if pv else None),
+                    "no_action": False,
+                    "kind": kind,
+                }
+            else:
+                # Cadence cycle date with no Trade rows → no-action result.
+                previous = {
+                    "date": str(event_date),
+                    "added": [],
+                    "removed": [],
+                    "buy_count": 0,
+                    "sell_count": 0,
+                    "notional_traded": 0.0,
+                    "turnover_pct": 0.0,
+                    "no_action": True,
+                    "kind": "no_action",
+                }
 
         # Next rebalance = projected from the last entry (BUY) date, which is
         # the engine's last regular rebalance (weekly rank-exits are SELL-only
@@ -446,20 +564,44 @@ def get_rebalance_history(
     traded, and turnover %. Replaces the old implementation that read the
     Rebalance table, which is never populated.
     """
+    cadence_key = (UNIVERSES.get(universe, {})
+                   .get("rebalance_cadence", DEFAULT_CADENCE))
+
     SessionLocal = get_session_local()
     db = SessionLocal()
     try:
-        dates = [
-            r[0] for r in db.query(Trade.trade_date).filter(
-                Trade.universe == universe
-            ).distinct().order_by(desc(Trade.trade_date)).limit(limit).all()
-        ]
-        if not dates:
+        today = date.today()
+
+        # Anchor cadence parity on the most recent entry-bearing trade (engine's
+        # last actual entry cycle). Weekly-exit-only SELL trades on off-week
+        # Fridays can't anchor — they'd shift parity.
+        anchor_exec = db.query(func.max(Trade.trade_date)).filter(
+            Trade.universe == universe,
+            Trade.side == "BUY",
+        ).scalar()
+
+        # Without an anchor we have no parity reference — fall back to the old
+        # observed-trades-only history (legacy behaviour). Strategies in their
+        # first cycle land here briefly.
+        if anchor_exec is None:
             return {"universe": universe, "history": [], "count": 0}
 
+        cycles = expected_cadence_history(
+            today=today, anchor_exec=anchor_exec,
+            cadence_key=cadence_key, lookback_count=limit,
+        )
+        if not cycles:
+            return {"universe": universe, "history": [], "count": 0}
+
+        earliest_exec = min(c[1] for c in cycles)
+
+        # Pull all trades in the window — by trade_date, not just cadence
+        # exec_dates, so weekly-exit SELL trades on off-cadence Fridays appear
+        # too. We classify them via no_action / kind below.
         rows = db.query(Trade).filter(
             Trade.universe == universe,
-            Trade.trade_date.in_(dates),
+            Trade.trade_date >= earliest_exec,
+            Trade.trade_date <= today,
         ).all()
         pv_map = {
             d: float(v) for d, v in db.query(
@@ -469,25 +611,60 @@ def get_rebalance_history(
 
         agg: dict = {}
         for r in rows:
-            a = agg.setdefault(r.trade_date, {"buys": 0, "sells": 0, "notional": 0.0})
+            a = agg.setdefault(r.trade_date,
+                                {"buys": 0, "sells": 0, "notional": 0.0})
             if r.side == "BUY":
                 a["buys"] += 1
             elif r.side == "SELL":
                 a["sells"] += 1
             a["notional"] += abs(float(r.notional or 0))
 
-        history = []
-        for d in sorted(agg.keys(), reverse=True):
-            a = agg[d]
-            pv = pv_map.get(d)
-            history.append({
-                "date": str(d),
-                "additions": a["buys"],
-                "removals": a["sells"],
-                "notional": round(a["notional"], 2),
-                "turnover_pct": round(a["notional"] / pv * 100, 2) if pv else None,
-            })
+        cadence_exec_dates = {exec_d for _sig, exec_d in cycles}
 
+        # Union all event dates: expected cadence exec dates + observed trade
+        # dates (the latter may include off-cadence weekly-exit Fridays).
+        all_dates = sorted(cadence_exec_dates | set(agg.keys()), reverse=True)
+
+        history = []
+        for d in all_dates:
+            a = agg.get(d)
+            pv = pv_map.get(d)
+            is_cadence = d in cadence_exec_dates
+            if a is None:
+                # Cadence cycle with no trades — engine processed the signal
+                # but the rotation stayed inside the exit buffer (top_n + buffer),
+                # so nothing rotated out and no new names rotated in. Surface
+                # the cycle so subscribers see the engine reviewed and held.
+                history.append({
+                    "date": str(d),
+                    "additions": 0,
+                    "removals": 0,
+                    "notional": 0.0,
+                    "turnover_pct": 0.0,
+                    "no_action": True,
+                    "kind": "no_action",
+                })
+            else:
+                if a["buys"] > 0:
+                    kind = "entry"
+                else:
+                    # SELL-only event — weekly rank/drawdown exit. If it falls
+                    # on the entry cadence it's a no-add cycle (e.g. bear-skipped
+                    # entries); if off-cadence it's a pure weekly exit.
+                    kind = "weekly_exit"
+                history.append({
+                    "date": str(d),
+                    "additions": a["buys"],
+                    "removals": a["sells"],
+                    "notional": round(a["notional"], 2),
+                    "turnover_pct": (round(a["notional"] / pv * 100, 2)
+                                     if pv else None),
+                    "no_action": False,
+                    "kind": kind,
+                    "off_cadence": (not is_cadence),
+                })
+
+        history = history[:limit]
         return {
             "universe": universe,
             "history": history,

@@ -166,6 +166,8 @@ export interface Job {
 }
 
 // Rebalance types
+export type RebalanceKind = "entry" | "weekly_exit" | "no_action";
+
 export interface RebalancePreviousInfo {
   date: string;
   added: string[];
@@ -174,6 +176,11 @@ export interface RebalancePreviousInfo {
   sell_count: number;
   notional_traded: number;
   turnover_pct: number | null;
+  // True when the engine processed the cadence cycle but fired zero trades
+  // (top-25 rotation stayed inside the exit buffer). Surfaces "the engine
+  // reviewed and held" instead of looking like a missing rebalance.
+  no_action?: boolean;
+  kind?: RebalanceKind;
 }
 
 export interface RebalanceNextInfo {
@@ -237,6 +244,11 @@ export interface RebalanceHistoryItem {
   removals: number;
   notional: number;
   turnover_pct: number | null;
+  // See RebalancePreviousInfo above for the no_action semantics. Optional
+  // because legacy strategies' summaries don't carry it yet.
+  no_action?: boolean;
+  kind?: RebalanceKind;
+  off_cadence?: boolean;
 }
 
 // Open Positions types (live portfolio tracking)

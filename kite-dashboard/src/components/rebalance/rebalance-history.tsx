@@ -52,27 +52,59 @@ export function RebalanceHistory({ limit = 12 }: { limit?: number }) {
                 </tr>
               </thead>
               <tbody>
-                {history.map((row) => (
-                  <tr key={row.date} className="border-b last:border-0">
-                    <td className="py-2 pr-4 font-medium">{row.date}</td>
-                    <td className="py-2 pr-4 text-right text-green-600">
-                      {row.additions}
-                    </td>
-                    <td className="py-2 pr-4 text-right text-red-600">
-                      {row.removals}
-                    </td>
-                    <td className="py-2 pr-4 text-right text-muted-foreground">
-                      {row.turnover_pct !== null
-                        ? `${row.turnover_pct.toFixed(1)}%`
-                        : "—"}
-                    </td>
-                    <td className="py-2 text-right text-muted-foreground">
-                      {formatCurrency(row.notional)}
-                    </td>
-                  </tr>
-                ))}
+                {history.map((row) => {
+                  const isNoAction = row.no_action === true;
+                  return (
+                    <tr
+                      key={row.date}
+                      className={
+                        "border-b last:border-0" +
+                        (isNoAction ? " text-muted-foreground italic" : "")
+                      }
+                    >
+                      <td className="py-2 pr-4 font-medium">
+                        {row.date}
+                        {isNoAction && (
+                          <span className="ml-2 rounded-sm bg-muted px-1.5 py-0.5 text-[10px] font-normal not-italic uppercase tracking-wide text-muted-foreground">
+                            no-action
+                          </span>
+                        )}
+                      </td>
+                      <td className={
+                        "py-2 pr-4 text-right " +
+                        (isNoAction ? "" : "text-green-600")
+                      }>
+                        {isNoAction ? "—" : row.additions}
+                      </td>
+                      <td className={
+                        "py-2 pr-4 text-right " +
+                        (isNoAction ? "" : "text-red-600")
+                      }>
+                        {isNoAction ? "—" : row.removals}
+                      </td>
+                      <td className="py-2 pr-4 text-right text-muted-foreground">
+                        {isNoAction
+                          ? "—"
+                          : row.turnover_pct !== null
+                            ? `${row.turnover_pct.toFixed(1)}%`
+                            : "—"}
+                      </td>
+                      <td className="py-2 text-right text-muted-foreground">
+                        {isNoAction ? "—" : formatCurrency(row.notional)}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
+            {history.some((r) => r.no_action) && (
+              <p className="mt-3 text-xs text-muted-foreground">
+                <span className="font-medium">No-action</span> cycles are
+                signal days where the engine reviewed the book but the
+                rotation stayed inside the exit buffer, so it held the
+                existing names. Not a missed rebalance.
+              </p>
+            )}
           </div>
         )}
       </CardContent>
