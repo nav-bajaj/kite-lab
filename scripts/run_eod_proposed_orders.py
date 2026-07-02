@@ -90,7 +90,41 @@ def parse_args():
                          "verifying a past signal date in isolation.")
     ap.add_argument("--initial-capital", type=float, default=1_000_000)
     ap.add_argument("--backtest-start", type=str, default="2018-01-01")
+    ap.add_argument("--no-sync", action="store_true",
+                    help="Skip the sync_proposed_rebalance DB write at the "
+                         "end. Default: sync so the /api/rebalance/upcoming "
+                         "endpoint sees the row within seconds of the "
+                         "producer finishing, instead of waiting for the "
+                         "next 07:00 IST daily_pipeline sync cycle.")
     return ap.parse_args()
+
+
+def _sync_to_db(strategy: str) -> None:
+    """Import kite-api's sync_service and push the freshly-written JSON into
+    the ``proposed_rebalances`` table.
+
+    The 07:00 IST ``daily_pipeline`` runs sync_all *before* the producer
+    runs at 16:00 IST, so a producer output stays invisible to the API for
+    ~15 hours without this. On Railway the script + API share the same
+    ``DATABASE_URL`` env var so the SQLAlchemy engine attaches to the same
+    Postgres; locally the same is true.
+    """
+    kite_api = ROOT / "kite-api"
+    if str(kite_api) not in sys.path:
+        sys.path.insert(0, str(kite_api))
+    from app.models.database import get_session_local
+    from app.services.sync_service import (
+        refresh_latest_pointer, sync_proposed_rebalance,
+    )
+
+    refresh_latest_pointer(strategy)
+    SessionLocal = get_session_local()
+    db = SessionLocal()
+    try:
+        result = sync_proposed_rebalance(db, strategy)
+        print(f"[eod] sync → {result}")
+    finally:
+        db.close()
 
 
 def main():
@@ -126,6 +160,15 @@ def main():
           f"{[b['symbol'] for b in summary['buys']]}")
     print(f"  HOLD         : {summary['hold_count']}")
     print(f"  out          : {out_dir}")
+
+    if not args.no_sync:
+        try:
+            _sync_to_db(strategy)
+        except Exception as e:
+            # Producer artifact is on disk regardless — a sync failure just
+            # means the DB row waits until the next sync_all. Don't fail the
+            # whole job over it.
+            print(f"[eod] warning: sync failed: {e!r}")
 
 
 if __name__ == "__main__":
