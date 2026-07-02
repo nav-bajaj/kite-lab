@@ -33,6 +33,16 @@ mkdir -p "$VOLUME/nifty_250_tests"
 mkdir -p "$VOLUME/experiments"
 mkdir -p "$VOLUME/logs/jobs"
 mkdir -p "$VOLUME/tokens"
+# v3 strategy portfolio dirs — the daily runners write timestamped runs
+# here. Symlinked so runs survive Railway container restarts (deploys).
+# Without this, /app/data/<strategy>_portfolios/ is ephemeral: every
+# redeploy wipes the runs, and any producer job (e.g. eod_proposed_orders)
+# that expects to find a completed run dir fails until the next
+# daily_pipeline populates them.
+mkdir -p "$VOLUME/om25_v3_portfolios"
+mkdir -p "$VOLUME/tl25_v3_portfolios"
+mkdir -p "$VOLUME/l6_v2_portfolios"
+mkdir -p "$VOLUME/combo_defensive_portfolios"
 
 # Helper: create symlink if target doesn't already point to the volume
 link() {
@@ -75,6 +85,11 @@ link "$VOLUME/nifty_100_tests"   "$APP/nifty_100_tests"
 link "$VOLUME/nifty_250_tests"   "$APP/nifty_250_tests"
 link "$VOLUME/experiments"       "$APP/experiments"
 link "$VOLUME/logs/jobs"         "$APP/logs/jobs"
+# v3 strategy portfolio dirs — see mkdir block above.
+link "$VOLUME/om25_v3_portfolios"          "$APP/data/om25_v3_portfolios"
+link "$VOLUME/tl25_v3_portfolios"          "$APP/data/tl25_v3_portfolios"
+link "$VOLUME/l6_v2_portfolios"            "$APP/data/l6_v2_portfolios"
+link "$VOLUME/combo_defensive_portfolios"  "$APP/data/combo_defensive_portfolios"
 
 # Symlink individual files (access token, session, instruments CSV)
 # For files, symlink the parent isn't practical — symlink the file directly
