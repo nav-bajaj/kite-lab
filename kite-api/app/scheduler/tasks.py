@@ -12,8 +12,8 @@ logger = logging.getLogger(__name__)
 
 # Strategies that have an EOD proposed-orders producer wired up — see
 # data_pipeline/eod_proposal.py and tasks/rebalance_page/PLAN.md Phase 2.
-# l6_v2 and combo_defensive land here once their score adapters land.
-EOD_STRATEGIES = ("om25_v3", "tl25_v3")
+# combo_defensive still needs a score adapter (uses regime + composite score).
+EOD_STRATEGIES = ("om25_v3", "tl25_v3", "l6_v2")
 
 
 # Predefined scheduled tasks configuration
@@ -134,26 +134,31 @@ def run_daily_cloud_upload():
 def _is_eod_signal_day(strategy: str, today: date) -> bool:
     """True if ``today`` is the next entry-cadence date for ``strategy``.
 
-    Anchors on the engine's own most recent signal date (last row of the
-    strategy's ``<strategy>_signals.csv``) and projects the next signal
-    date forward via ``rebalance_service.project_next_signal``. That uses
-    the cadence in ``config.UNIVERSES["rebalance_cadence"]`` and the
-    holiday-roll helpers in ``market_service`` so a holiday Friday falls
-    back to that week's prior trading day — same logic Phase 1 already
-    surfaces in the "Next rebalance" card.
+    Anchors on the most recent entry-bearing (BUY) trade in the DB and
+    projects forward via ``rebalance_service.project_next_signal`` (uses
+    the cadence in ``config.UNIVERSES["rebalance_cadence"]`` + the
+    holiday-roll helpers, same as Phase 1's "Next rebalance" card). The
+    Trade table is the single source of truth for every strategy, which
+    replaces the per-strategy ``<prefix>_signals.csv`` lookup that used
+    to gate the biweekly strategies (om25_v3, tl25_v3): weekly strategies
+    like l6_v2 never emit a signals CSV so that path silently returned
+    False and the cron never fired for Core Momentum.
 
-    Returns False (with a log line) when we can't determine the cadence:
-    missing run dir, missing signals CSV, or the strategy isn't registered
-    in ``UNIVERSES``. The scheduler treats that as "skip today" rather
-    than risking a spurious run on a non-cadence day.
+    Returns False (with a log line) when we can't determine the anchor —
+    no BUY trades on record for the strategy — or when today isn't a
+    trading day. The scheduler treats that as "skip today" rather than
+    risking a spurious run on a non-cadence day.
     """
     from datetime import timedelta
 
     from app.config import UNIVERSES
+    from app.models.database import get_session_local
+    from app.models.models import Trade
     from app.services.market_service import is_trading_day
     from app.services.rebalance_service import (
-        DEFAULT_CADENCE, get_latest_signals_dir, project_next_signal,
+        DEFAULT_CADENCE, _exec_to_signal, project_next_signal,
     )
+    from sqlalchemy import func
 
     if not is_trading_day(today):
         logger.info(f"[eod] {strategy}: skip — {today} is not an NSE trading day")
@@ -162,27 +167,22 @@ def _is_eod_signal_day(strategy: str, today: date) -> bool:
     cadence_key = (UNIVERSES.get(strategy, {})
                    .get("rebalance_cadence", DEFAULT_CADENCE))
 
-    run_dir = get_latest_signals_dir(strategy)
-    if run_dir is None:
-        logger.info(f"[eod] {strategy}: skip — no run dir found")
-        return False
-
-    signals_csv = run_dir / f"{strategy.split('_')[0]}_signals.csv"
-    # om25_v3 → om25_signals.csv; tl25_v3 → tl25_signals.csv.
-    if not signals_csv.exists():
-        logger.info(f"[eod] {strategy}: skip — no signals CSV at {signals_csv}")
-        return False
-
+    SessionLocal = get_session_local()
+    db = SessionLocal()
     try:
-        import pandas as pd
+        last_buy_exec = db.query(func.max(Trade.trade_date)).filter(
+            Trade.universe == strategy,
+            Trade.side == "BUY",
+        ).scalar()
+    finally:
+        db.close()
 
-        df = pd.read_csv(signals_csv, parse_dates=["date"], usecols=["date"])
-        if df.empty:
-            return False
-        last_signal = df["date"].max().date()
-    except (OSError, KeyError, ValueError) as e:
-        logger.info(f"[eod] {strategy}: skip — couldn't read {signals_csv}: {e}")
+    if last_buy_exec is None:
+        logger.info(f"[eod] {strategy}: skip — no entry-bearing trades in DB")
         return False
+
+    # exec_date → signal_date (the trading day strictly before exec_date).
+    last_signal = _exec_to_signal(last_buy_exec)
 
     # project_next_signal returns the next entry date strictly AFTER `today`.
     # To ask "is today itself the next signal date?", probe with yesterday.

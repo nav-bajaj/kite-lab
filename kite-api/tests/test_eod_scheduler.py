@@ -1,135 +1,179 @@
 """Unit tests for the 16:00 IST EOD producer scheduler task.
 
-Mostly exercises ``_is_eod_signal_day`` — the per-strategy gate the
-scheduler asks before dispatching a job (signal-day + holiday-aware,
-anchored on the engine's own most recent signal date).
+The gate ``_is_eod_signal_day`` decides per-strategy whether the cron
+should dispatch a job. It sources the cadence anchor from the DB Trade
+table (most recent BUY exec_date), then asks
+``rebalance_service.project_next_signal`` to project the next entry-cadence
+date. Compares to ``today``.
+
+The old implementation read the anchor from a per-strategy signals CSV in
+the latest run dir; that broke for l6_v2 (weekly Thu-Fri) which never
+writes a signals CSV. This test file exercises the new DB-backed path
+and covers the l6_v2 gap.
 """
 from __future__ import annotations
 
-from datetime import date, datetime, timedelta
-from types import SimpleNamespace
+from datetime import date
+from decimal import Decimal
 
-import pandas as pd
 import pytest
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
+from app.models.database import Base
+from app.models.models import EquityCurve, OpenPosition, Trade
 from app.scheduler import tasks
-from app.services import market_service, rebalance_service
-
-
-def _write_signals(parent_dir, run_name, csv_name, dates):
-    """Mimic what each strategy runner writes: <strategy>_signals.csv with
-    a date column. We add momentum_holdings.csv too so the run dir survives
-    the get_latest_experiment_dir / _holdings_present filter."""
-    run_dir = parent_dir / run_name
-    baseline = run_dir / "backtests" / "baseline"
-    baseline.mkdir(parents=True)
-    (baseline / "momentum_holdings.csv").write_text("symbol,shares\nTCS,10\n")
-    df = pd.DataFrame({"date": pd.to_datetime(dates), "symbol": ["A"] * len(dates)})
-    df.to_csv(run_dir / csv_name, index=False)
-    return run_dir
+from app.services import market_service
 
 
 @pytest.fixture
-def patched_paths(tmp_path, monkeypatch):
-    """Point both sync_service and rebalance_service at a tmp data root."""
-    data_root = tmp_path
-    monkeypatch.setattr(rebalance_service, "settings",
-                         SimpleNamespace(data_dir=data_root))
-    return data_root
+def db_session():
+    engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(
+        bind=engine,
+        tables=[Trade.__table__, EquityCurve.__table__, OpenPosition.__table__],
+    )
+    return sessionmaker(bind=engine, autoflush=False)()
+
+
+@pytest.fixture
+def install_session(monkeypatch):
+    """Patch tasks._is_eod_signal_day's session factory to yield our sqlite."""
+    def install(session):
+        from app.models import database as db_module
+        monkeypatch.setattr(db_module, "get_session_local",
+                             lambda: (lambda: session))
+    return install
 
 
 def _stub_trading_day(monkeypatch, return_value=True):
-    """Force is_trading_day → return_value so we don't depend on the real
-    NSE holiday table for these unit tests."""
     monkeypatch.setattr(market_service, "is_trading_day",
                          lambda _d: return_value)
 
 
-def test_signal_day_true_when_today_is_next_biweekly_friday(
-    patched_paths, monkeypatch
+def _add_buy(session, universe, trade_date):
+    session.add(Trade(
+        universe=universe, trade_date=trade_date, symbol="ANCHOR",
+        side="BUY", shares=Decimal(1), price=Decimal(100),
+        notional=Decimal(100),
+    ))
+    session.commit()
+
+
+# ============================================================
+# Biweekly strategies (om25_v3, tl25_v3) — cadence parity from Trade table
+# ============================================================
+
+def test_biweekly_true_on_next_expected_friday(
+    db_session, install_session, monkeypatch,
 ):
-    # Strategy's last signal: 2026-05-08 (Friday). Biweekly cadence → next
-    # is 2026-05-22 (Friday). Today = 2026-05-22 ⇒ signal day.
-    parent = patched_paths / "data" / "om25_v3_portfolios"
-    _write_signals(parent, "om25_v3_portfolio_20260508_160000",
-                    "om25_signals.csv",
-                    ["2026-04-24", "2026-05-08"])
+    # Anchor entry-bearing trade: 2026-05-04 (Mon exec for Thu 04-30 signal,
+    # because Fri 5/1 was Labour Day). Next biweekly signal in the week-
+    # bucket domain lands on Fri 2026-05-15 → exec Mon 2026-05-18.
+    # Today = signal day (Fri 2026-05-15) → gate must return True.
+    _add_buy(db_session, "om25_v3", date(2026, 5, 4))
+    install_session(db_session)
     _stub_trading_day(monkeypatch, True)
 
-    assert tasks._is_eod_signal_day("om25_v3", date(2026, 5, 22)) is True
+    assert tasks._is_eod_signal_day("om25_v3", date(2026, 5, 15)) is True
 
 
-def test_signal_day_false_on_off_week_friday(patched_paths, monkeypatch):
-    # 2026-05-15 (Fri) is the off-week between biweekly anchors 2026-05-08
-    # and 2026-05-22 — exit-check Friday, not an entry Friday. Producer
-    # must not fire (PLAN.md: off-week exit-check days are out of scope
-    # for the EOD producer right now).
-    parent = patched_paths / "data" / "om25_v3_portfolios"
-    _write_signals(parent, "om25_v3_portfolio_20260508_160000",
-                    "om25_signals.csv",
-                    ["2026-04-24", "2026-05-08"])
+def test_biweekly_false_on_off_week_friday(
+    db_session, install_session, monkeypatch,
+):
+    # Off-week Friday between biweekly anchors — no entry cadence.
+    _add_buy(db_session, "om25_v3", date(2026, 5, 4))
+    install_session(db_session)
+    _stub_trading_day(monkeypatch, True)
+
+    assert tasks._is_eod_signal_day("om25_v3", date(2026, 5, 8)) is False
+
+
+def test_biweekly_false_on_thursday_when_cadence_is_friday(
+    db_session, install_session, monkeypatch,
+):
+    _add_buy(db_session, "tl25_v3", date(2026, 5, 4))
+    install_session(db_session)
+    _stub_trading_day(monkeypatch, True)
+
+    assert tasks._is_eod_signal_day("tl25_v3", date(2026, 5, 14)) is False
+
+
+# ============================================================
+# Weekly Thu-Fri strategies (l6_v2) — this was the bug
+# ============================================================
+
+def test_l6_v2_true_on_signal_thursday(
+    db_session, install_session, monkeypatch,
+):
+    # l6_v2 signal on Thu, exec on Fri. Anchor exec Fri 2026-05-01 → anchor
+    # signal Thu 2026-04-30. Next signal one week later = Thu 2026-05-07.
+    _add_buy(db_session, "l6_v2", date(2026, 5, 1))
+    install_session(db_session)
+    _stub_trading_day(monkeypatch, True)
+
+    assert tasks._is_eod_signal_day("l6_v2", date(2026, 5, 7)) is True
+
+
+def test_l6_v2_true_on_today_2026_07_02(
+    db_session, install_session, monkeypatch,
+):
+    # Regression test for the user's report — Thu 2026-07-02 with a fresh
+    # anchor should fire for l6_v2.
+    _add_buy(db_session, "l6_v2", date(2026, 6, 26))  # last week's Fri exec
+    install_session(db_session)
+    _stub_trading_day(monkeypatch, True)
+
+    assert tasks._is_eod_signal_day("l6_v2", date(2026, 7, 2)) is True
+
+
+def test_l6_v2_false_on_wednesday(
+    db_session, install_session, monkeypatch,
+):
+    _add_buy(db_session, "l6_v2", date(2026, 5, 1))
+    install_session(db_session)
+    _stub_trading_day(monkeypatch, True)
+
+    assert tasks._is_eod_signal_day("l6_v2", date(2026, 5, 6)) is False
+
+
+# ============================================================
+# Shared skip conditions
+# ============================================================
+
+def test_skip_on_nse_holiday(
+    db_session, install_session, monkeypatch,
+):
+    _add_buy(db_session, "tl25_v3", date(2026, 5, 4))
+    install_session(db_session)
+    _stub_trading_day(monkeypatch, False)
+
+    assert tasks._is_eod_signal_day("tl25_v3", date(2026, 5, 15)) is False
+
+
+def test_skip_when_no_buy_trades_in_db(
+    db_session, install_session, monkeypatch,
+):
+    # New strategy with no historical trades yet — nothing to anchor on.
+    install_session(db_session)
     _stub_trading_day(monkeypatch, True)
 
     assert tasks._is_eod_signal_day("om25_v3", date(2026, 5, 15)) is False
 
 
-def test_signal_day_false_on_non_friday_weekday(patched_paths, monkeypatch):
-    # 2026-05-21 (Thu) — biweekly entries fire on Fridays only.
-    parent = patched_paths / "data" / "tl25_v3_portfolios"
-    _write_signals(parent, "tl25_v3_portfolio_20260508_160000",
-                    "tl25_signals.csv",
-                    ["2026-04-24", "2026-05-08"])
+def test_sell_only_trades_are_ignored_as_anchor(
+    db_session, install_session, monkeypatch,
+):
+    # A weekly-exit-only SELL trade shouldn't set the cadence anchor for
+    # biweekly parity — only entry-bearing (BUY) trades do.
+    db_session.add(Trade(
+        universe="om25_v3", trade_date=date(2026, 5, 8),
+        symbol="EXIT", side="SELL", shares=Decimal(1), price=Decimal(100),
+        notional=Decimal(100),
+    ))
+    db_session.commit()
+    install_session(db_session)
     _stub_trading_day(monkeypatch, True)
 
-    assert tasks._is_eod_signal_day("tl25_v3", date(2026, 5, 21)) is False
-
-
-def test_signal_day_false_on_nse_holiday(patched_paths, monkeypatch):
-    # Even if today would otherwise be a signal day, if NSE is closed we
-    # skip — the engine's close prices wouldn't be available anyway.
-    parent = patched_paths / "data" / "tl25_v3_portfolios"
-    _write_signals(parent, "tl25_v3_portfolio_20260508_160000",
-                    "tl25_signals.csv",
-                    ["2026-04-24", "2026-05-08"])
-    # NSE closed today.
-    _stub_trading_day(monkeypatch, False)
-
-    assert tasks._is_eod_signal_day("tl25_v3", date(2026, 5, 22)) is False
-
-
-def test_signal_day_false_when_no_run_dir(patched_paths, monkeypatch):
-    # Strategy has no production run on disk yet → we don't know the
-    # cadence anchor → safe default is False.
-    _stub_trading_day(monkeypatch, True)
-    assert tasks._is_eod_signal_day("om25_v3", date(2026, 5, 22)) is False
-
-
-def test_signal_day_false_when_no_signals_csv(patched_paths, monkeypatch):
-    parent = patched_paths / "data" / "om25_v3_portfolios"
-    run = parent / "om25_v3_portfolio_20260508_160000"
-    baseline = run / "backtests" / "baseline"
-    baseline.mkdir(parents=True)
-    (baseline / "momentum_holdings.csv").write_text("symbol,shares\nTCS,10\n")
-    # No om25_signals.csv at the run root.
-    _stub_trading_day(monkeypatch, True)
-
-    assert tasks._is_eod_signal_day("om25_v3", date(2026, 5, 22)) is False
-
-
-def test_signal_day_handles_holiday_rolled_anchor(patched_paths, monkeypatch):
-    # If the engine's last signal was on a Thursday because Friday was a
-    # holiday (resample('W-FRI').last() → that week's Thursday), the
-    # cadence projector + snap-back-to-trading-day still picks the right
-    # next signal date. We can't reasonably stub the actual NSE holiday
-    # table here, so we just confirm the gate doesn't crash on a
-    # non-Friday anchor (it falls through to a deterministic projection).
-    parent = patched_paths / "data" / "om25_v3_portfolios"
-    _write_signals(parent, "om25_v3_portfolio_20260508_160000",
-                    "om25_signals.csv",
-                    ["2026-04-30"])  # Thu, holiday-rolled from 2026-05-01
-    _stub_trading_day(monkeypatch, True)
-
-    # 14 days after 2026-04-30 is 2026-05-14 (Thu, no holiday here in our
-    # stub). The projector lands on the same weekday as the anchor.
-    result = tasks._is_eod_signal_day("om25_v3", date(2026, 5, 14))
-    assert isinstance(result, bool)
+    # No BUY anchor → gate returns False.
+    assert tasks._is_eod_signal_day("om25_v3", date(2026, 5, 15)) is False
