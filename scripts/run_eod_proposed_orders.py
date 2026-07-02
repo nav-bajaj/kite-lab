@@ -37,10 +37,12 @@ from data_pipeline.eod_proposal import build_eod_artifact
 _STRATEGY_PARENT_DIR = {
     "om25_v3": ROOT / "data/om25_v3_portfolios",
     "tl25_v3": ROOT / "data/tl25_v3_portfolios",
+    "l6_v2":   ROOT / "data/l6_v2_portfolios",
 }
 _STRATEGY_RUN_GLOB = {
     "om25_v3": "om25_v3_portfolio_202*",
     "tl25_v3": "tl25_v3_portfolio_202*",
+    "l6_v2":   "l6_v2_portfolio_202*",
 }
 
 

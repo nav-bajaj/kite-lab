@@ -141,6 +141,9 @@ def main():
         ("tl25_v3", pd.Timestamp("2026-03-13")),
         ("om25_v3", pd.Timestamp("2025-10-10")),
         ("om25_v3", pd.Timestamp("2025-11-21")),
+        # l6_v2 uses weekly Thursday cadence.
+        ("l6_v2",   pd.Timestamp("2026-04-30")),  # Thursday
+        ("l6_v2",   pd.Timestamp("2026-03-19")),  # Thursday
     ]
     results = []
     for strategy, sd in cases:

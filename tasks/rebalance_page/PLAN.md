@@ -231,9 +231,14 @@ across the matrix: signal Friday ✓, off-week Friday ✗, weekday non-Friday �
 NSE holiday ✗, missing run dir ✗, missing signals CSV ✗, holiday-rolled
 anchor (Thursday) handled cleanly.
 
-l6_v2 and combo_defensive don't yet have an EOD adapter; they're absent
-from `EOD_STRATEGIES` so the scheduler just doesn't fire for them, the API
-returns `available: false`, and the UI shows the empty state.
+l6_v2 (Core Momentum) wired 2026-07-02: reuses `_momentum_engine.build_momentum_panels`
++ `make_momentum_score` (same BASELINE the daily runner uses) with weekly
+Thursday cadence. Verified byte-identical membership vs real-bar engine on
+2 past Thursdays. Same commit refactored `_is_eod_signal_day` to anchor on
+the Trade table (most recent BUY exec_date) rather than a per-strategy
+signals CSV — l6_v2 never emits a signals CSV so the old CSV-based gate
+silently returned False and the cron never fired for it. combo_defensive
+remains — needs a combo_score + regime adapter.
 
 ## Key technical notes / risks
 

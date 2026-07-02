@@ -189,9 +189,72 @@ def _prepare_tl25_v3(*, prices_dir: Path) -> StrategyState:
     )
 
 
+def _prepare_l6_v2(*, prices_dir: Path) -> StrategyState:
+    """Core Momentum (l6_v2) — weekly Thursday-signal cadence.
+
+    Reuses ``scripts._momentum_engine.build_momentum_panels`` +
+    ``make_momentum_score`` (the same L6 config the daily runner in
+    ``scripts/run_l6_v2_portfolio.py`` uses). BASELINE lives in
+    ``_momentum_engine.BASELINE``; we don't override.
+    """
+    from scripts._clean_engine import thursdays
+    from scripts._momentum_engine import (
+        BASELINE, build_momentum_panels, lookback_months_to_days,
+        make_momentum_score,
+    )
+    from scripts.build_om25_signals import load_universe
+
+    close_panel, trade_panel = load_price_panels(prices_dir)
+    # L6's daily runner uses the nifty100 benchmark by default (nse500-index
+    # data isn't part of the price panel dir); the score is universe-relative
+    # so the choice of benchmark doesn't affect signal membership, only the
+    # equity-curve comparison line.
+    benchmark = load_benchmark(ROOT / "data/benchmarks/nifty100.csv")
+    calendar = close_panel.index
+    benchmark_aligned = benchmark.reindex(calendar).ffill()
+    sma_200 = close_panel.rolling(200, min_periods=200).mean()
+    atr_20 = close_panel.pct_change().rolling(20).std()
+
+    # Weekly Thursday entry + weekly Thursday DD-check (same series). L6 has
+    # no biweekly parity to preserve — every trading Thursday is a signal.
+    entry_dates = thursdays(calendar)
+    weekly_dates = entry_dates
+
+    universe = load_universe(ROOT / BASELINE["universe_csv"])
+    cols = [s for s in close_panel.columns if s in universe]
+    close_uni = close_panel[cols]
+
+    lookback_days = lookback_months_to_days(BASELINE["lookback_months"])
+    panels = build_momentum_panels(
+        close_uni,
+        lookback_days=lookback_days,
+        skip_days=BASELINE["skip_days"],
+    )
+    score_fn = make_momentum_score(
+        panels,
+        vol_floor=BASELINE["vol_floor"],
+        vol_power=BASELINE["vol_power"],
+        cross_sectional_zscore=BASELINE["cross_sectional_zscore"],
+    )
+
+    return StrategyState(
+        close_panel=close_panel, trade_panel=trade_panel,
+        benchmark_aligned=benchmark_aligned,
+        sma_200=sma_200, atr_20=atr_20,
+        score_fn=score_fn,
+        entry_signal_dates=entry_dates, weekly_signal_dates=weekly_dates,
+        top_n=BASELINE["top_n"], exit_buffer=BASELINE["exit_buffer"],
+        max_weight=BASELINE["max_weight"], slippage=BASELINE["slippage"],
+        drawdown_stop=BASELINE["drawdown_stop"],
+        weekly_rank_check=False,
+        regime_panel=None, bear_exposure=0.0,
+    )
+
+
 _STRATEGIES = {
     "om25_v3": _prepare_om25_v3,
     "tl25_v3": _prepare_tl25_v3,
+    "l6_v2": _prepare_l6_v2,
 }
 
 
