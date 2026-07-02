@@ -89,6 +89,15 @@ class StrategyState:
     weekly_rank_check: bool = False
     regime_panel: Optional[pd.Series] = None
     bear_exposure: float = 0.0
+    # Minimum trading-days a holding must sit before rank-out can fire on
+    # it. l6_v2's BASELINE sets this to 8; om25_v3 / tl25_v3 leave it at
+    # the engine default (0) because they lean on exit_buffer + weekly
+    # rank-exit for churn control. Missing this on l6_v2 causes freshly
+    # bought names to be rank-out'd on the very next signal day, which
+    # is not what the daily-runner backtest does (verified via BHARATFORG
+    # bought 2026-06-29, showing up as SELL on the 2026-07-02 proposal
+    # before this fix).
+    min_hold_days: int = 0
 
 
 def _prepare_om25_v3(*, prices_dir: Path) -> StrategyState:
@@ -248,6 +257,7 @@ def _prepare_l6_v2(*, prices_dir: Path) -> StrategyState:
         drawdown_stop=BASELINE["drawdown_stop"],
         weekly_rank_check=False,
         regime_panel=None, bear_exposure=0.0,
+        min_hold_days=BASELINE["min_hold_days"],
     )
 
 
@@ -454,6 +464,7 @@ def build_eod_artifact(*,
         use_dma_exit=False,
         weekly_rank_check=state.weekly_rank_check,
         regime_panel=state.regime_panel, bear_exposure=state.bear_exposure,
+        min_hold_days=state.min_hold_days,
         initial_capital=initial_capital,
     )
     if res is None:
