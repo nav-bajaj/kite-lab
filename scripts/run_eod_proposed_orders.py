@@ -76,8 +76,12 @@ def parse_args():
     group.add_argument("--universe", choices=sorted(_STRATEGY_PARENT_DIR),
                        help="Alias for --strategy; used when invoked via the "
                             "job-service scheduler.")
+    # nse500_data (Kite live, 2020+) matches what
+    # scripts/run_daily_pipeline.py + scripts/update_all_portfolios.py use in
+    # production. nse500_data_merged (2009+ stitched) only exists locally for
+    # research and is not present on the Railway persistent volume.
     ap.add_argument("--prices-dir", type=Path,
-                    default=ROOT / "nse500_data_merged")
+                    default=ROOT / "nse500_data")
     ap.add_argument("--signal-date", type=str, default=None,
                     help="Override signal date (YYYY-MM-DD). "
                          "Default: latest cadence date in panels.")

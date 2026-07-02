@@ -134,7 +134,7 @@ def diff_membership(label: str, signal_date: pd.Timestamp,
 
 
 def main():
-    prices_dir = ROOT / "nse500_data_merged"
+    prices_dir = ROOT / "nse500_data"
     cases = [
         ("tl25_v3", pd.Timestamp("2025-12-19")),
         ("tl25_v3", pd.Timestamp("2025-11-07")),
