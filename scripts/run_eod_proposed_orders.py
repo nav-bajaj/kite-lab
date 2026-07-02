@@ -17,7 +17,6 @@ Typical usage:
 from __future__ import annotations
 
 import argparse
-import glob
 import sys
 from pathlib import Path
 
@@ -30,40 +29,39 @@ if str(ROOT) not in sys.path:
 from data_pipeline.eod_proposal import build_eod_artifact
 
 
-# Match the UNIVERSE_DIRS spec in kite-api/app/services/sync_service.py so
-# the producer writes into the same run dir the API's latest.json pointer
-# already advances to. That way the dashboard sync picks up
-# `proposed_regime.json` next to `momentum_*.csv` without any extra glob.
-_STRATEGY_PARENT_DIR = {
-    "om25_v3": ROOT / "data/om25_v3_portfolios",
-    "tl25_v3": ROOT / "data/tl25_v3_portfolios",
-    "l6_v2":   ROOT / "data/l6_v2_portfolios",
-}
-_STRATEGY_RUN_GLOB = {
-    "om25_v3": "om25_v3_portfolio_202*",
-    "tl25_v3": "tl25_v3_portfolio_202*",
-    "l6_v2":   "l6_v2_portfolio_202*",
-}
+# CLI --strategy / --universe choices. The actual run-dir lookup goes through
+# sync_service.get_latest_experiment_dir which handles the ``settings.data_dir``
+# resolution (/app locally, /data on Railway's persistent volume) and shares
+# the UNIVERSE_DIRS + latest.json cache logic with the API. Keeping this list
+# in one place avoids drift.
+_STRATEGIES = ("om25_v3", "tl25_v3", "l6_v2")
 
 
 def _latest_production_run_dir(strategy: str) -> Path:
     """Return the newest <strategy>_portfolio_<ts> dir, or raise.
 
-    Mirrors sync_service.get_latest_experiment_dir's filter: only dirs that
-    contain ``backtests/baseline/momentum_holdings.csv`` qualify, so we
-    never write into an empty/aborted run.
+    Delegates to sync_service.get_latest_experiment_dir so we respect the
+    same ``settings.data_dir`` resolution + latest.json pointer that the
+    API already uses. Without this the script hard-codes
+    ``ROOT / "data/..."`` which is ``/app/data/...`` on Railway — but the
+    persistent volume mounts production runs at ``/data/data/...`` on that
+    environment.
     """
-    parent = _STRATEGY_PARENT_DIR[strategy]
-    pattern = _STRATEGY_RUN_GLOB[strategy]
-    candidates = sorted(glob.glob(str(parent / pattern)), reverse=True)
-    for d in candidates:
-        run = Path(d)
-        if (run / "backtests" / "baseline" / "momentum_holdings.csv").exists():
-            return run
-    raise RuntimeError(
-        f"No completed production run found under {parent}; run the "
-        f"daily pipeline (scripts/run_{strategy}_portfolio.py) first."
+    kite_api = ROOT / "kite-api"
+    if str(kite_api) not in sys.path:
+        sys.path.insert(0, str(kite_api))
+    from app.services.sync_service import (
+        get_latest_experiment_dir, refresh_latest_pointer,
     )
+
+    refresh_latest_pointer(strategy)
+    run = get_latest_experiment_dir(strategy)
+    if run is None:
+        raise RuntimeError(
+            f"No completed production run found for {strategy}; run the "
+            f"daily pipeline (scripts/run_{strategy}_portfolio.py) first."
+        )
+    return Path(run)
 
 
 def parse_args():
@@ -72,8 +70,8 @@ def parse_args():
     # since scheduler/job_service.py passes the universe arg uniformly). Both
     # mean the same thing here — the strategy name *is* the universe ID.
     group = ap.add_mutually_exclusive_group(required=True)
-    group.add_argument("--strategy", choices=sorted(_STRATEGY_PARENT_DIR))
-    group.add_argument("--universe", choices=sorted(_STRATEGY_PARENT_DIR),
+    group.add_argument("--strategy", choices=sorted(_STRATEGIES))
+    group.add_argument("--universe", choices=sorted(_STRATEGIES),
                        help="Alias for --strategy; used when invoked via the "
                             "job-service scheduler.")
     # nse500_data (Kite live, 2020+) matches what
