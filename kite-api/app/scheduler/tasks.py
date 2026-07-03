@@ -194,18 +194,46 @@ def _is_eod_signal_day(strategy: str, today: date) -> bool:
 def run_eod_proposed_orders():
     """Fire one EOD proposed-orders job per signal-day strategy.
 
-    Cron triggers this every weekday at 16:00 IST. For each strategy in
-    ``EOD_STRATEGIES`` we check whether today is on that strategy's
-    entry-cadence (biweekly Friday, holiday-rolled) and, if so, dispatch
-    the producer as its own job so per-strategy failures stay isolated.
+    Cron triggers this every weekday at 16:00 IST. Sequence:
+
+    1. Compute the eligible strategy set — those in ``EOD_STRATEGIES`` whose
+       cadence lands today (holiday-rolled).
+    2. If any are eligible, dispatch a full ``daily_pipeline`` job first.
+       Without this, the panel on disk only has yesterday's close (the
+       07:00 IST daily_pipeline fetches before market open), so the
+       producer would pick last week's cadence date as its signal —
+       silently emitting a stale proposal for a rebalance that already
+       executed. The 16:00 IST timing was chosen so Zerodha's adjusted
+       official closes (30 min after 15:30 IST close) are ready to
+       fetch. Adds ~7 min to the cron but only fires on signal days.
+    3. Dispatch a per-strategy ``eod_proposed_orders`` job for each
+       eligible strategy so per-strategy failures stay isolated.
+
+    ``_execute_scheduled_task`` awaits each job to completion, so this
+    entire wrapper blocks until data + producers are done.
     """
     import asyncio
 
     today = date.today()
+    eligible = [s for s in EOD_STRATEGIES if _is_eod_signal_day(s, today)]
+    if not eligible:
+        logger.info("[eod] no strategies on signal-day today — "
+                    "skipping data refresh + producer")
+        return
+
+    logger.info(
+        f"[eod] refreshing production data before producer for: "
+        f"{', '.join(eligible)}"
+    )
+    daily_cfg = next((t for t in SCHEDULED_TASKS
+                       if t["id"] == "daily_pipeline"), {})
+    asyncio.run(_execute_scheduled_task(
+        "daily_pipeline",
+        args=daily_cfg.get("args"),
+    ))
+
     fired = []
-    for strategy in EOD_STRATEGIES:
-        if not _is_eod_signal_day(strategy, today):
-            continue
+    for strategy in eligible:
         asyncio.run(_execute_scheduled_task(
             "eod_proposed_orders",
             universe=strategy,
