@@ -77,7 +77,14 @@ link "$VOLUME/nse500_data_historical"  "$APP/nse500_data_historical"
 link "$VOLUME/nse500_data_gdf_full"    "$APP/nse500_data_gdf_full"
 link "$VOLUME/nse500_data_full"        "$APP/nse500_data_full"
 link "$VOLUME/indices_data_full"       "$APP/indices_data_full"
-link "$VOLUME/indices_data"      "$APP/data/indices_data"
+# fetch_indices_history.py writes to relative "indices_data/" — which
+# with cwd=/app resolves to /app/indices_data, NOT /app/data/indices_data.
+# The old symlink at /app/data/indices_data caught nothing and left the
+# real indices output ephemeral. That was invisible until anything OUTSIDE
+# a single daily_pipeline run tried to read the CSV (e.g. the EOD producer
+# for om25_v3 after a redeploy). Fix by symlinking the path scripts
+# actually use.
+link "$VOLUME/indices_data"      "$APP/indices_data"
 link "$VOLUME/instruments"       "$APP/data/instruments"
 link "$VOLUME/benchmarks"        "$APP/data/benchmarks"
 link "$VOLUME/final_portfolio"   "$APP/data/final_portfolio"
