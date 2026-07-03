@@ -121,8 +121,22 @@ def _prepare_om25_v3(*, prices_dir: Path) -> StrategyState:
     cols = [s for s in close_panel.columns if s in universe]
     returns_uni = close_panel[cols].pct_change()
 
+    # LOCKED["regime_index_path"] defaults to indices_data_historical/... which
+    # only exists locally. On Railway the live NIFTY_100 CSV is refreshed each
+    # daily_pipeline by scripts/fetch_indices_history.py at indices_data/. The
+    # production runners (scripts/update_all_portfolios.py line 77) point at
+    # that live path via --regime-index indices_data/NIFTY_100.csv. Match that
+    # here, falling back to the LOCKED path for local dev where the historical
+    # dir is the source of truth.
+    regime_candidates = [
+        ROOT / "indices_data" / "NIFTY_100.csv",         # Railway daily-runner path
+        ROOT / "data" / "indices_data" / "NIFTY_100.csv",# alt persistent-volume symlink
+        ROOT / LOCKED["regime_index_path"],              # local research default
+    ]
+    regime_index_path = next((p for p in regime_candidates if p.is_file()),
+                              regime_candidates[-1])
     regime = build_regime_panel_confirmed(
-        ROOT / LOCKED["regime_index_path"],
+        regime_index_path,
         LOCKED["regime_ma_window"], LOCKED["regime_confirm_days"],
         calendar=calendar,
     )

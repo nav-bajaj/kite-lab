@@ -194,55 +194,131 @@ def _is_eod_signal_day(strategy: str, today: date) -> bool:
 def run_eod_proposed_orders():
     """Fire one EOD proposed-orders job per signal-day strategy.
 
-    Cron triggers this every weekday at 16:00 IST. Sequence:
+    Cron triggers this every weekday at 16:00 IST; the admin's "Run now"
+    button on this scheduled task hits the same entry. Sequence:
 
-    1. Compute the eligible strategy set — those in ``EOD_STRATEGIES`` whose
-       cadence lands today (holiday-rolled).
-    2. If any are eligible, dispatch a full ``daily_pipeline`` job first.
-       Without this, the panel on disk only has yesterday's close (the
-       07:00 IST daily_pipeline fetches before market open), so the
-       producer would pick last week's cadence date as its signal —
-       silently emitting a stale proposal for a rebalance that already
-       executed. The 16:00 IST timing was chosen so Zerodha's adjusted
-       official closes (30 min after 15:30 IST close) are ready to
-       fetch. Adds ~7 min to the cron but only fires on signal days.
-    3. Dispatch a per-strategy ``eod_proposed_orders`` job for each
+    1. **Always** create a wrapper Job row up-front. Without this, days
+       where no strategy is on cadence looked broken from the admin UI —
+       the trigger succeeded but no visible Job appeared. Now the row is
+       there with a log entry describing exactly why nothing dispatched.
+    2. Compute eligible strategies via ``_is_eod_signal_day``.
+    3. If any are eligible, dispatch a full ``daily_pipeline`` job first
+       (fetches today's close — the 07:00 IST daily_pipeline is
+       pre-market so its data doesn't include today). Without this the
+       producer would pick last week's cadence date as its signal.
+    4. Dispatch a per-strategy ``eod_proposed_orders`` job for each
        eligible strategy so per-strategy failures stay isolated.
 
-    ``_execute_scheduled_task`` awaits each job to completion, so this
-    entire wrapper blocks until data + producers are done.
+    ``_execute_scheduled_task`` awaits each dispatched Job to completion.
     """
     import asyncio
+    from datetime import datetime
 
-    today = date.today()
-    eligible = [s for s in EOD_STRATEGIES if _is_eod_signal_day(s, today)]
-    if not eligible:
-        logger.info("[eod] no strategies on signal-day today — "
-                    "skipping data refresh + producer")
-        return
+    asyncio.run(_run_eod_orchestrator())
 
-    logger.info(
-        f"[eod] refreshing production data before producer for: "
-        f"{', '.join(eligible)}"
+
+async def _run_eod_orchestrator():
+    """Async body of ``run_eod_proposed_orders`` — split out for testability
+    + to keep the wrapper Job's lifecycle explicit."""
+    from datetime import datetime
+
+    from app.models.database import get_session_local
+    from app.models.models import Job
+    from app.services.job_service import JobService
+
+    # Create the wrapper Job so the admin UI has a first-class row + log
+    # for this orchestrator run. Downstream _execute_scheduled_task calls
+    # will each create their own Jobs; those remain visible too.
+    wrap = await JobService.create_job(
+        command="eod_proposed_orders",
+        label="EOD proposed orders (orchestrator)",
     )
-    daily_cfg = next((t for t in SCHEDULED_TASKS
-                       if t["id"] == "daily_pipeline"), {})
-    asyncio.run(_execute_scheduled_task(
-        "daily_pipeline",
-        args=daily_cfg.get("args"),
-    ))
+    log_path = JobService.get_log_path(wrap.id)
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    log = open(log_path, "w")
 
-    fired = []
-    for strategy in eligible:
-        asyncio.run(_execute_scheduled_task(
-            "eod_proposed_orders",
-            universe=strategy,
-        ))
-        fired.append(strategy)
-    if fired:
-        logger.info(f"[eod] dispatched producers for: {', '.join(fired)}")
-    else:
-        logger.info("[eod] no strategies on signal-day today — nothing dispatched")
+    def w(msg):
+        log.write(f"[{datetime.utcnow().isoformat()}] {msg}\n")
+        log.flush()
+
+    _set_job_status(wrap.id, status="running", started_at=datetime.utcnow())
+
+    try:
+        today = date.today()
+        w(f"Today = {today}. Checking eligibility for {EOD_STRATEGIES!r}...")
+        eligible = []
+        for s in EOD_STRATEGIES:
+            on_cadence = _is_eod_signal_day(s, today)
+            w(f"  {s}: {'ELIGIBLE' if on_cadence else 'not on signal-day'}")
+            if on_cadence:
+                eligible.append(s)
+
+        if not eligible:
+            w("")
+            w("No strategies on their entry cadence today — skipping data "
+              "refresh + producer dispatch. This is expected on off-cadence "
+              "days (e.g. l6_v2 fires Thursdays only; om25_v3 and tl25_v3 "
+              "fire on biweekly Fridays).")
+            _set_job_status(wrap.id, status="completed",
+                             ended_at=datetime.utcnow())
+            return
+
+        w("")
+        w(f"Eligible: {', '.join(eligible)}. Running daily_pipeline first to "
+          f"fetch today's close before running each producer...")
+        daily_cfg = next((t for t in SCHEDULED_TASKS
+                           if t["id"] == "daily_pipeline"), {})
+        await _execute_scheduled_task(
+            "daily_pipeline", args=daily_cfg.get("args"),
+        )
+        w("daily_pipeline complete.")
+
+        w("")
+        for strategy in eligible:
+            w(f"Dispatching eod_proposed_orders for {strategy}...")
+            await _execute_scheduled_task(
+                "eod_proposed_orders", universe=strategy,
+            )
+            w(f"  {strategy} producer done.")
+
+        w("")
+        w(f"Orchestrator complete. Fired producers for: {', '.join(eligible)}")
+        _set_job_status(wrap.id, status="completed",
+                         ended_at=datetime.utcnow())
+    except Exception as e:
+        w(f"Orchestrator error: {e!r}")
+        _set_job_status(wrap.id, status="failed",
+                         ended_at=datetime.utcnow(),
+                         error_message=str(e))
+        raise
+    finally:
+        log.close()
+
+
+def _set_job_status(job_id: str, **fields):
+    """Update fields on a Job row + auto-compute duration_seconds if we're
+    completing/failing."""
+    from datetime import datetime
+
+    from app.models.database import get_session_local
+    from app.models.models import Job
+
+    SessionLocal = get_session_local()
+    db = SessionLocal()
+    try:
+        job = db.query(Job).filter(Job.id == job_id).first()
+        if job is None:
+            return
+        for k, v in fields.items():
+            setattr(job, k, v)
+        if (fields.get("status") in ("completed", "failed")
+                and job.started_at and job.ended_at):
+            job.duration_seconds = int(
+                (job.ended_at - job.started_at).total_seconds()
+            )
+        db.commit()
+    finally:
+        db.close()
 
 
 async def _execute_scheduled_task(command: str, universe: str = None, args: dict = None):
