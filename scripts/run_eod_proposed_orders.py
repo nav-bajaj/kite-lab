@@ -34,7 +34,7 @@ from data_pipeline.eod_proposal import build_eod_artifact
 # resolution (/app locally, /data on Railway's persistent volume) and shares
 # the UNIVERSE_DIRS + latest.json cache logic with the API. Keeping this list
 # in one place avoids drift.
-_STRATEGIES = ("om25_v3", "tl25_v3", "l6_v2")
+_STRATEGIES = ("om25_v3", "tl25_v3", "l6_v2", "combo_defensive")
 
 
 def _latest_production_run_dir(strategy: str) -> Path:

@@ -237,8 +237,16 @@ Thursday cadence. Verified byte-identical membership vs real-bar engine on
 2 past Thursdays. Same commit refactored `_is_eod_signal_day` to anchor on
 the Trade table (most recent BUY exec_date) rather than a per-strategy
 signals CSV — l6_v2 never emits a signals CSV so the old CSV-based gate
-silently returned False and the cron never fired for it. combo_defensive
-remains — needs a combo_score + regime adapter.
+silently returned False and the cron never fired for it.
+
+combo_defensive (Defensive Blend) wired 2026-07-04: reuses
+`combo_defensive.make_combo_score_fn` on the same L6 + OM25 v3 composition,
+biweekly Friday cadence, and the portfolio-level regime overlay
+(`bear_exposure=0.5`) — the piece that makes it "defensive". Unlike
+om25_v3 (`regime_panel=None`), this strategy DOES pass `regime_panel` to
+the engine because the defensive scale-down is part of the strategy
+definition. Verified byte-identical membership on 2 past biweekly
+Fridays.
 
 ## Key technical notes / risks
 

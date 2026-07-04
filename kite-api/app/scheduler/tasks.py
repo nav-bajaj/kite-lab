@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 # Strategies that have an EOD proposed-orders producer wired up — see
 # data_pipeline/eod_proposal.py and tasks/rebalance_page/PLAN.md Phase 2.
 # combo_defensive still needs a score adapter (uses regime + composite score).
-EOD_STRATEGIES = ("om25_v3", "tl25_v3", "l6_v2")
+EOD_STRATEGIES = ("om25_v3", "tl25_v3", "l6_v2", "combo_defensive")
 
 
 # Predefined scheduled tasks configuration

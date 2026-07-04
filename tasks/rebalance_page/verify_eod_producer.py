@@ -144,6 +144,9 @@ def main():
         # l6_v2 uses weekly Thursday cadence.
         ("l6_v2",   pd.Timestamp("2026-04-30")),  # Thursday
         ("l6_v2",   pd.Timestamp("2026-03-19")),  # Thursday
+        # combo_defensive uses biweekly Friday cadence like the v3 pair.
+        ("combo_defensive", pd.Timestamp("2025-12-19")),
+        ("combo_defensive", pd.Timestamp("2026-03-13")),
     ]
     results = []
     for strategy, sd in cases:
