@@ -191,6 +191,52 @@ def _is_eod_signal_day(strategy: str, today: date) -> bool:
     return projected == today
 
 
+def _is_eod_weekly_exit_day(strategy: str, today: date) -> bool:
+    """True if ``today`` is a weekly exit-check Friday for a biweekly
+    strategy — i.e. the off-week Friday where the engine's DD-stop / rank /
+    regime block fires but no new entries do.
+
+    Weekly strategies (``weekly_thu_fri`` — l6_v2) have no separate weekly
+    exit day; their entry cadence *is* their weekly cadence, so this always
+    returns False for them.
+    """
+    from datetime import timedelta
+
+    from app.config import UNIVERSES
+    from app.services.market_service import is_trading_day
+    from app.services.rebalance_service import (
+        CADENCE_META, DEFAULT_CADENCE,
+    )
+
+    if not is_trading_day(today):
+        return False
+
+    cadence_key = (UNIVERSES.get(strategy, {})
+                   .get("rebalance_cadence", DEFAULT_CADENCE))
+    _, _, signal_wd, has_weekly_exit = CADENCE_META.get(
+        cadence_key, CADENCE_META[DEFAULT_CADENCE]
+    )
+    if not has_weekly_exit:
+        return False
+
+    # For biweekly-Friday strategies, weekly exit checks fire on Fridays.
+    # Snap-back so a holiday-shifted Fri (e.g. Muharram) counts as the
+    # week's signal too — matches the engine's ``fridays(calendar)``
+    # (resample W-FRI, take last trading day of each week).
+    from app.services.market_service import snap_back_to_trading_day
+    days_to_wd = today.weekday() - signal_wd
+    if days_to_wd < 0:
+        return False  # too early in the week
+    nominal = today - timedelta(days=days_to_wd)
+    weekly_signal = snap_back_to_trading_day(nominal)
+    if weekly_signal != today:
+        return False
+
+    # Ensure today isn't ALREADY an entry cadence day — that's covered by
+    # ``_is_eod_signal_day``; the exit-only path is only for off-weeks.
+    return not _is_eod_signal_day(strategy, today)
+
+
 def run_eod_proposed_orders():
     """Fire one EOD proposed-orders job per signal-day strategy.
 
@@ -246,25 +292,35 @@ async def _run_eod_orchestrator():
     try:
         today = date.today()
         w(f"Today = {today}. Checking eligibility for {EOD_STRATEGIES!r}...")
-        eligible = []
+        entry_eligible = []
+        exit_eligible = []
         for s in EOD_STRATEGIES:
-            on_cadence = _is_eod_signal_day(s, today)
-            w(f"  {s}: {'ELIGIBLE' if on_cadence else 'not on signal-day'}")
-            if on_cadence:
-                eligible.append(s)
+            entry_on = _is_eod_signal_day(s, today)
+            exit_on = (not entry_on) and _is_eod_weekly_exit_day(s, today)
+            label = ("ENTRY" if entry_on
+                     else "EXIT-ONLY" if exit_on
+                     else "not on signal-day")
+            w(f"  {s}: {label}")
+            if entry_on:
+                entry_eligible.append(s)
+            elif exit_on:
+                exit_eligible.append(s)
 
-        if not eligible:
+        if not entry_eligible and not exit_eligible:
             w("")
-            w("No strategies on their entry cadence today — skipping data "
-              "refresh + producer dispatch. This is expected on off-cadence "
-              "days (e.g. l6_v2 fires Thursdays only; om25_v3 and tl25_v3 "
-              "fire on biweekly Fridays).")
+            w("No strategies on cadence today — skipping data refresh + "
+              "producer dispatch. Expected on non-signal weekdays.")
             _set_job_status(wrap.id, status="completed",
                              ended_at=datetime.utcnow())
             return
 
         w("")
-        w(f"Eligible: {', '.join(eligible)}. Running daily_pipeline first to "
+        summary = []
+        if entry_eligible:
+            summary.append(f"entry={entry_eligible}")
+        if exit_eligible:
+            summary.append(f"exit_only={exit_eligible}")
+        w(f"Eligible: {', '.join(summary)}. Running daily_pipeline first to "
           f"fetch today's close before running each producer...")
         daily_cfg = next((t for t in SCHEDULED_TASKS
                            if t["id"] == "daily_pipeline"), {})
@@ -274,15 +330,23 @@ async def _run_eod_orchestrator():
         w("daily_pipeline complete.")
 
         w("")
-        for strategy in eligible:
-            w(f"Dispatching eod_proposed_orders for {strategy}...")
+        for strategy in entry_eligible:
+            w(f"Dispatching entry producer for {strategy}...")
             await _execute_scheduled_task(
                 "eod_proposed_orders", universe=strategy,
             )
-            w(f"  {strategy} producer done.")
+            w(f"  {strategy} entry producer done.")
+        for strategy in exit_eligible:
+            w(f"Dispatching exit-only producer for {strategy}...")
+            await _execute_scheduled_task(
+                "eod_proposed_orders", universe=strategy,
+                args={"mode": "exit_only"},
+            )
+            w(f"  {strategy} exit-only producer done.")
 
         w("")
-        w(f"Orchestrator complete. Fired producers for: {', '.join(eligible)}")
+        fired = entry_eligible + [f"{s} (exit-only)" for s in exit_eligible]
+        w(f"Orchestrator complete. Fired producers for: {', '.join(fired)}")
         _set_job_status(wrap.id, status="completed",
                          ended_at=datetime.utcnow())
     except Exception as e:

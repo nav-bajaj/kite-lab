@@ -458,15 +458,30 @@ def _append_placeholder_bar(state: StrategyState, signal_date: pd.Timestamp,
 # ============================================================
 
 def _pick_signal_date(state: StrategyState,
-                       requested: Optional[pd.Timestamp]) -> pd.Timestamp:
-    """Choose the signal date — the latest cadence-Friday in our panels at
-    or before ``requested`` (or the last calendar day if no override)."""
+                       requested: Optional[pd.Timestamp],
+                       mode: str = "entry") -> pd.Timestamp:
+    """Choose the signal date.
+
+    ``mode="entry"`` (default): the latest **entry-cadence** date at or
+    before ``requested`` (or the panel's last trading day if no override).
+    Snaps back to the entry-cadence series so a biweekly strategy picks a
+    biweekly Friday even when today is an off-week Friday.
+
+    ``mode="exit_only"``: the latest **weekly** cadence date at or before
+    ``requested``. For biweekly strategies with weekly exit checks (the
+    ``has_weekly_exit`` cadences — om25_v3, tl25_v3, combo_defensive) this
+    lets the caller preview an off-week Friday's rank/DD-stop exits before
+    Monday's execution bar exists. l6_v2 is weekly Thu-Fri so its "weekly"
+    series is the same as its entry series — exit_only ≡ entry for it.
+    """
     cap = (requested if requested is not None
            else state.close_panel.index[-1])
-    eligible = state.entry_signal_dates[state.entry_signal_dates <= cap]
+    series = (state.weekly_signal_dates if mode == "exit_only"
+              else state.entry_signal_dates)
+    eligible = series[series <= cap]
     if len(eligible) == 0:
         raise ValueError(
-            f"No signal date in cadence on/before {cap.date()} — "
+            f"No {mode} signal date on/before {cap.date()} — "
             f"is the cadence index empty?"
         )
     return pd.Timestamp(eligible[-1])
@@ -526,11 +541,12 @@ def build_eod_artifact(*,
                         signal_date: Optional[pd.Timestamp] = None,
                         initial_capital: float = 1_000_000,
                         backtest_start: str = "2016-01-01",
+                        mode: str = "entry",
                         ) -> dict:
     """Produce ``proposed_orders_<exec_date>.csv`` + ``proposed_regime.json``.
 
     Args:
-        strategy: key into ``_STRATEGIES`` — currently ``om25_v3``, ``tl25_v3``.
+        strategy: key into ``_STRATEGIES``.
         prices_dir: directory of ``<symbol>_day.csv`` panels.
         output_dir: directory to write artifacts to (will be created). The
             convention is ``<run-dir>/backtests/baseline/`` so the dashboard
@@ -542,6 +558,14 @@ def build_eod_artifact(*,
             artifact carries a sized version for any admin readout.
         backtest_start: start date for the warmup pass (so signal scores and
             holdings have data prior to ``signal_date``).
+        mode: ``"entry"`` (default) picks the latest entry-cadence Friday —
+            full rebalance with exits + new entries. ``"exit_only"`` picks
+            the latest **weekly** cadence Friday (which for biweekly
+            strategies is *every* Friday, including off-week ones), and
+            filters ``entry_dates`` so the engine's entry block cannot fire
+            — the artifact then surfaces only rank / DD-stop / regime SELLs.
+            Semantically a no-op for weekly strategies (l6_v2) where
+            weekly ≡ entry, so callers can dispatch either.
 
     Returns:
         Summary dict written to ``proposed_regime.json``.
@@ -550,10 +574,12 @@ def build_eod_artifact(*,
         raise ValueError(
             f"Unknown strategy {strategy!r}; supported: {list(_STRATEGIES)}"
         )
-    print(f"[eod] strategy={strategy} prices={prices_dir.name}")
+    if mode not in ("entry", "exit_only"):
+        raise ValueError(f"Unknown mode {mode!r}; use 'entry' or 'exit_only'")
+    print(f"[eod] strategy={strategy} prices={prices_dir.name} mode={mode}")
 
     state = _STRATEGIES[strategy](prices_dir=prices_dir)
-    signal_ts = _pick_signal_date(state, signal_date)
+    signal_ts = _pick_signal_date(state, signal_date, mode=mode)
     print(f"[eod] signal_date = {signal_ts.date()}")
 
     exec_date = _append_placeholder_bar(state, signal_ts)
@@ -574,6 +600,12 @@ def build_eod_artifact(*,
         (state.weekly_signal_dates >= start_ts)
         & (state.weekly_signal_dates <= signal_ts)
     ]
+    if mode == "exit_only":
+        # Bar the engine from firing an entry rebalance on the exit-check
+        # signal by removing today's date from entry_dates. weekly_dates
+        # still contains signal_ts so the weekly-exit / DD-stop / regime
+        # blocks fire against the placeholder-bar exec.
+        entry_dates = entry_dates[entry_dates < signal_ts]
     print(f"[eod] entry_dates={len(entry_dates)} weekly_dates={len(weekly_dates)}")
 
     res = run_strategy(
@@ -636,6 +668,7 @@ def build_eod_artifact(*,
 
     summary = {
         "strategy": strategy,
+        "mode": mode,
         "signal_date": signal_ts.date().isoformat(),
         "exec_date": exec_date.date().isoformat(),
         "data_as_of": signal_ts.date().isoformat(),

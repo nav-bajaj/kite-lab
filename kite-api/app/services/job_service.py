@@ -176,6 +176,7 @@ class JobService:
                 "with-data", "with_data",
                 "skip-days", "skip_days",
                 "headless",
+                "mode",   # eod_proposed_orders: "entry" | "exit_only"
             }
 
             # Add additional arguments (validated)
