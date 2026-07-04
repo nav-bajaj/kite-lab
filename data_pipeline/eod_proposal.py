@@ -159,7 +159,16 @@ def _prepare_om25_v3(*, prices_dir: Path) -> StrategyState:
         max_weight=LOCKED["max_weight"], slippage=LOCKED["slippage"],
         drawdown_stop=LOCKED["drawdown_stop_pct"],
         weekly_rank_check=False,
-        regime_panel=regime, bear_exposure=0.0,
+        # IMPORTANT: production `run_om25_v3_portfolio.py` passes
+        # ``regime_panel=None`` — regime is consumed only through the
+        # score function (via ``make_om25_tilt_score`` bull/bear weight
+        # tilt). Passing it here too would activate the engine's
+        # ``bear_skips_entries=True`` + ``bear_exposure=0.0`` scale-down
+        # path, which the production runner deliberately doesn't use;
+        # over an 8-year warmup that empties the book and the producer
+        # emits "0 continuing, 25 entries" every cycle. Score fn already
+        # captured the regime signal via the closure above.
+        regime_panel=None, bear_exposure=0.0,
     )
 
 
