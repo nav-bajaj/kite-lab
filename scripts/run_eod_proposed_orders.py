@@ -92,6 +92,12 @@ def parse_args():
                          "verifying a past signal date in isolation.")
     ap.add_argument("--initial-capital", type=float, default=1_000_000)
     ap.add_argument("--backtest-start", type=str, default="2018-01-01")
+    ap.add_argument("--mode", choices=["entry", "exit_only"], default="entry",
+                    help="'entry' = full rebalance on the strategy's entry "
+                         "cadence Friday. 'exit_only' = weekly rank / DD-stop "
+                         "/ regime exit preview on an off-week Friday for "
+                         "biweekly strategies (no BUYs). Semantically a no-op "
+                         "on weekly strategies (l6_v2).")
     ap.add_argument("--no-sync", action="store_true",
                     help="Skip the sync_proposed_rebalance DB write at the "
                          "end. Default: sync so the /api/rebalance/upcoming "
@@ -149,6 +155,7 @@ def main():
         signal_date=signal_date,
         initial_capital=args.initial_capital,
         backtest_start=args.backtest_start,
+        mode=args.mode,
     )
 
     print()

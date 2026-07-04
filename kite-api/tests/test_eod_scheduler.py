@@ -177,3 +177,49 @@ def test_sell_only_trades_are_ignored_as_anchor(
 
     # No BUY anchor → gate returns False.
     assert tasks._is_eod_signal_day("om25_v3", date(2026, 5, 15)) is False
+
+
+# ============================================================
+# Weekly exit-check day gate (off-week Friday for biweekly strategies)
+# ============================================================
+
+def test_weekly_exit_true_on_off_week_friday_for_biweekly(
+    db_session, install_session, monkeypatch,
+):
+    # Anchor: 2026-05-04 (Mon exec from Thu 2026-04-30 signal, Muharram-rolled
+    # from Fri 05-01 Labour Day). Entry biweekly parity: 05-15, 05-29, ...
+    # Off-week Fridays where the weekly-exit block fires: 05-08, 05-22, ...
+    _add_buy(db_session, "om25_v3", date(2026, 5, 4))
+    install_session(db_session)
+    _stub_trading_day(monkeypatch, True)
+
+    # Off-week Fri (biweekly parity says 05-15 is entry, 05-08 is exit-only).
+    assert tasks._is_eod_weekly_exit_day("om25_v3", date(2026, 5, 8)) is True
+    # Entry Fri: NOT a weekly-exit day (that's covered by the entry gate).
+    assert tasks._is_eod_weekly_exit_day("om25_v3", date(2026, 5, 15)) is False
+    # Monday: not Friday-of-week signal.
+    assert tasks._is_eod_weekly_exit_day("om25_v3", date(2026, 5, 11)) is False
+
+
+def test_weekly_exit_false_for_weekly_thu_fri_strategies(
+    db_session, install_session, monkeypatch,
+):
+    # l6_v2 has weekly Thu-Fri cadence (has_weekly_exit=False). Its weekly
+    # cadence IS its entry cadence — there's no separate off-week day.
+    _add_buy(db_session, "l6_v2", date(2026, 5, 1))  # Fri exec
+    install_session(db_session)
+    _stub_trading_day(monkeypatch, True)
+
+    # Any Friday for l6: not a weekly-exit day.
+    assert tasks._is_eod_weekly_exit_day("l6_v2", date(2026, 5, 8)) is False
+    assert tasks._is_eod_weekly_exit_day("l6_v2", date(2026, 5, 15)) is False
+
+
+def test_weekly_exit_false_on_nse_holiday(
+    db_session, install_session, monkeypatch,
+):
+    _add_buy(db_session, "om25_v3", date(2026, 5, 4))
+    install_session(db_session)
+    _stub_trading_day(monkeypatch, False)  # NSE closed
+
+    assert tasks._is_eod_weekly_exit_day("om25_v3", date(2026, 5, 8)) is False
