@@ -284,10 +284,115 @@ def _prepare_l6_v2(*, prices_dir: Path) -> StrategyState:
     )
 
 
+def _prepare_combo_defensive(*, prices_dir: Path) -> StrategyState:
+    """Defensive Blend — 50-50 L6 + OM25 v3 with priority dedup + NIFTY 100
+    100-DMA regime overlay (bear_exposure=0.5).
+
+    Mirrors ``scripts/run_combo_defensive_portfolio.py`` line-for-line:
+    two component score fns, priority dedup via ``make_combo_score_fn``,
+    biweekly Friday cadence, portfolio-level regime overlay (unlike
+    om25_v3, this strategy DOES use the engine's regime scaling — it's
+    what makes it "defensive").
+    """
+    from scripts._clean_engine import biweekly_fridays, fridays
+    from scripts._momentum_engine import (
+        BASELINE as MM_BASELINE, build_momentum_panels,
+        lookback_months_to_days, make_momentum_score,
+    )
+    from scripts.build_om25_signals import load_universe
+    from scripts.combo_defensive import LOCKED, make_combo_score_fn
+    from scripts.om25_v3 import (
+        LOCKED as OM25_LOCKED, build_regime_panel_confirmed,
+        make_om25_tilt_score,
+    )
+
+    close_panel, trade_panel = load_price_panels(prices_dir)
+    benchmark = load_benchmark(ROOT / "data/benchmarks/nifty100.csv")
+    calendar = close_panel.index
+    benchmark_aligned = benchmark.reindex(calendar).ffill()
+    sma_200 = close_panel.rolling(200, min_periods=200).mean()
+    atr_20 = close_panel.pct_change().rolling(20).std()
+
+    # Same regime-index resolution logic as _prepare_om25_v3 — production
+    # writes to indices_data/, local research keeps _historical.
+    regime_candidates = [
+        ROOT / "indices_data" / "NIFTY_100.csv",
+        ROOT / "data" / "indices_data" / "NIFTY_100.csv",
+        ROOT / LOCKED["regime_index_path"],
+    ]
+    regime_index_path = next((p for p in regime_candidates if p.is_file()),
+                              regime_candidates[-1])
+
+    # L6 component (NSE 500)
+    l6_uni = load_universe(ROOT / LOCKED["l6_universe_csv"])
+    l6_cols = [s for s in close_panel.columns if s in l6_uni]
+    l6_panels = build_momentum_panels(
+        close_panel[l6_cols],
+        lookback_days=lookback_months_to_days(LOCKED["l6_lookback_months"]),
+        skip_days=LOCKED["l6_skip_days"],
+    )
+    l6_score = make_momentum_score(
+        l6_panels, vol_floor=LOCKED["l6_vol_floor"],
+        vol_power=LOCKED["l6_vol_power"], cross_sectional_zscore=True,
+    )
+
+    # OM25 v3 component (Nifty 250) — carries its own regime tilt in the
+    # score fn, separate from the portfolio-level overlay applied by the
+    # engine below.
+    om25_uni = load_universe(ROOT / LOCKED["om25_universe_csv"])
+    om25_cols = [s for s in close_panel.columns if s in om25_uni]
+    om25_returns = close_panel[om25_cols].pct_change()
+    om25_regime = build_regime_panel_confirmed(
+        regime_index_path,
+        OM25_LOCKED["regime_ma_window"], OM25_LOCKED["regime_confirm_days"],
+        calendar=calendar,
+    )
+    om25_score = make_om25_tilt_score(
+        om25_returns, om25_regime,
+        bull_w_uc=LOCKED["om25_bull_w_uc"], bull_w_cr=LOCKED["om25_bull_w_cr"],
+        bear_w_uc=LOCKED["om25_bear_w_uc"], bear_w_cr=LOCKED["om25_bear_w_cr"],
+        return_filter=LOCKED["om25_return_filter"],
+        lookback=LOCKED["om25_lookback"], min_obs=LOCKED["om25_min_obs"],
+    )
+
+    combo_score = make_combo_score_fn(
+        [("L6", l6_score), ("OM25", om25_score)],
+        n_per=LOCKED["n_per_strategy"],
+    )
+
+    portfolio_regime = build_regime_panel_confirmed(
+        regime_index_path,
+        LOCKED["regime_ma_window"], LOCKED["regime_confirm_days"],
+        calendar=calendar,
+    )
+
+    # Biweekly Friday entry, weekly Friday DD checks.
+    weekly_dates = fridays(calendar)
+    entry_dates = biweekly_fridays(calendar)
+
+    return StrategyState(
+        close_panel=close_panel, trade_panel=trade_panel,
+        benchmark_aligned=benchmark_aligned,
+        sma_200=sma_200, atr_20=atr_20,
+        score_fn=combo_score,
+        entry_signal_dates=entry_dates, weekly_signal_dates=weekly_dates,
+        top_n=LOCKED["top_n"], exit_buffer=LOCKED["exit_buffer"],
+        max_weight=LOCKED["max_weight"], slippage=LOCKED["slippage"],
+        drawdown_stop=0.0,     # combo relies on regime overlay for defense
+        weekly_rank_check=False,
+        # Combo DOES use the engine's regime scaling — that's the defensive
+        # piece. bear_exposure=0.5 keeps 50% invested when the panel says bear.
+        regime_panel=portfolio_regime,
+        bear_exposure=LOCKED["regime_bear_exposure"],
+        min_hold_days=LOCKED["min_hold_days"],
+    )
+
+
 _STRATEGIES = {
     "om25_v3": _prepare_om25_v3,
     "tl25_v3": _prepare_tl25_v3,
     "l6_v2": _prepare_l6_v2,
+    "combo_defensive": _prepare_combo_defensive,
 }
 
 
