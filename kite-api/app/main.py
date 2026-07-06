@@ -10,6 +10,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from contextlib import asynccontextmanager
 
 from app.config import get_settings
+from app.services.market_service import warn_if_holiday_table_stale
 from app.api import health, auth_routes, portfolio, sync, metrics, trades, rebalance, jobs, system, schedule, positions, insights
 from app.scheduler import start_scheduler, shutdown_scheduler, register_default_tasks, scheduler
 from app.middleware.error_handlers import register_error_handlers
@@ -38,6 +39,7 @@ async def lifespan(app: FastAPI):
         logging.getLogger(__name__).warning(
             "JWT_SECRET is using the default value - set a strong secret in production"
         )
+    warn_if_holiday_table_stale()
     print(f"Starting Kite-Lab API (debug={settings.debug})")
 
     # Start scheduler (synchronous)

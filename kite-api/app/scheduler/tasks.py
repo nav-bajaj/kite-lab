@@ -324,9 +324,15 @@ async def _run_eod_orchestrator():
           f"fetch today's close before running each producer...")
         daily_cfg = next((t for t in SCHEDULED_TASKS
                            if t["id"] == "daily_pipeline"), {})
-        await _execute_scheduled_task(
+        refresh_status = await _execute_scheduled_task(
             "daily_pipeline", args=daily_cfg.get("args"),
         )
+        if refresh_status != "completed":
+            raise RuntimeError(
+                f"daily_pipeline did not complete (status={refresh_status}); "
+                f"refusing to run producers on possibly-stale data. Today's "
+                f"proposals will be missing until the next successful run."
+            )
         w("daily_pipeline complete.")
 
         w("")
@@ -393,6 +399,13 @@ async def _execute_scheduled_task(command: str, universe: str = None, args: dict
         command: Command name from COMMANDS
         universe: Target universe (optional)
         args: Additional command arguments (optional)
+
+    Returns:
+        The job's final status string ("completed"/"failed"/...), or None if the
+        job could not be created. ``run_job`` records subprocess failure on the
+        Job row rather than raising, so callers that must gate on success (e.g.
+        the EOD orchestrator refusing to run producers on a failed data refresh)
+        check this return value.
     """
     from app.services.job_service import JobService
 
@@ -410,10 +423,15 @@ async def _execute_scheduled_task(command: str, universe: str = None, args: dict
         # Run job
         await JobService.run_job(job.id)
 
-        logger.info(f"Scheduled task completed: {command} (job_id={job.id})")
+        final = JobService.get_job(job.id)
+        status = final.status if final else None
+        logger.info(f"Scheduled task finished: {command} (job_id={job.id}, "
+                    f"status={status})")
+        return status
 
     except Exception as e:
         logger.error(f"Scheduled task failed: {command} - {str(e)}")
+        return None
 
 
 def create_task_wrapper(command: str, universe: str = None):

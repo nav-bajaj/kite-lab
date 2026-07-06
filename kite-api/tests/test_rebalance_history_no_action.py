@@ -229,3 +229,25 @@ class TestGetRebalanceSummaryNoAction:
         assert prev["no_action"] is False
         assert prev["kind"] == "entry"
         assert "TCS" in prev["added"]
+
+    def test_summary_survives_universe_with_zero_buy_trades(
+        self, db_session, install_session, patched_today,
+    ):
+        # Regression (audit L1/L2): the "next" anchor used an undefined
+        # ``last_date``, so ``get_rebalance_summary`` raised NameError for any
+        # universe whose BUY query returned None (SELL-only / pre-first-entry).
+        # It must instead fall back to the latest trade of any side.
+        db_session.add_all([
+            _make_trade(universe="om25_v3", trade_date=date(2026, 6, 15),
+                        symbol="INFY", side="SELL", notional=230000),
+            EquityCurve(universe="om25_v3", date=date(2026, 6, 15),
+                        portfolio_value=Decimal("10000000")),
+        ])
+        db_session.commit()
+        install_session(db_session)
+        patched_today(date(2026, 6, 16))
+
+        summary = rs.get_rebalance_summary("om25_v3")  # must not raise
+        assert summary["next"] is not None
+        assert summary["previous"]["kind"] == "weekly_exit"
+        assert summary["previous"]["removed"] == ["INFY"]

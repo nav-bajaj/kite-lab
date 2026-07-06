@@ -448,11 +448,10 @@ def get_rebalance_summary(universe: str = "nse500") -> dict:
 
         # Next rebalance = projected from the last entry (BUY) date, which is
         # the engine's last regular rebalance (weekly rank-exits are SELL-only
-        # and must not anchor the entry cadence).
-        anchor = db.query(func.max(Trade.trade_date)).filter(
-            Trade.universe == universe,
-            Trade.side == "BUY",
-        ).scalar() or last_date
+        # and must not anchor the entry cadence). Reuse the BUY-anchored
+        # ``anchor_exec`` computed above (falls back to the latest trade of any
+        # side when a universe has no BUY rows yet).
+        anchor = anchor_exec
         upcoming = None
         has_weekly_exit = CADENCE_META.get(cadence_key, CADENCE_META[DEFAULT_CADENCE])[3]
         if anchor:
@@ -510,6 +509,7 @@ def get_upcoming_rebalance(universe: str = "nse500") -> dict:
     SessionLocal = get_session_local()
     db = SessionLocal()
     try:
+        today = date.today()
         row = db.query(ProposedRebalance).filter(
             ProposedRebalance.universe == universe
         ).order_by(desc(ProposedRebalance.exec_date)).first()
@@ -518,6 +518,7 @@ def get_upcoming_rebalance(universe: str = "nse500") -> dict:
             return {
                 "universe": universe,
                 "available": False,
+                "stale": False,
                 "exec_date": None,
                 "signal_date": None,
                 "data_as_of": None,
@@ -529,9 +530,16 @@ def get_upcoming_rebalance(universe: str = "nse500") -> dict:
                 "initial_capital": None,
             }
 
+        # A proposal is "current" only until its execution day passes. Once
+        # exec_date < today the rebalance it describes has already executed (or a
+        # producer run was missed), so we still return it but flag it stale so
+        # the UI can warn instead of presenting an executed trade as upcoming.
+        stale = row.exec_date is not None and row.exec_date < today
+
         return {
             "universe": universe,
             "available": True,
+            "stale": stale,
             "exec_date": str(row.exec_date),
             "signal_date": str(row.signal_date),
             "data_as_of": str(row.data_as_of),
