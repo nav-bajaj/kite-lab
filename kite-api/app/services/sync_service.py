@@ -11,7 +11,7 @@ from typing import Optional
 import pandas as pd
 from sqlalchemy.orm import Session
 
-from app.config import settings
+from app.config import settings, ALL_UNIVERSES
 from app.models.database import get_session_local
 from app.models.models import (
     EquityCurve,
@@ -452,6 +452,6 @@ def sync_all_universes(full_trades: bool = False) -> dict:
     Sync all data for all universes (and strategies treated as universes).
     """
     results = {}
-    for universe in ["nse500", "nifty100", "nifty250", "om25_v3", "tl25_v3", "l6_v2", "combo_defensive"]:
+    for universe in ALL_UNIVERSES:
         results[universe] = sync_all(universe, full_trades=full_trades)
     return results

@@ -163,6 +163,16 @@ UNIVERSES = {
 
 UniverseId = Literal["nse500", "nifty250", "nifty100", "om25_v3", "tl25_v3", "l6_v2", "combo_defensive"]
 
+# Canonical strategy/universe lists — single source of truth to prevent the
+# multi-file drift the rebalance audit flagged (O6/T-14). Import these instead
+# of re-listing the strategies inline.
+ALL_UNIVERSES: list = list(UNIVERSES.keys())
+
+# The 4 client v3 portfolios that have an EOD proposed-orders producer
+# (data_pipeline/eod_proposal.py). Distinct from the legacy nse500/nifty
+# universes, which have no producer.
+EOD_STRATEGIES = ("om25_v3", "tl25_v3", "l6_v2", "combo_defensive")
+
 
 def get_universe(universe_id: UniverseId) -> dict:
     """Get universe configuration by ID."""

@@ -29,11 +29,12 @@ if str(ROOT) not in sys.path:
 from data_pipeline.eod_proposal import build_eod_artifact
 
 
-# CLI --strategy / --universe choices. The actual run-dir lookup goes through
-# sync_service.get_latest_experiment_dir which handles the ``settings.data_dir``
-# resolution (/app locally, /data on Railway's persistent volume) and shares
-# the UNIVERSE_DIRS + latest.json cache logic with the API. Keeping this list
-# in one place avoids drift.
+# CLI --strategy / --universe choices. Kept local (not imported from
+# app.config) so the CLI stays importable without the API package on the path;
+# a drift test (tests/test_strategy_lists_sync.py) asserts it equals the
+# canonical app.config.EOD_STRATEGIES. The run-dir lookup goes through
+# sync_service.get_latest_experiment_dir which shares the UNIVERSE_DIRS +
+# latest.json cache logic with the API.
 _STRATEGIES = ("om25_v3", "tl25_v3", "l6_v2", "combo_defensive")
 
 

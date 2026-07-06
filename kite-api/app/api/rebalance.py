@@ -1,8 +1,11 @@
 """
-Rebalance API endpoints
+Rebalance API endpoints.
 
-Weekly rebalance workflow: Thursday preview, Friday orders.
-All endpoints require authentication.
+Client-facing, cadence-aware read endpoints (``/summary``, ``/upcoming``,
+``/history``) derived from the Trade/Holding tables + the EOD proposed-orders
+producer — see tasks/rebalance_page/PLAN.md. The legacy ``/status`` /
+``/preview`` / ``/orders`` endpoints predate that rebuild and remain only for
+the admin legacy universes. All endpoints require authentication.
 """
 from fastapi import APIRouter, Query, HTTPException, Depends
 from fastapi.responses import StreamingResponse

@@ -168,3 +168,6 @@ cache/insights/
 
 # Playwright MCP browser debug artifacts (console logs + page snapshots)
 .playwright-mcp/
+
+# VSCode workspace files (local, per-machine)
+*.code-workspace
