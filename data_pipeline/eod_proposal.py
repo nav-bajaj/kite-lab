@@ -401,26 +401,30 @@ _STRATEGIES = {
 # ============================================================
 
 def _append_placeholder_bar(state: StrategyState, signal_date: pd.Timestamp,
+                             next_trading_day: Optional[Callable] = None,
                              ) -> pd.Timestamp:
     """Extend every date-indexed panel by one trading day, set to signal-day
     levels. Returns the placeholder date (= ``exec_date``).
 
-    The placeholder is signal_date + 1 calendar day, then bumped onto the
-    next weekday so we don't land on a Saturday/Sunday. (NSE holidays are
-    handled implicitly: the holiday calendar would already have removed any
-    intervening trading day from real data; for the live EOD path the
-    caller — the scheduler — must already be running on a signal weekday,
-    so signal_date + 1..3 always lands on a real next trading day in the
-    extended calendar we build here.)
+    ``next_trading_day``: optional ``date -> date`` returning the first NSE
+    trading day strictly after its argument (the production caller passes
+    ``market_service.next_trading_day_after``). When given, the placeholder /
+    exec_date rolls off NSE holidays too, so ``ProposedRebalance.exec_date``
+    agrees with ``/summary``'s holiday-aware ``next.exec_date`` (audit L6):
+    e.g. a Thursday signal before a Friday holiday resolves to Monday, not the
+    closed Friday. Without it, we fall back to a weekend-only bump.
     """
     cal = state.close_panel.index
     if signal_date not in cal:
         raise ValueError(f"Signal date {signal_date.date()} not in price calendar")
 
-    # signal_date + 1 calendar day; if that lands on a weekend, push to Monday.
-    candidate = signal_date + pd.Timedelta(days=1)
-    while candidate.weekday() >= 5:
-        candidate += pd.Timedelta(days=1)
+    if next_trading_day is not None:
+        candidate = pd.Timestamp(next_trading_day(signal_date.date()))
+    else:
+        # signal_date + 1 calendar day; if it lands on a weekend, push to Monday.
+        candidate = signal_date + pd.Timedelta(days=1)
+        while candidate.weekday() >= 5:
+            candidate += pd.Timedelta(days=1)
     if candidate in cal:
         # Don't double-append if for some reason the next day already exists.
         return candidate
@@ -487,6 +491,25 @@ def _pick_signal_date(state: StrategyState,
     return pd.Timestamp(eligible[-1])
 
 
+def _assert_panel_fresh(last_bar, require_through, strategy: str) -> None:
+    """Refuse to build a proposal from a stale price panel.
+
+    On a real signal day the 16:00 data refresh must have written today's close,
+    so the panel's last bar should reach ``require_through`` (today). If the
+    refresh silently failed the panel ends earlier and ``_pick_signal_date``
+    would pick the *previous* cadence date — emitting a back-dated proposal that
+    the API then serves as "upcoming" (audit L5). Raise instead.
+    """
+    last = pd.Timestamp(last_bar).normalize()
+    need = pd.Timestamp(require_through).normalize()
+    if last < need:
+        raise RuntimeError(
+            f"Stale price panel for {strategy}: last bar {last.date()} is before "
+            f"required {need.date()} — the data refresh likely failed; refusing "
+            f"to emit a back-dated proposal."
+        )
+
+
 def _final_pv(equity_df: pd.DataFrame) -> float:
     return float(equity_df["pv"].iloc[-1])
 
@@ -542,6 +565,8 @@ def build_eod_artifact(*,
                         initial_capital: float = 1_000_000,
                         backtest_start: str = "2016-01-01",
                         mode: str = "entry",
+                        require_panel_through: Optional[pd.Timestamp] = None,
+                        next_trading_day: Optional[Callable] = None,
                         ) -> dict:
     """Produce ``proposed_orders_<exec_date>.csv`` + ``proposed_regime.json``.
 
@@ -566,6 +591,14 @@ def build_eod_artifact(*,
             — the artifact then surfaces only rank / DD-stop / regime SELLs.
             Semantically a no-op for weekly strategies (l6_v2) where
             weekly ≡ entry, so callers can dispatch either.
+        require_panel_through: if set, refuse to run unless the price panel's
+            last bar reaches this date. The production cron passes today so a
+            failed data refresh raises instead of emitting a back-dated
+            proposal. Left None for past-date verification/backfill runs.
+        next_trading_day: optional ``date -> date`` (NSE-holiday-aware) used to
+            place the exec_date bar; see ``_append_placeholder_bar``. The
+            production CLI passes ``market_service.next_trading_day_after`` so
+            exec_date labels roll off holidays consistently with ``/summary``.
 
     Returns:
         Summary dict written to ``proposed_regime.json``.
@@ -579,10 +612,14 @@ def build_eod_artifact(*,
     print(f"[eod] strategy={strategy} prices={prices_dir.name} mode={mode}")
 
     state = _STRATEGIES[strategy](prices_dir=prices_dir)
+    if require_panel_through is not None:
+        _assert_panel_fresh(state.close_panel.index[-1], require_panel_through,
+                            strategy)
     signal_ts = _pick_signal_date(state, signal_date, mode=mode)
     print(f"[eod] signal_date = {signal_ts.date()}")
 
-    exec_date = _append_placeholder_bar(state, signal_ts)
+    exec_date = _append_placeholder_bar(state, signal_ts,
+                                        next_trading_day=next_trading_day)
     print(f"[eod] placeholder exec_date = {exec_date.date()}")
 
     # Run the engine over the full extended panel. We need data from

@@ -221,6 +221,10 @@ export interface ProposedBuy {
 export interface RebalanceUpcoming {
   universe: string;
   available: boolean;
+  // True once exec_date has passed (a missed/failed producer run left the
+  // previous proposal as the latest row). The UI warns instead of presenting
+  // an already-executed rebalance as upcoming.
+  stale: boolean;
   exec_date: string | null;
   signal_date: string | null;
   data_as_of: string | null;

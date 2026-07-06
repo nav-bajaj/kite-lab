@@ -142,6 +142,14 @@ def main():
     parser.add_argument("--sequential", action="store_true", help="Disable parallel execution (for debugging)")
     parser.add_argument("--no-shared-state", action="store_true",
                         help="Disable the Phase 2 shared-state cache (portfolios load panels independently)")
+    parser.add_argument("--fetch-only", action="store_true",
+                        help="Stop after login + data fetch + corporate actions "
+                             "+ benchmark; skip the shared-state cache, the "
+                             "all-7-portfolio build, and the backup. Used by the "
+                             "16:00 EOD producer, which only needs today's "
+                             "adjusted closes (it re-runs each strategy itself), "
+                             "so a second full portfolio build every signal day "
+                             "is pure waste.")
     args = parser.parse_args()
 
     start_time = time.time()
@@ -192,6 +200,16 @@ def main():
                                      timings=timings)
         if not success:
             sys.exit(1)
+
+    # The EOD producer only needs fresh adjusted closes + benchmark + indices
+    # (all produced above); it rebuilds each strategy itself. Stop here to avoid
+    # a second full all-7-portfolio build every signal day.
+    if args.fetch_only:
+        total_time = time.time() - start_time
+        print(f"\nFetch-only pipeline completed in {total_time:.1f}s "
+              f"(skipped shared-state cache, portfolio builds, backup).")
+        print_timing_summary(timings, total_time)
+        return
 
     # Phase 2: build shared-state cache once, pass to each portfolio.
     shared_state_file = None

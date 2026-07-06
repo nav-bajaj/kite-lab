@@ -27,6 +27,9 @@ export function RebalanceHistory({ limit = 12 }: { limit?: number }) {
   }
 
   const history = data.history || [];
+  const hasNoAction = history.some(
+    (r) => r.no_action === true || (r.additions === 0 && r.removals === 0),
+  );
 
   return (
     <Card>
@@ -48,12 +51,19 @@ export function RebalanceHistory({ limit = 12 }: { limit?: number }) {
                   <th className="py-2 pr-4 font-medium text-right">Added</th>
                   <th className="py-2 pr-4 font-medium text-right">Removed</th>
                   <th className="py-2 pr-4 font-medium text-right">Turnover</th>
-                  <th className="py-2 font-medium text-right">Traded</th>
+                  <th className="py-2 font-medium text-right">
+                    Traded
+                    <span className="ml-1 font-normal opacity-70">(model)</span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {history.map((row) => {
-                  const isNoAction = row.no_action === true;
+                  // A cycle with zero adds AND zero removes is a no-action
+                  // hold even if the backend didn't flag it (audit U9).
+                  const isNoAction =
+                    row.no_action === true ||
+                    (row.additions === 0 && row.removals === 0);
                   return (
                     <tr
                       key={row.date}
@@ -97,7 +107,7 @@ export function RebalanceHistory({ limit = 12 }: { limit?: number }) {
                 })}
               </tbody>
             </table>
-            {history.some((r) => r.no_action) && (
+            {hasNoAction && (
               <p className="mt-3 text-xs text-muted-foreground">
                 <span className="font-medium">No-action</span> cycles are
                 signal days where the engine reviewed the book but the
@@ -105,6 +115,10 @@ export function RebalanceHistory({ limit = 12 }: { limit?: number }) {
                 existing names. Not a missed rebalance.
               </p>
             )}
+            <p className="mt-1 text-xs text-muted-foreground">
+              <span className="font-medium">Traded (model)</span> is the model
+              portfolio&apos;s notional — not scaled to your own capital.
+            </p>
           </div>
         )}
       </CardContent>

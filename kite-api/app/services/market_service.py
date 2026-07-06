@@ -5,6 +5,7 @@ Provides market hours detection for NSE (National Stock Exchange of India).
 """
 from datetime import datetime, date, time, timedelta
 from typing import Optional
+import logging
 import pytz
 
 from app.schemas.positions import MarketStatus
@@ -29,13 +30,22 @@ MARKET_CLOSE = time(15, 30)  # 3:30 PM IST
 # Weekend-falling 2026 holidays are intentionally omitted (the market is
 # already closed Sat/Sun and get_market_status handles that separately):
 #   - Mahashivratri      Sun 15 Feb 2026
+#   - Id-ul-Fitr (Ramzan) Sat 21 Mar 2026
 #   - Independence Day   Sat 15 Aug 2026
 #   - Diwali Laxmi Pujan Sun 08 Nov 2026 (special Muhurat session, not a full
 #     trading day; not modelled here)
 #
+# NOTE ON AD-HOC CLOSURES: NSE also declares special one-off holidays outside
+# the annual circular (elections, days of mourning). These MUST be backfilled
+# here too — e.g. 15 Jan 2026 was declared a full CM trading holiday on 12 Jan
+# 2026 for the Maharashtra municipal-corporation elections (NSE/BSE closed).
+# Verified against Zerodha + ClearTax calendars and NSE circular reporting
+# (2026 total = 16 weekday CM holidays).
+#
 # Format: {year: [(month, day), ...]}
 NSE_HOLIDAYS = {
     2026: [
+        (1, 15),   # Maharashtra civic elections (special, declared 12 Jan) (Thu)
         (1, 26),   # Republic Day               (Mon)
         (3, 3),    # Holi                        (Tue)
         (3, 26),   # Shri Ram Navami             (Thu)
@@ -66,6 +76,41 @@ def is_nse_holiday(dt: datetime) -> bool:
         if dt.month == month and dt.day == day:
             return True
     return False
+
+
+def is_holiday_year_covered(year: int) -> bool:
+    """True if ``NSE_HOLIDAYS`` has an explicit entry for ``year``.
+
+    An uncovered year is dangerous: ``is_nse_holiday`` returns False for every
+    date in it, so date/schedule logic silently treats that year's exchange
+    holidays as trading days. Callers use this as a staleness tripwire.
+    """
+    return year in NSE_HOLIDAYS
+
+
+def warn_if_holiday_table_stale(today: Optional[date] = None) -> list:
+    """Log a warning for any near-term year missing from ``NSE_HOLIDAYS``.
+
+    Checks the current year, and — once within the final 45 days of it — next
+    year too (NSE publishes the next calendar in December). The table MUST be
+    refreshed from the official NSE circular before an uncovered year begins.
+    Returns the list of uncovered years (also used by the coverage test).
+    """
+    if today is None:
+        today = datetime.now(IST).date()
+    years_to_check = [today.year]
+    if (date(today.year, 12, 31) - today).days <= 45:
+        years_to_check.append(today.year + 1)
+    missing = [y for y in years_to_check if not is_holiday_year_covered(y)]
+    if missing:
+        logging.getLogger(__name__).warning(
+            "NSE_HOLIDAYS is missing entries for year(s) %s — holiday-dependent "
+            "scheduling will treat those years' exchange holidays as trading "
+            "days. Update market_service.NSE_HOLIDAYS from the official NSE "
+            "circular (nseindia.com/resources/exchange-communication-holidays).",
+            ", ".join(str(y) for y in missing),
+        )
+    return missing
 
 
 def get_next_trading_day_open(from_dt: Optional[datetime] = None) -> datetime:

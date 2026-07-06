@@ -148,6 +148,30 @@ def main():
         run_dir = args.output_dir
     out_dir = run_dir / "backtests" / "baseline"
 
+    # Production path (no explicit --signal-date): the 16:00 cron runs on a real
+    # signal day, so today's close must be in the panel. Guard against a silent
+    # data-refresh failure emitting a back-dated proposal. Skip the guard for
+    # past-date verification runs (--signal-date given). IST because the signal
+    # day is defined on the NSE calendar, not the server's local date.
+    require_through = None
+    if signal_date is None:
+        require_through = (pd.Timestamp.now(tz="Asia/Kolkata")
+                           .normalize().tz_localize(None))
+
+    # Holiday-aware exec_date so the artifact's exec_date matches /summary's
+    # (both roll off NSE weekends AND holidays). market_service lives in the API
+    # package; the script already imports from it for run-dir resolution.
+    next_trading_day = None
+    try:
+        kite_api = ROOT / "kite-api"
+        if str(kite_api) not in sys.path:
+            sys.path.insert(0, str(kite_api))
+        from app.services.market_service import next_trading_day_after
+        next_trading_day = next_trading_day_after
+    except Exception as e:  # pragma: no cover - defensive fallback
+        print(f"[eod] warning: holiday calendar unavailable ({e!r}); "
+              f"exec_date uses weekend-only roll")
+
     summary = build_eod_artifact(
         strategy=strategy,
         prices_dir=args.prices_dir,
@@ -156,6 +180,8 @@ def main():
         initial_capital=args.initial_capital,
         backtest_start=args.backtest_start,
         mode=args.mode,
+        require_panel_through=require_through,
+        next_trading_day=next_trading_day,
     )
 
     print()

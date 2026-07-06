@@ -174,6 +174,7 @@ class JobService:
                 "min-hold-days", "min_hold_days",
                 "with-login", "with_login",
                 "with-data", "with_data",
+                "fetch-only", "fetch_only",  # daily_pipeline: EOD light refresh
                 "skip-days", "skip_days",
                 "headless",
                 "mode",   # eod_proposed_orders: "entry" | "exit_only"

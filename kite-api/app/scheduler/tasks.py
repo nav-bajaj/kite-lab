@@ -248,12 +248,15 @@ def run_eod_proposed_orders():
        the trigger succeeded but no visible Job appeared. Now the row is
        there with a log entry describing exactly why nothing dispatched.
     2. Compute eligible strategies via ``_is_eod_signal_day``.
-    3. If any are eligible, dispatch a full ``daily_pipeline`` job first
-       (fetches today's close — the 07:00 IST daily_pipeline is
-       pre-market so its data doesn't include today). Without this the
-       producer would pick last week's cadence date as its signal.
+    3. If any are eligible, dispatch a **fetch-only** ``daily_pipeline`` job
+       first (refreshes today's close — the 07:00 IST daily_pipeline is
+       pre-market so its data doesn't include today). Fetch-only skips the
+       all-7-portfolio build + backup, which the producers don't need
+       (they re-run each strategy themselves) — audit O1.
     4. Dispatch a per-strategy ``eod_proposed_orders`` job for each
        eligible strategy so per-strategy failures stay isolated.
+    5. Verify each eligible strategy recorded a today-dated proposal;
+       fail the wrapper Job if any is missing (dead-man's-switch, O4).
 
     ``_execute_scheduled_task`` awaits each dispatched Job to completion.
     """
@@ -320,13 +323,25 @@ async def _run_eod_orchestrator():
             summary.append(f"entry={entry_eligible}")
         if exit_eligible:
             summary.append(f"exit_only={exit_eligible}")
-        w(f"Eligible: {', '.join(summary)}. Running daily_pipeline first to "
-          f"fetch today's close before running each producer...")
+        w(f"Eligible: {', '.join(summary)}. Running a fetch-only daily_pipeline "
+          f"first to refresh today's adjusted closes before each producer...")
         daily_cfg = next((t for t in SCHEDULED_TASKS
                            if t["id"] == "daily_pipeline"), {})
-        await _execute_scheduled_task(
-            "daily_pipeline", args=daily_cfg.get("args"),
+        # Only refresh the data the producers read (NSE500 + indices + benchmark,
+        # corporate-actions-adjusted); the producers re-run each strategy
+        # themselves, so the full all-7-portfolio build + backup here is pure
+        # duplicate compute (audit O1). The 07:00 run stays full.
+        daily_args = dict(daily_cfg.get("args") or {})
+        daily_args["fetch-only"] = True
+        refresh_status = await _execute_scheduled_task(
+            "daily_pipeline", args=daily_args,
         )
+        if refresh_status != "completed":
+            raise RuntimeError(
+                f"daily_pipeline did not complete (status={refresh_status}); "
+                f"refusing to run producers on possibly-stale data. Today's "
+                f"proposals will be missing until the next successful run."
+            )
         w("daily_pipeline complete.")
 
         w("")
@@ -346,7 +361,25 @@ async def _run_eod_orchestrator():
 
         w("")
         fired = entry_eligible + [f"{s} (exit-only)" for s in exit_eligible]
-        w(f"Orchestrator complete. Fired producers for: {', '.join(fired)}")
+        w(f"Dispatched producers for: {', '.join(fired)}")
+
+        # Dead-man's-switch (audit O4): confirm every eligible strategy actually
+        # recorded a today-dated proposal. A producer that silently no-ops (the
+        # l6_v2 miss that went unnoticed for days) otherwise leaves no signal.
+        # Any gap fails the wrapper Job so it shows red in the admin Jobs UI —
+        # the owner's existing visibility surface, no new endpoint needed.
+        eligible = entry_eligible + exit_eligible
+        missing = _strategies_missing_todays_proposal(eligible, today)
+        if missing:
+            msg = (f"EOD producers did not record today's proposal for: "
+                   f"{', '.join(missing)} (eligible={eligible}). "
+                   f"Investigate before clients rely on a stale rebalance.")
+            w(msg)
+            logger.error(msg)
+            _set_job_status(wrap.id, status="failed",
+                             ended_at=datetime.utcnow(), error_message=msg)
+            return
+        w(f"Verified today's proposal rows for all eligible: {eligible}")
         _set_job_status(wrap.id, status="completed",
                          ended_at=datetime.utcnow())
     except Exception as e:
@@ -357,6 +390,32 @@ async def _run_eod_orchestrator():
         raise
     finally:
         log.close()
+
+
+def _strategies_missing_todays_proposal(strategies, today) -> list:
+    """Return the strategies with no ProposedRebalance row dated ``today``.
+
+    ``data_as_of`` is the producer's signal date, which on a signal day is
+    today, so a today-dated row per eligible strategy confirms its producer
+    ran and synced. Used as the EOD orchestrator's completion check (O4).
+    """
+    from app.models.database import get_session_local
+    from app.models.models import ProposedRebalance
+
+    SessionLocal = get_session_local()
+    db = SessionLocal()
+    try:
+        missing = []
+        for s in strategies:
+            row = db.query(ProposedRebalance).filter(
+                ProposedRebalance.universe == s,
+                ProposedRebalance.data_as_of == today,
+            ).first()
+            if row is None:
+                missing.append(s)
+        return missing
+    finally:
+        db.close()
 
 
 def _set_job_status(job_id: str, **fields):
@@ -393,6 +452,13 @@ async def _execute_scheduled_task(command: str, universe: str = None, args: dict
         command: Command name from COMMANDS
         universe: Target universe (optional)
         args: Additional command arguments (optional)
+
+    Returns:
+        The job's final status string ("completed"/"failed"/...), or None if the
+        job could not be created. ``run_job`` records subprocess failure on the
+        Job row rather than raising, so callers that must gate on success (e.g.
+        the EOD orchestrator refusing to run producers on a failed data refresh)
+        check this return value.
     """
     from app.services.job_service import JobService
 
@@ -410,10 +476,15 @@ async def _execute_scheduled_task(command: str, universe: str = None, args: dict
         # Run job
         await JobService.run_job(job.id)
 
-        logger.info(f"Scheduled task completed: {command} (job_id={job.id})")
+        final = JobService.get_job(job.id)
+        status = final.status if final else None
+        logger.info(f"Scheduled task finished: {command} (job_id={job.id}, "
+                    f"status={status})")
+        return status
 
     except Exception as e:
         logger.error(f"Scheduled task failed: {command} - {str(e)}")
+        return None
 
 
 def create_task_wrapper(command: str, universe: str = None):
