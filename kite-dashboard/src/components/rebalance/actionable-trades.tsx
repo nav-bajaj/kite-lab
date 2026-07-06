@@ -91,21 +91,28 @@ interface SizedBuy {
   est_shares: number | null;
 }
 
-// Re-derive the BUY sizing on the client using the subscriber's own capital
-// when set, otherwise fall back to the producer's model-scale numbers.
+// Re-derive the BUY sizing on the client using the subscriber's own capital.
 // Mirrors data_pipeline/rebalance_proposal.build_proposal: est_notional =
 // weight × capital; est_shares = round(est_notional / price). We don't ship
 // per-symbol prices through the API yet, so when the subscriber supplies
-// capital we surface ₹ amounts but defer share counts to the producer's
-// value (it had real signal-day closes). When capital is null we show the
-// producer's numbers as-is.
+// capital we surface ₹ amounts and scale the producer's share count.
+//
+// When no capital is set we deliberately show WEIGHT ONLY — the producer's
+// est_notional/est_shares are on the model book's ₹ base (~₹10L), not the
+// subscriber's, so surfacing them would be misleading (the hint tells the user
+// to enter their value to see ₹). See audit U1.
 function sizeBuys(
   buys: SizedBuy[],
   modelCapital: number | null,
   clientCapital: number | null,
 ): SizedBuy[] {
   if (clientCapital === null || modelCapital === null || modelCapital <= 0) {
-    return buys;
+    return buys.map((b) => ({
+      symbol: b.symbol,
+      target_weight: b.target_weight,
+      est_notional: null,
+      est_shares: null,
+    }));
   }
   const scale = clientCapital / modelCapital;
   return buys.map((b) => ({
@@ -180,14 +187,28 @@ export function ActionableTrades() {
       </CardHeader>
 
       <CardContent className="space-y-5">
+        {/* Stale proposal warning (exec_date has passed) */}
+        {data.stale && (
+          <div className="flex items-start gap-2 rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
+            <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+            <span>
+              This shows the {data.exec_date} rebalance, whose execution date has
+              passed. Your next set of trades will appear here after the upcoming
+              signal day.
+            </span>
+          </div>
+        )}
+
         {/* Regime / risk strip */}
         <RegimeStrip data={data} />
 
-        {/* Optional ₹ personalisation */}
-        <PortfolioValueInput
-          value={clientCapital}
-          onChange={setClientCapital}
-        />
+        {/* Optional ₹ personalisation — only useful when there are BUYs to size */}
+        {sizedBuys.length > 0 && (
+          <PortfolioValueInput
+            value={clientCapital}
+            onChange={setClientCapital}
+          />
+        )}
 
         {/* SELL (full exits) */}
         {data.sells.length > 0 && (
@@ -281,6 +302,16 @@ export function ActionableTrades() {
             )}
           </section>
         )}
+
+        {/* Info-only disclaimer next to the imperative instructions */}
+        <p className="border-t pt-3 text-xs text-muted-foreground">
+          {data.buy_count > 0 && (
+            <>
+              &ldquo;Target&rdquo; is each name&apos;s share of your portfolio.{" "}
+            </>
+          )}
+          For information only — not a recommendation. Finalises at close.
+        </p>
       </CardContent>
     </Card>
   );
@@ -311,30 +342,40 @@ function RegimeStrip({ data }: { data: RebalanceUpcoming }) {
 
   return (
     <div
-      className={`flex flex-wrap items-center gap-3 rounded-md px-3 py-2 text-sm ${
+      className={`space-y-1.5 rounded-md px-3 py-2 text-sm ${
         isBear
           ? "bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300"
           : "bg-muted/50"
       }`}
     >
-      {data.regime && (
-        <span className="flex items-center gap-1.5">
-          {isBear && <AlertTriangle className="h-4 w-4" />}
-          <span className="text-xs uppercase tracking-wide">Regime</span>
-          <Badge
-            variant={isBear ? "outline" : "secondary"}
-            className={isBear ? "border-amber-600" : ""}
-          >
-            {data.regime}
-          </Badge>
-        </span>
-      )}
-      {dd !== null && (
-        <span className="text-xs">
-          <span className="uppercase tracking-wide">Drawdown from peak</span>
-          {": "}
-          <span className="font-medium">{dd.toFixed(2)}%</span>
-        </span>
+      <div className="flex flex-wrap items-center gap-3">
+        {data.regime && (
+          <span className="flex items-center gap-1.5">
+            {isBear && <AlertTriangle className="h-4 w-4" />}
+            <span className="text-xs uppercase tracking-wide">Market regime</span>
+            <Badge
+              variant={isBear ? "outline" : "secondary"}
+              className={isBear ? "border-amber-600" : ""}
+            >
+              {isBear ? "Bear — defensive" : "Bull"}
+            </Badge>
+          </span>
+        )}
+        {dd !== null && (
+          <span className="text-xs">
+            <span className="uppercase tracking-wide">
+              Portfolio drawdown from peak
+            </span>
+            {": "}
+            <span className="font-medium">{dd.toFixed(1)}%</span>
+          </span>
+        )}
+      </div>
+      {isBear && (
+        <p className="text-xs">
+          A bear regime means the strategy trims exposure / holds more cash to
+          limit losses, so it may hold fewer names than usual.
+        </p>
       )}
     </div>
   );

@@ -124,13 +124,14 @@ export function RebalanceSummary() {
               <p className="text-sm text-muted-foreground">
                 No rebalance trades recorded yet.
               </p>
-            ) : previous.no_action ? (
+            ) : previous.no_action ||
+              (previous.buy_count === 0 && previous.sell_count === 0) ? (
               <div className="space-y-3">
                 <Badge variant="outline" className="text-xs">
                   No-action rebalance
                 </Badge>
                 <p className="text-sm text-muted-foreground">
-                  The engine processed the signal day but the top-25
+                  The engine processed the signal day but the momentum
                   rotation stayed inside the exit buffer, so it held the
                   existing names. No trades were placed.
                 </p>
@@ -194,6 +195,7 @@ export function RebalanceSummary() {
 
                 <p className="text-xs text-muted-foreground">
                   {formatCurrency(previous.notional_traded)} traded
+                  <span className="ml-1 opacity-70">(model book)</span>
                 </p>
               </div>
             )}
