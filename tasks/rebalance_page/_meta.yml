@@ -1,10 +1,13 @@
 name: rebalance_page
-status: in-progress
+status: shipped
 opened: 2026-05-19
-closed: null
+closed: 2026-07-07
 related_commits:
   - 77d4067  # TASKS.md backlog documented
   - 45fe311  # PLAN.md decided direction (v2)
+  - 6ba312a  # PR #21 — end of the Phase 1/2 build (PRs #6–#21)
+  - a30bb99  # PR #22 — audit P0 correctness + P1 UX/ops
+  - fce5ece  # PR #23 — audit P2 cleanup
 supersedes: []
 depends_on:
   - client_portal
