@@ -1,8 +1,11 @@
 """
-Rebalance API endpoints
+Rebalance API endpoints.
 
-Weekly rebalance workflow: Thursday preview, Friday orders.
-All endpoints require authentication.
+Client-facing, cadence-aware read endpoints (``/summary``, ``/upcoming``,
+``/history``) derived from the Trade/Holding tables + the EOD proposed-orders
+producer — see tasks/rebalance_page/PLAN.md. The legacy ``/status`` /
+``/preview`` / ``/orders`` endpoints predate that rebuild and remain only for
+the admin legacy universes. All endpoints require authentication.
 """
 from fastapi import APIRouter, Query, HTTPException, Depends
 from fastapi.responses import StreamingResponse
@@ -14,7 +17,6 @@ from app.services.rebalance_service import (
     get_rebalance_history,
     get_rebalance_orders,
     get_rebalance_preview,
-    get_rebalance_status,
     get_rebalance_summary,
     get_upcoming_rebalance,
 )
@@ -22,24 +24,6 @@ from app.auth import get_current_user, check_universe_access
 from app.middleware.cache import cache_daily, cache_rebalance
 
 router = APIRouter(prefix="/api/rebalance", tags=["rebalance"])
-
-
-@router.get("/status", dependencies=[Depends(cache_rebalance)])
-async def rebalance_status(
-    universe: UniverseId = Query(default="nse500", description="Portfolio universe"),
-    user: dict = Depends(get_current_user)
-):
-    """
-    Get current rebalance status.
-
-    Returns current phase, available files, and next steps.
-    """
-    if not is_valid_universe(universe):
-        raise HTTPException(status_code=400, detail=f"Invalid universe: {universe}")
-    check_universe_access(universe, user)
-
-    result = get_rebalance_status(universe)
-    return result
 
 
 @router.get("/summary", dependencies=[Depends(cache_rebalance)])

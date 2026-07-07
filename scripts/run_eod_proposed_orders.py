@@ -29,11 +29,12 @@ if str(ROOT) not in sys.path:
 from data_pipeline.eod_proposal import build_eod_artifact
 
 
-# CLI --strategy / --universe choices. The actual run-dir lookup goes through
-# sync_service.get_latest_experiment_dir which handles the ``settings.data_dir``
-# resolution (/app locally, /data on Railway's persistent volume) and shares
-# the UNIVERSE_DIRS + latest.json cache logic with the API. Keeping this list
-# in one place avoids drift.
+# CLI --strategy / --universe choices. Kept local (not imported from
+# app.config) so the CLI stays importable without the API package on the path;
+# a drift test (tests/test_strategy_lists_sync.py) asserts it equals the
+# canonical app.config.EOD_STRATEGIES. The run-dir lookup goes through
+# sync_service.get_latest_experiment_dir which shares the UNIVERSE_DIRS +
+# latest.json cache logic with the API.
 _STRATEGIES = ("om25_v3", "tl25_v3", "l6_v2", "combo_defensive")
 
 
@@ -91,7 +92,13 @@ def parse_args():
                          "momentum_*.csv. Override to a fresh dir when "
                          "verifying a past signal date in isolation.")
     ap.add_argument("--initial-capital", type=float, default=1_000_000)
-    ap.add_argument("--backtest-start", type=str, default="2018-01-01")
+    # Warmup start for the engine pass. The producer must re-run the strategy
+    # from here so the engine rebuilds each current holding's entry date, peak
+    # (for the drawdown stop) and min-hold clock — state that isn't in
+    # momentum_holdings.csv, so the book can't just be loaded. Effective start is
+    # clamped to the data's first bar (2020 for Kite-live nse500_data), so any
+    # value <= 2020 is equivalent; matches the module default in eod_proposal.py.
+    ap.add_argument("--backtest-start", type=str, default="2016-01-01")
     ap.add_argument("--mode", choices=["entry", "exit_only"], default="entry",
                     help="'entry' = full rebalance on the strategy's entry "
                          "cadence Friday. 'exit_only' = weekly rank / DD-stop "

@@ -7,7 +7,8 @@ import {
   getTradeSummary,
   getPositions,
   getMarketStatus,
-  getRebalanceStatus,
+  getRebalanceSummary,
+  getRebalanceUpcoming,
 } from "./api-client";
 import type { UniverseId } from "./types";
 
@@ -46,7 +47,10 @@ const ROUTE_PRELOADERS = new Map<string, Preloader>([
   [
     "/rebalance",
     (u) => {
-      preload(["rebalance-status", u], () => getRebalanceStatus(u));
+      // The Actionable-trades card (upcoming) is above the fold; the summary
+      // cards follow. Keys mirror useRebalanceUpcoming / useRebalanceSummary.
+      preload(["rebalance-upcoming", u], () => getRebalanceUpcoming(u));
+      preload(["rebalance-summary", u], () => getRebalanceSummary(u));
     },
   ],
   [

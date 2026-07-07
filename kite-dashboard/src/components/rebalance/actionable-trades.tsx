@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useRebalanceUpcoming } from "@/lib/hooks";
+import { useRebalanceSummary, useRebalanceUpcoming } from "@/lib/hooks";
 import type { RebalanceUpcoming } from "@/lib/types";
 import { formatCompact } from "@/lib/utils";
 import {
@@ -127,6 +127,9 @@ function sizeBuys(
 
 export function ActionableTrades() {
   const { data, isLoading, error } = useRebalanceUpcoming();
+  // Shared SWR cache with the summary card below — used only to name the next
+  // signal date in the empty state (no extra network cost).
+  const { data: summary } = useRebalanceSummary();
   const universe = data?.universe ?? "";
   const [clientCapital, setClientCapital] = useClientCapital(universe);
   const [showHolds, setShowHolds] = useState(false);
@@ -159,8 +162,9 @@ export function ActionableTrades() {
             <CardTitle>Actionable trades</CardTitle>
           </div>
           <CardDescription>
-            No upcoming rebalance has been produced yet for this portfolio.
-            The next end-of-day run will populate it on the signal day.
+            {summary?.next?.signal_date
+              ? `We'll show your next set of trades here after the market closes on ${summary.next.signal_date}.`
+              : "We'll show your next set of trades here after the next rebalance's signal day."}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -322,7 +326,6 @@ function ActionableMeta({ data }: { data: RebalanceUpcoming }) {
     <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
       <Badge variant="outline">{data.sell_count} sell</Badge>
       <Badge variant="outline">{data.buy_count} buy</Badge>
-      <Badge variant="outline">{data.hold_count} hold</Badge>
     </div>
   );
 }
