@@ -12,7 +12,6 @@ import {
   getMonthlyReturns,
   getTrades,
   getTradeSummary,
-  getRebalanceStatus,
   getRebalanceSummary,
   getRebalancePreview,
   getRebalanceOrders,
@@ -170,20 +169,6 @@ export function useTradeSummary() {
     {
       refreshInterval: SLOW_REFRESH,
       revalidateOnFocus: false,
-    }
-  );
-}
-
-// Rebalance status (public, no auth required)
-export function useRebalanceStatus() {
-  const { universeId } = useUniverse();
-
-  return useAuthedSWR(
-    ["rebalance-status", universeId],
-    ([, universe]) => getRebalanceStatus(universe),
-    {
-      refreshInterval: SLOW_REFRESH,
-      revalidateOnFocus: true,
     }
   );
 }

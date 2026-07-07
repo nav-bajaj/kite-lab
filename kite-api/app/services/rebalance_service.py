@@ -20,7 +20,6 @@ from app.models.models import (
     Holding,
     OpenPosition,
     ProposedRebalance,
-    Rebalance,
     Signal,
     Trade,
 )
@@ -195,59 +194,6 @@ def get_latest_signals_dir(universe: str = "nse500") -> Optional[Path]:
 
     dirs = sorted(glob.glob(str(pattern)), reverse=True)
     return Path(dirs[0]) if dirs else None
-
-
-def get_rebalance_status(universe: str = "nse500") -> dict:
-    """
-    Get current rebalance status.
-
-    Returns status, signal date, and what's available.
-    """
-    SessionLocal = get_session_local()
-    db = SessionLocal()
-
-    try:
-        # Get latest rebalance record
-        rebalance = db.query(Rebalance).filter(
-            Rebalance.universe == universe
-        ).order_by(desc(Rebalance.signal_date)).first()
-
-        today = date.today()
-        weekday = today.weekday()  # 0=Monday, 4=Friday
-
-        # Determine current status based on day
-        if weekday == 3:  # Thursday
-            current_phase = "preview"
-        elif weekday == 4:  # Friday
-            current_phase = "ready"
-        else:
-            current_phase = "waiting"
-
-        # Check for files in latest experiment
-        exp_dir = get_latest_signals_dir(universe)
-        changes_available = False
-        orders_available = False
-
-        if exp_dir:
-            changes_files = list(exp_dir.glob("changes_*.csv"))
-            orders_files = list(exp_dir.glob("orders_*.csv"))
-            changes_available = len(changes_files) > 0
-            orders_available = len(orders_files) > 0
-
-        return {
-            "universe": universe,
-            "status": rebalance.status if rebalance else "none",
-            "signal_date": str(rebalance.signal_date) if rebalance else None,
-            "order_date": str(rebalance.order_date) if rebalance and rebalance.order_date else None,
-            "current_phase": current_phase,
-            "is_rebalance_day": weekday in [3, 4],
-            "preview_available": changes_available,
-            "orders_available": orders_available,
-            "today": str(today),
-            "weekday": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][weekday],
-        }
-    finally:
-        db.close()
 
 
 def get_rebalance_preview(universe: str = "nse500") -> dict:

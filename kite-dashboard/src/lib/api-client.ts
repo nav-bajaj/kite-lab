@@ -256,21 +256,6 @@ export async function getTradeSummary(universe: UniverseId) {
 }
 
 // Rebalance endpoints (public, no auth required)
-export async function getRebalanceStatus(universe: UniverseId) {
-  return apiFetch<{
-    universe: string;
-    status: string;
-    signal_date: string | null;
-    order_date: string | null;
-    current_phase: string;
-    is_rebalance_day: boolean;
-    preview_available: boolean;
-    orders_available: boolean;
-    today: string;
-    weekday: string;
-  }>(`/api/rebalance/status?universe=${universe}`);
-}
-
 export async function getRebalancePreview(universe: UniverseId) {
   return apiFetch<{
     universe: string;

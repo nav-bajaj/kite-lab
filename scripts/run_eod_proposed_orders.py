@@ -92,7 +92,13 @@ def parse_args():
                          "momentum_*.csv. Override to a fresh dir when "
                          "verifying a past signal date in isolation.")
     ap.add_argument("--initial-capital", type=float, default=1_000_000)
-    ap.add_argument("--backtest-start", type=str, default="2018-01-01")
+    # Warmup start for the engine pass. The producer must re-run the strategy
+    # from here so the engine rebuilds each current holding's entry date, peak
+    # (for the drawdown stop) and min-hold clock — state that isn't in
+    # momentum_holdings.csv, so the book can't just be loaded. Effective start is
+    # clamped to the data's first bar (2020 for Kite-live nse500_data), so any
+    # value <= 2020 is equivalent; matches the module default in eod_proposal.py.
+    ap.add_argument("--backtest-start", type=str, default="2016-01-01")
     ap.add_argument("--mode", choices=["entry", "exit_only"], default="entry",
                     help="'entry' = full rebalance on the strategy's entry "
                          "cadence Friday. 'exit_only' = weekly rank / DD-stop "
