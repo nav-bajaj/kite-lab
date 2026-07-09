@@ -506,6 +506,70 @@ async def stock_detail_endpoint(
     }
 
 
+@router.get("/movers")
+async def movers_endpoint(
+    response: Response,
+    date: Optional[str] = Query(None, description="As-of date, ISO YYYY-MM-DD. Default: latest."),
+) -> dict:
+    """Small aggregates for the Pulse enrichment cards (C6): fresh 52-week
+    highs / lows (count + top names) and the biggest 21-day RS-rank improvers.
+
+    Deliberately lean — derived directly from the engine contracts so
+    MarketReading stays free of the full per-stock table. Fresh highs use the
+    engine's `fresh_52w_high` flag; fresh lows are close at the trailing-year
+    minimum (`dist_52w_low_pct ≈ 0`). Named lists are ordered by RS strength
+    (highs strongest-first, lows weakest-first). RS improvers come from the
+    inflection cohort and are OBSERVATION-ONLY per the validity study —
+    rank change is a fact, no forward-return claim attaches."""
+    _set_cache(response)
+    asof = _parse_date(date)
+    metrics = stock_metrics.get_stock_metrics(asof)
+    if not metrics:
+        return {"asof": None, "data_available": False,
+                "fresh_highs": {"count": 0, "names": []},
+                "fresh_lows": {"count": 0, "names": []},
+                "rs_improvers": []}
+
+    rs_table = rs_rank.get_rs_table(asof)
+    sym_sectors = sector_constituents.get_symbol_to_sectors()
+    asof_date = next(iter(metrics.values())).date
+
+    def _rank(sym):
+        e = rs_table.get(sym)
+        return e.rank if (e and e.rank is not None) else 10_000
+
+    def _name(sym, m):
+        return _compact({
+            "symbol": sym, "close": m.close, "ret_1d": m.ret_1d,
+            "rank": rs_table[sym].rank if sym in rs_table else None,
+            "sectors": list(sym_sectors.get(sym, ())),
+        })
+
+    fresh_highs = [s for s, m in metrics.items() if m.fresh_52w_high]
+    fresh_lows = [s for s, m in metrics.items()
+                  if m.dist_52w_low_pct is not None and m.dist_52w_low_pct <= 1e-4]
+    highs_top = sorted(fresh_highs, key=_rank)[:5]
+    lows_top = sorted(fresh_lows, key=_rank, reverse=True)[:5]
+
+    improvers = rs_rank.get_live_inflection_cohort(asof, top_n=5)
+
+    return {
+        "asof": asof_date,
+        "data_available": True,
+        "fresh_highs": {"count": len(fresh_highs),
+                        "names": [_name(s, metrics[s]) for s in highs_top]},
+        "fresh_lows": {"count": len(fresh_lows),
+                       "names": [_name(s, metrics[s]) for s in lows_top]},
+        "rs_improvers": [
+            _compact({"symbol": e.symbol, "rank": e.rank,
+                      "rank_21d_ago": e.rank_21d_ago,
+                      "rank_delta_21d": e.rank_delta_21d,
+                      "sectors": list(sym_sectors.get(e.symbol, ()))})
+            for e in improvers
+        ],
+    }
+
+
 # ---------- concentration / attribution ----------
 
 @router.get("/concentration")

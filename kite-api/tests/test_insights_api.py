@@ -293,6 +293,30 @@ class TestStockDetailEndpoint:
         assert b["asof"].startswith("2022-06-")
 
 
+class TestMoversEndpoint:
+    def test_public_no_auth(self, client):
+        assert client.get("/api/insights/movers").status_code == 200
+
+    def test_shape(self, client):
+        b = client.get("/api/insights/movers").json()
+        assert b["data_available"] is True
+        for key in ("fresh_highs", "fresh_lows", "rs_improvers"):
+            assert key in b
+        assert "count" in b["fresh_highs"] and "names" in b["fresh_highs"]
+        assert len(b["fresh_highs"]["names"]) <= 5
+        assert len(b["rs_improvers"]) <= 5
+        # RS improvers are observation-only: rank change is a fact
+        for e in b["rs_improvers"]:
+            assert {"symbol", "rank", "rank_delta_21d"} <= set(e.keys())
+            if e["rank_delta_21d"] is not None:
+                assert e["rank_delta_21d"] > 0  # improvers moved toward rank 1
+
+    def test_early_date_degrades_empty(self, client):
+        b = client.get("/api/insights/movers?date=1990-01-01").json()
+        assert b["data_available"] is False
+        assert b["fresh_highs"]["count"] == 0
+
+
 # ---------- caching ----------
 
 class TestCacheHeaders:
