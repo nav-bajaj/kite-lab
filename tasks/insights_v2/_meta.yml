@@ -1,12 +1,14 @@
 name: insights_v2
-status: in-progress
+status: shipped            # code merged to main 2026-07-09; prod go-live gated on 2 founder actions
 opened: 2026-07-09
-closed: null
+closed: 2026-07-09
 branch: insights-v2
 supersedes: []
 depends_on:
   - insight_engine   # v1 engine, merged at 7f4f797; this task un-gates + expands it
-register_rows: []    # A2 sync.py change is R-014-class — security-reviewer pass required
+register_rows:
+  - R-023            # /api/insights/* intentionally-unauthenticated read surface (documented posture)
+  - R-014            # sync.py upload-whitelist grew by 2 dirs; review date bumped, no new row
 
 goals:
   - "Phase A: /insights visible to admins in prod (data provisioning + role-aware access flag)"
@@ -21,10 +23,10 @@ governance:
 
 execution_model: "Planned by Fable 5; executed by sequential Opus 4.8 agents (A → C1 → C2, B anytime after A)"
 
-founder_actions:
-  - "Run data upload to Railway with prod admin JWT (see RUNBOOK_admin_launch.md once written)"
-  - "Set NEXT_PUBLIC_INSIGHTS_ACCESS=admin on Vercel + redeploy"
-  - "Decide on FRED API key for US 10y (B4)"
+founder_actions:   # remaining to make /insights visible to admins in prod
+  - "Upload nse500_data_merged + indices_data_historical to Railway with prod admin JWT (see RUNBOOK_admin_launch.md)"
+  - "Set NEXT_PUBLIC_INSIGHTS_ACCESS=admin on Vercel + redeploy (admin only — do NOT use 'all' pre-launch)"
+  - "Decide on FRED API key for US 10y (B4) — skipped for now, nothing fabricated"
 
 key_docs:
   plan: PLAN.md

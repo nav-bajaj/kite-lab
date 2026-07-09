@@ -345,5 +345,12 @@ alerts, WhatsApp automation, heatmap, intraday layer, compliance review.
 | # | Task | Owner | Done |
 |---|---|---|---|
 | Z1 | RESULTS.md | 🤖 | ✅ |
-| Z2 | PR to main, `--no-ff` merge | 👤 | ☐ |
-| Z3 | `_meta.yml` → shipped | 🤖 | ☐ |
+| Z2 | `--no-ff` merge to main (founder-approved, 2026-07-09) | 👤 | ✅ |
+| Z3 | `_meta.yml` → shipped | 🤖 | ✅ |
+
+**Nothing left on the code side.** All Phase A/B/C rows are done, both
+merge gates pass (backend 783 passed / 1 skipped; `npm run build` clean),
+and the branch is merged to `main`. The only remaining work is the two
+prod actions in `RUNBOOK_admin_launch.md` (👤 A4.2 data upload, A6.2
+Vercel `NEXT_PUBLIC_INSIGHTS_ACCESS=admin`) — without those, `/insights`
+stays gated off in prod (safe default), so the merge exposes nothing.
