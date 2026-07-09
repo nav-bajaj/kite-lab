@@ -344,6 +344,6 @@ alerts, WhatsApp automation, heatmap, intraday layer, compliance review.
 
 | # | Task | Owner | Done |
 |---|---|---|---|
-| Z1 | RESULTS.md | 🤖 | ☐ |
+| Z1 | RESULTS.md | 🤖 | ✅ |
 | Z2 | PR to main, `--no-ff` merge | 👤 | ☐ |
 | Z3 | `_meta.yml` → shipped | 🤖 | ☐ |

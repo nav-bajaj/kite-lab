@@ -82,7 +82,7 @@ script, or removed `.md`. Don't push to that branch.
 - **Daily pipeline:** `python scripts/run_daily_pipeline.py --with-login`
 - **Spin up locally:** `cd kite-dashboard && npm run dev` (frontend) + `cd kite-api && source ../.venv/bin/activate && uvicorn app.main:app --reload --port 8000` (backend). Frontend's NEXT_PUBLIC_API_URL falls back to `localhost:8000`; CSP allows it in dev mode (see `kite-dashboard/next.config.ts`).
 - **Security audit:** `/security-audit` skill. Output lands at `reports/security/<UTC-date>/report.md`.
-- **Risk register:** `docs/security/risk-register.md` (22 rows; new gaps go here).
+- **Risk register:** `docs/security/risk-register.md` (23 rows; new gaps go here).
 
 ---
 
