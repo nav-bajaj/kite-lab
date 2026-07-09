@@ -4,31 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
-import {
-  LayoutDashboard,
-  TrendingUp,
-  RefreshCw,
-  History,
-  Settings,
-  Wallet,
-} from "lucide-react";
 import { SheetClose } from "@/components/ui/sheet";
-
-const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, adminOnly: false },
-  { name: "Open Positions", href: "/positions", icon: Wallet, adminOnly: false },
-  { name: "Performance", href: "/performance", icon: TrendingUp, adminOnly: false },
-  { name: "Rebalance", href: "/rebalance", icon: RefreshCw, adminOnly: false },
-  { name: "Trades", href: "/trades", icon: History, adminOnly: false },
-  { name: "Admin", href: "/admin", icon: Settings, adminOnly: true },
-];
+import { getNavigation } from "@/lib/nav";
 
 export function MobileSidebar() {
   const pathname = usePathname();
   const { user } = useUser();
   const role = (user?.publicMetadata as { role?: string } | undefined)?.role;
   const isAdmin = role === "admin";
-  const visibleNav = navigation.filter((item) => !item.adminOnly || isAdmin);
+  const visibleNav = getNavigation(isAdmin);
 
   return (
     <div className="flex flex-col h-full bg-sidebar">

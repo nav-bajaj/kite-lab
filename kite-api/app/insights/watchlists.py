@@ -31,12 +31,11 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 from functools import lru_cache
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-from app.config import get_settings
+from app.insights._paths import indices_dir as _indices_dir
 from app.insights.breadth import load_close_panel, load_universe
 
 
@@ -55,14 +54,6 @@ class WatchlistEntry:
 
     def to_dict(self) -> dict:
         return asdict(self)
-
-
-def _indices_dir() -> Path:
-    settings = get_settings()
-    external = Path("/Users/navdeep/Documents/stock_data/indices_data_full")
-    if external.exists():
-        return external
-    return settings.data_dir / "indices_data_historical"
 
 
 @lru_cache(maxsize=1)

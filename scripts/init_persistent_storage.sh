@@ -25,6 +25,14 @@ mkdir -p "$VOLUME/nse500_data_gdf_full"    # 2009-2023 deep GDF backfill (raw)
 mkdir -p "$VOLUME/nse500_data_full"        # stocks: GDF + Kite stitched
 mkdir -p "$VOLUME/indices_data_full"       # indices: historical + Kite stitched
 mkdir -p "$VOLUME/indices_data"
+# Insight-engine long-history panels (insights_v2 Phase A). Uploaded once via
+# POST /api/sync/upload-data and then kept fresh by sync_insights_panels.py in
+# the daily pipeline. Must be on the volume or every redeploy wipes them and
+# /insights 500s again.
+mkdir -p "$VOLUME/nse500_data_merged"      # 16y split-adjusted stock panel (breadth)
+mkdir -p "$VOLUME/indices_data_historical" # 16y indices + VIX panel (macro)
+mkdir -p "$VOLUME/cache"                    # derived pkl caches (rebuildable, but cheap to persist)
+mkdir -p "$VOLUME/cache/insights"
 mkdir -p "$VOLUME/instruments"
 mkdir -p "$VOLUME/benchmarks"
 mkdir -p "$VOLUME/final_portfolio"
@@ -85,6 +93,14 @@ link "$VOLUME/indices_data_full"       "$APP/indices_data_full"
 # for om25_v3 after a redeploy). Fix by symlinking the path scripts
 # actually use.
 link "$VOLUME/indices_data"      "$APP/indices_data"
+# Insight-engine panels + derived caches. These paths must match exactly what
+# the engine reads: breadth.py -> settings.data_dir/nse500_data_merged,
+# app.insights._paths -> settings.data_dir/indices_data_historical, and the
+# per-module pkl caches under settings.data_dir/cache/insights. settings.data_dir
+# is /app in the Railway image, so the read path IS the symlink source below.
+link "$VOLUME/nse500_data_merged"       "$APP/nse500_data_merged"
+link "$VOLUME/indices_data_historical"  "$APP/indices_data_historical"
+link "$VOLUME/cache"                     "$APP/cache"
 link "$VOLUME/instruments"       "$APP/data/instruments"
 link "$VOLUME/benchmarks"        "$APP/data/benchmarks"
 link "$VOLUME/final_portfolio"   "$APP/data/final_portfolio"

@@ -615,6 +615,36 @@ def _on_this_day(reading: MarketReading) -> str:
     )
 
 
+def _seasonality_note(profile) -> str:
+    """One descriptive sentence about the as-of month's historical Nifty
+    returns. Descriptive-only per VALIDITY_PROTOCOL.md — with ~16 years per
+    month the sample can never clear the n>=100 forward-return bar, so the
+    copy reports central tendency and explicitly disclaims prediction, and
+    always discloses n. Returns "" when history is too thin to report."""
+    m = getattr(profile, "month", None)
+    if m is None or m.median_return_pct is None:
+        return ""
+    n_positive = round(m.pct_positive * m.n)
+    return (
+        f"Seasonal context: over the last {m.n} years, {m.label} has posted "
+        f"a median Nifty return of {m.median_return_pct:+.1f}% "
+        f"(middle-half range {m.q1_return_pct:+.1f}% to "
+        f"{m.q3_return_pct:+.1f}%), finishing positive in {n_positive} of "
+        f"{m.n}. A historical tendency across a small sample, not a forecast."
+    )
+
+
+def _seasonality_moment(reading: MarketReading) -> str:
+    """Seasonality learn-moment for the premarket note — the quiet-day
+    fallback when nothing in the tape is unusual enough to spotlight."""
+    from app.insights import calendar_content as _cal
+    try:
+        profile = _cal.get_seasonality(reading.date, include_week=False)
+    except Exception:
+        return ""
+    return _seasonality_note(profile)
+
+
 def _pattern_of_the_week(reading: MarketReading) -> str:
     """Rotate through pattern explainers, one per ISO week.
 
@@ -640,8 +670,11 @@ def compose(reading: MarketReading, mode: str = "postclose") -> Commentary:
         learn = _pattern_of_the_week(reading)
     elif mode == "premarket":
         # Premarket prefers on_this_day when an anniversary matches a
-        # curated event; otherwise falls through to indicator_spotlight.
-        learn = _on_this_day(reading) or _indicator_spotlight(reading)
+        # curated event; otherwise falls through to indicator_spotlight,
+        # and finally to a descriptive seasonality note on quiet days.
+        learn = (_on_this_day(reading)
+                 or _indicator_spotlight(reading)
+                 or _seasonality_moment(reading))
     elif mode == "postclose":
         learn = _indicator_spotlight(reading)
     else:

@@ -14,6 +14,14 @@ import { drawdown } from "./drawdown";
 import { vix } from "./vix";
 import { concentration } from "./concentration";
 import { sustainedUptrend } from "./sustained-uptrend";
+import { rsRank } from "./rs-rank";
+import { trendScore } from "./trend-score";
+import { extensionRisk } from "./extension-risk";
+import { volumeConfirmation } from "./volume-confirmation";
+import { momentumConsistency } from "./momentum-consistency";
+import { atr } from "./atr";
+import { beta } from "./beta";
+import { liquidity } from "./liquidity";
 
 const ALL: LearnExplainer[] = [
   stressScore,
@@ -30,6 +38,15 @@ const ALL: LearnExplainer[] = [
   vix,
   concentration,
   sustainedUptrend,
+  // insights_v2 — stock-level analytics
+  rsRank,
+  trendScore,
+  extensionRisk,
+  volumeConfirmation,
+  momentumConsistency,
+  atr,
+  beta,
+  liquidity,
 ];
 
 export const EXPLAINERS: Record<string, LearnExplainer> = Object.fromEntries(

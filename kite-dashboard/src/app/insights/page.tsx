@@ -1,10 +1,19 @@
 import Link from "next/link";
 import {
   getReading,
+  getMovers,
+  getOnThisDay,
+  getSeasonality,
+  getPreEvent,
   fmtPct,
   fmtNum,
   ConcentrationReading,
   CrossAssetEntry,
+  MoversResponse,
+  OnThisDayResponse,
+  SeasonalityResponse,
+  PreEventResponse,
+  regimeLabel,
 } from "@/lib/insights-api";
 import { RegimeLegend } from "./_components/regime-legend";
 import {
@@ -36,8 +45,18 @@ export default async function PulsePage({
   searchParams: Promise<{ date?: string }>;
 }) {
   const { date } = await searchParams;
-  const reading = await getReading(date);
+  // Calendar-strip fetches are additive context — never let them break the
+  // core Pulse render, so each degrades to null on error.
+  const nullOnErr = <T,>(p: Promise<T>) => p.catch(() => null);
+  const [reading, movers, onThisDay, seasonality, preEvent] = await Promise.all([
+    getReading(date),
+    getMovers(date),
+    nullOnErr(getOnThisDay(date)),
+    nullOnErr(getSeasonality(date)),
+    nullOnErr(getPreEvent(date)),
+  ]);
   const { regime, stress, sector_leaderboard_60d, concentration, cross_asset } = reading;
+  const dateQuery = date ? `?date=${encodeURIComponent(date)}` : "";
 
   return (
     <main className="flex flex-col gap-12">
@@ -73,6 +92,18 @@ export default async function PulsePage({
           />
         </div>
       </section>
+
+      {/* ──────────────── STOCK MOVERS (C6) ──────────────── */}
+      {movers.data_available && (
+        <StockMoversSection movers={movers} dateQuery={dateQuery} />
+      )}
+
+      {/* ──────────────── MARKET CALENDAR (B3) ──────────────── */}
+      <CalendarStrip
+        onThisDay={onThisDay}
+        seasonality={seasonality}
+        preEvent={preEvent}
+      />
 
       {/* ──────────────── CONCENTRATION ──────────────── */}
       <ConcentrationSection concentration={concentration} />
@@ -358,6 +389,260 @@ function CrossAssetSection({ cross_asset }: { cross_asset: Record<string, CrossA
           {deferredEntries.map((e) => e.label.split(" (")[0]).join(", ")}
         </p>
       )}
+    </Section>
+  );
+}
+
+function StockMoversSection({ movers, dateQuery }: { movers: MoversResponse; dateQuery: string }) {
+  const { fresh_highs, fresh_lows, rs_improvers } = movers;
+  return (
+    <Section
+      title="Stock movers"
+      help={
+        <Link
+          href={`/insights/screener${dateQuery}`}
+          className="text-[13px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+        >
+          Open screener →
+        </Link>
+      }
+    >
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Fresh 52-week highs / lows */}
+        <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5">
+          <div className="flex items-baseline justify-between">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              Fresh 52-week highs / lows
+            </span>
+            <span className="text-[13px] text-muted-foreground">
+              {fresh_highs.count} high{fresh_highs.count === 1 ? "" : "s"} · {fresh_lows.count} low{fresh_lows.count === 1 ? "" : "s"}
+            </span>
+          </div>
+          <MoverRow
+            label="New highs"
+            names={fresh_highs.names.map((n) => n.symbol)}
+            dateQuery={dateQuery}
+            preset="near-high"
+          />
+          <MoverRow
+            label="New lows"
+            names={fresh_lows.names.map((n) => n.symbol)}
+            dateQuery={dateQuery}
+          />
+        </div>
+
+        {/* Biggest RS-rank improvers — observation only */}
+        <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5">
+          <div className="flex items-baseline justify-between">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              Biggest RS-rank improvers (21d)
+            </span>
+            <Link
+              href={`/insights/screener${dateQuery ? dateQuery + "&" : "?"}preset=fresh`}
+              className="text-[12px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+            >
+              See all →
+            </Link>
+          </div>
+          {rs_improvers.length === 0 ? (
+            <p className="text-[13px] text-muted-foreground">No notable rank improvers today.</p>
+          ) : (
+            <ul className="flex flex-col gap-1.5 text-[13px]">
+              {rs_improvers.map((e) => (
+                <li key={e.symbol} className="flex items-center justify-between gap-2">
+                  <Link href={`/insights/stocks/${e.symbol}${dateQuery}`} className="font-medium text-foreground underline-offset-2 hover:underline">
+                    {e.symbol}
+                  </Link>
+                  <span className="tabular-nums text-muted-foreground">
+                    {e.rank_21d_ago ?? "—"} → {e.rank ?? "—"}
+                    {e.rank_delta_21d ? <span className="ml-1 text-[color:var(--positive)]">(+{e.rank_delta_21d})</span> : null}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <p className="text-[11px] italic leading-[1.5] text-muted-foreground">
+            Rank change is a fact, not a forecast — this cohort did not beat the
+            baseline in our forward-return study.
+          </p>
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+function MoverRow({ label, names, dateQuery, preset }: { label: string; names: string[]; dateQuery: string; preset?: string }) {
+  const presetHref = preset
+    ? `/insights/screener${dateQuery ? dateQuery + "&" : "?"}preset=${preset}`
+    : null;
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</span>
+      {names.length === 0 ? (
+        <span className="text-[13px] text-muted-foreground">None today.</span>
+      ) : (
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px]">
+          {names.map((s) => (
+            <Link key={s} href={`/insights/stocks/${s}${dateQuery}`} className="font-medium text-foreground underline-offset-2 hover:underline">
+              {s}
+            </Link>
+          ))}
+          {presetHref && (
+            <Link href={presetHref} className="text-[12px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline">
+              (screener →)
+            </Link>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ──────────────── Market calendar strip (B3) ────────────────
+
+/** Format a percentage-point value (already ×100 by the engine). */
+function fmtPP(v: number | null | undefined, decimals = 1): string {
+  if (v === null || v === undefined || Number.isNaN(v)) return "—";
+  const s = v.toFixed(decimals);
+  return v >= 0 ? `+${s}%` : `${s}%`;
+}
+
+const EVENT_TYPE_LABEL: Record<string, string> = {
+  budget: "Union Budget",
+  rbi_policy: "RBI policy",
+  election: "General election",
+};
+
+function CalendarStrip({
+  onThisDay,
+  seasonality,
+  preEvent,
+}: {
+  onThisDay: OnThisDayResponse | null;
+  seasonality: SeasonalityResponse | null;
+  preEvent: PreEventResponse | null;
+}) {
+  // Prefer the longest-horizon anniversary that lands on a curated event.
+  const tagged = onThisDay
+    ? Object.values(onThisDay.anniversaries)
+        .filter((a) => a.event_tag)
+        .sort((a, b) => b.horizon_years - a.horizon_years)
+    : [];
+  const anniversary = tagged[0] ?? null;
+
+  const month = seasonality?.data_available ? seasonality.seasonality.month : null;
+  const upcoming = preEvent?.upcoming ?? [];
+
+  // Nothing to show → render nothing (additive strip).
+  if (!anniversary && !month && upcoming.length === 0) return null;
+
+  return (
+    <Section
+      title="Market calendar"
+      help={<LearnLink slug="regime" label="What is regime?" />}
+    >
+      <div className="grid gap-4 md:grid-cols-3">
+        {/* On this day */}
+        {anniversary && (
+          <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              On this day
+            </span>
+            <p className="text-[13px] leading-[1.55] text-foreground">
+              <span className="font-medium">
+                {anniversary.horizon_years} year
+                {anniversary.horizon_years === 1 ? "" : "s"} ago
+              </span>{" "}
+              ({new Date(anniversary.date).toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              })}
+              ): {anniversary.event_tag}
+            </p>
+            <p className="text-[12px] text-muted-foreground">
+              Regime that day: {regimeLabel(anniversary.regime)}
+              {anniversary.stress_score !== null
+                ? ` · stress ${anniversary.stress_score.toFixed(0)}/100`
+                : ""}
+            </p>
+          </div>
+        )}
+
+        {/* Seasonality — descriptive, n disclosed, no forecast */}
+        {month && (
+          <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              {month.label} seasonality
+            </span>
+            <p className="text-[13px] leading-[1.55] text-foreground">
+              Over the last {month.n} years, {month.label} posted a median Nifty
+              return of{" "}
+              <span className="font-medium tabular-nums">
+                {fmtPP(month.median_return_pct)}
+              </span>{" "}
+              (middle-half {fmtPP(month.q1_return_pct)} to{" "}
+              {fmtPP(month.q3_return_pct)}), positive in{" "}
+              {month.pct_positive !== null
+                ? Math.round(month.pct_positive * month.n)
+                : "—"}{" "}
+              of {month.n}.
+            </p>
+            <p className="text-[11px] italic leading-[1.5] text-muted-foreground">
+              A historical tendency across a small sample (n={month.n}), not a
+              forecast.
+            </p>
+          </div>
+        )}
+
+        {/* Upcoming curated events + same-type history */}
+        <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            Upcoming events
+          </span>
+          {upcoming.length === 0 ? (
+            <p className="text-[12px] leading-[1.5] text-muted-foreground">
+              No curated events in the next 7 days. Known event dates (budgets,
+              RBI policy, elections) are added by hand as they are scheduled.
+            </p>
+          ) : (
+            <ul className="flex flex-col gap-2 text-[13px]">
+              {upcoming.map((e) => (
+                <li key={`${e.date}-${e.tag}`} className="flex flex-col gap-0.5">
+                  <span className="text-foreground">
+                    <span className="font-medium">
+                      {e.days_until === 0
+                        ? "Today"
+                        : `In ${e.days_until} day${e.days_until === 1 ? "" : "s"}`}
+                    </span>
+                    : {e.tag}
+                  </span>
+                  {e.history && (
+                    <span className="text-[12px] text-muted-foreground">
+                      Past {EVENT_TYPE_LABEL[e.event_type ?? ""] ?? "similar"}{" "}
+                      days (n={e.history.n}): median 1-day move{" "}
+                      <span className="tabular-nums">
+                        {fmtPP(e.history.median_move_1d_pct)}
+                      </span>
+                      {e.history.median_move_5d_pct !== null ? (
+                        <>
+                          , 5-day{" "}
+                          <span className="tabular-nums">
+                            {fmtPP(e.history.median_move_5d_pct)}
+                          </span>
+                        </>
+                      ) : null}
+                    </span>
+                  )}
+                </li>
+              ))}
+              <li className="text-[11px] italic leading-[1.5] text-muted-foreground">
+                Historical context only — past moves are not a forecast.
+              </li>
+            </ul>
+          )}
+        </div>
+      </div>
     </Section>
   );
 }

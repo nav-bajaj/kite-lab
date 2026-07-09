@@ -52,6 +52,20 @@ def update_portfolios_step(shared_state_file):
 
 
 POST_PORTFOLIO_STEPS = [
+    # Insight-engine freshness. sync_insights_panels appends the day's new EOD
+    # rows (from nse500_data / indices_data, populated + corporate-action
+    # adjusted earlier this run) onto the long-history panels the engine reads.
+    # Append-only and idempotent, so it is safe this late in the run. The clear
+    # step then drops the on-disk insight pkl caches so the next read rebuilds
+    # from the freshened panels. To refresh a live API worker's in-memory cache
+    # without a redeploy, POST /api/insights/cache/clear (admin) — see
+    # tasks/insights_v2/RUNBOOK_admin_launch.md.
+    ("Sync insight panels", [sys.executable, "scripts/sync_insights_panels.py"]),
+    ("Clear insight caches", [
+        sys.executable, "-c",
+        "import sys; sys.path.insert(0, 'kite-api'); "
+        "from app.insights.reading import clear_all_caches; clear_all_caches()",
+    ]),
     ("Backup data to external location", [sys.executable, "scripts/sync_data_backup.py"]),
 ]
 

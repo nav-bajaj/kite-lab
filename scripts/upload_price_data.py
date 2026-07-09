@@ -22,7 +22,12 @@ import requests
 
 TARGETS = ["nse500_data", "nse500_data_hourly", "nse500_data_historical",
            "nse500_data_gdf_full", "nse500_data_full",
-           "indices_data", "indices_data_full"]
+           "indices_data", "indices_data_full",
+           # insights_v2 Phase A: the long-history panels the insight engine
+           # reads. nse500_data_merged sits in the repo root; the indices panel
+           # is built FROM the Documents store but uploaded AS
+           # indices_data_historical (the prod read path) via --source-dir.
+           "nse500_data_merged", "indices_data_historical"]
 
 
 def compress_directory(source_dir, target_name):
@@ -73,7 +78,15 @@ def main():
     parser.add_argument("--token", required=True, help="JWT auth token")
     parser.add_argument("--target", default=None, choices=TARGETS, help="Upload specific directory only")
     parser.add_argument("--data-dir", default=None, help="Path to kite-lab root (default: auto-detect)")
+    parser.add_argument("--source-dir", default=None,
+                        help="Override the source directory for a single --target "
+                             "upload. Use when the on-disk folder name differs from "
+                             "the upload target, e.g. --target indices_data_historical "
+                             "--source-dir /path/to/indices_data_full.")
     args = parser.parse_args()
+
+    if args.source_dir and not args.target:
+        parser.error("--source-dir requires --target (it overrides that one target's source)")
 
     # Determine data directory
     if args.data_dir:
@@ -89,7 +102,7 @@ def main():
     print()
 
     for target in targets:
-        source_dir = os.path.join(data_dir, target)
+        source_dir = args.source_dir or os.path.join(data_dir, target)
         if not os.path.isdir(source_dir):
             print(f"[SKIP] {target}: directory not found at {source_dir}")
             continue

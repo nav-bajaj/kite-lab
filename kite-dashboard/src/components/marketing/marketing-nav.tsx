@@ -4,11 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import { useAuth, UserButton } from "@clerk/nextjs";
 import { Menu, X } from "lucide-react";
-import { INSIGHTS_ENABLED } from "@/lib/flags";
+import { INSIGHTS_ACCESS } from "@/lib/flags";
 
+// Marketing surfaces are public: only advertise Insights on a full public
+// launch (access=all). In admin-only mode the surface exists but stays
+// unlisted here.
 const LINKS = [
   { label: "Library", href: "/library" },
-  ...(INSIGHTS_ENABLED ? [{ label: "Insights", href: "/insights" }] : []),
+  ...(INSIGHTS_ACCESS === "all" ? [{ label: "Insights", href: "/insights" }] : []),
   { label: "Portfolios", href: "/dashboard" },
 ];
 

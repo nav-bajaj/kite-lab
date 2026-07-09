@@ -1,6 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { INSIGHTS_ENABLED } from "@/lib/flags";
+import { INSIGHTS_ACCESS } from "@/lib/flags";
 
 // Public routes — no auth required. Anything not in this list (and not in
 // `config.matcher` exclusions below) requires a signed-in Clerk session.
@@ -29,17 +29,36 @@ const isPublicRoute = createRouteMatcher([
 // session token's `metadata` claim (configured in Clerk dashboard).
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 
-// Insights surface is gated off until the insight-engine data is provisioned
-// on the production backend (otherwise /insights 500s in prod). When disabled,
-// bounce /insights* to /dashboard so a direct URL doesn't hit the broken page.
-// Flip NEXT_PUBLIC_INSIGHTS_ENABLED=true to re-enable. See src/lib/flags.ts.
+// Insights surface access is a tri-state (see src/lib/flags.ts):
+//   off   → bounce /insights* to /dashboard (data-provisioning launch gate).
+//   admin → require an admin-role session, mirroring isAdminRoute below;
+//           non-admins bounce to /dashboard.
+//   all   → any signed-in user (the default auth.protect() gate applies).
 const isInsightsRoute = createRouteMatcher(["/insights(.*)"]);
 
+function roleFromClaims(sessionClaims: unknown): string | undefined {
+  return (sessionClaims as { metadata?: { role?: string } } | null)
+    ?.metadata?.role;
+}
+
 export default clerkMiddleware(async (auth, req) => {
-  if (!INSIGHTS_ENABLED && isInsightsRoute(req)) {
-    const url = req.nextUrl.clone();
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
+  if (isInsightsRoute(req)) {
+    if (INSIGHTS_ACCESS === "off") {
+      const url = req.nextUrl.clone();
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    }
+    if (INSIGHTS_ACCESS === "admin") {
+      // Signed-in enforcement first (throws to sign-in when absent), then the
+      // admin-role check — same shape as isAdminRoute below.
+      await auth.protect();
+      const { sessionClaims } = await auth();
+      if (roleFromClaims(sessionClaims) !== "admin") {
+        const url = req.nextUrl.clone();
+        url.pathname = "/dashboard";
+        return NextResponse.redirect(url);
+      }
+    }
   }
 
   if (!isPublicRoute(req)) {
@@ -48,8 +67,7 @@ export default clerkMiddleware(async (auth, req) => {
 
   if (isAdminRoute(req)) {
     const { sessionClaims } = await auth();
-    const role = (sessionClaims as { metadata?: { role?: string } } | null)
-      ?.metadata?.role;
+    const role = roleFromClaims(sessionClaims);
     if (role !== "admin") {
       // Not an admin → push them back to the dashboard root rather than
       // throwing a 404. Clerk's auth.protect() above already enforced auth.

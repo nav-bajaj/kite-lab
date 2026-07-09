@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 
 const TABS = [
   { href: "/insights", label: "Pulse" },
+  { href: "/insights/screener", label: "Screener" },
   { href: "/insights/sectors", label: "Sectors" },
   { href: "/insights/watchlists", label: "Watchlists" },
   { href: "/insights/learn", label: "Learn" },
@@ -19,7 +20,9 @@ export function InsightsTabs() {
         const active =
           t.href === "/insights"
             ? pathname === "/insights"
-            : pathname.startsWith(t.href);
+            : t.href === "/insights/screener"
+              ? pathname.startsWith(t.href) || pathname.startsWith("/insights/stocks")
+              : pathname.startsWith(t.href);
         return (
           <Link
             key={t.href}

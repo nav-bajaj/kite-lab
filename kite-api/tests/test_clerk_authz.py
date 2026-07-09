@@ -175,7 +175,7 @@ def test_client() -> TestClient:
 # ---------------------------------------------------------------------------
 
 
-# 17 admin/mutation endpoints. A client-role token must get 403 here.
+# 18 admin/mutation endpoints. A client-role token must get 403 here.
 ADMIN_ENDPOINTS: list[tuple[str, str]] = [
     # jobs.py
     ("GET", "/api/jobs"),
@@ -197,6 +197,8 @@ ADMIN_ENDPOINTS: list[tuple[str, str]] = [
     ("POST", "/api/positions/sync-from-csv"),
     # system.py
     ("POST", "/api/system/headless-login"),
+    # insights.py — the only mutating route on the otherwise-public surface
+    ("POST", "/api/insights/cache/clear"),
 ]
 # Note: POST /api/sync/upload-data and POST /api/jobs/{id}/cancel above already
 # cover sync.py(3rd) and jobs.py respectively. POST /api/sync/upload-data is

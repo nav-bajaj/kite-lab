@@ -324,6 +324,56 @@ export const GLOSSARY: GlossaryEntry[] = [
     definition:
       "Common short-hand for 'one trading day ago' (T-1) or 'two trading days ago' (T-2). Often used to flag that a data source publishes with a lag.",
   },
+
+  // ─────────── insights_v2 stock-level terms ───────────
+  {
+    term: "ATR (Average True Range)",
+    anchor: "atr",
+    bucket: "math",
+    definition:
+      "The average size of a stock's daily trading range over 14 days, including overnight gaps. We show it as a % of price (ATR %) so names of any price are comparable. It measures the size of moves, not their direction.",
+    related: "atr",
+  },
+  {
+    term: "Beta",
+    anchor: "beta",
+    bucket: "math",
+    definition:
+      "How much a stock tends to move when the market moves, measured against Nifty 50 over 60 days. Beta 1 moves with the index; 1.5 amplifies it; 0.6 dampens it. Captures market-linked movement only, not company-specific risk.",
+    related: "beta",
+  },
+  {
+    term: "RSI (Relative Strength Index)",
+    anchor: "rsi",
+    bucket: "math",
+    definition:
+      "A 0-100 momentum oscillator (14-day) comparing the size of recent up-moves to down-moves. High RSI means the stock has been rising persistently. Unrelated to RS rank, which compares a stock to the whole universe.",
+    related: "extension-risk",
+  },
+  {
+    term: "Turnover",
+    anchor: "turnover",
+    bucket: "flows-structure",
+    definition:
+      "The rupee value traded in a stock per day (price x volume), usually a 20-day average in Rs crore. We use it to bucket stocks into liquidity tiers - how easily a name can be traded.",
+    related: "liquidity",
+  },
+  {
+    term: "Inflection (momentum)",
+    anchor: "inflection",
+    bucket: "breadth-momentum",
+    definition:
+      "A large improvement in a stock's RS rank over ~21 trading days (e.g. rank 312 to 88). Purely an observation that the rank changed - in our validity study this cohort did not beat the baseline forward, so we attach no return claim.",
+    related: "rs-rank",
+  },
+  {
+    term: "Extension",
+    anchor: "extension",
+    bucket: "patterns",
+    definition:
+      "How far a stock has run above its own moving averages, measured in ATR units. A descriptive state ('stretched vs its own history'), banded Low/Moderate/High/Very high. Extended names did not historically underperform - it is not a mean-reversion signal.",
+    related: "extension-risk",
+  },
 ];
 
 export const BUCKET_LABELS: Record<GlossaryEntry["bucket"], string> = {

@@ -29,8 +29,9 @@ from __future__ import annotations
 from typing import Optional
 
 import pandas as pd
-from fastapi import APIRouter, HTTPException, Query, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 
+from app.auth import require_admin
 from app.insights import (
     analog_finder,
     breadth,
@@ -39,13 +40,17 @@ from app.insights import (
     cross_asset,
     macro,
     regime as regime_mod,
+    rs_rank,
+    scores as scores_mod,
     sector_breadth,
+    sector_constituents,
     sector_rs,
+    stock_metrics,
     stress,
     subgroups,
     watchlists,
 )
-from app.insights.reading import get_market_reading
+from app.insights.reading import clear_all_caches, get_market_reading
 
 router = APIRouter(prefix="/api/insights", tags=["insights"])
 
@@ -88,6 +93,23 @@ async def reading_endpoint(
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
     return r.to_dict()
+
+
+# ---------- admin cache lifecycle ----------
+
+@router.post("/cache/clear")
+async def clear_cache_endpoint(user: dict = Depends(require_admin)) -> dict:
+    """Drop every insight-engine cache (in-memory lru + on-disk pkl) so the
+    next read rebuilds from the freshest panels.
+
+    Admin-only: this is the one mutating route on an otherwise public,
+    read-only surface. It exists so a data refresh (e.g. after the daily
+    pipeline appends new EOD rows) can be forced without a redeploy. The
+    caches are per-process, so this clears the caches of the worker that
+    serves the request; single-worker deploys refresh fully in one call.
+    """
+    clear_all_caches()
+    return {"status": "cleared"}
 
 
 # ---------- timeseries endpoints ----------
@@ -299,6 +321,255 @@ async def watchlist_drill(
     }
 
 
+# ---------- stock-level screener + detail ----------
+
+# Fields dropped from the screener row to hold the ~500-row payload under the
+# 500 KB budget. All are either (a) shown only on the detail page — which uses
+# the full, undropped row — or (b) trivially derivable client-side:
+#   - absolute rupee DMA / ATR levels: UI reads the % distances + ATR%
+#   - above_*dma booleans: sign of the matching dist_*dma_pct
+#   - rank_21d_ago: rank + rank_delta_21d
+#   - raw score inputs (slopes, 5d/positive-week percentiles, up/down vol,
+#     6m drawdown, one annualized-vol series): summarised by the composite
+#     Trend / Extension / Volume / Consistency scores, which ARE included.
+_SCREENER_ROW_DROP = (
+    "date",
+    "sma_20", "sma_50", "sma_100", "sma_200", "atr_14",
+    "above_20dma", "above_50dma", "above_100dma", "above_200dma",
+    "rank_21d_ago",
+    "slope_50dma_20d", "slope_200dma_20d",
+    "vol_20d_annualized",
+    "ret_5d_pctile_1y", "pct_positive_weeks_6m",
+    "updown_vol_ratio_20d", "max_drawdown_6m_pct",
+)
+
+
+def _compact(v):
+    """JSON-safe + float-trimmed. Rounds every float to 4 decimals so the
+    ~500-row screener payload stays small; scores/percentiles already carry
+    ≤2 decimals upstream, returns are ratios where 4dp = 0.01% resolution."""
+    if isinstance(v, dict):
+        return {k: _compact(x) for k, x in v.items()}
+    if isinstance(v, (list, tuple)):
+        return [_compact(x) for x in v]
+    v = _jsonable(v)
+    if isinstance(v, float):
+        return round(v, 4)
+    return v
+
+
+def _build_row(sym: str, m, rs_entry, sc, sectors: tuple[str, ...],
+               drop: tuple[str, ...] = ()) -> dict:
+    """Zip one stock's metrics + RS entry + scores into a flat row.
+
+    `symbol`/`date` from the sub-records are deduped; `sectors` is the
+    reverse-mapping list (may be empty for names outside every index basket)."""
+    row = m.to_dict()
+    if rs_entry is not None:
+        rd = rs_entry.to_dict()
+        rd.pop("symbol", None)
+        row.update(rd)
+    if sc is not None:
+        sd = sc.to_dict()
+        sd.pop("symbol", None)
+        row.update(sd)
+    for k in drop:
+        row.pop(k, None)
+    row["sectors"] = list(sectors)
+    return _compact(row)
+
+
+@router.get("/screener")
+async def screener_endpoint(
+    response: Response,
+    date: Optional[str] = Query(None, description="As-of date, ISO YYYY-MM-DD. Default: latest."),
+) -> dict:
+    """One payload zipping the per-stock feature frame, RS ranking, and
+    composite scores/tags for the whole NSE 500 as of `date`.
+
+    Filtering and sorting are client-side (500 rows is trivial in-browser).
+    Degrades to an empty row list with `data_available=False` when the
+    stock-metrics panel is unprovisioned (prod before the founder upload) —
+    never 500s on missing data."""
+    _set_cache(response)
+    asof = _parse_date(date)
+    metrics = stock_metrics.get_stock_metrics(asof)
+    if not metrics:
+        return {"asof": None, "data_available": False, "rows": []}
+
+    rs_table = rs_rank.get_rs_table(asof)
+    all_scores = scores_mod.get_scores(asof)
+    sym_sectors = sector_constituents.get_symbol_to_sectors()
+    asof_date = next(iter(metrics.values())).date
+
+    rows = [
+        _build_row(sym, m, rs_table.get(sym), all_scores.get(sym),
+                   sym_sectors.get(sym, ()), drop=_SCREENER_ROW_DROP)
+        for sym, m in metrics.items()
+    ]
+    return {"asof": asof_date, "data_available": True, "rows": rows}
+
+
+def _rs_rank_history(symbol: str, asof: Optional[pd.Timestamp],
+                     dates: list[str], step: int = 21) -> list[dict]:
+    """Coarse (monthly) RS-rank history for the detail-page sparkline.
+
+    Per-date RS ranking is a full-universe cross-sectional build (~240ms
+    cold each, then pkl-cached). Sampling every `step` (~21) trading days
+    keeps this to ~12 builds for a year; the sampled per-date RS tables are
+    shared/cached across every stock page, so only the first detail request
+    after a cache clear pays the build cost. Documented as a coarse monthly
+    series, not a daily one."""
+    if not dates:
+        return []
+    sampled = dates[::step]
+    if dates[-1] not in sampled:
+        sampled.append(dates[-1])
+    out: list[dict] = []
+    for d in sampled:
+        table = rs_rank.get_rs_table(pd.Timestamp(d))
+        entry = table.get(symbol)
+        if entry is None or entry.rank is None:
+            continue
+        out.append({"date": d, "rank": entry.rank,
+                    "percentile": round(entry.percentile, 2)
+                    if entry.percentile is not None else None})
+    return out
+
+
+def _sector_peers(symbol: str, rs_table: dict, sectors: tuple[str, ...],
+                  limit: int = 5) -> list[dict]:
+    """Top-`limit` sector siblings by RS rank (strongest first), excluding
+    the stock itself. Uses the symbol's first (alphabetical) index basket."""
+    if not sectors:
+        return []
+    primary = sectors[0]
+    try:
+        sector = sector_constituents.get_sector(primary)
+    except KeyError:
+        return []
+    cand = [
+        (s, rs_table[s].rank)
+        for s in sector.symbols
+        if s != symbol and s in rs_table and rs_table[s].rank is not None
+    ]
+    cand.sort(key=lambda x: x[1])
+    return [{"symbol": s, "rank": rk, "sector": primary} for s, rk in cand[:limit]]
+
+
+@router.get("/stocks/{symbol}")
+async def stock_detail_endpoint(
+    response: Response,
+    symbol: str,
+    date: Optional[str] = Query(None, description="As-of date, ISO YYYY-MM-DD. Default: latest."),
+) -> dict:
+    """Everything the screener has for one stock plus detail-page timeseries:
+    1y of close + 50/200-DMA + volume ratio, and a coarse (monthly) RS-rank
+    history for the sparkline. Score history is intentionally omitted — a
+    per-date score is a full-universe rebuild, too costly to serialise here;
+    the page shows current scores. Peer strip = top-5 sector siblings by RS.
+
+    404 on an unknown symbol; empty `data_available=False` payload when the
+    panel is unprovisioned."""
+    _set_cache(response)
+    asof = _parse_date(date)
+    metrics = stock_metrics.get_stock_metrics(asof)
+    if not metrics:
+        return {"symbol": symbol, "data_available": False, "row": None,
+                "series": {}, "rs_rank_history": [], "peers": []}
+    if symbol not in metrics:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Unknown symbol {symbol!r}. Valid universe is the NSE 500 "
+                   f"(see /api/insights/screener for the full list).",
+        )
+
+    rs_table = rs_rank.get_rs_table(asof)
+    all_scores = scores_mod.get_scores(asof)
+    sym_sectors = sector_constituents.get_symbol_to_sectors()
+    sectors = sym_sectors.get(symbol, ())
+
+    row = _build_row(symbol, metrics[symbol], rs_table.get(symbol),
+                     all_scores.get(symbol), sectors)
+    series = stock_metrics.get_price_dma_volume_series(symbol, asof)
+    history = _rs_rank_history(symbol, asof, series.get("dates", []))
+    peers = _sector_peers(symbol, rs_table, sectors)
+
+    return {
+        "symbol": symbol,
+        "data_available": True,
+        "asof": metrics[symbol].date,
+        "row": row,
+        "series": _compact(series),
+        "rs_rank_history": history,
+        "peers": peers,
+    }
+
+
+@router.get("/movers")
+async def movers_endpoint(
+    response: Response,
+    date: Optional[str] = Query(None, description="As-of date, ISO YYYY-MM-DD. Default: latest."),
+) -> dict:
+    """Small aggregates for the Pulse enrichment cards (C6): fresh 52-week
+    highs / lows (count + top names) and the biggest 21-day RS-rank improvers.
+
+    Deliberately lean — derived directly from the engine contracts so
+    MarketReading stays free of the full per-stock table. Fresh highs use the
+    engine's `fresh_52w_high` flag; fresh lows are close at the trailing-year
+    minimum (`dist_52w_low_pct ≈ 0`). Named lists are ordered by RS strength
+    (highs strongest-first, lows weakest-first). RS improvers come from the
+    inflection cohort and are OBSERVATION-ONLY per the validity study —
+    rank change is a fact, no forward-return claim attaches."""
+    _set_cache(response)
+    asof = _parse_date(date)
+    metrics = stock_metrics.get_stock_metrics(asof)
+    if not metrics:
+        return {"asof": None, "data_available": False,
+                "fresh_highs": {"count": 0, "names": []},
+                "fresh_lows": {"count": 0, "names": []},
+                "rs_improvers": []}
+
+    rs_table = rs_rank.get_rs_table(asof)
+    sym_sectors = sector_constituents.get_symbol_to_sectors()
+    asof_date = next(iter(metrics.values())).date
+
+    def _rank(sym):
+        e = rs_table.get(sym)
+        return e.rank if (e and e.rank is not None) else 10_000
+
+    def _name(sym, m):
+        return _compact({
+            "symbol": sym, "close": m.close, "ret_1d": m.ret_1d,
+            "rank": rs_table[sym].rank if sym in rs_table else None,
+            "sectors": list(sym_sectors.get(sym, ())),
+        })
+
+    fresh_highs = [s for s, m in metrics.items() if m.fresh_52w_high]
+    fresh_lows = [s for s, m in metrics.items()
+                  if m.dist_52w_low_pct is not None and m.dist_52w_low_pct <= 1e-4]
+    highs_top = sorted(fresh_highs, key=_rank)[:5]
+    lows_top = sorted(fresh_lows, key=_rank, reverse=True)[:5]
+
+    improvers = rs_rank.get_live_inflection_cohort(asof, top_n=5)
+
+    return {
+        "asof": asof_date,
+        "data_available": True,
+        "fresh_highs": {"count": len(fresh_highs),
+                        "names": [_name(s, metrics[s]) for s in highs_top]},
+        "fresh_lows": {"count": len(fresh_lows),
+                       "names": [_name(s, metrics[s]) for s in lows_top]},
+        "rs_improvers": [
+            _compact({"symbol": e.symbol, "rank": e.rank,
+                      "rank_21d_ago": e.rank_21d_ago,
+                      "rank_delta_21d": e.rank_delta_21d,
+                      "sectors": list(sym_sectors.get(e.symbol, ()))})
+            for e in improvers
+        ],
+    }
+
+
 # ---------- concentration / attribution ----------
 
 @router.get("/concentration")
@@ -364,6 +635,57 @@ async def calendar_on_this_day(
         "asof": asof.isoformat(),
         "anniversaries": {str(years): snap.to_dict()
                           for years, snap in anns.items()},
+    }
+
+
+@router.get("/calendar/seasonality")
+async def calendar_seasonality(
+    response: Response,
+    date: Optional[str] = Query(None, description="As-of date, ISO YYYY-MM-DD. Default: latest panel date."),
+) -> dict:
+    """Historical calendar-month (and ISO-week) Nifty return profile for the
+    as-of date: median / middle-half range / % positive years / n.
+
+    Descriptive-only historical observation — with ~16 years per month this
+    cannot clear the forward-return validity bar, so it carries no forecast.
+    Degrades to a null profile when the Nifty panel is unprovisioned."""
+    _set_cache(response)
+    asof = _parse_date(date)
+    try:
+        profile = calendar_content.get_seasonality(asof)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+    return {
+        "asof": profile.asof.isoformat(),
+        "data_available": profile.month is not None,
+        "seasonality": profile.to_dict(),
+    }
+
+
+@router.get("/calendar/pre-event")
+async def calendar_pre_event(
+    response: Response,
+    date: Optional[str] = Query(None, description="As-of date, ISO YYYY-MM-DD. Default: latest panel date."),
+    window_days: int = Query(7, ge=1, le=90, description="Look-ahead window in days."),
+) -> dict:
+    """Curated events falling within the next `window_days`, each attached to
+    the historical Nifty move around past events of the same type (budget /
+    RBI / election). The curated file holds only past events by design, so
+    `upcoming` is empty until forward-dated events are added manually —
+    documented in `app/insights/calendar_content.py`."""
+    _set_cache(response)
+    asof = _parse_date(date)
+    if asof is None:
+        panel = stress.compute_stress_panel()
+        asof = panel.index.max() if not panel.empty else pd.Timestamp.today()
+    try:
+        upcoming = calendar_content.get_pre_event(asof, window_days=window_days)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+    return {
+        "asof": asof.isoformat(),
+        "window_days": window_days,
+        "upcoming": [e.to_dict() for e in upcoming],
     }
 
 
