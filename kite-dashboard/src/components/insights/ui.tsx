@@ -180,6 +180,67 @@ export function StressGauge({
   );
 }
 
+/** A small pill for an insight tag or band label. Render only engine label
+ *  strings verbatim (compliance surface — see kite-api/app/insights/scores.py).
+ *  `tone` is deliberately restrained: bands/tags describe a state, they never
+ *  imply a buy/sell action or a mean-reversion call. */
+export function Tag({ label, tone = "muted" }: { label: string; tone?: Tone }) {
+  const border =
+    tone === "positive"
+      ? "border-[color:var(--positive)] text-[color:var(--positive)]"
+      : tone === "warning"
+        ? "border-[color:var(--warning)] text-[color:var(--warning)]"
+        : "border-border text-muted-foreground";
+  return (
+    <span className={cn("inline-block rounded-full border px-2 py-0.5 text-[11px] font-medium", border)}>
+      {label}
+    </span>
+  );
+}
+
+/** Volume-confirmation band → tone. "Strong" reads positive (participation
+ *  confirmed); the rest stay neutral. */
+export function volumeBandTone(band: string | null): Tone {
+  return band === "Strong" ? "positive" : "muted";
+}
+
+/** A 0–100 score rendered as a value + thin bar. `tone` colors the bar; for
+ *  extension risk pass "muted" — a high reading is descriptive ("stretched vs
+ *  its own history"), NOT a signal to act, so it must not read as a red alert. */
+export function ScoreBar({
+  value,
+  tone = "default",
+  suffix,
+}: {
+  value: number | null;
+  tone?: Tone;
+  suffix?: string;
+}) {
+  if (value === null || value === undefined || Number.isNaN(value)) {
+    return <span className="text-muted-foreground">—</span>;
+  }
+  const pct = Math.max(0, Math.min(100, value));
+  const color =
+    tone === "positive"
+      ? "var(--positive)"
+      : tone === "warning"
+        ? "var(--warning)"
+        : tone === "negative"
+          ? "var(--negative)"
+          : "var(--muted-foreground)";
+  return (
+    <div className="flex items-center gap-2">
+      <span className="w-9 shrink-0 text-right font-mono text-[13px] tabular-nums text-foreground">
+        {pct.toFixed(0)}
+      </span>
+      <div className="h-1.5 w-full min-w-[40px] overflow-hidden rounded-full bg-muted">
+        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: color }} />
+      </div>
+      {suffix && <span className="shrink-0 text-[11px] text-muted-foreground">{suffix}</span>}
+    </div>
+  );
+}
+
 /** Ranked sector RS leaderboard as horizontal semantic bars (the guide's
  *  Insights/Data look). `rs` field is a ratio. */
 export function SectorBars({
