@@ -1,0 +1,33 @@
+name: insights_v2
+status: in-progress
+opened: 2026-07-09
+closed: null
+branch: insights-v2
+supersedes: []
+depends_on:
+  - insight_engine   # v1 engine, merged at 7f4f797; this task un-gates + expands it
+register_rows: []    # A2 sync.py change is R-014-class — security-reviewer pass required
+
+goals:
+  - "Phase A: /insights visible to admins in prod (data provisioning + role-aware access flag)"
+  - "Phase C: stock-level analytics — per-stock metrics, RS ranks, composite scores, screener, stock detail pages"
+  - "Phase B: v1 leftovers (seasonality, pre-event, calendar strip, US 10y optional)"
+
+governance:
+  - "TDD per tasks/insight_engine/TDD_POLICY.md for all engine work"
+  - "VALIDITY_PROTOCOL.md gates any forward-return claim"
+  - "Compliance lexicon (no recommendation language) extends to all new UI copy"
+  - "security-reviewer subagent on sync.py / upload-path diffs"
+
+execution_model: "Planned by Fable 5; executed by sequential Opus 4.8 agents (A → C1 → C2, B anytime after A)"
+
+founder_actions:
+  - "Run data upload to Railway with prod admin JWT (see RUNBOOK_admin_launch.md once written)"
+  - "Set NEXT_PUBLIC_INSIGHTS_ACCESS=admin on Vercel + redeploy"
+  - "Decide on FRED API key for US 10y (B4)"
+
+key_docs:
+  plan: PLAN.md
+  tasks: TASKS.md
+  v1_history: ../insight_engine/
+  brainstorm_source: /Users/navdeep/Documents/marketworks_insight_dashboard_brainstorm.md
