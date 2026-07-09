@@ -31,6 +31,7 @@ from app.insights import (
     regime as regime_mod,
     sector_breadth,
     sector_rs,
+    stock_metrics,
     stress,
     subgroups,
     watchlists,
@@ -214,3 +215,4 @@ def clear_all_caches() -> None:
     concentration.load_nifty50_index.cache_clear()
     subgroups.clear_cache()
     cross_asset.clear_cache()
+    stock_metrics.clear_cache()
