@@ -66,6 +66,13 @@ ALLOWED_UPLOAD_DIRS = {
     "nse500_data_full",       # stocks: GDF + Kite stitched (comprehensive)
     "indices_data",
     "indices_data_full",      # indices: historical + Kite stitched (comprehensive)
+    # Insight-engine long-history panels (insights_v2 Phase A). breadth.py reads
+    # settings.data_dir/nse500_data_merged; macro.py/watchlists.py read
+    # settings.data_dir/indices_data_historical via app.insights._paths. Both
+    # extract to settings.data_dir/<target> here and are volume-symlinked in
+    # scripts/init_persistent_storage.sh so uploads survive a redeploy.
+    "nse500_data_merged",     # 16y split-adjusted stock panel (breadth engine)
+    "indices_data_historical",  # 16y indices + VIX panel (macro engine)
 }
 
 

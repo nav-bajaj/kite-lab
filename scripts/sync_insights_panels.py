@@ -27,15 +27,25 @@ cache + restarting the API.
 """
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+
+# Reuse the engine's indices-dir resolver so the append target matches the
+# path the API actually reads (env override → local Documents → data_dir
+# fallback). Without this the script could append to a folder no reader sees.
+_KITE_API = REPO_ROOT / "kite-api"
+if str(_KITE_API) not in sys.path:
+    sys.path.insert(0, str(_KITE_API))
+from app.insights._paths import indices_dir  # noqa: E402
+
 LIVE_STOCKS = REPO_ROOT / "nse500_data"
 MERGED_STOCKS = REPO_ROOT / "nse500_data_merged"
 LIVE_INDICES = REPO_ROOT / "indices_data"
-HIST_INDICES = Path("/Users/navdeep/Documents/stock_data/indices_data_full")
+HIST_INDICES = indices_dir()
 
 
 def _append_new_rows(live_path: Path, target_path: Path) -> tuple[int, str | None]:

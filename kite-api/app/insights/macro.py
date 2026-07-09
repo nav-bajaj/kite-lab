@@ -34,6 +34,7 @@ import numpy as np
 import pandas as pd
 
 from app.config import get_settings
+from app.insights._paths import indices_dir as _indices_dir
 
 
 # Sector indices with long history (≥10 years). Verified at runtime.
@@ -42,17 +43,6 @@ SECTOR_INDICES = [
     "NIFTY_METAL", "NIFTY_REALTY", "NIFTY_FIN_SERVICE", "NIFTY_ENERGY",
     "NIFTY_MEDIA",
 ]
-
-
-def _indices_dir() -> Path:
-    # The historical indices folder lives outside the repo in the
-    # user's stock_data store. If it's not there (e.g., in Docker), fall
-    # back to the in-repo `indices_data/` which has the live series.
-    settings = get_settings()
-    external = Path("/Users/navdeep/Documents/stock_data/indices_data_full")
-    if external.exists():
-        return external
-    return settings.data_dir / "indices_data_historical"
 
 
 def _cache_file() -> Path:
