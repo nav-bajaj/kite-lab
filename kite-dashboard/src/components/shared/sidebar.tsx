@@ -4,37 +4,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
-import {
-  LayoutDashboard,
-  TrendingUp,
-  RefreshCw,
-  History,
-  Settings,
-  ChevronLeft,
-  Wallet,
-} from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/contexts/sidebar-context";
 import { useUniverse } from "@/contexts/universe-context";
 import { useApiAuth } from "@/contexts/api-auth-context";
 import { preloadRoute } from "@/lib/preload";
-
-// `adminOnly` items are filtered out for non-admin clients in the render.
-const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, adminOnly: false },
-  { name: "Open Positions", href: "/positions", icon: Wallet, adminOnly: false },
-  { name: "Performance", href: "/performance", icon: TrendingUp, adminOnly: false },
-  { name: "Rebalance", href: "/rebalance", icon: RefreshCw, adminOnly: false },
-  { name: "Trades", href: "/trades", icon: History, adminOnly: false },
-  { name: "Admin", href: "/admin", icon: Settings, adminOnly: true },
-];
+import { getNavigation } from "@/lib/nav";
 
 export function Sidebar() {
   const pathname = usePathname();
   const { user } = useUser();
   const role = (user?.publicMetadata as { role?: string } | undefined)?.role;
   const isAdmin = role === "admin";
-  const visibleNav = navigation.filter((item) => !item.adminOnly || isAdmin);
+  const visibleNav = getNavigation(isAdmin);
   const { collapsed, toggle } = useSidebar();
   const { universeId } = useUniverse();
   const { authReady } = useApiAuth();
