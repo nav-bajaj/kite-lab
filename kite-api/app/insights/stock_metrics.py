@@ -49,6 +49,8 @@ CRORE = 1e7                  # ₹1 Cr = 10^7
 # Liquidity tier cutoffs (₹ Cr, 20-session average turnover) — design choices.
 LIQ_GOOD_CR = 10.0
 LIQ_MODERATE_CR = 1.0
+# User-facing tier labels — covered by the closed-lexicon compliance test.
+LIQUIDITY_TIERS: tuple[str, ...] = ("Good", "Moderate", "Low")
 
 
 @dataclass

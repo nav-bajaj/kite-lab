@@ -58,6 +58,17 @@ TAG_COILED = "Coiled"
 TAG_NEW_MOMENTUM = "New momentum"
 TAG_QUIET = "Quiet"
 
+# Full compliance surface — every user-facing label these engines emit.
+# The closed-lexicon test (tests/test_insights_commentary.py) locks this set
+# so no tag/band label can ship without passing the no-recommendation-verb /
+# no-jargon gate. The C4/C5 API/UI agent should render only these strings.
+INSIGHT_TAGS: tuple[str, ...] = (
+    TAG_MOMENTUM_LEADER, TAG_NEAR_52W_HIGH, TAG_FRESH_52W_HIGH,
+    TAG_VOLUME_EXPANSION, TAG_EXTENDED, TAG_COILED, TAG_NEW_MOMENTUM, TAG_QUIET,
+)
+EXTENSION_BANDS: tuple[str, ...] = ("Low", "Moderate", "High", "Very high")
+VOLUME_BANDS: tuple[str, ...] = ("Weak", "Neutral", "Strong")
+
 # Tag thresholds (transparent design choices).
 MOMENTUM_LEADER_PCTILE = 90.0     # RS top decile
 NEAR_52W_HIGH_PCT = -0.03         # within 3% below the high

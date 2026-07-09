@@ -98,6 +98,46 @@ class TestEditorialVoice:
         assert "not investment advice" in commentary_obj.disclaimer.lower()
 
 
+class TestInsightsV2LabelLexicon:
+    """C8.2 — extend the closed lexicon to every user-facing string the
+    stock-level engines (stock_metrics / scores) emit: insight tags, score
+    band labels, liquidity tiers. Exact strings are compliance-controlled;
+    this test locks the set and gates the wording."""
+
+    @staticmethod
+    def _all_labels() -> list[str]:
+        from app.insights import scores, stock_metrics
+        return list(scores.INSIGHT_TAGS) + list(scores.EXTENSION_BANDS) \
+            + list(scores.VOLUME_BANDS) + list(stock_metrics.LIQUIDITY_TIERS)
+
+    def test_labels_have_no_recommendation_verbs(self):
+        for label in self._all_labels():
+            padded = f" {label.lower()} "
+            offending = [v for v in RECOMMENDATION_VERBS if v in padded]
+            assert not offending, f"{label!r} contains recommendation verb {offending}"
+
+    def test_labels_have_no_jargon(self):
+        for label in self._all_labels():
+            low = label.lower()
+            offending = [t for t in JARGON_TERMS if t.lower() in low]
+            assert not offending, f"{label!r} contains jargon {offending}"
+
+    def test_insight_tag_set_is_locked(self):
+        """No tag ships without a deliberate update here — the compliance
+        review is on the exact wording."""
+        from app.insights import scores
+        assert set(scores.INSIGHT_TAGS) == {
+            "Momentum leader", "Near 52-week high", "Fresh 52-week high",
+            "Volume expansion", "Extended", "Coiled", "New momentum", "Quiet",
+        }
+
+    def test_band_labels_are_locked(self):
+        from app.insights import scores, stock_metrics
+        assert set(scores.EXTENSION_BANDS) == {"Low", "Moderate", "High", "Very high"}
+        assert set(scores.VOLUME_BANDS) == {"Weak", "Neutral", "Strong"}
+        assert set(stock_metrics.LIQUIDITY_TIERS) == {"Good", "Moderate", "Low"}
+
+
 class TestHeadlinesAcrossRegimes:
     """The headline should reflect the regime well — verify on canonical
     historical episodes."""
