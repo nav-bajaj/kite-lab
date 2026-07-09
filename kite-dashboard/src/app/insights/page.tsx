@@ -2,11 +2,18 @@ import Link from "next/link";
 import {
   getReading,
   getMovers,
+  getOnThisDay,
+  getSeasonality,
+  getPreEvent,
   fmtPct,
   fmtNum,
   ConcentrationReading,
   CrossAssetEntry,
   MoversResponse,
+  OnThisDayResponse,
+  SeasonalityResponse,
+  PreEventResponse,
+  regimeLabel,
 } from "@/lib/insights-api";
 import { RegimeLegend } from "./_components/regime-legend";
 import {
@@ -38,7 +45,16 @@ export default async function PulsePage({
   searchParams: Promise<{ date?: string }>;
 }) {
   const { date } = await searchParams;
-  const [reading, movers] = await Promise.all([getReading(date), getMovers(date)]);
+  // Calendar-strip fetches are additive context — never let them break the
+  // core Pulse render, so each degrades to null on error.
+  const nullOnErr = <T,>(p: Promise<T>) => p.catch(() => null);
+  const [reading, movers, onThisDay, seasonality, preEvent] = await Promise.all([
+    getReading(date),
+    getMovers(date),
+    nullOnErr(getOnThisDay(date)),
+    nullOnErr(getSeasonality(date)),
+    nullOnErr(getPreEvent(date)),
+  ]);
   const { regime, stress, sector_leaderboard_60d, concentration, cross_asset } = reading;
   const dateQuery = date ? `?date=${encodeURIComponent(date)}` : "";
 
@@ -81,6 +97,13 @@ export default async function PulsePage({
       {movers.data_available && (
         <StockMoversSection movers={movers} dateQuery={dateQuery} />
       )}
+
+      {/* ──────────────── MARKET CALENDAR (B3) ──────────────── */}
+      <CalendarStrip
+        onThisDay={onThisDay}
+        seasonality={seasonality}
+        preEvent={preEvent}
+      />
 
       {/* ──────────────── CONCENTRATION ──────────────── */}
       <ConcentrationSection concentration={concentration} />
@@ -472,6 +495,155 @@ function MoverRow({ label, names, dateQuery, preset }: { label: string; names: s
         </div>
       )}
     </div>
+  );
+}
+
+// ──────────────── Market calendar strip (B3) ────────────────
+
+/** Format a percentage-point value (already ×100 by the engine). */
+function fmtPP(v: number | null | undefined, decimals = 1): string {
+  if (v === null || v === undefined || Number.isNaN(v)) return "—";
+  const s = v.toFixed(decimals);
+  return v >= 0 ? `+${s}%` : `${s}%`;
+}
+
+const EVENT_TYPE_LABEL: Record<string, string> = {
+  budget: "Union Budget",
+  rbi_policy: "RBI policy",
+  election: "General election",
+};
+
+function CalendarStrip({
+  onThisDay,
+  seasonality,
+  preEvent,
+}: {
+  onThisDay: OnThisDayResponse | null;
+  seasonality: SeasonalityResponse | null;
+  preEvent: PreEventResponse | null;
+}) {
+  // Prefer the longest-horizon anniversary that lands on a curated event.
+  const tagged = onThisDay
+    ? Object.values(onThisDay.anniversaries)
+        .filter((a) => a.event_tag)
+        .sort((a, b) => b.horizon_years - a.horizon_years)
+    : [];
+  const anniversary = tagged[0] ?? null;
+
+  const month = seasonality?.data_available ? seasonality.seasonality.month : null;
+  const upcoming = preEvent?.upcoming ?? [];
+
+  // Nothing to show → render nothing (additive strip).
+  if (!anniversary && !month && upcoming.length === 0) return null;
+
+  return (
+    <Section
+      title="Market calendar"
+      help={<LearnLink slug="regime" label="What is regime?" />}
+    >
+      <div className="grid gap-4 md:grid-cols-3">
+        {/* On this day */}
+        {anniversary && (
+          <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              On this day
+            </span>
+            <p className="text-[13px] leading-[1.55] text-foreground">
+              <span className="font-medium">
+                {anniversary.horizon_years} year
+                {anniversary.horizon_years === 1 ? "" : "s"} ago
+              </span>{" "}
+              ({new Date(anniversary.date).toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              })}
+              ): {anniversary.event_tag}
+            </p>
+            <p className="text-[12px] text-muted-foreground">
+              Regime that day: {regimeLabel(anniversary.regime)}
+              {anniversary.stress_score !== null
+                ? ` · stress ${anniversary.stress_score.toFixed(0)}/100`
+                : ""}
+            </p>
+          </div>
+        )}
+
+        {/* Seasonality — descriptive, n disclosed, no forecast */}
+        {month && (
+          <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              {month.label} seasonality
+            </span>
+            <p className="text-[13px] leading-[1.55] text-foreground">
+              Over the last {month.n} years, {month.label} posted a median Nifty
+              return of{" "}
+              <span className="font-medium tabular-nums">
+                {fmtPP(month.median_return_pct)}
+              </span>{" "}
+              (middle-half {fmtPP(month.q1_return_pct)} to{" "}
+              {fmtPP(month.q3_return_pct)}), positive in{" "}
+              {month.pct_positive !== null
+                ? Math.round(month.pct_positive * month.n)
+                : "—"}{" "}
+              of {month.n}.
+            </p>
+            <p className="text-[11px] italic leading-[1.5] text-muted-foreground">
+              A historical tendency across a small sample (n={month.n}), not a
+              forecast.
+            </p>
+          </div>
+        )}
+
+        {/* Upcoming curated events + same-type history */}
+        <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            Upcoming events
+          </span>
+          {upcoming.length === 0 ? (
+            <p className="text-[12px] leading-[1.5] text-muted-foreground">
+              No curated events in the next 7 days. Known event dates (budgets,
+              RBI policy, elections) are added by hand as they are scheduled.
+            </p>
+          ) : (
+            <ul className="flex flex-col gap-2 text-[13px]">
+              {upcoming.map((e) => (
+                <li key={`${e.date}-${e.tag}`} className="flex flex-col gap-0.5">
+                  <span className="text-foreground">
+                    <span className="font-medium">
+                      {e.days_until === 0
+                        ? "Today"
+                        : `In ${e.days_until} day${e.days_until === 1 ? "" : "s"}`}
+                    </span>
+                    : {e.tag}
+                  </span>
+                  {e.history && (
+                    <span className="text-[12px] text-muted-foreground">
+                      Past {EVENT_TYPE_LABEL[e.event_type ?? ""] ?? "similar"}{" "}
+                      days (n={e.history.n}): median 1-day move{" "}
+                      <span className="tabular-nums">
+                        {fmtPP(e.history.median_move_1d_pct)}
+                      </span>
+                      {e.history.median_move_5d_pct !== null ? (
+                        <>
+                          , 5-day{" "}
+                          <span className="tabular-nums">
+                            {fmtPP(e.history.median_move_5d_pct)}
+                          </span>
+                        </>
+                      ) : null}
+                    </span>
+                  )}
+                </li>
+              ))}
+              <li className="text-[11px] italic leading-[1.5] text-muted-foreground">
+                Historical context only — past moves are not a forecast.
+              </li>
+            </ul>
+          )}
+        </div>
+      </div>
+    </Section>
   );
 }
 

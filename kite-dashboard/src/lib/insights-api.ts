@@ -420,6 +420,79 @@ export async function getMovers(date?: string): Promise<MoversResponse> {
   return getJson<MoversResponse>(`/api/insights/movers${q}`);
 }
 
+// ---------- calendar strip (insights_v2 B1/B2/B3) ----------
+
+export interface AnniversarySnapshot {
+  horizon_years: number;
+  date: string;
+  regime: string;
+  stress_score: number | null;
+  event_tag: string | null;
+  actual_offset_days: number;
+}
+
+export interface OnThisDayResponse {
+  asof: string;
+  anniversaries: Record<string, AnniversarySnapshot>;
+}
+
+export async function getOnThisDay(date?: string): Promise<OnThisDayResponse> {
+  const q = date ? `?date=${encodeURIComponent(date)}` : "";
+  return getJson<OnThisDayResponse>(`/api/insights/calendar/on-this-day${q}`);
+}
+
+export interface PeriodSeasonality {
+  kind: string;
+  period: number;
+  label: string;
+  n: number;
+  median_return_pct: number | null;
+  q1_return_pct: number | null;
+  q3_return_pct: number | null;
+  pct_positive: number | null;
+}
+
+export interface SeasonalityResponse {
+  asof: string;
+  data_available: boolean;
+  seasonality: {
+    asof: string;
+    month: PeriodSeasonality | null;
+    week: PeriodSeasonality | null;
+  };
+}
+
+export async function getSeasonality(date?: string): Promise<SeasonalityResponse> {
+  const q = date ? `?date=${encodeURIComponent(date)}` : "";
+  return getJson<SeasonalityResponse>(`/api/insights/calendar/seasonality${q}`);
+}
+
+export interface EventTypeHistory {
+  event_type: string;
+  n: number;
+  median_move_1d_pct: number | null;
+  median_move_5d_pct: number | null;
+}
+
+export interface UpcomingEvent {
+  date: string;
+  tag: string;
+  event_type: string | null;
+  days_until: number;
+  history: EventTypeHistory | null;
+}
+
+export interface PreEventResponse {
+  asof: string;
+  window_days: number;
+  upcoming: UpcomingEvent[];
+}
+
+export async function getPreEvent(date?: string): Promise<PreEventResponse> {
+  const q = date ? `?date=${encodeURIComponent(date)}` : "";
+  return getJson<PreEventResponse>(`/api/insights/calendar/pre-event${q}`);
+}
+
 /** Strip the NIFTY_ prefix for display; sector baskets are index names. */
 export function sectorLabel(s: string): string {
   return s.replace(/^NIFTY_/, "").replace(/_/g, " ");
