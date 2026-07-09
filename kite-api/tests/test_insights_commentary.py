@@ -304,6 +304,63 @@ class TestConditionalParagraphSpec:
         )
 
 
+class TestSeasonalityNoteSpec:
+    """B1 — the descriptive seasonality sentence is forward-return-shaped
+    copy, so it is compliance-controlled: it must disclose n, stay purely
+    descriptive (no forecast / prediction), and carry no jargon or
+    recommendation verbs (VALIDITY_PROTOCOL.md — seasonality can't clear the
+    n>=100 bar, so it ships descriptive-only)."""
+
+    from dataclasses import dataclass as _dc
+
+    class _FakeMonth:
+        def __init__(self):
+            self.label = "December"
+            self.n = 16
+            self.median_return_pct = 1.4
+            self.q1_return_pct = -0.9
+            self.q3_return_pct = 3.1
+            self.pct_positive = 0.5625
+
+    class _FakeProfile:
+        def __init__(self, month):
+            self.month = month
+
+    def _note(self):
+        return commentary._seasonality_note(
+            self._FakeProfile(self._FakeMonth())
+        )
+
+    def test_discloses_sample_size(self):
+        note = self._note()
+        assert "16 years" in note, f"n must be disclosed; got: {note!r}"
+
+    def test_is_descriptive_not_predictive(self):
+        low = self._note().lower()
+        # Must explicitly disclaim forecasting; must not use predictive verbs
+        assert "not a forecast" in low
+        for banned in ("will ", "expect", "predict", "should rise",
+                       "should fall", "likely to"):
+            assert banned not in low, (
+                f"seasonality copy must not predict; found {banned!r}: {low!r}"
+            )
+
+    def test_no_jargon_or_recommendation_verbs(self):
+        low = self._note().lower()
+        assert not [t for t in JARGON_TERMS if t.lower() in low], (
+            f"jargon in seasonality copy: {low!r}"
+        )
+        padded = f" {low} "
+        assert not [v for v in RECOMMENDATION_VERBS if v in padded], (
+            f"recommendation verb in seasonality copy: {low!r}"
+        )
+
+    def test_empty_when_history_thin(self):
+        class _NoMonth:
+            month = None
+        assert commentary._seasonality_note(_NoMonth()) == ""
+
+
 class TestStressBandSpec:
     """Stress-band phrase must match what reality looked like on canonical
     historical days. This is stronger than the parametrized threshold check

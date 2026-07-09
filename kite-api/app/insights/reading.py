@@ -24,6 +24,7 @@ import pandas as pd
 from app.insights import (
     analog_finder,
     breadth,
+    calendar_content,
     concentration,
     conditional_dist,
     cross_asset,
@@ -220,3 +221,4 @@ def clear_all_caches() -> None:
     stock_metrics.clear_cache()
     rs_rank.clear_cache()
     scores_mod.clear_cache()
+    calendar_content.clear_cache()

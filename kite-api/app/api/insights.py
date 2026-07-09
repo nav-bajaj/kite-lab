@@ -638,6 +638,57 @@ async def calendar_on_this_day(
     }
 
 
+@router.get("/calendar/seasonality")
+async def calendar_seasonality(
+    response: Response,
+    date: Optional[str] = Query(None, description="As-of date, ISO YYYY-MM-DD. Default: latest panel date."),
+) -> dict:
+    """Historical calendar-month (and ISO-week) Nifty return profile for the
+    as-of date: median / middle-half range / % positive years / n.
+
+    Descriptive-only historical observation — with ~16 years per month this
+    cannot clear the forward-return validity bar, so it carries no forecast.
+    Degrades to a null profile when the Nifty panel is unprovisioned."""
+    _set_cache(response)
+    asof = _parse_date(date)
+    try:
+        profile = calendar_content.get_seasonality(asof)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+    return {
+        "asof": profile.asof.isoformat(),
+        "data_available": profile.month is not None,
+        "seasonality": profile.to_dict(),
+    }
+
+
+@router.get("/calendar/pre-event")
+async def calendar_pre_event(
+    response: Response,
+    date: Optional[str] = Query(None, description="As-of date, ISO YYYY-MM-DD. Default: latest panel date."),
+    window_days: int = Query(7, ge=1, le=90, description="Look-ahead window in days."),
+) -> dict:
+    """Curated events falling within the next `window_days`, each attached to
+    the historical Nifty move around past events of the same type (budget /
+    RBI / election). The curated file holds only past events by design, so
+    `upcoming` is empty until forward-dated events are added manually —
+    documented in `app/insights/calendar_content.py`."""
+    _set_cache(response)
+    asof = _parse_date(date)
+    if asof is None:
+        panel = stress.compute_stress_panel()
+        asof = panel.index.max() if not panel.empty else pd.Timestamp.today()
+    try:
+        upcoming = calendar_content.get_pre_event(asof, window_days=window_days)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+    return {
+        "asof": asof.isoformat(),
+        "window_days": window_days,
+        "upcoming": [e.to_dict() for e in upcoming],
+    }
+
+
 # ---------- sector subgroups ----------
 
 @router.get("/subgroups")

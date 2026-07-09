@@ -33,6 +33,8 @@ class TestPublicAccess:
         "/api/insights/watchlists?limit=3",
         "/api/insights/watchlists/breakouts",
         "/api/insights/regime/history",
+        "/api/insights/calendar/seasonality",
+        "/api/insights/calendar/pre-event",
     ])
     def test_route_works_without_auth(self, client, path):
         """No Authorization header sent — must still return 200."""
@@ -317,6 +319,44 @@ class TestMoversEndpoint:
         assert b["fresh_highs"]["count"] == 0
 
 
+# ---------- calendar seasonality + pre-event (insights_v2 B1/B2) ----------
+
+class TestSeasonalityEndpoint:
+    def test_shape_and_month_matches_date(self, client):
+        r = client.get("/api/insights/calendar/seasonality?date=2024-12-10")
+        assert r.status_code == 200
+        b = r.json()
+        assert "seasonality" in b and "data_available" in b
+        if b["data_available"]:
+            m = b["seasonality"]["month"]
+            assert m["period"] == 12
+            assert m["n"] > 0  # sample size disclosed
+            assert m["median_return_pct"] is not None
+
+    def test_rejects_malformed_date(self, client):
+        assert client.get(
+            "/api/insights/calendar/seasonality?date=nope").status_code == 400
+
+
+class TestPreEventEndpoint:
+    def test_shape(self, client):
+        r = client.get("/api/insights/calendar/pre-event?window_days=7")
+        assert r.status_code == 200
+        b = r.json()
+        assert "upcoming" in b and isinstance(b["upcoming"], list)
+        assert b["window_days"] == 7
+
+    def test_far_future_date_has_no_upcoming(self, client):
+        # Curated file holds only past events → nothing ahead of 2030.
+        b = client.get(
+            "/api/insights/calendar/pre-event?date=2030-01-01").json()
+        assert b["upcoming"] == []
+
+    def test_window_days_bounds_enforced(self, client):
+        assert client.get(
+            "/api/insights/calendar/pre-event?window_days=0").status_code == 422
+
+
 # ---------- caching ----------
 
 class TestCacheHeaders:
@@ -327,6 +367,8 @@ class TestCacheHeaders:
         "/api/insights/analogs?k=3",
         "/api/insights/watchlists?limit=3",
         "/api/insights/screener",
+        "/api/insights/calendar/seasonality",
+        "/api/insights/calendar/pre-event",
     ])
     def test_cache_control_header_set(self, client, path):
         r = client.get(path)
