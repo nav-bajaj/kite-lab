@@ -29,8 +29,9 @@ from __future__ import annotations
 from typing import Optional
 
 import pandas as pd
-from fastapi import APIRouter, HTTPException, Query, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 
+from app.auth import require_admin
 from app.insights import (
     analog_finder,
     breadth,
@@ -45,7 +46,7 @@ from app.insights import (
     subgroups,
     watchlists,
 )
-from app.insights.reading import get_market_reading
+from app.insights.reading import clear_all_caches, get_market_reading
 
 router = APIRouter(prefix="/api/insights", tags=["insights"])
 
@@ -88,6 +89,23 @@ async def reading_endpoint(
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
     return r.to_dict()
+
+
+# ---------- admin cache lifecycle ----------
+
+@router.post("/cache/clear")
+async def clear_cache_endpoint(user: dict = Depends(require_admin)) -> dict:
+    """Drop every insight-engine cache (in-memory lru + on-disk pkl) so the
+    next read rebuilds from the freshest panels.
+
+    Admin-only: this is the one mutating route on an otherwise public,
+    read-only surface. It exists so a data refresh (e.g. after the daily
+    pipeline appends new EOD rows) can be forced without a redeploy. The
+    caches are per-process, so this clears the caches of the worker that
+    serves the request; single-worker deploys refresh fully in one call.
+    """
+    clear_all_caches()
+    return {"status": "cleared"}
 
 
 # ---------- timeseries endpoints ----------
