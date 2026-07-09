@@ -75,10 +75,63 @@ are prod actions documented in `RUNBOOK_admin_launch.md`.
 
 | # | Task | Owner | Risk | Done |
 |---|---|---|---|---|
-| B1 | Seasonality engine (4.4.3) — TDD; descriptive-only unless validity passes | 🤖 | 🟡 | ☐ |
-| B2 | Pre-event helper (4.4.4) | 🤖 | 🟢 | ☐ |
-| B3 | Pulse calendar strip (4.4.7) | 🤖 | 🟢 | ☐ |
-| B4 | US 10y via FRED — only if founder provides key | 👤+🤖 | 🟢 | ☐ |
+| B1 | Seasonality engine (4.4.3) — TDD; descriptive-only unless validity passes | 🤖 | 🟡 | ✅ |
+| B2 | Pre-event helper (4.4.4) | 🤖 | 🟢 | ✅ |
+| B3 | Pulse calendar strip (4.4.7) | 🤖 | 🟢 | ✅ |
+| B4 | US 10y via FRED — only if founder provides key | 👤+🤖 | 🟢 | ⊘ skipped (no FRED key) |
+
+### Phase B worklog (Opus 4.8 agent, 2026-07-09)
+
+All 🤖 Phase B items done and green. B4 SKIPPED (no FRED key provided; the
+US-10y series was not built and not fabricated). Suite: **783 passed, 1
+skipped** (was 759/1 — +24 tests). `npm run build` clean, ESLint clean. Two
+commits: B1/B2 engines+API+copy (`c282d48`), B3 Pulse strip (`4e1e791`).
+
+- **B1 seasonality** (`calendar_content.py`) — `get_seasonality(asof)` returns
+  the historical calendar-month **and** ISO-week Nifty return profile off the
+  16y NIFTY_50 panel: median / middle-half range (25–75th pct) / % positive
+  years / n. Pure core `compute_seasonality(close, asof)` is TDD-tested with a
+  hand-computed synthetic panel (Dec returns [+10,-5,+20,+5]% → median +7.5%,
+  3/4 positive, n=4); boundary is `SEASONALITY_MIN_OBS=3` (thin months →
+  `None`, never fabricated). Cache hooked into `reading.clear_all_caches()`.
+  - **Copy** (`commentary._seasonality_note`) is the compliance surface. Per
+    VALIDITY_PROTOCOL.md, seasonality is forward-return-shaped but with ~16
+    years/month can never clear the n≥100 bar → **descriptive-only**. Template
+    (n always disclosed, explicit no-forecast disclaimer):
+    *"Seasonal context: over the last {n} years, {Month} has posted a median
+    Nifty return of {median:+.1f}% (middle-half range {q1:+.1f}% to {q3:+.1f}%),
+    finishing positive in {k} of {n}. A historical tendency across a small
+    sample, not a forecast."* Wired as the **quiet-day fallback** of the
+    premarket cascade (`_on_this_day or _indicator_spotlight or
+    _seasonality_moment`). Locked by `TestSeasonalityNoteSpec` (n-disclosure,
+    no predictive verbs, no jargon/recommendation).
+- **B2 pre-event** (`calendar_content.py`) — `get_pre_event(asof, window_days=7)`
+  flags curated events dated within the window and attaches
+  `get_event_type_history(type)` = median 1d/5d Nifty move around **past events
+  of the same type** (budget / RBI / election, keyword-classified). TDD:
+  classify, window inclusion, hand-computed +5% 1-day move, n-disclosure. The
+  curated CSV holds only past events by design, so `upcoming` is empty for
+  present-day as-of dates until forward-dated events are **added to the CSV
+  manually** — documented in the module docstring; no events calendar invented.
+- **API** — two read-only, unauthenticated, 15-min-cached GETs mirroring the
+  sibling `/calendar/on-this-day`: `GET /calendar/seasonality?date=` and
+  `GET /calendar/pre-event?date=&window_days=`. Both degrade to empty/null when
+  the panel is unprovisioned. +8 API tests (public-access, cache-header,
+  shape, malformed-date, bounds, no-forward-events).
+- **B3 Pulse strip** (`page.tsx` + `insights-api.ts`) — "Market calendar"
+  Section with three cards: longest-horizon tagged on-this-day anniversary,
+  the month seasonality profile (with the descriptive "not a forecast"
+  caption), and upcoming curated events with same-type median-move context (or
+  the manual-curation note when none). `?date=` threaded; each fetch degrades
+  to null so the strip never breaks the core render; regime term deep-links its
+  Learn explainer.
+- **Deviations**: none. B4 skipped per instruction. Browser/visual eyeballing
+  of the strip was not possible (all `/insights/*` routes 404 for anonymous
+  behind Clerk middleware, same constraint the Phase C agent hit) — verified
+  instead via clean `next build` + ESLint + TestClient JSON-shape checks of all
+  three endpoints against the TS interfaces (on-this-day COVID tag, December
+  n=16 median +0.31%, and a 2020-01-28 as-of correctly surfacing the upcoming
+  Union Budget with n=3 type history).
 
 ## Phase C — Stock-level analytics (P1)
 
