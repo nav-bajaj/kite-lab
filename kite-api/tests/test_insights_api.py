@@ -181,6 +181,118 @@ class TestRegimeHistoryEndpoint:
         assert ep["days"] >= 1
 
 
+# ---------- stock screener + detail (insights_v2 C4) ----------
+
+class TestScreenerEndpoint:
+    def test_public_no_auth(self, client):
+        r = client.get("/api/insights/screener")
+        assert r.status_code == 200
+
+    def test_shape(self, client):
+        b = client.get("/api/insights/screener").json()
+        assert set(b.keys()) >= {"asof", "data_available", "rows"}
+        assert b["data_available"] is True
+        assert len(b["rows"]) > 100  # ~NSE 500 minus names lacking a CSV
+        row = b["rows"][0]
+        # Zipped from metrics + RS + scores + sectors
+        for key in ("symbol", "close", "ret_1m", "rank", "percentile",
+                    "trend_score", "extension_band", "volume_band",
+                    "momentum_consistency", "tags", "sectors"):
+            assert key in row, f"screener row missing {key}"
+        assert isinstance(row["tags"], list)
+        assert isinstance(row["sectors"], list)
+
+    def test_dropped_fields_absent(self, client):
+        """Screener row trims raw sub-score inputs (kept on the detail page)."""
+        row = client.get("/api/insights/screener").json()["rows"][0]
+        for dropped in ("sma_50", "atr_14", "above_50dma", "slope_50dma_20d",
+                        "date", "rank_21d_ago"):
+            assert dropped not in row, f"{dropped} should be dropped from screener row"
+
+    def test_payload_under_budget(self, client):
+        """~500-row payload must stay under the 500 KB contract budget."""
+        r = client.get("/api/insights/screener")
+        size_kb = len(r.content) / 1024
+        assert size_kb < 500, f"screener payload {size_kb:.1f} KB exceeds 500 KB budget"
+
+    def test_accepts_historical_date(self, client):
+        b = client.get("/api/insights/screener?date=2020-03-23").json()
+        assert b["data_available"] is True
+        assert b["asof"].startswith("2020-03-")
+
+    def test_unknown_early_date_degrades_empty(self, client):
+        """A date before any data → empty, not a 500."""
+        r = client.get("/api/insights/screener?date=1990-01-01")
+        assert r.status_code == 200
+        b = r.json()
+        assert b["data_available"] is False
+        assert b["rows"] == []
+
+    def test_rejects_malformed_date(self, client):
+        assert client.get("/api/insights/screener?date=nope").status_code == 400
+
+    def test_floats_are_trimmed(self, client):
+        """Float precision is trimmed to <=4 decimals for payload size."""
+        row = client.get("/api/insights/screener").json()["rows"][0]
+        if row.get("ret_1m") is not None:
+            s = repr(row["ret_1m"]).split(".")
+            if len(s) == 2:
+                assert len(s[1]) <= 4
+
+
+class TestStockDetailEndpoint:
+    def _a_symbol(self, client) -> str:
+        return client.get("/api/insights/screener").json()["rows"][0]["symbol"]
+
+    def test_public_no_auth(self, client):
+        sym = self._a_symbol(client)
+        assert client.get(f"/api/insights/stocks/{sym}").status_code == 200
+
+    def test_shape(self, client):
+        sym = self._a_symbol(client)
+        b = client.get(f"/api/insights/stocks/{sym}").json()
+        for key in ("symbol", "data_available", "asof", "row", "series",
+                    "rs_rank_history", "peers"):
+            assert key in b
+        assert b["data_available"] is True
+        assert b["row"]["symbol"] == sym
+        # Detail row keeps the fields dropped from the screener row
+        assert "above_50dma" in b["row"]
+        # 1y price/DMA/volume series
+        for key in ("dates", "close", "sma_50", "sma_200", "vol_ratio"):
+            assert key in b["series"]
+        assert len(b["series"]["dates"]) == len(b["series"]["close"])
+
+    def test_rs_history_is_coarse_monthly(self, client):
+        sym = self._a_symbol(client)
+        hist = client.get(f"/api/insights/stocks/{sym}").json()["rs_rank_history"]
+        # ~1y sampled every ~21 trading days → roughly a dozen points, never daily
+        assert len(hist) <= 20
+        if hist:
+            assert {"date", "rank", "percentile"} <= set(hist[0].keys())
+
+    def test_peers_are_ranked_siblings(self, client):
+        sym = self._a_symbol(client)
+        peers = client.get(f"/api/insights/stocks/{sym}").json()["peers"]
+        assert len(peers) <= 5
+        for p in peers:
+            assert p["symbol"] != sym
+            assert {"symbol", "rank", "sector"} <= set(p.keys())
+        # Ranked strongest-first
+        ranks = [p["rank"] for p in peers]
+        assert ranks == sorted(ranks)
+
+    def test_unknown_symbol_404(self, client):
+        r = client.get("/api/insights/stocks/NOTAREALTICKER")
+        assert r.status_code == 404
+        assert "Unknown symbol" in r.json()["detail"]
+
+    def test_accepts_historical_date(self, client):
+        sym = self._a_symbol(client)
+        b = client.get(f"/api/insights/stocks/{sym}?date=2022-06-17").json()
+        assert b["asof"].startswith("2022-06-")
+
+
 # ---------- caching ----------
 
 class TestCacheHeaders:
@@ -190,6 +302,7 @@ class TestCacheHeaders:
         "/api/insights/sectors",
         "/api/insights/analogs?k=3",
         "/api/insights/watchlists?limit=3",
+        "/api/insights/screener",
     ])
     def test_cache_control_header_set(self, client, path):
         r = client.get(path)

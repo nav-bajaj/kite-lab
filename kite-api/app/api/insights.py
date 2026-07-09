@@ -40,8 +40,12 @@ from app.insights import (
     cross_asset,
     macro,
     regime as regime_mod,
+    rs_rank,
+    scores as scores_mod,
     sector_breadth,
+    sector_constituents,
     sector_rs,
+    stock_metrics,
     stress,
     subgroups,
     watchlists,
@@ -314,6 +318,191 @@ async def watchlist_drill(
         "name": name,
         "date": asof.isoformat() if asof else None,
         "entries": [e.to_dict() for e in entries],
+    }
+
+
+# ---------- stock-level screener + detail ----------
+
+# Fields dropped from the screener row to hold the ~500-row payload under the
+# 500 KB budget. All are either (a) shown only on the detail page — which uses
+# the full, undropped row — or (b) trivially derivable client-side:
+#   - absolute rupee DMA / ATR levels: UI reads the % distances + ATR%
+#   - above_*dma booleans: sign of the matching dist_*dma_pct
+#   - rank_21d_ago: rank + rank_delta_21d
+#   - raw score inputs (slopes, 5d/positive-week percentiles, up/down vol,
+#     6m drawdown, one annualized-vol series): summarised by the composite
+#     Trend / Extension / Volume / Consistency scores, which ARE included.
+_SCREENER_ROW_DROP = (
+    "date",
+    "sma_20", "sma_50", "sma_100", "sma_200", "atr_14",
+    "above_20dma", "above_50dma", "above_100dma", "above_200dma",
+    "rank_21d_ago",
+    "slope_50dma_20d", "slope_200dma_20d",
+    "vol_20d_annualized",
+    "ret_5d_pctile_1y", "pct_positive_weeks_6m",
+    "updown_vol_ratio_20d", "max_drawdown_6m_pct",
+)
+
+
+def _compact(v):
+    """JSON-safe + float-trimmed. Rounds every float to 4 decimals so the
+    ~500-row screener payload stays small; scores/percentiles already carry
+    ≤2 decimals upstream, returns are ratios where 4dp = 0.01% resolution."""
+    if isinstance(v, dict):
+        return {k: _compact(x) for k, x in v.items()}
+    if isinstance(v, (list, tuple)):
+        return [_compact(x) for x in v]
+    v = _jsonable(v)
+    if isinstance(v, float):
+        return round(v, 4)
+    return v
+
+
+def _build_row(sym: str, m, rs_entry, sc, sectors: tuple[str, ...],
+               drop: tuple[str, ...] = ()) -> dict:
+    """Zip one stock's metrics + RS entry + scores into a flat row.
+
+    `symbol`/`date` from the sub-records are deduped; `sectors` is the
+    reverse-mapping list (may be empty for names outside every index basket)."""
+    row = m.to_dict()
+    if rs_entry is not None:
+        rd = rs_entry.to_dict()
+        rd.pop("symbol", None)
+        row.update(rd)
+    if sc is not None:
+        sd = sc.to_dict()
+        sd.pop("symbol", None)
+        row.update(sd)
+    for k in drop:
+        row.pop(k, None)
+    row["sectors"] = list(sectors)
+    return _compact(row)
+
+
+@router.get("/screener")
+async def screener_endpoint(
+    response: Response,
+    date: Optional[str] = Query(None, description="As-of date, ISO YYYY-MM-DD. Default: latest."),
+) -> dict:
+    """One payload zipping the per-stock feature frame, RS ranking, and
+    composite scores/tags for the whole NSE 500 as of `date`.
+
+    Filtering and sorting are client-side (500 rows is trivial in-browser).
+    Degrades to an empty row list with `data_available=False` when the
+    stock-metrics panel is unprovisioned (prod before the founder upload) —
+    never 500s on missing data."""
+    _set_cache(response)
+    asof = _parse_date(date)
+    metrics = stock_metrics.get_stock_metrics(asof)
+    if not metrics:
+        return {"asof": None, "data_available": False, "rows": []}
+
+    rs_table = rs_rank.get_rs_table(asof)
+    all_scores = scores_mod.get_scores(asof)
+    sym_sectors = sector_constituents.get_symbol_to_sectors()
+    asof_date = next(iter(metrics.values())).date
+
+    rows = [
+        _build_row(sym, m, rs_table.get(sym), all_scores.get(sym),
+                   sym_sectors.get(sym, ()), drop=_SCREENER_ROW_DROP)
+        for sym, m in metrics.items()
+    ]
+    return {"asof": asof_date, "data_available": True, "rows": rows}
+
+
+def _rs_rank_history(symbol: str, asof: Optional[pd.Timestamp],
+                     dates: list[str], step: int = 21) -> list[dict]:
+    """Coarse (monthly) RS-rank history for the detail-page sparkline.
+
+    Per-date RS ranking is a full-universe cross-sectional build (~240ms
+    cold each, then pkl-cached). Sampling every `step` (~21) trading days
+    keeps this to ~12 builds for a year; the sampled per-date RS tables are
+    shared/cached across every stock page, so only the first detail request
+    after a cache clear pays the build cost. Documented as a coarse monthly
+    series, not a daily one."""
+    if not dates:
+        return []
+    sampled = dates[::step]
+    if dates[-1] not in sampled:
+        sampled.append(dates[-1])
+    out: list[dict] = []
+    for d in sampled:
+        table = rs_rank.get_rs_table(pd.Timestamp(d))
+        entry = table.get(symbol)
+        if entry is None or entry.rank is None:
+            continue
+        out.append({"date": d, "rank": entry.rank,
+                    "percentile": round(entry.percentile, 2)
+                    if entry.percentile is not None else None})
+    return out
+
+
+def _sector_peers(symbol: str, rs_table: dict, sectors: tuple[str, ...],
+                  limit: int = 5) -> list[dict]:
+    """Top-`limit` sector siblings by RS rank (strongest first), excluding
+    the stock itself. Uses the symbol's first (alphabetical) index basket."""
+    if not sectors:
+        return []
+    primary = sectors[0]
+    try:
+        sector = sector_constituents.get_sector(primary)
+    except KeyError:
+        return []
+    cand = [
+        (s, rs_table[s].rank)
+        for s in sector.symbols
+        if s != symbol and s in rs_table and rs_table[s].rank is not None
+    ]
+    cand.sort(key=lambda x: x[1])
+    return [{"symbol": s, "rank": rk, "sector": primary} for s, rk in cand[:limit]]
+
+
+@router.get("/stocks/{symbol}")
+async def stock_detail_endpoint(
+    response: Response,
+    symbol: str,
+    date: Optional[str] = Query(None, description="As-of date, ISO YYYY-MM-DD. Default: latest."),
+) -> dict:
+    """Everything the screener has for one stock plus detail-page timeseries:
+    1y of close + 50/200-DMA + volume ratio, and a coarse (monthly) RS-rank
+    history for the sparkline. Score history is intentionally omitted — a
+    per-date score is a full-universe rebuild, too costly to serialise here;
+    the page shows current scores. Peer strip = top-5 sector siblings by RS.
+
+    404 on an unknown symbol; empty `data_available=False` payload when the
+    panel is unprovisioned."""
+    _set_cache(response)
+    asof = _parse_date(date)
+    metrics = stock_metrics.get_stock_metrics(asof)
+    if not metrics:
+        return {"symbol": symbol, "data_available": False, "row": None,
+                "series": {}, "rs_rank_history": [], "peers": []}
+    if symbol not in metrics:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Unknown symbol {symbol!r}. Valid universe is the NSE 500 "
+                   f"(see /api/insights/screener for the full list).",
+        )
+
+    rs_table = rs_rank.get_rs_table(asof)
+    all_scores = scores_mod.get_scores(asof)
+    sym_sectors = sector_constituents.get_symbol_to_sectors()
+    sectors = sym_sectors.get(symbol, ())
+
+    row = _build_row(symbol, metrics[symbol], rs_table.get(symbol),
+                     all_scores.get(symbol), sectors)
+    series = stock_metrics.get_price_dma_volume_series(symbol, asof)
+    history = _rs_rank_history(symbol, asof, series.get("dates", []))
+    peers = _sector_peers(symbol, rs_table, sectors)
+
+    return {
+        "symbol": symbol,
+        "data_available": True,
+        "asof": metrics[symbol].date,
+        "row": row,
+        "series": _compact(series),
+        "rs_rank_history": history,
+        "peers": peers,
     }
 
 
