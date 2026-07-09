@@ -30,6 +30,7 @@ from app.insights import (
     macro,
     regime as regime_mod,
     rs_rank,
+    scores as scores_mod,
     sector_breadth,
     sector_rs,
     stock_metrics,
@@ -218,3 +219,4 @@ def clear_all_caches() -> None:
     cross_asset.clear_cache()
     stock_metrics.clear_cache()
     rs_rank.clear_cache()
+    scores_mod.clear_cache()
