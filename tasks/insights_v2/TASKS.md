@@ -91,14 +91,14 @@ are prod actions documented in `RUNBOOK_admin_launch.md`.
 | C3.1 | `scores.py` — Trend / Extension Risk / Volume Confirmation / Momentum Consistency + insight tags (TDD, monotonicity invariants) | 🤖 | 🔴 | ✅ |
 | C8.1 | Validity studies: inflection cohort, RS-top-decile, extension-high; badge per protocol | 🤖 | 🔴 | ✅ |
 | C8.2 | Extend compliance lexicon tests to all new labels/tags/copy | 🤖 | 🔴 | ✅ |
-| C4.1 | `GET /api/insights/screener` (+ tests, payload budget < 500 KB) | 🤖 | 🟡 | ☐ |
-| C4.2 | `GET /api/insights/stocks/{symbol}` (+ timeseries + tests) | 🤖 | 🟡 | ☐ |
-| C5.1 | `/insights/screener` page — table, filter rail, preset chips, URL-encoded state, mobile fallback | 🤖 | 🟡 | ☐ |
-| C5.2 | `/insights/stocks/[symbol]` page — scores, sections, 1y chart, peer strip | 🤖 | 🟡 | ☐ |
-| C5.3 | Nav integration + `?date=` snapshot support on both pages | 🤖 | 🟢 | ☐ |
-| C6.1 | Pulse: fresh 52w highs/lows names card + RS-improvers mini-list → preset links | 🤖 | 🟢 | ☐ |
-| C7.1 | 8 new Learn explainers + glossary additions + deep-links | 🤖 | 🟡 | ☐ |
-| C9.1 | Perf: warm screener < 100 ms; cold-build measured + bounded | 🤖 | 🟡 | ◑ (engine half done; screener endpoint is C4) |
+| C4.1 | `GET /api/insights/screener` (+ tests, payload budget < 500 KB) | 🤖 | 🟡 | ✅ |
+| C4.2 | `GET /api/insights/stocks/{symbol}` (+ timeseries + tests) | 🤖 | 🟡 | ✅ |
+| C5.1 | `/insights/screener` page — table, filter rail, preset chips, URL-encoded state, mobile fallback | 🤖 | 🟡 | ✅ |
+| C5.2 | `/insights/stocks/[symbol]` page — scores, sections, 1y chart, peer strip | 🤖 | 🟡 | ✅ |
+| C5.3 | Nav integration + `?date=` snapshot support on both pages | 🤖 | 🟢 | ✅ |
+| C6.1 | Pulse: fresh 52w highs/lows names card + RS-improvers mini-list → preset links | 🤖 | 🟢 | ✅ |
+| C7.1 | 8 new Learn explainers + glossary additions + deep-links | 🤖 | 🟡 | ✅ |
+| C9.1 | Perf: warm screener < 100 ms; cold-build measured + bounded | 🤖 | 🟡 | ✅ |
 
 ### Phase C engines worklog (Opus 4.8 agent, 2026-07-09)
 
@@ -199,6 +199,88 @@ JSON-safe scalars (tags become a list). All accept an optional `asof`
 - Screener endpoint: build the payload by zipping `get_stock_metrics` +
   `get_rs_table` + `get_scores` for one `asof`; all three are warm-cached
   per date, so the request is O(500) dict lookups.
+
+### Phase C API/UI worklog (Opus 4.8 agent, 2026-07-09)
+
+All C4–C7 + C9.1 items done and green. Suite: **759 passed, 1 skipped** (was
+741/1 — +18 API tests). `npm run build` clean. Four commits: C4 API
+(`a1319f7`), C5.1 screener (`ddd258e`), C5.2 stock page (`f01f472`), C6+C7
+(`09ce63d`).
+
+- **C4 endpoints** (`app/api/insights.py`) — all read-only, unauthenticated,
+  15-min cache, `?date=` via the shared `_parse_date`, degrade to empty
+  `data_available=false` payloads when the panel is unprovisioned (no 500s):
+  - `GET /screener` zips `get_stock_metrics` + `get_rs_table` + `get_scores`
+    per `asof` (all warm-cached) into ~500 flat rows. Floats trimmed to 4dp;
+    raw sub-score inputs (slopes, above-DMA booleans, 5d/positive-week
+    percentiles, up/down vol, one annualized-vol series, `rank_21d_ago`,
+    absolute DMA/ATR levels) dropped from the row — the detail page keeps them.
+  - `GET /stocks/{symbol}` = full (undropped) row + 1y price/DMA/vol-ratio
+    series + coarse **monthly** RS-rank history + top-5 sector peers by RS.
+    404 on unknown symbol. **Score history omitted by design** — a per-date
+    score is a full-universe rebuild (~1.4s each); serialising 6 monthly points
+    would be an 8s+ endpoint. RS-rank history samples every ~21 td (~13 pts/yr):
+    each sampled per-date RS table is pkl-cached and shared across all stock
+    pages, so only the first detail request after a cache clear pays the ~2.9s
+    build; thereafter it's warm.
+  - `GET /movers` (C6) — lean aggregates for Pulse: fresh 52w highs (engine
+    `fresh_52w_high`) / lows (`dist_52w_low_pct ≈ 0`) with counts + top names,
+    and the top-5 21d RS-rank improvers. MarketReading untouched.
+- **C9.1 measurements** (local, TestClient, real 496-row panel):
+  - Screener: cold 3.7s (metrics 1.8s + rs + scores build), **warm median
+    37.7ms** (< 100ms target), **payload 442.6 KB** (< 500 KB budget).
+  - Detail: warm ~4ms once the shared monthly RS tables are cached.
+- **C5 UI** — `/insights/screener` (server fetch → `ScreenerClient`): sticky
+  sortable table, filter rail (sector multi-select, tag chips, numeric ranges,
+  above-50/200-DMA toggles), 6 preset chips, Risk/Volume column-group toggles,
+  mobile card fallback, per-header explainer deep-links. Filter state is
+  encoded into the URL via `history.replaceState` (shareable/bookmarkable, no
+  server refetch); `?date=` preserved and threaded into every stock link.
+  `/insights/stocks/[symbol]`: header + 5-score row + trend/momentum/volume/risk
+  sections + peer strip + friendly not-found state. Screener tab added to the
+  insights nav (also active on stock pages).
+- **Charts** — per a mid-task founder scope change, the detail price chart uses
+  **TradingView lightweight-charts** (`^5.2.0`, new dep; Apache-2.0): client-only
+  component, theme-aware via next-themes (design-token colors resolved to
+  concrete rgb for the canvas), `autoSize` resize, close-area + 50/200-DMA
+  lines, and the required "Charts by TradingView" attribution link. RS-rank
+  sparkline stayed a lightweight inline SVG.
+- **C7 Learn** — 8 explainers (rs-rank, trend-score, extension-risk,
+  volume-confirmation, momentum-consistency, atr, beta, liquidity), each
+  quoting the real engine weights (RS_WEIGHTS, the four score checklists) and
+  the transparent design-choice cutoffs (liquidity ₹10/₹1 Cr, volume 2–3x, ATR
+  simple-mean, 60d beta). Glossary +6 (ATR, beta, RSI, turnover, inflection,
+  extension). Registered in `_index.ts` → prerendered.
+- **Compliance placement**:
+  - *Validated forward-return claim* appears in the `rs-rank` explainer and the
+    stock-page header badge for "Momentum leader" names — quotes the actual
+    `rs_top_decile` figures (+1.19pp 20d excess, 56% vs 54% positive, +3.9pp
+    60d), framed as historical tendency, not a per-stock forecast, with the
+    Watchlists-style "Validity-tested ✓" idiom.
+  - *Observation-only* enforced for inflection everywhere: the "New momentum"
+    tag, the "Fresh momentum" screener preset, and the Pulse RS-improvers card
+    all say the rank changed and explicitly state the cohort did NOT beat the
+    baseline forward — no performance claim.
+  - *Extension null finding* stated honestly in the `extension-risk` explainer
+    and the "Extended names" preset note; the Extension band/score is rendered
+    in neutral tones (never red/mean-reversion) with a "stretched vs own
+    history" caption.
+  - No recommendation verbs in any new TSX/API string; tags/bands render engine
+    constants verbatim (the backend lexicon test already locks those sets).
+- **Deviations**: (1) new npm dep `lightweight-charts` — sanctioned by the
+  mid-task founder scope override. (2) Detail-page score history dropped as a
+  perf decision (documented above). (3) Screener drop-list is larger than the
+  C4 sketch to hold the 500 KB budget; every dropped field is either
+  detail-only or client-derivable (booleans = sign of the dist %). (4) Renamed
+  the screener column `sortKey`→`sortField` to avoid a gitleaks generic-api-key
+  false positive on a high-entropy field-name string.
+- **Left for close-out**: browser/visual verification was blocked locally — all
+  `/insights/*` routes 404 for anonymous requests behind the Clerk middleware
+  (pre-existing `/insights/sectors` behaves identically), so a signed-in admin
+  session is needed to eyeball the pages. Verified instead via a clean
+  production `next build` (all routes compile; Learn pages prerender) and
+  TestClient smoke tests of every new endpoint. Security-reviewer subagent run
+  on the API diff (read-only additive routes).
 
 ## Phase D — deferred (do not build)
 
