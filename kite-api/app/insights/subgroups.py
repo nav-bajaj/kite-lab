@@ -32,6 +32,7 @@ import numpy as np
 import pandas as pd
 
 from app.config import get_settings
+from app.insights._paths import indices_dir
 
 
 # ─────────── membership ───────────
@@ -155,7 +156,7 @@ def _prices_dir() -> Path:
 
 
 def _nifty_file() -> Path:
-    return Path("/Users/navdeep/Documents/stock_data/indices_data_full/NIFTY_50.csv")
+    return indices_dir() / "NIFTY_50.csv"
 
 
 @lru_cache(maxsize=1)
