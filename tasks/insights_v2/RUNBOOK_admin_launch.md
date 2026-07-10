@@ -38,16 +38,26 @@ looks for in prod).
 ## Step 0 — Get a prod admin JWT
 
 The upload endpoint is behind `require_admin`, which verifies a Clerk session
-JWT. Get yours from the browser:
+JWT. Clerk session tokens are short-lived (~60s from when they're minted).
+
+**Preferred — mint a fresh token on demand from the browser console.** This
+always returns a brand-new token; the DevTools Network-tab method can hand you
+a *stale* one (the header shown belongs to whenever the page last called the
+API, which may already be a minute old — a common cause of a 401 on the second
+upload):
 
 1. Sign in to <https://marketworks.in> as your admin account.
-2. Open DevTools → Network, trigger any authenticated call (e.g. load
-   `/dashboard`), click a request to `kite-lab-production.up.railway.app`,
-   and copy the `Authorization: Bearer <token>` value (the part after
-   `Bearer `). Alternatively copy the `__session` cookie value.
-3. Clerk session tokens are short-lived (~60s default). Grab a fresh one
-   immediately before each upload, or do both uploads back-to-back. If an
-   upload 401s, the token expired — get a new one and retry.
+2. Open DevTools → Console and run:
+   ```js
+   await window.Clerk.session.getToken()
+   ```
+3. Copy the printed string (raw JWT — three `eyJ….eyJ….<sig>` segments, no
+   `Bearer ` prefix, no quotes) and use it immediately.
+
+The 60s clock starts at mint and includes the local tarball step, so grab the
+token right before running, and mint a new one per upload. If you hit
+`401 Invalid or expired token`, see Troubleshooting at the bottom — the
+1-hour JWT-template token removes the timing pressure entirely.
 
 Export it for the commands below:
 
@@ -70,8 +80,11 @@ python scripts/upload_price_data.py \
 
 The script auto-detects the source at `<repo>/nse500_data_merged`, tarballs
 it, and POSTs to `/api/sync/upload-data?target=nse500_data_merged`. Expect
-`Success: 501 files written to /app/nse500_data_merged`. This is the big one;
-the tar is a few tens of MB compressed and the upload has a 300s timeout.
+`Success: 501 files written to /app/nse500_data_merged`. This is the big one
+(~30-40 MB compressed). The HTTP client waits up to 300s, but the **Clerk
+session token only lives ~60s** — if your uplink can't push the tar within
+that window the server rejects it mid-upload with `401 Invalid or expired
+token`. If that happens, use the longer-lived token in Troubleshooting below.
 
 ## Step 2 — Upload the indices panel (indices_data_historical, ~9.5 MB)
 
@@ -172,3 +185,58 @@ cache. If a given day's data looks stale in the UI, POST
 Set `NEXT_PUBLIC_INSIGHTS_ACCESS = off` on Vercel + redeploy. The surface
 hides and `/insights*` redirects to `/dashboard` again. The uploaded data can
 stay on the volume harmlessly.
+
+## Troubleshooting — `401 Invalid or expired token` on upload
+
+The upload endpoint verifies a Clerk **session** JWT, and Clerk session
+tokens expire ~60 seconds after they're minted. The backend rejects the
+request the instant `exp` passes, so a 401 almost always means the token
+aged out — not that anything is wrong with the data or the endpoint.
+
+Order of likelihood:
+
+1. **Stale token (most common).** You reused a token across both uploads, or
+   grabbed it more than a minute before running. The small indices upload
+   finishes in ~1-2s, so if *it* 401s the token was already dead. **Fix:**
+   copy a brand-new token and run the command within a few seconds. Do the
+   two uploads as two separate fresh-token runs, not one shared token.
+2. **Copy hygiene.** The value must be the raw JWT only — no `Bearer ` prefix,
+   no surrounding quotes, no trailing newline. A stray `Bearer ` makes the
+   header `Bearer Bearer …` and 401s. Quick sanity check: a Clerk JWT is
+   three dot-separated base64 segments (`eyJ….eyJ….<sig>`).
+3. **Wrong value.** Copy the `Authorization: Bearer …` request-header value
+   (or the `__session` cookie), not some other cookie/CSRF token.
+
+### For the 105 MB stock panel — use a longer-lived token
+
+If a fresh session token still can't push the big tar inside 60s (slow
+uplink), mint a longer-lived token via a **Clerk JWT template** instead of
+the default session token. It's signed by the same Clerk instance, so it
+passes JWKS + issuer verification exactly like a session token — it just
+lives longer.
+
+One-time setup (Clerk Dashboard):
+
+1. **JWT Templates → New template.** Name it e.g. `upload`.
+2. Set **Token lifetime** to `3600` (1 hour).
+3. In the **Claims** editor, include the role claim the backend reads
+   (`require_admin` → `_extract_role` reads `metadata.role`):
+   ```json
+   { "metadata": { "role": "{{user.public_metadata.role}}" } }
+   ```
+   Save. (The issuer is the same instance issuer the backend pins, so no
+   other change is needed.)
+
+Mint one from the browser console on <https://marketworks.in> while signed
+in as your admin account:
+
+```js
+await window.Clerk.session.getToken({ template: 'upload' })
+```
+
+Copy the printed string into `ADMIN_JWT` and run the upload — you now have a
+one-hour window instead of 60 seconds. Delete the template afterward if you
+prefer not to keep a long-lived admin-token path around.
+
+> Note: the `POST /api/insights/cache/clear` call in Step 4 is a tiny
+> request, so a normal fresh session token is fine there.
