@@ -47,17 +47,19 @@ API, which may already be a minute old — a common cause of a 401 on the second
 upload):
 
 1. Sign in to <https://marketworks.in> as your admin account.
-2. Open DevTools → Console and run:
+2. Open DevTools → Console and run (the `skipCache` matters — a plain
+   `getToken()` returns a *cached* token that may have only ~10s of life left):
    ```js
-   await window.Clerk.session.getToken()
+   await window.Clerk.session.getToken({ skipCache: true })
    ```
 3. Copy the printed string (raw JWT — three `eyJ….eyJ….<sig>` segments, no
-   `Bearer ` prefix, no quotes) and use it immediately.
+   `Bearer ` prefix, no surrounding quotes) and use it immediately.
 
-The 60s clock starts at mint and includes the local tarball step, so grab the
-token right before running, and mint a new one per upload. If you hit
-`401 Invalid or expired token`, see Troubleshooting at the bottom — the
-1-hour JWT-template token removes the timing pressure entirely.
+The token still only lives ~60s from mint, and that clock includes the local
+tarball step. For the small indices upload a `skipCache` token run instantly
+is usually enough; for anything that races the clock, use the **1-hour
+JWT-template token** in Troubleshooting at the bottom — it removes the timing
+pressure entirely and is the reliable path if the 60s window keeps losing.
 
 Export it for the commands below:
 
