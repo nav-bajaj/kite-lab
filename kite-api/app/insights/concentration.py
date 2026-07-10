@@ -36,6 +36,7 @@ from typing import Optional
 import pandas as pd
 
 from app.config import get_settings
+from app.insights._paths import indices_dir
 
 
 def _data_root() -> Path:
@@ -63,7 +64,7 @@ def _prices_dir() -> Path:
 
 
 def _index_file() -> Path:
-    return Path("/Users/navdeep/Documents/stock_data/indices_data_full/NIFTY_50.csv")
+    return indices_dir() / "NIFTY_50.csv"
 
 
 @lru_cache(maxsize=1)
