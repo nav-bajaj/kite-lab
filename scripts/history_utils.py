@@ -169,9 +169,24 @@ def _fetch_with_retries(fetch_callable, symbol, max_retries, rate_limiter):
             raise
 
 
+# Corporate-action ticker renames: universe symbol -> current Kite tradingsymbol.
+# When a listed name is rebranded or moves trading series, its old NSE ticker
+# stops resolving and the daily fetch silently freezes that stock. We keep the
+# universe symbol as the canonical file name (so nse500_data/<OLD>_day.csv and
+# the NSE500 universe / portfolios stay continuous across the rename) but fetch
+# candles under the successor ticker. Same company / ISIN, so the series is
+# continuous. Revisit as part of a proper universe refresh.
+SYMBOL_ALIASES = {
+    "RELINFRA": "RELINFRA-BE",   # moved to the trade-to-trade (BE) series
+    "AKZOINDIA": "JSWDULUX",     # Akzo Nobel India rebranded to JSW Dulux
+    "LTIM": "LTM",               # LTIMindtree ticker changed to LTM
+}
+
+
 def _process_symbol(kite, symbol, cfg, start_ts, end_ts, lookback_days, rate_limiter, max_retries):
     """Process a single symbol - designed to run in thread pool."""
     output_path = os.path.join(cfg["output_dir"], f"{symbol}_{cfg['suffix']}.csv")
+    fetch_symbol = SYMBOL_ALIASES.get(symbol, symbol)
     existing_df = None
     fetch_start = start_ts
 
@@ -195,8 +210,10 @@ def _process_symbol(kite, symbol, cfg, start_ts, end_ts, lookback_days, rate_lim
         return {"symbol": symbol, "status": "skipped", "message": "Up to date"}
 
     try:
-        # Capture symbol in closure properly
-        def do_fetch(sym=symbol, fs=fetch_start):
+        # Capture symbol in closure properly. Fetch under the aliased ticker
+        # (successor of a renamed listing) but keep writing to the original
+        # symbol's file so the historical series stays continuous.
+        def do_fetch(sym=fetch_symbol, fs=fetch_start):
             return fetch_history(
                 kite,
                 sym,
