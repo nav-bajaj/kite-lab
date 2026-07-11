@@ -37,3 +37,4 @@ instrument_token,exchange_token,tradingsymbol,name,exchange,category,description
 398601,1557,US30,US 30,GLOBAL,global,Dow Jones Industrial Average
 273417,1068,MCXGOLDEX,MCXGOLDEX,MCX,commodity,MCX Gold index
 294153,1149,MCXSILVDEX,MCXSILVDEX,MCX,commodity,MCX Silver index
+264969,1035,INDIA VIX,INDIA VIX,NSE,volatility,India VIX implied-volatility index (feeds insight-engine stress + regime)
