@@ -8,6 +8,7 @@ import {
   LogViewer,
   ScheduleTable,
   SystemStatus,
+  FreshnessPanel,
 } from "@/components/admin";
 
 export default function AdminPage() {
@@ -28,6 +29,9 @@ export default function AdminPage() {
 
       {/* Quick Actions */}
       <QuickActions />
+
+      {/* Data freshness monitor (full width) */}
+      <FreshnessPanel />
 
       {/* Main Content Grid */}
       <div className="grid gap-6 lg:grid-cols-2">

@@ -471,6 +471,32 @@ export async function getSystemStatus() {
   return apiFetch<SystemStatus>("/api/system/status");
 }
 
+// Data-freshness monitor (admin-only). Mirrors the FastAPI SourceFreshness
+// dataclass + report envelope in kite-api/app/services/freshness_service.py.
+export type FreshnessStatus = "fresh" | "stale" | "critical" | "missing";
+
+export interface SourceFreshness {
+  name: string;
+  kind: string;
+  last_date: string | null;
+  age_days: number | null;
+  lag_trading_days: number | null;
+  status: FreshnessStatus;
+  detail: string;
+  expected_cadence: string;
+}
+
+export interface FreshnessReport {
+  generated_at: string;
+  generated_for_reference_date: string | null;
+  overall_status: FreshnessStatus;
+  sources: SourceFreshness[];
+}
+
+export async function getFreshnessReport() {
+  return apiFetch<FreshnessReport>("/api/freshness");
+}
+
 export async function getTokenStatus() {
   return apiFetch<TokenStatus>("/api/system/token");
 }

@@ -4,3 +4,4 @@ export { JobList } from "./job-list";
 export { LogViewer } from "./log-viewer";
 export { ScheduleTable } from "./schedule-table";
 export { SystemStatus } from "./system-status";
+export { FreshnessPanel } from "./freshness-panel";

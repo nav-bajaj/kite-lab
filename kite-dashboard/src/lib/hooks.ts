@@ -22,6 +22,7 @@ import {
   getJobLogs,
   getSchedule,
   getSystemStatus,
+  getFreshnessReport,
   getHealth,
   getPositions,
   getMarketStatus,
@@ -29,6 +30,7 @@ import {
   type JobListResponse,
   type ScheduleListResponse,
   type SystemStatus,
+  type FreshnessReport,
 } from "./api-client";
 import type { PositionsResponse, MarketStatus } from "./types";
 
@@ -306,6 +308,13 @@ export function useSystemStatus() {
       revalidateOnFocus: true,
     }
   );
+}
+
+export function useFreshnessReport() {
+  return useAuthedSWR<FreshnessReport>("freshness", getFreshnessReport, {
+    refreshInterval: 60000,
+    revalidateOnFocus: true,
+  });
 }
 
 // Open Positions (live portfolio tracking)
