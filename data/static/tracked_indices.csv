@@ -38,3 +38,4 @@ instrument_token,exchange_token,tradingsymbol,name,exchange,category,description
 273417,1068,MCXGOLDEX,MCXGOLDEX,MCX,commodity,MCX Gold index
 294153,1149,MCXSILVDEX,MCXSILVDEX,MCX,commodity,MCX Silver index
 264969,1035,INDIA VIX,INDIA VIX,NSE,volatility,India VIX implied-volatility index (feeds insight-engine stress + regime)
+269065,1051,NIFTY GS 10YR,NIFTY GS 10YR,NSE,rates,Indian 10y govt-securities index (feeds insight-engine cross-asset india_10y)
