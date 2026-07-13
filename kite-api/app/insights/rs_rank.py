@@ -37,6 +37,7 @@ from dataclasses import asdict, dataclass
 import numpy as np
 import pandas as pd
 
+from app.insights import sector_constituents as _sc
 from app.insights import stock_metrics as _sm
 
 # Composite blend weights (sum to 1.0) — see module docstring.
@@ -179,6 +180,13 @@ def _symbol_sectors() -> dict[str, tuple[str, ...]]:
 _MEM_CACHE: dict[str, dict[str, RSEntry]] = {}
 
 
+def _source_key(date_key: str) -> str:
+    """Per-date cache key folded with the underlying data signature (price
+    panel + sector snapshot) so a same-date data update reloads."""
+    sig = _sm._panel_signature() + _sc._signature()
+    return f"{date_key}|{_sm._sig_token(sig)}"
+
+
 def get_rs_table(asof: pd.Timestamp | None = None) -> dict[str, RSEntry]:
     """RS table over the live NSE 500 panel, cached per as-of date."""
     close = _load_close()
@@ -189,7 +197,7 @@ def get_rs_table(asof: pd.Timestamp | None = None) -> dict[str, RSEntry]:
     if not len(valid):
         return {}
     resolved = valid.max()
-    key = resolved.date().isoformat()
+    key = _source_key(resolved.date().isoformat())
     if key in _MEM_CACHE:
         return _MEM_CACHE[key]
     table = compute_rs_table(resolved, close, sectors_map=_symbol_sectors())

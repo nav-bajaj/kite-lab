@@ -35,6 +35,8 @@ from functools import lru_cache
 import numpy as np
 import pandas as pd
 
+from app.insights import breadth as _breadth
+from app.insights._freshness import file_signature
 from app.insights._paths import indices_dir as _indices_dir
 from app.insights.breadth import load_close_panel, load_universe
 
@@ -56,8 +58,16 @@ class WatchlistEntry:
         return asdict(self)
 
 
-@lru_cache(maxsize=1)
+def _nifty_signature() -> tuple:
+    return (file_signature(_indices_dir() / "NIFTY_50.csv"),)
+
+
 def _nifty_close() -> pd.Series:
+    return _nifty_close_cached(_nifty_signature())
+
+
+@lru_cache(maxsize=2)
+def _nifty_close_cached(signature) -> pd.Series:
     p = _indices_dir() / "NIFTY_50.csv"
     if not p.exists():
         return pd.Series(dtype=float)
@@ -66,9 +76,20 @@ def _nifty_close() -> pd.Series:
               .sort_index())
 
 
-@lru_cache(maxsize=1)
+_nifty_close.cache_clear = _nifty_close_cached.cache_clear
+
+
 def _stock_panel() -> pd.DataFrame:
+    # Same universe + price sources as breadth, so reuse its signature.
+    return _stock_panel_cached(_breadth._signature())
+
+
+@lru_cache(maxsize=2)
+def _stock_panel_cached(signature) -> pd.DataFrame:
     return load_close_panel(load_universe())
+
+
+_stock_panel.cache_clear = _stock_panel_cached.cache_clear
 
 
 def _sectors_for(symbol: str) -> tuple[str, ...]:
@@ -464,5 +485,5 @@ def get_all_watchlists(
 
 
 def clear_cache() -> None:
-    _stock_panel.cache_clear()
-    _nifty_close.cache_clear()
+    _stock_panel_cached.cache_clear()
+    _nifty_close_cached.cache_clear()

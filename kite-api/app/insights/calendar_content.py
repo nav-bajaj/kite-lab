@@ -35,6 +35,7 @@ import pandas as pd
 from app.config import get_settings
 from app.insights import regime as regime_mod
 from app.insights import stress as stress_mod
+from app.insights._freshness import file_signature
 from app.insights._paths import indices_dir as _indices_dir
 
 
@@ -68,9 +69,13 @@ def _events_file() -> Path:
     return get_settings().data_dir / "data" / "static" / "historical_events.csv"
 
 
-@lru_cache(maxsize=1)
 def load_events() -> list[dict]:
     """Read the curated events file. Returns a list of {date, tag} dicts."""
+    return _load_events_cached(file_signature(_events_file()))
+
+
+@lru_cache(maxsize=2)
+def _load_events_cached(signature) -> list[dict]:
     p = _events_file()
     if not p.exists():
         return []
@@ -79,6 +84,9 @@ def load_events() -> list[dict]:
         {"date": pd.Timestamp(row["date"]), "tag": str(row["tag"])}
         for _, row in df.iterrows()
     ]
+
+
+load_events.cache_clear = _load_events_cached.cache_clear
 
 
 def _event_tag_for_date(target: pd.Timestamp,
@@ -165,11 +173,15 @@ def get_on_this_day(
 # ─────────── Nifty panel loader (shared by B1 + B2) ───────────
 
 
-@lru_cache(maxsize=1)
 def _nifty_close() -> pd.Series:
     """Long-history Nifty 50 daily close — the 16y panel used for the
     seasonality profile and event-move history. Same source + shape as
     `stress._nifty_close`; empty Series when the panel is unprovisioned."""
+    return _nifty_close_cached(file_signature(_indices_dir() / "NIFTY_50.csv"))
+
+
+@lru_cache(maxsize=2)
+def _nifty_close_cached(signature) -> pd.Series:
     p = _indices_dir() / "NIFTY_50.csv"
     if not p.exists():
         return pd.Series(dtype=float)
@@ -178,9 +190,14 @@ def _nifty_close() -> pd.Series:
               .sort_index())
 
 
+_nifty_close.cache_clear = _nifty_close_cached.cache_clear
+
+
 def clear_cache() -> None:
-    """Drop the cached Nifty close (hooked into reading.clear_all_caches)."""
-    _nifty_close.cache_clear()
+    """Drop the cached Nifty close + events (hooked into
+    reading.clear_all_caches)."""
+    _nifty_close_cached.cache_clear()
+    _load_events_cached.cache_clear()
 
 
 # ─────────── B1: seasonality ───────────

@@ -24,6 +24,7 @@ from pathlib import Path
 import pandas as pd
 
 from app.config import get_settings
+from app.insights._freshness import dir_signature
 
 
 # Sectors where the snapshot includes small-caps outside our NSE 500 price
@@ -92,19 +93,36 @@ def _load_one_sector(name: str, snapshot_dir: Path) -> Sector:
     )
 
 
-@lru_cache(maxsize=1)
+def _signature() -> tuple:
+    """Cache key: the latest snapshot directory's mtime (or the root's when
+    none resolves yet). Constituents change only on a new snapshot, so a
+    directory mtime is a sufficient, cheap token."""
+    try:
+        return (dir_signature(_latest_snapshot_dir()),)
+    except FileNotFoundError:
+        return (dir_signature(_root()),)
+
+
 def get_all_sectors() -> dict[str, Sector]:
     """Return {sector_name: Sector} for the latest snapshot.
 
-    Cached for process lifetime; call `clear_cache()` after fetching a
-    new snapshot to pick up changes.
+    Cached per snapshot signature; a new snapshot directory busts it
+    automatically.
     """
+    return _get_all_sectors_cached(_signature())
+
+
+@lru_cache(maxsize=2)
+def _get_all_sectors_cached(signature) -> dict[str, Sector]:
     snapshot_dir = _latest_snapshot_dir()
     sectors: dict[str, Sector] = {}
     for csv_path in sorted(snapshot_dir.glob("*.csv")):
         name = csv_path.stem
         sectors[name] = _load_one_sector(name, snapshot_dir)
     return sectors
+
+
+get_all_sectors.cache_clear = _get_all_sectors_cached.cache_clear
 
 
 def get_sector(name: str) -> Sector:
@@ -118,19 +136,26 @@ def get_sector(name: str) -> Sector:
     return sectors[name]
 
 
-@lru_cache(maxsize=1)
 def get_symbol_to_sectors() -> dict[str, tuple[str, ...]]:
     """Reverse mapping: symbol → tuple of sectors that contain it.
 
     Many stocks appear in multiple sectors (e.g., HDFCBANK is in NIFTY_BANK
     AND NIFTY_FIN_SERVICE AND NIFTY_CONSUMPTION). Returned tuples are sorted.
     """
+    return _get_symbol_to_sectors_cached(_signature())
+
+
+@lru_cache(maxsize=2)
+def _get_symbol_to_sectors_cached(signature) -> dict[str, tuple[str, ...]]:
     sectors = get_all_sectors()
     out: dict[str, list[str]] = {}
     for sector_name, sector in sectors.items():
         for sym in sector.symbols:
             out.setdefault(sym, []).append(sector_name)
     return {sym: tuple(sorted(lst)) for sym, lst in out.items()}
+
+
+get_symbol_to_sectors.cache_clear = _get_symbol_to_sectors_cached.cache_clear
 
 
 def get_sectors_for(symbol: str) -> tuple[str, ...]:
@@ -140,5 +165,5 @@ def get_sectors_for(symbol: str) -> tuple[str, ...]:
 
 def clear_cache() -> None:
     """Drop in-memory cache. Call after fetching a new snapshot."""
-    get_all_sectors.cache_clear()
-    get_symbol_to_sectors.cache_clear()
+    _get_all_sectors_cached.cache_clear()
+    _get_symbol_to_sectors_cached.cache_clear()

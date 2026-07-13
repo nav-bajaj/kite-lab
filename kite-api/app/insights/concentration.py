@@ -36,6 +36,7 @@ from typing import Optional
 import pandas as pd
 
 from app.config import get_settings
+from app.insights._freshness import dir_signature, file_signature
 from app.insights._paths import indices_dir
 
 
@@ -67,7 +68,13 @@ def _index_file() -> Path:
     return indices_dir() / "NIFTY_50.csv"
 
 
-@lru_cache(maxsize=1)
+def _weights_signature() -> tuple:
+    """Cache key for the factsheet weights — the weights dir mtime, which
+    bumps when a new dated factsheet CSV is dropped in (the documented
+    refresh path)."""
+    return (dir_signature(_weights_dir()),)
+
+
 def load_weights() -> pd.Series:
     """Symbol → weight (normalised to sum to exactly 100).
 
@@ -76,15 +83,30 @@ def load_weights() -> pd.Series:
     factsheet sum to ~100 with rounding; we re-normalise so attribution
     math is exactly invariant.
     """
+    return _load_weights_cached(_weights_signature())
+
+
+@lru_cache(maxsize=2)
+def _load_weights_cached(signature) -> pd.Series:
     df = pd.read_csv(_latest_weights_file())
     df["symbol"] = df["symbol"].astype(str).str.strip()
     raw = pd.Series(df["weight_pct"].astype(float).values, index=df["symbol"].values)
     return raw * (100.0 / raw.sum())
 
 
-@lru_cache(maxsize=1)
+load_weights.cache_clear = _load_weights_cached.cache_clear
+
+
 def load_constituent_closes() -> pd.DataFrame:
     """Wide DataFrame of close prices, columns=symbol (only Nifty 50 names)."""
+    return _load_constituent_closes_cached(
+        _weights_signature()
+        + (dir_signature(_prices_dir(), sentinel="RELIANCE_day.csv"),)
+    )
+
+
+@lru_cache(maxsize=2)
+def _load_constituent_closes_cached(signature) -> pd.DataFrame:
     weights = load_weights()
     series = []
     for sym in weights.index:
@@ -99,10 +121,28 @@ def load_constituent_closes() -> pd.DataFrame:
     return pd.concat(series, axis=1).sort_index()
 
 
-@lru_cache(maxsize=1)
+load_constituent_closes.cache_clear = _load_constituent_closes_cached.cache_clear
+
+
 def load_nifty50_index() -> pd.DataFrame:
+    return _load_nifty50_index_cached(file_signature(_index_file()))
+
+
+@lru_cache(maxsize=2)
+def _load_nifty50_index_cached(signature) -> pd.DataFrame:
     df = pd.read_csv(_index_file(), parse_dates=["date"])
     return df.set_index("date").sort_index()
+
+
+load_nifty50_index.cache_clear = _load_nifty50_index_cached.cache_clear
+
+
+def clear_cache() -> None:
+    """Drop all three concentration loaders. Wired into
+    reading.clear_all_caches()."""
+    _load_weights_cached.cache_clear()
+    _load_constituent_closes_cached.cache_clear()
+    _load_nifty50_index_cached.cache_clear()
 
 
 @dataclass

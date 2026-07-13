@@ -32,6 +32,8 @@ import numpy as np
 import pandas as pd
 
 from app.config import get_settings
+from app.insights import stress as _stress
+from app.insights._freshness import file_signature
 from app.insights.breadth import get_breadth_panel
 from app.insights.macro import get_macro_panel
 from app.insights.stress import compute_stress_panel
@@ -114,8 +116,23 @@ def _indices_dir() -> Path:
     return settings.data_dir / "indices_data_historical"
 
 
-@lru_cache(maxsize=1)
+def _nifty_signature() -> tuple:
+    return (file_signature(_indices_dir() / "NIFTY_50.csv"),)
+
+
+def _signature() -> tuple:
+    """Feature panel derives from breadth, macro, stress, and the Nifty close.
+    stress._signature() already covers breadth + macro + Nifty 50; add the
+    analog module's own Nifty read for completeness."""
+    return _stress._signature() + _nifty_signature()
+
+
 def _nifty_close() -> pd.Series:
+    return _nifty_close_cached(_nifty_signature())
+
+
+@lru_cache(maxsize=2)
+def _nifty_close_cached(signature) -> pd.Series:
     p = _indices_dir() / "NIFTY_50.csv"
     if not p.exists():
         return pd.Series(dtype=float)
@@ -124,9 +141,16 @@ def _nifty_close() -> pd.Series:
               .sort_index())
 
 
-@lru_cache(maxsize=1)
+_nifty_close.cache_clear = _nifty_close_cached.cache_clear
+
+
 def _build_feature_panel() -> pd.DataFrame:
     """Build the per-date feature matrix used for KNN matching."""
+    return _build_feature_panel_cached(_signature())
+
+
+@lru_cache(maxsize=2)
+def _build_feature_panel_cached(signature) -> pd.DataFrame:
     breadth = get_breadth_panel()
     macro = get_macro_panel()
     stress = compute_stress_panel()
@@ -146,7 +170,9 @@ def _build_feature_panel() -> pd.DataFrame:
     return df
 
 
-@lru_cache(maxsize=1)
+_build_feature_panel.cache_clear = _build_feature_panel_cached.cache_clear
+
+
 def _standardize_features() -> tuple[pd.DataFrame, pd.Series, pd.Series]:
     """Return (z_scored_features, means, stds) over all history.
 
@@ -154,6 +180,11 @@ def _standardize_features() -> tuple[pd.DataFrame, pd.Series, pd.Series]:
     stable. This is fine because we're not trying to predict — we're
     measuring similarity in feature space.
     """
+    return _standardize_features_cached(_signature())
+
+
+@lru_cache(maxsize=2)
+def _standardize_features_cached(signature) -> tuple[pd.DataFrame, pd.Series, pd.Series]:
     df = _build_feature_panel()
     features = df[FEATURE_COLUMNS]
     means = features.mean()
@@ -162,10 +193,17 @@ def _standardize_features() -> tuple[pd.DataFrame, pd.Series, pd.Series]:
     return z, means, stds
 
 
-@lru_cache(maxsize=1)
+_standardize_features.cache_clear = _standardize_features_cached.cache_clear
+
+
 def _nifty_forward_returns() -> pd.DataFrame:
     """Pre-compute Nifty forward returns at each horizon. Aligned to the
     feature panel's index so we can directly look up match dates."""
+    return _nifty_forward_returns_cached(_signature())
+
+
+@lru_cache(maxsize=2)
+def _nifty_forward_returns_cached(signature) -> pd.DataFrame:
     feat = _build_feature_panel()
     nifty = _nifty_close().reindex(feat.index).ffill()
     out = {}
@@ -295,8 +333,11 @@ def _safe_float(v) -> float | None:
         return None
 
 
+_nifty_forward_returns.cache_clear = _nifty_forward_returns_cached.cache_clear
+
+
 def clear_cache() -> None:
-    _nifty_close.cache_clear()
-    _build_feature_panel.cache_clear()
-    _standardize_features.cache_clear()
-    _nifty_forward_returns.cache_clear()
+    _nifty_close_cached.cache_clear()
+    _build_feature_panel_cached.cache_clear()
+    _standardize_features_cached.cache_clear()
+    _nifty_forward_returns_cached.cache_clear()

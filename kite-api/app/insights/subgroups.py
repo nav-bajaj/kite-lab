@@ -32,6 +32,7 @@ import numpy as np
 import pandas as pd
 
 from app.config import get_settings
+from app.insights._freshness import dir_signature, file_signature
 from app.insights._paths import indices_dir
 
 
@@ -169,9 +170,15 @@ def _all_members() -> tuple[str, ...]:
     return tuple(seen)
 
 
-@lru_cache(maxsize=1)
 def load_close_panel() -> pd.DataFrame:
     """Wide DataFrame of subgroup-member close prices (cols=symbol)."""
+    return _load_close_panel_cached(
+        dir_signature(_prices_dir(), sentinel="RELIANCE_day.csv")
+    )
+
+
+@lru_cache(maxsize=2)
+def _load_close_panel_cached(signature) -> pd.DataFrame:
     series = []
     for sym in _all_members():
         p = _prices_dir() / f"{sym}_day.csv"
@@ -183,15 +190,25 @@ def load_close_panel() -> pd.DataFrame:
     return pd.concat(series, axis=1).sort_index()
 
 
-@lru_cache(maxsize=1)
+load_close_panel.cache_clear = _load_close_panel_cached.cache_clear
+
+
 def load_nifty_close() -> pd.Series:
+    return _load_nifty_close_cached(file_signature(_nifty_file()))
+
+
+@lru_cache(maxsize=2)
+def _load_nifty_close_cached(signature) -> pd.Series:
     df = pd.read_csv(_nifty_file(), parse_dates=["date"]).set_index("date").sort_index()
     return df["close"]
 
 
+load_nifty_close.cache_clear = _load_nifty_close_cached.cache_clear
+
+
 def clear_cache() -> None:
-    load_close_panel.cache_clear()
-    load_nifty_close.cache_clear()
+    _load_close_panel_cached.cache_clear()
+    _load_nifty_close_cached.cache_clear()
 
 
 # ─────────── computation ───────────

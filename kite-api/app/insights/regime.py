@@ -36,6 +36,9 @@ import numpy as np
 import pandas as pd
 
 from app.config import get_settings
+from app.insights import breadth as _breadth
+from app.insights import macro as _macro
+from app.insights._freshness import file_signature
 from app.insights.breadth import get_breadth_panel
 from app.insights.macro import get_macro_panel
 
@@ -82,13 +85,27 @@ def _indices_dir() -> Path:
     return settings.data_dir / "indices_data_historical"
 
 
-@lru_cache(maxsize=1)
+def _nifty100_signature() -> tuple:
+    return (file_signature(_indices_dir() / "NIFTY_100.csv"),)
+
+
+def _signature() -> tuple:
+    """Signature of the regime panel — it derives from breadth, macro, and the
+    NIFTY 100 trend filter, so fold all three source signatures together."""
+    return _breadth._signature() + _macro._signature() + _nifty100_signature()
+
+
 def _nifty100_above_100dma() -> pd.Series:
     """Bool series: True on days NIFTY 100 closed > 100-DMA.
 
     Reuses the trend filter from combo_defensive (without the 3-day
     confirmation hysteresis — we apply our own smoothing at regime level).
     """
+    return _nifty100_above_100dma_cached(_nifty100_signature())
+
+
+@lru_cache(maxsize=2)
+def _nifty100_above_100dma_cached(signature) -> pd.Series:
     p = _indices_dir() / "NIFTY_100.csv"
     if not p.exists():
         return pd.Series(dtype=bool)
@@ -172,9 +189,16 @@ def _compute_persistence(regime_series: pd.Series) -> pd.Series:
     return persistence
 
 
-@lru_cache(maxsize=1)
+_nifty100_above_100dma.cache_clear = _nifty100_above_100dma_cached.cache_clear
+
+
 def compute_regime_panel() -> pd.DataFrame:
     """Time series of regime classifications with persistence tracking."""
+    return _compute_regime_panel_cached(_signature())
+
+
+@lru_cache(maxsize=2)
+def _compute_regime_panel_cached(signature) -> pd.DataFrame:
     breadth = get_breadth_panel()
     macro = get_macro_panel()
     nifty_up = _nifty100_above_100dma()
@@ -274,6 +298,9 @@ def get_regime_history() -> pd.DataFrame:
     return pd.DataFrame(episodes)
 
 
+compute_regime_panel.cache_clear = _compute_regime_panel_cached.cache_clear
+
+
 def clear_cache() -> None:
-    _nifty100_above_100dma.cache_clear()
-    compute_regime_panel.cache_clear()
+    _nifty100_above_100dma_cached.cache_clear()
+    _compute_regime_panel_cached.cache_clear()

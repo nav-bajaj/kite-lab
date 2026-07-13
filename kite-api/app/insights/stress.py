@@ -36,6 +36,9 @@ import numpy as np
 import pandas as pd
 
 from app.config import get_settings
+from app.insights import breadth as _breadth
+from app.insights import macro as _macro
+from app.insights._freshness import file_signature
 from app.insights.breadth import get_breadth_panel
 from app.insights.macro import get_macro_panel
 
@@ -82,8 +85,22 @@ def _indices_dir() -> Path:
     return settings.data_dir / "indices_data_historical"
 
 
-@lru_cache(maxsize=1)
+def _nifty_signature() -> tuple:
+    return (file_signature(_indices_dir() / "NIFTY_50.csv"),)
+
+
+def _signature() -> tuple:
+    """Signature of the stress panel — derives from breadth, macro, and the
+    Nifty 50 close, so fold all three source signatures together."""
+    return _breadth._signature() + _macro._signature() + _nifty_signature()
+
+
 def _nifty_close() -> pd.Series:
+    return _nifty_close_cached(_nifty_signature())
+
+
+@lru_cache(maxsize=2)
+def _nifty_close_cached(signature) -> pd.Series:
     p = _indices_dir() / "NIFTY_50.csv"
     if not p.exists():
         return pd.Series(dtype=float)
@@ -92,15 +109,22 @@ def _nifty_close() -> pd.Series:
               .sort_index())
 
 
+_nifty_close.cache_clear = _nifty_close_cached.cache_clear
+
+
 def _rolling_percentile(series: pd.Series, window: int = 252) -> pd.Series:
     """For each date, return the percentile rank of today's value within
     the trailing `window` observations. 0 = lowest in window, 1 = highest."""
     return series.rolling(window, min_periods=max(50, window // 4)).rank(pct=True)
 
 
-@lru_cache(maxsize=1)
 def compute_stress_panel() -> pd.DataFrame:
     """Time series of stress score + components, on the breadth calendar."""
+    return _compute_stress_panel_cached(_signature())
+
+
+@lru_cache(maxsize=2)
+def _compute_stress_panel_cached(signature) -> pd.DataFrame:
     breadth = get_breadth_panel()
     macro = get_macro_panel()
     nifty = _nifty_close()
@@ -195,6 +219,9 @@ def get_stress_snapshot(asof: pd.Timestamp | None = None) -> StressSnapshot | No
     )
 
 
+compute_stress_panel.cache_clear = _compute_stress_panel_cached.cache_clear
+
+
 def clear_cache() -> None:
-    _nifty_close.cache_clear()
-    compute_stress_panel.cache_clear()
+    _nifty_close_cached.cache_clear()
+    _compute_stress_panel_cached.cache_clear()
