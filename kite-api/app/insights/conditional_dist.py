@@ -31,6 +31,9 @@ import numpy as np
 import pandas as pd
 
 from app.config import get_settings
+from app.insights import regime as _regime
+from app.insights import stress as _stress
+from app.insights._freshness import file_signature
 from app.insights.regime import REGIMES, compute_regime_panel
 from app.insights.stress import compute_stress_panel
 
@@ -65,8 +68,22 @@ def _indices_dir() -> Path:
     return settings.data_dir / "indices_data_historical"
 
 
-@lru_cache(maxsize=1)
+def _nifty_signature() -> tuple:
+    return (file_signature(_indices_dir() / "NIFTY_50.csv"),)
+
+
+def _signature() -> tuple:
+    """Joint panel derives from the regime panel, the stress panel, and Nifty
+    forward returns — fold all three source signatures together."""
+    return _regime._signature() + _stress._signature() + _nifty_signature()
+
+
 def _nifty_close() -> pd.Series:
+    return _nifty_close_cached(_nifty_signature())
+
+
+@lru_cache(maxsize=2)
+def _nifty_close_cached(signature) -> pd.Series:
     p = _indices_dir() / "NIFTY_50.csv"
     if not p.exists():
         return pd.Series(dtype=float)
@@ -75,9 +92,16 @@ def _nifty_close() -> pd.Series:
               .sort_index())
 
 
-@lru_cache(maxsize=1)
+_nifty_close.cache_clear = _nifty_close_cached.cache_clear
+
+
 def _build_joint_panel() -> pd.DataFrame:
     """Combine regime, stress score, and Nifty forward returns into one panel."""
+    return _build_joint_panel_cached(_signature())
+
+
+@lru_cache(maxsize=2)
+def _build_joint_panel_cached(signature) -> pd.DataFrame:
     regime_panel = compute_regime_panel()
     stress_panel = compute_stress_panel()
     nifty = _nifty_close()
@@ -235,6 +259,9 @@ def get_today_conditional(asof: pd.Timestamp | None = None) -> dict:
     }
 
 
+_build_joint_panel.cache_clear = _build_joint_panel_cached.cache_clear
+
+
 def clear_cache() -> None:
-    _nifty_close.cache_clear()
-    _build_joint_panel.cache_clear()
+    _nifty_close_cached.cache_clear()
+    _build_joint_panel_cached.cache_clear()

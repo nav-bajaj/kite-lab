@@ -41,6 +41,8 @@ import numpy as np
 import pandas as pd
 
 from app.config import get_settings
+from app.insights import breadth as _breadth
+from app.insights import sector_constituents as _sector_constituents
 from app.insights.breadth import load_close_panel
 from app.insights.sector_constituents import (
     PARTIAL_COVERAGE_SECTORS,
@@ -108,15 +110,27 @@ class SectorBreadthSnapshot:
 
 # ---------- panel builder (historical time series) ----------
 
-@lru_cache(maxsize=1)
+def _signature() -> tuple:
+    """Depends on the NSE 500 price panel (via breadth) and the sector
+    constituent snapshot, so fold both source signatures together."""
+    return _breadth._signature() + _sector_constituents._signature()
+
+
 def _build_stock_panel() -> pd.DataFrame:
     """Wide stock-price panel covering every symbol in any sector + Nifty."""
+    return _build_stock_panel_cached(_signature())
+
+
+@lru_cache(maxsize=2)
+def _build_stock_panel_cached(signature) -> pd.DataFrame:
     sectors = get_all_sectors()
     all_symbols = sorted({sym for s in sectors.values() for sym in s.symbols})
     return load_close_panel(all_symbols)
 
 
-@lru_cache(maxsize=1)
+_build_stock_panel.cache_clear = _build_stock_panel_cached.cache_clear
+
+
 def compute_sector_breadth_panel() -> pd.DataFrame:
     """Time series of per-sector breadth.
 
@@ -125,6 +139,11 @@ def compute_sector_breadth_panel() -> pd.DataFrame:
     pct_advancing, dispersion_20d, n_covered, thrust_day.
     Rows: trading days.
     """
+    return _compute_sector_breadth_panel_cached(_signature())
+
+
+@lru_cache(maxsize=2)
+def _compute_sector_breadth_panel_cached(signature) -> pd.DataFrame:
     sectors = get_all_sectors()
     close = _build_stock_panel()
     if close.empty:
@@ -304,6 +323,9 @@ def _safe_float(x) -> float | None:
     return v
 
 
+compute_sector_breadth_panel.cache_clear = _compute_sector_breadth_panel_cached.cache_clear
+
+
 def clear_cache() -> None:
-    _build_stock_panel.cache_clear()
-    compute_sector_breadth_panel.cache_clear()
+    _build_stock_panel_cached.cache_clear()
+    _compute_sector_breadth_panel_cached.cache_clear()

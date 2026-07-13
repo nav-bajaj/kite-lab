@@ -44,6 +44,7 @@ import numpy as np
 import pandas as pd
 
 from app.config import get_settings
+from app.insights._freshness import file_signature
 from app.insights.sector_breadth import get_sector_breadth_snapshot
 
 
@@ -124,9 +125,23 @@ def _load_index_close(name: str) -> pd.Series:
               .sort_index())
 
 
-@lru_cache(maxsize=1)
+def _sector_signature() -> tuple:
+    """Sector-index panel signature. The pipeline writes all indices together,
+    so a representative sector sentinel (NIFTY_BANK) tracks the whole set."""
+    return (file_signature(_indices_dir() / "NIFTY_BANK.csv"),)
+
+
+def _nifty_signature() -> tuple:
+    return (file_signature(_indices_dir() / "NIFTY_50.csv"),)
+
+
 def _load_sector_panel() -> pd.DataFrame:
     """Wide DataFrame: rows=date, cols=sector_name, values=close."""
+    return _load_sector_panel_cached(_sector_signature())
+
+
+@lru_cache(maxsize=2)
+def _load_sector_panel_cached(signature) -> pd.DataFrame:
     series = {}
     for name in SECTOR_INDICES:
         s = _load_index_close(name)
@@ -138,18 +153,32 @@ def _load_sector_panel() -> pd.DataFrame:
     return pd.concat(series, axis=1).sort_index()
 
 
-@lru_cache(maxsize=1)
+_load_sector_panel.cache_clear = _load_sector_panel_cached.cache_clear
+
+
 def _nifty_close() -> pd.Series:
+    return _nifty_close_cached(_nifty_signature())
+
+
+@lru_cache(maxsize=2)
+def _nifty_close_cached(signature) -> pd.Series:
     return _load_index_close("NIFTY_50")
 
 
-@lru_cache(maxsize=1)
+_nifty_close.cache_clear = _nifty_close_cached.cache_clear
+
+
 def compute_sector_rs_panel() -> pd.DataFrame:
     """Time series of RS scores + ranks per sector × window.
 
     Wide DataFrame, MultiIndex columns (sector, window, metric),
     where metric ∈ {'rs_score', 'rank'}.
     """
+    return _compute_sector_rs_panel_cached(_sector_signature() + _nifty_signature())
+
+
+@lru_cache(maxsize=2)
+def _compute_sector_rs_panel_cached(signature) -> pd.DataFrame:
     sector_panel = _load_sector_panel()
     if sector_panel.empty:
         return pd.DataFrame()
@@ -281,7 +310,10 @@ def get_leaderboard(
     )
 
 
+compute_sector_rs_panel.cache_clear = _compute_sector_rs_panel_cached.cache_clear
+
+
 def clear_cache() -> None:
-    _load_sector_panel.cache_clear()
-    _nifty_close.cache_clear()
-    compute_sector_rs_panel.cache_clear()
+    _load_sector_panel_cached.cache_clear()
+    _nifty_close_cached.cache_clear()
+    _compute_sector_rs_panel_cached.cache_clear()

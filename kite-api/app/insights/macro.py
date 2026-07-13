@@ -34,6 +34,7 @@ import numpy as np
 import pandas as pd
 
 from app.config import get_settings
+from app.insights._freshness import dir_signature
 from app.insights._paths import indices_dir as _indices_dir
 
 
@@ -99,11 +100,27 @@ def _cache_is_fresh(cache_path: Path) -> bool:
     return True
 
 
-@lru_cache(maxsize=1)
+def _signature() -> tuple:
+    """Cache key: the indices directory (INDIA_VIX sentinel). The pipeline
+    rewrites the whole indices set together, so one sentinel tracks the VIX
+    and sector-index inputs this panel reads."""
+    return (dir_signature(_indices_dir(), sentinel="INDIA_VIX.csv"),)
+
+
 def get_macro_panel(force_rebuild: bool = False) -> pd.DataFrame:
     """Return the macro panel, building if needed and caching to disk."""
+    if force_rebuild:
+        _get_macro_panel_cached.cache_clear()
+        cache = _cache_file()
+        if cache.exists():
+            cache.unlink()
+    return _get_macro_panel_cached(_signature())
+
+
+@lru_cache(maxsize=2)
+def _get_macro_panel_cached(signature) -> pd.DataFrame:
     cache = _cache_file()
-    if not force_rebuild and _cache_is_fresh(cache):
+    if _cache_is_fresh(cache):
         return pd.read_pickle(cache)  # noqa: S301  # internal cache only
 
     print("[macro] cache stale or missing — rebuilding from VIX + sector indices")
@@ -114,8 +131,11 @@ def get_macro_panel(force_rebuild: bool = False) -> pd.DataFrame:
     return df
 
 
+get_macro_panel.cache_clear = _get_macro_panel_cached.cache_clear
+
+
 def clear_cache() -> None:
-    get_macro_panel.cache_clear()
+    _get_macro_panel_cached.cache_clear()
     cache = _cache_file()
     if cache.exists():
         cache.unlink()

@@ -43,6 +43,8 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
+from app.insights._freshness import file_signature
+
 
 # ─────────── data shape ───────────
 
@@ -204,11 +206,20 @@ def _load_close_series(csv_filename: str) -> Optional[pd.Series]:
     return df["close"]
 
 
+def _signature() -> tuple:
+    """Cache key: mtimes of every registered asset CSV (only a handful), so a
+    fetcher rewrite of any asset busts the snapshot. Deferred assets (no CSV)
+    contribute a 0.0 sentinel that flips when their file first appears."""
+    return tuple(
+        file_signature(INDICES_DIR / fn)
+        for _, _, fn in REGISTERED_ASSETS if fn is not None
+    )
+
+
 def clear_cache() -> None:
-    get_cross_asset_snapshot.cache_clear()
+    _get_cross_asset_snapshot_cached.cache_clear()
 
 
-@lru_cache(maxsize=1)
 def get_cross_asset_snapshot() -> dict[str, CrossAssetEntry]:
     """Return the per-asset feature snapshot dict.
 
@@ -217,6 +228,11 @@ def get_cross_asset_snapshot() -> dict[str, CrossAssetEntry]:
     iterate the dict and find every registered asset, gracefully
     handling missing data.
     """
+    return _get_cross_asset_snapshot_cached(_signature())
+
+
+@lru_cache(maxsize=2)
+def _get_cross_asset_snapshot_cached(signature) -> dict[str, CrossAssetEntry]:
     out: dict[str, CrossAssetEntry] = {}
     for asset_id, label, csv_filename in REGISTERED_ASSETS:
         if csv_filename is None:
@@ -238,3 +254,6 @@ def get_cross_asset_snapshot() -> dict[str, CrossAssetEntry]:
             as_of_date=series.index.max().date().isoformat(),
         )
     return out
+
+
+get_cross_asset_snapshot.cache_clear = _get_cross_asset_snapshot_cached.cache_clear

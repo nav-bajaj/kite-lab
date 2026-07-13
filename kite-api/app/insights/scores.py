@@ -261,14 +261,21 @@ def get_scores(asof=None) -> dict[str, StockScores]:
 
     from app.insights import rs_rank, stock_metrics, watchlists
 
+    from app.insights import sector_constituents as _sc
+
     metrics = stock_metrics.get_stock_metrics(asof)
     if not metrics:
         return {}
-    key = next(iter(metrics.values())).date
+    date_key = next(iter(metrics.values())).date
+    # Fold the source signature into the key so a same-date data update
+    # (adjusted closes, refreshed constituents) reloads instead of serving a
+    # stale composite.
+    sig = stock_metrics._panel_signature() + _sc._signature()
+    key = f"{date_key}|{stock_metrics._sig_token(sig)}"
     if key in _MEM_CACHE:
         return _MEM_CACHE[key]
 
-    resolved = pd.Timestamp(key)
+    resolved = pd.Timestamp(date_key)
     rs_table = rs_rank.get_rs_table(resolved)
     inflection = {e.symbol for e in
                   rs_rank.get_live_inflection_cohort(resolved, top_n=25)}
