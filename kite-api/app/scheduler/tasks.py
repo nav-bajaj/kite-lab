@@ -14,17 +14,41 @@ logger = logging.getLogger(__name__)
 
 # Predefined scheduled tasks configuration
 SCHEDULED_TASKS = [
+    # Pre-market token refresh. Kite access tokens expire ~06:00 IST daily;
+    # since daily_pipeline now runs post-close (16:30), the overnight token is
+    # dead by morning. This login-only job at 08:30 IST (before the 09:15 open)
+    # keeps the day's token valid for intraday positions, the live dashboard,
+    # and the 16:00 EOD rebalance producer.
+    {
+        "id": "morning_login",
+        "name": "Morning Login",
+        "description": "Pre-market (08:30 IST) Kite login so the day's token is valid for intraday + the 16:00 EOD producer",
+        "command": "login",
+        "args": {"headless": True},
+        "func_ref": "app.scheduler.tasks:run_morning_login",
+        "trigger": "cron",
+        "trigger_args": {
+            "hour": 8,
+            "minute": 30,
+            "day_of_week": "mon-fri"
+        },
+    },
+    # Post-close data + insights refresh. Moved from 07:00 (pre-market, which
+    # only ever had prior-day closes) to 16:30 IST — after the 15:30 NSE close
+    # plus Zerodha's adjusted-close publish delay — so the insight dashboard
+    # and portfolios reflect the SAME day's close for evening viewers. Re-logins
+    # as a self-contained fallback if the morning login failed.
     {
         "id": "daily_pipeline",
         "name": "Daily Pipeline",
-        "description": "Auto-login + fetch data, build signals, backup",
+        "description": "Post-close (16:30 IST): auto-login + fetch same-day data, build portfolios, sync insights, backup",
         "command": "daily_pipeline",
         "args": {"with-login": True, "headless": True},
         "func_ref": "app.scheduler.tasks:run_daily_pipeline",
         "trigger": "cron",
         "trigger_args": {
-            "hour": 7,
-            "minute": 0,
+            "hour": 16,
+            "minute": 30,
             "day_of_week": "mon-fri"
         },
     },
@@ -103,6 +127,16 @@ def run_daily_pipeline():
         "daily_pipeline",
         args=task_config.get("args"),
     ))
+
+
+def run_morning_login():
+    """Pre-market Kite login (token-only). Refreshes the daily access token
+    before the 09:15 open so intraday positions, the live dashboard, and the
+    16:00 EOD producer all have a valid token. Synchronous wrapper for
+    APScheduler."""
+    import asyncio
+    task_config = next((t for t in SCHEDULED_TASKS if t["id"] == "morning_login"), {})
+    asyncio.run(_execute_scheduled_task("login", args=task_config.get("args")))
 
 
 def run_weekly_backup():
