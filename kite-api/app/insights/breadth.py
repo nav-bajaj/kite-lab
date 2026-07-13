@@ -38,6 +38,7 @@ import numpy as np
 import pandas as pd
 
 from app.config import get_settings
+from app.insights._freshness import dir_signature, file_signature
 
 
 def _repo_root() -> Path:
@@ -163,16 +164,37 @@ def _cache_is_fresh(cache_path: Path) -> bool:
     return True
 
 
-@lru_cache(maxsize=1)
+def _signature() -> tuple:
+    """In-memory cache key: changes when the universe list or the price panel
+    changes. Stats only the RELIANCE sentinel (the pipeline writes the panel
+    as a batch) plus the universe file — the same inputs `_cache_is_fresh`
+    already checks. Keeping the lru keyed on this makes the worker reload on
+    the next request after the daily pipeline rewrites the panel, instead of
+    serving a frozen in-memory copy until redeploy."""
+    return (
+        file_signature(_universe_file()),
+        dir_signature(_prices_dir(), sentinel="RELIANCE_day.csv"),
+    )
+
+
 def get_breadth_panel(force_rebuild: bool = False) -> pd.DataFrame:
     """Return the breadth panel, building if needed and caching to disk.
 
-    @lru_cache keeps it in memory per process; the cache key (just the
-    force_rebuild flag) means subsequent calls return the same DataFrame
-    instance unless explicitly rebuilt. Disk cache survives restarts.
+    The in-memory cache is keyed on `_signature()`, so it self-invalidates
+    when the source files change. Disk cache survives restarts.
     """
+    if force_rebuild:
+        _get_breadth_panel_cached.cache_clear()
+        cache = _cache_file()
+        if cache.exists():
+            cache.unlink()
+    return _get_breadth_panel_cached(_signature())
+
+
+@lru_cache(maxsize=2)
+def _get_breadth_panel_cached(signature) -> pd.DataFrame:
     cache = _cache_file()
-    if not force_rebuild and _cache_is_fresh(cache):
+    if _cache_is_fresh(cache):
         return pd.read_pickle(cache)  # noqa: S301  # internal cache only
 
     print("[breadth] cache stale or missing — rebuilding from NSE 500 panel")
@@ -187,10 +209,14 @@ def get_breadth_panel(force_rebuild: bool = False) -> pd.DataFrame:
     return breadth
 
 
+# Preserve `get_breadth_panel.cache_clear()` for any external caller.
+get_breadth_panel.cache_clear = _get_breadth_panel_cached.cache_clear
+
+
 def clear_cache() -> None:
     """Drop both in-memory and on-disk cache. Use after a data refresh
     to force a rebuild on next call."""
-    get_breadth_panel.cache_clear()
+    _get_breadth_panel_cached.cache_clear()
     cache = _cache_file()
     if cache.exists():
         cache.unlink()

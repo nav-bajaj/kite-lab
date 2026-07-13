@@ -38,6 +38,8 @@ import numpy as np
 import pandas as pd
 
 from app.config import get_settings
+from app.insights import breadth as _breadth
+from app.insights._freshness import dir_signature, file_signature
 from app.insights._paths import indices_dir as _indices_dir
 from app.insights.breadth import load_universe
 
@@ -121,8 +123,37 @@ def _prices_dir() -> Path:
     return get_settings().data_dir / "nse500_data_merged"
 
 
-@lru_cache(maxsize=1)
+def _panel_signature() -> tuple:
+    """Cache key for the OHLCV panels — the universe list + the price panel
+    (RELIANCE sentinel), the same sources breadth reads."""
+    return (
+        file_signature(_breadth._universe_file()),
+        dir_signature(_prices_dir(), sentinel="RELIANCE_day.csv"),
+    )
+
+
+def _nifty_signature() -> tuple:
+    return (file_signature(_indices_dir() / "NIFTY_50.csv"),)
+
+
+def _sig_token(signature: tuple) -> str:
+    """Short, filename-safe digest of a signature tuple — used to key the
+    per-date in-memory cache on the underlying data version."""
+    import hashlib
+    return hashlib.sha1(repr(signature).encode()).hexdigest()[:12]
+
+
 def load_ohlcv_panels() -> dict[str, pd.DataFrame]:
+    """Wide panels (rows=date, cols=symbol) for close/high/low/volume.
+
+    Keyed on the panel signature so the worker reloads after the pipeline
+    rewrites the merged panel instead of serving a frozen copy.
+    """
+    return _load_ohlcv_panels_cached(_panel_signature())
+
+
+@lru_cache(maxsize=2)
+def _load_ohlcv_panels_cached(signature) -> dict[str, pd.DataFrame]:
     """Wide panels (rows=date, cols=symbol) for close/high/low/volume.
 
     Uses the same 16y split-adjusted merged panel breadth.py reads.
@@ -145,13 +176,24 @@ def load_ohlcv_panels() -> dict[str, pd.DataFrame]:
     return out
 
 
-@lru_cache(maxsize=1)
+# Preserve `load_ohlcv_panels.cache_clear()` for any external caller.
+load_ohlcv_panels.cache_clear = _load_ohlcv_panels_cached.cache_clear
+
+
 def _nifty_close() -> pd.Series:
+    return _nifty_close_cached(_nifty_signature())
+
+
+@lru_cache(maxsize=2)
+def _nifty_close_cached(signature) -> pd.Series:
     p = _indices_dir() / "NIFTY_50.csv"
     if not p.exists():
         return pd.Series(dtype=float)
     return (pd.read_csv(p, parse_dates=["date"])
             .set_index("date")["close"].sort_index())
+
+
+_nifty_close.cache_clear = _nifty_close_cached.cache_clear
 
 
 # ─────────────────────────── computation ───────────────────────────
@@ -432,12 +474,17 @@ def get_stock_metrics(
     resolved = _resolve_asof(asof, panels["close"].index)
     if resolved is None:
         return {}
-    key = resolved.date().isoformat()
+    date_key = resolved.date().isoformat()
+    # Fold the source signature into the in-memory key so a same-date data
+    # update (e.g. corporate-action-adjusted closes) reloads instead of
+    # serving the stale per-date record. The disk pkl stays keyed on the date
+    # and re-checks mtime itself.
+    key = f"{date_key}|{_sig_token(_panel_signature() + _nifty_signature())}"
 
     if not force_rebuild and key in _MEM_CACHE:
         return _MEM_CACHE[key]
 
-    cache = _cache_file(key)
+    cache = _cache_file(date_key)
     if not force_rebuild and _cache_fresh(cache):
         data = pd.read_pickle(cache)  # noqa: S301  # internal cache only
         _MEM_CACHE[key] = data
@@ -489,8 +536,8 @@ def clear_cache() -> None:
     """Drop in-memory + on-disk stock-metrics caches and panel loaders.
     Wired into reading.clear_all_caches()."""
     _MEM_CACHE.clear()
-    load_ohlcv_panels.cache_clear()
-    _nifty_close.cache_clear()
+    _load_ohlcv_panels_cached.cache_clear()
+    _nifty_close_cached.cache_clear()
     cache_dir = get_settings().data_dir / "cache" / "insights"
     if cache_dir.exists():
         for f in cache_dir.glob("stock_metrics_*.pkl"):
