@@ -1,0 +1,9 @@
+name: universe_membership
+status: in-progress
+opened: 2026-07-14
+closed: null
+related_commits: []
+supersedes: []
+depends_on:
+  - momentum_experiment
+register_rows: []

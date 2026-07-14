@@ -131,6 +131,13 @@ def parse_args():
                     help="Stock OHLC panel dir; use nse500_data for live production")
     ap.add_argument("--universe", type=Path,
                     default=ROOT / BASELINE["universe_csv"])
+    ap.add_argument("--membership", type=Path,
+                    default=ROOT / "data/static/nse500_membership.csv",
+                    help="Effective-dated membership CSV. When the file "
+                         "exists, entry eligibility is date-masked and held "
+                         "positions are grandfathered (exit by portfolio "
+                         "logic only). Pass a non-existent path to force "
+                         "legacy snapshot-universe behavior.")
     ap.add_argument("--benchmark", type=Path,
                     default=ROOT / "data/benchmarks/nifty100.csv")
     ap.add_argument("--start", type=str, default="2009-09-01",
@@ -189,7 +196,18 @@ def main():
     sma_200 = close_panel.rolling(200, min_periods=200).mean()
     atr_20 = close_panel.pct_change().rolling(20).std()
 
-    universe = load_universe(args.universe)
+    membership_fn = None
+    if args.membership.exists():
+        from scripts.universe_membership import (
+            load_membership, all_ever_members, make_membership_fn,
+        )
+        mdf = load_membership(args.membership)
+        universe = all_ever_members(mdf)
+        membership_fn = make_membership_fn(mdf)
+        print(f"  membership: {args.membership.name} "
+              f"({len(mdf)} rows, {len(universe)} all-ever symbols)")
+    else:
+        universe = load_universe(args.universe)
     cols = [s for s in close_panel.columns if s in universe]
     close_uni = close_panel[cols]
     print(f"  universe: {len(cols)} symbols")
@@ -219,6 +237,7 @@ def main():
         calendar=calendar, benchmark_aligned=benchmark_aligned,
         panels=panels, sma_200_panel=sma_200, atr_20_panel=atr_20,
         start=args.start, end=args.end or "2099-12-31", config=cfg,
+        membership_fn=membership_fn,
     )
 
     if res is None or res["equity"].empty:
