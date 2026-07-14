@@ -89,19 +89,29 @@ Shipped:
    an all-ever panel let future additions with price history (AIIL,
    LAURUSLABS, MCX, RADICO had local data) shift pre-cutover ranks and
    rewrite 2021+ picks. L6's z-score is monotone, so it needs no mask.
-3. **Engine tie-order fix**: `nlargest` at different depths orders tied
+3. **Component slot-cuts need the mask even when the score is monotone.**
+   The post-fetch check (new symbols' price history actually in the panel)
+   caught a third leak: L6's z-score is monotone so standalone L6 needs no
+   candidate mask, but COMBO's `make_combo_score_fn` truncates each
+   component to its top-12 — CEMPRO (listed 2020, added to NSE 500
+   2026-07) cracked the L6 component's 2022 top-12 and changed published
+   COMBO picks. `make_momentum_score` now takes `candidate_fn` and every
+   caller passes it. Rule of thumb: any hard cut inside a score fn
+   (top-n_per, eligibility filters) needs point-in-time candidates, not
+   just the engine-level entry mask.
+4. **Engine tie-order fix**: `nlargest` at different depths orders tied
    scores differently, and entrant order feeds the leftover-cash
    redistribution pass (caught as a TL25 one-row swap). The ranking head
    is now computed with the exact legacy `nlargest(top_n+exit_buffer)`
    call; deeper ranks are appended only when membership is active.
-4. **Legacy admin variants frozen** on
+5. **Legacy admin variants frozen** on
    `data/static/legacy_snapshot_2025-11-06/` — the legacy engine has no
    membership support, so it must not read the now-moving universe views.
-5. **`*_universe.csv` regenerated as current-members views** (canonical
+6. **`*_universe.csv` regenerated as current-members views** (canonical
    symbols: the JSW Dulux row carries AKZOINDIA, LTM carries LTIM) via
    `regenerate_universe_csvs.py`. `fetch_nse500_history` now fetches
    ALL-EVER members (533) so grandfathered holds and history keep pricing.
-6. Regression gate re-run in strict order (legacy baselines on the old
+7. Regression gate re-run in strict order (legacy baselines on the old
    snapshot -> regenerate -> membership runs): all four portfolios
    byte-identical across equity/trades/exits/dashboard CSVs.
 

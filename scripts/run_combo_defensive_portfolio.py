@@ -179,7 +179,7 @@ def main():
 
     # L6 component
     print(f"[component] L6 score on NSE 500 ...")
-    nse500_uni, l6_membership_fn, _l6_candidate_fn = resolve_universe(
+    nse500_uni, l6_membership_fn, l6_candidate_fn = resolve_universe(
         args.l6_membership, ROOT / LOCKED["l6_universe_csv"])
     nse500_cols = [s for s in close_panel.columns if s in nse500_uni]
     l6_panels = build_momentum_panels(
@@ -190,6 +190,7 @@ def main():
     l6_score = make_momentum_score(
         l6_panels, vol_floor=LOCKED["l6_vol_floor"],
         vol_power=LOCKED["l6_vol_power"], cross_sectional_zscore=True,
+        candidate_fn=l6_candidate_fn,
     )
 
     # OM25 component (uses OM25's internal regime tilt — separate from the

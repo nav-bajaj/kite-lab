@@ -268,7 +268,7 @@ def _prepare_l6_v2(*, prices_dir: Path) -> StrategyState:
     weekly_dates = entry_dates
 
     from scripts.universe_membership import resolve_universe
-    universe, membership_fn, _candidate_fn = resolve_universe(
+    universe, membership_fn, candidate_fn = resolve_universe(
         ROOT / "data/static/nse500_membership.csv",
         ROOT / BASELINE["universe_csv"])
     cols = [s for s in close_panel.columns if s in universe]
@@ -285,6 +285,7 @@ def _prepare_l6_v2(*, prices_dir: Path) -> StrategyState:
         vol_floor=BASELINE["vol_floor"],
         vol_power=BASELINE["vol_power"],
         cross_sectional_zscore=BASELINE["cross_sectional_zscore"],
+        candidate_fn=candidate_fn,
     )
 
     return StrategyState(
@@ -345,7 +346,7 @@ def _prepare_combo_defensive(*, prices_dir: Path) -> StrategyState:
     from scripts.universe_membership import resolve_universe, union_membership_fns
 
     # L6 component (NSE 500)
-    l6_uni, l6_membership_fn, _l6_candidate_fn = resolve_universe(
+    l6_uni, l6_membership_fn, l6_candidate_fn = resolve_universe(
         ROOT / "data/static/nse500_membership.csv",
         ROOT / LOCKED["l6_universe_csv"])
     l6_cols = [s for s in close_panel.columns if s in l6_uni]
@@ -357,6 +358,7 @@ def _prepare_combo_defensive(*, prices_dir: Path) -> StrategyState:
     l6_score = make_momentum_score(
         l6_panels, vol_floor=LOCKED["l6_vol_floor"],
         vol_power=LOCKED["l6_vol_power"], cross_sectional_zscore=True,
+        candidate_fn=l6_candidate_fn,
     )
 
     # OM25 v3 component (Nifty 250) — carries its own regime tilt in the

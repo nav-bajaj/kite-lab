@@ -197,13 +197,16 @@ def main():
     atr_20 = close_panel.pct_change().rolling(20).std()
 
     membership_fn = None
+    candidate_fn = None
     if args.membership.exists():
         from scripts.universe_membership import (
             load_membership, all_ever_members, make_membership_fn,
+            make_candidate_fn,
         )
         mdf = load_membership(args.membership)
         universe = all_ever_members(mdf)
         membership_fn = make_membership_fn(mdf)
+        candidate_fn = make_candidate_fn(mdf)
         print(f"  membership: {args.membership.name} "
               f"({len(mdf)} rows, {len(universe)} all-ever symbols)")
     else:
@@ -237,7 +240,7 @@ def main():
         calendar=calendar, benchmark_aligned=benchmark_aligned,
         panels=panels, sma_200_panel=sma_200, atr_20_panel=atr_20,
         start=args.start, end=args.end or "2099-12-31", config=cfg,
-        membership_fn=membership_fn,
+        membership_fn=membership_fn, candidate_fn=candidate_fn,
     )
 
     if res is None or res["equity"].empty:
