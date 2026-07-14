@@ -80,20 +80,27 @@ def sync_stocks() -> None:
         return
     appended_total = 0
     n_files_touched = 0
-    n_files_skipped = 0
+    n_files_seeded = 0
     by_new_max: dict[str, int] = {}
     for live_file in sorted(LIVE_STOCKS.glob("*_day.csv")):
         target = MERGED_STOCKS / live_file.name
+        if not target.exists():
+            # New universe member (fetch covers all-ever membership): it has
+            # no pre-live GDF history, so the live file IS its full history.
+            # Seeding here is what gets reconstitution additions into the
+            # insight panels without a manual merged-panel re-upload.
+            import shutil
+            shutil.copyfile(live_file, target)
+            n_files_seeded += 1
+            continue
         n, new_max = _append_new_rows(live_file, target)
         if n > 0:
             appended_total += n
             n_files_touched += 1
             by_new_max[new_max] = by_new_max.get(new_max, 0) + 1
-        elif not target.exists():
-            n_files_skipped += 1
     print(f"  {n_files_touched} files updated, {appended_total} new rows total")
-    if n_files_skipped:
-        print(f"  {n_files_skipped} live files had no merged counterpart (skipped)")
+    if n_files_seeded:
+        print(f"  {n_files_seeded} new symbols seeded into merged from live")
     print(f"  new max-date distribution: {dict(sorted(by_new_max.items()))}")
 
 
