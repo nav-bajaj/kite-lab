@@ -355,7 +355,8 @@ def _build_stock_panel_row(stock_panel_dir: Path, trading_dates: List[date],
 def _build_cross_asset_rows(cross_asset_dir: Path, registry: Iterable,
                             trading_dates: List[date],
                             reference_date: Optional[date],
-                            today: date) -> List[SourceFreshness]:
+                            today: date,
+                            primary_dir: Optional[Path] = None) -> List[SourceFreshness]:
     rows: List[SourceFreshness] = []
     for entry in registry:
         asset_id, label, csv_filename = entry
@@ -363,8 +364,15 @@ def _build_cross_asset_rows(cross_asset_dir: Path, registry: Iterable,
             # Deferred asset with no data path — excluded from the report so it
             # doesn't peg the overall status at missing forever.
             continue
+        # Mirror cross_asset._asset_path: the tracked NIFTY index (india_10y)
+        # syncs into the shared indices dir (indices_data_historical), the
+        # futures into cross_asset_dir (indices_data_full). Check the indices
+        # dir first so the monitor reports the same file the engine serves.
+        path = cross_asset_dir / csv_filename
+        if primary_dir is not None and (primary_dir / csv_filename).exists():
+            path = primary_dir / csv_filename
         try:
-            last = last_csv_date(cross_asset_dir / csv_filename)
+            last = last_csv_date(path)
         except Exception:
             last = None
         rows.append(build_daily_source(
@@ -658,7 +666,8 @@ def get_freshness_report(
     sources.extend(_build_index_rows(
         indices_directory, trading_dates, reference_date, today))
     sources.extend(_build_cross_asset_rows(
-        cross_asset_dir, cross_asset_registry, trading_dates, reference_date, today))
+        cross_asset_dir, cross_asset_registry, trading_dates, reference_date, today,
+        primary_dir=indices_directory))
     sources.append(_build_sector_constituents_row(sector_constituents_root, today))
     sources.append(_build_index_weights_row(index_weights_root, today))
     if include_token:
