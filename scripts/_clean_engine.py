@@ -214,6 +214,16 @@ def run_strategy(*,
                                              # don't add new positions during bear regime.
                                              # if False: allow entries at bear-scaled size
                                              # (target_exposure / top_n weight per stock).
+                 membership_fn=None,         # optional callable(signal_date) ->
+                                             # set of entry-eligible symbols
+                                             # (effective-dated universe). Per
+                                             # date, ranking is filtered to
+                                             # members | current holdings and
+                                             # only members may ENTER; held
+                                             # non-members exit by rank as
+                                             # usual (grandfather rule). None
+                                             # = legacy behavior, everything
+                                             # scored is eligible.
                  regime_redeploy_on_increase=False,  # if True, when target_exposure
                                              # increases vs the prior day (e.g. bear→bull
                                              # or bear→deep with 3-state breadth gate),
@@ -240,7 +250,13 @@ def run_strategy(*,
         scores = signal_function(date, **signal_function_args)
         if scores is None or scores.empty:
             continue
-        ranked = scores.dropna().nlargest(top_n + exit_buffer)
+        scores = scores.dropna()
+        # With a membership filter the top_n+exit_buffer cut happens AFTER
+        # restricting to members|held (only known during simulation), so the
+        # precomputed ranking must keep full depth. nlargest (not
+        # sort_values) either way so tie ordering matches the legacy path.
+        depth = len(scores) if membership_fn is not None else top_n + exit_buffer
+        ranked = scores.nlargest(depth)
         if len(ranked) == 0:
             continue
         signals[date] = ranked.index.tolist()
@@ -274,6 +290,19 @@ def run_strategy(*,
     active_cal = calendar[calendar >= min(rebal_set)]
 
     holdings = {}
+
+    def _relevant_ranking(ranked_list, signal_date):
+        """Restrict a precomputed ranking to members(date) | current holdings.
+
+        Non-held non-members become invisible: they can't occupy a top-N
+        slot, block an entrant, or push a holding out of the keep set. Held
+        non-members stay in and compete for their slot (grandfather rule).
+        """
+        if membership_fn is None:
+            return ranked_list
+        mem = membership_fn(signal_date)
+        return [s for s in ranked_list if s in mem or s in holdings]
+
     cost_basis = {}
     entry_meta = {}
     cash = initial_capital
@@ -524,7 +553,7 @@ def run_strategy(*,
         if (weekly_rank_check and date in weekly_exec_to_signal
                 and date not in rebal_set):
             sd_w = weekly_exec_to_signal[date]
-            ranked_w = signals.get(sd_w, [])
+            ranked_w = _relevant_ranking(signals.get(sd_w, []), sd_w)
             if ranked_w:
                 keep_w = set(ranked_w[:top_n + exit_buffer])
                 for sym in list(holdings.keys()):
@@ -570,7 +599,7 @@ def run_strategy(*,
         # exits via rank still run so we keep churn control during bear.
         if date in rebal_set:
             sd = entry_schedule[date]
-            ranked = signals.get(sd, [])
+            ranked = _relevant_ranking(signals.get(sd, []), sd)
             keep = set(ranked[:top_n + exit_buffer])
 
             # Sell out-of-rank holdings
