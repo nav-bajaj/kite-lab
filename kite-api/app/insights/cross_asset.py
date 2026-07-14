@@ -44,6 +44,7 @@ import numpy as np
 import pandas as pd
 
 from app.insights._freshness import file_signature
+from app.insights._paths import indices_dir
 
 
 # ─────────── data shape ───────────
@@ -196,8 +197,24 @@ REGISTERED_ASSETS: list[tuple[str, str, Optional[str]]] = [
 ]
 
 
+def _asset_path(csv_filename: str) -> Path:
+    """Resolve an asset CSV, preferring the shared indices dir.
+
+    india_10y (NIFTY_GS_10YR) is a tracked NIFTY index — the daily pipeline
+    fetches it with the other indices and syncs it into ``indices_dir()``
+    (``indices_data_historical`` on Railway). The futures (USDINR/GOLD/CRUDEOIL)
+    are written by fetch_cross_asset_history.py into ``INDICES_DIR``
+    (``indices_data_full``). Check the indices dir first so the tracked index
+    reads its freshly-synced data, then fall back to the futures dir. Locally
+    both resolve to the same folder, so behaviour is unchanged."""
+    primary = indices_dir() / csv_filename
+    if primary.exists():
+        return primary
+    return INDICES_DIR / csv_filename
+
+
 def _load_close_series(csv_filename: str) -> Optional[pd.Series]:
-    path = INDICES_DIR / csv_filename
+    path = _asset_path(csv_filename)
     if not path.exists():
         return None
     df = pd.read_csv(path, parse_dates=["date"]).set_index("date").sort_index()
@@ -211,7 +228,7 @@ def _signature() -> tuple:
     fetcher rewrite of any asset busts the snapshot. Deferred assets (no CSV)
     contribute a 0.0 sentinel that flips when their file first appears."""
     return tuple(
-        file_signature(INDICES_DIR / fn)
+        file_signature(_asset_path(fn))
         for _, _, fn in REGISTERED_ASSETS if fn is not None
     )
 
