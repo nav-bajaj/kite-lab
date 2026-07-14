@@ -98,6 +98,11 @@ class StrategyState:
     # bought 2026-06-29, showing up as SELL on the 2026-07-02 proposal
     # before this fix).
     min_hold_days: int = 0
+    # Effective-dated universe membership (mirrors each runner's
+    # --membership resolution). None = legacy snapshot behavior. Missing
+    # this while the runners have it would make proposals force-exit
+    # grandfathered ex-members the daily backtest keeps holding.
+    membership_fn: Optional[Callable] = None
 
 
 def _prepare_om25_v3(*, prices_dir: Path) -> StrategyState:
@@ -117,7 +122,10 @@ def _prepare_om25_v3(*, prices_dir: Path) -> StrategyState:
     weekly_filt = fridays(calendar)
     entry_dates = biweekly_fridays(calendar)
 
-    universe = load_universe(ROOT / LOCKED["universe_csv"])
+    from scripts.universe_membership import resolve_universe
+    universe, membership_fn, candidate_fn = resolve_universe(
+        ROOT / "data/static/nifty250_membership.csv",
+        ROOT / LOCKED["universe_csv"])
     cols = [s for s in close_panel.columns if s in universe]
     returns_uni = close_panel[cols].pct_change()
 
@@ -147,6 +155,7 @@ def _prepare_om25_v3(*, prices_dir: Path) -> StrategyState:
         bear_w_uc=LOCKED["bear_w_uc"], bear_w_cr=LOCKED["bear_w_cr"],
         return_filter=LOCKED["return_filter"],
         lookback=LOCKED["lookback"], min_obs=LOCKED["min_obs"],
+        candidate_fn=candidate_fn,
     )
 
     return StrategyState(
@@ -169,6 +178,7 @@ def _prepare_om25_v3(*, prices_dir: Path) -> StrategyState:
         # emits "0 continuing, 25 entries" every cycle. Score fn already
         # captured the regime signal via the closure above.
         regime_panel=None, bear_exposure=0.0,
+        membership_fn=membership_fn,
     )
 
 
@@ -187,7 +197,10 @@ def _prepare_tl25_v3(*, prices_dir: Path) -> StrategyState:
     weekly_filt = fridays(calendar)
     entry_dates = biweekly_fridays(calendar)
 
-    universe = load_universe(ROOT / V3_LOCKED["universe_csv"])
+    from scripts.universe_membership import resolve_universe
+    universe, membership_fn, candidate_fn = resolve_universe(
+        ROOT / "data/static/nse500_membership.csv",
+        ROOT / V3_LOCKED["universe_csv"])
     cols = [s for s in close_panel.columns if s in universe]
     close_uni = close_panel[cols]
     panels = build_tl25_panels(
@@ -205,6 +218,7 @@ def _prepare_tl25_v3(*, prices_dir: Path) -> StrategyState:
         w_persistence=V3_LOCKED["w_persistence"],
         w_drawdown=V3_LOCKED["w_drawdown"],
         w_momentum=V3_LOCKED["w_momentum"],
+        candidate_fn=candidate_fn,
     )
 
     return StrategyState(
@@ -218,6 +232,7 @@ def _prepare_tl25_v3(*, prices_dir: Path) -> StrategyState:
         drawdown_stop=V3_LOCKED["atr_min_floor"],
         weekly_rank_check=True,
         regime_panel=None, bear_exposure=0.0,
+        membership_fn=membership_fn,
     )
 
 
@@ -252,7 +267,10 @@ def _prepare_l6_v2(*, prices_dir: Path) -> StrategyState:
     entry_dates = thursdays(calendar)
     weekly_dates = entry_dates
 
-    universe = load_universe(ROOT / BASELINE["universe_csv"])
+    from scripts.universe_membership import resolve_universe
+    universe, membership_fn, _candidate_fn = resolve_universe(
+        ROOT / "data/static/nse500_membership.csv",
+        ROOT / BASELINE["universe_csv"])
     cols = [s for s in close_panel.columns if s in universe]
     close_uni = close_panel[cols]
 
@@ -280,6 +298,7 @@ def _prepare_l6_v2(*, prices_dir: Path) -> StrategyState:
         drawdown_stop=BASELINE["drawdown_stop"],
         weekly_rank_check=False,
         regime_panel=None, bear_exposure=0.0,
+        membership_fn=membership_fn,
         min_hold_days=BASELINE["min_hold_days"],
     )
 
@@ -323,8 +342,12 @@ def _prepare_combo_defensive(*, prices_dir: Path) -> StrategyState:
     regime_index_path = next((p for p in regime_candidates if p.is_file()),
                               regime_candidates[-1])
 
+    from scripts.universe_membership import resolve_universe, union_membership_fns
+
     # L6 component (NSE 500)
-    l6_uni = load_universe(ROOT / LOCKED["l6_universe_csv"])
+    l6_uni, l6_membership_fn, _l6_candidate_fn = resolve_universe(
+        ROOT / "data/static/nse500_membership.csv",
+        ROOT / LOCKED["l6_universe_csv"])
     l6_cols = [s for s in close_panel.columns if s in l6_uni]
     l6_panels = build_momentum_panels(
         close_panel[l6_cols],
@@ -339,7 +362,9 @@ def _prepare_combo_defensive(*, prices_dir: Path) -> StrategyState:
     # OM25 v3 component (Nifty 250) — carries its own regime tilt in the
     # score fn, separate from the portfolio-level overlay applied by the
     # engine below.
-    om25_uni = load_universe(ROOT / LOCKED["om25_universe_csv"])
+    om25_uni, om25_membership_fn, om25_candidate_fn = resolve_universe(
+        ROOT / "data/static/nifty250_membership.csv",
+        ROOT / LOCKED["om25_universe_csv"])
     om25_cols = [s for s in close_panel.columns if s in om25_uni]
     om25_returns = close_panel[om25_cols].pct_change()
     om25_regime = build_regime_panel_confirmed(
@@ -353,6 +378,7 @@ def _prepare_combo_defensive(*, prices_dir: Path) -> StrategyState:
         bear_w_uc=LOCKED["om25_bear_w_uc"], bear_w_cr=LOCKED["om25_bear_w_cr"],
         return_filter=LOCKED["om25_return_filter"],
         lookback=LOCKED["om25_lookback"], min_obs=LOCKED["om25_min_obs"],
+        candidate_fn=om25_candidate_fn,
     )
 
     combo_score = make_combo_score_fn(
@@ -384,6 +410,9 @@ def _prepare_combo_defensive(*, prices_dir: Path) -> StrategyState:
         # piece. bear_exposure=0.5 keeps 50% invested when the panel says bear.
         regime_panel=portfolio_regime,
         bear_exposure=LOCKED["regime_bear_exposure"],
+        membership_fn=(union_membership_fns([l6_membership_fn,
+                                             om25_membership_fn])
+                       if (l6_membership_fn or om25_membership_fn) else None),
         min_hold_days=LOCKED["min_hold_days"],
     )
 
@@ -661,6 +690,7 @@ def build_eod_artifact(*,
         use_dma_exit=False,
         weekly_rank_check=state.weekly_rank_check,
         regime_panel=state.regime_panel, bear_exposure=state.bear_exposure,
+        membership_fn=state.membership_fn,
         min_hold_days=state.min_hold_days,
         initial_capital=initial_capital,
     )

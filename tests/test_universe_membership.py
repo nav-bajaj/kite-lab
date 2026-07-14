@@ -21,6 +21,7 @@ if str(ROOT) not in sys.path:
 from scripts._clean_engine import run_strategy
 from scripts.universe_membership import (
     load_membership, all_ever_members, members_asof, make_membership_fn,
+    make_candidate_fn,
 )
 
 
@@ -62,6 +63,26 @@ def test_membership_fn_matches_members_asof(tmp_path):
     for d in ["2020-01-01", "2026-07-14", "2026-07-15",
               "2026-08-31", "2026-09-01", "2030-01-01"]:
         assert fn(d) == frozenset(members_asof(df, d)), d
+
+
+def test_candidate_fn_excludes_future_additions_keeps_ex_members(tmp_path):
+    """Cross-sectional score mask: ever-a-member ON OR BEFORE the date.
+
+    Ex-members stay in (their scores must keep flowing for grandfathered
+    holds); future additions stay out until effective_from — otherwise a
+    new stock's price history would shift pre-cutover pct-ranks and
+    rewrite published history.
+    """
+    p = _write_membership(tmp_path, [
+        ("AAA", "1900-01-01", "", ""),
+        ("BBB", "1900-01-01", "2026-07-15", "removed at cutover"),
+        ("CCC", "2026-07-15", "", "added at cutover"),
+    ])
+    fn = make_candidate_fn(load_membership(p))
+    assert fn("2026-07-14") == frozenset({"AAA", "BBB"})   # CCC not yet
+    assert fn("2026-07-15") == frozenset({"AAA", "BBB", "CCC"})
+    # BBB remains a candidate forever after removal (grandfather scoring)
+    assert fn("2030-01-01") == frozenset({"AAA", "BBB", "CCC"})
 
 
 def test_load_membership_rejects_bad_rows(tmp_path):

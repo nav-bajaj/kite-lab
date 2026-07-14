@@ -131,6 +131,11 @@ def parse_args():
                     help="Stock OHLC panel directory (use nse500_data for live)")
     ap.add_argument("--universe", type=Path,
                     default=ROOT / V3_LOCKED["universe_csv"])
+    ap.add_argument("--membership", type=Path,
+                    default=ROOT / "data/static/nse500_membership.csv",
+                    help="Effective-dated membership CSV; when it exists, "
+                         "entries are date-masked and held positions are "
+                         "grandfathered. Non-existent path = legacy snapshot.")
     ap.add_argument("--benchmark", type=Path,
                     default=ROOT / "data/benchmarks/nifty100.csv")
     ap.add_argument("--start", type=str, default="2009-09-01",
@@ -211,10 +216,13 @@ def main():
 
     print(f"  signals: {len(entry_dates)} entry dates, {len(weekly_filt)} weekly checks")
 
-    universe = load_universe(args.universe)
+    from scripts.universe_membership import resolve_universe
+    universe, membership_fn, candidate_fn = resolve_universe(
+        args.membership, args.universe)
     cols = [s for s in close_panel.columns if s in universe]
     close_uni = close_panel[cols]
-    print(f"  universe: {len(cols)} symbols")
+    print(f"  universe: {len(cols)} symbols"
+          + (f" (membership: {args.membership.name})" if membership_fn else ""))
 
     print(f"[panels] building TL25 panels "
           f"(persistence {args.persistence_window}d, drawdown {args.drawdown_window}d², "
@@ -234,6 +242,7 @@ def main():
         w_persistence=args.w_persistence,
         w_drawdown=args.w_drawdown,
         w_momentum=args.w_momentum,
+        candidate_fn=candidate_fn,
     )
 
     print(f"[backtest] running ...")
@@ -250,6 +259,7 @@ def main():
         use_dma_exit=False,
         weekly_rank_check=weekly_rank_check,
         regime_panel=None, bear_exposure=0.0,
+        membership_fn=membership_fn,
         initial_capital=args.initial_capital,
     )
 

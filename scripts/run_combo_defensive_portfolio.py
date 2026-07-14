@@ -120,6 +120,14 @@ def parse_args():
     ap.add_argument("--end", type=str, default=None)
     ap.add_argument("--regime-index", type=Path,
                     default=ROOT / LOCKED["regime_index_path"])
+    ap.add_argument("--l6-membership", type=Path,
+                    default=ROOT / "data/static/nse500_membership.csv",
+                    help="Effective-dated membership for the L6 component; "
+                         "non-existent path = legacy snapshot.")
+    ap.add_argument("--om25-membership", type=Path,
+                    default=ROOT / "data/static/nifty250_membership.csv",
+                    help="Effective-dated membership for the OM25 component; "
+                         "non-existent path = legacy snapshot.")
     ap.add_argument("--initial-capital", type=float, default=1_000_000)
     ap.add_argument("--slippage", type=float, default=LOCKED["slippage"])
     ap.add_argument("--output-dir", type=Path, default=None)
@@ -167,9 +175,12 @@ def main():
     sma_200 = close_panel.rolling(200, min_periods=200).mean()
     atr_20 = close_panel.pct_change().rolling(20).std()
 
+    from scripts.universe_membership import resolve_universe, union_membership_fns
+
     # L6 component
     print(f"[component] L6 score on NSE 500 ...")
-    nse500_uni = load_universe(ROOT / LOCKED["l6_universe_csv"])
+    nse500_uni, l6_membership_fn, _l6_candidate_fn = resolve_universe(
+        args.l6_membership, ROOT / LOCKED["l6_universe_csv"])
     nse500_cols = [s for s in close_panel.columns if s in nse500_uni]
     l6_panels = build_momentum_panels(
         close_panel[nse500_cols],
@@ -184,7 +195,8 @@ def main():
     # OM25 component (uses OM25's internal regime tilt — separate from the
     # portfolio-level regime overlay applied later)
     print(f"[component] OM25 v3 score on Nifty 250 ...")
-    nifty250_uni = load_universe(ROOT / LOCKED["om25_universe_csv"])
+    nifty250_uni, om25_membership_fn, om25_candidate_fn = resolve_universe(
+        args.om25_membership, ROOT / LOCKED["om25_universe_csv"])
     nifty250_cols = [s for s in close_panel.columns if s in nifty250_uni]
     om25_returns = close_panel[nifty250_cols].pct_change()
     if cached_regime is not None:
@@ -201,6 +213,7 @@ def main():
         bear_w_uc=LOCKED["om25_bear_w_uc"], bear_w_cr=LOCKED["om25_bear_w_cr"],
         return_filter=LOCKED["om25_return_filter"],
         lookback=LOCKED["om25_lookback"], min_obs=LOCKED["om25_min_obs"],
+        candidate_fn=om25_candidate_fn,
     )
 
     # Combined score (priority dedup: L6 → OM25)
@@ -246,6 +259,11 @@ def main():
         weekly_rank_check=False,
         regime_panel=portfolio_regime,
         bear_exposure=LOCKED["regime_bear_exposure"],
+        # Blend-level membership: eligible iff member of either component
+        # universe on the date (see union_membership_fns docstring for the
+        # per-component slot-discipline caveat).
+        membership_fn=(union_membership_fns([l6_membership_fn, om25_membership_fn])
+                       if (l6_membership_fn or om25_membership_fn) else None),
         min_hold_days=LOCKED["min_hold_days"],
         initial_capital=args.initial_capital,
     )

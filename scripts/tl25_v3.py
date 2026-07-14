@@ -151,12 +151,19 @@ def make_tl25_score(panels: dict, *,
                     regime_panel: Optional[pd.Series] = None,
                     bear_w_persistence: Optional[float] = None,
                     bear_w_drawdown: Optional[float] = None,
-                    bear_w_momentum: Optional[float] = None):
+                    bear_w_momentum: Optional[float] = None,
+                    candidate_fn=None):
     """Return a score_fn(signal_date) closure for use with run_strategy.
 
     If `regime_panel` is provided AND the bear_* weights are set, weights
     are tilted in bear regimes (analogous to OM25 v3). When all bear_*
     are None, the bull weights apply unconditionally.
+
+    candidate_fn(date) -> set: optional point-in-time column mask (from
+    scripts.universe_membership.make_candidate_fn). The momentum leg is
+    pct-ranked among eligible stocks, so with an all-ever panel the
+    eligible set must be date-masked or future universe additions with
+    price history would shift pre-cutover ranks.
     """
     eligibility = panels["eligibility"]
     persistence = panels["persistence"]
@@ -194,6 +201,9 @@ def make_tl25_score(panels: dict, *,
         wp_n, wd_n, wm_n = wp / wsum, wd / wsum, wm / wsum
 
         elig_row = eligibility.loc[signal_date]
+        if candidate_fn is not None:
+            cands = candidate_fn(signal_date)
+            elig_row = elig_row & elig_row.index.isin(cands)
         if not elig_row.any():
             return pd.Series(dtype=float)
         persist_row = persistence.loc[signal_date].fillna(0)

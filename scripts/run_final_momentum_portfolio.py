@@ -17,23 +17,28 @@ WEEKDAYS = {
     "sunday": 6,
 }
 
+# Legacy variants are pinned to the 2025-11-06 universe snapshot: the live
+# *_universe.csv files became derived current-members views of the
+# effective-dated membership files (tasks/universe_membership, 2026-07-14),
+# and this legacy engine has no membership support — repointing it at a
+# moving universe would rewrite its recomputed history on every refresh.
 UNIVERSE_DEFAULTS = {
     "nse500": {
-        "universe_file": Path("data/static/nse500_universe.csv"),
+        "universe_file": Path("data/static/legacy_snapshot_2025-11-06/nse500_universe.csv"),
         "output_root": Path("experiments/final_portfolio"),
         "publish_signals": Path("data/final_portfolio/final_top24_signals.csv"),
         "latest_output": Path("data/final_portfolio/final_portfolio_24.csv"),
         "run_prefix": "final_portfolio",
     },
     "nifty100": {
-        "universe_file": Path("data/static/nifty100_universe.csv"),
+        "universe_file": Path("data/static/legacy_snapshot_2025-11-06/nifty100_universe.csv"),
         "output_root": Path("nifty_100_tests"),
         "publish_signals": Path("data/nifty100_portfolio/final_top24_signals.csv"),
         "latest_output": Path("data/nifty100_portfolio/final_portfolio_24.csv"),
         "run_prefix": "nifty100_portfolio",
     },
     "nifty250": {
-        "universe_file": Path("data/static/nifty250_universe.csv"),
+        "universe_file": Path("data/static/legacy_snapshot_2025-11-06/nifty250_universe.csv"),
         "output_root": Path("nifty_250_tests"),
         "publish_signals": Path("data/nifty250_portfolio/final_top24_signals.csv"),
         "latest_output": Path("data/nifty250_portfolio/final_portfolio_24.csv"),
