@@ -9,11 +9,30 @@ from history_utils import (
 
 
 UNIVERSE_CSV = "data/static/nse500_universe.csv"
+MEMBERSHIP_CSV = "data/static/nse500_membership.csv"
+
+
+def fetch_symbols():
+    """ALL-EVER members when the membership file exists, else the snapshot.
+
+    Removed-but-grandfathered holdings need daily prices until the engine
+    sells them, and the recomputed history needs ex-members priced forever —
+    so the fetch set must never shrink to current members only.
+    """
+    from pathlib import Path
+    if Path(MEMBERSHIP_CSV).exists():
+        # sibling import: this script runs as scripts/fetch_nse500_history.py
+        # with scripts/ as sys.path[0] (same style as history_utils above)
+        from universe_membership import load_membership, all_ever_members
+        syms = sorted(all_ever_members(load_membership(Path(MEMBERSHIP_CSV))))
+        print(f"Fetching {len(syms)} all-ever members from {MEMBERSHIP_CSV}")
+        return syms
+    return load_symbols(UNIVERSE_CSV)
 
 
 def main():
     kite = init_kite_client()
-    symbols = load_symbols(UNIVERSE_CSV)
+    symbols = fetch_symbols()
     if not symbols:
         print(f"No symbols found in {UNIVERSE_CSV}")
         return

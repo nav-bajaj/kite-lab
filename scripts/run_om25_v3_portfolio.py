@@ -140,6 +140,11 @@ def parse_args():
                     help="Stock OHLC panel directory")
     ap.add_argument("--universe", type=Path,
                     default=ROOT / LOCKED["universe_csv"])
+    ap.add_argument("--membership", type=Path,
+                    default=ROOT / "data/static/nifty250_membership.csv",
+                    help="Effective-dated membership CSV; when it exists, "
+                         "entries are date-masked and held positions are "
+                         "grandfathered. Non-existent path = legacy snapshot.")
     ap.add_argument("--regime-index", type=Path,
                     default=ROOT / LOCKED["regime_index_path"],
                     help="Index CSV used for regime signal")
@@ -230,10 +235,13 @@ def main():
 
     print(f"  signals: {len(entry_dates)} entry dates, {len(weekly_filt)} weekly checks")
 
-    universe = load_universe(args.universe)
+    from scripts.universe_membership import resolve_universe
+    universe, membership_fn, candidate_fn = resolve_universe(
+        args.membership, args.universe)
     cols = [s for s in close_panel.columns if s in universe]
     returns_uni = close_panel[cols].pct_change()
-    print(f"  universe: {len(cols)} symbols")
+    print(f"  universe: {len(cols)} symbols"
+          + (f" (membership: {args.membership.name})" if membership_fn else ""))
 
     if cached_regime is not None:
         print(f"[regime] using cached regime panel (assumed ma_window={args.ma_window}, confirm_days={args.confirm_days})")
@@ -250,6 +258,7 @@ def main():
         bear_w_uc=args.bear_w_uc, bear_w_cr=args.bear_w_cr,
         return_filter=not args.no_return_filter,
         lookback=args.lookback, min_obs=args.min_obs,
+        candidate_fn=candidate_fn,
     )
 
     print(f"[backtest] running...")
@@ -266,6 +275,7 @@ def main():
         use_trailing_stop=args.drawdown_stop > 0,
         use_dma_exit=False,
         regime_panel=None, bear_exposure=0.0,
+        membership_fn=membership_fn,
         initial_capital=args.initial_capital,
     )
 

@@ -62,6 +62,74 @@ def members_asof(df: pd.DataFrame, asof) -> set:
     return set(df.loc[live, "symbol"])
 
 
+def make_candidate_fn(df: pd.DataFrame):
+    """callable(date) -> frozenset of symbols ever a member ON OR BEFORE date.
+
+    The point-in-time universe for CROSS-SECTIONAL score computations
+    (percentile ranks, equal-weight market return, z-score baselines).
+    Includes ex-members (their scores must keep flowing for grandfathered
+    holds) but excludes future additions — otherwise a stock added at a
+    cutover would pollute pre-cutover ranks the moment its price history
+    lands, silently rewriting published history.
+    """
+    first_from = df.groupby("symbol")["effective_from"].min()
+    boundaries = sorted(first_from.unique())
+    cache: dict = {}
+
+    def candidate_fn(date) -> frozenset:
+        d = pd.Timestamp(date)
+        lo, hi = 0, len(boundaries)
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if boundaries[mid] <= d:
+                lo = mid + 1
+            else:
+                hi = mid
+        key = lo
+        if key not in cache:
+            cache[key] = frozenset(first_from.index[first_from <= d])
+        return cache[key]
+
+    return candidate_fn
+
+
+def resolve_universe(membership_csv: Path, snapshot_csv: Path):
+    """Resolve a runner's universe: membership file wins when it exists.
+
+    Returns (symbols, membership_fn, candidate_fn). With a membership file,
+    symbols is the ALL-EVER set (score panels must keep pricing grandfathered
+    ex-members), membership_fn date-masks entries, and candidate_fn date-masks
+    cross-sectional score computations. Without one, falls back to the legacy
+    snapshot CSV with (symbols, None, None) — legacy behavior.
+    """
+    membership_csv = Path(membership_csv)
+    if membership_csv.exists():
+        df = load_membership(membership_csv)
+        return all_ever_members(df), make_membership_fn(df), make_candidate_fn(df)
+    from scripts.build_om25_signals import load_universe
+    return load_universe(Path(snapshot_csv)), None, None
+
+
+def union_membership_fns(fns):
+    """Blend-level membership for multi-component strategies (COMBO).
+
+    Eligible iff member of ANY component universe on the date. Per-component
+    slot discipline is deliberately NOT date-masked: component scores must
+    keep flowing for held ex-members (grandfather rule), so e.g. a stock
+    dropped from Nifty 250 but still in NSE 500 remains OM25-slot-eligible.
+    Documented in tasks/universe_membership/PLAN.md.
+    """
+    fns = [f for f in fns if f is not None]
+
+    def fn(date) -> frozenset:
+        out = frozenset()
+        for f in fns:
+            out |= f(date)
+        return out
+
+    return fn
+
+
 def make_membership_fn(df: pd.DataFrame):
     """Return callable(date) -> frozenset for run_strategy(membership_fn=...).
 

@@ -253,13 +253,20 @@ def run_strategy(*,
         scores = scores.dropna()
         # With a membership filter the top_n+exit_buffer cut happens AFTER
         # restricting to members|held (only known during simulation), so the
-        # precomputed ranking must keep full depth. nlargest (not
-        # sort_values) either way so tie ordering matches the legacy path.
-        depth = len(scores) if membership_fn is not None else top_n + exit_buffer
-        ranked = scores.nlargest(depth)
-        if len(ranked) == 0:
+        # precomputed ranking must keep full depth. The head is computed with
+        # the SAME nlargest(top_n+exit_buffer) call as the legacy path —
+        # nlargest at different depths can order TIED scores differently, and
+        # entrant order feeds the leftover-cash redistribution pass, so a
+        # full-depth sort alone breaks byte-identity (caught by the TL25
+        # regression). Deeper ranks are appended only for grandfathered holds.
+        head = scores.nlargest(top_n + exit_buffer)
+        if len(head) == 0:
             continue
-        signals[date] = ranked.index.tolist()
+        if membership_fn is not None and len(scores) > len(head):
+            tail = scores.drop(head.index).sort_values(ascending=False)
+            signals[date] = head.index.tolist() + tail.index.tolist()
+        else:
+            signals[date] = head.index.tolist()
 
     # Map signal dates → execution dates.
     # Entry schedule is built from entry_signal_dates ONLY (the biweekly set

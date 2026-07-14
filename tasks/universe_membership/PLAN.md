@@ -71,14 +71,62 @@ dashboard CSVs must be **byte-identical** while the price panel ends before
 the cutover date. Verified 2026-07-14 (panel through 2026-07-13). Re-run
 after any engine change.
 
-## Phase 2 (not in this branch)
+## Phase 2 (2026-07-14, same day)
 
-1. Migrate OM25 v3 / TL25 v3 / COMBO runners to membership (same
-   `membership_fn` plumbing; COMBO composes the other two).
-2. Regenerate `*_universe.csv` as current-members views; switch
-   `fetch_nse500_history` to fetch all-ever members.
-3. Fetch price history for the 33 NSE-500 additions (needs Kite session).
-4. Upload refreshed static CSVs to the Railway volume (insights readers).
-5. Wire nifty50 into product surfaces only if/when a portfolio uses it.
-6. Post-cutover watch: AKUMS / INOXINDIA are held ex-members — confirm they
-   grandfather correctly at the first live rebalance.
+Shipped:
+
+1. **OM25 v3 / TL25 v3 / COMBO / EOD-proposal adapter migrated** — same
+   `--membership` resolution as L6 (`resolve_universe`), `membership_fn`
+   plumbed into every `run_strategy` call. COMBO uses blend-level
+   membership (`union_membership_fns`); per-component slot discipline is
+   deliberately not date-masked (component scores must keep flowing for
+   grandfathered holds), so a stock dropped from Nifty 250 but still in
+   NSE 500 remains OM25-slot-eligible.
+2. **Cross-sectional scores are date-masked via `candidate_fn`** ("ever a
+   member on or before date"). The first regression run caught two leaks:
+   OM25's score is doubly cross-sectional (equal-weight `market_ret` over
+   panel columns + pct ranks) and TL25 pct-ranks momentum among eligible —
+   an all-ever panel let future additions with price history (AIIL,
+   LAURUSLABS, MCX, RADICO had local data) shift pre-cutover ranks and
+   rewrite 2021+ picks. L6's z-score is monotone, so it needs no mask.
+3. **Component slot-cuts need the mask even when the score is monotone.**
+   The post-fetch check (new symbols' price history actually in the panel)
+   caught a third leak: L6's z-score is monotone so standalone L6 needs no
+   candidate mask, but COMBO's `make_combo_score_fn` truncates each
+   component to its top-12 — CEMPRO (listed 2020, added to NSE 500
+   2026-07) cracked the L6 component's 2022 top-12 and changed published
+   COMBO picks. `make_momentum_score` now takes `candidate_fn` and every
+   caller passes it. Rule of thumb: any hard cut inside a score fn
+   (top-n_per, eligibility filters) needs point-in-time candidates, not
+   just the engine-level entry mask.
+4. **Engine tie-order fix**: `nlargest` at different depths orders tied
+   scores differently, and entrant order feeds the leftover-cash
+   redistribution pass (caught as a TL25 one-row swap). The ranking head
+   is now computed with the exact legacy `nlargest(top_n+exit_buffer)`
+   call; deeper ranks are appended only when membership is active.
+5. **Legacy admin variants frozen** on
+   `data/static/legacy_snapshot_2025-11-06/` — the legacy engine has no
+   membership support, so it must not read the now-moving universe views.
+6. **`*_universe.csv` regenerated as current-members views** (canonical
+   symbols: the JSW Dulux row carries AKZOINDIA, LTM carries LTIM) via
+   `regenerate_universe_csvs.py`. `fetch_nse500_history` now fetches
+   ALL-EVER members (533) so grandfathered holds and history keep pricing.
+7. Regression gate re-run in strict order (legacy baselines on the old
+   snapshot -> regenerate -> membership runs): all four portfolios
+   byte-identical across equity/trades/exits/dashboard CSVs.
+
+Deployment notes (2026-07-15 cutover):
+
+- Railway's 16:30 scheduler runs the repo's `run_daily_pipeline.py`; the
+  merged fetch change provisions the 33 new symbols' history on the volume
+  automatically at the next run. Static CSVs ship with the deploy (they're
+  committed). Confirm Railway redeployed from main before tomorrow 16:00
+  (the EOD-proposal producer must use membership code too).
+- `nse500_data_merged` (insights breadth long-history panel, uploaded to
+  the volume manually) lacks the 33 additions until its next re-upload —
+  analytics-only degradation, tracked as follow-up.
+- Post-cutover watch: INOXINDIA (Core Momentum) and AKUMS (legacy signals)
+  are ex-members — confirm grandfathering at the first live rebalance
+  (Thu 2026-07-16 signal -> Fri 2026-07-17 execution).
+- nifty50 tracked (membership + universe files); product wiring deferred
+  until a portfolio uses it.

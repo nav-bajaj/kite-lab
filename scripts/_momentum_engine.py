@@ -98,11 +98,21 @@ def build_momentum_panels(close_panel: pd.DataFrame, *,
 def make_momentum_score(panels: dict, *,
                          vol_floor: float = 0.05,
                          vol_power: float = 1.0,
-                         cross_sectional_zscore: bool = True):
+                         cross_sectional_zscore: bool = True,
+                         candidate_fn=None):
     """Return a score_fn(signal_date, **_) closure for run_strategy.
 
     Score = momentum / max(realized_vol, vol_floor) ** vol_power
     Optionally z-scored cross-sectionally per date.
+
+    candidate_fn(date) -> set: optional point-in-time symbol mask (from
+    scripts.universe_membership.make_candidate_fn). The z-score itself is
+    monotone, so standalone L6's ranking never needs this — but COMBO's
+    make_combo_score_fn truncates each component to its top-n_per, and a
+    future universe addition with price history (e.g. CEMPRO, listed 2020,
+    added 2026-07) would consume an L6 component slot in pre-cutover
+    history and change published picks (caught by the COMBO post-fetch
+    regression).
     """
     momentum = panels["momentum"]
     realized_vol = panels["realized_vol"]
@@ -113,6 +123,10 @@ def make_momentum_score(panels: dict, *,
 
         mom_row = momentum.loc[signal_date]
         vol_row = realized_vol.loc[signal_date]
+        if candidate_fn is not None:
+            cands = candidate_fn(signal_date)
+            mom_row = mom_row[mom_row.index.isin(cands)]
+            vol_row = vol_row[vol_row.index.isin(cands)]
 
         # Clip vol to floor; raise to vol_power
         denom = vol_row.clip(lower=vol_floor)
@@ -171,7 +185,7 @@ def run_momentum(*, close_panel, trade_panel, calendar, benchmark_aligned,
                   start, end, config: dict,
                   regime_panel=None, bear_exposure: float = 0.0,
                   bear_skips_entries: bool = True,
-                  membership_fn=None) -> Optional[dict]:
+                  membership_fn=None, candidate_fn=None) -> Optional[dict]:
     """Run a single momentum config over [start, end] entry dates.
 
     `config` is a dict merging BASELINE with overrides. Returns the
@@ -201,6 +215,7 @@ def run_momentum(*, close_panel, trade_panel, calendar, benchmark_aligned,
         vol_floor=cfg["vol_floor"],
         vol_power=cfg["vol_power"],
         cross_sectional_zscore=cfg["cross_sectional_zscore"],
+        candidate_fn=candidate_fn,
     )
     dd_stop = cfg.get("drawdown_stop", 0.0)
     return run_strategy(

@@ -102,13 +102,22 @@ def make_om25_tilt_score(returns_universe: pd.DataFrame,
                           bull_w_uc: float = 0.5, bull_w_cr: float = 0.5,
                           bear_w_uc: float = 0.0, bear_w_cr: float = 1.0,
                           return_filter: bool = True,
-                          lookback: int = 252, min_obs: int = 220):
+                          lookback: int = 252, min_obs: int = 220,
+                          candidate_fn=None):
     """Score factory — returns `score_fn(signal_date)` for run_strategy.
 
     Computes each stock's upside_capture (UC) and capture_ratio (CR =
     UC/DC) over a `lookback`-day window. Pct-ranks each metric across
     eligible stocks. Blends with weights determined by regime at
     signal_date (bull vs bear).
+
+    candidate_fn(date) -> set: optional point-in-time column mask (from
+    scripts.universe_membership.make_candidate_fn). The score is doubly
+    cross-sectional — `market_ret` is the equal-weight mean over columns
+    and both metrics are pct-ranked — so with an all-ever panel the
+    columns must be date-masked, or a future universe addition with
+    price history would shift pre-cutover ranks and rewrite published
+    history (caught by the OM25 byte-identity regression).
     """
     def score_fn(signal_date, **_):
         if signal_date not in returns_universe.index:
@@ -131,6 +140,9 @@ def make_om25_tilt_score(returns_universe: pd.DataFrame,
         w_uc_n, w_cr_n = w_uc / w_sum, w_cr / w_sum
 
         window = returns_universe.iloc[idx - lookback + 1:idx + 1]
+        if candidate_fn is not None:
+            cands = candidate_fn(signal_date)
+            window = window[[c for c in window.columns if c in cands]]
         market_ret = window.mean(axis=1)
         results = {}
         for sym in window.columns:
