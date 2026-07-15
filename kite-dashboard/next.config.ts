@@ -41,8 +41,14 @@ const devApiOrigin =
 // is on the bare `*.accounts.dev`. Both need allowlisting for sign-in flows
 // to navigate through cleanly (cross-domain session sync, satellite-domain
 // redirects, etc.).
+//
+// In production Clerk serves the Frontend API + ClerkJS from our custom domain
+// (`clerk.marketworks.in`), not `*.clerk.accounts.dev`, so it must be
+// allowlisted or ClerkJS fails to load and sign-in silently breaks. The
+// `*.accounts.dev` / `*.clerk.accounts.dev` entries are kept so local/dev
+// (test instance) still works. See docs/security/risk-register.md R-006.
 const clerkOrigins =
-  "https://*.clerk.accounts.dev https://*.accounts.dev https://*.clerk.com";
+  "https://clerk.marketworks.in https://*.clerk.accounts.dev https://*.accounts.dev https://*.clerk.com";
 const turnstileOrigin = "https://challenges.cloudflare.com";
 
 const cspDirectives = [
