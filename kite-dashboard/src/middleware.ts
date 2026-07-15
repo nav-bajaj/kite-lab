@@ -7,7 +7,8 @@ import { INSIGHTS_ACCESS } from "@/lib/flags";
 //
 // `/` is the public marketing landing page (the authenticated dashboard
 // moved to `/dashboard`). Unauthenticated visitors see the landing; signed-in
-// users are sent to `/dashboard` post-auth (ClerkProvider fallback redirects).
+// users also land on `/` post-auth (ClerkProvider fallback redirects in
+// src/app/layout.tsx) and navigate to `/dashboard` themselves.
 const isPublicRoute = createRouteMatcher([
   "/",
   "/sign-in(.*)",
