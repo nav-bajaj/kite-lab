@@ -18,7 +18,7 @@ import {
 import { useJobs } from "@/lib/hooks";
 import { cancelJob } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
-import { formatDistanceToNow } from "date-fns";
+import { formatJobTime, formatJobTimeFull } from "@/lib/format-time";
 
 interface JobListProps {
   onSelectJob?: (jobId: string) => void;
@@ -145,10 +145,8 @@ export function JobList({ onSelectJob, selectedJobId }: JobListProps) {
                           {job.label || job.command}
                         </div>
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <span>
-                            {formatDistanceToNow(new Date(job.created_at), {
-                              addSuffix: true,
-                            })}
+                          <span title={formatJobTimeFull(job.created_at)}>
+                            {formatJobTime(job.created_at)}
                           </span>
                           {job.duration_seconds && (
                             <>
