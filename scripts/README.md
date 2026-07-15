@@ -18,6 +18,7 @@ Closed research / old experiments live on the archive branch
 | **DB + cloud sync** | `sync_to_database.py`, `backup_database.py`, `restore_database.py`, `upload_to_gdrive.py`, `upload_price_data.py` | Push results to Postgres, rotate DB backups, mirror data to Google Drive |
 | **Operator utils** | `headless_login.py`, `update_prices.py`, `utils.py`, `history_utils.py` | Manual ops, used from CLI or dashboard admin |
 | **Content bridge** | `publish_signal.py`, `generate_quant_note.py`, `analyse_topic.py` | `publish_signal.py` emits Signal-shaped JSON to `data/published/signals/` for the content engine. `analyse_topic.py` is the founder-facing "quick analysis" tool — takes a topic phrase and produces a verified-data dossier the content writers ground their pieces in. See `tasks/content_bridge/` + `tasks/content_redesign/`. |
+| **Sector data** (reconstitution-time, not daily) | `fetch_sector_constituents.py`, `fetch_zerodha_sectors.py` | Refresh the sector taxonomies. `fetch_sector_constituents.py` snapshots the 12 NSE thematic *indices* (NIFTY_BANK…) for sector RS / breadth. `fetch_zerodha_sectors.py` writes `data/static/zerodha_sectors.csv`, a per-stock label from Zerodha's finer 35-sector taxonomy. Both change only at an NSE reconstitution — run them alongside the `tasks/universe_membership/` refresh, not in the daily cron. |
 | **Docker** | `entrypoint.sh`, `init_persistent_storage.sh` | Run in `kite-api` container at boot |
 
 ## How to add a new script

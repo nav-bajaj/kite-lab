@@ -68,7 +68,14 @@ export default async function StockDetailPage({ params, searchParams }: PageProp
           <div className="flex flex-col gap-1">
             <h2 className="font-serif text-3xl font-medium tracking-[-0.01em] text-foreground">{r.symbol}</h2>
             <p className="text-[13px] text-muted-foreground">
-              {r.sectors.length ? r.sectors.map(sectorLabel).join(" · ") : "Not in a tracked index basket"}
+              {r.zerodha_sector ? (
+                <span className="font-medium text-foreground">{r.zerodha_sector}</span>
+              ) : r.sectors.length ? (
+                r.sectors.map(sectorLabel).join(" · ")
+              ) : (
+                "Sector not classified"
+              )}
+              {r.zerodha_sector && r.sectors.length ? ` · ${r.sectors.map(sectorLabel).join(" · ")}` : ""}
               {detail.asof && ` · as of ${new Date(detail.asof).toLocaleDateString("en-IN")}`}
             </p>
           </div>

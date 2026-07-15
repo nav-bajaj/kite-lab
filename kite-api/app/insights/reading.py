@@ -38,6 +38,7 @@ from app.insights import (
     stress,
     subgroups,
     watchlists,
+    zerodha_sectors,
 )
 
 
@@ -220,3 +221,4 @@ def clear_all_caches() -> None:
     rs_rank.clear_cache()
     scores_mod.clear_cache()
     calendar_content.clear_cache()
+    zerodha_sectors.clear_cache()

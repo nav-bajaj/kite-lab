@@ -328,6 +328,7 @@ export interface StockRow {
   momentum_consistency: number | null;
   tags: string[];
   sectors: string[];
+  zerodha_sector?: string | null;
   // detail-only (present on /stocks/{symbol}.row, absent on screener rows)
   date?: string;
   above_20dma?: boolean | null;

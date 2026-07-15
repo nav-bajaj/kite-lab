@@ -211,6 +211,14 @@ class TestScreenerEndpoint:
                         "date", "rank_21d_ago"):
             assert dropped not in row, f"{dropped} should be dropped from screener row"
 
+    def test_zerodha_sector_present(self, client):
+        """Every tracked row should carry a per-stock Zerodha sector (~100%
+        coverage). `_compact` drops it only for the rare unclassified name."""
+        rows = client.get("/api/insights/screener").json()["rows"]
+        with_sector = [r for r in rows if r.get("zerodha_sector")]
+        assert len(with_sector) / len(rows) >= 0.95
+        assert isinstance(with_sector[0]["zerodha_sector"], str)
+
     def test_payload_under_budget(self, client):
         """~500-row payload must stay under the 500 KB contract budget."""
         r = client.get("/api/insights/screener")
