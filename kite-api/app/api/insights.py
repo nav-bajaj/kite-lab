@@ -49,6 +49,7 @@ from app.insights import (
     stress,
     subgroups,
     watchlists,
+    zerodha_sectors,
 )
 from app.insights.reading import clear_all_caches, get_market_reading
 
@@ -359,11 +360,14 @@ def _compact(v):
 
 
 def _build_row(sym: str, m, rs_entry, sc, sectors: tuple[str, ...],
+               zerodha_sector: Optional[str] = None,
                drop: tuple[str, ...] = ()) -> dict:
     """Zip one stock's metrics + RS entry + scores into a flat row.
 
-    `symbol`/`date` from the sub-records are deduped; `sectors` is the
-    reverse-mapping list (may be empty for names outside every index basket)."""
+    `symbol`/`date` from the sub-records are deduped; `sectors` is the NSE
+    index-basket reverse-mapping list (may be empty for names outside every
+    basket); `zerodha_sector` is the single canonical Zerodha sector (~100%
+    tracked coverage)."""
     row = m.to_dict()
     if rs_entry is not None:
         rd = rs_entry.to_dict()
@@ -376,6 +380,7 @@ def _build_row(sym: str, m, rs_entry, sc, sectors: tuple[str, ...],
     for k in drop:
         row.pop(k, None)
     row["sectors"] = list(sectors)
+    row["zerodha_sector"] = zerodha_sector
     return _compact(row)
 
 
@@ -400,11 +405,13 @@ async def screener_endpoint(
     rs_table = rs_rank.get_rs_table(asof)
     all_scores = scores_mod.get_scores(asof)
     sym_sectors = sector_constituents.get_symbol_to_sectors()
+    z_sectors = zerodha_sectors.get_symbol_to_sector()
     asof_date = next(iter(metrics.values())).date
 
     rows = [
         _build_row(sym, m, rs_table.get(sym), all_scores.get(sym),
-                   sym_sectors.get(sym, ()), drop=_SCREENER_ROW_DROP)
+                   sym_sectors.get(sym, ()), z_sectors.get(sym),
+                   drop=_SCREENER_ROW_DROP)
         for sym, m in metrics.items()
     ]
     return {"asof": asof_date, "data_available": True, "rows": rows}
@@ -490,7 +497,8 @@ async def stock_detail_endpoint(
     sectors = sym_sectors.get(symbol, ())
 
     row = _build_row(symbol, metrics[symbol], rs_table.get(symbol),
-                     all_scores.get(symbol), sectors)
+                     all_scores.get(symbol), sectors,
+                     zerodha_sectors.get_sector_for(symbol))
     series = stock_metrics.get_price_dma_volume_series(symbol, asof)
     history = _rs_rank_history(symbol, asof, series.get("dates", []))
     peers = _sector_peers(symbol, rs_table, sectors)
