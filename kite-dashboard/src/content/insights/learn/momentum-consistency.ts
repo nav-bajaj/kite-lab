@@ -5,7 +5,7 @@ export const momentumConsistency: LearnExplainer = {
   title: "Momentum Consistency",
   category: "indicator",
   summary:
-    "A 0–100 read of move quality — how steady a 6-month advance has been, separating smooth compounders from one-spike wonders.",
+    "A 0–100 score of how steady a stock's climb has been — a smooth, reliable riser scores high; one that owes it all to a single jump scores low.",
   related: ["trend-score", "rs-rank", "drawdown"],
   lastUpdated: "2026-07-09",
   sections: [

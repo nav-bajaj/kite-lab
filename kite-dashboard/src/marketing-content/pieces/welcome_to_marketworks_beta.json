@@ -1,0 +1,32 @@
+{
+  "slug": "welcome_to_marketworks_beta",
+  "title": "What Marketworks is, and how to use it.",
+  "pillar": "practical education",
+  "format": "guide",
+  "duration": "4 min read",
+  "published_at": "2026-07-16T10:00:00Z",
+  "hook": "Welcome to the Marketworks beta. In short: we help you follow the strongest stocks in the Indian market with ready-made portfolios, so you don't have to track it all yourself. Here's how the whole thing works.",
+  "alternate_hooks": [],
+  "body": [
+    "Most people who want to invest in stocks run into the same problem: there are thousands of companies, endless news, and no easy way to know what is actually working right now. Following it all properly is close to a full-time job.",
+    "Marketworks takes a different approach. Instead of asking you to pick stocks or react to headlines, we hand you a ready-made list — a portfolio — of the stocks that are currently leading the market. You can see exactly what is in it and follow along.",
+    "It all runs on one idea, called momentum. The pattern is simple: stocks that have been rising tend to keep leading for a while, and stocks that have started falling tend to keep lagging. We do not try to predict the future — we just measure which stocks are strong today, and hold those.",
+    "Momentum is not just a nice idea. It is what researchers call a factor: one of a small handful of forces that decades of studies have shown drive stock returns over time, alongside things like value and quality. What makes momentum stand out is how stubbornly it persists — across decades, across markets, and notably here in Indian equities.",
+    "That persistence is what we have spent years researching. We test our momentum rules over long stretches of Indian market history, check that they still hold up on periods our models had never seen, and put them through crashes, rallies, and quiet drifts before a single rule earns a place in a portfolio. It is a simple philosophy — process over prediction. We do not guess where the market is headed; we run the same disciplined process every week and let it follow the leaders.",
+    "Because leadership changes over time, each portfolio is rebuilt on a fixed schedule. That refresh is called a rebalance. When a stock loses its strength it drops out, and when a new leader appears it comes in. You always see what changed and why.",
+    "There are three portfolios, each with a different level of risk. Core Momentum is the most direct — it simply holds the strongest names across the broad market. Defensive Blend is the calmer option — it follows momentum but shifts partly to cash when the market turns weak, to soften the drops. Quality Momentum leans toward sturdier, better-established companies. You can compare all three on the Portfolios page.",
+    "Alongside the portfolios, Marketworks publishes a daily market read we call Insights. It is a plain-English snapshot of what the market is doing — which parts are leading, whether conditions are calm or stressed, and what moved today. It is the same picture our portfolios are built on.",
+    "One important thing: Marketworks is for research and education. The portfolios show what a clear, rules-based strategy would hold — they are not personalised advice, and no one here is telling you what to buy or sell. All investing carries risk, and past patterns do not guarantee future results.",
+    "As a beta tester, the most useful thing you can do is tell us what is confusing, what is missing, and what you would want next. That feedback is exactly what this stage is for — reply to your invite email or use the contact link any time."
+  ],
+  "key_takeaway": "Marketworks does the hard part — years of research into what actually leads the Indian market — and hands you a clear list to follow. Process over prediction: no forecasts, no noise, just a disciplined approach you can understand.",
+  "contrarian_angle": "",
+  "cta": "New here? Start with the Portfolios page to see all three, then sign in to follow them live — marketworks.in/portfolios.",
+  "assets": [],
+  "meta": {
+    "source_repo": "kite-lab",
+    "confidence": "high",
+    "compliance_summary": "Educational onboarding note. Explains the product, momentum (framed as a research factor with documented persistence, incl. Indian equities), the firm's out-of-sample research process ('process over prediction'), the rebalance cadence, and the three portfolios — all in plain language. States clearly that portfolios are model/educational, not personalised advice, and that investing carries risk. Research claims are qualitative; no performance figures, no recommendations, no invented data.",
+    "authored": "Hand-authored platform/onboarding note for the private-beta launch. NOT synced from ~/finance-content-os; it does not fit the market-piece pipeline. If finance-content-os publish.py is re-run, preserve this manifest entry and piece file."
+  }
+}

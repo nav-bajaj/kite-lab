@@ -1,6 +1,15 @@
 {
   "pieces": [
     {
+      "slug": "welcome_to_marketworks_beta",
+      "title": "What Marketworks is, and how to use it.",
+      "pillar": "practical education",
+      "format": "guide",
+      "published_at": "2026-07-16T10:00:00Z",
+      "thumbnail": null,
+      "hook": "Welcome to the Marketworks beta. In short: we help you follow the strongest stocks in the Indian market with ready-made portfolios, so you don't have to track it all yourself. Here's how the whole thing works."
+    },
+    {
       "slug": "rupee_weakness_roundup",
       "title": "A weak rupee isn't a market event \u2014 it's a slow tax on everything India imports.",
       "pillar": "active frameworks",
@@ -10,5 +19,5 @@
       "hook": "The headline this week wasn't the rupee. But the rupee is quietly making everything imported a little more expensive \u2014 and that bill is bigger than it looks."
     }
   ],
-  "last_updated": "2026-06-02T17:23:42Z"
+  "last_updated": "2026-07-16T10:00:00Z"
 }

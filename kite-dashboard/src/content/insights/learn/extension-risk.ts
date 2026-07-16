@@ -5,7 +5,7 @@ export const extensionRisk: LearnExplainer = {
   title: "Extension",
   category: "indicator",
   summary:
-    "A 0–100 description of how stretched a stock is above its own moving averages, in ATR units — a state label, not a mean-reversion signal.",
+    "A 0–100 gauge of how far a stock has run above its usual trend. A high reading just means 'stretched' — it's a description, not a signal to sell.",
   related: ["atr", "trend-score"],
   lastUpdated: "2026-07-09",
   sections: [

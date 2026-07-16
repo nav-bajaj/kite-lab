@@ -24,3 +24,14 @@ so Next.js serves them at `/marketing-content/assets/<slug>/<file>`.
 
 See `tasks/content_bridge/PLAN.md` in the kite-lab repo for the full
 architecture and rationale.
+
+## Hand-authored exceptions
+
+One piece breaks the "synced only" rule: `welcome_to_marketworks_beta`.
+It is a platform/onboarding note written for the private-beta launch,
+not a market piece, so it has no counterpart in finance-content-os and
+was added here by hand (see its `meta.authored` field). If you re-run
+`publish.py` and it rewrites `manifest.json`, **re-add this entry** (and
+keep `pieces/welcome_to_marketworks_beta.json`). Long-term this should
+either move into a proper evergreen-content pipeline or a separate
+hand-authored manifest — tracked as beta-launch follow-up.

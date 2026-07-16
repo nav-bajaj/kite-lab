@@ -5,7 +5,7 @@ export const stressScore: LearnExplainer = {
   title: "Stress score",
   category: "indicator",
   summary:
-    "A 0-100 reading of how stressed the Indian equity market is right now, blending volatility, drawdown, breadth, and dispersion.",
+    "A 0–100 reading of how tense the market is right now — high means fear and big swings, low means calm. It rolls four warning signs into one number.",
   related: ["vix", "drawdown", "pct-above-200dma", "dispersion"],
   lastUpdated: "2026-05-28",
   sections: [

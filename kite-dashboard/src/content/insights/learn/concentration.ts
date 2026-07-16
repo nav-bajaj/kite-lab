@@ -5,7 +5,7 @@ export const concentration: LearnExplainer = {
   title: "Concentration / index attribution",
   category: "concept",
   summary:
-    "What % of today's Nifty 50 move came from the top 3, top 5, and Reliance specifically. Tells you whether a tape is broad or narrow.",
+    "How much of today's Nifty 50 move came from just a few giant stocks — it tells you whether the move was broad or driven by a handful of names.",
   related: ["sector-breadth", "pct-above-200dma"],
   lastUpdated: "2026-05-28",
   sections: [

@@ -63,7 +63,7 @@ function renderTokens(tokens: Token[]): React.ReactNode {
         return (
           <code
             key={i}
-            className="rounded bg-neutral-100 px-1 py-0.5 text-[0.85em] dark:bg-neutral-800"
+            className="rounded bg-muted px-1 py-0.5 text-[0.85em]"
           >
             {t.value}
           </code>
@@ -94,7 +94,7 @@ function renderTokens(tokens: Token[]): React.ReactNode {
 export function RenderBody({ body }: { body: string }) {
   const paragraphs = body.trim().split(/\n{2,}/);
   return (
-    <div className="space-y-3 leading-relaxed text-neutral-800 dark:text-neutral-200">
+    <div className="space-y-3 text-[15px] leading-[1.6] text-foreground">
       {paragraphs.map((para, pi) => {
         const lines = para.split("\n");
         const isListBlock = lines.every(

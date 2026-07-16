@@ -10,6 +10,7 @@ import {
   sectorLabel,
 } from "@/lib/insights-api";
 import { Pct, Tag, ScoreBar, volumeBandTone } from "@/components/insights/ui";
+import { TagBadges } from "@/components/insights/tag-badges";
 import { cn } from "@/lib/utils";
 
 /**
@@ -23,17 +24,6 @@ import { cn } from "@/lib/utils";
  * The "Fresh momentum" preset is observation-only (its cohort failed the
  * forward-return validity study) — labelled as such, no performance claim.
  */
-
-const ALL_TAGS = [
-  "Momentum leader",
-  "Near 52-week high",
-  "Fresh 52-week high",
-  "Volume expansion",
-  "Extended",
-  "Coiled",
-  "New momentum",
-  "Quiet",
-] as const;
 
 type OptionalGroup = "risk" | "volume";
 
@@ -111,19 +101,24 @@ interface Column {
   render: (r: StockRow) => React.ReactNode;
 }
 
-const secText = (r: StockRow) => (r.sectors.length ? sectorLabel(r.sectors[0]) : "—");
+// Prefer the per-stock Zerodha sector (covers ~100% of the NSE 500); fall back
+// to the NSE index-basket label only if it's missing.
+const secText = (r: StockRow) =>
+  r.zerodha_sector ?? (r.sectors.length ? sectorLabel(r.sectors[0]) : "—");
 const num = (v: number | null | undefined, d = 2) => fmtNum(v, d);
 
 const COLUMNS: Column[] = [
-  // RS
+  // RS + the two Marketworks scores, kept together next to RS rank
   { id: "rank", label: "RS rank", group: "rs", learn: "rs-rank", sortField: "rank", align: "right",
     render: (r) => (r.rank ?? "—") },
   { id: "percentile", label: "RS %ile", group: "rs", learn: "rs-rank", sortField: "percentile", align: "right",
     render: (r) => (r.percentile === null ? "—" : r.percentile.toFixed(0)) },
-  { id: "sector_rank", label: "Sec rank", group: "rs", learn: "rs-rank", sortField: "sector_rank", align: "right",
-    render: (r) => (r.sector_rank && r.sector_size ? `${r.sector_rank}/${r.sector_size}` : "—") },
-  { id: "rank_delta_21d", label: "Δ 21d", group: "rs", learn: "rs-rank", sortField: "rank_delta_21d", align: "right",
+  { id: "rank_delta_21d", label: "RS rank Δ 21d", group: "rs", learn: "rs-rank", sortField: "rank_delta_21d", align: "right",
     render: (r) => (r.rank_delta_21d === null ? "—" : (r.rank_delta_21d > 0 ? `+${r.rank_delta_21d}` : `${r.rank_delta_21d}`)) },
+  { id: "trend_score", label: "Trend", group: "trend", learn: "trend-score", sortField: "trend_score",
+    render: (r) => <ScoreBar value={r.trend_score} tone="positive" /> },
+  { id: "momentum_consistency", label: "Consistency", group: "trend", learn: "momentum-consistency", sortField: "momentum_consistency",
+    render: (r) => <ScoreBar value={r.momentum_consistency} tone="positive" /> },
   // Returns
   { id: "ret_1d", label: "1D", group: "returns", sortField: "ret_1d", align: "right", render: (r) => <Pct v={r.ret_1d} decimals={2} /> },
   { id: "ret_1w", label: "1W", group: "returns", sortField: "ret_1w", align: "right", render: (r) => <Pct v={r.ret_1w} /> },
@@ -131,13 +126,7 @@ const COLUMNS: Column[] = [
   { id: "ret_3m", label: "3M", group: "returns", sortField: "ret_3m", align: "right", render: (r) => <Pct v={r.ret_3m} /> },
   { id: "ret_6m", label: "6M", group: "returns", sortField: "ret_6m", align: "right", render: (r) => <Pct v={r.ret_6m} /> },
   { id: "ret_12m", label: "12M", group: "returns", sortField: "ret_12m", align: "right", render: (r) => <Pct v={r.ret_12m} /> },
-  // Trend
-  { id: "trend_score", label: "Trend", group: "trend", learn: "trend-score", sortField: "trend_score",
-    render: (r) => <ScoreBar value={r.trend_score} tone="positive" /> },
-  { id: "momentum_consistency", label: "Consistency", group: "trend", learn: "momentum-consistency", sortField: "momentum_consistency",
-    render: (r) => <ScoreBar value={r.momentum_consistency} tone="positive" /> },
-  { id: "dist_50dma_pct", label: "50-DMA", group: "trend", sortField: "dist_50dma_pct", align: "right", render: (r) => <Pct v={r.dist_50dma_pct} /> },
-  { id: "dist_200dma_pct", label: "200-DMA", group: "trend", sortField: "dist_200dma_pct", align: "right", render: (r) => <Pct v={r.dist_200dma_pct} /> },
+  // Trend position
   { id: "dist_52w_high_pct", label: "52w high", group: "trend", sortField: "dist_52w_high_pct", align: "right", render: (r) => <Pct v={r.dist_52w_high_pct} /> },
   // Risk
   { id: "extension_band", label: "Extension", group: "risk", learn: "extension-risk", sortField: "extension_risk",
@@ -185,18 +174,6 @@ export function ScreenerClient({ rows, asof }: { rows: StockRow[]; asof: string 
     [searchParams],
   );
 
-  const update = useCallback(
-    (patch: Partial<Filters>, preset: string | null = null) => {
-      setFilters((prev) => {
-        const next = { ...prev, ...patch };
-        setActivePreset(preset);
-        syncUrl(next, groups, sort, preset);
-        return next;
-      });
-    },
-    [groups, sort, syncUrl],
-  );
-
   const applyPreset = useCallback(
     (p: Preset) => {
       const next = { ...EMPTY, ...p.patch };
@@ -239,12 +216,6 @@ export function ScreenerClient({ rows, asof }: { rows: StockRow[]; asof: string 
     [filters, groups, activePreset, syncUrl],
   );
 
-  const availableSectors = useMemo(() => {
-    const set = new Set<string>();
-    rows.forEach((r) => r.sectors.forEach((s) => set.add(s)));
-    return Array.from(set).sort();
-  }, [rows]);
-
   const visibleColumns = useMemo(
     () => COLUMNS.filter((c) => c.group === "rs" || c.group === "returns" || c.group === "trend" || groups.has(c.group as OptionalGroup)),
     [groups],
@@ -257,17 +228,63 @@ export function ScreenerClient({ rows, asof }: { rows: StockRow[]; asof: string 
 
   return (
     <main className="flex flex-col gap-6">
-      <section className="flex flex-col gap-1">
-        <h2 className="font-serif text-2xl font-medium tracking-[-0.01em] text-foreground">
-          NSE 500 screener
-        </h2>
-        <p className="max-w-3xl text-[13px] leading-[1.55] text-muted-foreground">
-          {asof && `As of ${new Date(asof).toLocaleDateString("en-IN")}. `}
-          Decision-support data on every NSE 500 name — relative strength, trend
-          and momentum scores, extension and volume state. Sort, filter, and
-          share any view. Educational context only; not buy or sell
-          recommendations.
-        </p>
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <h2 className="font-serif text-2xl font-medium tracking-[-0.01em] text-foreground">
+            NSE 500 screener
+          </h2>
+          <p className="max-w-3xl text-[13px] leading-[1.55] text-muted-foreground">
+            {asof && `As of ${new Date(asof).toLocaleDateString("en-IN")}. `}
+            Every NSE 500 stock, scored by the same signals our portfolios use.
+            Sort, filter, and share any view. Educational context only — not buy
+            or sell recommendations.
+          </p>
+        </div>
+
+        {/* The three signature Marketworks scores — proprietary, built in-house. */}
+        <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-5">
+          <div className="flex flex-col gap-1">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
+              Marketworks scores · built in-house
+            </span>
+            <p className="max-w-3xl text-[13px] leading-[1.55] text-muted-foreground">
+              We grade every stock on three momentum signals we built ourselves.
+              You won&apos;t find these exact numbers anywhere else — they&apos;re
+              the same scores our portfolios are built on.
+            </p>
+          </div>
+          <dl className="grid gap-5 border-t border-border pt-4 sm:grid-cols-3">
+            {[
+              {
+                term: "RS rank",
+                def: "Relative strength rank. We rank all 500 stocks by momentum and give each its place — rank 1 is the single strongest name in the market, higher numbers are weaker.",
+                learn: "rs-rank",
+              },
+              {
+                term: "Trend",
+                def: "A 0–100 score of how clean and orderly a stock's uptrend is. A high score means it's climbing steadily rather than lurching up and down.",
+                learn: "trend-score",
+              },
+              {
+                term: "Consistency",
+                def: "A 0–100 score of how reliably a stock has held its momentum over time, rather than owing it all to one sudden jump.",
+                learn: "momentum-consistency",
+              },
+            ].map((s) => (
+              <div key={s.term} className="flex flex-col gap-1.5">
+                <dt className="text-sm font-semibold text-foreground">{s.term}</dt>
+                <dd className="text-[13px] leading-[1.5] text-muted-foreground">{s.def}</dd>
+                <Link
+                  href={`/insights/learn/${s.learn}`}
+                  className="mt-0.5 inline-flex w-fit items-center gap-1 text-[12px] font-medium text-primary underline-offset-2 hover:underline"
+                >
+                  How we build this
+                  <span aria-hidden>→</span>
+                </Link>
+              </div>
+            ))}
+          </dl>
+        </div>
       </section>
 
       {/* Presets */}
@@ -300,16 +317,9 @@ export function ScreenerClient({ rows, asof }: { rows: StockRow[]; asof: string 
         <p className="-mt-3 text-[12px] italic text-muted-foreground">{activeNote}</p>
       )}
 
-      <div className="flex flex-col gap-6 lg:flex-row">
-        {/* Filter rail */}
-        <FilterRail
-          filters={filters}
-          update={update}
-          availableSectors={availableSectors}
-        />
-
+      <div className="flex flex-col gap-6">
         {/* Table + group toggles */}
-        <div className="min-w-0 flex-1 flex flex-col gap-3">
+        <div className="min-w-0 flex flex-col gap-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
@@ -335,13 +345,18 @@ export function ScreenerClient({ rows, asof }: { rows: StockRow[]; asof: string 
             </span>
           </div>
 
+          <p className="text-[12px] text-muted-foreground">
+            Some stocks carry small badges under their name — hover any badge to
+            see what it flags. Tap a column header to sort.
+          </p>
+
           {/* Desktop table */}
-          <div className="hidden overflow-x-auto rounded-xl border border-border md:block">
+          <div className="hidden overflow-x-auto rounded-xl border border-border bg-card md:block">
             <table className="w-full text-[13px]">
-              <thead className="border-b border-border bg-muted/40 text-left">
+              <thead className="border-b border-border bg-muted text-left">
                 <tr>
                   <SortableTh label="Symbol" onSort={() => applySort("symbol")} sort={sort} sortField="symbol" />
-                  <th className="px-3 py-2 font-medium text-muted-foreground">Sector</th>
+                  <th className="px-3 py-2 font-semibold text-foreground">Sector</th>
                   {visibleColumns.map((c) => (
                     <SortableTh
                       key={c.id}
@@ -356,23 +371,25 @@ export function ScreenerClient({ rows, asof }: { rows: StockRow[]; asof: string 
                 </tr>
               </thead>
               <tbody>
-                {sorted.map((r) => (
-                  <tr key={r.symbol} className="border-b border-border last:border-0 hover:bg-muted/30">
+                {sorted.map((r, i) => (
+                  <tr
+                    key={r.symbol}
+                    className={cn(
+                      "border-b border-border last:border-0 transition-colors hover:bg-primary/[0.06]",
+                      i % 2 === 1 && "bg-muted/50",
+                    )}
+                  >
                     <td className="px-3 py-2">
                       <div className="flex flex-col gap-1">
                         <Link href={`/insights/stocks/${r.symbol}${asofQuery(searchParams)}`} className="font-medium text-foreground underline-offset-2 hover:underline">
                           {r.symbol}
                         </Link>
-                        {r.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-1">
-                            {r.tags.map((t) => <Tag key={t} label={t} />)}
-                          </div>
-                        )}
+                        <TagBadges tags={r.tags} />
                       </div>
                     </td>
-                    <td className="px-3 py-2 text-xs text-muted-foreground">{secText(r)}</td>
+                    <td className="px-3 py-2 text-xs text-foreground">{secText(r)}</td>
                     {visibleColumns.map((c) => (
-                      <td key={c.id} className={cn("px-3 py-2 tabular-nums", c.align === "right" ? "text-right" : "text-left")}>
+                      <td key={c.id} className={cn("px-3 py-2 tabular-nums text-foreground", c.align === "right" ? "text-right" : "text-left")}>
                         {c.render(r)}
                       </td>
                     ))}
@@ -417,7 +434,7 @@ function SortableTh({
 }) {
   const active = sortField && sort.key === sortField;
   return (
-    <th className={cn("px-3 py-2 font-medium text-muted-foreground", align === "right" ? "text-right" : "text-left")}>
+    <th className={cn("px-3 py-2 font-semibold text-foreground", align === "right" ? "text-right" : "text-left")}>
       <span className={cn("inline-flex items-center gap-1", align === "right" && "justify-end")}>
         {onSort ? (
           <button onClick={onSort} className="inline-flex items-center gap-0.5 hover:text-foreground">
@@ -449,9 +466,7 @@ function MobileCard({ r, href }: { r: StockRow; href: string }) {
           <Link href={href} className="font-medium text-foreground underline-offset-2 hover:underline">
             {r.symbol}
           </Link>
-          <span className="text-xs text-muted-foreground">
-            {r.sectors.length ? sectorLabel(r.sectors[0]) : "—"}
-          </span>
+          <span className="text-xs text-muted-foreground">{secText(r)}</span>
         </div>
         <div className="text-right">
           <div className="font-mono text-sm text-foreground">{fmtNum(r.close, 2)}</div>
@@ -459,8 +474,8 @@ function MobileCard({ r, href }: { r: StockRow; href: string }) {
         </div>
       </div>
       {r.tags.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-1">
-          {r.tags.map((t) => <Tag key={t} label={t} />)}
+        <div className="mt-2">
+          <TagBadges tags={r.tags} />
         </div>
       )}
       <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
@@ -481,120 +496,6 @@ function Stat({ label, value }: { label: string; value: React.ReactNode }) {
       <span className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</span>
       <span className="tabular-nums text-foreground">{value}</span>
     </div>
-  );
-}
-
-function FilterRail({
-  filters,
-  update,
-  availableSectors,
-}: {
-  filters: Filters;
-  update: (patch: Partial<Filters>, preset?: string | null) => void;
-  availableSectors: string[];
-}) {
-  const toggleTag = (t: string) =>
-    update({ tags: filters.tags.includes(t) ? filters.tags.filter((x) => x !== t) : [...filters.tags, t] });
-  const toggleSector = (s: string) =>
-    update({ sectors: filters.sectors.includes(s) ? filters.sectors.filter((x) => x !== s) : [...filters.sectors, s] });
-
-  return (
-    <aside className="w-full shrink-0 lg:w-64">
-      <div className="flex flex-col gap-5 rounded-xl border border-border bg-card p-4">
-        <div className="flex flex-col gap-2">
-          <RailLabel>Insight tags</RailLabel>
-          <div className="flex flex-wrap gap-1.5">
-            {ALL_TAGS.map((t) => (
-              <button
-                key={t}
-                onClick={() => toggleTag(t)}
-                className={cn(
-                  "rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors",
-                  filters.tags.includes(t)
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border text-muted-foreground hover:text-foreground",
-                )}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <RailLabel>Numeric filters</RailLabel>
-          <NumInput label="RS rank ≤" value={filters.rankMax} onChange={(v) => update({ rankMax: v })} />
-          <NumInput label="Trend score ≥" value={filters.trendMin} onChange={(v) => update({ trendMin: v })} />
-          <NumInput label="Consistency ≥" value={filters.consMin} onChange={(v) => update({ consMin: v })} />
-          <NumInput label="1M return ≥ %" value={filters.r1m} onChange={(v) => update({ r1m: v })} />
-          <NumInput label="3M return ≥ %" value={filters.r3m} onChange={(v) => update({ r3m: v })} />
-          <NumInput label="6M return ≥ %" value={filters.r6m} onChange={(v) => update({ r6m: v })} />
-          <NumInput label="ATR % ≤" value={filters.atrMax} onChange={(v) => update({ atrMax: v })} />
-          <NumInput label="Within % of 52w high" value={filters.nearHigh} onChange={(v) => update({ nearHigh: v })} />
-          <NumInput label="Volume ratio ≥" value={filters.volMin} onChange={(v) => update({ volMin: v })} />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <RailLabel>Trend position</RailLabel>
-          <Toggle label="Above 50-DMA" on={filters.above50} onClick={() => update({ above50: !filters.above50 })} />
-          <Toggle label="Above 200-DMA" on={filters.above200} onClick={() => update({ above200: !filters.above200 })} />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <RailLabel>Sectors</RailLabel>
-          <div className="flex max-h-56 flex-col gap-1 overflow-y-auto pr-1">
-            {availableSectors.map((s) => (
-              <label key={s} className="flex cursor-pointer items-center gap-2 text-[12px] text-muted-foreground hover:text-foreground">
-                <input
-                  type="checkbox"
-                  checked={filters.sectors.includes(s)}
-                  onChange={() => toggleSector(s)}
-                  className="h-3.5 w-3.5"
-                />
-                {sectorLabel(s)}
-              </label>
-            ))}
-          </div>
-        </div>
-      </div>
-    </aside>
-  );
-}
-
-function RailLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-      {children}
-    </span>
-  );
-}
-
-function NumInput({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
-  return (
-    <label className="flex items-center justify-between gap-2 text-[12px] text-muted-foreground">
-      <span>{label}</span>
-      <input
-        type="number"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-16 rounded-md border border-input bg-background px-2 py-1 text-right text-[12px] text-foreground"
-      />
-    </label>
-  );
-}
-
-function Toggle({ label, on, onClick }: { label: string; on: boolean; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "flex items-center justify-between rounded-md border px-2.5 py-1 text-[12px] transition-colors",
-        on ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground hover:text-foreground",
-      )}
-    >
-      {label}
-      <span className={cn("ml-2 h-2 w-2 rounded-full", on ? "bg-primary" : "bg-muted")} />
-    </button>
   );
 }
 

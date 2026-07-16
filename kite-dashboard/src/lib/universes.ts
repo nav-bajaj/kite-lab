@@ -30,8 +30,13 @@ export const UNIVERSES: Record<UniverseId, Universe> = {
     shortName: "Trend",
     description: "Pure trend-following on NSE 500 — trend quality + drawdown control + 63d momentum",
     stocks: 25,
+    // Temporarily hidden for the private-beta launch — we show 3 portfolios
+    // (Core Momentum, Defensive Blend, Quality Momentum) to keep the first
+    // GTM simple. This is a production portfolio, NOT a legacy demotion; flip
+    // back to `true` to re-list it. Frontend-only gate for now: the backend
+    // CLIENT_VISIBLE_UNIVERSES set (kite-api/app/auth.py) still allows it.
+    clientVisible: false,
     riskProfile: "Trend-following",
-    clientVisible: true,
   },
   l6_v2: {
     id: "l6_v2",
@@ -95,8 +100,9 @@ export function isValidUniverse(id: string): id is UniverseId {
 
 export const UNIVERSE_IDS = Object.keys(UNIVERSES) as UniverseId[];
 
-/** Universes visible to a given role. Admins see all 7; clients see only
- *  the 4 production portfolios. */
+/** Universes visible to a given role. Admins see all 7; clients see the
+ *  client-visible production portfolios (3 during the private beta —
+ *  Trend Leaders is temporarily hidden; see its entry above). */
 export function getVisibleUniverseIds(role: string | undefined): UniverseId[] {
   if (role === "admin") return UNIVERSE_IDS;
   return UNIVERSE_IDS.filter(

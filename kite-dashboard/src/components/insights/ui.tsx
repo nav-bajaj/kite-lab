@@ -65,19 +65,32 @@ export function Section({
   );
 }
 
-/** A stat card: small label, large value (tone-colored), sub-line + help. */
+/** The bottom "so what" line on a headline card — a plain-English takeaway of
+ *  what the current reading means. Descriptive only, never a call to act. */
+export function CardTakeaway({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="mt-auto border-t border-border pt-3 text-[13px] leading-[1.5] text-foreground">
+      {children}
+    </p>
+  );
+}
+
+/** A stat card: small label, large value (tone-colored), sub-line + help, and
+ *  an optional bottom takeaway. */
 export function MetricCard({
   label,
   value,
   sub,
   tone = "default",
   help,
+  takeaway,
 }: {
   label: string;
   value: React.ReactNode;
   sub?: React.ReactNode;
   tone?: Tone;
   help?: React.ReactNode;
+  takeaway?: React.ReactNode;
 }) {
   return (
     <div className="flex flex-col gap-1.5 rounded-xl border border-border bg-card p-5">
@@ -87,6 +100,7 @@ export function MetricCard({
       </span>
       {sub && <span className="text-[13px] leading-snug text-muted-foreground">{sub}</span>}
       {help && <div className="mt-1">{help}</div>}
+      {takeaway && <CardTakeaway>{takeaway}</CardTakeaway>}
     </div>
   );
 }
@@ -115,6 +129,15 @@ const REGIME_TONE = new Map<RegimeSnapshot["regime"], Tone>([
   ["STRESS", "negative"],
 ]);
 
+// Plain-English "so what" per market state. Descriptive of conditions — no
+// buy/sell call, no forecast.
+const REGIME_TAKEAWAY = new Map<RegimeSnapshot["regime"], string>([
+  ["TREND_BULL", "The market is trending up and most stocks are joining in — conditions are healthy."],
+  ["DRIFT", "No strong trend right now — the market is drifting sideways on mixed signals."],
+  ["STRETCHED", "The market is running hot and almost everyone's optimistic — historically a time to be a little more careful, not a sell signal."],
+  ["STRESS", "The market is under pressure — either fear is up or fewer stocks are holding their trend."],
+]);
+
 export function RegimeCard({
   regime,
   help,
@@ -128,11 +151,12 @@ export function RegimeCard({
       : `Day ${regime.persistence_days}`;
   return (
     <MetricCard
-      label="Today's regime"
+      label="Market state"
       value={regimeLabel(regime.regime)}
       tone={REGIME_TONE.get(regime.regime) ?? "default"}
       sub={transitioned}
       help={help}
+      takeaway={REGIME_TAKEAWAY.get(regime.regime)}
     />
   );
 }
@@ -154,6 +178,12 @@ export function StressGauge({
       : tone === "warning"
         ? "var(--warning)"
         : "var(--negative)";
+  const takeaway =
+    score < 33
+      ? "Calm conditions — low fear and steady trading. Swings tend to be smaller here."
+      : score < 66
+        ? "Some caution in the air, but not panic. Normal, workable conditions."
+        : "Fear is high — expect bigger, faster swings than usual until it settles.";
 
   return (
     <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
@@ -173,9 +203,10 @@ export function StressGauge({
         />
       </div>
       <span className="text-[13px] text-muted-foreground">
-        {stress.score_percentile.toFixed(0)}th percentile of its history
+        More stressed than {stress.score_percentile.toFixed(0)}% of past days
       </span>
       {help && <div className="mt-1">{help}</div>}
+      <CardTakeaway>{takeaway}</CardTakeaway>
     </div>
   );
 }
@@ -202,6 +233,15 @@ export function Tag({ label, tone = "muted" }: { label: string; tone?: Tone }) {
  *  confirmed); the rest stay neutral. */
 export function volumeBandTone(band: string | null): Tone {
   return band === "Strong" ? "positive" : "muted";
+}
+
+/** Shared tone → badge border/text classes (used by the tag icon badges). */
+export function badgeToneClass(tone: Tone): string {
+  return tone === "positive"
+    ? "border-[color:var(--positive)] text-[color:var(--positive)]"
+    : tone === "warning"
+      ? "border-[color:var(--warning)] text-[color:var(--warning)]"
+      : "border-border text-muted-foreground";
 }
 
 /** A 0–100 score rendered as a value + thin bar. `tone` colors the bar; for
@@ -241,8 +281,10 @@ export function ScoreBar({
   );
 }
 
-/** Ranked sector RS leaderboard as horizontal semantic bars (the guide's
- *  Insights/Data look). `rs` field is a ratio. */
+/** Ranked sector RS leaderboard as a diverging ("tornado") chart: the sector
+ *  name sits on the centre zero-axis, outperformers (green) extend right and
+ *  laggards (red) extend left, each with its % riding the bar's outer tip.
+ *  `rs_60d` is a ratio (vs Nifty 50). */
 export function SectorBars({
   sectors,
   limit = 12,
@@ -259,25 +301,53 @@ export function SectorBars({
   );
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2">
       {rows.map((s) => {
         const v = s.rs_60d ?? 0;
-        const pct = Math.max(3, (Math.abs(v) / maxAbs) * 100);
-        const color = v >= 0 ? "var(--positive)" : "var(--negative)";
+        const positive = v >= 0;
+        // Cap at 80% of each half so the % label at the tip never overflows.
+        const width = `${Math.max(4, (Math.abs(v) / maxAbs) * 80)}%`;
+        const color = positive ? "var(--positive)" : "var(--negative)";
         return (
-          <div key={s.sector} className="flex items-center gap-4">
-            <span className="w-[120px] shrink-0 truncate font-mono text-[13px] uppercase tracking-[0.04em] text-foreground">
+          <div
+            key={s.sector}
+            className="grid items-center gap-2"
+            style={{ gridTemplateColumns: "1fr 132px 1fr" }}
+          >
+            {/* Left half — laggards (red), bar grows toward centre */}
+            <div className="flex items-center justify-end gap-2">
+              {!positive && (
+                <>
+                  <span className="font-mono text-[13px] tabular-nums">
+                    <Pct v={v} />
+                  </span>
+                  <div
+                    className="h-6 rounded-[4px]"
+                    style={{ width, backgroundColor: color }}
+                  />
+                </>
+              )}
+            </div>
+
+            {/* Centre — sector name on the zero-axis */}
+            <span className="truncate text-center font-mono text-[13px] uppercase tracking-[0.04em] text-foreground">
               {s.sector.replace("NIFTY_", "")}
             </span>
-            <div className="h-6 flex-1">
-              <div
-                className="h-6 rounded-[4px]"
-                style={{ width: `${pct}%`, backgroundColor: color }}
-              />
+
+            {/* Right half — leaders (green), bar grows outward from centre */}
+            <div className="flex items-center gap-2">
+              {positive && (
+                <>
+                  <div
+                    className="h-6 rounded-[4px]"
+                    style={{ width, backgroundColor: color }}
+                  />
+                  <span className="font-mono text-[13px] tabular-nums">
+                    <Pct v={v} />
+                  </span>
+                </>
+              )}
             </div>
-            <span className="w-[72px] shrink-0 text-right font-mono text-[13px]">
-              <Pct v={v} />
-            </span>
           </div>
         );
       })}

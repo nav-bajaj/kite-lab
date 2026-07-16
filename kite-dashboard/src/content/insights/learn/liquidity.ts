@@ -5,7 +5,7 @@ export const liquidity: LearnExplainer = {
   title: "Liquidity tier",
   category: "concept",
   summary:
-    "A simple Good / Moderate / Low bucket based on a stock's average daily traded value — how easily it trades.",
+    "A simple Good / Moderate / Low rating of how easily a stock trades — i.e. how quickly you could buy or sell it without moving the price.",
   related: ["volume-confirmation"],
   lastUpdated: "2026-07-09",
   sections: [

@@ -32,6 +32,10 @@ export function SnapshotPicker() {
   const currentDate = searchParams.get("date") ?? "";
   const [draft, setDraft] = useState(currentDate);
 
+  // Learn pages (explainers + glossary) are evergreen — a "snapshot date"
+  // makes no sense there, so hide the picker on that branch.
+  if (pathname.startsWith("/insights/learn")) return null;
+
   function navigate(date: string) {
     const params = new URLSearchParams(searchParams.toString());
     if (date) params.set("date", date);
@@ -42,13 +46,22 @@ export function SnapshotPicker() {
   }
 
   return (
-    <div className="rounded-xl border border-dashed border-border p-4 text-sm">
-      <div className="flex items-baseline justify-between">
-        <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-          Snapshot date
+    <div className="rounded-xl border border-dashed border-border p-5 text-sm">
+      <div className="flex items-baseline justify-between gap-3">
+        <div className="flex flex-col gap-1">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            Snapshot date · a time machine
+          </div>
+          <p className="max-w-2xl text-[14px] leading-[1.55] text-foreground">
+            Curious what the market looked like during a big moment? Jump to any
+            trading day back to 2010 and every reading on this page rewinds to
+            show exactly how it read that day. Try the COVID crash or an election
+            — it&apos;s the fastest way to get a feel for what &ldquo;calm&rdquo;
+            and &ldquo;stressed&rdquo; actually look like.
+          </p>
         </div>
         {isPending && (
-          <span className="text-xs text-muted-foreground">loading…</span>
+          <span className="shrink-0 text-xs text-muted-foreground">loading…</span>
         )}
       </div>
 
@@ -94,11 +107,6 @@ export function SnapshotPicker() {
           </button>
         </form>
       </div>
-
-      <p className="mt-3 text-xs text-muted-foreground">
-        Pick a historical date to see what the dashboard read like that day.
-        Data goes back to 2010.
-      </p>
     </div>
   );
 }

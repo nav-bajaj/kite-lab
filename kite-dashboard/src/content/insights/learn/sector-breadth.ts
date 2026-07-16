@@ -5,7 +5,7 @@ export const sectorBreadth: LearnExplainer = {
   title: "Sector breadth (constituent-level)",
   category: "indicator",
   summary:
-    "How many stocks WITHIN a sector are actually participating. Tells you whether sector strength is broad or just a few mega-caps.",
+    "Whether a whole sector is strong or just its biggest one or two names — it counts how many stocks inside the sector are actually rising.",
   related: ["sector-rs", "pct-above-200dma"],
   lastUpdated: "2026-05-28",
   sections: [

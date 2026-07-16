@@ -18,70 +18,74 @@ const CATEGORY_ORDER: Array<{
   {
     key: "indicator",
     label: "Indicators",
-    blurb: "What each indicator measures and how to read it.",
+    blurb: "What each number measures, and how to read it.",
   },
   {
     key: "pattern",
     label: "Patterns",
-    blurb: "Technical setups we surface on the Watchlists page.",
+    blurb: "The chart setups we point out and what they tend to mean.",
   },
   {
     key: "concept",
     label: "Concepts",
-    blurb: "Foundational ideas referenced throughout the platform.",
+    blurb: "The big ideas the whole platform is built on.",
   },
 ];
 
 export default function LearnIndexPage() {
   const byCat = explainersByCategory();
   return (
-    <main className="space-y-8">
-      <header>
-        <h2 className="text-lg font-semibold">Learn</h2>
-        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
-          Short, plain-English explainers for every indicator, pattern, and
-          concept we use. Every reading on the dashboard links back here —
-          if you don&apos;t recognise a term, this is where you look.
+    <main className="flex flex-col gap-10">
+      <header className="flex flex-col gap-2">
+        <h2 className="font-serif text-2xl font-medium tracking-[-0.01em] text-foreground">
+          Learn
+        </h2>
+        <p className="max-w-2xl text-[15px] leading-[1.6] text-muted-foreground">
+          Short, plain-English explainers for every term we use. New to this?
+          Start here. And anywhere you see a &ldquo;What is this?&rdquo; link on
+          the dashboard, it brings you back to the right explainer.
         </p>
       </header>
 
-      {/* Glossary featured card — drives traffic to the term reference */}
-      <section className="rounded border bg-neutral-50 p-4 dark:bg-neutral-900/50">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <div>
-            <h3 className="text-base font-semibold">Glossary</h3>
-            <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-400">
-              {GLOSSARY.length} short definitions across market state,
-              breadth, patterns, math, flows, and general terms.
-            </p>
-          </div>
-          <Link
-            href="/insights/learn/glossary"
-            className="rounded border bg-white px-3 py-1 text-sm hover:bg-neutral-100 dark:bg-neutral-950 dark:hover:bg-neutral-800"
-          >
-            Open glossary →
-          </Link>
+      {/* Glossary featured card */}
+      <section className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-card p-6">
+        <div className="flex flex-col gap-1">
+          <h3 className="font-serif text-lg font-medium tracking-[-0.01em] text-foreground">
+            Glossary
+          </h3>
+          <p className="text-[13px] leading-[1.5] text-muted-foreground">
+            {GLOSSARY.length} quick definitions — every term in one place, in
+            one line each.
+          </p>
         </div>
+        <Link
+          href="/insights/learn/glossary"
+          className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary/40"
+        >
+          Open glossary →
+        </Link>
       </section>
 
       {CATEGORY_ORDER.map((cat) => {
         const items = byCat[cat.key] ?? [];
         if (items.length === 0) return null;
         return (
-          <section key={cat.key} className="space-y-3">
-            <div>
-              <h3 className="text-base font-semibold">{cat.label}</h3>
-              <p className="text-xs text-neutral-500">{cat.blurb}</p>
+          <section key={cat.key} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <h3 className="font-serif text-lg font-medium tracking-[-0.01em] text-foreground">
+                {cat.label}
+              </h3>
+              <p className="text-[13px] text-muted-foreground">{cat.blurb}</p>
             </div>
             <ul className="grid gap-3 sm:grid-cols-2">
               {items.map((e) => (
                 <li key={e.slug}>
                   <Link
                     href={`/insights/learn/${e.slug}`}
-                    className="block rounded border p-3 hover:bg-neutral-50 dark:hover:bg-neutral-900"
+                    className="flex h-full flex-col gap-1 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40"
                   >
-                    <p className="font-medium">{e.title}</p>
-                    <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-400">
+                    <p className="font-medium text-foreground">{e.title}</p>
+                    <p className="text-[13px] leading-[1.5] text-muted-foreground">
                       {e.summary}
                     </p>
                   </Link>

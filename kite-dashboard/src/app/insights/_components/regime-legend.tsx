@@ -48,12 +48,14 @@ export function RegimeLegend() {
     <section id="regime-legend" className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
         <h3 className="font-serif text-xl font-medium tracking-[-0.01em] text-foreground">
-          What do the regimes mean?
+          The four market states, explained
         </h3>
         <p className="text-[13px] text-muted-foreground">
-          Each day is classified into one of four regimes from a simple
-          rules-based model using NSE 500 breadth + VIX. Definitions below
-          mirror the actual classifier — no marketing gap.
+          Every day we sort the market into one of four states (the technical
+          name is &ldquo;regime&rdquo;). It&apos;s a simple rules-based read on
+          trend and stress. The plain-English meaning is on top; the exact rule
+          we use is underneath, so there&apos;s no gap between what we say and
+          what the model does.
         </p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">

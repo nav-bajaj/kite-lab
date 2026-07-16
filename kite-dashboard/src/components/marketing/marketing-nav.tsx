@@ -10,9 +10,9 @@ import { INSIGHTS_ACCESS } from "@/lib/flags";
 // launch (access=all). In admin-only mode the surface exists but stays
 // unlisted here.
 const LINKS = [
+  { label: "Portfolios", href: "/portfolios" },
   { label: "Library", href: "/library" },
   ...(INSIGHTS_ACCESS === "all" ? [{ label: "Insights", href: "/insights" }] : []),
-  { label: "Portfolios", href: "/dashboard" },
 ];
 
 /**

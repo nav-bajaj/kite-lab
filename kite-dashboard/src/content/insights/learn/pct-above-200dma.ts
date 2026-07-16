@@ -5,7 +5,7 @@ export const pctAbove200dma: LearnExplainer = {
   title: "% above 200-DMA",
   category: "indicator",
   summary:
-    "Share of NSE 500 stocks trading above their 200-day moving average. The most-used breadth metric — answers 'how broad is the trend?'",
+    "The share of stocks in a long-term uptrend — the simplest way to see how many stocks are healthy, not just the index.",
   related: ["sector-breadth", "mcclellan-oscillator", "regime"],
   lastUpdated: "2026-05-28",
   sections: [

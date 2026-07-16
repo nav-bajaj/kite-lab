@@ -5,7 +5,7 @@ export const rsRank: LearnExplainer = {
   title: "Relative Strength (RS) rank",
   category: "indicator",
   summary:
-    "A 1-to-500 ranking of every NSE 500 stock by a blended, multi-horizon momentum score. Rank 1 is the strongest name.",
+    "Where every stock sits in the market's momentum pecking order, from rank 1 (strongest) to 500 (weakest).",
   related: ["rs-leader", "trend-score", "momentum-consistency"],
   lastUpdated: "2026-07-09",
   sections: [

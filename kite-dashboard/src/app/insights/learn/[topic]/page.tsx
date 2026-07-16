@@ -33,41 +33,45 @@ export default async function LearnTopicPage(
     .filter((e): e is NonNullable<typeof e> => Boolean(e));
 
   return (
-    <article className="space-y-6">
-      <nav className="text-xs text-neutral-500">
-        <Link href="/insights/learn" className="underline-offset-2 hover:underline">
+    <article className="mx-auto flex max-w-[720px] flex-col gap-7">
+      <nav className="text-xs text-muted-foreground">
+        <Link href="/insights/learn" className="underline-offset-2 hover:text-foreground hover:underline">
           Learn
         </Link>
         {" · "}
         <span className="uppercase tracking-wide">{explainer.category}</span>
       </nav>
 
-      <header className="space-y-2 border-b pb-4">
-        <h2 className="text-2xl font-semibold">{explainer.title}</h2>
-        <p className="text-neutral-600 dark:text-neutral-400">{explainer.summary}</p>
-        <p className="text-xs text-neutral-500">
+      <header className="flex flex-col gap-3 border-b border-border pb-6">
+        <h2 className="font-serif text-[2rem] font-medium leading-[1.1] tracking-[-0.02em] text-foreground">
+          {explainer.title}
+        </h2>
+        <p className="text-lg leading-[1.6] text-muted-foreground">{explainer.summary}</p>
+        <p className="text-xs text-muted-foreground">
           Last reviewed {explainer.lastUpdated}
         </p>
       </header>
 
-      <div className="space-y-8">
+      <div className="flex flex-col gap-8">
         {explainer.sections.map((s) => (
-          <section key={s.heading}>
-            <h3 className="mb-2 text-base font-semibold">{s.heading}</h3>
+          <section key={s.heading} className="flex flex-col gap-2">
+            <h3 className="font-serif text-lg font-medium tracking-[-0.01em] text-foreground">
+              {s.heading}
+            </h3>
             <RenderBody body={s.body} />
           </section>
         ))}
       </div>
 
       {related.length > 0 && (
-        <aside className="mt-10 border-t pt-4 text-sm">
-          <p className="mb-2 font-medium">Related explainers</p>
+        <aside className="mt-4 flex flex-col gap-2 border-t border-border pt-6 text-sm">
+          <p className="font-medium text-foreground">Related explainers</p>
           <ul className="flex flex-wrap gap-2">
             {related.map((r) => (
               <li key={r.slug}>
                 <Link
                   href={`/insights/learn/${r.slug}`}
-                  className="rounded border px-2 py-1 hover:bg-neutral-100 dark:hover:bg-neutral-900"
+                  className="rounded-lg border border-border px-3 py-1.5 text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
                 >
                   {r.title}
                 </Link>
@@ -77,10 +81,9 @@ export default async function LearnTopicPage(
         </aside>
       )}
 
-      <p className="text-xs text-neutral-500">
-        Educational content; not investment advice. Methodology and
-        examples are illustrative — past patterns do not guarantee future
-        outcomes.
+      <p className="text-xs text-muted-foreground">
+        Educational content, not investment advice. Examples are illustrative —
+        past patterns do not guarantee future outcomes.
       </p>
     </article>
   );

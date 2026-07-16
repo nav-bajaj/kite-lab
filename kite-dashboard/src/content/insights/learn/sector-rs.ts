@@ -5,7 +5,7 @@ export const sectorRs: LearnExplainer = {
   title: "Sector relative strength (RS)",
   category: "indicator",
   summary:
-    "How a sector has performed against Nifty 50 over a chosen window. Positive RS = sector beat the index; negative = lagged.",
+    "How a sector is doing versus the wider market (the Nifty 50). Positive means it's beating the market; negative means it's lagging.",
   related: ["sector-breadth", "rs-leader"],
   lastUpdated: "2026-05-28",
   sections: [

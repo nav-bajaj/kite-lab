@@ -5,7 +5,7 @@ export const sustainedUptrend: LearnExplainer = {
   title: "Sustained uptrend (clean trend)",
   category: "pattern",
   summary:
-    "Stocks with strong 1-year returns AND low recent drawdown — the visible signature of a 'clean' trend without recent corrective episodes.",
+    "Stocks that have climbed strongly over the past year without any nasty falls along the way — the mark of a smooth, orderly trend.",
   related: ["rs-leader", "breakout"],
   lastUpdated: "2026-05-28",
   sections: [

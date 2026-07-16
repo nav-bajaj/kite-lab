@@ -5,7 +5,7 @@ export const mcclellanOscillator: LearnExplainer = {
   title: "McClellan oscillator",
   category: "indicator",
   summary:
-    "A breadth momentum indicator computed from advancing minus declining stocks across NSE 500.",
+    "A day-by-day health check on how many stocks are rising versus falling — it shows whether a market move has broad support or just a few names behind it.",
   related: ["pct-above-200dma", "dispersion"],
   lastUpdated: "2026-05-28",
   sections: [

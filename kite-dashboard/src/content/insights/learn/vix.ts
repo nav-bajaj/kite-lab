@@ -5,7 +5,7 @@ export const vix: LearnExplainer = {
   title: "India VIX",
   category: "indicator",
   summary:
-    "The market's expectation of Nifty volatility over the next 30 days — derived from index option prices.",
+    "The market's own forecast of how bumpy the next month will be — often called the 'fear gauge'.",
   related: ["stress-score", "regime"],
   lastUpdated: "2026-05-28",
   sections: [

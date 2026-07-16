@@ -5,7 +5,7 @@ export const dispersion: LearnExplainer = {
   title: "Cross-sectional dispersion",
   category: "indicator",
   summary:
-    "How spread out daily returns are across NSE 500 stocks. High dispersion = stock-picker's market; low dispersion = everything moving together.",
+    "How differently stocks are moving from one another on a given day. When it's high, picking the right stock matters a lot; when it's low, almost everything moves together.",
   related: ["stress-score", "vix"],
   lastUpdated: "2026-05-28",
   sections: [

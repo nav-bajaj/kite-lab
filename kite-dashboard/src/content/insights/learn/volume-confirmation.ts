@@ -5,7 +5,7 @@ export const volumeConfirmation: LearnExplainer = {
   title: "Volume Confirmation",
   category: "indicator",
   summary:
-    "A 0–100 score of whether volume is backing a move — today's and the week's volume vs average, plus the up/down-day volume balance.",
+    "A 0–100 score of whether real buying is behind a move — is it happening on heavier-than-usual volume, or just quietly drifting?",
   related: ["breakout", "rs-rank"],
   lastUpdated: "2026-07-09",
   sections: [

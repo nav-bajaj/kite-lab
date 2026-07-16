@@ -90,7 +90,7 @@ export const GLOSSARY: GlossaryEntry[] = [
     anchor: "mcclellan",
     bucket: "breadth-momentum",
     definition:
-      "Breadth momentum: a 19-day EMA minus a 39-day EMA of (advances minus declines). Captures whether breadth is accelerating or fading.",
+      "A gauge of whether more stocks are rising than falling, and whether that's speeding up or slowing down. Technically, a 19-day EMA minus a 39-day EMA of (advances minus declines).",
     related: "mcclellan-oscillator",
   },
   {
@@ -98,7 +98,7 @@ export const GLOSSARY: GlossaryEntry[] = [
     anchor: "dispersion",
     bucket: "breadth-momentum",
     definition:
-      "Cross-sectional standard deviation of daily returns — how scattered stocks are around the average. High = stock-picker's market; low = everything moving together.",
+      "How differently stocks are moving from one another on a day. High = a stock-picker's market (winners and losers spread far apart); low = almost everything moving together.",
     related: "dispersion",
   },
   {

@@ -5,7 +5,7 @@ export const coiledSpring: LearnExplainer = {
   title: "Coiled spring",
   category: "pattern",
   summary:
-    "Stocks in tight trading ranges above their 50- and 200-DMAs — historically the setup that precedes either a continuation breakout or a fast failure.",
+    "A stock that's gone quiet in a tight price range while still in an uptrend — often a pause before a bigger move, in either direction.",
   related: ["breakout", "rs-leader"],
   lastUpdated: "2026-05-28",
   sections: [

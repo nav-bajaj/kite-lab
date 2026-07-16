@@ -5,7 +5,7 @@ export const breakout: LearnExplainer = {
   title: "Breakout",
   category: "pattern",
   summary:
-    "A stock closing above a recent significant high — most commonly a 20-day high but can extend to multi-year bases.",
+    "When a stock closes above a recent high — a sign it may be starting a fresh leg up after a pause.",
   related: ["coiled-spring", "rs-leader"],
   lastUpdated: "2026-05-28",
   sections: [

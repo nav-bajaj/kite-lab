@@ -33,18 +33,20 @@ export default function GlossaryPage() {
   const totalEntries = GLOSSARY.length;
 
   return (
-    <main className="space-y-8">
-      <header className="space-y-2">
-        <nav className="text-xs text-neutral-500">
-          <Link href="/insights/learn" className="underline-offset-2 hover:underline">
+    <main className="flex flex-col gap-8">
+      <header className="flex flex-col gap-2">
+        <nav className="text-xs text-muted-foreground">
+          <Link href="/insights/learn" className="underline-offset-2 hover:text-foreground hover:underline">
             Learn
           </Link>
           {" · Glossary"}
         </nav>
-        <h2 className="text-lg font-semibold">Glossary</h2>
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          {totalEntries} terms used across the dashboard, grouped by topic.
-          Where a term has a deep-dive explainer, the link takes you there.
+        <h2 className="font-serif text-2xl font-medium tracking-[-0.01em] text-foreground">
+          Glossary
+        </h2>
+        <p className="max-w-2xl text-[15px] leading-[1.6] text-muted-foreground">
+          {totalEntries} terms used across Insights, one line each, grouped by
+          topic. Where a term has a fuller explainer, the link takes you there.
         </p>
       </header>
 
@@ -54,7 +56,7 @@ export default function GlossaryPage() {
           <a
             key={bucket}
             href={`#${bucket}`}
-            className="rounded border px-2 py-1 hover:bg-neutral-100 dark:hover:bg-neutral-900"
+            className="rounded-lg border border-border px-3 py-1.5 font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
           >
             {/* eslint-disable-next-line security/detect-object-injection */}
             {BUCKET_LABELS[bucket]} ({entries.length})
@@ -66,27 +68,27 @@ export default function GlossaryPage() {
         <section
           key={bucket}
           id={bucket}
-          className="space-y-4 scroll-mt-20"
+          className="flex flex-col gap-4 scroll-mt-24"
         >
-          <h3 className="border-b pb-1 text-base font-semibold">
+          <h3 className="border-b border-border pb-2 font-serif text-lg font-medium tracking-[-0.01em] text-foreground">
             {/* eslint-disable-next-line security/detect-object-injection */}
             {BUCKET_LABELS[bucket]}
           </h3>
-          <dl className="space-y-4">
+          <dl className="flex flex-col gap-4">
             {entries.map((e) => (
-              <div key={e.anchor} id={e.anchor} className="scroll-mt-20">
-                <dt className="font-medium">
+              <div key={e.anchor} id={e.anchor} className="scroll-mt-24">
+                <dt className="font-medium text-foreground">
                   {e.term}
                   {e.related && (
                     <Link
                       href={`/insights/learn/${e.related}`}
-                      className="ml-2 text-xs text-neutral-500 underline-offset-2 hover:underline"
+                      className="ml-2 text-xs text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
                     >
                       deep-dive →
                     </Link>
                   )}
                 </dt>
-                <dd className="mt-1 text-sm text-neutral-700 dark:text-neutral-300">
+                <dd className="mt-1 text-[14px] leading-[1.55] text-muted-foreground">
                   {e.definition}
                 </dd>
               </div>
@@ -95,9 +97,9 @@ export default function GlossaryPage() {
         </section>
       ))}
 
-      <p className="border-t pt-4 text-xs text-neutral-500">
+      <p className="border-t border-border pt-4 text-xs text-muted-foreground">
         Missing a term?{" "}
-        <Link href="/insights/learn" className="underline-offset-2 hover:underline">
+        <Link href="/insights/learn" className="underline-offset-2 hover:text-foreground hover:underline">
           Back to Learn index
         </Link>
         .

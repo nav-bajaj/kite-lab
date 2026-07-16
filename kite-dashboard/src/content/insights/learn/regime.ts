@@ -5,7 +5,7 @@ export const regime: LearnExplainer = {
   title: "Market regime",
   category: "indicator",
   summary:
-    "A 4-state classification — Trend Bull, Drift, Stretched, Stress — that captures where markets are in the cycle.",
+    "The market's current state, sorted into one of four plain labels — Trend Bull, Drift, Stretched, or Stress — so you can tell at a glance what kind of market you're in.",
   related: ["stress-score", "pct-above-200dma", "vix"],
   lastUpdated: "2026-05-28",
   sections: [

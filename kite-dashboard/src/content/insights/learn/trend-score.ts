@@ -5,7 +5,7 @@ export const trendScore: LearnExplainer = {
   title: "Trend Score",
   category: "indicator",
   summary:
-    "A transparent 0–100 score of how cleanly a stock is trending — DMA positioning, alignment, slope, proximity to its high, and drawdown control.",
+    "A 0–100 score of how clean and orderly a stock's uptrend is — a high score means it's climbing steadily rather than lurching up and down.",
   related: ["rs-rank", "momentum-consistency", "pct-above-200dma"],
   lastUpdated: "2026-07-09",
   sections: [
