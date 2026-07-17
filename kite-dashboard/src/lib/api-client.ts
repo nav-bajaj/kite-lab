@@ -255,6 +255,18 @@ export async function getTrades(
   }>(`/api/trades?${searchParams}`);
 }
 
+export interface TradeDetail {
+  symbol: string;
+  entry_date: string;
+  exit_date: string;
+  entry_price: number;
+  exit_price: number;
+  shares: number;
+  holding_days: number;
+  realized_pnl: number;
+  realized_pnl_pct: number;
+}
+
 export async function getTradeSummary(universe: UniverseId) {
   return apiFetch<{
     universe: string;
@@ -271,6 +283,8 @@ export async function getTradeSummary(universe: UniverseId) {
     worst_trade_pct?: number | null;
     avg_winner_pct?: number | null;
     avg_loser_pct?: number | null;
+    best_trade?: TradeDetail | null;
+    worst_trade?: TradeDetail | null;
   }>(`/api/trades/summary?universe=${universe}`);
 }
 

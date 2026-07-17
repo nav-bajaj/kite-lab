@@ -30,8 +30,8 @@ export function getNavigation(isAdmin: boolean): NavItem[] {
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
     { name: "Open Positions", href: "/positions", icon: Wallet },
     { name: "Performance", href: "/performance", icon: TrendingUp },
-    { name: "Rebalance", href: "/rebalance", icon: RefreshCw },
-    { name: "Trades", href: "/trades", icon: History },
+    { name: "Upcoming Trades", href: "/rebalance", icon: RefreshCw },
+    { name: "Trade Log", href: "/trades", icon: History },
   ];
 
   if (insightsVisible) {

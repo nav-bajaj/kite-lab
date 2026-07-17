@@ -14,8 +14,8 @@ const pathNames: Record<string, string> = {
   "/dashboard": "Overview",
   "/positions": "Open Positions",
   "/performance": "Performance",
-  "/rebalance": "Rebalance",
-  "/trades": "Trades",
+  "/rebalance": "Upcoming Trades",
+  "/trades": "Trade Log",
   "/admin": "Admin",
   "/account": "Account",
 };

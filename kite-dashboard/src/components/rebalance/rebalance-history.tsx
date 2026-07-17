@@ -1,15 +1,33 @@
 "use client";
 
+import { useState } from "react";
+
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRebalanceHistory } from "@/lib/hooks";
 import { formatCurrency } from "@/lib/utils";
+import type { RebalanceHistoryItem } from "@/lib/types";
+import { ChevronDown, ChevronRight } from "lucide-react";
+
+const fmtDate = (d: string) => {
+  const parsed = new Date(d);
+  if (Number.isNaN(parsed.getTime())) return d;
+  return parsed.toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+};
+
+const isNoActionRow = (row: RebalanceHistoryItem) =>
+  row.no_action === true || (row.additions === 0 && row.removals === 0);
 
 export function RebalanceHistory({ limit = 12 }: { limit?: number }) {
   const { data, isLoading, error } = useRebalanceHistory(limit);
@@ -27,15 +45,14 @@ export function RebalanceHistory({ limit = 12 }: { limit?: number }) {
   }
 
   const history = data.history || [];
-  const hasNoAction = history.some(
-    (r) => r.no_action === true || (r.additions === 0 && r.removals === 0),
-  );
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Rebalance history</CardTitle>
-        <CardDescription>Recent rebalance activity</CardDescription>
+        <CardTitle>Past rebalances</CardTitle>
+        <CardDescription>
+          Every recent reshuffle — tap a row to see exactly what changed.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         {history.length === 0 ? (
@@ -43,86 +60,124 @@ export function RebalanceHistory({ limit = 12 }: { limit?: number }) {
             No rebalance history yet.
           </p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b text-left text-muted-foreground">
-                  <th className="py-2 pr-4 font-medium">Date</th>
-                  <th className="py-2 pr-4 font-medium text-right">Added</th>
-                  <th className="py-2 pr-4 font-medium text-right">Removed</th>
-                  <th className="py-2 pr-4 font-medium text-right">Turnover</th>
-                  <th className="py-2 font-medium text-right">
-                    Traded
-                    <span className="ml-1 font-normal opacity-70">(model)</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {history.map((row) => {
-                  // A cycle with zero adds AND zero removes is a no-action
-                  // hold even if the backend didn't flag it (audit U9).
-                  const isNoAction =
-                    row.no_action === true ||
-                    (row.additions === 0 && row.removals === 0);
-                  return (
-                    <tr
-                      key={row.date}
-                      className={
-                        "border-b last:border-0" +
-                        (isNoAction ? " text-muted-foreground italic" : "")
-                      }
-                    >
-                      <td className="py-2 pr-4 font-medium">
-                        {row.date}
-                        {isNoAction && (
-                          <span className="ml-2 rounded-sm bg-muted px-1.5 py-0.5 text-[10px] font-normal not-italic uppercase tracking-wide text-muted-foreground">
-                            no-action
-                          </span>
-                        )}
-                      </td>
-                      <td className={
-                        "py-2 pr-4 text-right " +
-                        (isNoAction ? "" : "text-green-600")
-                      }>
-                        {isNoAction ? "—" : row.additions}
-                      </td>
-                      <td className={
-                        "py-2 pr-4 text-right " +
-                        (isNoAction ? "" : "text-red-600")
-                      }>
-                        {isNoAction ? "—" : row.removals}
-                      </td>
-                      <td className="py-2 pr-4 text-right text-muted-foreground">
-                        {isNoAction
-                          ? "—"
-                          : row.turnover_pct !== null
-                            ? `${row.turnover_pct.toFixed(1)}%`
-                            : "—"}
-                      </td>
-                      <td className="py-2 text-right text-muted-foreground">
-                        {isNoAction ? "—" : formatCurrency(row.notional)}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-            {hasNoAction && (
-              <p className="mt-3 text-xs text-muted-foreground">
-                <span className="font-medium">No-action</span> cycles are
-                signal days where the engine reviewed the book but the
-                rotation stayed inside the exit buffer, so it held the
-                existing names. Not a missed rebalance.
-              </p>
-            )}
-            <p className="mt-1 text-xs text-muted-foreground">
-              <span className="font-medium">Traded (model)</span> is the model
-              portfolio&apos;s notional — not scaled to your own capital.
-            </p>
+          <div className="divide-y rounded-md border">
+            {history.map((row) => (
+              <HistoryRow key={row.date} row={row} />
+            ))}
           </div>
         )}
       </CardContent>
     </Card>
+  );
+}
+
+function HistoryRow({ row }: { row: RebalanceHistoryItem }) {
+  const noAction = isNoActionRow(row);
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center gap-3 px-3 py-3 text-left transition-colors hover:bg-muted/50"
+      >
+        <span className="text-muted-foreground">
+          {open ? (
+            <ChevronDown className="h-4 w-4" />
+          ) : (
+            <ChevronRight className="h-4 w-4" />
+          )}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="font-medium">{fmtDate(row.date)}</span>
+        </span>
+        <span className="shrink-0 text-sm text-muted-foreground">
+          {noAction ? (
+            <Badge variant="outline" className="text-[10px] uppercase tracking-wide">
+              No changes
+            </Badge>
+          ) : (
+            <span className="flex items-center gap-2">
+              {row.additions > 0 && (
+                <span className="text-green-600">+{row.additions}</span>
+              )}
+              {row.removals > 0 && (
+                <span className="text-red-600">−{row.removals}</span>
+              )}
+            </span>
+          )}
+        </span>
+      </button>
+
+      {open && (
+        <div className="space-y-3 bg-muted/30 px-3 pb-4 pl-10 pt-1 text-sm">
+          {noAction ? (
+            <p className="text-muted-foreground">
+              The strategy reviewed the market this day but the leaders barely
+              shifted, so it held every name it already owned. No trades were
+              placed — a deliberate no-change, not a missed rebalance.
+            </p>
+          ) : (
+            <>
+              {row.added && row.added.length > 0 && (
+                <div className="space-y-1.5">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Bought in
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {row.added.map((s) => (
+                      <Badge
+                        key={`add-${s}`}
+                        variant="outline"
+                        className="border-green-600 text-green-700 dark:text-green-400"
+                      >
+                        + {s}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {row.removed && row.removed.length > 0 && (
+                <div className="space-y-1.5">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Sold out
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {row.removed.map((s) => (
+                      <Badge
+                        key={`rem-${s}`}
+                        variant="outline"
+                        className="border-red-600 text-red-700 dark:text-red-400"
+                      >
+                        − {s}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="flex flex-wrap gap-x-6 gap-y-1 pt-1 text-xs text-muted-foreground">
+                {row.turnover_pct !== null && (
+                  <span>
+                    <span className="font-medium text-foreground">
+                      {row.turnover_pct.toFixed(1)}%
+                    </span>{" "}
+                    of the portfolio changed hands
+                  </span>
+                )}
+                <span>
+                  <span className="font-medium text-foreground">
+                    {formatCurrency(row.notional)}
+                  </span>{" "}
+                  traded{" "}
+                  <span className="opacity-70">(model book, not your capital)</span>
+                </span>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -131,12 +186,12 @@ function HistorySkeleton() {
     <Card>
       <CardHeader>
         <Skeleton className="h-5 w-40" />
-        <Skeleton className="h-4 w-32" />
+        <Skeleton className="h-4 w-56" />
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
           {[...Array(5)].map((_, i) => (
-            <Skeleton key={i} className="h-8 w-full" />
+            <Skeleton key={i} className="h-11 w-full" />
           ))}
         </div>
       </CardContent>

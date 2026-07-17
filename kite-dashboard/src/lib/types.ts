@@ -246,6 +246,10 @@ export interface RebalanceHistoryItem {
   date: string;
   additions: number;
   removals: number;
+  // The actual names traded at this rebalance — powers the expandable detail
+  // row. Optional because legacy summary payloads may omit them.
+  added?: string[];
+  removed?: string[];
   notional: number;
   turnover_pct: number | null;
   // See RebalancePreviousInfo above for the no_action semantics. Optional

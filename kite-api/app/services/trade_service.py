@@ -179,8 +179,39 @@ def get_trade_summary(universe: str = "nse500") -> dict:
         avg_winner_pct = float(match_stats.avg_winner_pct) if match_stats.avg_winner_pct is not None else None
         avg_loser_pct = float(match_stats.avg_loser_pct) if match_stats.avg_loser_pct is not None else None
 
+        # The single best / worst matched trade, so the UI can show its detail.
+        def _match_dict(m):
+            if m is None:
+                return None
+            return {
+                "symbol": m.symbol,
+                "entry_date": str(m.entry_date),
+                "exit_date": str(m.exit_date),
+                "entry_price": round(float(m.entry_price), 2),
+                "exit_price": round(float(m.exit_price), 2),
+                "shares": round(float(m.shares_matched), 2),
+                "holding_days": int(m.holding_days),
+                "realized_pnl": round(float(m.realized_pnl), 2),
+                "realized_pnl_pct": round(float(m.realized_pnl_pct), 2),
+            }
+
+        best_match = (
+            db.query(TradeMatch)
+            .filter(TradeMatch.universe == universe)
+            .order_by(desc(TradeMatch.realized_pnl_pct))
+            .first()
+        )
+        worst_match = (
+            db.query(TradeMatch)
+            .filter(TradeMatch.universe == universe)
+            .order_by(TradeMatch.realized_pnl_pct)
+            .first()
+        )
+
         return {
             "universe": universe,
+            "best_trade": _match_dict(best_match),
+            "worst_trade": _match_dict(worst_match),
             "total_trades": total,
             "buys": buys,
             "sells": sells,

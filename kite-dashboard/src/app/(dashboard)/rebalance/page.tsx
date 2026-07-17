@@ -1,29 +1,23 @@
 "use client";
 
-import {
-  ActionableTrades,
-  RebalanceHistory,
-  RebalanceSummary,
-} from "@/components/rebalance";
+import { ActionableTrades, RebalanceHistory } from "@/components/rebalance";
 
 export default function RebalancePage() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Rebalance</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Upcoming Trades</h1>
         <p className="text-muted-foreground">
-          When this portfolio last rebalanced and when it&apos;s due next
+          The next moves this portfolio plans to make — and a record of every
+          past one.
         </p>
       </div>
 
-      {/* Actionable trades — what to do at the upcoming rebalance */}
+      {/* The hero — what's about to change, or a countdown to it */}
       <ActionableTrades />
 
-      {/* Previous + next rebalance, cadence */}
-      <RebalanceSummary />
-
-      {/* History timeline */}
+      {/* Expandable log of past rebalances */}
       <RebalanceHistory />
     </div>
   );

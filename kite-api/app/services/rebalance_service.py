@@ -565,12 +565,16 @@ def get_rebalance_history(
 
         agg: dict = {}
         for r in rows:
-            a = agg.setdefault(r.trade_date,
-                                {"buys": 0, "sells": 0, "notional": 0.0})
+            a = agg.setdefault(
+                r.trade_date,
+                {"buys": 0, "sells": 0, "notional": 0.0, "added": [], "removed": []},
+            )
             if r.side == "BUY":
                 a["buys"] += 1
+                a["added"].append(r.symbol)
             elif r.side == "SELL":
                 a["sells"] += 1
+                a["removed"].append(r.symbol)
             a["notional"] += abs(float(r.notional or 0))
 
         cadence_exec_dates = {exec_d for _sig, exec_d in cycles}
@@ -593,6 +597,8 @@ def get_rebalance_history(
                     "date": str(d),
                     "additions": 0,
                     "removals": 0,
+                    "added": [],
+                    "removed": [],
                     "notional": 0.0,
                     "turnover_pct": 0.0,
                     "no_action": True,
@@ -610,6 +616,8 @@ def get_rebalance_history(
                     "date": str(d),
                     "additions": a["buys"],
                     "removals": a["sells"],
+                    "added": sorted(set(a["added"])),
+                    "removed": sorted(set(a["removed"])),
                     "notional": round(a["notional"], 2),
                     "turnover_pct": (round(a["notional"] / pv * 100, 2)
                                      if pv else None),

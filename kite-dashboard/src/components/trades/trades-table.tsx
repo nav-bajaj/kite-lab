@@ -29,7 +29,6 @@ import {
   ChevronDown,
   ChevronUp,
   Search,
-  Download,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -77,16 +76,6 @@ export function TradesTable() {
     }
   };
 
-  const handleExport = () => {
-    const params = new URLSearchParams();
-    params.set("universe", "nse500"); // TODO: get from context
-    if (symbol) params.set("symbol", symbol);
-    if (side) params.set("side", side);
-
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-    window.open(`${apiUrl}/api/trades/export?${params}`, "_blank");
-  };
-
   if (isLoading) {
     return <TradesTableSkeleton />;
   }
@@ -109,7 +98,7 @@ export function TradesTable() {
     <Card>
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <CardTitle>Trade History</CardTitle>
+          <CardTitle>Every trade</CardTitle>
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -131,10 +120,6 @@ export function TradesTable() {
                 <SelectItem value="SELL">Sell</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" size="sm" onClick={handleExport}>
-              <Download className="h-4 w-4 mr-1" />
-              Export
-            </Button>
           </div>
         </div>
       </CardHeader>
