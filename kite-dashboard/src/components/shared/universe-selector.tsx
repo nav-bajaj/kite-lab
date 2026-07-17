@@ -9,16 +9,20 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
-import { Globe } from "lucide-react";
+
+// A small "Strategy" eyebrow stacked above the selected name, so the control
+// reads as a labelled picker rather than a bare dropdown (or a floating word
+// next to it).
+const EYEBROW = "text-[10px] font-medium uppercase tracking-wider text-muted-foreground";
 
 export function UniverseSelector() {
   const { universeId, setUniverse, isLoading, visibleUniverseIds } = useUniverse();
 
   if (isLoading) {
     return (
-      <div className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground">
-        <Globe className="h-4 w-4" />
-        <span>Loading...</span>
+      <div className="flex flex-col items-start gap-0.5 rounded-md border px-3 py-1 leading-tight">
+        <span className={EYEBROW}>Strategy</span>
+        <span className="text-sm text-muted-foreground">Loading…</span>
       </div>
     );
   }
@@ -28,14 +32,13 @@ export function UniverseSelector() {
 
   return (
     <Select value={universeId} onValueChange={(v) => setUniverse(v as UniverseId)}>
-      {/* Single-line full name in the trigger — the two-line item markup was
-          clipping the name + stock count in the short trigger. The trigger
-          sizes to its content so the chevron sits next to the name; the stock
-          count stays in the dropdown items below. */}
-      <SelectTrigger>
-        <span className="flex items-center gap-2">
-          <Globe className="h-4 w-4 shrink-0" />
-          <span>{current?.name}</span>
+      {/* Two-line trigger: the "Strategy" eyebrow labels the control; the
+          selected name sits below it. h-auto overrides the primitive's fixed
+          h-9 so both lines fit. Stock count stays in the dropdown items. */}
+      <SelectTrigger className="!h-auto py-1">
+        <span className="flex flex-col items-start gap-0.5 text-left leading-tight">
+          <span className={EYEBROW}>Strategy</span>
+          <span className="text-sm font-medium">{current?.name}</span>
         </span>
       </SelectTrigger>
       {/* popper + align end: anchor the menu under the trigger. The default
