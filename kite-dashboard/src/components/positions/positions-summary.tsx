@@ -11,7 +11,6 @@ import {
   Clock,
   Activity,
   CalendarDays,
-  AlertTriangle,
 } from "lucide-react";
 import { formatCurrency, formatPercentValue, getPnLClass } from "@/lib/utils";
 import { FlashOnChange } from "@/components/ui/flash-on-change";
@@ -23,10 +22,6 @@ interface PositionsSummaryProps {
   holdingsAsOf?: string | null;
   isLoading: boolean;
 }
-
-// Holdings refresh on trading days only, so a weekend + a holiday can leave a
-// legitimate ~4-day gap. Flag anything older than that as stale.
-const HOLDINGS_STALE_MS = 4 * 24 * 60 * 60 * 1000;
 
 export function PositionsSummary({
   summary,
@@ -43,13 +38,6 @@ export function PositionsSummary({
   }
 
   const holdingsDate = holdingsAsOf ? new Date(holdingsAsOf) : null;
-  // Reference "now" from the server response (market_status.last_updated)
-  // rather than the client clock: keeps render pure and avoids clock skew.
-  const serverNow = marketStatus ? new Date(marketStatus.last_updated) : null;
-  const holdingsStale =
-    holdingsDate !== null &&
-    serverNow !== null &&
-    serverNow.getTime() - holdingsDate.getTime() > HOLDINGS_STALE_MS;
 
   const cards = [
     {
@@ -99,7 +87,7 @@ export function PositionsSummary({
             />
             <span className="text-sm text-muted-foreground">
               {marketStatus.is_open
-                ? "Live prices from Zerodha"
+                ? "Live market prices"
                 : "Showing last closing prices"}
             </span>
           </div>
@@ -155,24 +143,11 @@ export function PositionsSummary({
         </div>
         {holdingsDate && (
           <div
-            className={`flex items-center gap-2 ml-auto ${
-              holdingsStale ? "text-amber-600 font-medium" : ""
-            }`}
-            title={
-              holdingsStale
-                ? "Holdings have not refreshed recently — the daily sync may not have run."
-                : "When holdings were last synced by the daily pipeline"
-            }
+            className="flex items-center gap-2 ml-auto"
+            title="The holdings shown, from the portfolio's most recent rebalance, priced live"
           >
-            {holdingsStale ? (
-              <AlertTriangle className="h-3 w-3" />
-            ) : (
-              <CalendarDays className="h-3 w-3" />
-            )}
-            <span>
-              Holdings as of {holdingsDate.toLocaleDateString()}
-              {holdingsStale && " (stale)"}
-            </span>
+            <CalendarDays className="h-3 w-3" />
+            <span>Holdings as of {holdingsDate.toLocaleDateString()}</span>
           </div>
         )}
         {marketStatus && (
