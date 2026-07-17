@@ -11,7 +11,8 @@ import { MobileSidebar } from "./mobile-sidebar";
 import { UniverseSelector } from "./universe-selector";
 
 const pathNames: Record<string, string> = {
-  "/dashboard": "Dashboard",
+  "/dashboard": "Overview",
+  "/positions": "Open Positions",
   "/performance": "Performance",
   "/rebalance": "Rebalance",
   "/trades": "Trades",
@@ -24,7 +25,7 @@ export function Navbar() {
   const { theme, setTheme } = useTheme();
 
   // eslint-disable-next-line security/detect-object-injection -- pathname is from Next's router (closed set of known route strings); pathNames is a module-level constant Record
-  const pageName = pathNames[pathname] || "Dashboard";
+  const pageName = pathNames[pathname] || "Overview";
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 lg:px-6">

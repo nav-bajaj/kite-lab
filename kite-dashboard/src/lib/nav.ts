@@ -27,7 +27,7 @@ export function getNavigation(isAdmin: boolean): NavItem[] {
     INSIGHTS_ACCESS === "all" || (INSIGHTS_ACCESS === "admin" && isAdmin);
 
   const items: NavItem[] = [
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
     { name: "Open Positions", href: "/positions", icon: Wallet },
     { name: "Performance", href: "/performance", icon: TrendingUp },
     { name: "Rebalance", href: "/rebalance", icon: RefreshCw },

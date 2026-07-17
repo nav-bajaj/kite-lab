@@ -9,6 +9,7 @@ import {
   getHoldings,
   getMetrics,
   getEquityCurve,
+  getIndexReturns,
   getMonthlyReturns,
   getTrades,
   getTradeSummary,
@@ -124,6 +125,14 @@ export function useEquityCurve() {
       revalidateOnFocus: false,
     }
   );
+}
+
+// Index rolling returns (public market data — universe-independent, no auth gate)
+export function useIndexReturns() {
+  return useSWR("index-returns", getIndexReturns, {
+    refreshInterval: SLOW_REFRESH,
+    revalidateOnFocus: false,
+  });
 }
 
 // Monthly returns data (public, no auth required)

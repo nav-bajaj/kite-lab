@@ -3,15 +3,11 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useHoldings } from "@/lib/hooks";
-import { formatCurrency } from "@/lib/utils";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
-// Allocation-pie palette derived from the brand chart hues (DESIGN.md §
-// chart-1..5: lichen, signal-green, slate-blue, violet, ochre) plus
-// tints/shades, ordered for adjacent-slice contrast. Mid-tones only, so
-// every slice reads against both the light (#FFFFFF) and dark (#171717)
-// card. Static hex (not var()) because a 25-slice categorical scale needs
-// more steps than the five themeable --chart-* tokens provide.
+// Sector-pie palette from the brand chart hues (DESIGN.md chart-1..5) plus
+// tints, ordered for adjacent-slice contrast. Mid-tones only, so each slice
+// reads against both the light and dark card.
 const COLORS = [
   "#14715F", // lichen
   "#9750F8", // violet
@@ -27,6 +23,8 @@ const COLORS = [
   "#3E8E78", // lichen (mid)
 ];
 
+type SectorSlice = { name: string; value: number; count: number };
+
 export function AllocationChart() {
   const { data, isLoading, error } = useHoldings();
 
@@ -38,8 +36,8 @@ export function AllocationChart() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Allocation</CardTitle>
-          <CardDescription>Position weights</CardDescription>
+          <CardTitle>Allocation by sector</CardTitle>
+          <CardDescription>How the portfolio is spread across sectors</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">No allocation data available</p>
@@ -48,55 +46,72 @@ export function AllocationChart() {
     );
   }
 
-  // Prepare data for pie chart
-  const chartData = data.holdings
-    .map((h) => ({
-      name: h.symbol,
-      value: h.weight,
-      notional: h.notional,
-    }))
-    .sort((a, b) => b.value - a.value);
+  // Aggregate holding weights into sectors.
+  const bySector = new Map<string, SectorSlice>();
+  for (const h of data.holdings) {
+    const name = h.sector && h.sector.trim() ? h.sector : "Uncategorised";
+    const slice = bySector.get(name);
+    if (slice) {
+      slice.value += h.weight;
+      slice.count += 1;
+    } else {
+      bySector.set(name, { name, value: h.weight, count: 1 });
+    }
+  }
+  const chartData = Array.from(bySector.values()).sort((a, b) => b.value - a.value);
+
+  // Plain-English read of the pie: leading sector + how spread out it is.
+  const top = chartData[0];
+  const topShare = top?.value ?? 0;
+  const concentration =
+    chartData.length <= 2
+      ? `Concentrated in ${top?.name ?? "one sector"} (${topShare.toFixed(0)}%).`
+      : topShare >= 40
+        ? `Heavily tilted toward ${top.name} (${topShare.toFixed(0)}% of the portfolio), across ${chartData.length} sectors.`
+        : topShare >= 25
+          ? `Leaning toward ${top.name} (${topShare.toFixed(0)}%), but spread across ${chartData.length} sectors.`
+          : `Well diversified — no single sector above ${topShare.toFixed(0)}%, across ${chartData.length} sectors.`;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Allocation</CardTitle>
-        <CardDescription>
-          Position weights across {chartData.length} holdings
-        </CardDescription>
+        <CardTitle>Allocation by sector</CardTitle>
+        <CardDescription>{concentration}</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="h-[200px] mb-4">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={chartData}
-                cx="50%"
-                cy="50%"
-                innerRadius={50}
-                outerRadius={80}
-                paddingAngle={1}
-                dataKey="value"
-              >
-                {chartData.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-        {/* Scrollable legend */}
-        <div className="max-h-[150px] overflow-y-auto">
-          <div className="grid grid-cols-2 gap-1">
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="h-[240px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={chartData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={95}
+                  paddingAngle={1}
+                  dataKey="value"
+                >
+                  {chartData.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          {/* Legend */}
+          <div className="flex flex-col justify-center gap-1.5">
             {chartData.map((item, index) => (
-              <div key={item.name} className="flex items-center gap-2 text-xs">
+              <div key={item.name} className="flex items-center gap-2 text-sm">
                 <div
-                  className="w-3 h-3 rounded-sm flex-shrink-0"
+                  className="h-3 w-3 flex-shrink-0 rounded-sm"
                   style={{ backgroundColor: COLORS[index % COLORS.length] }}
                 />
-                <span className="truncate">{item.name}</span>
-                <span className="text-muted-foreground ml-auto">{item.value.toFixed(1)}%</span>
+                <span className="truncate text-foreground">{item.name}</span>
+                <span className="ml-auto shrink-0 tabular-nums text-muted-foreground">
+                  {item.value.toFixed(1)}% · {item.count}
+                </span>
               </div>
             ))}
           </div>
@@ -106,21 +121,22 @@ export function AllocationChart() {
   );
 }
 
-function CustomTooltip({ active, payload }: { active?: boolean; payload?: Array<{ payload: { name: string; value: number; notional: number } }> }) {
+function CustomTooltip({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: Array<{ payload: SectorSlice }>;
+}) {
   if (!active || !payload || !payload.length) {
     return null;
   }
-
-  const data = payload[0].payload;
-
+  const d = payload[0].payload;
   return (
     <div className="rounded-lg border bg-background p-2 shadow-md">
-      <p className="font-medium">{data.name}</p>
+      <p className="font-medium">{d.name}</p>
       <p className="text-sm text-muted-foreground">
-        Weight: {data.value.toFixed(2)}%
-      </p>
-      <p className="text-sm text-muted-foreground">
-        Value: {formatCurrency(data.notional)}
+        {d.value.toFixed(1)}% · {d.count} stock{d.count === 1 ? "" : "s"}
       </p>
     </div>
   );
@@ -130,11 +146,11 @@ function AllocationChartSkeleton() {
   return (
     <Card>
       <CardHeader>
-        <Skeleton className="h-6 w-24" />
-        <Skeleton className="h-4 w-40" />
+        <Skeleton className="h-6 w-40" />
+        <Skeleton className="h-4 w-56" />
       </CardHeader>
       <CardContent>
-        <div className="flex items-center justify-center h-[300px]">
+        <div className="flex h-[240px] items-center justify-center">
           <Skeleton className="h-[200px] w-[200px] rounded-full" />
         </div>
       </CardContent>

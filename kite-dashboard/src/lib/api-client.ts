@@ -136,6 +136,7 @@ export async function getHoldings(universe: UniverseId, token?: string) {
       entry_date: string;
       holding_days: number;
       rank: number;
+      sector?: string | null;
     }>;
     summary: {
       total_pnl: number;
@@ -181,6 +182,23 @@ export async function getEquityCurve(universe: UniverseId) {
     }>;
     count: number;
   }>(`/api/metrics/equity-curve?universe=${universe}`);
+}
+
+// Index returns (public market data, no auth) — for the Overview comparison.
+export interface IndexReturns {
+  as_of: string | null;
+  horizons: string[];
+  indices: Array<{
+    key: string;
+    label: string;
+    as_of: string | null;
+    data_available: boolean;
+    returns: Record<string, number | null>;
+  }>;
+}
+
+export async function getIndexReturns() {
+  return apiFetch<IndexReturns>("/api/indices/returns", { skipAuth: true });
 }
 
 export async function getMonthlyReturns(universe: UniverseId) {
