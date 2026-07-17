@@ -72,6 +72,7 @@ export function EquityCurve() {
   const totalReturn = metricsData?.returns.total_return ?? 0;
   const startDate = metricsData?.period.start ?? "";
   const endDate = metricsData?.period.end ?? "";
+  const benchmarkLabel = equityData.benchmark_label ?? "Benchmark";
 
   return (
     <Card>
@@ -79,8 +80,11 @@ export function EquityCurve() {
         <div>
           <CardTitle>Equity Curve</CardTitle>
           <CardDescription>
-            {totalReturn > 0 ? "+" : ""}
-            {totalReturn.toFixed(1)}% total return ({startDate} to {endDate})
+            Growth of a ₹10L investment{" "}
+            {totalReturn > 0 ? "→ +" : "→ "}
+            {totalReturn.toFixed(1)}% ({startDate} to {endDate}). Turn on
+            Benchmark to compare against the {benchmarkLabel}, started from the
+            same ₹10L.
           </CardDescription>
         </div>
         <ToggleGroup
@@ -124,10 +128,7 @@ export function EquityCurve() {
                   year: "numeric",
                 })
               }
-              formatter={(value, name) => [
-                formatCurrency(Number(value)),
-                name === "portfolio_value" ? "Portfolio" : "Benchmark",
-              ]}
+              formatter={(value, name) => [formatCurrency(Number(value)), name]}
               contentStyle={{
                 backgroundColor: "var(--popover)",
                 color: "var(--popover-foreground)",
@@ -148,7 +149,7 @@ export function EquityCurve() {
               <Area
                 type="monotone"
                 dataKey="benchmark_normalized"
-                name="Nifty 100"
+                name={benchmarkLabel}
                 stroke="var(--muted-foreground)"
                 fill="transparent"
                 strokeWidth={1.5}

@@ -174,6 +174,7 @@ export async function getMetrics(universe: UniverseId) {
 export async function getEquityCurve(universe: UniverseId) {
   return apiFetch<{
     universe: string;
+    benchmark_label?: string;
     data: Array<{
       date: string;
       portfolio_value: number;

@@ -2,15 +2,43 @@
 Metrics Service - Calculate and retrieve performance metrics from database.
 """
 from datetime import date, datetime
+from functools import lru_cache
 from typing import Optional, List
 from collections import defaultdict
 
 import numpy as np
+import pandas as pd
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
 from app.models.database import get_session_local
 from app.models.models import Metric, EquityCurve
+from app.insights._paths import indices_dir
+from app.insights._freshness import file_signature
+
+# Benchmark index per portfolio: NSE-500-based strategies compare vs Nifty 500,
+# the Nifty-250 strategy vs Nifty 250 (LargeMidcap 250). (universe -> (csv, label))
+_BENCHMARK: dict[str, tuple[str, str]] = {
+    "l6_v2": ("NIFTY_500.csv", "Nifty 500"),
+    "combo_defensive": ("NIFTY_500.csv", "Nifty 500"),
+    "tl25_v3": ("NIFTY_500.csv", "Nifty 500"),
+    "nse500": ("NIFTY_500.csv", "Nifty 500"),
+    "om25_v3": ("NIFTY_LARGEMID250.csv", "Nifty 250"),
+    "nifty250": ("NIFTY_LARGEMID250.csv", "Nifty 250"),
+    "nifty100": ("NIFTY_100.csv", "Nifty 100"),
+}
+_DEFAULT_BENCHMARK = ("NIFTY_500.csv", "Nifty 500")
+
+
+@lru_cache(maxsize=8)
+def _index_close_map_cached(filename: str, signature: float) -> dict[str, float]:
+    df = pd.read_csv(indices_dir() / filename, parse_dates=["date"])
+    s = df.set_index("date")["close"].dropna()
+    return {d.strftime("%Y-%m-%d"): float(v) for d, v in s.items()}
+
+
+def _index_close_map(filename: str) -> dict[str, float]:
+    return _index_close_map_cached(filename, file_signature(indices_dir() / filename))
 
 
 def get_metrics(universe: str = "nse500") -> dict:
@@ -114,17 +142,28 @@ def get_equity_curve(
         if not records:
             return {"data": [], "count": 0, "error": f"No equity curve data for {universe}"}
 
+        # Benchmark: the portfolio's matched index (Nifty 500 / 250 / 100),
+        # overriding the stored value so it reflects the right size tier. The
+        # frontend rebases it to the portfolio's ₹10L starting base.
+        bench_file, bench_label = _BENCHMARK.get(universe, _DEFAULT_BENCHMARK)
+        try:
+            closes = _index_close_map(bench_file)
+        except (FileNotFoundError, KeyError, OSError):
+            closes = {}
+
         data = []
         for r in records:
+            date_str = str(r.date)
             data.append({
-                "date": str(r.date),
+                "date": date_str,
                 "portfolio_value": float(r.portfolio_value),
-                "benchmark_value": float(r.benchmark) if r.benchmark else None,
+                "benchmark_value": closes.get(date_str),
                 "drawdown": round(float(r.drawdown) * 100, 2) if r.drawdown else 0
             })
 
         return {
             "universe": universe,
+            "benchmark_label": bench_label,
             "data": data,
             "count": len(data)
         }
