@@ -8,6 +8,7 @@ from typing import Optional
 import pandas as pd
 
 from app.config import settings, UNIVERSE_DEFAULTS
+from app.insights.zerodha_sectors import get_sector_for
 # Phase 3.3 — single source of truth in sync_service. Other services
 # delegate so they share the latest.json pointer cache.
 from app.services.sync_service import get_latest_experiment_dir  # noqa: F401
@@ -184,6 +185,7 @@ def get_holdings(universe: str = "nse500", update_prices: bool = False) -> dict:
             "entry_date": row["entry_date"],
             "holding_days": int(row["holding_days"]),
             "rank": int(row["entry_rank"]),
+            "sector": get_sector_for(row["symbol"]),
         })
 
     # Calculate summary

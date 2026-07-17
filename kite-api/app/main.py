@@ -11,7 +11,7 @@ from contextlib import asynccontextmanager
 
 from app.config import get_settings
 from app.services.market_service import warn_if_holiday_table_stale
-from app.api import health, auth_routes, portfolio, sync, metrics, trades, rebalance, jobs, system, schedule, positions, insights, freshness
+from app.api import health, auth_routes, portfolio, sync, metrics, trades, rebalance, jobs, system, schedule, positions, insights, indices, freshness
 from app.scheduler import start_scheduler, shutdown_scheduler, register_default_tasks, scheduler
 from app.middleware.error_handlers import register_error_handlers
 from app.middleware.request_logger import RequestLoggerMiddleware
@@ -126,6 +126,7 @@ app.include_router(system.router, tags=["system"])
 app.include_router(schedule.router, tags=["schedule"])
 app.include_router(positions.router, tags=["positions"])
 app.include_router(insights.router, tags=["insights"])  # public, read-only — no auth required
+app.include_router(indices.router, tags=["indices"])  # public, read-only — no auth required
 app.include_router(freshness.router, tags=["freshness"])  # admin-only ops intel
 
 

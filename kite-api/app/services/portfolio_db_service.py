@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.models.database import get_session_local
 from app.models.models import Holding, Metric, EquityCurve
+from app.insights.zerodha_sectors import get_sector_for
 
 
 def get_latest_snapshot_date(db: Session, universe: str) -> Optional[date]:
@@ -129,6 +130,7 @@ def get_holdings_db(universe: str = "nse500") -> dict:
                 "entry_date": str(h.entry_date),
                 "holding_days": int(h.holding_days),
                 "rank": int(h.entry_rank),
+                "sector": get_sector_for(h.symbol),
             })
 
         # Calculate summary
