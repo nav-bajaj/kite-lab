@@ -53,9 +53,9 @@ export function RegimeLegend() {
         <p className="text-[13px] text-muted-foreground">
           Every day we sort the market into one of four states (the technical
           name is &ldquo;regime&rdquo;). It&apos;s a simple rules-based read on
-          trend and stress. The plain-English meaning is on top; the exact rule
-          we use is underneath, so there&apos;s no gap between what we say and
-          what the model does.
+          trend and stress. Each shows its plain-English meaning; open{" "}
+          &ldquo;the exact rule&rdquo; to see precisely what the engine checks —
+          so there&apos;s no gap between what we say and what the model does.
         </p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
@@ -73,9 +73,14 @@ export function RegimeLegend() {
               {r.label}
             </div>
             <p className="mt-2 text-sm leading-[1.55] text-foreground">{r.plain}</p>
-            <p className="mt-2 text-[13px] leading-[1.5] text-muted-foreground">
-              <span className="font-semibold">Rule:</span> {r.rule}
-            </p>
+            <details className="mt-2">
+              <summary className="cursor-pointer text-[13px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline">
+                See the exact rule
+              </summary>
+              <p className="mt-1.5 text-[13px] leading-[1.5] text-muted-foreground">
+                {r.rule}
+              </p>
+            </details>
           </div>
         ))}
       </div>
