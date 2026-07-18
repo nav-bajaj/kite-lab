@@ -85,6 +85,8 @@ def compute_dashboard_metrics(
     else:
         avg_hold = 0
 
+    avg_turnover_pct, annualized_turnover = _turnover(trades, pv, yrs)
+
     return {
         "start": pv.index[0].date(),
         "end": pv.index[-1].date(),
@@ -95,10 +97,52 @@ def compute_dashboard_metrics(
         "annualized_volatility": float(vol),
         "hit_rate_overall": float(hit_rate),
         "avg_holding_days": float(avg_hold),
+        "avg_turnover_pct": avg_turnover_pct,
+        "annualized_turnover": annualized_turnover,
         "trades_total": int(len(trades)),
         "buys": int(buys_mask.sum()),
         "sells": int(sells_mask.sum()),
     }
+
+
+def _turnover(
+    trades: pd.DataFrame, pv: pd.Series, yrs: float
+) -> tuple[Optional[float], Optional[float]]:
+    """Gross-notional turnover per rebalance, normalised contemporaneously.
+
+    Per rebalance date, turnover is the sum of |notional| across that day's
+    buys and sells (gross, both sides — matching the rebalance-history endpoint
+    and ``momentum_turnover.csv``), divided by that day's portfolio value. Two
+    fields:
+
+      avg_turnover_pct    — mean of those per-rebalance turnover fractions.
+      annualized_turnover — their sum divided by the number of years, i.e. how
+                            many times the book turns over per year.
+
+    Each rebalance is normalised by its OWN contemporaneous portfolio value
+    (not starting capital), so a compounding book doesn't inflate the figure —
+    unlike backtest_momentum's research formula (total notional / initial
+    capital / years), which conflates growth with trading activity.
+
+    Returns (None, None) when trades lack the columns needed to compute it.
+    """
+    if trades.empty or "notional" not in trades.columns or "date" not in trades.columns:
+        return None, None
+
+    dates = pd.to_datetime(trades["date"])
+    gross = trades["notional"].abs().groupby(dates).sum()
+    if gross.empty:
+        return None, None
+
+    pv_on = pv.reindex(gross.index, method="ffill")
+    valid = pv_on > 0
+    if not valid.any():
+        return None, None
+    turnover_pct = gross[valid] / pv_on[valid]
+
+    avg_turnover_pct = float(turnover_pct.mean())
+    annualized_turnover = float(turnover_pct.sum() / yrs) if yrs > 0 else None
+    return avg_turnover_pct, annualized_turnover
 
 
 def write_dashboard_metrics(

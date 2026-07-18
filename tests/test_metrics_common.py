@@ -94,6 +94,31 @@ class SyntheticMetricsTests(unittest.TestCase):
         self.assertAlmostEqual(m["hit_rate_overall"], 0.5, places=10)
         self.assertAlmostEqual(m["avg_holding_days"], 25.0, places=10)
 
+    def test_turnover_gross_contemporaneous(self):
+        # Flat 1M book so turnover fractions are exact. Two rebalance dates:
+        #   2020-01-01: BUY 100k + SELL 100k -> gross 200k -> 20% of 1M
+        #   2020-07-01: BUY 50k            -> gross  50k ->  5% of 1M
+        dates = pd.to_datetime(["2020-01-01", "2020-07-01", "2021-01-01"])
+        eq = _eq(dates, [1_000_000.0, 1_000_000.0, 1_000_000.0])
+        trades = pd.DataFrame({
+            "date": pd.to_datetime(["2020-01-01", "2020-01-01", "2020-07-01"]),
+            "side": ["BUY", "SELL", "BUY"],
+            # sells stored negative — turnover is sign-agnostic (abs)
+            "notional": [100_000.0, -100_000.0, 50_000.0],
+        })
+        m = compute_dashboard_metrics(eq, trades, pd.DataFrame())
+        self.assertAlmostEqual(m["avg_turnover_pct"], (0.20 + 0.05) / 2, places=10)
+        yrs = (dates[-1] - dates[0]).days / 365.25
+        self.assertAlmostEqual(m["annualized_turnover"], 0.25 / yrs, places=10)
+
+    def test_turnover_none_without_notional(self):
+        dates = pd.date_range("2020-01-01", periods=2, freq="D")
+        eq = _eq(dates, [1.0e6, 1.0e6])
+        trades = pd.DataFrame({"side": ["BUY", "SELL"]})  # no notional/date cols
+        m = compute_dashboard_metrics(eq, trades, pd.DataFrame())
+        self.assertIsNone(m["avg_turnover_pct"])
+        self.assertIsNone(m["annualized_turnover"])
+
     def test_sharpe_uses_rf_rate(self):
         # Construct an equity with non-zero vol and known CAGR-ish.
         dates = pd.date_range("2020-01-01", periods=253, freq="B")

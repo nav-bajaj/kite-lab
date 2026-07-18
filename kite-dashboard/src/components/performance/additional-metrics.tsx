@@ -45,13 +45,14 @@ export function AdditionalMetrics() {
       value: `${data.activity.avg_holding_days.toFixed(0)} days`,
       hint: "How long a position is typically held before it's sold.",
     },
-    // Turnover is only shown when the pipeline has populated it (currently 0).
-    ...(data.activity.annualized_turnover > 0
+    // Turnover is only shown once the pipeline has populated it (null/0 for a
+    // brand-new portfolio with no rebalances yet).
+    ...(data.activity.avg_turnover > 0
       ? [
           {
-            title: "Turnover",
-            value: `${data.activity.annualized_turnover.toFixed(0)}%`,
-            hint: "How much of the portfolio is traded in a year — higher means more frequent rotation.",
+            title: "Avg Turnover",
+            value: `${data.activity.avg_turnover.toFixed(1)}%`,
+            hint: "On a typical rebalance, this share of the portfolio is traded (buys and sells combined) as it rotates into the current leaders.",
           },
         ]
       : []),
