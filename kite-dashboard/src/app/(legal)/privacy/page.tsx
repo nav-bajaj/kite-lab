@@ -8,7 +8,7 @@ export default function PrivacyPage() {
       <h1>Privacy Policy</h1>
 
       <p className="text-sm text-muted-foreground">
-        Last updated: <strong>placeholder — to be filled before public launch</strong>
+        Last updated: <strong>18 July 2026</strong>
       </p>
 
       <h2>What we collect</h2>
@@ -59,12 +59,8 @@ export default function PrivacyPage() {
 
       <h2>Contact</h2>
       <p>
-        Questions about this policy can be sent to <em>placeholder@marketworks.in</em>.
-      </p>
-
-      <p className="text-sm text-muted-foreground">
-        This page is a placeholder. Final policy will be prepared with legal
-        review before public launch.
+        Questions about this policy can be sent to{" "}
+        <a href="mailto:navdeep@marketworks.in">navdeep@marketworks.in</a>.
       </p>
     </div>
   );
