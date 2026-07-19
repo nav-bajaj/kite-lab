@@ -104,6 +104,7 @@
   --color-surface-panel-mist: var(--surface-panel-mist);
   --color-surface-panel-tint: var(--surface-panel-tint);
   --color-surface-panel-deep: var(--surface-panel-deep);
+  --color-marigold: #E8A33D; /* warm brand accent (DESIGN.md §2.1) */
   --radius-card:  24px;
   --radius-panel: 32px;
   --shadow-card:       0px 6px 24px -3px rgba(26,26,26,0.13), 0px 1px 2px -4px rgba(26,26,26,0.13);
