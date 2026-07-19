@@ -24,7 +24,7 @@ const STEPS = [
     body: "Every week our system scores stocks by momentum — the simple idea that names already trending up tend to keep leading for a while.",
     image: {
       src: "/illustrations/rank.webp",
-      alt: "Stepped hills with a flag on the tallest peak — spotting the market's leaders",
+      alt: "Hot-air balloons rising to different heights over misty hills — the ones with the most lift rise to the top",
     },
   },
   {
@@ -32,7 +32,7 @@ const STEPS = [
     body: "The strongest names go into ready-made lists you can follow. When the leaders change, the list updates — no guessing, no headlines.",
     image: {
       src: "/illustrations/build.webp",
-      alt: "Hands stacking smooth stones into a balanced cairn — assembling a steady portfolio",
+      alt: "Hands picking only the ripest fruit from a branch into a basket — selecting the strongest names",
     },
   },
   {
@@ -40,20 +40,26 @@ const STEPS = [
     body: "See exactly what each portfolio holds, what changed at the last rebalance, and why — all in plain language.",
     image: {
       src: "/illustrations/follow.webp",
-      alt: "A lone figure walking a winding path over gentle hills — following the route",
+      alt: "A figure walking a lantern-lit path over misty hills — a clear route to follow",
     },
   },
 ];
 
+// The hero illustration floats on the base with soft-faded edges (no card
+// frame), so its grain melts into the near-white surface.
+const HERO_FADE =
+  "radial-gradient(ellipse 80% 80% at 50% 46%, #000 58%, transparent 100%)";
+
 function HeroGraphic() {
   return (
-    <div className="relative aspect-square w-full overflow-hidden rounded-card shadow-card">
+    <div className="relative aspect-square w-full">
       <Image
         src="/illustrations/hero.webp"
-        alt="A lone figure on a hill watching layered market peaks rise at dawn"
+        alt="A lone figure at a window quietly watching a valley of misty hills at dawn"
         fill
         sizes="(max-width: 900px) 100vw, 48vw"
         className="object-cover"
+        style={{ maskImage: HERO_FADE, WebkitMaskImage: HERO_FADE }}
         priority
       />
     </div>
@@ -215,7 +221,7 @@ export default function LandingPage() {
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl">
                 <Image
                   src="/illustrations/research.webp"
-                  alt="A magnifying glass over layered hills — studying decades of market history"
+                  alt="A magnifying glass over a tree stump's growth rings — reading decades of market history"
                   fill
                   sizes="(max-width: 1024px) 100vw, 40vw"
                   className="object-cover"
@@ -247,7 +253,7 @@ export default function LandingPage() {
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-card shadow-card">
                 <Image
                   src="/illustrations/portfolios.webp"
-                  alt="Three winding paths diverging from one hilltop — three ways to follow momentum"
+                  alt="Three potted plants of different character on a windowsill — three ways to follow momentum"
                   fill
                   sizes="(max-width: 1024px) 100vw, 48vw"
                   className="object-cover"

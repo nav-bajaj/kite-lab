@@ -8,17 +8,17 @@ const require = createRequire(import.meta.url);
 const sharp = require("/Users/navdeep/kite-lab/kite-dashboard/node_modules/sharp");
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const SRC = path.join(HERE, "final");
+const SRC = path.join(HERE, "finalset");
 const OUT = "/Users/navdeep/kite-lab/kite-dashboard/public/illustrations";
 await fs.mkdir(OUT, { recursive: true });
 
-// curated pick per slot
+// curated pick per slot (cool muted set)
 const PICKS = {
   hero: "hero_1.png",
   rank: "rank_1.png",
   build: "build_1.png",
   follow: "follow_1.png",
-  research: "research_1.png",
+  research: "research_2.png",
   portfolios: "portfolios_1.png",
 };
 
