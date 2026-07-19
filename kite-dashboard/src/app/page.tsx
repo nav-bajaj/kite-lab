@@ -1,9 +1,12 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 import { UNIVERSES } from "@/lib/universes";
 import { FloatingNav } from "@/components/marketing/floating-nav";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
+import { MarketingBackground } from "@/components/marketing/marketing-background";
 import { MarketingCard } from "@/components/marketing/marketing-card";
+import { FeatureCard } from "@/components/marketing/feature-card";
 import { SectionPanel } from "@/components/marketing/section-panel";
 import { Reveal } from "@/components/marketing/reveal";
 import { Halftone } from "@/components/marketing/halftone";
@@ -16,18 +19,38 @@ export const metadata = {
     "over prediction. Currently in private beta.",
 };
 
+// Line-motif graphics for the how-it-works steps (editorial, stroke-only).
+const STEP_GRAPHICS: ReactNode[] = [
+  <svg key="rank" width="120" height="64" viewBox="0 0 120 64" fill="none">
+    <line x1="14" y1="18" x2="104" y2="18" className="stroke-secondary" strokeWidth="6" strokeLinecap="round" />
+    <line x1="14" y1="34" x2="80" y2="34" className="stroke-primary" strokeWidth="6" strokeLinecap="round" opacity="0.8" />
+    <line x1="14" y1="50" x2="56" y2="50" className="stroke-primary" strokeWidth="6" strokeLinecap="round" opacity="0.55" />
+  </svg>,
+  <svg key="build" width="120" height="64" viewBox="0 0 120 64" fill="none">
+    <rect x="18" y="14" width="36" height="36" rx="5" className="stroke-primary" strokeWidth="2.2" fill="none" />
+    <rect x="66" y="14" width="36" height="36" rx="5" className="stroke-secondary" strokeWidth="2.2" fill="none" />
+  </svg>,
+  <svg key="follow" width="120" height="64" viewBox="0 0 120 64" fill="none">
+    <path d="M16 50 C 38 42, 56 28, 78 20 S 102 12, 106 10" className="stroke-primary" strokeWidth="2.4" strokeLinecap="round" fill="none" />
+    <circle cx="78" cy="20" r="6" className="stroke-secondary" strokeWidth="2.4" fill="none" />
+  </svg>,
+];
+
 const STEPS = [
   {
     title: "We rank the market",
     body: "Every week our system scores stocks by momentum — the simple idea that names already trending up tend to keep leading for a while.",
+    graphic: STEP_GRAPHICS[0],
   },
   {
     title: "We build the portfolios",
     body: "The strongest names go into ready-made lists you can follow. When the leaders change, the list updates — no guessing, no headlines.",
+    graphic: STEP_GRAPHICS[1],
   },
   {
     title: "You follow along",
     body: "See exactly what each portfolio holds, what changed at the last rebalance, and why — all in plain language.",
+    graphic: STEP_GRAPHICS[2],
   },
 ];
 
@@ -39,9 +62,6 @@ function HeroGraphic() {
       aria-hidden
       className="relative flex min-h-[380px] items-center justify-center overflow-hidden rounded-card bg-surface-panel-tint p-8 shadow-card"
     >
-      <span className="absolute left-4 top-3 font-mono text-[0.66rem] tracking-wide text-muted-foreground/70">
-        illustration placeholder
-      </span>
       <Halftone className="absolute inset-0 opacity-[0.1] [mask-image:radial-gradient(circle_at_68%_40%,#000,transparent_70%)]" />
       <svg viewBox="0 0 400 320" fill="none" className="relative w-full max-w-[380px]">
         <line x1="30" y1="270" x2="372" y2="270" className="stroke-border" strokeWidth="1.5" />
@@ -73,11 +93,8 @@ export default function LandingPage() {
 
   return (
     <div className="mw-brand relative min-h-screen overflow-hidden bg-surface-base">
-      {/* Quant grid in the base flow (Spade reference) — contained to the hero. */}
-      <div
-        aria-hidden
-        className="mw-grid pointer-events-none absolute inset-x-0 top-0 h-[920px] [mask-image:radial-gradient(120%_80%_at_72%_6%,#000,transparent_78%)]"
-      />
+      {/* Quant grid flowing down the whole base (Spade reference). */}
+      <MarketingBackground texture="grid" />
 
       <FloatingNav />
 
@@ -91,7 +108,7 @@ export default function LandingPage() {
               </span>
               <h1 className="mt-5 font-serif text-[2.75rem] font-medium leading-[1.03] tracking-[-0.02em] text-balance text-foreground sm:text-[4.25rem]">
                 Indian markets, the{" "}
-                <span className="relative whitespace-nowrap text-primary">
+                <span className="relative whitespace-nowrap text-accent">
                   calm
                   <svg
                     viewBox="0 0 200 12"
@@ -101,7 +118,7 @@ export default function LandingPage() {
                   >
                     <path
                       d="M3 8 C 55 3, 150 3, 197 7"
-                      className="stroke-secondary"
+                      className="stroke-accent"
                       strokeWidth="3"
                       strokeLinecap="round"
                       fill="none"
@@ -129,13 +146,6 @@ export default function LandingPage() {
                 >
                   Read the library
                 </Link>
-              </div>
-              <div className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[0.8rem] text-muted-foreground">
-                <span>Built on live NSE data</span>
-                <span aria-hidden>·</span>
-                <span>Rebalanced weekly</span>
-                <span aria-hidden>·</span>
-                <span>SEBI-registered research</span>
               </div>
             </Reveal>
 
@@ -173,7 +183,7 @@ export default function LandingPage() {
           </SectionPanel>
         </Reveal>
 
-        {/* How it works — cards float on the base */}
+        {/* How it works — feature cards float on the base */}
         <section className="mx-auto max-w-[1140px] px-6 py-16 sm:py-24">
           <Reveal>
             <h2 className="max-w-[560px] font-serif text-[2rem] font-medium leading-[1.15] tracking-[-0.01em] text-foreground sm:text-[2.5rem]">
@@ -183,15 +193,12 @@ export default function LandingPage() {
           <div className="mt-10 grid gap-5 sm:grid-cols-3">
             {STEPS.map((step, i) => (
               <Reveal key={step.title} delayMs={i * 80}>
-                <MarketingCard className="h-full">
-                  <span className="font-mono text-sm text-primary">0{i + 1}</span>
-                  <h3 className="mt-3 font-serif text-xl font-medium leading-[1.2] text-foreground">
-                    {step.title}
-                  </h3>
-                  <p className="mt-2 text-[15px] leading-[1.55] text-muted-foreground">
-                    {step.body}
-                  </p>
-                </MarketingCard>
+                <FeatureCard
+                  eyebrow={`0${i + 1}`}
+                  title={step.title}
+                  body={step.body}
+                  graphic={step.graphic}
+                />
               </Reveal>
             ))}
           </div>

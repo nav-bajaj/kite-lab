@@ -357,3 +357,12 @@
     linear-gradient(to bottom, color-mix(in oklab, var(--primary) 6%, transparent) 1px, transparent 1px);
   background-size: 46px 46px;
 }
+
+/* Editorial dot-grid — an alternate base texture (stipple, printed-page feel). */
+.mw-dots {
+  background-image: radial-gradient(
+    color-mix(in oklab, var(--primary) 9%, transparent) 1px,
+    transparent 1.6px
+  );
+  background-size: 22px 22px;
+}
