@@ -49,15 +49,15 @@ export function FloatingNav() {
       <nav className="w-full max-w-[1080px] rounded-3xl border border-foreground/8 bg-white/80 shadow-sm backdrop-blur-md">
         {/* Fixed row height so the bar is identical signed-in vs signed-out
             (the beta CTA is taller than the avatar/Dashboard link). */}
-        <div className="flex h-14 items-center justify-between pl-6 pr-2">
+        <div className="grid h-14 grid-cols-[1fr_auto_1fr] items-center pl-6 pr-3">
           <Link
             href="/"
-            className="text-xl font-semibold tracking-tight text-primary"
+            className="justify-self-start text-xl font-semibold tracking-tight text-primary"
           >
             marketworks
           </Link>
 
-          <div className="hidden items-center gap-7 sm:flex">
+          <div className="hidden items-center justify-self-center gap-8 sm:flex">
             {LINKS.map((link) => (
               <Link
                 key={link.label}
@@ -69,7 +69,7 @@ export function FloatingNav() {
             ))}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-self-end gap-3">
             {showSignedIn ? (
               <>
                 <Link

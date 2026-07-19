@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
  * motion it draws once, static. Purely decorative (aria-hidden).
  */
 const LICHEN = "20,113,95";
-const GAP = 26; // dot pitch (px)
+const GAP = 34; // dot pitch (px) — sparser
 
 type Dot = { x: number; y: number; edge: number; phase: number; speed: number; pulses: boolean };
 
@@ -55,8 +55,8 @@ export function FlowDots({ className }: { className?: string }) {
             edge,
             phase: Math.random() * Math.PI * 2,
             speed: 0.5 + Math.random() * 1.1,
-            // more dots pulse toward the edges; a few sprinkle through the middle
-            pulses: Math.random() < 0.12 + edge * 0.55,
+            // pulsing is concentrated at the edges; the centre barely twinkles
+            pulses: Math.random() < 0.03 + edge * 0.62,
           });
         }
       }
@@ -65,14 +65,14 @@ export function FlowDots({ className }: { className?: string }) {
     const draw = (t: number) => {
       ctx.clearRect(0, 0, W, H);
       for (const d of dots) {
-        let r = 1.3;
-        // calmer through the centre (behind copy), stronger toward the edges
-        let a = 0.1 + d.edge * 0.08;
+        let r = 1.0;
+        // near-nothing through the centre, clearly present toward the edges
+        let a = 0.04 + d.edge * 0.13;
         if (!reduce && d.pulses) {
           const p = (Math.sin(t * d.speed + d.phase) + 1) / 2; // 0..1
-          const strength = 0.25 + d.edge * 0.75; // edges pulse hardest
-          r += p * 2.6 * strength;
-          a += p * 0.34 * strength;
+          const strength = 0.08 + d.edge * 0.92; // edges pulse hardest
+          r += p * 1.7 * strength;
+          a += p * 0.32 * strength;
         }
         ctx.beginPath();
         ctx.arc(d.x, d.y, r, 0, Math.PI * 2);

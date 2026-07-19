@@ -3,7 +3,7 @@ import Image from "next/image";
 
 import { UNIVERSES } from "@/lib/universes";
 import { FloatingNav } from "@/components/marketing/floating-nav";
-import { MarketingFooter } from "@/components/marketing/marketing-footer";
+import { FooterPanel } from "@/components/marketing/footer-panel";
 import { FlowDots } from "@/components/marketing/flow-dots";
 import { MarketingCard } from "@/components/marketing/marketing-card";
 import { FeatureCard } from "@/components/marketing/feature-card";
@@ -309,12 +309,10 @@ export default function LandingPage() {
           </SectionPanel>
         </Reveal>
 
-        <div className="h-8" />
+        <div className="relative z-10 pb-6">
+          <FooterPanel />
+        </div>
       </main>
-
-      <div className="relative z-10">
-        <MarketingFooter />
-      </div>
     </div>
   );
 }
