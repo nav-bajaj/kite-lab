@@ -96,10 +96,10 @@
   --radius-4xl: calc(var(--radius) + 16px);
 
   /* Layered marketing surface & depth (DESIGN.md §2.5).
-   * Colors map the raw .mw-brand vars; radius/shadow/easing are literals
-   * because their Tailwind namespaces (--radius-*/--shadow-*/--ease-*) would
-   * self-reference. Generates bg-surface-*, rounded-card/panel, shadow-card/
-   * -card-hover/-panel/-soft, ease-expo. */
+   * Colors map the raw .mw-brand vars; radius, shadow and easing are literals
+   * because those Tailwind namespaces would self-reference via var().
+   * Generates bg-surface-*, rounded-card, rounded-panel, shadow-card,
+   * shadow-card-hover, shadow-panel, shadow-soft, ease-expo. */
   --color-surface-base:       var(--surface-base);
   --color-surface-panel-mist: var(--surface-panel-mist);
   --color-surface-panel-tint: var(--surface-panel-tint);
@@ -323,4 +323,37 @@
 
 .animate-value-flash {
   animation: mw-value-flash 0.6s ease-out;
+}
+
+/* ---------------------------------------------------------------------------
+ * Marketing motion + texture primitives (homepage_visual_refresh, DESIGN.md §2.5)
+ * Reveal is visible-by-default (SSR / no-JS safe): the hidden state is only
+ * applied client-side via data-reveal="hidden" set before first paint, so a
+ * headless render or a failed script never ships a blank section.
+ * ------------------------------------------------------------------------ */
+.mw-reveal {
+  transition: opacity 700ms var(--ease-expo), transform 700ms var(--ease-expo);
+}
+.mw-reveal[data-reveal="hidden"] {
+  opacity: 0;
+  transform: translateY(20px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .mw-reveal { transition: none; }
+  .mw-reveal[data-reveal="hidden"] { opacity: 1; transform: none; }
+}
+
+/* Editorial halftone dot-screen (decorative). currentColor sets dot colour. */
+.mw-halftone {
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1.7px);
+  background-size: 7px 7px;
+}
+
+/* Quant grid texture for the near-white base flow (Spade reference). Lines are
+ * lichen at low opacity via color-mix — pure CSS, CSP-clean. */
+.mw-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--primary) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--primary) 6%, transparent) 1px, transparent 1px);
+  background-size: 46px 46px;
 }
