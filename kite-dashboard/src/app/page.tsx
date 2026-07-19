@@ -4,7 +4,7 @@ import Image from "next/image";
 import { UNIVERSES } from "@/lib/universes";
 import { FloatingNav } from "@/components/marketing/floating-nav";
 import { FooterPanel } from "@/components/marketing/footer-panel";
-import { FlowDots } from "@/components/marketing/flow-dots";
+import { FlowGrid } from "@/components/marketing/flow-grid";
 import { MarketingCard } from "@/components/marketing/marketing-card";
 import { FeatureCard } from "@/components/marketing/feature-card";
 import { SectionPanel } from "@/components/marketing/section-panel";
@@ -71,8 +71,8 @@ export default function LandingPage() {
 
   return (
     <div className="mw-brand relative min-h-screen overflow-hidden bg-surface-base">
-      {/* Scroll-reactive dot field — fixed to the viewport, follows the focus. */}
-      <FlowDots />
+      {/* Quant grid texture — fixed to the viewport, focus-masked, follows the scroll. */}
+      <FlowGrid />
 
       <FloatingNav />
 
