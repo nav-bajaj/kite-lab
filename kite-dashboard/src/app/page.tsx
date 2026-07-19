@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
+import Image from "next/image";
 
 import { UNIVERSES } from "@/lib/universes";
 import { FloatingNav } from "@/components/marketing/floating-nav";
@@ -9,7 +9,6 @@ import { MarketingCard } from "@/components/marketing/marketing-card";
 import { FeatureCard } from "@/components/marketing/feature-card";
 import { SectionPanel } from "@/components/marketing/section-panel";
 import { Reveal } from "@/components/marketing/reveal";
-import { Halftone } from "@/components/marketing/halftone";
 
 export const metadata = {
   title: "Marketworks — Indian markets, the calm way",
@@ -19,71 +18,44 @@ export const metadata = {
     "over prediction. Currently in private beta.",
 };
 
-// Line-motif graphics for the how-it-works steps (editorial, stroke-only).
-const STEP_GRAPHICS: ReactNode[] = [
-  <svg key="rank" width="120" height="64" viewBox="0 0 120 64" fill="none">
-    <line x1="14" y1="18" x2="104" y2="18" className="stroke-secondary" strokeWidth="6" strokeLinecap="round" />
-    <line x1="14" y1="34" x2="80" y2="34" className="stroke-primary" strokeWidth="6" strokeLinecap="round" opacity="0.8" />
-    <line x1="14" y1="50" x2="56" y2="50" className="stroke-primary" strokeWidth="6" strokeLinecap="round" opacity="0.55" />
-  </svg>,
-  <svg key="build" width="120" height="64" viewBox="0 0 120 64" fill="none">
-    <rect x="18" y="14" width="36" height="36" rx="5" className="stroke-primary" strokeWidth="2.2" fill="none" />
-    <rect x="66" y="14" width="36" height="36" rx="5" className="stroke-secondary" strokeWidth="2.2" fill="none" />
-  </svg>,
-  <svg key="follow" width="120" height="64" viewBox="0 0 120 64" fill="none">
-    <path d="M16 50 C 38 42, 56 28, 78 20 S 102 12, 106 10" className="stroke-primary" strokeWidth="2.4" strokeLinecap="round" fill="none" />
-    <circle cx="78" cy="20" r="6" className="stroke-secondary" strokeWidth="2.4" fill="none" />
-  </svg>,
-];
-
 const STEPS = [
   {
     title: "We rank the market",
     body: "Every week our system scores stocks by momentum — the simple idea that names already trending up tend to keep leading for a while.",
-    graphic: STEP_GRAPHICS[0],
+    image: {
+      src: "/illustrations/rank.webp",
+      alt: "Stepped hills with a flag on the tallest peak — spotting the market's leaders",
+    },
   },
   {
     title: "We build the portfolios",
     body: "The strongest names go into ready-made lists you can follow. When the leaders change, the list updates — no guessing, no headlines.",
-    graphic: STEP_GRAPHICS[1],
+    image: {
+      src: "/illustrations/build.webp",
+      alt: "Hands stacking smooth stones into a balanced cairn — assembling a steady portfolio",
+    },
   },
   {
     title: "You follow along",
     body: "See exactly what each portfolio holds, what changed at the last rebalance, and why — all in plain language.",
-    graphic: STEP_GRAPHICS[2],
+    image: {
+      src: "/illustrations/follow.webp",
+      alt: "A lone figure walking a winding path over gentle hills — following the route",
+    },
   },
 ];
 
-/** Placeholder hero graphic — the Recraft editorial illustration (Phase C) drops
- *  in here. A tinted panel + halftone + a "resolve" momentum line stands in. */
 function HeroGraphic() {
   return (
-    <div
-      aria-hidden
-      className="relative flex min-h-[380px] items-center justify-center overflow-hidden rounded-card bg-surface-panel-tint p-8 shadow-card"
-    >
-      <Halftone className="absolute inset-0 opacity-[0.1] [mask-image:radial-gradient(circle_at_68%_40%,#000,transparent_70%)]" />
-      <svg viewBox="0 0 400 320" fill="none" className="relative w-full max-w-[380px]">
-        <line x1="30" y1="270" x2="372" y2="270" className="stroke-border" strokeWidth="1.5" />
-        <g className="fill-primary opacity-50">
-          <circle cx="66" cy="236" r="3" />
-          <circle cx="120" cy="214" r="3" />
-          <circle cx="158" cy="222" r="3" />
-          <circle cx="206" cy="182" r="3" />
-          <circle cx="248" cy="162" r="3" />
-          <circle cx="300" cy="126" r="3" />
-          <circle cx="344" cy="98" r="3" />
-        </g>
-        <path
-          d="M56 248 C 140 222, 210 188, 272 152 C 314 128, 346 108, 372 94"
-          className="stroke-primary"
-          strokeWidth="2.6"
-          strokeLinecap="round"
-          fill="none"
-        />
-        <circle cx="372" cy="94" r="8" className="stroke-secondary" strokeWidth="2.4" fill="none" />
-        <circle cx="372" cy="94" r="3.4" className="fill-secondary" />
-      </svg>
+    <div className="relative aspect-square w-full overflow-hidden rounded-card shadow-card">
+      <Image
+        src="/illustrations/hero.webp"
+        alt="A lone figure on a hill watching layered market peaks rise at dawn"
+        fill
+        sizes="(max-width: 900px) 100vw, 48vw"
+        className="object-cover"
+        priority
+      />
     </div>
   );
 }
@@ -93,8 +65,7 @@ export default function LandingPage() {
 
   return (
     <div className="mw-brand relative min-h-screen overflow-hidden bg-surface-base">
-      {/* Quant grid — contained to the hero zone so the rest of the base stays
-          clean; a page-wide grid flattened the layering. */}
+      {/* Quant grid — contained to the hero zone; the rest of the base stays clean. */}
       <MarketingBackground
         texture="grid"
         className="absolute inset-x-0 top-0 h-[820px] [mask-image:radial-gradient(120%_80%_at_72%_6%,#000,transparent_78%)]"
@@ -187,7 +158,7 @@ export default function LandingPage() {
           </SectionPanel>
         </Reveal>
 
-        {/* How it works — feature cards float on the base */}
+        {/* How it works — image-led feature cards float on the base */}
         <section className="mx-auto max-w-[1140px] px-6 py-16 sm:py-24">
           <Reveal>
             <h2 className="max-w-[560px] font-serif text-[2rem] font-medium leading-[1.15] tracking-[-0.01em] text-foreground sm:text-[2.5rem]">
@@ -201,65 +172,90 @@ export default function LandingPage() {
                   eyebrow={`0${i + 1}`}
                   title={step.title}
                   body={step.body}
-                  graphic={step.graphic}
+                  image={step.image}
                 />
               </Reveal>
             ))}
           </div>
         </section>
 
-        {/* Research — inset deep panel (the dark contrast moment) */}
+        {/* Research — inset deep panel (the dark contrast moment), 2-col with art */}
         <Reveal>
           <SectionPanel variant="deep">
-            <div className="relative max-w-[640px]">
-              <span className="text-xs font-semibold uppercase tracking-[0.16em] text-secondary">
-                The research behind it
-              </span>
-              <h2 className="mt-4 font-serif text-[2rem] font-medium leading-[1.15] tracking-[-0.01em] text-primary-foreground sm:text-[2.5rem]">
-                Process over prediction.
-              </h2>
-              <p className="mt-5 text-lg leading-[1.65] text-primary-foreground/80">
-                Momentum isn&apos;t a hunch. It&apos;s a{" "}
-                <span className="text-primary-foreground">factor</span> — one of a
-                small handful of forces that decades of research have shown drive
-                stock returns over time, alongside things like value and quality.
-              </p>
-              <p className="mt-4 text-lg leading-[1.65] text-primary-foreground/80">
-                We&apos;ve spent years studying how it actually behaves in Indian
-                equities: testing it over long stretches of market history,
-                validating it on periods our models had never seen, and
-                stress-testing it through crashes and rallies. Only the rules that
-                hold up on that unseen data earn a place in a portfolio.
-              </p>
-              <Link
-                href="/library/welcome_to_marketworks_beta"
-                className="mt-6 inline-flex items-center gap-2 text-base font-semibold text-secondary transition-opacity hover:opacity-80"
-              >
-                Read the full story
-                <span aria-hidden>→</span>
-              </Link>
+            <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+              <div className="max-w-[600px]">
+                <span className="text-xs font-semibold uppercase tracking-[0.16em] text-secondary">
+                  The research behind it
+                </span>
+                <h2 className="mt-4 font-serif text-[2rem] font-medium leading-[1.15] tracking-[-0.01em] text-primary-foreground sm:text-[2.5rem]">
+                  Process over prediction.
+                </h2>
+                <p className="mt-5 text-lg leading-[1.65] text-primary-foreground/80">
+                  Momentum isn&apos;t a hunch. It&apos;s a{" "}
+                  <span className="text-primary-foreground">factor</span> — one of
+                  a small handful of forces that decades of research have shown
+                  drive stock returns over time, alongside things like value and
+                  quality.
+                </p>
+                <p className="mt-4 text-lg leading-[1.65] text-primary-foreground/80">
+                  We&apos;ve spent years studying how it actually behaves in
+                  Indian equities: validating it on periods our models had never
+                  seen, and stress-testing it through crashes and rallies. Only
+                  the rules that hold up on that unseen data earn a place in a
+                  portfolio.
+                </p>
+                <Link
+                  href="/library/welcome_to_marketworks_beta"
+                  className="mt-6 inline-flex items-center gap-2 text-base font-semibold text-secondary transition-opacity hover:opacity-80"
+                >
+                  Read the full story
+                  <span aria-hidden>→</span>
+                </Link>
+              </div>
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl">
+                <Image
+                  src="/illustrations/research.webp"
+                  alt="A magnifying glass over layered hills — studying decades of market history"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                  className="object-cover"
+                />
+              </div>
             </div>
           </SectionPanel>
         </Reveal>
 
-        {/* Portfolios — cards float on the base */}
+        {/* Portfolios — 2-col intro + cards */}
         <section className="mx-auto max-w-[1140px] px-6 py-16 sm:py-24">
-          <Reveal>
-            <div className="max-w-[560px]">
-              <span className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-                The portfolios
-              </span>
-              <h2 className="mt-4 font-serif text-[2.25rem] font-medium leading-[1.1] tracking-[-0.01em] text-foreground sm:text-[2.75rem]">
-                Three ways to follow momentum.
-              </h2>
-              <p className="mt-4 text-lg leading-[1.6] text-muted-foreground">
-                Each one is a rules-based list of Indian stocks, rebuilt on a
-                schedule so it stays with the current leaders. These are model
-                portfolios for research and education, not personalised advice.
-              </p>
-            </div>
-          </Reveal>
-          <div className="mt-10 grid gap-5 sm:grid-cols-2">
+          <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+            <Reveal>
+              <div className="max-w-[560px]">
+                <span className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+                  The portfolios
+                </span>
+                <h2 className="mt-4 font-serif text-[2.25rem] font-medium leading-[1.1] tracking-[-0.01em] text-foreground sm:text-[2.75rem]">
+                  Three ways to follow momentum.
+                </h2>
+                <p className="mt-4 text-lg leading-[1.6] text-muted-foreground">
+                  Each one is a rules-based list of Indian stocks, rebuilt on a
+                  schedule so it stays with the current leaders. These are model
+                  portfolios for research and education, not personalised advice.
+                </p>
+              </div>
+            </Reveal>
+            <Reveal delayMs={80}>
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-card shadow-card">
+                <Image
+                  src="/illustrations/portfolios.webp"
+                  alt="Three winding paths diverging from one hilltop — three ways to follow momentum"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 48vw"
+                  className="object-cover"
+                />
+              </div>
+            </Reveal>
+          </div>
+          <div className="mt-12 grid gap-5 sm:grid-cols-2">
             {portfolios.map((universe, i) => (
               <Reveal key={universe.id} delayMs={(i % 2) * 80}>
                 <MarketingCard className="h-full">
