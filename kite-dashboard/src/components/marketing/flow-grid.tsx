@@ -3,8 +3,8 @@ import { cn } from "@/lib/utils";
 /**
  * Fixed-viewport quant grid for the marketing base (homepage_visual_refresh).
  *
- * Graph-paper lines with faint intersection nodes, radially masked so the
- * pattern concentrates in the viewport focus and fades at the edges. Because
+ * Graph-paper lines, radially masked so the pattern concentrates in the
+ * viewport focus and fades at the edges. Because
  * the layer is fixed, the focus band follows the page as it scrolls — whatever
  * the reader is looking at always has grid behind it. All styling (including a
  * whisper of opacity breath, static under reduced-motion) lives in the
