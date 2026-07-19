@@ -4,7 +4,7 @@ import Image from "next/image";
 import { UNIVERSES } from "@/lib/universes";
 import { FloatingNav } from "@/components/marketing/floating-nav";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
-import { MarketingBackground } from "@/components/marketing/marketing-background";
+import { FlowDots } from "@/components/marketing/flow-dots";
 import { MarketingCard } from "@/components/marketing/marketing-card";
 import { FeatureCard } from "@/components/marketing/feature-card";
 import { SectionPanel } from "@/components/marketing/section-panel";
@@ -71,15 +71,12 @@ export default function LandingPage() {
 
   return (
     <div className="mw-brand relative min-h-screen overflow-hidden bg-surface-base">
-      {/* Quant grid — contained to the hero zone; the rest of the base stays clean. */}
-      <MarketingBackground
-        texture="grid"
-        className="absolute inset-x-0 top-0 h-[820px] [mask-image:radial-gradient(120%_80%_at_72%_6%,#000,transparent_78%)]"
-      />
+      {/* Scroll-reactive dot field — fixed to the viewport, follows the focus. */}
+      <FlowDots />
 
       <FloatingNav />
 
-      <main className="relative">
+      <main className="relative z-10">
         {/* Hero */}
         <section className="mx-auto max-w-[1140px] px-6 pb-16 pt-32 sm:pt-40">
           <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
@@ -315,7 +312,9 @@ export default function LandingPage() {
         <div className="h-8" />
       </main>
 
-      <MarketingFooter />
+      <div className="relative z-10">
+        <MarketingFooter />
+      </div>
     </div>
   );
 }

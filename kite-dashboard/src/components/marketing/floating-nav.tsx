@@ -47,7 +47,9 @@ export function FloatingNav() {
       )}
     >
       <nav className="w-full max-w-[1080px] rounded-3xl border border-foreground/8 bg-white/80 shadow-sm backdrop-blur-md">
-        <div className="flex items-center justify-between py-2 pl-6 pr-2">
+        {/* Fixed row height so the bar is identical signed-in vs signed-out
+            (the beta CTA is taller than the avatar/Dashboard link). */}
+        <div className="flex h-14 items-center justify-between pl-6 pr-2">
           <Link
             href="/"
             className="text-xl font-semibold tracking-tight text-primary"
