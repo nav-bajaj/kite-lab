@@ -93,8 +93,12 @@ export default function LandingPage() {
 
   return (
     <div className="mw-brand relative min-h-screen overflow-hidden bg-surface-base">
-      {/* Quant grid flowing down the whole base (Spade reference). */}
-      <MarketingBackground texture="grid" />
+      {/* Quant grid — contained to the hero zone so the rest of the base stays
+          clean; a page-wide grid flattened the layering. */}
+      <MarketingBackground
+        texture="grid"
+        className="absolute inset-x-0 top-0 h-[820px] [mask-image:radial-gradient(120%_80%_at_72%_6%,#000,transparent_78%)]"
+      />
 
       <FloatingNav />
 
@@ -108,7 +112,7 @@ export default function LandingPage() {
               </span>
               <h1 className="mt-5 font-serif text-[2.75rem] font-medium leading-[1.03] tracking-[-0.02em] text-balance text-foreground sm:text-[4.25rem]">
                 Indian markets, the{" "}
-                <span className="relative whitespace-nowrap text-accent">
+                <span className="relative whitespace-nowrap text-primary">
                   calm
                   <svg
                     viewBox="0 0 200 12"
@@ -118,7 +122,7 @@ export default function LandingPage() {
                   >
                     <path
                       d="M3 8 C 55 3, 150 3, 197 7"
-                      className="stroke-accent"
+                      className="stroke-secondary"
                       strokeWidth="3"
                       strokeLinecap="round"
                       fill="none"
