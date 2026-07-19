@@ -94,6 +94,23 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+
+  /* Layered marketing surface & depth (DESIGN.md §2.5).
+   * Colors map the raw .mw-brand vars; radius/shadow/easing are literals
+   * because their Tailwind namespaces (--radius-*/--shadow-*/--ease-*) would
+   * self-reference. Generates bg-surface-*, rounded-card/panel, shadow-card/
+   * -card-hover/-panel/-soft, ease-expo. */
+  --color-surface-base:       var(--surface-base);
+  --color-surface-panel-mist: var(--surface-panel-mist);
+  --color-surface-panel-tint: var(--surface-panel-tint);
+  --color-surface-panel-deep: var(--surface-panel-deep);
+  --radius-card:  24px;
+  --radius-panel: 32px;
+  --shadow-card:       0px 6px 24px -3px rgba(26,26,26,0.13), 0px 1px 2px -4px rgba(26,26,26,0.13);
+  --shadow-card-hover: 0px 6px 24px -3px rgba(26,26,26,0.13), 0px 4px 6px -4px rgba(26,26,26,0.13);
+  --shadow-panel:      0px 10px 40px -12px rgba(26,26,26,0.18), 0px 2px 6px -4px rgba(26,26,26,0.12);
+  --shadow-soft:       0px 6px 24px -3px rgba(26,26,26,0.07);
+  --ease-expo:         cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .dark {
@@ -175,6 +192,17 @@
   --input: #D4D4D4;
   --ring: #14715F;
   --radius: 0.5rem;
+
+  /* Layered marketing surface (DESIGN.md §2.5) — mirrors @marketworks/design.
+   * Near-white base + inset mist/tint/deep panel colours. Raw here, mapped to
+   * `bg-surface-*` utilities in the @theme block. The homepage opts its
+   * background into --surface-base; mist stays the anchor panel colour.
+   * Elevation / radius / easing tokens live in @theme (their Tailwind
+   * namespaces collide with a raw+var mapping). Light-locked. */
+  --surface-base:       #FAFCFB;
+  --surface-panel-mist: #ECF3EF;
+  --surface-panel-tint: #F3F8F5;
+  --surface-panel-deep: #0E3B32;
 
   background-color: var(--background);
   color: var(--foreground);
