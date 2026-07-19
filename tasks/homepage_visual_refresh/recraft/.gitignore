@@ -1,5 +1,17 @@
-# Raw/generated PNGs are large (~2MB each) — the shipped webp live in
-# kite-dashboard/public/illustrations/. Keep the scripts, not the bitmaps.
+# Generated PNGs (large) — shipped webp live in kite-dashboard/public/illustrations.
 raw/
 final/
+finalset/
 raster/
+pastel/
+pastel2/
+comps/
+styles/
+watercolor/
+set_watercolor/
+set_pastel/
+set_pastel2/
+set_engraving/
+set_hf_pastel/
+set_hf_fintech/
+hf_test/

@@ -23,7 +23,7 @@ const STEPS = [
     title: "We rank the market",
     body: "Every week our system scores stocks by momentum — the simple idea that names already trending up tend to keep leading for a while.",
     image: {
-      src: "/illustrations/rank.webp",
+      src: "/illustrations/fin-rank.webp",
       alt: "Hot-air balloons rising to different heights over misty hills — the ones with the most lift rise to the top",
     },
   },
@@ -31,7 +31,7 @@ const STEPS = [
     title: "We build the portfolios",
     body: "The strongest names go into ready-made lists you can follow. When the leaders change, the list updates — no guessing, no headlines.",
     image: {
-      src: "/illustrations/build.webp",
+      src: "/illustrations/fin-build.webp",
       alt: "Hands picking only the ripest fruit from a branch into a basket — selecting the strongest names",
     },
   },
@@ -39,7 +39,7 @@ const STEPS = [
     title: "You follow along",
     body: "See exactly what each portfolio holds, what changed at the last rebalance, and why — all in plain language.",
     image: {
-      src: "/illustrations/follow.webp",
+      src: "/illustrations/fin-follow.webp",
       alt: "A figure walking a lantern-lit path over misty hills — a clear route to follow",
     },
   },
@@ -54,7 +54,7 @@ function HeroGraphic() {
   return (
     <div className="relative aspect-square w-full">
       <Image
-        src="/illustrations/hero.webp"
+        src="/illustrations/fin-hero.webp"
         alt="A lone figure at a window quietly watching a valley of misty hills at dawn"
         fill
         sizes="(max-width: 900px) 100vw, 48vw"
@@ -220,7 +220,7 @@ export default function LandingPage() {
               </div>
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl">
                 <Image
-                  src="/illustrations/research.webp"
+                  src="/illustrations/fin-research.webp"
                   alt="A magnifying glass over a tree stump's growth rings — reading decades of market history"
                   fill
                   sizes="(max-width: 1024px) 100vw, 40vw"
@@ -252,7 +252,7 @@ export default function LandingPage() {
             <Reveal delayMs={80}>
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-card shadow-card">
                 <Image
-                  src="/illustrations/portfolios.webp"
+                  src="/illustrations/fin-portfolios.webp"
                   alt="Three potted plants of different character on a windowsill — three ways to follow momentum"
                   fill
                   sizes="(max-width: 1024px) 100vw, 48vw"
