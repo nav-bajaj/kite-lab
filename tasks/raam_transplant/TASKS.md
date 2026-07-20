@@ -154,6 +154,16 @@ counterintuitive, honest story ("momentum is crowded → historically kept
 running, bumpier"). Productization = insight-engine module + validity-gated
 framing + a subscriber-facing gauge. Founder decision pending.
 
+**Generality check — lever on OM25 Quality Momentum (`om25_crowding_lever.py`):**
+fails identically. Every threshold/floor loses OOS CAGR (best 90/70: −4.8pp
+mean, worst 80/50: −14.7pp), worst in the OOS-B bull — same mechanism (high
+crowding = mid-rally). Extra point: OM25 already has a 20% trailing DD stop,
+so the lever's only supposed benefit is **redundant** — OOS-B drawdown is
+unchanged (−32.8% with or without the lever, the stop already binds); it
+only trims DD in OOS-C, and there at a proportional return cost (Sharpe
+flat). Confirms: the crowding index is not an exposure-timing signal for any
+momentum-family strategy.
+
 ## Phase 3 — E3: RC25 standalone — REFUTED (momentum in disguise)
 
 `rc25.py`. Paper's full weighted-rank composite: M (126d vol-adj momentum) +
