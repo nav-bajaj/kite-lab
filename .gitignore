@@ -159,6 +159,10 @@ tasks/insight_engine/cache/
 tasks/insight_engine/runs/
 tasks/insight_engine/__pycache__/
 
+# RAAM-transplant experiment runs (regenerable from the probes)
+tasks/raam_transplant/runs/
+tasks/raam_transplant/__pycache__/
+
 # Insight engine runtime cache (kite-api/app/insights/* uses this)
 cache/insights/
 

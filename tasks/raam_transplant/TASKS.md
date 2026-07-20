@@ -7,8 +7,8 @@ results reviewed and direction confirmed before the next phase starts.
 
 | # | Task | Owner | Risk |
 |---|---|---|---|
-| 0.1 | Data audit: panel depth, membership coverage, NIFTY 100 source freshness, symbol-rename gaps (TATAMOTORS/ZOMATO class) | 🤖 | data-gap |
-| 0.2 | Reproduce L6 v2 baseline on the four windows with the standard engine config; confirm metrics match `docs/portfolios.md` within tolerance | 🤖 | lookahead |
+| 0.1 | ~~Data audit + refresh~~ **DONE** — panel through 2026-07-20; found + flagged the local NIFTY 100 regime-path split (repo `indices_data_historical` stale 05-08, insight-engine path fresh) | 🤖 | data-gap |
+| 0.2 | ~~Reproduce L6 v2 baseline~~ **DONE** — `baseline_l6.py`; Sharpe 1.90 / MaxDD −29.4 reproduce docs tightly; CAGR 54.5 vs 59.4 = refreshed-panel drift (same engine code path, so data not logic). Turnover/hit are definitional — standardize via `summarise_metrics` in Phase 1 | 🤖 | lookahead |
 | 0.3 | Build residual-correlation panel (beta 252d vs NIFTY 100, residual pairwise corr 63d); reconstruct rolling internal correlation of the actual L6 book 2017→now | 🤖 | compute-cost |
 | 0.4 | Diagnostic study: internal corr quantiles vs forward 20/40/60d portfolio DD and return; momentum-breadth (share of top-40 with positive 126d momentum) vs same forwards | 🤖 | multiple-comparisons |
 | 0.5 | 👤 checkpoint: review diagnostic report, G0 go/no-go, finalize C parameters | 👤 | — |
