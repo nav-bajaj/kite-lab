@@ -28,6 +28,19 @@ results reviewed and direction confirmed before the next phase starts.
 | 1.3 | ~~Gate + robustness~~ **DONE** — `e1_robustness.py`; smooth λ∈[0.5,1.5] plateau (not knife-edge), crowd-window 42/63/126 all positive | 🤖 | — |
 | 1.4 | 👤 checkpoint: **E1 = robust qualified PASS** (locked λ=1.0). Turnover gate fails on artifact scale; cost_drag +0.3pp/yr absorbed in improved net CAGR | 👤 | — |
 
+### E1 on OM25 Quality Momentum — transfers, but gentler
+
+`om25_div.py`. Same greedy residual-correlation selection penalty on OM25's
+capture-ratio score (z-scored so λ is on the E1 footing), production OM25
+engine (Nifty 250, biweekly, top-25, exit-buffer 20, 20% stop). IS-tuned
+λ*=0.5. OOS vs plain OM25: CAGR +1.0 / +1.9 / −2.3pp (OOS-A/B/C), Calmar
+better 2/3, DD better in OOS-B. **Passes the E1 gate.** But the effect is
+*smaller* than on L6 (λ 0.5 vs 1.0; overlap **96%** vs 90% — ~1 name swapped;
+corr 0.999). Reason: OM25 is large-cap (Nifty 250, less theme-crowded than
+L6's broad NSE 500) and its capture-ratio factor already leans away from
+crowded high-beta names — so there's less crowding left to remove. OOS-C is
+the soft spot (de-crowding hurt slightly in the recent large-cap era).
+
 **E1 verdict:** robust, modest improvement — de-crowding L6's book by nudging out the 2-3 most residual-correlated names/week buys ~+1.7pp OOS CAGR and better Calmar in 2/3 windows, net of costs. Helps most in trending/crowding eras (2020-22, 2023-26), neutral-to-slightly-negative in low-momentum chop (2017-19). Not a production decision here — a validated candidate + the crowding gauge (Phase 3) are the deliverables.
 
 ## Phase 2 — E2: bottom-up breadth throttle
