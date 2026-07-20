@@ -179,3 +179,4 @@ cache/insights/
 # raam_transplant chart data (regenerable via chart_data.py; embedded in the html)
 tasks/raam_transplant/chart_series.json
 tasks/raam_transplant/.playwright-mcp/
+tasks/raam_transplant/chart_2019.json
