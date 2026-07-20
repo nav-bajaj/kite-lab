@@ -100,14 +100,26 @@ Synthesis across E1/E-LV/E-T: the paper's *directions* transplant; its
 *literal mechanics* often don't — our own tooling (residual crowding, DMA
 trend) beats the paper's GARCH-vol/ATR-breakout in Indian stock momentum.
 
-## Phase 3 — E3: RC25 standalone (stretch, gated on E1 or E2 passing)
+## Phase 3 — E3: RC25 standalone — REFUTED (momentum in disguise)
 
-| # | Task | Owner | Risk |
-|---|---|---|---|
-| 3.1 | Full ranked-composite scorer (M + C + additive T, per-slot cash) | 🤖 | complexity |
-| 3.2 | Four-window run; differentiation metrics vs L6/OM25/TL25/COMBO | 🤖 | overfit |
-| 3.3 | Judge against om25_alt differentiation bar | 🤖 | — |
-| 3.4 | 👤 checkpoint: portfolio-lineup decision | 👤 | product |
+`rc25.py`. Paper's full weighted-rank composite: M (126d vol-adj momentum) +
+C (per-name avg residual correlation to pool, low=good) + T (200-DMA
+distance), rank-summed, top-24, per-slot cash. IS-tuned weights 0.4/0.3/0.3.
+
+OOS: RC25 ≈ L6 overall (FULL CAGR 37.0 vs 37.9, Sharpe 1.41 vs 1.40); helps
+choppy OOS-A (DD −25.2 vs −28.8) and recent OOS-C, but gives up 11pp in the
+strong bull OOS-B (55.3 vs 66.2) — C+T pull off the momentum leaders exactly
+when leaders run hardest.
+
+**Differentiation bar (om25_alt) — FAILS decisively:** daily corr to L6
+**0.97** (bar <0.7), holdings overlap **66%** (bar <25%), Sharpe 1.41 (bar 1.5).
+It is not a new product — it's a re-weighted L6 that trades bull-market
+return for choppy-market smoothness at 97% correlation.
+
+**Verdict:** closes the "is a 5th *momentum* portfolio warranted?" question —
+**no.** The crowding/trend value is real but belongs as *tweaks to L6* (E1,
+E-T), not a standalone composite. The genuinely different product is the
+low-vol sleeve (E-LV), which is not a momentum book.
 
 ## Phase 4 — Close-out
 

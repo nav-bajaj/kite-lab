@@ -23,5 +23,5 @@ outcome:
   e2_breadth: negative                   # docs/failed_experiments.md #6
   e_t_breakout: negative                 # docs/failed_experiments.md #7
   ewma_vol: negative                     # docs/failed_experiments.md #8
-  e3_rc25: not-run
+  e3_rc25: negative                     # RC25 momentum-in-disguise (corr 0.97)
 register_rows: []
