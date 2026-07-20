@@ -100,6 +100,33 @@ Synthesis across E1/E-LV/E-T: the paper's *directions* transplant; its
 *literal mechanics* often don't — our own tooling (residual crowding, DMA
 trend) beats the paper's GARCH-vol/ATR-breakout in Indian stock momentum.
 
+## Phase 3C — De-crowding character morph
+
+`de_crowd_character.py`. Push the E1 selection penalty from gentle to
+aggressive (λ 0→40, pool 60→200), watch the character shift (FULL 2009-26):
+
+| variant | λ | CAGR | Sharpe | DD | corr→L6 | overlap→L6 | book crowding |
+|---|---|---|---|---|---|---|---|
+| L6 | 0 | 37.9 | 1.40 | −37.7 | 1.00 | 100% | 0.080 |
+| gentle (E1) | 1 | 38.4 | **1.43** | −38.0 | 0.99 | 91% | 0.073 |
+| strong | 10 | 33.2 | 1.25 | −39.6 | 0.98 | 67% | 0.033 |
+| aggressive | 20 | 28.5 | 1.10 | −41.1 | 0.95 | 51% | 0.005 |
+| max+deep | 40 | 21.9 | 0.86 | −44.7 | **0.92** | **37%** | −0.018 |
+
+**Findings:** (1) the mechanism works — it genuinely drops the book's internal
+crowding (0.080 → ~0/negative) and overlap with L6 (100→37%). (2) **But you
+can't decorrelate a momentum book by de-crowding it** — daily return corr to
+L6 stays ~0.92 even at 37% overlap, because every name is still a momentum
+stock riding the same factor. (3) The cost rises steeply — CAGR 38→22%,
+Sharpe 1.43→0.86, and drawdown *worsens* (−38→−45%). You pay a lot for
+"differently-named momentum" that still moves together.
+
+**Verdict:** gentle E1 (λ=1) remains the only sweet spot — the sole setting
+that beats L6. Aggressive de-crowding buys lower overlap and a genuinely
+less-clustered book but never real decorrelation, at a heavy return/DD cost.
+Genuinely different character comes only from *dropping momentum* (the E-LV
+low-vol sleeve, corr 0.70 / overlap 4%), not from de-crowding momentum.
+
 ## Phase 3B — Crowding as a timing signal / proprietary indicator
 
 `crowding_timing.py`. One crowding series (avg residual pairwise corr of the
