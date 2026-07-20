@@ -175,3 +175,7 @@ cache/insights/
 
 # VSCode workspace files (local, per-machine)
 *.code-workspace
+
+# raam_transplant chart data (regenerable via chart_data.py; embedded in the html)
+tasks/raam_transplant/chart_series.json
+tasks/raam_transplant/.playwright-mcp/
