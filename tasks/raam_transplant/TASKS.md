@@ -65,6 +65,26 @@ high-beta era (OOS-C CAGR 8.8%, ~index); DD stop is redundant (low-vol
 already shallow). Better outcome than om25_alt's LV25 — the reframe + trend
 pairing did it.
 
+### E-T: trend as a soft contributor to L6 — mechanic matters
+
+`t_trend.py`. `final = L6_z + w * trend_signal`, grid w, read OOS.
+
+- **Paper's breakout state (DONCH, 42d ±1): FAILS.** Hurts OOS mean CAGR at
+  every weight (−1.8 to −3.4pp), worst in the strong-trend OOS-B (up to
+  −12pp) — a "fresh-high-required" filter ejects consolidating winners,
+  brutal in bulls. The paper's literal T mechanic does not transplant to
+  stock momentum.
+- **200-DMA-distance trend (our tooling), gentle w≈0.25: modest WIN.**
+  OOS mean CAGR +1.97pp, **3/3 Calmar wins**, and it helps the choppy
+  OOS-A window (+1.1pp) as hypothesised. Same gentle-dose-then-decay
+  signature as E1 (w0.25 best, w0.5 less, w1.0 negative → real, not a spike).
+  Caveat: 200-DMA distance partly overlaps momentum, so some of the gain is
+  "more momentum." Robustness/stacking-with-E1 not yet run.
+
+Synthesis across E1/E-LV/E-T: the paper's *directions* transplant; its
+*literal mechanics* often don't — our own tooling (residual crowding, DMA
+trend) beats the paper's GARCH-vol/ATR-breakout in Indian stock momentum.
+
 ## Phase 3 — E3: RC25 standalone (stretch, gated on E1 or E2 passing)
 
 | # | Task | Owner | Risk |
