@@ -41,6 +41,24 @@ L6's broad NSE 500) and its capture-ratio factor already leans away from
 crowded high-beta names — so there's less crowding left to remove. OOS-C is
 the soft spot (de-crowding hurt slightly in the recent large-cap era).
 
+### E1 on OM25 in the NSE 500 universe — FAILS (the tell)
+
+`om25_div_nse500.py`. Identical to `om25_div.py` except OM25 selects from
+NSE 500 instead of Nifty 250. Hypothesis (broader/more-crowded universe →
+nudge helps more) was **wrong** — it flips negative. IS: every λ>0 is worse
+than λ=0. OOS vs plain OM25-on-NSE500: CAGR −3.7 / −1.8 / −0.2pp, Calmar
+worse **0/3**, gate FAILS. (corr 0.998, overlap 91.5% — still a ~2-name tweak.)
+
+**Why (the load-bearing insight):** the nudge's value depends on the *base
+score*, not the universe. L6's score is pure momentum, whose top names crowd
+into themes → de-crowding removes redundancy and helps. OM25's capture-ratio
+score is a *quality* tilt that already selects structurally-diversified,
+downside-protected names — it de-crowds implicitly. On the broader NSE 500,
+that quality factor has even more room to express, so forcing extra
+decorrelation *fights* it, trading CR-selected quality for worse diversifiers.
+So: helps momentum-purity scores, redundant on quality-momentum (Nifty 250),
+counterproductive on quality-momentum in a wide universe (NSE 500).
+
 **E1 verdict:** robust, modest improvement — de-crowding L6's book by nudging out the 2-3 most residual-correlated names/week buys ~+1.7pp OOS CAGR and better Calmar in 2/3 windows, net of costs. Helps most in trending/crowding eras (2020-22, 2023-26), neutral-to-slightly-negative in low-momentum chop (2017-19). Not a production decision here — a validated candidate + the crowding gauge (Phase 3) are the deliverables.
 
 ## Phase 2 — E2: bottom-up breadth throttle
