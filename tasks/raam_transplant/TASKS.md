@@ -23,10 +23,12 @@ results reviewed and direction confirmed before the next phase starts.
 
 | # | Task | Owner | Risk |
 |---|---|---|---|
-| 1.1 | Implement greedy corr-penalized scorer as a `score_fn` probe in this folder | 🤖 | lookahead |
-| 1.2 | Tune λ on IS only; run OOS-A/B/C + 2021+ era, net of slippage | 🤖 | overfit |
-| 1.3 | Judge against pre-registered E1 gate; sensitivity check on corr window | 🤖 | — |
-| 1.4 | 👤 checkpoint: E1 verdict + direction | 👤 | — |
+| 1.1 | ~~Greedy corr-penalized scorer~~ **DONE** — `e1_l6div.py` (path-dependent greedy run inside score_fn; λ=0 reproduces L6) | 🤖 | lookahead |
+| 1.2 | ~~Tune λ on IS, run OOS~~ **DONE** — λ*=1.0; net-of-slip CAGR +0.2/+3.3/+1.7pp OOS, Calmar 2/3 | 🤖 | overfit |
+| 1.3 | ~~Gate + robustness~~ **DONE** — `e1_robustness.py`; smooth λ∈[0.5,1.5] plateau (not knife-edge), crowd-window 42/63/126 all positive | 🤖 | — |
+| 1.4 | 👤 checkpoint: **E1 = robust qualified PASS** (locked λ=1.0). Turnover gate fails on artifact scale; cost_drag +0.3pp/yr absorbed in improved net CAGR | 👤 | — |
+
+**E1 verdict:** robust, modest improvement — de-crowding L6's book by nudging out the 2-3 most residual-correlated names/week buys ~+1.7pp OOS CAGR and better Calmar in 2/3 windows, net of costs. Helps most in trending/crowding eras (2020-22, 2023-26), neutral-to-slightly-negative in low-momentum chop (2017-19). Not a production decision here — a validated candidate + the crowding gauge (Phase 3) are the deliverables.
 
 ## Phase 2 — E2: bottom-up breadth throttle
 
