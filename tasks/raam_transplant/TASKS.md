@@ -100,6 +100,33 @@ Synthesis across E1/E-LV/E-T: the paper's *directions* transplant; its
 *literal mechanics* often don't — our own tooling (residual crowding, DMA
 trend) beats the paper's GARCH-vol/ATR-breakout in Indian stock momentum.
 
+## Phase 3B — Crowding as a timing signal / proprietary indicator
+
+`crowding_timing.py`. One crowding series (avg residual pairwise corr of the
+top-50 momentum names), three angles.
+
+- **Momentum Crowding Index (publishable):** clean daily series, range
+  0.015–0.206, expanding-percentile context (lookahead-safe). Flags real
+  episodes — all-time peak **early-2023 (Adani/Hindenburg, 0.206)**, then
+  **2024-05 (PSU/defence, 0.173)**. Current 2026-07-20 = 0.115 (**89th pctile,
+  elevated**).
+- **Strategy lever — FAILS.** Throttling L6 exposure when crowding is
+  extreme hurts at every threshold/floor (OOS mean CAGR −4.8 to −14pp,
+  0–1 Calmar wins), worst in the OOS-B bull. High crowding coincides with
+  strong momentum runs; cutting sits out the continuation. Do not retry.
+- **What it means — the intuition FLIPS.** Forward L6 return by crowding
+  quintile is **monotone increasing**: calmest quintile fwd-60d +3.2%/57% hit
+  vs most-crowded +14.0%/78% hit. Crowded momentum historically KEPT working
+  (higher forward return) — just with deeper interim shakeouts (the −0.19
+  near-term-DD signal from Phase 0). It's a **trend-intensity gauge, not a
+  sell signal.** Caveat: partly confounded with bull-regime (crowding is high
+  in strong markets) — frame as observation, not a clean causal edge.
+
+**Verdict:** not a lever; a viable **proprietary indicator** with a
+counterintuitive, honest story ("momentum is crowded → historically kept
+running, bumpier"). Productization = insight-engine module + validity-gated
+framing + a subscriber-facing gauge. Founder decision pending.
+
 ## Phase 3 — E3: RC25 standalone — REFUTED (momentum in disguise)
 
 `rc25.py`. Paper's full weighted-rank composite: M (126d vol-adj momentum) +
