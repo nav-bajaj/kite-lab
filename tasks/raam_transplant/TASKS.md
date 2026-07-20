@@ -65,6 +65,21 @@ high-beta era (OOS-C CAGR 8.8%, ~index); DD stop is redundant (low-vol
 already shallow). Better outcome than om25_alt's LV25 — the reframe + trend
 pairing did it.
 
+**Robustness (`lv_robustness.py`) — survives and IMPROVES under stress:**
+- **Cadence/size:** edge strengthens with less churn — monthly/top-30 gives
+  Sharpe 1.00 at ~2.4%/yr cost vs weekly/24's 0.82 at 4.8%/yr. Ideal for a
+  conservative product (trades less, costs less, performs better).
+- **Ingredients:** **realized-252d vol beats the paper's EWMA(0.94)** on every
+  gate (realized+both: CAGR 16.5, DD −26.4, Sharpe 0.91 vs EWMA 15.4/−31.6/0.82)
+  — another "simple beats the paper's instrument." Trend gate ("both") best either way.
+- **Consistency:** beats NIFTY 100 on return in **69%** of rolling 1-yr windows and
+  on drawdown in **70%**. Big downside protection in crashes (2011: −10% vs index −25%).
+- **Honest limits:** lags in strong large-cap bull years (2021, 2025: −0.2% vs +9%);
+  vs a true 60/40 (NIFTY100/10y gilt, 2017+) it wins on return+Sharpe (11.8/0.50 vs
+  9.0/0.39) but its drawdown stays equity-sized (−32% vs 60/40's −24%). It's a
+  **defensive-equity sleeve, not a bond substitute.**
+- **Best production config:** realized-252 vol + trend gate + monthly + top-30.
+
 ### E-T: trend as a soft contributor to L6 — mechanic matters
 
 `t_trend.py`. `final = L6_z + w * trend_signal`, grid w, read OOS.
