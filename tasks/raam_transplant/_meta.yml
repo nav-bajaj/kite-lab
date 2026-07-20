@@ -1,10 +1,27 @@
 name: raam_transplant
-status: in-progress
+status: in-progress            # research documented; gauge wiring + productization decision open
 opened: 2026-07-19
 closed: null
-related_commits: []
+related_commits:
+  - 56b2c1a                   # open task
+  - 8ebdd99                   # L6 baseline reproduction
+  - 5416dea                   # crowding diagnostic / G0
+  - d47898e                   # E1 L6-DIV
+  - 491cb2e                   # E1 robustness
+  - 81694a1                   # crowding engine (TDD)
+  - ee6fea9                   # E-LV low-vol sleeve
+  - de10078                   # E-T trend
+  - ae9dac0                   # E-LV robustness
 supersedes: []
 depends_on:
   - om25_alt
   - breadth_atlas
+outcome:
+  e1_crowding: validated-candidate      # crowding-aware L6, not deployed
+  e_lv_lowvol: validated-candidate      # defensive low-vol sleeve, not deployed
+  crowding_gauge: engine-shipped         # kite-api engine only, no route/panel
+  e2_breadth: negative                   # docs/failed_experiments.md #6
+  e_t_breakout: negative                 # docs/failed_experiments.md #7
+  ewma_vol: negative                     # docs/failed_experiments.md #8
+  e3_rc25: not-run
 register_rows: []

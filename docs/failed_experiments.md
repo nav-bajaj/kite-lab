@@ -160,5 +160,41 @@ The short-hold losses are not a bug; they are the cost of maintaining high sensi
 
 ---
 
-*Last updated: February 2026*
-*All tests run on NSE 500 universe, 2020-07-10 to 2026-01-30, 1M initial capital, 20bps slippage*
+## 6. Bottom-up breadth throttle (RAAM transplant, `tasks/raam_transplant`)
+
+**Hypothesis:** scale L6's exposure by market-wide positive-momentum breadth (a bottom-up version of RAAM's per-slot cash fallback) — deploy less when fewer names are trending.
+
+**Method:** diagnostic first — bucket market-wide breadth (share of the eligible universe with positive 126d momentum) against forward 20/40/60d return and drawdown, 2017-2026.
+
+**Result — REFUTED before backtest.** The breadth→forward-outcome relation is **U-shaped, not monotone**: low breadth (washed-out market) has the *best* forward returns, mid-breadth is the danger zone (worst returns + deepest drawdowns), high breadth is healthiest. A linear "cut exposure when breadth is low" throttle would cut risk exactly at the bullish lows. The only viable form is a non-linear mid-breadth regime flag, which duplicates the already-rejected `tasks/breadth_atlas/combo_3state`.
+
+**Conclusion:** Do not build a linear breadth throttle for Indian stock momentum. Low breadth is a contrarian-bullish signal here, not a risk-off one.
+
+## 7. Trend as an additive score — ATR/Donchian breakout state (RAAM transplant)
+
+**Hypothesis:** add the paper's trend/breakout state to L6's score (`final = L6_z + w·trend`) to de-rank high-momentum names that are rolling over.
+
+**Method:** 42-day Donchian breakout state (+1 in uptrend since last 42d-high, −1 since last 42d-low), grid `w`, judged OOS.
+
+| w | OOS mean ΔCAGR | worst window |
+|---|---|---|
+| 0.5 | −1.79pp | OOS-B −5.0 |
+| 1.0 | −3.07pp | OOS-B −9.2 |
+| 2.0 | −3.41pp | OOS-B −12.3 |
+
+**Result — FAILS at every weight**, worst in the strong-trend OOS-B (2020-22). A "must be making fresh highs" state ejects *consolidating* winners, which is brutal in a bull market. (A gentler 200-DMA-distance trend tilt at w≈0.25 was modestly positive — see `tasks/raam_transplant/TASKS.md` E-T — but overlaps momentum and was not productized.)
+
+**Conclusion:** Do not use a breakout-state trend term on a stock momentum book. If a trend contributor is ever wanted, use a smooth 200-DMA-distance measure at a gentle weight, not an ATR/Donchian breakout state.
+
+## 8. EWMA/GARCH volatility over realized vol (RAAM transplant, low-vol sleeve)
+
+**Hypothesis:** the paper's RiskMetrics EWMA(λ=0.94) volatility estimator improves a low-vol ranking over plain 252d realized std.
+
+**Result — EWMA UNDERPERFORMS.** On the low-vol sleeve, realized-252d vol beat EWMA(0.94) on every trend-gate variant (realized+trend: CAGR 16.5% / DD −26.4% / Sharpe 0.91 vs EWMA 15.4% / −31.6% / 0.82), and at lower turnover.
+
+**Conclusion:** Use plain realized volatility, not EWMA/GARCH, for vol-ranking in this universe. (Consistent with the broader raam_transplant finding: the paper's fancier instruments lose to simpler ones here.)
+
+---
+
+*Last updated: July 2026*
+*Sections 1-5 (2020-2026 window); sections 6-8 from `tasks/raam_transplant` (NSE 500, IS 2009-2016 / OOS 2017-2026, 20bps slippage, net of costs).*
