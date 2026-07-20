@@ -39,6 +39,32 @@ results reviewed and direction confirmed before the next phase starts.
 | 2.3 | Judge against pre-registered E2 gate; calendar-year DD table | 🤖 | — |
 | 2.4 | 👤 checkpoint: E2 verdict + direction | 👤 | — |
 
+## Phase 2 — Paper pillars revisited (user-requested)
+
+### E-LV: low-volatility as a conservative sleeve — VIABLE
+
+`lv_revisit.py`. Reframed bar (not a momentum rival; judged vs NIFTY 100
+buy-hold as the conservative alternative). Two paper-faithful choices:
+EWMA(λ=0.94) vol (RiskMetrics), and low-vol paired with a trend gate
+(close>200-DMA & positive 126d momentum) — the paper's warning that raw
+low-vol overweights declining names.
+
+FULL 2009-2026, net of 20bps, top-24 weekly:
+| Strategy | CAGR | Vol | MaxDD | Sharpe | Calmar | corr→L6 | overlap→L6 |
+|---|---|---|---|---|---|---|---|
+| NIFTY100 buy-hold | 10.1 | 16.3 | −38.1 | 0.31 | 0.26 | — | — |
+| LV_NAIVE | 12.7 | 12.0 | −31.7 | 0.64 | 0.40 | 0.67 | 1.7% |
+| **LV_TREND** | **15.4** | **12.6** | −31.6 | **0.82** | 0.49 | 0.70 | 4.2% |
+| L6 (momentum) | 37.9 | 23.6 | −37.7 | 1.40 | 1.00 | — | — |
+
+Verdict: **LV_TREND beats the NIFTY 100 on return, vol, drawdown AND Sharpe**
+with a near-disjoint book (~4% overlap) and ~half L6's vol — a real
+different-character sleeve for a conservative investor. Paper's V+T pairing
+confirmed (LV_TREND > LV_NAIVE every window). Caveat: lags in the recent
+high-beta era (OOS-C CAGR 8.8%, ~index); DD stop is redundant (low-vol
+already shallow). Better outcome than om25_alt's LV25 — the reframe + trend
+pairing did it.
+
 ## Phase 3 — E3: RC25 standalone (stretch, gated on E1 or E2 passing)
 
 | # | Task | Owner | Risk |
