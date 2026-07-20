@@ -9,9 +9,15 @@ results reviewed and direction confirmed before the next phase starts.
 |---|---|---|---|
 | 0.1 | ~~Data audit + refresh~~ **DONE** — panel through 2026-07-20; found + flagged the local NIFTY 100 regime-path split (repo `indices_data_historical` stale 05-08, insight-engine path fresh) | 🤖 | data-gap |
 | 0.2 | ~~Reproduce L6 v2 baseline~~ **DONE** — `baseline_l6.py`; Sharpe 1.90 / MaxDD −29.4 reproduce docs tightly; CAGR 54.5 vs 59.4 = refreshed-panel drift (same engine code path, so data not logic). Turnover/hit are definitional — standardize via `summarise_metrics` in Phase 1 | 🤖 | lookahead |
-| 0.3 | Build residual-correlation panel (beta 252d vs NIFTY 100, residual pairwise corr 63d); reconstruct rolling internal correlation of the actual L6 book 2017→now | 🤖 | compute-cost |
-| 0.4 | Diagnostic study: internal corr quantiles vs forward 20/40/60d portfolio DD and return; momentum-breadth (share of top-40 with positive 126d momentum) vs same forwards | 🤖 | multiple-comparisons |
-| 0.5 | 👤 checkpoint: review diagnostic report, G0 go/no-go, finalize C parameters | 👤 | — |
+| 0.3 | ~~Residual-correlation panel~~ **DONE** — `residuals.py` (reusable by-product); rolling L6-book crowding reconstructed 2017→now via `crowding_diagnostic.py` | 🤖 | compute-cost |
+| 0.4 | ~~Diagnostic study~~ **DONE** — see G0 verdict below. Fixed a mis-specified breadth metric (top-40-rank breadth is tautologically ~1.0; switched to market-wide) | 🤖 | multiple-comparisons |
+| 0.5 | 👤 checkpoint: **G0 verdict — crowding weak-green, breadth-throttle (E2) REFUTED** | 👤 | — |
+
+### G0 verdict (2026-07-20, `runs/crowding_diag_*`)
+
+- **Crowding → forward drawdown:** weak but directionally consistent. Spearman(crowding, fwd_maxdd_20) = **−0.19**; top crowding quintile −7.2% 20d DD vs −6.0% bottom. Forward *return* is flat across crowding buckets (Spearman ≈0) → **de-crowding may trim DD at ~no return cost.** Signal fades past 20d. **E1 proceeds, low prior on a large win.**
+- **Breadth → forward outcomes:** **U-shaped, not monotone.** Low breadth (washed-out) = strong forward returns; mid-breadth = worst returns + deepest DD; high breadth = best. A linear breadth throttle (E2) would cut risk at the bullish lows — **refuted.** The only viable breadth signal is a non-linear mid-breadth regime flag, which duplicates the already-rejected `breadth_atlas/combo_3state`. **E2 dropped in its planned form.**
+- **By-product:** the crowding gauge is shippable to the insight-engine admin panel regardless of E1's outcome.
 
 ## Phase 1 — E1: correlation-penalized selection (L6-DIV)
 
