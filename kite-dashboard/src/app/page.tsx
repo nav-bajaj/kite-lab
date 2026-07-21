@@ -6,6 +6,7 @@ import { UNIVERSES } from "@/lib/universes";
 import { FloatingNav } from "@/components/marketing/floating-nav";
 import { FooterPanel } from "@/components/marketing/footer-panel";
 import { FlowGrid } from "@/components/marketing/flow-grid";
+import { HeroFlow } from "@/components/marketing/hero-flow";
 import { MarketingCard } from "@/components/marketing/marketing-card";
 import { FeatureCard } from "@/components/marketing/feature-card";
 import { SectionPanel } from "@/components/marketing/section-panel";
@@ -46,27 +47,6 @@ const STEPS = [
   },
 ];
 
-// The hero illustration floats on the base with soft-faded edges (no card
-// frame), so its grain melts into the near-white surface.
-const HERO_FADE =
-  "radial-gradient(ellipse 80% 80% at 50% 46%, #000 58%, transparent 100%)";
-
-function HeroGraphic() {
-  return (
-    <div className="relative aspect-square w-full">
-      <Image
-        src="/illustrations/fin-hero.webp"
-        alt="A lone figure at a window quietly watching a valley of misty hills at dawn"
-        fill
-        sizes="(max-width: 900px) 100vw, 48vw"
-        className="object-cover"
-        style={{ maskImage: HERO_FADE, WebkitMaskImage: HERO_FADE }}
-        priority
-      />
-    </div>
-  );
-}
-
 export default async function LandingPage() {
   const portfolios = Object.values(UNIVERSES).filter((u) => u.clientVisible);
   // Signed-in visitors already have access, so send them straight to the app.
@@ -82,14 +62,14 @@ export default async function LandingPage() {
       <FloatingNav />
 
       <main className="relative z-10">
-        {/* Hero */}
-        <section className="mx-auto max-w-[1140px] px-6 pb-16 pt-32 sm:pt-40">
-          <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
+        {/* Hero — centered copy; the flow graph lives in a band below (desktop). */}
+        <section className="relative flex flex-col overflow-hidden pb-12 pt-32 sm:pt-36">
+          <div className="mx-auto max-w-[860px] px-6 text-center">
             <Reveal>
               <span className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
                 Private beta
               </span>
-              <h1 className="mt-5 font-serif text-[2.75rem] font-medium leading-[1.03] tracking-[-0.02em] text-balance text-foreground sm:text-[4.25rem]">
+              <h1 className="mt-5 font-serif text-[2.75rem] font-medium leading-[1.03] tracking-[-0.02em] text-balance text-foreground sm:text-[4.5rem]">
                 Indian markets, the{" "}
                 <span className="relative whitespace-nowrap text-primary">
                   calm
@@ -110,13 +90,13 @@ export default async function LandingPage() {
                 </span>{" "}
                 way.
               </h1>
-              <p className="mt-6 max-w-[34em] text-lg leading-[1.6] text-muted-foreground sm:text-xl">
+              <p className="mx-auto mt-6 max-w-[40em] text-lg leading-[1.6] text-muted-foreground sm:text-xl">
                 Marketworks helps you follow the strongest stocks in the Indian
                 market — without watching it all day. You get three ready-made
                 portfolios and a daily market read, built on live data instead of
                 news and noise.
               </p>
-              <div className="mt-8 flex flex-wrap items-center gap-4">
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                 <Link
                   href={betaHref}
                   className="rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground transition-[transform,box-shadow] duration-200 ease-expo hover:-translate-y-px hover:shadow-md"
@@ -131,10 +111,11 @@ export default async function LandingPage() {
                 </Link>
               </div>
             </Reveal>
+          </div>
 
-            <Reveal delayMs={80}>
-              <HeroGraphic />
-            </Reveal>
+          {/* Flow graph band — desktop only; mobile shows the copy alone. */}
+          <div className="relative mt-10 hidden h-[42vh] min-h-[300px] w-full md:block">
+            <HeroFlow className="absolute inset-0" />
           </div>
         </section>
 
