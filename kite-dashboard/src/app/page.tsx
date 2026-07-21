@@ -36,6 +36,7 @@ export default async function LandingPage() {
   // Signed-in visitors already have access, so send them straight to the app.
   const { userId } = await auth();
   const betaHref = userId ? "/dashboard" : "/sign-up";
+  const betaLabel = userId ? "View dashboard" : "Get beta access";
 
   return (
     <div className="mw-brand flex min-h-screen flex-col bg-background">
@@ -62,7 +63,7 @@ export default async function LandingPage() {
                 href={betaHref}
                 className="rounded-lg bg-primary px-6 py-3 text-base font-semibold text-primary-foreground transition-opacity hover:opacity-90"
               >
-                Get beta access
+                {betaLabel}
               </Link>
               <Link
                 href="/library"
