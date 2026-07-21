@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
 
 import { UNIVERSES } from "@/lib/universes";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
@@ -30,8 +31,11 @@ const STEPS = [
   },
 ];
 
-export default function LandingPage() {
+export default async function LandingPage() {
   const portfolios = Object.values(UNIVERSES).filter((u) => u.clientVisible);
+  // Signed-in visitors already have access, so send them straight to the app.
+  const { userId } = await auth();
+  const betaHref = userId ? "/dashboard" : "/sign-up";
 
   return (
     <div className="mw-brand flex min-h-screen flex-col bg-background">
@@ -55,7 +59,7 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <Link
-                href="/sign-up"
+                href={betaHref}
                 className="rounded-lg bg-primary px-6 py-3 text-base font-semibold text-primary-foreground transition-opacity hover:opacity-90"
               >
                 Get beta access
@@ -213,7 +217,7 @@ export default function LandingPage() {
               Free while we&apos;re in beta.
             </p>
             <Link
-              href="/sign-up"
+              href={betaHref}
               className="rounded-lg bg-background px-6 py-3 text-base font-semibold text-primary transition-opacity hover:opacity-90"
             >
               Get beta access
