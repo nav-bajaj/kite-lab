@@ -1,5 +1,5 @@
 name: raam_transplant
-status: in-progress            # research documented; gauge wiring + productization decision open
+status: in-progress            # research documented; paused for later continuation (see RESULTS.md "Open threads")
 opened: 2026-07-19
 closed: null
 related_commits:
@@ -12,16 +12,30 @@ related_commits:
   - ee6fea9                   # E-LV low-vol sleeve
   - de10078                   # E-T trend
   - ae9dac0                   # E-LV robustness
+  - 0bbf2cb                   # RC25
+  - 10c2f50                   # crowding as timing / indicator
+  - 801cd06                   # de-crowding character morph
+  - 472ff2c                   # crowding chart (full)
+  - 790930a                   # crowding chart (2019+)
+  - 86138b7                   # exposure lever on OM25
+  - fea4fda                   # E1 nudge on OM25 (Nifty 250)
+  - 95f95f7                   # E1 nudge on OM25 (NSE 500)
 supersedes: []
 depends_on:
   - om25_alt
   - breadth_atlas
 outcome:
-  e1_crowding: validated-candidate      # crowding-aware L6, not deployed
-  e_lv_lowvol: validated-candidate      # defensive low-vol sleeve, not deployed
-  crowding_gauge: engine-shipped         # kite-api engine only, no route/panel
-  e2_breadth: negative                   # docs/failed_experiments.md #6
-  e_t_breakout: negative                 # docs/failed_experiments.md #7
-  ewma_vol: negative                     # docs/failed_experiments.md #8
-  e3_rc25: negative                     # RC25 momentum-in-disguise (corr 0.97)
+  e1_crowding_l6: validated-candidate     # crowding-aware L6, not deployed
+  e_lv_lowvol: validated-candidate        # defensive low-vol sleeve, not deployed
+  momentum_crowding_index: indicator-candidate  # publishable market internal
+  crowding_gauge: engine-shipped          # kite-api engine only, no route/panel
+  e2_breadth: negative                    # failed_experiments #6
+  e_t_breakout: negative                  # failed_experiments #7
+  e_t_dma_trend: marginal                 # gentle DMA tilt, not productized
+  ewma_vol: negative                      # failed_experiments #8
+  e3_rc25: negative                       # failed_experiments #9
+  crowding_exposure_lever: negative       # failed_experiments #10 (L6 + OM25)
+  om25_div_nifty250: marginal             # transfers, gentler
+  om25_div_nse500: negative               # failed_experiments #11 (score-dependent)
+resume_pointer: "RESULTS.md > Open threads — WHERE TO RESUME"
 register_rows: []

@@ -1,5 +1,10 @@
 # raam_transplant — task breakdown
 
+> **STATUS: paused for later continuation (not complete).** For the full
+> synthesis, validated candidates, key insights, and the ranked list of where
+> to resume, read **`RESULTS.md`**. This file is the detailed per-experiment
+> log. Negative results are catalogued in `docs/failed_experiments.md` #6-11.
+
 Owners: 🤖 agent, 👤 Navdeep. Every phase ends with a 👤 checkpoint —
 results reviewed and direction confirmed before the next phase starts.
 

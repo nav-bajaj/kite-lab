@@ -194,7 +194,33 @@ The short-hold losses are not a bug; they are the cost of maintaining high sensi
 
 **Conclusion:** Use plain realized volatility, not EWMA/GARCH, for vol-ranking in this universe. (Consistent with the broader raam_transplant finding: the paper's fancier instruments lose to simpler ones here.)
 
+## 9. RC25 full ranked composite as a standalone portfolio (RAAM transplant)
+
+**Hypothesis:** the paper's full weighted-rank composite (M momentum + C per-name residual crowding + T 200-DMA distance, top-25, per-slot cash) forms a differentiated 5th momentum portfolio.
+
+**Result — REFUTED.** IS-tuned weights 0.4/0.3/0.3. Overall ≈ L6 (FULL CAGR 37.0 vs 37.9, Sharpe 1.41 vs 1.40) but fails the differentiation bar decisively: **daily corr to L6 0.97** (bar <0.7), **holdings overlap 66%** (bar <25%). Helps choppy/recent windows but gives up 11pp in the strong OOS-B bull (C+T pull off the momentum leaders when they run hardest).
+
+**Conclusion:** No standalone 5th *momentum* portfolio. The crowding/trend value belongs as tweaks to L6 (E1), not a new book. The only genuinely different book is the low-vol sleeve (not a momentum strategy).
+
+## 10. Crowding index as an exposure-timing lever (RAAM transplant)
+
+**Hypothesis:** throttle a momentum strategy's gross exposure down when the Momentum Crowding Index is in an extreme percentile (crowding weakly predicts near-term drawdown).
+
+**Result — FAILS on both L6 and OM25.** Every threshold/floor lost OOS CAGR (L6 −5 to −14pp; OM25 −4.8 to −14.7pp), worst in the OOS-B bull. High crowding coincides with strong momentum rallies, so cutting exposure sits out the continuation — confirmed by the conditional distribution (top crowding quintile had the *highest* forward returns). On OM25 the lever is additionally redundant with its built-in 20% trailing DD stop (OOS-B drawdown unchanged).
+
+**Conclusion:** Crowding is a *selection* signal, not an *exposure/timing* signal, for any momentum-family strategy. Do not build a crowding exposure throttle.
+
+## 11. Crowding selection nudge on Quality Momentum (OM25) — universe study
+
+**Hypothesis:** the E1 de-crowding selection nudge (which works on L6) should help OM25, and help *more* on the broader, more-crowded NSE 500 than on Nifty 250.
+
+**Result — mixed, and the hypothesis about *why* is wrong.** On Nifty 250 the nudge passes the E1 gate but is tiny (λ*=0.5, +0.2pp OOS mean, 96% overlap). On **NSE 500 it flips negative** (OOS CAGR −3.7/−1.8/−0.2pp, Calmar 0/3, gate fails). Broadening the universe made it *worse*, not better.
+
+**Why:** the nudge's value depends on the *base score*, not the universe. L6's score is pure momentum, whose top names crowd into themes → de-crowding helps. OM25's capture-ratio score is a quality tilt that already selects structurally-diversified, downside-protected names → the penalty is redundant (Nifty 250) or fights the quality factor (NSE 500, where quality has more room to express).
+
+**Conclusion:** Apply the crowding selection nudge to momentum-purity strategies (L6) only; do not layer it on quality-momentum (OM25).
+
 ---
 
 *Last updated: July 2026*
-*Sections 1-5 (2020-2026 window); sections 6-8 from `tasks/raam_transplant` (NSE 500, IS 2009-2016 / OOS 2017-2026, 20bps slippage, net of costs).*
+*Sections 1-5 (2020-2026 window); sections 6-11 from `tasks/raam_transplant` (IS 2009-2016 / OOS 2017-2026, 20bps slippage, net of costs). Full write-up: `tasks/raam_transplant/RESULTS.md`.*
