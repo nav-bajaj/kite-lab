@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { auth } from "@clerk/nextjs/server";
 
 import { UNIVERSES } from "@/lib/universes";
 import { FloatingNav } from "@/components/marketing/floating-nav";
@@ -66,8 +67,12 @@ function HeroGraphic() {
   );
 }
 
-export default function LandingPage() {
+export default async function LandingPage() {
   const portfolios = Object.values(UNIVERSES).filter((u) => u.clientVisible);
+  // Signed-in visitors already have access, so send them straight to the app.
+  const { userId } = await auth();
+  const betaHref = userId ? "/dashboard" : "/sign-up";
+  const betaLabel = userId ? "View dashboard" : "Get beta access";
 
   return (
     <div className="mw-brand relative min-h-screen overflow-hidden bg-surface-base">
@@ -113,10 +118,10 @@ export default function LandingPage() {
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <Link
-                  href="/sign-up"
+                  href={betaHref}
                   className="rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground transition-[transform,box-shadow] duration-200 ease-expo hover:-translate-y-px hover:shadow-md"
                 >
-                  Get beta access
+                  {betaLabel}
                 </Link>
                 <Link
                   href="/library"
@@ -300,7 +305,7 @@ export default function LandingPage() {
                 Free while we&apos;re in beta.
               </p>
               <Link
-                href="/sign-up"
+                href={betaHref}
                 className="rounded-full bg-surface-base px-6 py-3 text-base font-semibold text-primary transition-[transform,box-shadow] duration-200 ease-expo hover:-translate-y-px hover:shadow-md"
               >
                 Get beta access
