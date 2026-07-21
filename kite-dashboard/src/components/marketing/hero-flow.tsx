@@ -169,7 +169,7 @@ export function HeroFlow({ className }: { className?: string }) {
     const buildSources = () => {
       sources = [];
       for (let k = 0; k < SOURCE_PAIRS; k++) {
-        const frac = SOURCE_PAIRS === 1 ? 0 : k / (SOURCE_PAIRS - 1);
+        const frac = k / Math.max(1, SOURCE_PAIRS - 1);
         const offset = lerp(SOURCE_CENTER_GAP, SOURCE_SPREAD, frac);
         const delay = k * PAIR_STAGGER; // mirrored pair shares a delay -> rolling wave
         for (const sign of [-1, 1]) {
