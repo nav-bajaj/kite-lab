@@ -23,6 +23,12 @@
 - [x] 🤖 Regenerate `*_universe.csv` as current-members views; fetch list = all-ever members
 - [x] 🤖 Fetch price history for 33 NSE-500 additions (local; Railway volume self-provisions at next 16:30 run)
 - [x] 🤖 Static CSVs ship via git deploy — no manual Railway upload needed
-- [ ] 🤖 Re-upload `nse500_data_merged` insights panel with the 33 additions (analytics-only, non-blocking)
-- [ ] 👤 Confirm Railway redeployed from main before 2026-07-15 16:00 IST
-- [ ] 🤖 Post-cutover verification: INOXINDIA / AKUMS grandfather correctly at first live rebalance (Thu 07-16 signal)
+- [x] 🤖 Merged-panel coverage for the 33 additions — solved in code instead of a re-upload (`sync_insights_panels` seeds new members; verified "33 new symbols seeded" in the Railway run log)
+- [x] 👤 Confirm Railway redeployed from main before 2026-07-15 16:00 IST
+- [x] 🤖 Post-cutover verification (2026-07-21): INOXINDIA + AKUMS grandfathered, CPPLUS/CEMPRO/ACUTAAS/EMMVEE entered on merit 07-17, no removed-symbol re-entries, shared history identical across daily recomputes — see RESULTS.md
+
+## Open follow-ups (outside this task's scope)
+
+- [ ] 🤖 Freshness monitor: treat closed-membership symbols as expected-stale
+- [ ] 🤖 `tasks/momentum_experiment/RESULTS.md` vol-floor correction
+- [ ] 👤🤖 Phase 3 ledger architecture (`tasks/portfolio_ledger/`) — awaiting go-ahead
