@@ -1,0 +1,11 @@
+name: donchian_channel
+status: planned
+opened: 2026-07-22
+closed: null
+related_commits: []
+supersedes: []
+depends_on:
+  - om25_alt
+  - breadth_atlas
+  - insight_engine
+register_rows: []
