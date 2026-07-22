@@ -75,6 +75,23 @@ slippage. Exit grid pre-registered before any run (no post-hoc shopping):
 - [x] Note: entry cohort is (near-)identical across arms — validity-gate
       status is an ENTRY property and is not re-litigated by exit choice.
 
+## Phase 5c — H4 productization grid (founder request 2026-07-22) [🤖]
+
+Fixed: entry = fresh 20-day-high cross, top-quartile momentum filter,
+**cap 50 active** (momentum-rank priority), next-day OHLC/4 +/- 20bps.
+Grid (2 x 2 x 2 = 8 arms, pre-registered):
+
+- [x] Universe: NSE 500 vs Nifty 250
+- [x] Momentum lookback: 126d (L6-style) vs 252d (1-year), score =
+      ret_N / max(annualized vol_N, 0.05), pct-rank within universe
+- [x] Exit: momq (rank < 0.5) vs momq_or_ts20 (momq OR close < 0.80 x
+      peak close since entry — trailing stop, first to fire)
+- [x] Winner rule (pre-registered): highest 50-slot portfolio Sharpe,
+      tie-break Calmar. Comparison table for all 8 arms; deep-dive
+      (monthly heatmap, yearly table, open positions) on the winner.
+- [x] Mint-brand HTML tearsheet (marketworks-design mint palette,
+      midnight dark), published as artifact.
+
 ## Phase 6 — Close-out [👤 + 🤖]
 
 - [x] RESULTS.md: per-hypothesis verdicts, decision line, reproducibility

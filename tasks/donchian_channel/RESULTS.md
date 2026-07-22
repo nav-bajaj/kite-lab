@@ -181,6 +181,44 @@ Findings:
    If any of this ships, the capped + chosen-exit configuration must be
    re-simulated (one run) before quoting numbers.
 
+## H4c — Productization grid: cap 50, trailing stop, 1y lookback, N250 (founder iteration 2)
+
+Fixed: 20-day breakout entry, top-quartile momentum, cap 50 (rank
+priority). Grid: universe {NSE 500, N250} x lookback {126d, 252d} x exit
+{momq, momq OR 20%-from-peak}. 8 arms, winner rule pre-registered
+(highest 50-slot Sharpe). Run dir: `runs/h4c_20260722_193236/`.
+
+| arm | win% | mean | median | hold | CAGR | Sharpe | MaxDD | Calmar |
+|---|---|---|---|---|---|---|---|---|
+| **nse500 126d momq+ts20** | 49.0 | +14.7 | -0.4 | 78 | 30.5 | **1.56** | **-24.8** | **1.23** |
+| nse500 252d momq+ts20 | 48.4 | +20.5 | -0.7 | 95 | 28.4 | 1.51 | -25.3 | 1.12 |
+| nse500 126d momq | 53.4 | +24.4 | +1.6 | 123 | 32.6 | 1.50 | -35.1 | 0.93 |
+| n250 252d momq+ts20 | 50.5 | +22.1 | +0.2 | 100 | 26.6 | 1.49 | -24.3 | 1.09 |
+| n250 252d momq | 58.8 | +49.2 | +6.2 | 201 | 29.7 | 1.48 | -35.2 | 0.85 |
+| nse500 252d momq | **57.8** | **+56.5** | **+6.7** | 231 | 30.5 | 1.40 | -34.8 | 0.87 |
+| n250 126d momq+ts20 | 46.6 | +12.7 | -1.3 | 72 | 25.5 | 1.36 | -20.0 | 1.27 |
+| n250 126d momq | 50.4 | +18.9 | +0.2 | 106 | 27.4 | 1.33 | -32.9 | 0.83 |
+
+Findings:
+
+1. **The 20% trailing stop earns its place at the portfolio level.** In
+   every pairing it cuts MaxDD from ~-35% to ~-20/-25% for ~2pp of CAGR;
+   all four ts20 arms lead on Calmar. Winner: NSE 500 / 126d /
+   momq+ts20 (Sharpe 1.56, CAGR 30.5%, MaxDD -24.8%).
+2. **The 1-year lookback makes the best *recommendations*, not the best
+   portfolio.** 252d + momq-only: 57.8% win rate, +56.5% mean, +6.7%
+   MEDIAN per call (finally positive), 231-day median hold — but deeper
+   portfolio drawdowns (-34.8%). Fewer, slower, fatter calls (~43/year).
+3. **Nifty 250 fits the cap better but earns less.** Days-at-cap drops
+   from 75-93% (NSE 500) to 45-67%, capacity-skips fall ~4x, CAGR gives
+   up 2-5pp. A liquidity/capacity trade the founder can make later.
+4. **No arm collapses** (Sharpe 1.33-1.56): the entry + momentum-exit
+   core is robust to these variations; configuration tunes the shape.
+5. Caveat: winner-of-8 is still selection; treat between-arm deltas as
+   indicative. Entry-level validity-gate failure carries over unchanged.
+
+Mint-brand tearsheet artifact published (grid + winner deep dive).
+
 ## What we learned that wasn't a no
 
 - The engine's `donchian_low_panel` hook works as documented; prior-window
