@@ -171,3 +171,6 @@ cache/insights/
 
 # VSCode workspace files (local, per-machine)
 *.code-workspace
+
+# Donchian channel experiment runs (regenerable)
+tasks/donchian_channel/runs/

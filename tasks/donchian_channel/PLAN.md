@@ -1,6 +1,7 @@
 # Donchian channel exploration — PLAN
 
-Opened 2026-07-22. Status: planned (hypotheses drafted, awaiting scope lock).
+Opened 2026-07-22. Status: in-progress (scope locked 2026-07-22: H2 -> H1 ->
+H3 -> H4; H4 added by founder).
 
 ## Why
 
@@ -88,6 +89,45 @@ Publication gates:
   must clear the 6-check gate in `tasks/insight_engine/VALIDITY_PROTOCOL.md`
   via `pattern_validity_study.py`, and must be shown non-duplicative of
   `multi_year_breakout` (report fire-date/name overlap).
+
+### H4 — Momentum-filtered Donchian breakout calls (daily recommendation product)
+
+Founder idea (2026-07-22): a shareable daily "breakout call" list — filter
+NSE 500 to the top quartile of momentum rankings, and among those issue a
+call when a stock breaks its Donchian upper band. Long-only, max 20-25
+active calls at a time, tracked as a group so subscribers see honest
+aggregate stats.
+
+Design (pre-registered before running):
+
+- Momentum filter: top quartile by the L6-style score (126d momentum /
+  realized vol) computed at signal date.
+- Entry signal: signal-date close crosses above the prior N-day high
+  (prior = shifted 1 day, else the cross can never fire). Test N = 55
+  (Turtle System 2) and N = 20.
+- Exit: signal-date close below the prior M-day low, Turtle pairing
+  (55/20 and 20/10). No profit targets, no pyramiding.
+- Capacity: max 25 active calls; when breakouts exceed free slots,
+  priority by momentum rank. Track skipped-for-capacity calls separately.
+- Execution accounting: entry/exit at next-day OHLC/4 with 20bps slippage;
+  per-call P&L strictly net of slippage (house rule).
+- Metrics: per-call P&L distribution, win rate, expectancy, hold days,
+  yearly breakdown, active-count utilization, and an equal-weight
+  portfolio-equivalent equity curve.
+- Core comparison (the founder's question): identical rules on ALL NSE 500
+  (no momentum filter) — does the top-quartile filter improve per-call
+  expectancy, win rate, and tail profile?
+
+Acceptance bars:
+
+- n >= 100 calls over the study period (validity protocol floor).
+- Filtered beats unfiltered on expectancy AND win rate consistently across
+  OOS windows (not one regime driving it).
+- For any subscriber-facing publication: the 6-check gate in
+  `tasks/insight_engine/VALIDITY_PROTOCOL.md` (>= +1.0pp excess vs
+  same-date NSE 500 baseline at the headline horizon, positive direction
+  lift, sign consistency, persistence across halves), plus dedup analysis
+  vs the validated `multi_year_breakout` detector.
 
 ## Method — fixed, inherited from om25_alt / oos_retune_2026
 

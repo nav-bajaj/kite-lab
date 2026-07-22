@@ -1,0 +1,77 @@
+# Donchian channel exploration — TASKS
+
+Scope locked 2026-07-22. Order: Phase 1 → H2 → H1 → H3 → H4 → close-out.
+
+## Phase 1 — Channel panels + sanity [🤖]
+
+- [x] `channel_panels.py`: load Date×Symbol high/low/close panels from
+      `nse500_data_merged/*_day.csv` (universe-filtered), rolling N-day
+      Donchian bands **shifted by 1 day** (prior-window bands, else the
+      engine's `close < don_low` exit and any breakout cross can never
+      fire on the day the extreme is set).
+- [x] Sanity gates (breadth-atlas style): spot-check RELIANCE bands vs
+      manual computation; assert no `.shift(-N)` / centered rollings;
+      coverage counts per year; NaN policy documented.
+      Risk: silent misalignment between panel calendar and engine calendar.
+
+## Phase 2 — H2: Donchian exit overlay [🤖]
+
+- [x] `h2_donchian_exit_experiment.py`: L6 v2 and OM25-shaped strategies,
+      exits = {baseline, don-10, don-20, don-55, don-20 + existing stop}
+      across IS / OOS-A / OOS-B / OOS-C. Entries unchanged.
+- [x] Pick N on IS only; verdict from OOS consistency (Calmar/MaxDD better,
+      CAGR give-up <= 2pp, all three OOS windows agree in direction).
+- [x] Exit-reason attribution (donchian vs rank vs stop) per window.
+
+## Phase 3 — H1: 52-week-high nearness ranking [🤖]
+
+- [x] `h1_nearness_experiment.py`: George-Hwang score
+      `close / prior 252d high` — standalone top-25 (production-shaped
+      execution) and 50/50 rank-blend with L6; comparators L6 + OM25.
+- [x] Differentiation diagnostics: daily-return corr, top-25 overlap vs L6;
+      "momentum in disguise" rejection per om25_alt bars.
+- [x] Momentum-crash claim: drawdown comparison in 2020-03 and 2025
+      correction windows.
+
+## Phase 4 — H3: Donchian breadth indicator [🤖]
+
+- [x] `h3_breadth_profile.py`: % of universe at prior N-day highs/lows
+      (N = 20/55/252), net series, median channel position; distributions,
+      dwell times, extremes catalog; correlation vs existing
+      `data/breadth/breadth_daily.csv` metrics (incl. `net_new_highs_pct`
+      redundancy check).
+- [x] Descriptive profile only in this phase — no forward-return claims.
+
+## Phase 5 — H4: momentum-filtered breakout calls [🤖]
+
+- [x] `h4_breakout_calls.py`: daily simulation per PLAN spec (top-quartile
+      momentum filter, 55/20 + 20/10 Turtle pairings, max 25 active,
+      momentum-rank priority, next-day OHLC/4 + 20bps, P&L net of
+      slippage).
+- [x] Control arm: identical rules, no momentum filter (all NSE 500).
+- [x] Group stats + per-year table + portfolio-equivalent equity curve.
+- [x] Validity-gate dry run on the filtered calls (excess vs same-date
+      NSE 500 baseline at 5/20/60d, direction lift, halves persistence).
+- [ ] Overlap check vs `multi_year_breakout` fires — DEFERRED: moot while
+      H4 fails the validity gate (no detector will ship); required if the
+      call-list idea is ever revived.
+
+## Phase 6 — Close-out [👤 + 🤖]
+
+- [x] RESULTS.md: per-hypothesis verdicts, decision line, reproducibility
+      block, file index.
+- [ ] Founder review: which (if any) H4 product surface to build; whether
+      any H1/H2 finding warrants a production-change proposal (default
+      stance: diagnostic only).
+- [ ] `_meta.yml` status update.
+
+## Risk tags
+
+- Lookahead in hand-built panels (mitigated: shift(1) + audit gate).
+- Survivorship: universe file is the current snapshot; disclose in all
+  writeups (breadth-atlas precedent), baseline comparisons use same-date
+  universe means to partially cancel it.
+- H4 capacity rule introduces path dependence — results must be shown
+  with and without the 25-slot cap to prove the cap isn't doing the work.
+- Multiple-comparison discipline: parameter grid is fixed here in TASKS.md
+  before any run; no post-hoc N-shopping outside {10, 20, 55, 252}.
