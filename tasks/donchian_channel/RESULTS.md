@@ -132,6 +132,55 @@ require exceptional care in presentation, and its recent-era stats
 product; if the format is still attractive, revisit as an educational /
 transparency journal with the full loss distribution shown.
 
+## H4b — Exit-rule sweep (founder iteration, 2026-07-22)
+
+Fixed entry (fresh 20-day-high breakout, top-quartile momentum, uncapped),
+10 pre-registered exit rules. Run dir: `runs/h4b_20260722_190733/`.
+Entry cohort is near-identical across arms, so the validity-gate verdict
+(an entry property) is unchanged; this sweep is about P&L shape.
+
+| exit | n | win% | mean | median | p95 | hold (td) | sig-CAGR | sig-Sharpe |
+|---|---|---|---|---|---|---|---|---|
+| don10 | 7,715 | 40.6 | +3.45 | -2.21 | +36.5 | 22 | 27.5% | 1.25 |
+| don20 | 5,709 | 43.4 | +7.76 | -2.49 | +60.0 | 42 | 28.2% | 1.32 |
+| don55 | 3,373 | 47.6 | **+25.75** | -1.66 | +157.6 | 109 | 27.4% | 1.31 |
+| mid20 | 9,472 | 36.3 | +1.63 | -2.41 | +24.9 | 14 | 25.0% | 1.06 |
+| pct10_peak | 6,509 | 41.6 | +4.79 | -3.24 | +46.1 | 28 | 24.0% | 1.17 |
+| pct15_peak | 4,461 | 45.0 | +12.76 | -2.67 | +90.8 | 64 | 26.3% | 1.30 |
+| atr4_peak | 7,368 | 40.9 | +4.00 | -2.37 | +40.0 | 25 | 27.2% | 1.19 |
+| time40 | 7,703 | **55.1** | +4.09 | **+1.87** | +35.5 | 41 | 26.5% | 1.19 |
+| momq | 3,559 | 47.0 | +19.76 | -1.13 | +113.2 | 93 | **31.0%** | **1.44** |
+| don10_or_momq | 7,803 | 40.5 | +3.25 | -2.15 | +35.3 | 21 | 27.9% | 1.26 |
+
+Findings:
+
+1. **Slower exits monotonically improve per-call economics.** don55 earns
+   7.5x don10's expectancy and even wins per-day-held (0.24%/td vs
+   0.16%/td). Fast exits (don10, mid20) whipsaw breakouts to death.
+2. **The best exit is our own momentum rank.** `momq` (exit when the stock
+   drops below the momentum median) posts the best signal-portfolio
+   aggregate (CAGR 31.0%, Sharpe 1.44) — the Donchian breakout is best
+   understood as an *entry timer for the momentum sleeve*, and momentum
+   itself as the exit. The Donchian low adds nothing on top
+   (don10_or_momq is just don10).
+3. **time40 is the only arm with a positive median call (+1.87%, 55.1% win
+   rate)** and the most stable worst-year (-3.0%). If the product must
+   *feel* like recommendations (most calls should win), an unconditional
+   time exit produces that shape — at the cost of the fat right tail and
+   a worse p5 (-20.5%, it holds losers).
+4. **Aggregate capital results are exit-insensitive** (all arms CAGR
+   24-31%, MaxDD -35 to -39%): exit choice reshapes the per-call
+   distribution far more than total signal profitability.
+5. **The "recent era is broken" read from H4 was partly an artifact.**
+   Closed-call stats exclude winners still open at study end (145-159
+   open calls in slow arms, mean +17-21%). Including open calls, 2025+
+   means are positive for don55 (+3.8%) and momq (+4.4%). 2018 remains
+   the honest bad year across all arms.
+6. **Product-shape caveat:** uncapped active counts run 42-129 concurrent
+   calls; a real 20-25-slot list would bind hard on the slow-exit arms.
+   If any of this ships, the capped + chosen-exit configuration must be
+   re-simulated (one run) before quoting numbers.
+
 ## What we learned that wasn't a no
 
 - The engine's `donchian_low_panel` hook works as documented; prior-window

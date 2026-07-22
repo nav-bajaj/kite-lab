@@ -56,6 +56,25 @@ Scope locked 2026-07-22. Order: Phase 1 → H2 → H1 → H3 → H4 → close-ou
       H4 fails the validity gate (no detector will ship); required if the
       call-list idea is ever revived.
 
+## Phase 5b — H4 exit-rule sweep (founder request 2026-07-22) [🤖]
+
+Fixed config: entry = fresh cross above prior 20-day high, top-quartile
+momentum filter, NO slot cap, next-day OHLC/4 +/- 20bps, P&L net of
+slippage. Exit grid pre-registered before any run (no post-hoc shopping):
+
+- [x] don10 / don20 / don55 — prior N-day-low Donchian exits
+- [x] mid20 — close below the 20-day channel midline
+- [x] pct10_peak / pct15_peak — 10% / 15% below peak close since entry
+- [x] atr4_peak — 4 x ATR20(pct) trailing from peak close
+- [x] time40 — unconditional exit after 40 trading days
+- [x] momq — momentum rank falls below 0.50 (loses the quartile edge)
+- [x] don10_or_momq — whichever fires first
+- [x] Comparison table: n, win rate, mean/median, p5/p95, hold days,
+      calls/year, daily equal-weight signal-portfolio CAGR/Sharpe/MaxDD,
+      per-year mean P&L stability
+- [x] Note: entry cohort is (near-)identical across arms — validity-gate
+      status is an ENTRY property and is not re-litigated by exit choice.
+
 ## Phase 6 — Close-out [👤 + 🤖]
 
 - [x] RESULTS.md: per-hypothesis verdicts, decision line, reproducibility
