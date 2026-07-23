@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
 import { useUser } from "@clerk/nextjs";
 import { UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { Home, Menu, Moon, Sun } from "lucide-react";
+import { Home, Menu } from "lucide-react";
 import { MobileSidebar } from "./mobile-sidebar";
 import { UniverseSelector } from "./universe-selector";
+import { PalettePicker } from "./palette-picker";
 import { getInsightsNavItem } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +26,6 @@ const pathNames: Record<string, string> = {
 
 export function Navbar() {
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
   const { user } = useUser();
   const role = (user?.publicMetadata as { role?: string } | undefined)?.role;
   const isAdmin = role === "admin";
@@ -90,16 +89,9 @@ export function Navbar() {
         <UniverseSelector />
 
         <div className="flex items-center">
-          {/* Theme toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          >
-            <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            <span className="sr-only">Toggle theme</span>
-          </Button>
+          {/* Palette picker — Mint/Ocean/Amber/Coral/Charcoal/Midnight
+              (Midnight is the dark theme; replaces the old sun/moon toggle) */}
+          <PalettePicker />
 
           {/* Home — escape hatch back to the public marketing site. The
               dashboard is a separate app shell (sidebar nav), so signed-in

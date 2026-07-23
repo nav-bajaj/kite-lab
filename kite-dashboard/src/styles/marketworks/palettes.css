@@ -1,0 +1,213 @@
+/* VENDORED from marketworks-design@1995f4d (src/palettes.css) — do not hand-edit.
+ * Re-sync: node scripts/sync-design-tokens.mjs */
+/**
+ * @marketworks/design — palette override sheet.
+ *
+ * GENERATED from tokens/palettes.ts (npx tsx scripts/gen-palettes-css.ts)
+ * — do not hand-edit; the contract test checks sync.
+ *
+ * Consumers import this once, after styles.css:
+ *
+ *   import "@marketworks/design/styles.css";
+ *   import "@marketworks/design/palettes.css";
+ *
+ * Then stamp data-palette="ocean|amber|coral|charcoal|midnight" on the
+ * root element (mint = attribute absent; midnight also answers to .dark).
+ * Canonical picker order: mint, ocean, amber, coral, charcoal, midnight.
+ */
+
+[data-palette="ocean"] {
+  --background: #EFF4FA;
+  --foreground: #1A1A1A;
+  --muted: #F5F5F5;
+  --muted-foreground: #737373;
+  --border: #D4D4D4;
+  --input: #D4D4D4;
+  --destructive: #A64C42;
+  --destructive-foreground: #FFFFFF;
+  --card: #FFFFFF;
+  --card-foreground: #1A1A1A;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1A1A;
+  --primary: #1263C7;
+  --primary-foreground: #EFF4FA;
+  --secondary: #58A6E8;
+  --secondary-foreground: #1A1A1A;
+  --accent: #E8A33D;
+  --accent-foreground: #1A1A1A;
+  --ring: #1263C7;
+  --surface-base: #FCFDFE;
+  --surface-panel-mist: #EFF4FA;
+  --surface-panel-tint: #F5F9FC;
+  --surface-panel-deep: #0D2B45;
+  --acc1-bg: #E9F2FB; --acc1-line: #94C2EC; --acc1-fg: #29598C;
+  --acc2-bg: #FBF2DF; --acc2-line: #E8C27A; --acc2-fg: #7A5A18;
+  --acc3-bg: #E6F4F5; --acc3-line: #8BCBD1; --acc3-fg: #1F5F66;
+  --acc4-bg: #EDEFFA; --acc4-line: #AEB6E8; --acc4-fg: #414E96;
+  --acc5-bg: #E9F5EC; --acc5-line: #9FD0AC; --acc5-fg: #2E6B44;
+  --acc6-bg: #FBEDEA; --acc6-line: #EFA898; --acc6-fg: #93402C;
+  --wash1: #EAF2FB;
+  --wash2: #FBF3E2;
+  --wash3: #EDEFFA;
+  --chart-series-1: #1263C7;
+  --chart-series-2: #AD741C;
+  --chart-series-3: #8B95A1;
+  --display-accent: #1263C7;
+}
+
+[data-palette="amber"] {
+  --background: #F9F4EA;
+  --foreground: #1A1A1A;
+  --muted: #F5F5F5;
+  --muted-foreground: #737373;
+  --border: #D4D4D4;
+  --input: #D4D4D4;
+  --destructive: #A64C42;
+  --destructive-foreground: #FFFFFF;
+  --card: #FFFFFF;
+  --card-foreground: #1A1A1A;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1A1A;
+  --primary: #A05A0A;
+  --primary-foreground: #F9F4EA;
+  --secondary: #E8A33D;
+  --secondary-foreground: #1A1A1A;
+  --accent: #0B7E65;
+  --accent-foreground: #FFFFFF;
+  --ring: #A05A0A;
+  --surface-base: #FDFCFA;
+  --surface-panel-mist: #F9F4EA;
+  --surface-panel-tint: #FBF8F1;
+  --surface-panel-deep: #43290D;
+  --acc1-bg: #FBF2DE; --acc1-line: #E8C27A; --acc1-fg: #7A5A18;
+  --acc2-bg: #F9EBE4; --acc2-line: #DFA183; --acc2-fg: #8C4A26;
+  --acc3-bg: #F1F3E4; --acc3-line: #BFC98A; --acc3-fg: #59631F;
+  --acc4-bg: #E6F3F0; --acc4-line: #8FC8BC; --acc4-fg: #1F6156;
+  --acc5-bg: #FAECEC; --acc5-line: #E7A6A6; --acc5-fg: #904040;
+  --acc6-bg: #EBF0F6; --acc6-line: #A9BDD4; --acc6-fg: #3D5A78;
+  --wash1: #FBF3E1;
+  --wash2: #F8ECE3;
+  --wash3: #F1F3E6;
+  --chart-series-1: #A05A0A;
+  --chart-series-2: #0B7E65;
+  --chart-series-3: #97908A;
+  --display-accent: #A05A0A;
+}
+
+[data-palette="coral"] {
+  --background: #FBEFEA;
+  --foreground: #1A1A1A;
+  --muted: #F5F5F5;
+  --muted-foreground: #737373;
+  --border: #D4D4D4;
+  --input: #D4D4D4;
+  --destructive: #A64C42;
+  --destructive-foreground: #FFFFFF;
+  --card: #FFFFFF;
+  --card-foreground: #1A1A1A;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1A1A;
+  --primary: #C94A39;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F8A98A;
+  --secondary-foreground: #1A1A1A;
+  --accent: #17697E;
+  --accent-foreground: #FFFFFF;
+  --ring: #C94A39;
+  --surface-base: #FDFBFA;
+  --surface-panel-mist: #FBEFEA;
+  --surface-panel-tint: #FDF6F2;
+  --surface-panel-deep: #0F3B3E;
+  --acc1-bg: #FDEFE8; --acc1-line: #F3B79A; --acc1-fg: #96522F;
+  --acc2-bg: #E9F6F1; --acc2-line: #96D4BC; --acc2-fg: #256B51;
+  --acc3-bg: #FDF3DE; --acc3-line: #F0C579; --acc3-fg: #8A621A;
+  --acc4-bg: #E8F4F8; --acc4-line: #8FC8DD; --acc4-fg: #28617A;
+  --acc5-bg: #F7EFFA; --acc5-line: #D4B0E8; --acc5-fg: #6D3F8E;
+  --acc6-bg: #FBEBEE; --acc6-line: #EFA5B4; --acc6-fg: #993B54;
+  --wash1: #FBEFE7;
+  --wash2: #EAF6F0;
+  --wash3: #EBF4F8;
+  --chart-series-1: #C94A39;
+  --chart-series-2: #17697E;
+  --chart-series-3: #94908B;
+  --display-accent: #E0604D;
+}
+
+[data-palette="charcoal"] {
+  --background: #F2F2F0;
+  --foreground: #1A1A1A;
+  --muted: #F5F5F5;
+  --muted-foreground: #737373;
+  --border: #D4D4D4;
+  --input: #D4D4D4;
+  --destructive: #A64C42;
+  --destructive-foreground: #FFFFFF;
+  --card: #FFFFFF;
+  --card-foreground: #1A1A1A;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1A1A;
+  --primary: #2B2B2B;
+  --primary-foreground: #F2F2F0;
+  --secondary: #E8A33D;
+  --secondary-foreground: #1A1A1A;
+  --accent: #E8A33D;
+  --accent-foreground: #1A1A1A;
+  --ring: #2B2B2B;
+  --surface-base: #FCFCFB;
+  --surface-panel-mist: #F2F2F0;
+  --surface-panel-tint: #F7F7F5;
+  --surface-panel-deep: #202020;
+  --acc1-bg: #F1F1EF; --acc1-line: #C2C2BE; --acc1-fg: #4F4F4B;
+  --acc2-bg: #FAF2DF; --acc2-line: #E0B65E; --acc2-fg: #77571A;
+  --acc3-bg: #EFF1F3; --acc3-line: #B9C0C7; --acc3-fg: #45505A;
+  --acc4-bg: #F4F1ED; --acc4-line: #CBC2B5; --acc4-fg: #5C5142;
+  --acc5-bg: #EFF2EF; --acc5-line: #B7C2B8; --acc5-fg: #47544A;
+  --acc6-bg: #F2F0F2; --acc6-line: #C2B8C2; --acc6-fg: #544754;
+  --wash1: #F2F2F0;
+  --wash2: #FAF3E2;
+  --wash3: #EFF1F3;
+  --chart-series-1: #2B2B2B;
+  --chart-series-2: #AD741C;
+  --chart-series-3: #8E8E8E;
+  --display-accent: #2B2B2B;
+}
+
+.dark,
+[data-palette="midnight"] {
+  --background: #0C1219;
+  --foreground: #E9EEF4;
+  --card: #17202C;
+  --card-foreground: #E9EEF4;
+  --popover: #17202C;
+  --popover-foreground: #E9EEF4;
+  --primary: #58A6E8;
+  --primary-foreground: #0C1219;
+  --secondary: #7CC4F5;
+  --secondary-foreground: #0C1219;
+  --accent: #E8A33D;
+  --accent-foreground: #0C1219;
+  --muted: #1A2431;
+  --muted-foreground: #8F9AA8;
+  --destructive: #D07162;
+  --destructive-foreground: #E9EEF4;
+  --border: #2C3947;
+  --input: #2C3947;
+  --ring: #58A6E8;
+  --surface-base: #0C1219;
+  --surface-panel-mist: #131B26;
+  --surface-panel-tint: #101720;
+  --surface-panel-deep: #1C2E45;
+  --acc1-bg: rgba(88,166,232,.14); --acc1-line: #3D6D99; --acc1-fg: #9CCBF2;
+  --acc2-bg: rgba(232,163,61,.14); --acc2-line: #8A6A2E; --acc2-fg: #F0C47E;
+  --acc3-bg: rgba(107,208,196,.12); --acc3-line: #2F6B64; --acc3-fg: #8ED8CD;
+  --acc4-bg: rgba(160,140,240,.13); --acc4-line: #5D519B; --acc4-fg: #C0B2F2;
+  --acc5-bg: rgba(110,200,140,.12); --acc5-line: #33684A; --acc5-fg: #96D8AC;
+  --acc6-bg: rgba(235,130,150,.12); --acc6-line: #7E4451; --acc6-fg: #EFA9B6;
+  --wash1: #14202B;
+  --wash2: #211C11;
+  --wash3: #1C1930;
+  --chart-series-1: #6FB4EC;
+  --chart-series-2: #E8A33D;
+  --chart-series-3: #6E7987;
+  --display-accent: #58A6E8;
+}
