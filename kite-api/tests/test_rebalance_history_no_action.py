@@ -89,11 +89,11 @@ class TestExpectedCadenceHistory:
 # session factory so its production code path runs unchanged.
 from decimal import Decimal
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
 from app.models.database import Base
-from app.models.models import EquityCurve, OpenPosition, Trade
+from app.models.models import EquityCurve, OpenPosition, ProposedRebalance, Trade
 
 
 @pytest.fixture
@@ -105,6 +105,18 @@ def db_session():
             Trade.__table__, EquityCurve.__table__, OpenPosition.__table__,
         ],
     )
+    # ProposedRebalance carries JSONB columns sqlite can't DDL-compile, but
+    # the history path only reads its date + count columns — a hand-rolled
+    # table (JSON columns stay null in tests) is enough.
+    with engine.begin() as conn:
+        conn.execute(text(
+            "CREATE TABLE proposed_rebalances ("
+            "id INTEGER PRIMARY KEY, universe VARCHAR(20), exec_date DATE, "
+            "signal_date DATE, data_as_of DATE, sell_count INTEGER, "
+            "buy_count INTEGER, hold_count INTEGER, sells TEXT, buys TEXT, "
+            "holds TEXT, regime VARCHAR(10), drawdown_from_peak NUMERIC, "
+            "final_pv NUMERIC, initial_capital NUMERIC, created_at DATETIME)"
+        ))
     SessionLocal = sessionmaker(bind=engine, autoflush=False)
     return SessionLocal()
 
@@ -183,6 +195,56 @@ class TestGetRebalanceHistoryNoAction:
             "universe": "om25_v3", "history": [], "count": 0,
         }
 
+    def test_zero_trade_weekly_check_surfaces_from_proposal(
+        self, db_session, install_session, patched_today,
+    ):
+        # Production 2026-07-17 pattern: last entry exec Mon 07-13, then the
+        # off-week Friday exit check (signal 07-17, exec Mon 07-20) sold
+        # nothing. It leaves no Trade rows and 07-20 is not on the entry
+        # grid, so only the recorded ProposedRebalance can surface it.
+        db_session.add_all([
+            _make_trade(universe="om25_v3", trade_date=date(2026, 7, 13),
+                        symbol="BSE", side="BUY", notional=250000),
+            _make_trade(universe="om25_v3", trade_date=date(2026, 7, 13),
+                        symbol="ENRIN", side="SELL", notional=230000),
+            ProposedRebalance(
+                universe="om25_v3", exec_date=date(2026, 7, 20),
+                signal_date=date(2026, 7, 17), data_as_of=date(2026, 7, 17),
+                sell_count=0, buy_count=0, hold_count=25,
+            ),
+        ])
+        db_session.commit()
+        install_session(db_session)
+        patched_today(date(2026, 7, 21))
+
+        rows = {h["date"]: h for h in
+                rs.get_rebalance_history("om25_v3", limit=6)["history"]}
+        assert rows["2026-07-20"]["no_action"] is True
+        assert rows["2026-07-20"]["kind"] == "no_action"
+        assert rows["2026-07-13"]["no_action"] is False
+
+    def test_proposal_with_trades_does_not_add_no_action_row(
+        self, db_session, install_session, patched_today,
+    ):
+        # A live proposal that HAS moves (not yet executed/synced) must not
+        # masquerade as a completed no-action cycle.
+        db_session.add_all([
+            _make_trade(universe="om25_v3", trade_date=date(2026, 7, 13),
+                        symbol="BSE", side="BUY", notional=250000),
+            ProposedRebalance(
+                universe="om25_v3", exec_date=date(2026, 7, 20),
+                signal_date=date(2026, 7, 17), data_as_of=date(2026, 7, 17),
+                sell_count=2, buy_count=3, hold_count=20,
+            ),
+        ])
+        db_session.commit()
+        install_session(db_session)
+        patched_today(date(2026, 7, 21))
+
+        dates = [h["date"] for h in
+                 rs.get_rebalance_history("om25_v3", limit=6)["history"]]
+        assert "2026-07-20" not in dates
+
 
 class TestGetRebalanceSummaryNoAction:
     def test_previous_anchors_on_latest_cadence_when_no_action(
@@ -229,6 +291,28 @@ class TestGetRebalanceSummaryNoAction:
         assert prev["no_action"] is False
         assert prev["kind"] == "entry"
         assert "TCS" in prev["added"]
+
+    def test_next_projects_from_signal_parity_not_exec_date(
+        self, db_session, install_session, patched_today,
+    ):
+        # Regression: the "next" anchor passed the BUY *exec* date (Mon
+        # 07-13) straight into project_next_signal, which rolled it onto its
+        # own week's Friday (07-17) and reported the next entry a week late
+        # (07-31). Anchored on the true signal (Fri 07-10), the next entry
+        # is Fri 07-24 — and 07-31 is merely the off-week exit check.
+        db_session.add_all([
+            _make_trade(universe="om25_v3", trade_date=date(2026, 7, 13),
+                        symbol="BSE", side="BUY", notional=250000),
+            EquityCurve(universe="om25_v3", date=date(2026, 7, 13),
+                        portfolio_value=Decimal("10000000")),
+        ])
+        db_session.commit()
+        install_session(db_session)
+        patched_today(date(2026, 7, 20))
+
+        nxt = rs.get_rebalance_summary("om25_v3")["next"]
+        assert nxt["signal_date"] == "2026-07-24"
+        assert nxt["exec_date"] == "2026-07-27"
 
     def test_summary_survives_universe_with_zero_buy_trades(
         self, db_session, install_session, patched_today,
