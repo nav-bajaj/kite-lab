@@ -23,7 +23,9 @@ import pandas as pd
 import yfinance as yf
 
 ROOT = Path(__file__).resolve().parents[2]
-UNIVERSE_CSV = ROOT / "data/static/us_equities_universe.csv"
+import os
+UNIVERSE_CSV = Path(os.environ.get("US_UNIVERSE_CSV",
+    ROOT / "data/static/us_equities_universe.csv"))
 OUT_DIR = ROOT / "us_equities_data"
 START = "2008-01-01"
 CHUNK = 40

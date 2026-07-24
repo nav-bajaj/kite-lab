@@ -256,6 +256,40 @@ Findings:
 Artifact updated with a "same rules in America" section (comparison
 table, indexed overlay, disclosure of the data-source swap).
 
+## H4f — US market-fit grid on expanded universe (2026-07-24)
+
+Universe expanded to SP500 + NDX + SP400 (914 symbols with data; SP400
+list from Wikipedia current snapshot). Grid pre-registered: cap {50,100}
+x stop {none, 10xATR20 trail} x exit rank {0.50, 0.35}, lookback 126d.
+Overfit guard: full window AND 2023-07..2026-05 tail reported per arm.
+Run dir: `runs/h4f_20260724_144608/` (+ largecap_none_xr35 single cell).
+
+Findings:
+
+1. **Mid caps rejected.** Same rules on the expanded universe: CAGR flat
+   (21.9%), Sharpe 0.94 -> 0.83, MaxDD -32 -> -41. Call-level split:
+   mid-cap calls are worse on every stat (win 51.2% vs 53.9%, median
+   +0.45% vs +1.49%); under the slow exit the gap widens (mean +11.5%
+   vs +17.1%). Caveat both ways: current-snapshot SP400 excludes
+   winners promoted to SP500, so the test is biased against mid caps —
+   but even so there is no case to expand. Keep SP500 + NDX.
+2. **Exit rank 0.35 is the real US tweak.** Better in every pairing and
+   in both windows. On large caps: win 55.4 -> 59.2%, median call
+   +1.65 -> +3.64%, mean +10.5 -> +15.3%, Sharpe ~unchanged (0.93),
+   holds lengthen to 138td, ~69 calls/yr.
+3. **ATR-scaled stop rejected** (third stop variant tested): costs
+   0.07-0.13 Sharpe in every pairing, both windows. The US answer is
+   genuinely no stop; the momentum rank owns the exit.
+4. **Cap 100 dilutes.** 2x calls, lower Sharpe/CAGR everywhere; even
+   100 slots stay full ~90% of days. Keep 50.
+5. Tail rankings match full-window rankings -> tweaks are time-stable.
+
+**Recommended US config:** SP500 + NDX, 20d breakout, top-quartile 126d
+momentum, cap 50, no stop, exit at momentum rank < 0.35.
+Full window 22.2% CAGR / 0.93 Sharpe / -36.3% MaxDD (SPY 14.9%);
+per call 59.2% win, median +3.6%, mean +15.3%, ~6.5-month median hold.
+Open symmetric follow-up: exit rank < 0.35 has not been tested on India.
+
 ## What we learned that wasn't a no
 
 - The engine's `donchian_low_panel` hook works as documented; prior-window

@@ -112,6 +112,20 @@ cap 50, rank priority).
 - [x] Extend the research-note artifact with a two-markets section
       (US series in the brand denim, per the one-engine note).
 
+## Phase 5f — US market-fit grid on expanded universe (founder request 2026-07-24) [🤖]
+
+Universe expanded to S&P 500 union Nasdaq 100 union S&P 400 (mid caps),
+current snapshots, prices via yfinance into us_equities_data/. Lookback
+fixed at 126d (US winner). Grid pre-registered BEFORE any run, 8 arms:
+
+- [x] cap {50, 100} x stop {none, 10 x ATR20(pct) trailing from peak}
+      x exit momentum-rank {0.50, 0.35}
+- [x] Baseline arm = cap 50 / no stop / rank 0.50 (the 5e winner rules)
+      on the expanded universe, for a clean universe-effect read.
+- [x] Overfit guard: report full window AND the 2023-07..2026-05 tail
+      separately; a tweak only counts if it helps in both.
+- [x] Chat-only presentation (no artifact update this phase).
+
 ## Phase 6 — Close-out [👤 + 🤖]
 
 - [x] RESULTS.md: per-hypothesis verdicts, decision line, reproducibility
