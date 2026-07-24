@@ -401,7 +401,12 @@ def get_rebalance_summary(universe: str = "nse500") -> dict:
         upcoming = None
         has_weekly_exit = CADENCE_META.get(cadence_key, CADENCE_META[DEFAULT_CADENCE])[3]
         if anchor:
-            sig = project_next_signal(anchor, cadence_key, today)
+            # ``anchor`` is an EXEC date; ``project_next_signal`` expects the
+            # SIGNAL date. Feeding a Monday exec directly rolls it onto its
+            # own week's Friday and shifts the biweekly parity a week late
+            # (e.g. exec Mon 07-13 → "next" Fri 07-31 instead of Fri 07-24).
+            # Same conversion the scheduler does in ``_is_eod_signal_day``.
+            sig = project_next_signal(_exec_to_signal(anchor), cadence_key, today)
             upcoming = {
                 "signal_date": str(sig),
                 "exec_date": str(next_trading_day_after(sig)),
@@ -579,9 +584,27 @@ def get_rebalance_history(
 
         cadence_exec_dates = {exec_d for _sig, exec_d in cycles}
 
+        # Zero-trade producer runs (typically off-week weekly exit checks that
+        # sold nothing) leave no Trade rows and sit outside the entry-cadence
+        # grid, so without this they vanish from the page the moment their
+        # proposal goes stale. ProposedRebalance records every producer run —
+        # surface its zero-trade exec dates as no-action cycles too.
+        checked_dates = {
+            d for (d,) in db.query(ProposedRebalance.exec_date).filter(
+                ProposedRebalance.universe == universe,
+                ProposedRebalance.exec_date >= earliest_exec,
+                ProposedRebalance.exec_date <= today,
+                ProposedRebalance.sell_count == 0,
+                ProposedRebalance.buy_count == 0,
+            ).all()
+        }
+
         # Union all event dates: expected cadence exec dates + observed trade
-        # dates (the latter may include off-cadence weekly-exit Fridays).
-        all_dates = sorted(cadence_exec_dates | set(agg.keys()), reverse=True)
+        # dates (the latter may include off-cadence weekly-exit Fridays) +
+        # recorded zero-trade checks.
+        all_dates = sorted(
+            cadence_exec_dates | set(agg.keys()) | checked_dates, reverse=True
+        )
 
         history = []
         for d in all_dates:
