@@ -17,6 +17,16 @@ import {
   Sparkles,
 } from "lucide-react";
 
+const fmtDate = (d: string) => {
+  const parsed = new Date(d);
+  if (Number.isNaN(parsed.getTime())) return d;
+  return parsed.toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+};
+
 export function ActionableTrades() {
   const { data, isLoading, error } = useRebalanceUpcoming();
   // Shared SWR cache with the history card below — gives us the next signal
@@ -98,7 +108,9 @@ export function ActionableTrades() {
           <div className="rounded-md border border-dashed px-4 py-6 text-center">
             <p className="text-sm text-muted-foreground">
               {data.available && !data.stale
-                ? "No changes this time — the current leaders are holding their spots, so the portfolio stays as-is."
+                ? data.signal_date
+                  ? `Checked ${fmtDate(data.signal_date)} — no changes. The current leaders are holding their spots, so the portfolio stays as-is.`
+                  : "No changes this time — the current leaders are holding their spots, so the portfolio stays as-is."
                 : "We're between rebalances right now. When the next signal lands, the exact buys and sells will appear here — that's the moment worth watching for. The most recent reshuffle is in the history below."}
             </p>
           </div>
