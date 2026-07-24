@@ -290,6 +290,29 @@ Full window 22.2% CAGR / 0.93 Sharpe / -36.3% MaxDD (SPY 14.9%);
 per call 59.2% win, median +3.6%, mean +15.3%, ~6.5-month median hold.
 Open symmetric follow-up: exit rank < 0.35 has not been tested on India.
 
+## H4g — Mid-caps standalone + India exit-rank test (2026-07-24)
+
+Run dir: `runs/h4g_20260724_150137/`. Regression check passed: the
+xr50 India arms reproduce h4c numbers exactly (1,377 calls, 32.64/1.496;
+1,877 calls, 30.48/1.557).
+
+A. **US mid caps as a standalone universe: rejected, third strike.**
+SP400-only, cap 50, no stop: 18.3-18.4% CAGR, Sharpe 0.63-0.65,
+MaxDD -42/-45%, win ~49-51%. Worse than the large-cap arm on every
+metric (22.2% / 0.93 / -36.3 / 59.2%). Beats SPY on CAGR but with far
+more pain. Mid-cap question closed (mixed-pool, split-stats, and
+standalone reads all agree).
+
+B. **Exit rank 0.35 on India: generalizes — prediction wrong.** It was
+expected to fail as a US-only market fit. Instead: portfolio Sharpe
+~unchanged without the stop (1.489 vs 1.496) and slightly BETTER with
+it (1.573 vs 1.557, same -24.6% DD), clearly better tail in all pairs,
+and much better call economics (no-stop mean +35.3% vs +24.4%, median
++3.45% vs +1.61%). The slow exit is an engine improvement, not market
+fit. **India recommended config updates to: momq(0.35) + 20% trail —
+30.0% CAGR / 1.57 Sharpe / -24.6% MaxDD.** US keeps: momq(0.35), no
+stop. The two markets now differ only in the stop.
+
 ## What we learned that wasn't a no
 
 - The engine's `donchian_low_panel` hook works as documented; prior-window
