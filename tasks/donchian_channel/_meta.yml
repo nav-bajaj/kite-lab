@@ -1,8 +1,16 @@
 name: donchian_channel
-status: in-progress   # experiments complete; awaiting founder review of RESULTS.md
+status: shipped
 opened: 2026-07-22
-closed: null
-related_commits: []
+closed: 2026-07-24
+related_commits:
+  - 3a9c4b5   # open: literature + plan
+  - 5b018e5   # H1-H4 experiments
+  - 2e5412e   # H4b exit sweep
+  - 60b7d82   # H4c productization grid
+  - 3e60d8c   # H4e US comparative
+  - a11951f   # H4f US market-fit
+  - e227b2f   # H4g midcap + India xr35
+  - 8d3d05c   # H4h India flow grid
 supersedes: []
 depends_on:
   - om25_alt
