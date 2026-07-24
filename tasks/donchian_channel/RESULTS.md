@@ -219,6 +219,43 @@ Findings:
 
 Mint-brand tearsheet artifact published (grid + winner deep dive).
 
+## H4e — US comparative study (founder iteration 3, 2026-07-24)
+
+Same rules on S&P 500 union Nasdaq 100 (514 symbols), identical window,
+costs, and 50-cap. Data: yfinance rebuild of the decluttered EODHD panel
+(sub lapsed 401); parity vs the 4 surviving EODHD trial files is exact
+(return corr 1.00000, 0.00% median close diff). Benchmark SPY.
+Run dir: `runs/h4e_20260724_142058/`.
+
+| arm | win% | mean | median | CAGR | Sharpe | MaxDD | Calmar |
+|---|---|---|---|---|---|---|---|
+| us 126d momq | 55.4 | +10.5 | +1.7 | **21.9** | **0.94** | -32.2 | 0.68 |
+| us 126d momq+ts20 | 52.8 | +7.7 | +0.9 | 18.1 | 0.83 | **-21.0** | **0.86** |
+| us 252d momq | 56.7 | +18.7 | +4.3 | 19.7 | 0.79 | -37.1 | 0.53 |
+| us 252d momq+ts20 | 52.3 | +11.0 | +1.0 | 16.5 | 0.73 | -21.4 | 0.77 |
+
+Findings:
+
+1. **The strategy transfers.** Every US arm beats SPY (14.9% CAGR over
+   the window) by 2-7pp/yr. $1 -> $23.4 in the best arm vs $9.1 for SPY.
+   Consistent with the us_equities_2017 finding that momentum signals
+   generalize to US large caps.
+2. **India pays roughly double per unit of risk.** Best-arm Sharpe 1.56
+   (India) vs 0.94 (US); CAGR 30.5% vs 21.9%. Same engine, richer fuel.
+3. **The market picks a different winner.** US best arm is 126d + plain
+   momq (no stop); the 20% trail cuts DD (-32 -> -21) but costs Sharpe
+   (0.94 -> 0.83), the opposite of India where the stop improved
+   risk-adjusted returns. US large caps whipsaw through 20% dips.
+4. **US per-call stats are friendlier, tails thinner.** 55.4% win rate
+   and a positive median call (+1.65%) even at 126d, but p95 +58% vs
+   India's +96%.
+5. **Diversification is real: monthly winner-vs-winner correlation 0.34.**
+6. Capacity binds harder in the US (days-at-cap 90-96%, ~25k skipped
+   breakouts) — a larger cap is worth testing if a US sleeve ever matters.
+
+Artifact updated with a "same rules in America" section (comparison
+table, indexed overlay, disclosure of the data-source swap).
+
 ## What we learned that wasn't a no
 
 - The engine's `donchian_low_panel` hook works as documented; prior-window
