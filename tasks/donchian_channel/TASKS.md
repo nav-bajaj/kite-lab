@@ -126,6 +126,19 @@ fixed at 126d (US winner). Grid pre-registered BEFORE any run, 8 arms:
       separately; a tweak only counts if it helps in both.
 - [x] Chat-only presentation (no artifact update this phase).
 
+## Phase 5g — India call-flow grid (founder request 2026-07-24) [🤖]
+
+Goal: more calls/year for the India xr35/no-stop config without giving
+up its economics. Fixed: NSE 500, 20d breakout (unless varied), 126d
+momentum, exit rank 0.35, no stop. Grid pre-registered:
+
+- [x] cap sweep {75, 100, 150} vs cap 50 baseline
+- [x] at cap 100: entry channel 10d (more signals) as separate arm
+- [x] at cap 100: momentum floor 0.60 (top 40%) as separate arm
+- [x] per arm: calls/yr, mean new calls/week, % weeks with >= 1 new
+      call, plus standard full-window + tail metrics
+- [x] chat-only presentation
+
 ## Phase 6 — Close-out [👤 + 🤖]
 
 - [x] RESULTS.md: per-hypothesis verdicts, decision line, reproducibility

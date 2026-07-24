@@ -313,6 +313,28 @@ fit. **India recommended config updates to: momq(0.35) + 20% trail —
 30.0% CAGR / 1.57 Sharpe / -24.6% MaxDD.** US keeps: momq(0.35), no
 stop. The two markets now differ only in the stop.
 
+## H4h — India call-flow grid (2026-07-24)
+
+Goal: more calls/yr for the xr35/no-stop India config. Grid: cap
+{50, 75, 100, 150} + at cap 100 a 10d entry channel and a 0.60
+momentum floor. Run dir: `runs/h4h_20260724_150710/`.
+
+- **Cap 100 is the flow sweet spot**: 128 calls/yr (2.6/week, a fresh
+  call in 88% of weeks) vs 62/yr at cap 50, for -2.5pp CAGR and -0.09
+  Sharpe full-window — while the 2023+ tail is BETTER than cap 50
+  (34.6%/1.49 vs 34.0%/1.39; the dilution lives in the early years
+  when universe coverage was thin). Mean call barely moves (+32.5% vs
+  +35.3%); median softens (+1.45% vs +3.45%).
+- **Cap 150 is the cliff**: CAGR 23.9%, Sharpe 1.22 — beyond ~100
+  slots the marginal breakout is junk (cap binds only 15% of days).
+- **Signal-widening does nothing at cap 100**: 10d entry (+3 calls/yr,
+  same metrics) and 0.60 floor (slightly worse everywhere) both
+  rejected — the system is slot-bound, not signal-bound.
+- Product recommendation: cap 100 for the subscriber feed; cap 75
+  (95/yr, -1.7pp CAGR) if protecting the headline matters more. A
+  watchlist tier of qualified-but-unslotted breakouts remains free
+  extra flow with no portfolio claim attached.
+
 ## What we learned that wasn't a no
 
 - The engine's `donchian_low_panel` hook works as documented; prior-window
