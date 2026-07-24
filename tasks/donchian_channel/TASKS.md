@@ -92,6 +92,26 @@ Grid (2 x 2 x 2 = 8 arms, pre-registered):
 - [x] Mint-brand HTML tearsheet (marketworks-design mint palette,
       midnight dark), published as artifact.
 
+## Phase 5e — US comparative study (founder request 2026-07-24) [🤖]
+
+Same rules, US large caps: universe = S&P 500 union Nasdaq 100 (516
+symbols, data/static/us_equities_universe.csv, current-snapshot
+survivorship as in the India arms). Data source: EODHD subscription
+lapsed (401) and us_equities_data/ was decluttered -> refetch via
+yfinance (adjusted OHLCV), disclosed in all outputs. Benchmark SPY.
+Window, costs, cap identical to Phase 5c (2010-06..2026-05-08, 20bps,
+cap 50, rank priority).
+
+- [x] Rebuild us_equities_data/ from yfinance; sanity: symbol count,
+      AAPL split-adjustment spot-check, coverage by year.
+- [x] Grid: lookback {126d, 252d} x exit {momq, momq_ts20} (4 arms,
+      matching the India NSE 500 arms exactly).
+- [x] Comparison: arm-by-arm India vs US table, winner-vs-winner equity
+      overlay (indexed), yearly record for the US winner, hold-bucket
+      economics, monthly-return correlation between markets.
+- [x] Extend the research-note artifact with a two-markets section
+      (US series in the brand denim, per the one-engine note).
+
 ## Phase 6 — Close-out [👤 + 🤖]
 
 - [x] RESULTS.md: per-hypothesis verdicts, decision line, reproducibility
