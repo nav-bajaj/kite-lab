@@ -45,20 +45,49 @@ class TestRealMap:
         assert "TCS" in rev["Software Services"]
         assert all(isinstance(v, tuple) for v in rev.values())
 
+    def test_super_sector_rollup(self):
+        # Fine sectors roll up into the coarser 15-bucket study layer.
+        assert zerodha_sectors.get_super_sector_for("HDFCBANK") == "Financials"
+        assert zerodha_sectors.get_super_sector_for("TCS") == "IT & Internet"
+        # Media Entertainment (a thin 4-name fine sector) folds into IT & Internet.
+        assert zerodha_sectors.get_super_sector_for("SUNTV") == "IT & Internet"
+
+    def test_super_sector_reverse_index_is_coarser(self):
+        fine = zerodha_sectors.get_sector_to_symbols()
+        supers = zerodha_sectors.get_super_sector_to_symbols()
+        assert len(supers) <= 15
+        assert len(supers) < len(fine)  # strictly coarser than the fine level
+        assert "TCS" in supers["IT & Internet"]
+
+    def test_super_sectors_stay_within_known_15(self):
+        # Guard against taxonomy drift: every super-sector in the live map must
+        # be one of the 15 defined buckets (no silent fallback leakage).
+        known = {
+            "Financials", "Industrials & Capital Goods", "Healthcare",
+            "IT & Internet", "Automobile & Ancillaries", "Energy",
+            "FMCG / Staples", "Real Estate & Building", "Materials & Chemicals",
+            "Consumer Discretionary", "Metals & Mining", "Transport & Logistics",
+            "Telecom", "Tourism & Hospitality", "Diversified / Other",
+        }
+        got = set(zerodha_sectors.get_super_sector_to_symbols())
+        assert got <= known, f"unexpected super-sectors: {got - known}"
+
 
 class TestHermetic:
     def test_parse_and_cache_invalidation(self, tmp_path: Path, monkeypatch):
         csv_path = tmp_path / "zerodha_sectors.csv"
         monkeypatch.setattr(zerodha_sectors, "_path", lambda: csv_path)
 
-        header = "symbol,company,zerodha_sector,zerodha_sector_slug,source_exchange\n"
+        header = ("symbol,company,zerodha_sector,zerodha_sector_slug,"
+                  "super_sector,source_exchange\n")
         csv_path.write_text(
             header
-            + "AAA,Alpha Ltd.,Metals,metals,NSE\n"
-            + "BBB,Beta Ltd.,,,\n"  # unresolved: no sector -> skipped
+            + "AAA,Alpha Ltd.,Metals,metals,Metals & Mining,NSE\n"
+            + "BBB,Beta Ltd.,,,,\n"  # unresolved: no sector -> skipped
         )
         zerodha_sectors.clear_cache()
         assert zerodha_sectors.get_sector_for("AAA") == "Metals"
+        assert zerodha_sectors.get_super_sector_for("AAA") == "Metals & Mining"
         assert zerodha_sectors.get_sector_for("BBB") is None  # blank skipped
 
         # Rewriting the file changes its mtime signature -> cache self-busts,
@@ -66,10 +95,12 @@ class TestHermetic:
         import os
         import time
 
-        csv_path.write_text(header + "AAA,Alpha Ltd.,Chemicals,chemicals,NSE\n")
+        csv_path.write_text(
+            header + "AAA,Alpha Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE\n")
         future = time.time() + 5
         os.utime(csv_path, (future, future))
         assert zerodha_sectors.get_sector_for("AAA") == "Chemicals"
+        assert zerodha_sectors.get_super_sector_for("AAA") == "Materials & Chemicals"
 
     def test_missing_file_raises(self, tmp_path: Path, monkeypatch):
         monkeypatch.setattr(zerodha_sectors, "_path", lambda: tmp_path / "nope.csv")
