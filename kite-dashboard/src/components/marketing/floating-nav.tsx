@@ -47,7 +47,7 @@ export function FloatingNav() {
         scrolled ? "pt-2" : "pt-4 sm:pt-5",
       )}
     >
-      <nav className="w-full max-w-[1080px] rounded-3xl border border-foreground/8 bg-white/80 shadow-sm backdrop-blur-md">
+      <nav className="w-full max-w-[1080px] rounded-3xl border border-foreground/8 bg-card/80 shadow-sm backdrop-blur-md">
         {/* Fixed row height so the bar is identical signed-in vs signed-out
             (the beta CTA is taller than the avatar/Dashboard link). */}
         <div className="grid h-14 grid-cols-[1fr_auto_1fr] items-center px-5">

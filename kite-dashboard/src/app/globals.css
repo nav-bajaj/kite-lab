@@ -153,70 +153,26 @@
 /* ---------------------------------------------------------------------------
  * Marketworks brand surface (.mw-brand)
  *
- * Editorial scope for the public marketing/content surfaces. Since the
- * palette system (2026.07.23) the role tokens flow globally from the
- * vendored design sheets, so this class no longer re-pins colors — light
- * palettes theme these surfaces too. It keeps the brand font opt-in, and
- * the `.dark .mw-brand` block below re-pins the FULL light-Mint set so
- * editorial surfaces stay light-locked against Midnight (DESIGN.md §13).
+ * Editorial scope for the public marketing/content surfaces. Fully
+ * palette-transparent: role/surface/accent tokens flow from the vendored
+ * design sheets for ALL palettes, including Midnight — the palette is the
+ * user's choice of how the whole site looks, so a Midnight user gets dark
+ * editorial pages too (light-lock retired 2026-07-25 by product decision;
+ * previously these surfaces pinned light Mint under .dark).
  * ------------------------------------------------------------------------ */
 .mw-brand {
-  /* Palette-transparent since the palette system (2026.07.23): role tokens
-   * flow from the vendored sheets, so Ocean/Amber/Coral/Charcoal marketing
-   * pages theme with the user's palette. Only the DARK theme is pinned back
-   * to light Mint below — editorial surfaces stay light-locked (§13). */
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
-}
-
-/* Light-lock vs Midnight: a dark root re-pins the editorial surface to light
- * Mint (role + surface + rotation + chart tokens — the full Mint set). */
-.dark .mw-brand {
-  --background: #F0F7F3;
-  --foreground: #1A1A1A;
-  --card: #FFFFFF;
-  --card-foreground: #1A1A1A;
-  --popover: #FFFFFF;
-  --popover-foreground: #1A1A1A;
-  --primary: #0C7A62;
-  --primary-foreground: #F0F7F3;
-  --secondary: #55C374;
-  --secondary-foreground: #1A1A1A;
-  --accent: #9750F8;
-  --accent-foreground: #FFFFFF;
-  --muted: #F5F5F5;
-  --muted-foreground: #737373;
-  --destructive: #A64C42;
-  --destructive-foreground: #FFFFFF;
-  --border: #D4D4D4;
-  --input: #D4D4D4;
-  --ring: #0C7A62;
-  --surface-base: #FCFDFD;
-  --surface-panel-mist: #F0F7F3;
-  --surface-panel-tint: #F6FAF8;
-  --surface-panel-deep: #0E3B32;
-  --acc1-bg: #EAF4EC; --acc1-line: #9CCCA9; --acc1-fg: #2E6B44;
-  --acc2-bg: #FBF1DC; --acc2-line: #E8C27A; --acc2-fg: #7A5A18;
-  --acc3-bg: #E8F1FA; --acc3-line: #96BFE3; --acc3-fg: #2D5A85;
-  --acc4-bg: #F1EBFB; --acc4-line: #C3A8EE; --acc4-fg: #5C3A9E;
-  --acc5-bg: #E5F3F1; --acc5-line: #8BC8BF; --acc5-fg: #1F645B;
-  --acc6-bg: #FAECEF; --acc6-line: #E5A3B3; --acc6-fg: #8E3A52;
-  --wash1: #ECF5EE; --wash2: #FBF3E1; --wash3: #F1ECFA;
-  --chart-series-1: #0C7A62;
-  --chart-series-2: #AD741C;
-  --chart-series-3: #8C9490;
-  --chart-axis: #737373;
-  --chart-grid-line: #D4D4D4;
-  --chart-positive: #3F8059;
-  --chart-negative: #A64C42;
-  --display-accent: #0C7A62;
 }
 
 /* Strong body ink (neutral-900) for long-form prose, per the guide's
  * reading-page board. */
 .mw-brand {
   --brand-prose: #171717;
+}
+.dark .mw-brand {
+  --brand-prose: var(--foreground);
 }
 
 /* ---------------------------------------------------------------------------

@@ -1,12 +1,12 @@
-/* VENDORED from marketworks-design@1995f4d (src/styles.css) — do not hand-edit.
+/* VENDORED from marketworks-design@2734439 (src/styles.css) — do not hand-edit.
  * Re-sync: node scripts/sync-design-tokens.mjs */
 /**
  * @marketworks/design — token stylesheet.
  *
  * Ships role tokens in two themes:
- *   :root   — light theme (default for /library, social, marketing)
- *   .dark   — dark theme (dashboard only; never applied to
- *             light-locked surfaces)
+ *   :root   — light theme (Mint, the default everywhere)
+ *   .dark   — dark theme (Midnight; applies wherever the user's palette
+ *             says so — the palette is a whole-site choice)
  *
  * Consumers import this once:
  *
@@ -69,8 +69,9 @@
   --brand-marigold:     #E8A33D;
   --brand-ink:          #1A1A1A;
 
-  /* Layered marketing surface & depth (DESIGN.md §2.5) — light-locked.
-     Near-white base with mist/tint/deep as INSET panels; ink-tinted shadows. */
+  /* Layered marketing surface & depth (DESIGN.md §2.5).
+     Near-white base with mist/tint/deep as INSET panels; ink-tinted shadows.
+     Dark equivalents ship in the midnight palette block (palettes.css). */
   --surface-base:       #FCFDFD;
   --surface-panel-mist: #F0F7F3;
   --surface-panel-tint: #F6FAF8;
@@ -155,9 +156,10 @@
  * Applied on the authenticated dashboard surface via next-themes, and
  * doubles as the `midnight` palette (src/palettes.css re-emits these
  * values under [data-palette="midnight"] together with its surface,
- * accent-rotation, wash, and chart-series layers). /library, social,
- * landing, and signup are light-locked and must not opt into `.dark`.
- * See DESIGN.md §13 for the surface→mode map.
+ * accent-rotation, wash, and chart-series layers). Applies site-wide when
+ * the user picks Midnight — the editorial light-lock was retired
+ * 2026.07.25 (product decision: the palette is the user's whole-site
+ * preference). Social/render assets remain light Mint by pipeline policy.
  */
 .dark {
   --background: #0C1219;
