@@ -43,6 +43,112 @@ const inr = (v: number) =>
 
 const inrSigned = (v: number) => (v >= 0 ? `+${inr(v)}` : `-${inr(Math.abs(v))}`);
 
+const groupDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-IN", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+
+const realizedOf = (t: Trade) =>
+  t.matches?.reduce((sum, m) => sum + m.realized_pnl, 0) ?? 0;
+
+/** Mobile trade log (UX study D2): trades grouped by rebalance date, the
+ *  group's net realized P&L in its header, values labeled in words. */
+function MobileTradeGroups({ trades }: { trades: Trade[] }) {
+  const groups: { date: string; trades: Trade[]; realized: number }[] = [];
+  for (const trade of trades) {
+    const last = groups[groups.length - 1];
+    if (last && last.date === trade.date) {
+      last.trades.push(trade);
+      last.realized += realizedOf(trade);
+    } else {
+      groups.push({ date: trade.date, trades: [trade], realized: realizedOf(trade) });
+    }
+  }
+
+  return (
+    <div className="overflow-hidden rounded-md border">
+      {groups.map((group) => (
+        <div key={group.date}>
+          <div className="flex items-center justify-between bg-muted/60 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            <span>{groupDate(group.date)}</span>
+            {group.realized !== 0 && (
+              <span
+                className={cn(
+                  "tabular-nums",
+                  group.realized >= 0
+                    ? "text-[color:var(--positive)]"
+                    : "text-[color:var(--negative)]",
+                )}
+              >
+                {inrSigned(group.realized)}
+              </span>
+            )}
+          </div>
+          {group.trades.map((trade) => {
+            const realized = realizedOf(trade);
+            const isSellWithPnl =
+              trade.side === "SELL" && (trade.matches?.length ?? 0) > 0;
+            return (
+              <div
+                key={trade.id}
+                className="flex items-center justify-between border-t px-3 py-2.5"
+              >
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={cn(
+                        "rounded px-1.5 py-px text-[10px] font-bold tracking-[0.06em]",
+                        trade.side === "BUY"
+                          ? "bg-[color:var(--positive)]/12 text-[color:var(--positive)]"
+                          : "bg-[color:var(--negative)]/12 text-[color:var(--negative)]",
+                      )}
+                    >
+                      {trade.side}
+                    </span>
+                    <span className="text-sm font-semibold">{trade.symbol}</span>
+                  </div>
+                  <div className="mt-0.5 text-xs text-muted-foreground tabular-nums">
+                    {trade.shares.toLocaleString()} × {inr(trade.price)}
+                  </div>
+                </div>
+                <div className="text-right tabular-nums">
+                  {isSellWithPnl ? (
+                    <>
+                      <div
+                        className={cn(
+                          "text-sm font-semibold",
+                          realized >= 0
+                            ? "text-[color:var(--positive)]"
+                            : "text-[color:var(--negative)]",
+                        )}
+                      >
+                        {inrSigned(realized)}
+                      </div>
+                      <div className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">
+                        realized
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-sm font-medium">{inr(trade.notional)}</div>
+                      <div className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">
+                        notional
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function TradesTable() {
   const [page, setPage] = useState(0);
   const [symbol, setSymbol] = useState("");
@@ -133,7 +239,12 @@ export function TradesTable() {
           </div>
         ) : (
           <>
-            <div className="rounded-md border">
+            {/* Mobile (UX study D2): grouped by rebalance date */}
+            <div className="md:hidden">
+              <MobileTradeGroups trades={trades} />
+            </div>
+
+            <div className="hidden rounded-md border md:block">
               <Table>
                 <TableHeader>
                   <TableRow>
