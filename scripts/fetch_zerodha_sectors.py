@@ -64,9 +64,78 @@ UNIVERSE_FILES = [
 
 _ACRONYMS = {"it": "IT", "fmcg": "FMCG", "nbfc": "NBFC"}
 
+# Coarser, study-oriented rollup: Zerodha's 35 fine sectors -> 15 economically
+# coherent super-sectors, each with enough constituents to judge/compare sector
+# performance (the finest fine-sectors have 1-4 names). Keys are the fine-sector
+# display names emitted by slug_to_name(); this covers all 35 Zerodha sectors,
+# including ones not currently in our universe, so future universe changes map
+# cleanly. The fine `zerodha_sector` label is preserved alongside for identity.
+SUPER_SECTORS: dict[str, str] = {
+    # Financials
+    "Financial Services": "Financials",
+    "NBFC": "Financials",
+    # Industrials & Capital Goods
+    "Engineering Capital Goods": "Industrials & Capital Goods",
+    "Defence": "Industrials & Capital Goods",
+    # Healthcare
+    "Healthcare": "Healthcare",
+    # IT & Internet (Zerodha "IT" and "Services" are internet platforms)
+    "Software Services": "IT & Internet",
+    "IT": "IT & Internet",
+    "Services": "IT & Internet",
+    "Media Entertainment": "IT & Internet",
+    # Automobile & Ancillaries
+    "Automobile": "Automobile & Ancillaries",
+    "Auto Ancillary": "Automobile & Ancillaries",
+    # Energy (incl. solar equipment as energy-transition)
+    "Energy": "Energy",
+    "Solar Panel": "Energy",
+    # FMCG / Staples
+    "FMCG": "FMCG / Staples",
+    "Agriculture": "FMCG / Staples",
+    "Dairy Products": "FMCG / Staples",
+    # Real Estate & Building (pipes are building products)
+    "Real Estate": "Real Estate & Building",
+    "Building Materials": "Real Estate & Building",
+    "Plastic Pipes": "Real Estate & Building",
+    # Materials & Chemicals (fertilizers = agrichem; packaging materials)
+    "Chemicals": "Materials & Chemicals",
+    "Fertilizers": "Materials & Chemicals",
+    "Packaging": "Materials & Chemicals",
+    # Consumer Discretionary
+    "Retail": "Consumer Discretionary",
+    "Consumer Durables": "Consumer Discretionary",
+    "Textiles": "Consumer Discretionary",
+    # Metals & Mining
+    "Metals": "Metals & Mining",
+    "Silver": "Metals & Mining",
+    # Transport & Logistics
+    "Logistics": "Transport & Logistics",
+    "Aviation": "Transport & Logistics",
+    # Standalone themes with enough names on their own
+    "Telecom": "Telecom",
+    "Tourism Hospitality": "Tourism & Hospitality",
+    # Diversified / Other (conglomerates + genuine orphans)
+    "Diversified": "Diversified / Other",
+    "Trading": "Diversified / Other",
+    "Education Training": "Diversified / Other",
+    "Miscellaneous": "Diversified / Other",
+}
+
+# Fallback bucket for any fine sector not in the map above (keeps the pipeline
+# from silently emitting a blank super-sector if Zerodha adds a new category).
+_SUPER_FALLBACK = "Diversified / Other"
+
 
 def slug_to_name(slug: str) -> str:
     return _ACRONYMS.get(slug, slug.replace("-", " ").title())
+
+
+def super_sector_for(fine_sector: str) -> str:
+    """Map a fine Zerodha sector display name to its study super-sector."""
+    if not fine_sector:
+        return ""
+    return SUPER_SECTORS.get(fine_sector, _SUPER_FALLBACK)
 
 
 def load_tracked() -> dict[str, str]:
@@ -127,11 +196,13 @@ def main() -> int:
     rows, unmatched = [], []
     for sym in symbols:
         slug, exch = resolved[sym]
+        fine = slug_to_name(slug) if slug else ""
         rows.append({
             "symbol": sym,
             "company": meta.get(sym, ""),
-            "zerodha_sector": slug_to_name(slug) if slug else "",
+            "zerodha_sector": fine,
             "zerodha_sector_slug": slug,
+            "super_sector": super_sector_for(fine),
             "source_exchange": exch,
         })
         if not slug:
@@ -150,7 +221,7 @@ def main() -> int:
     else:
         STATIC_DIR.mkdir(parents=True, exist_ok=True)
         fields = ["symbol", "company", "zerodha_sector",
-                  "zerodha_sector_slug", "source_exchange"]
+                  "zerodha_sector_slug", "super_sector", "source_exchange"]
         with OUT_PATH.open("w", newline="") as fh:
             w = csv.DictWriter(fh, fieldnames=fields)
             w.writeheader()

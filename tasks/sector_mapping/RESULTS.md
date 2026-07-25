@@ -97,3 +97,35 @@ above remain as research history; the production versions are:
   the NSE index baskets kept as a secondary clause.
 - Tests: `test_insights_api.py::TestScreenerEndpoint::test_zerodha_sector_present`
   asserts ≥95% of screener rows carry the field. Frontend `npm run build` clean.
+
+### Super-sector study rollup (2026-07-25)
+
+The fine Zerodha taxonomy is unevenly grained — over-split at the tail
+(Aviation=2, Media=4) and over-lumped at the head (Financial Services=100).
+For sector-performance studies the thin buckets are unusable, so a coarser
+**15-bucket super-sector** layer now rolls the 35 fine sectors up into
+economically coherent groups, each with >=8 constituents (min bucket 8; largest
+is Financials 101). Additive — the fine `zerodha_sector` stays for identity,
+`super_sector` is the study level.
+
+- `scripts/fetch_zerodha_sectors.py` — `SUPER_SECTORS` map (all 35 fine sectors,
+  incl. ones not yet in the universe) + `super_sector_for()`; writes a new
+  `super_sector` column. Unknown future sectors fall back to `Diversified / Other`.
+- `data/static/zerodha_sectors.csv` — gains the `super_sector` column (derived
+  from the existing fine sector, no re-scrape; existing values unchanged).
+- Loader — `get_super_sector_for()`, `get_symbol_to_super_sector()`,
+  `get_super_sector_to_symbols()` (coarse reverse index for studies).
+- API — rows carry `super_sector` alongside `zerodha_sector` (screener +
+  stock-detail). Stock-detail header shows it when it differs from the fine sector.
+- Tests — rollup anchors (SUNTV/INDIGO fold up), coarser-than-fine invariant, a
+  drift guard (super-sectors must stay within the known 15), + API assertion.
+
+The 15 buckets (counts on the 502-name `main` snapshot): Financials 101,
+Industrials & Capital Goods 74, Healthcare 49, IT & Internet 43, Automobile &
+Ancillaries 35, Energy 32, FMCG / Staples 32, Real Estate & Building 29,
+Materials & Chemicals 26, Consumer Discretionary 24, Metals & Mining 21,
+Transport & Logistics 11, Telecom 9, Tourism & Hospitality 8, Diversified /
+Other 8.
+
+Deferred: splitting the oversized Financials bucket (Banks / NBFC / Insurance /
+Capital Markets) needs a sub-classification source Zerodha doesn't cleanly give.

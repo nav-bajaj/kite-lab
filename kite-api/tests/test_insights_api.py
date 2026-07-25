@@ -219,6 +219,16 @@ class TestScreenerEndpoint:
         assert len(with_sector) / len(rows) >= 0.95
         assert isinstance(with_sector[0]["zerodha_sector"], str)
 
+    def test_super_sector_present_and_coarser(self, client):
+        """Rows also carry the coarser study super-sector; the super level has
+        far fewer distinct values than the fine level."""
+        rows = client.get("/api/insights/screener").json()["rows"]
+        with_super = [r for r in rows if r.get("super_sector")]
+        assert len(with_super) / len(rows) >= 0.95
+        fine = {r["zerodha_sector"] for r in rows if r.get("zerodha_sector")}
+        supers = {r["super_sector"] for r in with_super}
+        assert len(supers) <= 15 < len(fine)
+
     def test_payload_under_budget(self, client):
         """~500-row payload must stay under the 500 KB contract budget."""
         r = client.get("/api/insights/screener")
