@@ -18,9 +18,9 @@ function variantClasses(variant: Variant): string {
     case "tint":
       return "bg-surface-panel-tint text-foreground";
     case "lichen":
-      return "bg-primary text-primary-foreground";
+      return "bg-primary text-primary-foreground mw-panel-texture";
     case "deep":
-      return "bg-surface-panel-deep text-primary-foreground";
+      return "bg-surface-panel-deep text-primary-foreground mw-panel-texture";
   }
 }
 

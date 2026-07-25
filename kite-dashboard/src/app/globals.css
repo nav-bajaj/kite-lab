@@ -270,6 +270,20 @@
   .mw-reveal[data-reveal="hidden"] { opacity: 1; transform: none; }
 }
 
+/* Dark-panel texture (palette system, DESIGN.md §2.6): a soft glow in the
+ * palette's secondary color from the top corner + a faint dot grid. Token-
+ * driven, so every palette self-themes it (signal-green on deep lichen,
+ * signal-blue on navy, peach on sea-teal). Tuned in the theme exploration:
+ * stronger glows wash the panel out and dull the text. Applied by
+ * SectionPanel to its dark variants; background-color comes from the
+ * variant class. */
+.mw-panel-texture {
+  background-image:
+    radial-gradient(640px 360px at 88% -14%, color-mix(in srgb, var(--secondary) 11%, transparent), transparent 55%),
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 1.6px);
+  background-size: auto, 26px 26px;
+}
+
 /* Editorial halftone dot-screen (decorative). currentColor sets dot colour. */
 .mw-halftone {
   background-image: radial-gradient(circle, currentColor 1px, transparent 1.7px);

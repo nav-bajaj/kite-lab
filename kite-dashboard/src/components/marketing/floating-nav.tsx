@@ -6,6 +6,7 @@ import { useAuth, UserButton } from "@clerk/nextjs";
 import { Menu, X } from "lucide-react";
 
 import { INSIGHTS_ACCESS } from "@/lib/flags";
+import { PalettePicker } from "@/components/shared/palette-picker";
 import { cn } from "@/lib/utils";
 
 // Same public link set as the legacy MarketingNav — Insights only advertised on
@@ -70,6 +71,11 @@ export function FloatingNav() {
           </div>
 
           <div className="flex items-center justify-self-end gap-3">
+            {/* Palette picker — signed-out choices persist per device;
+                signed-in choices roam via Clerk (PaletteSync). */}
+            <span className="hidden sm:inline-flex">
+              <PalettePicker />
+            </span>
             {showSignedIn ? (
               <>
                 <Link
@@ -90,7 +96,7 @@ export function FloatingNav() {
                 </Link>
                 <Link
                   href="/sign-up"
-                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-[transform,box-shadow] duration-200 ease-expo hover:-translate-y-px hover:shadow-[0_6px_18px_-6px_rgba(20,113,95,0.5)]"
+                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-[transform,box-shadow] duration-200 ease-expo hover:-translate-y-px hover:shadow-[0_6px_18px_-6px_color-mix(in_oklab,var(--primary)_50%,transparent)]"
                 >
                   Get beta access
                 </Link>

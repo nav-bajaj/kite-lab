@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -18,11 +18,33 @@ import { cn } from "@/lib/utils";
  * up-and-right with a halftone-shaded area. Scoped to its parent (the hero
  * section) and transparent — the page-wide FlowGrid shows through underneath.
  * Autonomous (not scroll-driven); static under reduced-motion; pauses on hidden
- * tab. Purely decorative (aria-hidden). Brand-exact colours only.
+ * tab. Purely decorative (aria-hidden). Palette-exact colours: the two
+ * channel strings are resolved from --primary/--secondary at mount and
+ * re-resolved when the palette changes (canvas can't consume CSS vars).
  */
 
-const LICHEN = "20,113,95"; // #14715F
-const SIGNAL = "85,195,116"; // #55C374
+// Resolved at runtime from the palette tokens; Mint values as SSR-safe
+// fallbacks. Module-level because the draw closures template them per frame.
+let LICHEN = "12,122,98"; // --primary fallback (#0C7A62)
+let SIGNAL = "85,195,116"; // --secondary fallback (#55C374)
+
+function cssColorToChannels(v: string): string | null {
+  const value = v.trim();
+  const hex = /^#([0-9a-f]{6})$/i.exec(value);
+  if (hex) {
+    const n = parseInt(hex[1], 16);
+    return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`;
+  }
+  const rgb = /^rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/.exec(value);
+  if (rgb) return `${rgb[1]},${rgb[2]},${rgb[3]}`;
+  return null;
+}
+
+function resolveFlowColors(el: HTMLElement) {
+  const cs = getComputedStyle(el);
+  LICHEN = cssColorToChannels(cs.getPropertyValue("--primary")) ?? LICHEN;
+  SIGNAL = cssColorToChannels(cs.getPropertyValue("--secondary")) ?? SIGNAL;
+}
 
 // ---- convergence node (fraction of the hero box) ----
 const NODE_X = 0.5;
@@ -132,12 +154,26 @@ function growthValue(g: number) {
 
 export function HeroFlow({ className }: { className?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
+  // Bumped when the palette (class / data-palette on <html>) changes so the
+  // main effect re-inits with re-resolved colors + a rebuilt halftone pattern.
+  const [paletteEpoch, setPaletteEpoch] = useState(0);
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => setPaletteEpoch((e) => e + 1));
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class", "data-palette"],
+    });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+
+    resolveFlowColors(canvas);
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -469,7 +505,7 @@ export function HeroFlow({ className }: { className?: string }) {
       ro.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, []);
+  }, [paletteEpoch]);
 
   return (
     <canvas

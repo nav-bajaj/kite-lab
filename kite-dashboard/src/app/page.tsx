@@ -47,6 +47,15 @@ const STEPS = [
   },
 ];
 
+// Accent rotation for sibling portfolio cards (DESIGN.md §2.6) — static
+// class strings so Tailwind sees them at build time.
+const CARD_ACCENTS = [
+  "border-acc1-line bg-acc1 text-acc1-fg",
+  "border-acc2-line bg-acc2 text-acc2-fg",
+  "border-acc4-line bg-acc4 text-acc4-fg",
+  "border-acc5-line bg-acc5 text-acc5-fg",
+] as const;
+
 export default async function LandingPage() {
   const portfolios = Object.values(UNIVERSES).filter((u) => u.clientVisible);
   // Signed-in visitors already have access, so send them straight to the app.
@@ -71,7 +80,7 @@ export default async function LandingPage() {
               </span>
               <h1 className="mt-5 font-serif text-[2.75rem] font-medium leading-[1.03] tracking-[-0.02em] text-balance text-foreground sm:text-[4.5rem]">
                 Indian markets, the{" "}
-                <span className="relative whitespace-nowrap text-primary">
+                <span className="relative whitespace-nowrap text-display-accent">
                   calm
                   <svg
                     viewBox="0 0 200 12"
@@ -162,6 +171,7 @@ export default async function LandingPage() {
                   title={step.title}
                   body={step.body}
                   image={step.image}
+                  tone={((i % 3) + 1) as 1 | 2 | 3}
                 />
               </Reveal>
             ))}
@@ -249,7 +259,9 @@ export default async function LandingPage() {
               <Reveal key={universe.id} delayMs={(i % 2) * 80}>
                 <MarketingCard className="h-full">
                   <div className="flex items-center justify-between gap-3">
-                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+                    <span
+                      className={`rounded-full border px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.14em] ${CARD_ACCENTS[i % CARD_ACCENTS.length]}`}
+                    >
                       {universe.riskProfile}
                     </span>
                     <span className="font-mono text-sm text-muted-foreground">
