@@ -69,8 +69,9 @@ function MobilePositionRow({
         </span>
       </div>
       <div className="mt-0.5 flex items-center justify-between gap-3">
-        <span className="text-xs text-muted-foreground tabular-nums">
-          {position.qty} qty · avg {formatCurrency(position.avg_price)}
+        <span className={`text-xs tabular-nums ${getPnLClass(position.day_pnl)}`}>
+          {position.day_pnl >= 0 ? "+" : ""}
+          {formatCurrency(position.day_pnl)} ({formatPercentValue(position.day_pnl_pct)}) today
         </span>
         <span
           className={`rounded-full px-2 py-px text-xs font-semibold tabular-nums ${getPnLClass(
@@ -84,17 +85,21 @@ function MobilePositionRow({
         <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-2 border-t border-dashed pt-3 text-[13px] tabular-nums">
           <div>
             <dt className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-              LTP
+              Qty
             </dt>
-            <dd>{formatCurrency(position.ltp)}</dd>
+            <dd>{position.qty}</dd>
           </div>
           <div>
             <dt className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-              Day P&L
+              Avg price
             </dt>
-            <dd className={getPnLClass(position.day_pnl)}>
-              {formatCurrency(position.day_pnl)} ({formatPercentValue(position.day_pnl_pct)})
-            </dd>
+            <dd>{formatCurrency(position.avg_price)}</dd>
+          </div>
+          <div>
+            <dt className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+              LTP
+            </dt>
+            <dd>{formatCurrency(position.ltp)}</dd>
           </div>
           <div>
             <dt className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
@@ -211,6 +216,20 @@ export function PositionsTable({ positions, isLoading }: PositionsTableProps) {
   const dayPnlPct = (totals.day_pnl / totals.invested) * 100;
 
   return (
+    <>
+    {/* Day's P&L pulse — docked above the BottomNav, always visible while
+        scrolling the list (UX study follow-up). Informational only. */}
+    <div className="pointer-events-none fixed inset-x-0 bottom-[calc(max(env(safe-area-inset-bottom),0.75rem)+4.35rem)] z-40 flex justify-center px-4 md:hidden">
+      <div className="flex items-baseline gap-2.5 rounded-2xl border border-foreground/8 bg-card/90 px-4 py-1.5 shadow-lg backdrop-blur-md">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+          Day&apos;s P&L
+        </span>
+        <span className={`text-sm font-semibold tabular-nums ${getPnLClass(totals.day_pnl)}`}>
+          {totals.day_pnl >= 0 ? "+" : ""}
+          {formatCurrency(totals.day_pnl)} ({formatPercentValue(dayPnlPct)})
+        </span>
+      </div>
+    </div>
     <Card>
       <CardHeader>
         <CardTitle>Open Positions</CardTitle>
@@ -258,6 +277,8 @@ export function PositionsTable({ positions, isLoading }: PositionsTableProps) {
               {formatCurrency(totals.total_pnl)} ({formatPercentValue(totalPnlPct)})
             </span>
           </div>
+          {/* Clearance so the Day's P&L strip never covers the totals line */}
+          <div aria-hidden className="h-12" />
         </div>
 
         <div className="hidden rounded-md border overflow-x-auto md:block">
@@ -381,6 +402,7 @@ export function PositionsTable({ positions, isLoading }: PositionsTableProps) {
         </div>
       </CardContent>
     </Card>
+    </>
   );
 }
 
