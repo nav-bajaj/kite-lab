@@ -1,4 +1,4 @@
-/* VENDORED from marketworks-design@2734439 (src/palettes.css) — do not hand-edit.
+/* VENDORED from marketworks-design@a396019 (src/palettes.css) — do not hand-edit.
  * Re-sync: node scripts/sync-design-tokens.mjs */
 /**
  * @marketworks/design — palette override sheet.
@@ -40,6 +40,7 @@
   --surface-panel-mist: #EFF4FA;
   --surface-panel-tint: #F5F9FC;
   --surface-panel-deep: #0D2B45;
+  --surface-panel-deep-foreground: #EFF4FA;
   --acc1-bg: #E9F2FB; --acc1-line: #94C2EC; --acc1-fg: #29598C;
   --acc2-bg: #FBF2DF; --acc2-line: #E8C27A; --acc2-fg: #7A5A18;
   --acc3-bg: #E6F4F5; --acc3-line: #8BCBD1; --acc3-fg: #1F5F66;
@@ -79,6 +80,7 @@
   --surface-panel-mist: #F9F4EA;
   --surface-panel-tint: #FBF8F1;
   --surface-panel-deep: #43290D;
+  --surface-panel-deep-foreground: #F9F4EA;
   --acc1-bg: #FBF2DE; --acc1-line: #E8C27A; --acc1-fg: #7A5A18;
   --acc2-bg: #F9EBE4; --acc2-line: #DFA183; --acc2-fg: #8C4A26;
   --acc3-bg: #F1F3E4; --acc3-line: #BFC98A; --acc3-fg: #59631F;
@@ -118,6 +120,7 @@
   --surface-panel-mist: #FBEFEA;
   --surface-panel-tint: #FDF6F2;
   --surface-panel-deep: #0F3B3E;
+  --surface-panel-deep-foreground: #FBEFEA;
   --acc1-bg: #FDEFE8; --acc1-line: #F3B79A; --acc1-fg: #96522F;
   --acc2-bg: #E9F6F1; --acc2-line: #96D4BC; --acc2-fg: #256B51;
   --acc3-bg: #FDF3DE; --acc3-line: #F0C579; --acc3-fg: #8A621A;
@@ -157,6 +160,7 @@
   --surface-panel-mist: #F2F2F0;
   --surface-panel-tint: #F7F7F5;
   --surface-panel-deep: #202020;
+  --surface-panel-deep-foreground: #F2F2F0;
   --acc1-bg: #F1F1EF; --acc1-line: #C2C2BE; --acc1-fg: #4F4F4B;
   --acc2-bg: #FAF2DF; --acc2-line: #E0B65E; --acc2-fg: #77571A;
   --acc3-bg: #EFF1F3; --acc3-line: #B9C0C7; --acc3-fg: #45505A;
@@ -197,6 +201,7 @@
   --surface-panel-mist: #131B26;
   --surface-panel-tint: #101720;
   --surface-panel-deep: #1C2E45;
+  --surface-panel-deep-foreground: #E9EEF4;
   --acc1-bg: rgba(88,166,232,.14); --acc1-line: #3D6D99; --acc1-fg: #9CCBF2;
   --acc2-bg: rgba(232,163,61,.14); --acc2-line: #8A6A2E; --acc2-fg: #F0C47E;
   --acc3-bg: rgba(107,208,196,.12); --acc3-line: #2F6B64; --acc3-fg: #8ED8CD;

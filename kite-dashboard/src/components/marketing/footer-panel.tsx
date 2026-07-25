@@ -26,11 +26,11 @@ export function FooterPanel() {
           <div className="max-w-[440px]">
             <Link
               href="/"
-              className="text-xl font-semibold tracking-tight text-primary-foreground"
+              className="text-xl font-semibold tracking-tight text-surface-panel-deep-foreground"
             >
               marketworks
             </Link>
-            <p className="mt-3 text-sm leading-[1.6] text-primary-foreground/65">
+            <p className="mt-3 text-sm leading-[1.6] text-surface-panel-deep-foreground/65">
               Marketworks publishes educational research grounded in our own
               momentum portfolios and live insight engine. Nothing here is
               investment advice or a recommendation to buy or sell any security.
@@ -43,14 +43,14 @@ export function FooterPanel() {
               <Link
                 key={link.label}
                 href={link.href}
-                className="text-sm text-primary-foreground/70 transition-colors hover:text-primary-foreground"
+                className="text-sm text-surface-panel-deep-foreground/70 transition-colors hover:text-surface-panel-deep-foreground"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
         </div>
-        <div className="border-t border-primary-foreground/12 pt-5 text-sm text-primary-foreground/55">
+        <div className="border-t border-surface-panel-deep-foreground/12 pt-5 text-sm text-surface-panel-deep-foreground/55">
           &copy; 2026 Marketworks Research &middot; SEBI Registered Research
           Analyst
         </div>

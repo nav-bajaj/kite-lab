@@ -9,6 +9,17 @@ export const metadata = {
     "and live insight engine — not opinions about other people's books.",
 };
 
+// One accent per pillar (six pillars, six accents — DESIGN.md §2.6). The
+// heading bar and the cards' format chips share the pillar's accent.
+const PILLAR_ACCENTS = [
+  { bar: "bg-acc1-line", chip: "border-acc1-line bg-acc1 text-acc1-fg" },
+  { bar: "bg-acc2-line", chip: "border-acc2-line bg-acc2 text-acc2-fg" },
+  { bar: "bg-acc3-line", chip: "border-acc3-line bg-acc3 text-acc3-fg" },
+  { bar: "bg-acc4-line", chip: "border-acc4-line bg-acc4 text-acc4-fg" },
+  { bar: "bg-acc5-line", chip: "border-acc5-line bg-acc5 text-acc5-fg" },
+  { bar: "bg-acc6-line", chip: "border-acc6-line bg-acc6 text-acc6-fg" },
+] as const;
+
 const PILLAR_ORDER = [
   "momentum",
   "portfolio construction",
@@ -49,18 +60,29 @@ export default function LibraryIndex() {
         </div>
       ) : (
         <div className="flex flex-col gap-14">
-          {orderedPillars.map((pillar) => (
-            <section key={pillar}>
-              <h2 className="mb-5 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                {pillar}
-              </h2>
-              <div className="flex flex-col gap-5">
-                {(groups.get(pillar) ?? []).map((piece) => (
-                  <PieceCard key={piece.slug} piece={piece} />
-                ))}
-              </div>
-            </section>
-          ))}
+          {orderedPillars.map((pillar, pi) => {
+            const accent = PILLAR_ACCENTS[pi % PILLAR_ACCENTS.length];
+            return (
+              <section key={pillar}>
+                <h2 className="mb-5 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                  {pillar}
+                  <span
+                    aria-hidden
+                    className={`mt-2 block h-1 w-10 rounded-full ${accent.bar}`}
+                  />
+                </h2>
+                <div className="flex flex-col gap-5">
+                  {(groups.get(pillar) ?? []).map((piece) => (
+                    <PieceCard
+                      key={piece.slug}
+                      piece={piece}
+                      accentChip={accent.chip}
+                    />
+                  ))}
+                </div>
+              </section>
+            );
+          })}
         </div>
       )}
     </div>

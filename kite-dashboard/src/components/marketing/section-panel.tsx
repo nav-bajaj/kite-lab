@@ -20,7 +20,7 @@ function variantClasses(variant: Variant): string {
     case "lichen":
       return "bg-primary text-primary-foreground mw-panel-texture";
     case "deep":
-      return "bg-surface-panel-deep text-primary-foreground mw-panel-texture";
+      return "bg-surface-panel-deep text-surface-panel-deep-foreground mw-panel-texture";
   }
 }
 

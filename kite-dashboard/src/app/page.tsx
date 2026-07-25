@@ -186,17 +186,17 @@ export default async function LandingPage() {
                 <span className="text-xs font-semibold uppercase tracking-[0.16em] text-secondary">
                   The research behind it
                 </span>
-                <h2 className="mt-4 font-serif text-[2rem] font-medium leading-[1.15] tracking-[-0.01em] text-primary-foreground sm:text-[2.5rem]">
+                <h2 className="mt-4 font-serif text-[2rem] font-medium leading-[1.15] tracking-[-0.01em] text-surface-panel-deep-foreground sm:text-[2.5rem]">
                   Process over prediction.
                 </h2>
-                <p className="mt-5 text-lg leading-[1.65] text-primary-foreground/80">
+                <p className="mt-5 text-lg leading-[1.65] text-surface-panel-deep-foreground/80">
                   Momentum isn&apos;t a hunch. It&apos;s a{" "}
-                  <span className="text-primary-foreground">factor</span> — one of
+                  <span className="text-surface-panel-deep-foreground">factor</span> — one of
                   a small handful of forces that decades of research have shown
                   drive stock returns over time, alongside things like value and
                   quality.
                 </p>
-                <p className="mt-4 text-lg leading-[1.65] text-primary-foreground/80">
+                <p className="mt-4 text-lg leading-[1.65] text-surface-panel-deep-foreground/80">
                   We&apos;ve spent years studying how it actually behaves in
                   Indian equities: validating it on periods our models had never
                   seen, and stress-testing it through crashes and rallies. Only

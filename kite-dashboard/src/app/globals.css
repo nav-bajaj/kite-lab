@@ -99,6 +99,7 @@
   --color-surface-panel-mist: var(--surface-panel-mist);
   --color-surface-panel-tint: var(--surface-panel-tint);
   --color-surface-panel-deep: var(--surface-panel-deep);
+  --color-surface-panel-deep-foreground: var(--surface-panel-deep-foreground);
   --color-marigold: var(--brand-marigold); /* warm brand accent (DESIGN.md §2.1) */
 
   /* Palette system (DESIGN.md §2.6) — accent rotation, washes, chart series,
