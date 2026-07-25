@@ -19,7 +19,8 @@ import {
 
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { getInsightsNavItem } from "@/lib/nav";
-import { cn } from "@/lib/utils";
+import { usePositions } from "@/lib/hooks";
+import { cn, formatCurrency, formatPercentValue, getPnLClass } from "@/lib/utils";
 
 /**
  * Mobile bottom navigation (UX study D3, 2026-07-25) — the five highest-
@@ -31,6 +32,30 @@ import { cn } from "@/lib/utils";
  * FloatingNav's floating-glass-pill language — rounded, translucent card,
  * hairline border, backdrop blur — and palette-aware through the tokens.
  */
+/**
+ * Day's P&L notch — rises from the nav pill on the positions page (the
+ * always-visible pulse; Kite's sticky strip re-imagined as part of the nav).
+ * Mounted only on /positions, so its SWR hook shares the page's cache entry
+ * (same key) and never fetches elsewhere. Polling stays off — the page's own
+ * hook keeps the cache fresh.
+ */
+function DayPnlNotch() {
+  const { data } = usePositions({ enablePolling: false });
+  const summary = data?.summary;
+  if (!summary || summary.position_count === 0) return null;
+  return (
+    <div className="-mb-px flex items-baseline gap-2 rounded-t-2xl border border-b-0 border-foreground/8 bg-card/85 px-4 pb-1.5 pt-1 backdrop-blur-md">
+      <span className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+        Day&apos;s P&L
+      </span>
+      <span className={cn("text-[13px] font-semibold tabular-nums", getPnLClass(summary.day_pnl))}>
+        {summary.day_pnl >= 0 ? "+" : ""}
+        {formatCurrency(summary.day_pnl)} ({formatPercentValue(summary.day_pnl_pct)})
+      </span>
+    </div>
+  );
+}
+
 const SLOTS = [
   { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { name: "Positions", href: "/positions", icon: Wallet },
@@ -61,10 +86,12 @@ export function BottomNav() {
     <div
       className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-[max(env(safe-area-inset-bottom),0.75rem)] md:hidden"
     >
-      <nav
-        aria-label="Primary"
-        className="grid w-full max-w-[440px] grid-cols-5 rounded-3xl border border-foreground/8 bg-card/85 px-1 py-1.5 shadow-lg backdrop-blur-md"
-      >
+      <div className="flex w-full max-w-[440px] flex-col items-center">
+        {pathname.startsWith("/positions") && <DayPnlNotch />}
+        <nav
+          aria-label="Primary"
+          className="grid w-full grid-cols-5 rounded-3xl border border-foreground/8 bg-card/85 px-1 py-1.5 shadow-lg backdrop-blur-md"
+        >
         {SLOTS.map((item) => {
           const active = pathname.startsWith(item.href);
           return (
@@ -122,8 +149,9 @@ export function BottomNav() {
               })}
             </div>
           </SheetContent>
-        </Sheet>
-      </nav>
+          </Sheet>
+        </nav>
+      </div>
     </div>
   );
 }
