@@ -23,7 +23,7 @@ export default function DashboardLayout({
 
           {/* Page content */}
           {/* Extra bottom padding below md clears the floating BottomNav */}
-          <main className="flex-1 p-4 pb-28 md:pb-4 lg:p-6">{children}</main>
+          <main className="flex-1 overflow-x-clip p-4 pb-28 md:pb-4 lg:p-6">{children}</main>
 
           {/* Persistent compliance footer */}
           <div className="pb-24 md:pb-0">

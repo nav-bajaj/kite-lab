@@ -50,7 +50,7 @@ export function FloatingNav() {
       <nav className="w-full max-w-[1080px] rounded-3xl border border-foreground/8 bg-card/80 shadow-sm backdrop-blur-md">
         {/* Fixed row height so the bar is identical signed-in vs signed-out
             (the beta CTA is taller than the avatar/Dashboard link). */}
-        <div className="grid h-14 grid-cols-[1fr_auto_1fr] items-center px-5">
+        <div className="grid h-14 grid-cols-[auto_1fr_auto] items-center px-4 sm:grid-cols-[1fr_auto_1fr] sm:px-5">
           <Link
             href="/"
             className="inline-flex items-center justify-self-start text-xl font-semibold leading-none tracking-tight text-primary"
@@ -70,12 +70,14 @@ export function FloatingNav() {
             ))}
           </div>
 
-          <div className="flex items-center justify-self-end gap-3">
+          {/* justify-end INSIDE the flex as well as justify-self-end on the
+              grid item: with narrow signed-in content (avatar + burger) the
+              1fr track is wider than the cluster, and only an inner
+              justify-end pins the children to the right edge. */}
+          <div className="flex items-center justify-end justify-self-end gap-2 sm:gap-3">
             {/* Palette picker — signed-out choices persist per device;
                 signed-in choices roam via Clerk (PaletteSync). */}
-            <span className="hidden sm:inline-flex">
-              <PalettePicker />
-            </span>
+            <PalettePicker />
             {showSignedIn ? (
               <>
                 <Link
@@ -96,7 +98,7 @@ export function FloatingNav() {
                 </Link>
                 <Link
                   href="/sign-up"
-                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-[transform,box-shadow] duration-200 ease-expo hover:-translate-y-px hover:shadow-[0_6px_18px_-6px_color-mix(in_oklab,var(--primary)_50%,transparent)]"
+                  className="whitespace-nowrap rounded-full bg-primary px-4 py-2 text-[13px] font-semibold text-primary-foreground sm:px-5 sm:py-2.5 sm:text-sm transition-[transform,box-shadow] duration-200 ease-expo hover:-translate-y-px hover:shadow-[0_6px_18px_-6px_color-mix(in_oklab,var(--primary)_50%,transparent)]"
                 >
                   Get beta access
                 </Link>
