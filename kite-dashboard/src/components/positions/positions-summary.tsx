@@ -136,8 +136,10 @@ export function PositionsSummary({
         </CardContent>
       </Card>
 
-      {/* Stats Row */}
-      <div className="flex items-center gap-6 text-sm text-muted-foreground">
+      {/* Stats Row — wraps on narrow screens (a rigid no-wrap row was wider
+          than a phone and dragged the whole page into horizontal scroll);
+          the meta pair right-aligns only from sm up. */}
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-sm text-muted-foreground">
         <div className="flex items-center gap-2">
           <span className="font-medium">{summary.position_count}</span>
           <span>Positions</span>
@@ -152,18 +154,20 @@ export function PositionsSummary({
         </div>
         {holdingsDate && (
           <div
-            className="flex items-center gap-2 ml-auto"
+            className="flex items-center gap-1.5 sm:ml-auto"
             title="The holdings shown, from the portfolio's most recent rebalance, priced live"
           >
-            <CalendarDays className="h-3 w-3" />
-            <span>Holdings as of {holdingsDate.toLocaleDateString()}</span>
+            <CalendarDays className="h-3 w-3 shrink-0" />
+            <span className="whitespace-nowrap">
+              Holdings {holdingsDate.toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+            </span>
           </div>
         )}
         {marketStatus && (
-          <div className={`flex items-center gap-2 ${holdingsDate ? "" : "ml-auto"}`}>
-            <Clock className="h-3 w-3" />
-            <span>
-              Updated {new Date(marketStatus.last_updated).toLocaleTimeString()}
+          <div className={`flex items-center gap-1.5 ${holdingsDate ? "" : "sm:ml-auto"}`}>
+            <Clock className="h-3 w-3 shrink-0" />
+            <span className="whitespace-nowrap">
+              Updated {new Date(marketStatus.last_updated).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
             </span>
           </div>
         )}
