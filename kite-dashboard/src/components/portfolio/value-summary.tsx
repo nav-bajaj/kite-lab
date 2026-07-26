@@ -1,11 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePortfolio, useHoldings, useEquityCurve } from "@/lib/hooks";
 import { formatCurrency, formatPercentValue } from "@/lib/utils";
 import { InfoHint } from "@/components/shared/info-hint";
-import { Wallet, TrendingUp, TrendingDown, CalendarClock, Waves } from "lucide-react";
+import { PiggyBank, TrendingUp, TrendingDown, CalendarClock, Waves } from "lucide-react";
 
 /** The Overview's headline stats. All four describe the *current* open
  *  positions: what they're worth vs what they cost, the open profit on them,
@@ -39,94 +39,102 @@ export function ValueSummary() {
   const profitUp = data.total_return >= 0;
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {/* Portfolio Value — current value, with holding cost underneath */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Portfolio Value</CardTitle>
-          <Wallet className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{formatCurrency(data.total_value)}</div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Cost {formatCurrency(data.invested)}
-          </p>
-          <p className="text-xs text-muted-foreground">
-            {data.holdings_count} holding{data.holdings_count === 1 ? "" : "s"}
-          </p>
+    // Two combo cards, no title rows (UX study "D2" primitive): the mini
+    // accent chips carry each cell's identity; a single hairline splits the
+    // pair. Mobile scrolls two compact cards instead of four.
+    <div className="grid gap-4 lg:grid-cols-2">
+      {/* What it's worth + what that means in profit */}
+      <Card className="py-0">
+        <CardContent className="p-0">
+          <div className="grid grid-cols-2">
+            <div className="min-h-[96px] px-4 py-4 sm:px-5">
+              <p className="flex items-center gap-1.5">
+                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-acc1 text-acc1-fg">
+                  <PiggyBank className="h-3 w-3" aria-hidden />
+                </span>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.09em] text-muted-foreground">
+                  Portfolio value
+                </span>
+              </p>
+              <div className="mt-1 text-xl font-bold tabular-nums sm:text-2xl">
+                {formatCurrency(data.total_value)}
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Cost {formatCurrency(data.invested)} · {data.holdings_count} holding{data.holdings_count === 1 ? "" : "s"}
+              </p>
+            </div>
+            <div className="min-h-[96px] border-l border-border px-4 py-4 sm:px-5">
+              <p className="flex items-center gap-1.5">
+                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-acc2 text-acc2-fg">
+                  {profitUp ? <TrendingUp className="h-3 w-3" aria-hidden /> : <TrendingDown className="h-3 w-3" aria-hidden />}
+                </span>
+                <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.09em] text-muted-foreground">
+                  Current profit
+                  <InfoHint text="Unrealised profit on the stocks held right now — the gain if you sold today. Not the strategy's long-term return." />
+                </span>
+              </p>
+              <div
+                className={
+                  profitUp
+                    ? "mt-1 text-xl font-bold tabular-nums text-[color:var(--positive)] sm:text-2xl"
+                    : "mt-1 text-xl font-bold tabular-nums text-[color:var(--negative)] sm:text-2xl"
+                }
+              >
+                {formatPercentValue(data.total_return_pct)}
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {formatCurrency(data.total_return)} open profit
+              </p>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Current Profit — open (unrealised) profit on the positions held now */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="flex items-center gap-1.5 text-sm font-medium">
-            Current Profit
-            <InfoHint text="Unrealised profit on the stocks held right now — the gain if you sold today. Not the strategy's long-term return." />
-          </CardTitle>
-          {profitUp ? (
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          ) : (
-            <TrendingDown className="h-4 w-4 text-muted-foreground" />
-          )}
-        </CardHeader>
-        <CardContent>
-          <div
-            className={
-              profitUp
-                ? "text-2xl font-bold text-[color:var(--positive)]"
-                : "text-2xl font-bold text-[color:var(--negative)]"
-            }
-          >
-            {formatPercentValue(data.total_return_pct)}
+      {/* How the book is positioned: age of the holdings + distance off peak */}
+      <Card className="py-0">
+        <CardContent className="p-0">
+          <div className="grid grid-cols-2">
+            <div className="min-h-[96px] px-4 py-4 sm:px-5">
+              <p className="flex items-center gap-1.5">
+                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-acc3 text-acc3-fg">
+                  <CalendarClock className="h-3 w-3" aria-hidden />
+                </span>
+                <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.09em] text-muted-foreground">
+                  Avg. holding age
+                  <InfoHint text="The average time the current stocks have been held. Momentum portfolios rotate, so this is usually weeks to a few months." />
+                </span>
+              </p>
+              <div className="mt-1 text-xl font-bold tabular-nums sm:text-2xl">
+                {avgAge === null ? "—" : `${avgAge} days`}
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Average age of the current holdings
+              </p>
+            </div>
+            <div className="min-h-[96px] border-l border-border px-4 py-4 sm:px-5">
+              <p className="flex items-center gap-1.5">
+                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-acc4 text-acc4-fg">
+                  <Waves className="h-3 w-3" aria-hidden />
+                </span>
+                <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.09em] text-muted-foreground">
+                  Current drawdown
+                  <InfoHint text="How far below its highest recent value the portfolio is right now. A small dip is normal; a big one means it's well off its peak." />
+                </span>
+              </p>
+              <div
+                className={
+                  currentDD !== null && currentDD < -0.05
+                    ? "mt-1 text-xl font-bold tabular-nums text-[color:var(--negative)] sm:text-2xl"
+                    : "mt-1 text-xl font-bold tabular-nums text-foreground sm:text-2xl"
+                }
+              >
+                {currentDD === null ? "—" : formatPercentValue(currentDD)}
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Distance below the recent high
+              </p>
+            </div>
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {formatCurrency(data.total_return)} open profit on current holdings
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* Avg holding age — over roughly what time this profit was earned */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="flex items-center gap-1.5 text-sm font-medium">
-            Avg. Holding Age
-            <InfoHint text="The average time the current stocks have been held. Momentum portfolios rotate, so this is usually weeks to a few months." />
-          </CardTitle>
-          <CalendarClock className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">
-            {avgAge === null ? "—" : `${avgAge} days`}
-          </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Average age of the current holdings
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* Current drawdown */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="flex items-center gap-1.5 text-sm font-medium">
-            Current Drawdown
-            <InfoHint text="How far below its highest recent value the portfolio is right now. A small dip is normal; a big one means it's well off its peak." />
-          </CardTitle>
-          <Waves className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div
-            className={
-              currentDD !== null && currentDD < -0.05
-                ? "text-2xl font-bold text-[color:var(--negative)]"
-                : "text-2xl font-bold text-foreground"
-            }
-          >
-            {currentDD === null ? "—" : formatPercentValue(currentDD)}
-          </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            How far below its recent high the portfolio is now
-          </p>
         </CardContent>
       </Card>
     </div>
@@ -135,16 +143,19 @@ export function ValueSummary() {
 
 function ValueSummarySkeleton() {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {[1, 2, 3, 4].map((i) => (
-        <Card key={i}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <Skeleton className="h-4 w-28" />
-            <Skeleton className="h-4 w-4" />
-          </CardHeader>
-          <CardContent>
-            <Skeleton className="mb-2 h-8 w-32" />
-            <Skeleton className="h-3 w-40" />
+    <div className="grid gap-4 lg:grid-cols-2">
+      {[1, 2].map((i) => (
+        <Card key={i} className="py-0">
+          <CardContent className="p-0">
+            <div className="grid grid-cols-2">
+              {[1, 2].map((j) => (
+                <div key={j} className={`min-h-[96px] px-4 py-4 sm:px-5 ${j === 2 ? "border-l border-border" : ""}`}>
+                  <Skeleton className="h-4 w-28" />
+                  <Skeleton className="mt-2 h-7 w-32" />
+                  <Skeleton className="mt-2 h-3 w-36" />
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       ))}

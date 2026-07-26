@@ -1,0 +1,11 @@
+name: stress_reversal_calls
+status: shipped
+opened: 2026-07-24
+closed: 2026-07-24
+related_commits: []
+supersedes: []
+depends_on:
+  - donchian_channel
+  - insight_engine
+  - breadth_atlas
+register_rows: []

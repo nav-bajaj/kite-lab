@@ -148,6 +148,8 @@ const COLUMNS: Column[] = [
     render: (r) => r.liquidity_tier ?? "—" },
 ];
 
+const PAGE_SIZE = 50;
+
 export function ScreenerClient({ rows, asof }: { rows: StockRow[]; asof: string | null }) {
   const searchParams = useSearchParams();
 
@@ -161,6 +163,10 @@ export function ScreenerClient({ rows, asof }: { rows: StockRow[]; asof: string 
   const [activePreset, setActivePreset] = useState<string | null>(
     () => searchParams.get("preset"),
   );
+  // Pagination (2026-07-26): ~500 names rendered at once made the page heavy
+  // and endless, especially on mobile. Filter/preset/sort changes jump back
+  // to page 1; the index also self-clamps when a filter shrinks the results.
+  const [page, setPage] = useState(0);
 
   // Push the current view into the URL without a navigation / refetch.
   const syncUrl = useCallback(
@@ -179,6 +185,7 @@ export function ScreenerClient({ rows, asof }: { rows: StockRow[]; asof: string 
       const next = { ...EMPTY, ...p.patch };
       setFilters(next);
       setActivePreset(p.key);
+      setPage(0);
       syncUrl(next, groups, sort, p.key);
     },
     [groups, sort, syncUrl],
@@ -187,6 +194,7 @@ export function ScreenerClient({ rows, asof }: { rows: StockRow[]; asof: string 
   const reset = useCallback(() => {
     setFilters(EMPTY);
     setActivePreset(null);
+    setPage(0);
     syncUrl(EMPTY, groups, sort, null);
   }, [groups, sort, syncUrl]);
 
@@ -205,6 +213,7 @@ export function ScreenerClient({ rows, asof }: { rows: StockRow[]; asof: string 
 
   const applySort = useCallback(
     (key: keyof StockRow) => {
+      setPage(0);
       setSort((prev) => {
         const dir: "asc" | "desc" =
           prev.key === key ? (prev.dir === "asc" ? "desc" : "asc") : "asc";
@@ -223,6 +232,13 @@ export function ScreenerClient({ rows, asof }: { rows: StockRow[]; asof: string 
 
   const filtered = useMemo(() => matchFilters(rows, filters), [rows, filters]);
   const sorted = useMemo(() => sortRows(filtered, sort), [filtered, sort]);
+
+  const pageCount = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const safePage = Math.min(page, pageCount - 1);
+  const paged = useMemo(
+    () => sorted.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE),
+    [sorted, safePage],
+  );
 
   const activeNote = PRESETS.find((p) => p.key === activePreset)?.note;
 
@@ -371,7 +387,7 @@ export function ScreenerClient({ rows, asof }: { rows: StockRow[]; asof: string 
                 </tr>
               </thead>
               <tbody>
-                {sorted.map((r, i) => (
+                {paged.map((r, i) => (
                   <tr
                     key={r.symbol}
                     className={cn(
@@ -401,13 +417,42 @@ export function ScreenerClient({ rows, asof }: { rows: StockRow[]; asof: string 
 
           {/* Mobile card list */}
           <div className="flex flex-col gap-3 md:hidden">
-            {sorted.map((r) => (
+            {paged.map((r) => (
               <MobileCard key={r.symbol} r={r} href={`/insights/stocks/${r.symbol}${asofQuery(searchParams)}`} />
             ))}
           </div>
 
           {sorted.length === 0 && (
             <p className="text-sm text-muted-foreground">No names match these filters.</p>
+          )}
+
+          {pageCount > 1 && (
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <span className="text-[13px] text-muted-foreground tabular-nums">
+                Showing {safePage * PAGE_SIZE + 1}–{Math.min((safePage + 1) * PAGE_SIZE, sorted.length)} of {sorted.length}
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPage(safePage - 1)}
+                  disabled={safePage === 0}
+                  className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
+                >
+                  ← Prev
+                </button>
+                <span className="text-[13px] text-muted-foreground tabular-nums">
+                  Page {safePage + 1} of {pageCount}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPage(safePage + 1)}
+                  disabled={safePage >= pageCount - 1}
+                  className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
+                >
+                  Next →
+                </button>
+              </div>
+            </div>
           )}
         </div>
       </div>

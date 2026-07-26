@@ -1,0 +1,16 @@
+name: homepage_visual_refresh
+status: in-progress          # planned | in-progress | shipped | archived
+branch: beta_gtm_mvp_redesign
+opened: 2026-07-19
+closed: null
+related_commits: []
+supersedes: []
+depends_on: []
+register_rows: []           # none expected — pipeline stays CSP-clean (static SVG + CSS + self-hosted Motion). Any WASM/CDN asset would flip this and need a row first.
+notes: >
+  Visual richness pass on the public marketing homepage. Moves the surface model
+  from a single flat mist plane to a layered near-white base with mist / lichen
+  bands, real card depth, an editorial halftone graphic treatment, a floating nav,
+  and restrained Motion. Amends DESIGN.md's surface-anchor rule (see PLAN §Brand
+  contract). Reference teardowns of spade.com / corgi.insure / acctual.com in
+  REFERENCES.md. Illustrations via Recraft (RECRAFT_API_KEY in .env).

@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "../styles/marketworks/tokens.css";
+@import "../styles/marketworks/palettes.css";
 
 /* Typography for long-form prose pages (legal pages use `prose`). */
 @plugin "@tailwindcss/typography";
@@ -8,47 +10,40 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: #fafafa;
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Role, surface, accent-rotation, wash, and chart tokens come from
+   * ../styles/marketworks/tokens.css (Mint default, .dark = Midnight) and
+   * re-map per palette via ../styles/marketworks/palettes.css
+   * (data-palette on <html>, set by next-themes — see providers.tsx).
+   * Below: app-level DERIVATIONS only, expressed through role tokens so
+   * every palette themes the shell without listing itself here. */
+  --sidebar: var(--card);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--muted);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+
+  --chart-1: var(--chart-series-1);
+  --chart-2: var(--secondary);
+  --chart-3: #42608E;   /* semantic info — palette-stable */
+  --chart-4: var(--accent);
+  --chart-5: #9E6A35;   /* semantic warning-ochre — palette-stable */
+
+  /* Finance direction — from the design tokens (auto-brighten in dark) */
+  --positive: var(--chart-positive);
+  --negative: var(--chart-negative);
+  --warning: #9E6A35;
 }
 
-/* Dark mode is handled entirely by the `.dark` class block below (set by
- * next-themes). A previous `@media (prefers-color-scheme: dark)` here was
- * setting a SUBSET of variables based on OS preference, which fought with
- * the manual toggle: at night (OS=dark), toggling to light left some
- * components dark because the media query kept overriding. Don't reintroduce
- * a media-query-based dark mode unless you also remove the `.dark` block. */
+/* Dark (Midnight) adjustments for the palette-stable literals above.
+ * Everything else re-themes through the token sheets. */
+.dark {
+  --chart-3: #6E8BC0;
+  --chart-5: #BC8A52;
+  --warning: #BC8A52;
+}
 
 @theme inline {
   --color-background: var(--background);
@@ -94,40 +89,57 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
-}
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Layered marketing surface & depth (DESIGN.md §2.5).
+   * Colors map the raw .mw-brand vars; radius, shadow and easing are literals
+   * because those Tailwind namespaces would self-reference via var().
+   * Generates bg-surface-*, rounded-card, rounded-panel, shadow-card,
+   * shadow-card-hover, shadow-panel, shadow-soft, ease-expo. */
+  --color-surface-base:       var(--surface-base);
+  --color-surface-panel-mist: var(--surface-panel-mist);
+  --color-surface-panel-tint: var(--surface-panel-tint);
+  --color-surface-panel-deep: var(--surface-panel-deep);
+  --color-surface-panel-deep-foreground: var(--surface-panel-deep-foreground);
+  --color-marigold: var(--brand-marigold); /* warm brand accent (DESIGN.md §2.1) */
+
+  /* Palette system (DESIGN.md §2.6) — accent rotation, washes, chart series,
+   * display accent, finance direction. Generates bg-acc1, border-acc1-line,
+   * text-acc1-fg, bg-wash1, text-display-accent, text-positive, … */
+  --color-acc1: var(--acc1-bg);
+  --color-acc1-line: var(--acc1-line);
+  --color-acc1-fg: var(--acc1-fg);
+  --color-acc2: var(--acc2-bg);
+  --color-acc2-line: var(--acc2-line);
+  --color-acc2-fg: var(--acc2-fg);
+  --color-acc3: var(--acc3-bg);
+  --color-acc3-line: var(--acc3-line);
+  --color-acc3-fg: var(--acc3-fg);
+  --color-acc4: var(--acc4-bg);
+  --color-acc4-line: var(--acc4-line);
+  --color-acc4-fg: var(--acc4-fg);
+  --color-acc5: var(--acc5-bg);
+  --color-acc5-line: var(--acc5-line);
+  --color-acc5-fg: var(--acc5-fg);
+  --color-acc6: var(--acc6-bg);
+  --color-acc6-line: var(--acc6-line);
+  --color-acc6-fg: var(--acc6-fg);
+  --color-wash1: var(--wash1);
+  --color-wash2: var(--wash2);
+  --color-wash3: var(--wash3);
+  --color-display-accent: var(--display-accent);
+  --color-chart-series-1: var(--chart-series-1);
+  --color-chart-series-2: var(--chart-series-2);
+  --color-chart-series-3: var(--chart-series-3);
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-warning: var(--warning);
+  --radius-card:  24px;
+  --radius-panel: 32px;
+  --shadow-card:       0px 6px 24px -3px rgba(26,26,26,0.13), 0px 1px 2px -4px rgba(26,26,26,0.13);
+  --shadow-card-hover: 0px 6px 24px -3px rgba(26,26,26,0.13), 0px 4px 6px -4px rgba(26,26,26,0.13);
+  --shadow-panel:      0px 10px 40px -12px rgba(26,26,26,0.18), 0px 2px 6px -4px rgba(26,26,26,0.12);
+  --shadow-soft:       0px 6px 24px -3px rgba(26,26,26,0.07);
+  --ease-expo:         cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @layer base {
@@ -142,40 +154,14 @@
 /* ---------------------------------------------------------------------------
  * Marketworks brand surface (.mw-brand)
  *
- * Light-locked editorial scope for the public marketing/content surfaces
- * (/library now; landing + sign-up later). It REDEFINES the shadcn role
- * tokens to the brand palette, so every Tailwind color utility and shadcn
- * component nested inside inherits the brand automatically — without
- * touching the authenticated dashboard (which keeps the greyscale :root
- * theme until Phases 5-7). Values mirror @marketworks/design src/styles.css
- * (DESIGN.md §2.2); the design package stays the source of truth.
- *
- * Because CSS custom properties resolve to the nearest ancestor, these
- * light values also override any `.dark` on <html> for descendants — so the
- * surface is light-locked without a forcedTheme.
+ * Editorial scope for the public marketing/content surfaces. Fully
+ * palette-transparent: role/surface/accent tokens flow from the vendored
+ * design sheets for ALL palettes, including Midnight — the palette is the
+ * user's choice of how the whole site looks, so a Midnight user gets dark
+ * editorial pages too (light-lock retired 2026-07-25 by product decision;
+ * previously these surfaces pinned light Mint under .dark).
  * ------------------------------------------------------------------------ */
 .mw-brand {
-  --background: #ECF3EF;          /* mist */
-  --foreground: #1A1A1A;          /* ink */
-  --card: #FFFFFF;
-  --card-foreground: #1A1A1A;
-  --popover: #FFFFFF;
-  --popover-foreground: #1A1A1A;
-  --primary: #14715F;             /* lichen */
-  --primary-foreground: #ECF3EF;  /* mist */
-  --secondary: #55C374;           /* signal-green */
-  --secondary-foreground: #1A1A1A;
-  --accent: #9750F8;              /* purple — editorial accent only */
-  --accent-foreground: #FFFFFF;
-  --muted: #F5F5F5;               /* neutral-100 */
-  --muted-foreground: #737373;    /* neutral-500 */
-  --destructive: #A64C42;         /* semantic negative */
-  --destructive-foreground: #FFFFFF;
-  --border: #D4D4D4;              /* neutral-300 */
-  --input: #D4D4D4;
-  --ring: #14715F;
-  --radius: 0.5rem;
-
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
@@ -186,100 +172,26 @@
 .mw-brand {
   --brand-prose: #171717;
 }
+.dark .mw-brand {
+  --brand-prose: var(--foreground);
+}
 
 /* ---------------------------------------------------------------------------
  * Marketworks app brand surface (.mw-app)
  *
- * Themed (light + dark) brand scope for the authenticated *insight* surfaces
- * (/insights now; the main dashboard moves over in Phase 7). Like .mw-brand
- * it redefines the shadcn role tokens to the brand palette so nested
- * utilities inherit the brand — but unlike the light-locked marketing scope,
- * it honours next-themes' `.dark` (DESIGN.md §8.5: insights + dashboard are
- * light+dark). Dark inverts brand per §2.2 (signal-green becomes primary).
- * `--positive`/`--negative` are the semantic finance-direction colors —
- * never the brand greens (DESIGN.md §2.3).
+ * Themed brand scope for the authenticated surfaces. Since the palette
+ * system (2026.07.23) all tokens (role, sidebar, chart, finance direction)
+ * flow globally, so the whole app inherits the user's palette; this class
+ * only opts the surface into the brand font. Honours .dark = Midnight.
  * ------------------------------------------------------------------------ */
 .mw-app {
-  --background: #ECF3EF;
-  --foreground: #1A1A1A;
-  --card: #FFFFFF;
-  --card-foreground: #1A1A1A;
-  --popover: #FFFFFF;
-  --popover-foreground: #1A1A1A;
-  --primary: #14715F;
-  --primary-foreground: #ECF3EF;
-  --secondary: #55C374;
-  --secondary-foreground: #1A1A1A;
-  --accent: #9750F8;
-  --accent-foreground: #FFFFFF;
-  --muted: #F5F5F5;
-  --muted-foreground: #737373;
-  --destructive: #A64C42;
-  --destructive-foreground: #FFFFFF;
-  --border: #D4D4D4;
-  --input: #D4D4D4;
-  --ring: #14715F;
-  --radius: 0.5rem;
-  --positive: #3F8059;
-  --negative: #A64C42;
-  --warning: #9E6A35;
-
-  /* App shell (sidebar) + data-viz palette — brand-mapped so the authed
-   * dashboard chrome + allocation charts inherit the brand. */
-  --sidebar: #FFFFFF;
-  --sidebar-foreground: #1A1A1A;
-  --sidebar-primary: #14715F;
-  --sidebar-primary-foreground: #ECF3EF;
-  --sidebar-accent: #F5F5F5;
-  --sidebar-accent-foreground: #1A1A1A;
-  --sidebar-border: #D4D4D4;
-  --sidebar-ring: #14715F;
-  --chart-1: #14715F;
-  --chart-2: #55C374;
-  --chart-3: #42608E;
-  --chart-4: #9750F8;
-  --chart-5: #9E6A35;
-
+  /* Palette-transparent since the palette system (2026.07.23): role,
+   * sidebar, chart, and finance-direction tokens all flow from :root /
+   * palettes.css. This class now only opts the surface into the brand
+   * font + token-driven background. Honours .dark (Midnight). */
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
-}
-
-.dark .mw-app {
-  --background: #0A0A0A;
-  --foreground: #ECF3EF;
-  --card: #171717;
-  --card-foreground: #ECF3EF;
-  --popover: #171717;
-  --popover-foreground: #ECF3EF;
-  --primary: #55C374;            /* signal-green — primary on dark */
-  --primary-foreground: #0A0A0A;
-  --secondary: #14715F;          /* lichen demoted to secondary */
-  --secondary-foreground: #ECF3EF;
-  --muted: #262626;
-  --muted-foreground: #A3A3A3;
-  --destructive: #DC2626;
-  --destructive-foreground: #FFFFFF;
-  --border: #404040;
-  --input: #404040;
-  --ring: #55C374;
-  --positive: #4CA56C;           /* slightly lifted for dark legibility */
-  --negative: #C2685C;
-  --warning: #BC8A52;
-
-  --sidebar: #171717;
-  --sidebar-foreground: #ECF3EF;
-  --sidebar-primary: #55C374;
-  --sidebar-primary-foreground: #0A0A0A;
-  --sidebar-accent: #262626;
-  --sidebar-accent-foreground: #ECF3EF;
-  --sidebar-border: #404040;
-  --sidebar-ring: #55C374;
-  --chart-1: #55C374;
-  --chart-2: #14715F;
-  --chart-3: #6E8BC0;
-  --chart-4: #B07FF5;
-  --chart-5: #BC8A52;
 }
 
 /* One-shot highlight for live value changes (see FlashOnChange). Restarted
@@ -295,4 +207,89 @@
 
 .animate-value-flash {
   animation: mw-value-flash 0.6s ease-out;
+}
+
+/* ---------------------------------------------------------------------------
+ * Marketing motion + texture primitives (homepage_visual_refresh, DESIGN.md §2.5)
+ * Reveal is visible-by-default (SSR / no-JS safe): the hidden state is only
+ * applied client-side via data-reveal="hidden" set before first paint, so a
+ * headless render or a failed script never ships a blank section.
+ * ------------------------------------------------------------------------ */
+.mw-reveal {
+  transition: opacity 700ms var(--ease-expo), transform 700ms var(--ease-expo);
+}
+.mw-reveal[data-reveal="hidden"] {
+  opacity: 0;
+  transform: translateY(20px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .mw-reveal { transition: none; }
+  .mw-reveal[data-reveal="hidden"] { opacity: 1; transform: none; }
+}
+
+/* Dark-panel texture (palette system, DESIGN.md §2.6): a soft glow in the
+ * palette's secondary color from the top corner + a faint dot grid. Token-
+ * driven, so every palette self-themes it (signal-green on deep lichen,
+ * signal-blue on navy, peach on sea-teal). Tuned in the theme exploration:
+ * stronger glows wash the panel out and dull the text. Applied by
+ * SectionPanel to its dark variants; background-color comes from the
+ * variant class. */
+.mw-panel-texture {
+  background-image:
+    radial-gradient(640px 360px at 88% -14%, color-mix(in srgb, var(--secondary) 11%, transparent), transparent 55%),
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 1.6px);
+  background-size: auto, 26px 26px;
+}
+
+/* Editorial halftone dot-screen (decorative). currentColor sets dot colour. */
+.mw-halftone {
+  background-image: radial-gradient(circle, currentColor 1px, transparent 1.7px);
+  background-size: 7px 7px;
+}
+
+/* Quant grid texture for the near-white base flow (Spade reference). Lines are
+ * lichen at low opacity via color-mix — pure CSS, CSP-clean. */
+.mw-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--primary) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--primary) 6%, transparent) 1px, transparent 1px);
+  background-size: 46px 46px;
+}
+
+/* Editorial dot-grid — an alternate base texture (stipple, printed-page feel). */
+.mw-dots {
+  background-image: radial-gradient(
+    color-mix(in oklab, var(--primary) 9%, transparent) 1px,
+    transparent 1.6px
+  );
+  background-size: 22px 22px;
+}
+
+/* Fixed-viewport quant grid for the marketing base (homepage_visual_refresh):
+ * graph-paper lines, radially masked so the pattern
+ * stays in the viewport focus and dissolves toward the edges — "viewport
+ * visibility": as the page scrolls under the fixed layer, whatever is in the
+ * focus band always has grid behind it. A whisper of global opacity breath adds
+ * life without any discrete movement; static under reduced-motion. */
+.mw-flow-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--primary) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--primary) 5%, transparent) 1px, transparent 1px);
+  background-size: 46px 46px, 46px 46px;
+  -webkit-mask-image: radial-gradient(ellipse 92% 78% at 50% 44%, #000 42%, transparent 100%);
+  mask-image: radial-gradient(ellipse 92% 78% at 50% 44%, #000 42%, transparent 100%);
+  animation: mw-grid-breath 15s ease-in-out infinite;
+  will-change: opacity;
+}
+
+@keyframes mw-grid-breath {
+  0%, 100% { opacity: 0.72; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mw-flow-grid {
+    animation: none;
+    opacity: 0.85;
+  }
 }

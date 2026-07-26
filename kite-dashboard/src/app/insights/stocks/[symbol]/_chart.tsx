@@ -49,7 +49,8 @@ function pts(dates: string[] | undefined, values: (number | null)[] | undefined)
 
 export function PriceChart({ series }: { series: Partial<PriceSeries> }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const { resolvedTheme } = useTheme();
+  // theme included so palette switches (not just light/dark flips) redraw
+  const { theme, resolvedTheme } = useTheme();
 
   useEffect(() => {
     const el = containerRef.current;
@@ -116,7 +117,7 @@ export function PriceChart({ series }: { series: Partial<PriceSeries> }) {
     void foreground;
 
     return () => chart.remove();
-  }, [series, resolvedTheme]);
+  }, [series, theme, resolvedTheme]);
 
   if (!series.dates || series.dates.length === 0) {
     return <p className="text-sm text-muted-foreground">No price history available.</p>;

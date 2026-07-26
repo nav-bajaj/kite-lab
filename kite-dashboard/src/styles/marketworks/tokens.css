@@ -1,0 +1,209 @@
+/* VENDORED from marketworks-design@a396019 (src/styles.css) — do not hand-edit.
+ * Re-sync: node scripts/sync-design-tokens.mjs */
+/**
+ * @marketworks/design — token stylesheet.
+ *
+ * Ships role tokens in two themes:
+ *   :root   — light theme (Mint, the default everywhere)
+ *   .dark   — dark theme (Midnight; applies wherever the user's palette
+ *             says so — the palette is a whole-site choice)
+ *
+ * Consumers import this once:
+ *
+ *   import "@marketworks/design/styles.css";
+ *
+ * Fonts are NOT loaded here. Consumers wire Fraunces + Outfit
+ * through next/font (see DESIGN.md §3 → "Font loading" for the
+ * snippet) — this preserves CSP and uses Next's optimised pipeline.
+ *
+ * Component CSS lives in Tailwind utility classes emitted by the
+ * primitives in src/primitives/. The Tailwind v4 preset at
+ * tokens/tailwind.ts maps these tokens into Tailwind utilities so
+ * `bg-primary`, `text-foreground`, `border-border`, etc. resolve to
+ * the brand values.
+ *
+ * Token drift between this file and tokens/colors.ts is checked by
+ * tests/contract/tokens.spec.ts.
+ */
+
+:root {
+  /* Light role tokens — defaults for every surface */
+  --background: #F0F7F3;
+  --foreground: #1A1A1A;
+
+  --card: #FFFFFF;
+  --card-foreground: #1A1A1A;
+
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1A1A;
+
+  --primary: #0C7A62;
+  --primary-foreground: #F0F7F3;
+
+  --secondary: #55C374;
+  --secondary-foreground: #1A1A1A;
+
+  --accent: #9750F8;
+  --accent-foreground: #FFFFFF;
+
+  --muted: #F5F5F5;
+  --muted-foreground: #737373;
+
+  --destructive: #A64C42;
+  --destructive-foreground: #FFFFFF;
+
+  --border: #D4D4D4;
+  --input: #D4D4D4;
+  --ring: #0C7A62;
+
+  --radius: 0.5rem;
+
+  /* Brand-identity escape hatches.
+     Use only when you need to reference a specific brand color
+     outside its role mapping (e.g., the wordmark must be lichen
+     regardless of theme). Avoid in normal component code. */
+  --brand-mist:         #F0F7F3;
+  --brand-lichen:       #0C7A62;
+  --brand-signal-green: #55C374;
+  --brand-purple:       #9750F8;
+  --brand-marigold:     #E8A33D;
+  --brand-ink:          #1A1A1A;
+
+  /* Layered marketing surface & depth (DESIGN.md §2.5).
+     Near-white base with mist/tint/deep as INSET panels; ink-tinted shadows.
+     Dark equivalents ship in the midnight palette block (palettes.css). */
+  --surface-base:       #FCFDFD;
+  --surface-panel-mist: #F0F7F3;
+  --surface-panel-tint: #F6FAF8;
+  --surface-panel-deep: #0E3B32;
+  --surface-panel-deep-foreground: #F0F7F3;
+
+  --shadow-card:        0px 6px 24px -3px rgba(26,26,26,0.13), 0px 1px 2px -4px rgba(26,26,26,0.13);
+  --shadow-card-hover:  0px 6px 24px -3px rgba(26,26,26,0.13), 0px 4px 6px -4px rgba(26,26,26,0.13);
+  --shadow-panel:       0px 10px 40px -12px rgba(26,26,26,0.18), 0px 2px 6px -4px rgba(26,26,26,0.12);
+  --shadow-soft:        0px 6px 24px -3px rgba(26,26,26,0.07);
+
+  /* Accent rotation (Mint set) — product-wide convention: chips, meta
+     pills, item keylines, table column groups rotate through acc1..acc6.
+     Other palettes redefine these in palettes.css. */
+  --acc1-bg: #EAF4EC; --acc1-line: #9CCCA9; --acc1-fg: #2E6B44;
+  --acc2-bg: #FBF1DC; --acc2-line: #E8C27A; --acc2-fg: #7A5A18;
+  --acc3-bg: #E8F1FA; --acc3-line: #96BFE3; --acc3-fg: #2D5A85;
+  --acc4-bg: #F1EBFB; --acc4-line: #C3A8EE; --acc4-fg: #5C3A9E;
+  --acc5-bg: #E5F3F1; --acc5-line: #8BC8BF; --acc5-fg: #1F645B;
+  --acc6-bg: #FAECEF; --acc6-line: #E5A3B3; --acc6-fg: #8E3A52;
+
+  /* Card washes — tinted card backgrounds (rotation for card grids) */
+  --wash1: #ECF5EE;
+  --wash2: #FBF3E1;
+  --wash3: #F1ECFA;
+
+  /* Chart series — 1 home/primary, 2 counter, 3 benchmark neutral */
+  --chart-series-1: #0C7A62;
+  --chart-series-2: #AD741C;
+  --chart-series-3: #8C9490;
+  --chart-axis: #737373;
+  --chart-grid-line: #D4D4D4;
+  --chart-positive: #3F8059;
+  --chart-negative: #A64C42;
+
+  /* Display accent — equals primary except where a palette defines a
+     large-text-only display color (coral). LARGE TYPE ONLY when it
+     differs from --primary. */
+  --display-accent: #0C7A62;
+
+  /* Spacing (4px modular) */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+  --space-9:  96px;
+  --space-10: 128px;
+
+  /* Containers */
+  --container-reading:     680px;
+  --container-display:     960px;
+  --container-application: 1280px;
+
+  /* Radii (in addition to --radius which shadcn convention uses) */
+  --radius-sm:    4px;
+  --radius-md:    8px;
+  --radius-lg:    12px;
+  --radius-card:  24px;   /* marketing card / graphic panel */
+  --radius-panel: 32px;   /* inset section panel */
+  --radius-pill:  9999px;
+
+  /* Motion */
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-slow: 400ms;
+  --ease-out:    cubic-bezier(0, 0, 0.2, 1);
+  --ease-expo:   cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-stagger: 60ms;
+
+  /* OpenType feature flags */
+  --feature-tabular:   "tnum" 1;
+  --feature-oldstyle:  "onum" 1;
+  --feature-small-caps: "smcp" 1;
+}
+
+/**
+ * Dark theme — "Midnight" (replaced the legacy green dark, 2026.07.22).
+ * Applied on the authenticated dashboard surface via next-themes, and
+ * doubles as the `midnight` palette (src/palettes.css re-emits these
+ * values under [data-palette="midnight"] together with its surface,
+ * accent-rotation, wash, and chart-series layers). Applies site-wide when
+ * the user picks Midnight — the editorial light-lock was retired
+ * 2026.07.25 (product decision: the palette is the user's whole-site
+ * preference). Social/render assets remain light Mint by pipeline policy.
+ */
+.dark {
+  --background: #0C1219;
+  --foreground: #E9EEF4;
+
+  --card: #17202C;
+  --card-foreground: #E9EEF4;
+
+  --popover: #17202C;
+  --popover-foreground: #E9EEF4;
+
+  --primary: #58A6E8;
+  --primary-foreground: #0C1219;
+
+  --secondary: #7CC4F5;
+  --secondary-foreground: #0C1219;
+
+  --accent: #E8A33D;
+  --accent-foreground: #0C1219;
+
+  --muted: #1A2431;
+  --muted-foreground: #8F9AA8;
+
+  --destructive: #D07162;
+  --destructive-foreground: #E9EEF4;
+
+  --border: #2C3947;
+  --input: #2C3947;
+  --ring: #58A6E8;
+
+  --chart-axis: #8F9AA8;
+  --chart-grid-line: #2C3947;
+  --chart-positive: #57A876;
+  --chart-negative: #D07162;
+}
+
+/* Reduced motion is global. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

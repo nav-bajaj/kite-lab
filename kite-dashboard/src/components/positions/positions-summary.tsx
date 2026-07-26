@@ -3,15 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  PiggyBank,
-  Clock,
-  Activity,
-  CalendarDays,
-} from "lucide-react";
+import { Clock, Activity, CalendarDays, PiggyBank, Wallet, TrendingUp, TrendingDown } from "lucide-react";
 import { formatCurrency, formatPercentValue, getPnLClass } from "@/lib/utils";
 import { FlashOnChange } from "@/components/ui/flash-on-change";
 import type { PositionsSummary as PositionsSummaryType, MarketStatus } from "@/lib/types";
@@ -39,38 +31,46 @@ export function PositionsSummary({
 
   const holdingsDate = holdingsAsOf ? new Date(holdingsAsOf) : null;
 
-  const cards = [
+  // One combo card instead of four (UX study "D2" primitive): labeled cells
+  // with mini accent-chip icons, hairline dividers, 2×2 on mobile / one row
+  // on desktop. Divider classes are per-position: columns always split;
+  // the second mobile row gains a top hairline that disappears at md.
+  const cells = [
     {
-      title: "Total Invested",
+      title: "Invested",
       value: formatCurrency(summary.total_invested),
       flashValue: summary.total_invested,
       icon: PiggyBank,
-      iconColor: "text-blue-500",
+      chip: "bg-acc1 text-acc1-fg",
+      divider: "",
     },
     {
-      title: "Current Value",
+      title: "Current value",
       value: formatCurrency(summary.total_current_value),
       flashValue: summary.total_current_value,
-      icon: DollarSign,
-      iconColor: "text-purple-500",
+      icon: Wallet,
+      chip: "bg-acc3 text-acc3-fg",
+      divider: "border-l",
     },
     {
       title: "Total P&L",
       value: formatCurrency(summary.total_pnl),
       flashValue: summary.total_pnl,
       subValue: formatPercentValue(summary.total_pnl_pct),
-      icon: summary.total_pnl >= 0 ? TrendingUp : TrendingDown,
-      iconColor: summary.total_pnl >= 0 ? "text-green-500" : "text-red-500",
       valueColor: getPnLClass(summary.total_pnl),
+      icon: summary.total_pnl >= 0 ? TrendingUp : TrendingDown,
+      chip: "bg-acc2 text-acc2-fg",
+      divider: "border-t md:border-t-0 md:border-l",
     },
     {
       title: "Day P&L",
       value: formatCurrency(summary.day_pnl),
       flashValue: summary.day_pnl,
       subValue: formatPercentValue(summary.day_pnl_pct),
-      icon: summary.day_pnl >= 0 ? TrendingUp : TrendingDown,
-      iconColor: summary.day_pnl >= 0 ? "text-green-500" : "text-red-500",
       valueColor: getPnLClass(summary.day_pnl),
+      icon: summary.day_pnl >= 0 ? TrendingUp : TrendingDown,
+      chip: "bg-acc4 text-acc4-fg",
+      divider: "border-l border-t md:border-t-0",
     },
   ];
 
@@ -101,31 +101,40 @@ export function PositionsSummary({
         </div>
       )}
 
-      {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {cards.map((card) => (
-          <Card key={card.title}>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">{card.title}</p>
-                  <p className={`text-2xl font-bold ${card.valueColor || ""}`}>
-                    <FlashOnChange value={card.flashValue}>
-                      {card.value}
-                    </FlashOnChange>
+      {/* Combo summary card (D2 primitive) */}
+      <Card className="py-0">
+        <CardContent className="p-0">
+          <div className="grid grid-cols-2 md:grid-cols-4">
+            {cells.map((cell) => (
+              <div
+                key={cell.title}
+                className={`min-h-[86px] space-y-1 border-border px-4 py-4 sm:px-5 ${cell.divider}`}
+              >
+                <p className="flex items-center gap-1.5">
+                  <span
+                    className={`flex h-5 w-5 items-center justify-center rounded-md ${cell.chip}`}
+                  >
+                    <cell.icon className="h-3 w-3" aria-hidden />
+                  </span>
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.09em] text-muted-foreground">
+                    {cell.title}
+                  </span>
+                </p>
+                <p className={`text-xl font-bold tabular-nums sm:text-2xl ${cell.valueColor || ""}`}>
+                  <FlashOnChange value={cell.flashValue}>
+                    {cell.value}
+                  </FlashOnChange>
+                </p>
+                {cell.subValue && (
+                  <p className={`text-sm tabular-nums ${cell.valueColor || ""}`}>
+                    {cell.subValue}
                   </p>
-                  {card.subValue && (
-                    <p className={`text-sm ${card.valueColor || ""}`}>
-                      {card.subValue}
-                    </p>
-                  )}
-                </div>
-                <card.icon className={`h-8 w-8 ${card.iconColor}`} />
+                )}
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Stats Row */}
       <div className="flex items-center gap-6 text-sm text-muted-foreground">
@@ -170,8 +179,8 @@ function PositionsSummarySkeleton() {
         <Skeleton className="h-5 w-40" />
         <Skeleton className="h-6 w-24" />
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {[1, 2, 3, 4].map((i) => (
+      <div className="grid gap-4">
+        {[1].map((i) => (
           <Card key={i}>
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">

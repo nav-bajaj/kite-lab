@@ -147,7 +147,27 @@ function WatchlistTable({ entries }: { entries: WatchlistEntry[] }) {
   }
 
   return (
-    <div className="overflow-x-auto">
+    <>
+    {/* Mobile: stacked rows — symbol + day move, then the note (the point
+        of a watchlist) at full width. No horizontal scroll. */}
+    <div className="flex flex-col md:hidden">
+      {entries.map((e) => (
+        <div key={e.symbol} className="border-b border-border py-3 last:border-0">
+          <div className="flex items-baseline justify-between gap-3">
+            <span className="text-sm font-semibold text-foreground">{e.symbol}</span>
+            <span className="tabular-nums text-sm"><Pct v={e.chg_today_pct} decimals={2} /></span>
+          </div>
+          <div className="mt-0.5 text-xs text-muted-foreground tabular-nums">
+            {e.close.toFixed(2)}
+            {e.sectors.length > 0 &&
+              ` · ${e.sectors.map((x) => x.replace("NIFTY_", "")).join(", ")}`}
+          </div>
+          <p className="mt-1.5 text-sm leading-[1.5] text-foreground">{e.note}</p>
+        </div>
+      ))}
+    </div>
+
+    <div className="hidden overflow-x-auto md:block">
       <table className="w-full text-sm">
         <thead className="border-b border-border text-left text-muted-foreground">
           <tr>
@@ -175,5 +195,6 @@ function WatchlistTable({ entries }: { entries: WatchlistEntry[] }) {
         </tbody>
       </table>
     </div>
+    </>
   );
 }

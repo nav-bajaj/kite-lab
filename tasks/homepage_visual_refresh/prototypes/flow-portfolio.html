@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Marketworks — Hero Flow Prototype</title>
+<style>
+  /* ---- Prototype page shell (NOT production) ---- */
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #FAFCFB;              /* page/background base */
+    overflow: hidden;
+  }
+
+  /* Full-viewport canvas sits behind everything */
+  #flow {
+    position: fixed;
+    inset: 0;
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+  }
+
+  /* Placeholder hero copy — left-aligned in the left half, over the calm band */
+  .hero {
+    position: fixed;
+    z-index: 1;
+    left: 8vw;
+    top: 50%;
+    transform: translateY(-50%);
+    max-width: 40vw;
+    pointer-events: none;
+    font-family: Georgia, 'Times New Roman', serif;
+    color: #1A1A1A;                   /* ink */
+  }
+  .hero h1 {
+    margin: 0 0 0.5rem 0;
+    font-weight: 500;
+    font-size: clamp(2rem, 4.4vw, 3.6rem);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+  }
+  .hero p {
+    margin: 0;
+    font-size: clamp(0.95rem, 1.4vw, 1.2rem);
+    line-height: 1.5;
+    color: #737373;                  /* muted text */
+    max-width: 30ch;
+  }
+  /* faint "PLACEHOLDER" tag so nobody mistakes this for final copy */
+  .hero .tag {
+    display: inline-block;
+    margin-bottom: 1.1rem;
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #737373;
+    opacity: 0.7;
+  }
+</style>
+</head>
+<body>
+  <canvas id="flow"></canvas>
+
+  <div class="hero">
+    <span class="tag">Placeholder hero</span>
+    <h1>Indian markets,<br>the calm way.</h1>
+    <p>Momentum portfolios, quietly rebalanced. Signals in, growth out.</p>
+  </div>
+
+<script>
+"use strict";
+/* =====================================================================
+   MARKETWORKS — HERO BACKGROUND FLOW  (design prototype, not production)
+   Story, left -> right:
+     (1) Several source lines enter from the left, carrying glowing pulses.
+     (2) Pulses converge on a soft node and get absorbed (node brightens).
+     (3) A single portfolio line grows up-and-right from the node — a rising
+         momentum curve with a bright leading dot and faint area fill.
+   ---------------------------------------------------------------------
+   ALL TUNABLE KNOBS LIVE HERE. Iterate freely.
+   ===================================================================== */
+
+/* ---- Palette (brand-exact; do not invent new colors) ---- */
+const COLORS = {
+  base:        "#FAFCFB", // page background
+  lichen:      "#14715F", // primary lichen green — faint source lines
+  signal:      "#55C374", // signal green — pulses, growth line, leading dot
+  deep:        "#0E3B32", // lichen deep — optional accents
+  marigold:    "#E8A33D", // warm accent (only if WARM_ACCENT === true)
+};
+
+/* Warm-accent toggle. MUST default false (green-forward). */
+const WARM_ACCENT = false;
+const PULSE_COLOR = WARM_ACCENT ? COLORS.marigold : COLORS.signal;
+
+/* ---- Convergence node position (fraction of viewport) ---- */
+const NODE_X = 0.46;   // ~46% across
+const NODE_Y = 0.52;   // ~52% down
+
+/* ---- Source lines ---- */
+const SOURCE_COUNT      = 6;      // 5–7 thin inbound lines
+const SOURCE_ALPHA      = 0.10;   // resting line opacity (~8–12%)
+const SOURCE_WIDTH      = 1.0;    // stroke px (pre-DPR)
+const SOURCE_START_X    = -0.02;  // enter just off the left edge
+// y-band the sources spawn in — weighted to upper & lower thirds so the
+// vertical center (headline zone) stays calm.
+const SOURCE_Y_TOP      = 0.10;
+const SOURCE_Y_BOTTOM   = 0.90;
+const SOURCE_CENTER_GAP = 0.16;   // half-height of the kept-clear center band
+
+/* ---- Pulses (travel source -> node) ---- */
+const PULSE_MIN_GAP   = 1.5;   // seconds between emissions (per source, min)
+const PULSE_MAX_GAP   = 3.0;   // seconds between emissions (per source, max)
+const PULSE_MIN_DUR   = 3.4;   // seconds to travel the full line (slower)
+const PULSE_MAX_DUR   = 5.2;   // seconds to travel the full line (slowest)
+const PULSE_CORE_R    = 2.4;   // core radius px
+const PULSE_GLOW_R    = 9.0;   // radial glow radius px
+const PULSE_ALPHA     = 0.85;  // core alpha at full brightness
+
+/* ---- Node glow ---- */
+const NODE_BASE_R     = 34;    // resting glow radius px
+const NODE_BASE_ALPHA = 0.14;  // resting glow alpha
+const NODE_FLARE_R    = 26;    // extra radius added on a fresh arrival
+const NODE_FLARE_GAIN = 0.30;  // extra alpha added on a fresh arrival
+const NODE_FLARE_DECAY= 1.8;   // how fast an arrival flare fades (per second)
+
+/* ---- Portfolio growth line (node -> up & right) ---- */
+const GROW_LOOP_SEC   = 12.0;  // seconds for the line to draw fully, then fade+restart
+const GROW_FADE_SEC   = 1.6;   // fade-out time before restart (part of the loop feel)
+const GROW_END_X      = 0.94;  // where the curve finishes (fraction of width)
+const GROW_RISE       = 0.30;  // total vertical climb as fraction of height (up)
+const GROW_WIDTH      = 1.8;   // stroke px
+const GROW_FILL_ALPHA = 0.04;  // area fill alpha under the curve
+const GROW_TAIL_FADE  = 0.55;  // left/older end fades to this fraction of opacity
+const GROW_DOT_R      = 3.2;   // leading dot core radius px
+const GROW_DOT_GLOW_R = 14;    // leading dot glow radius px
+const GROW_SEG        = 120;   // sample points along the curve (smoothness)
+const GROW_PULLBACKS  = 3;     // number of small realistic dips on the way up
+const GROW_PULLBACK_AMP= 0.055;// dip depth as fraction of total rise
+
+/* ---- Global motion feel ---- */
+const BG_CLEAR_ALPHA  = 1.0;   // full clear each frame (crisp, no trails)
+
+/* =====================================================================
+   Engine
+   ===================================================================== */
+const canvas = document.getElementById("flow");
+const ctx = canvas.getContext("2d");
+
+let W = 0, H = 0, DPR = 1;
+let sources = [];
+let node = { x: 0, y: 0, flare: 0 };
+let running = true;
+let growthPath = [];   // precomputed portfolio curve points (in px)
+
+const prefersReduced = window.matchMedia
+  ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  : false;
+
+/* small deterministic-ish helpers */
+function rand(a, b) { return a + Math.random() * (b - a); }
+function hexA(hex, a) {
+  const n = parseInt(hex.slice(1), 16);
+  const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  return `rgba(${r},${g},${b},${a})`;
+}
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+/* ---- Build the scene at current size ---- */
+function build() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width  = Math.floor(W * DPR);
+  canvas.height = Math.floor(H * DPR);
+  canvas.style.width  = W + "px";
+  canvas.style.height = H + "px";
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+  node.x = NODE_X * W;
+  node.y = NODE_Y * H;
+  node.flare = 0;
+
+  buildSources();
+  buildGrowthPath();
+}
+
+/* Source lines: entry heights weighted to upper & lower thirds,
+   each a gentle quadratic curve into the node. */
+function buildSources() {
+  sources = [];
+  for (let i = 0; i < SOURCE_COUNT; i++) {
+    // spread across the band, then push away from the center clear-zone
+    let t = (i + 0.5) / SOURCE_COUNT;           // 0..1 across the band
+    let y = lerp(SOURCE_Y_TOP, SOURCE_Y_BOTTOM, t);
+    // repel from node.y so the headline band stays calm
+    const dy = y - NODE_Y;
+    if (Math.abs(dy) < SOURCE_CENTER_GAP) {
+      y = NODE_Y + Math.sign(dy || 1) * SOURCE_CENTER_GAP;
+    }
+    y += rand(-0.015, 0.015);
+
+    const startX = SOURCE_START_X * W;
+    const startY = y * H;
+    // control point creates the gentle curve toward the node
+    const ctrlX = lerp(startX, node.x, 0.5) + rand(-0.03, 0.03) * W;
+    const ctrlY = lerp(startY, node.y, 0.5) + rand(-0.06, 0.06) * H;
+
+    sources.push({
+      startX, startY,
+      ctrlX, ctrlY,
+      endX: node.x, endY: node.y,
+      pulses: [],
+      nextEmit: rand(0, PULSE_MAX_GAP),   // stagger first emissions
+    });
+  }
+}
+
+/* Point along a source's quadratic bezier at parameter u (0..1) */
+function sourcePoint(s, u) {
+  const mu = 1 - u;
+  const x = mu * mu * s.startX + 2 * mu * u * s.ctrlX + u * u * s.endX;
+  const y = mu * mu * s.startY + 2 * mu * u * s.ctrlY + u * u * s.endY;
+  return { x, y };
+}
+
+/* Portfolio curve: from node, climbing to (GROW_END_X, node.y - rise),
+   with a few small pullbacks superimposed. Precomputed as px points. */
+function buildGrowthPath() {
+  growthPath = [];
+  const x0 = node.x;
+  const y0 = node.y;
+  const x1 = GROW_END_X * W;
+  const rise = GROW_RISE * H;
+  for (let i = 0; i <= GROW_SEG; i++) {
+    const t = i / GROW_SEG;                    // 0..1 progress along curve
+    const x = lerp(x0, x1, t);
+    // base climb: ease-out so it shoots up then steadies (momentum feel)
+    const climb = Math.pow(t, 0.85);
+    // small realistic pullbacks (decaying sine)
+    const wobble = Math.sin(t * Math.PI * GROW_PULLBACKS * 2)
+                 * GROW_PULLBACK_AMP * rise * (1 - t * 0.4);
+    const y = y0 - climb * rise + wobble;
+    growthPath.push({ x, y });
+  }
+}
+
+/* =====================================================================
+   Update + draw
+   ===================================================================== */
+function emitPulses(s, dt) {
+  s.nextEmit -= dt;
+  if (s.nextEmit <= 0) {
+    s.nextEmit = rand(PULSE_MIN_GAP, PULSE_MAX_GAP);
+    s.pulses.push({ u: 0, dur: rand(PULSE_MIN_DUR, PULSE_MAX_DUR) });
+  }
+  for (let i = s.pulses.length - 1; i >= 0; i--) {
+    const p = s.pulses[i];
+    p.u += dt / p.dur;
+    if (p.u >= 1) {
+      // absorbed at node -> flare it
+      node.flare = Math.min(1, node.flare + NODE_FLARE_GAIN);
+      s.pulses.splice(i, 1);
+    }
+  }
+}
+
+function drawSourceLine(s) {
+  ctx.beginPath();
+  ctx.moveTo(s.startX, s.startY);
+  ctx.quadraticCurveTo(s.ctrlX, s.ctrlY, s.endX, s.endY);
+  ctx.strokeStyle = hexA(COLORS.lichen, SOURCE_ALPHA);
+  ctx.lineWidth = SOURCE_WIDTH;
+  ctx.stroke();
+}
+
+function drawPulse(x, y, bright) {
+  // soft radial glow
+  const g = ctx.createRadialGradient(x, y, 0, x, y, PULSE_GLOW_R);
+  g.addColorStop(0, hexA(PULSE_COLOR, 0.45 * bright));
+  g.addColorStop(1, hexA(PULSE_COLOR, 0));
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(x, y, PULSE_GLOW_R, 0, Math.PI * 2);
+  ctx.fill();
+  // core
+  ctx.fillStyle = hexA(PULSE_COLOR, PULSE_ALPHA * bright);
+  ctx.beginPath();
+  ctx.arc(x, y, PULSE_CORE_R, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawNode() {
+  const r = NODE_BASE_R + node.flare * NODE_FLARE_R;
+  const a = NODE_BASE_ALPHA + node.flare * NODE_FLARE_GAIN;
+  const g = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, r);
+  g.addColorStop(0, hexA(COLORS.signal, a));
+  g.addColorStop(0.5, hexA(COLORS.lichen, a * 0.5));
+  g.addColorStop(1, hexA(COLORS.lichen, 0));
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(node.x, node.y, r, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+/* Draw the portfolio line up to progress `prog` (0..1), at overall `alpha`. */
+function drawGrowth(prog, alpha) {
+  const n = growthPath.length;
+  const last = Math.max(1, Math.floor(prog * (n - 1)));
+
+  // ---- area fill under the drawn portion ----
+  ctx.beginPath();
+  ctx.moveTo(growthPath[0].x, node.y);
+  for (let i = 0; i <= last; i++) ctx.lineTo(growthPath[i].x, growthPath[i].y);
+  ctx.lineTo(growthPath[last].x, node.y);
+  ctx.closePath();
+  ctx.fillStyle = hexA(COLORS.lichen, GROW_FILL_ALPHA * alpha);
+  ctx.fill();
+
+  // ---- the line itself, drawn as short segments so the older (left)
+  //      end can fade out via a per-segment alpha ramp ----
+  ctx.lineWidth = GROW_WIDTH;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  for (let i = 1; i <= last; i++) {
+    const t = i / (n - 1);
+    // color shifts lichen -> signal along its length
+    const col = t < 0.5 ? COLORS.lichen : COLORS.signal;
+    // tail fade: older (small i) points dimmer
+    const tail = lerp(GROW_TAIL_FADE, 1, i / last);
+    ctx.strokeStyle = hexA(col, alpha * tail);
+    ctx.beginPath();
+    ctx.moveTo(growthPath[i - 1].x, growthPath[i - 1].y);
+    ctx.lineTo(growthPath[i].x, growthPath[i].y);
+    ctx.stroke();
+  }
+
+  // ---- bright leading glow-dot at the growing tip ----
+  const tip = growthPath[last];
+  const gg = ctx.createRadialGradient(tip.x, tip.y, 0, tip.x, tip.y, GROW_DOT_GLOW_R);
+  gg.addColorStop(0, hexA(COLORS.signal, 0.55 * alpha));
+  gg.addColorStop(1, hexA(COLORS.signal, 0));
+  ctx.fillStyle = gg;
+  ctx.beginPath();
+  ctx.arc(tip.x, tip.y, GROW_DOT_GLOW_R, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = hexA(COLORS.signal, 0.95 * alpha);
+  ctx.beginPath();
+  ctx.arc(tip.x, tip.y, GROW_DOT_R, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+/* ---- One animated frame ---- */
+let growthClock = 0;  // seconds within the current grow loop
+
+function frame(dt) {
+  ctx.clearRect(0, 0, W, H);
+
+  // node flare decays back to rest
+  node.flare = Math.max(0, node.flare - NODE_FLARE_DECAY * dt);
+
+  // sources + pulses
+  for (const s of sources) {
+    drawSourceLine(s);
+    emitPulses(s, dt);
+  }
+
+  // node under the pulses
+  drawNode();
+
+  // pulses on top (brighter as they near the node)
+  for (const s of sources) {
+    for (const p of s.pulses) {
+      const pt = sourcePoint(s, p.u);
+      const bright = 0.5 + 0.5 * p.u;   // brighten toward absorption
+      drawPulse(pt.x, pt.y, bright);
+    }
+  }
+
+  // portfolio growth loop: draw 0..1, hold briefly, fade, restart
+  growthClock += dt;
+  const drawSec = GROW_LOOP_SEC - GROW_FADE_SEC;
+  let prog, alpha;
+  if (growthClock <= drawSec) {
+    prog = growthClock / drawSec;
+    alpha = 1;
+  } else {
+    prog = 1;
+    const f = (growthClock - drawSec) / GROW_FADE_SEC;
+    alpha = 1 - f;
+    if (growthClock >= GROW_LOOP_SEC) growthClock = 0;
+  }
+  // ease the progress a touch for a smoother tip motion
+  const easedProg = prog < 1 ? (1 - Math.pow(1 - prog, 1.4)) : 1;
+  drawGrowth(Math.max(0.001, easedProg), alpha);
+}
+
+/* ---- Static resolved frame for reduced-motion ---- */
+function staticFrame() {
+  ctx.clearRect(0, 0, W, H);
+  for (const s of sources) drawSourceLine(s);
+  drawNode();
+  drawGrowth(1, 1);
+}
+
+/* =====================================================================
+   Loop / lifecycle
+   ===================================================================== */
+let lastT = 0;
+function loop(now) {
+  if (!running) return;
+  if (!lastT) lastT = now;
+  let dt = (now - lastT) / 1000;
+  lastT = now;
+  if (dt > 0.05) dt = 0.05;          // clamp after tab-switch / jank
+  frame(dt);
+  requestAnimationFrame(loop);
+}
+
+function start() {
+  if (prefersReduced) { build(); staticFrame(); return; }
+  running = true;
+  lastT = 0;
+  requestAnimationFrame(loop);
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    running = false;
+  } else if (!prefersReduced) {
+    running = true;
+    lastT = 0;
+    requestAnimationFrame(loop);
+  }
+});
+
+/* debounced resize -> full rebuild */
+let resizeTimer = null;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    build();
+    if (prefersReduced) staticFrame();
+  }, 180);
+});
+
+/* go */
+build();
+start();
+</script>
+</body>
+</html>

@@ -29,6 +29,96 @@ interface PositionsTableProps {
 type SortField = keyof Position;
 type SortOrder = "asc" | "desc";
 
+/** Mobile sort chips (UX study D1) — sorting is first-class on a ranked
+ *  product, so it stays visible instead of hiding behind an icon. */
+const MOBILE_SORTS: ReadonlyArray<{ field: SortField; label: string }> = [
+  { field: "total_pnl", label: "P&L" },
+  { field: "day_pnl", label: "Day" },
+  { field: "current_value", label: "Value" },
+  { field: "symbol", label: "A–Z" },
+];
+
+/** Mobile position row — two lines + tap-to-expand (UX study D1).
+ *  Line 1: symbol + total P&L (the question the page answers).
+ *  Line 2: qty · avg + return chip. Detail lives behind the tap. */
+function MobilePositionRow({
+  position,
+  isExpanded,
+  onToggle,
+}: {
+  position: Position;
+  isExpanded: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-expanded={isExpanded}
+      className={`w-full border-b px-1 py-3 text-left transition-colors ${
+        isExpanded ? "bg-muted/50" : ""
+      }`}
+    >
+      <div className="flex items-baseline justify-between gap-3">
+        <span className="text-[15px] font-semibold">{position.symbol}</span>
+        <span
+          className={`text-[15px] font-semibold tabular-nums ${getPnLClass(position.total_pnl)}`}
+        >
+          {position.total_pnl >= 0 ? "+" : ""}
+          {formatCurrency(position.total_pnl)}
+        </span>
+      </div>
+      <div className="mt-0.5 flex items-center justify-between gap-3">
+        <span className={`text-xs tabular-nums ${getPnLClass(position.day_pnl)}`}>
+          {position.day_pnl >= 0 ? "+" : ""}
+          {formatCurrency(position.day_pnl)} ({formatPercentValue(position.day_pnl_pct)}) today
+        </span>
+        <span
+          className={`rounded-full px-2 py-px text-xs font-semibold tabular-nums ${getPnLClass(
+            position.total_pnl_pct,
+          )} ${position.total_pnl_pct >= 0 ? "bg-green-600/10" : "bg-red-600/10"}`}
+        >
+          {formatPercentValue(position.total_pnl_pct)}
+        </span>
+      </div>
+      {isExpanded && (
+        <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-2 border-t border-dashed pt-3 text-[13px] tabular-nums">
+          <div>
+            <dt className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+              Qty
+            </dt>
+            <dd>{position.qty}</dd>
+          </div>
+          <div>
+            <dt className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+              Avg price
+            </dt>
+            <dd>{formatCurrency(position.avg_price)}</dd>
+          </div>
+          <div>
+            <dt className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+              LTP
+            </dt>
+            <dd>{formatCurrency(position.ltp)}</dd>
+          </div>
+          <div>
+            <dt className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+              Invested
+            </dt>
+            <dd>{formatCurrency(position.invested)}</dd>
+          </div>
+          <div>
+            <dt className="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+              Current
+            </dt>
+            <dd>{formatCurrency(position.current_value)}</dd>
+          </div>
+        </dl>
+      )}
+    </button>
+  );
+}
+
 // Defined at module scope to satisfy react-hooks/static-components — creating
 // this component inline inside PositionsTable triggered the rule because the
 // component identity changes on every render.
@@ -59,6 +149,15 @@ function SortableHeader({
 export function PositionsTable({ positions, isLoading }: PositionsTableProps) {
   const [sortField, setSortField] = useState<SortField>("total_pnl");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+
+  const toggleRow = (symbol: string) =>
+    setExpandedRows((prev) => {
+      const next = new Set(prev);
+      if (next.has(symbol)) next.delete(symbol);
+      else next.add(symbol);
+      return next;
+    });
 
   if (isLoading) {
     return <PositionsTableSkeleton />;
@@ -125,7 +224,48 @@ export function PositionsTable({ positions, isLoading }: PositionsTableProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="rounded-md border overflow-x-auto">
+        {/* Mobile (UX study D1): sort chips + two-line rows, no horizontal scroll */}
+        <div className="md:hidden">
+          <div className="flex items-center gap-2 overflow-x-auto pb-3">
+            {MOBILE_SORTS.map(({ field, label }) => {
+              const selected = sortField === field;
+              return (
+                <button
+                  key={field}
+                  type="button"
+                  onClick={() => handleSort(field)}
+                  className={`whitespace-nowrap rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
+                    selected
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-card text-muted-foreground"
+                  }`}
+                >
+                  {label}
+                  {selected ? (sortOrder === "desc" ? " ↓" : " ↑") : ""}
+                </button>
+              );
+            })}
+          </div>
+          <div className="border-t">
+            {sortedPositions.map((position) => (
+              <MobilePositionRow
+                key={position.symbol}
+                position={position}
+                isExpanded={expandedRows.has(position.symbol)}
+                onToggle={() => toggleRow(position.symbol)}
+              />
+            ))}
+          </div>
+          <div className="flex items-baseline justify-between px-1 pt-3 text-sm font-semibold tabular-nums">
+            <span>Total</span>
+            <span className={getPnLClass(totals.total_pnl)}>
+              {totals.total_pnl >= 0 ? "+" : ""}
+              {formatCurrency(totals.total_pnl)} ({formatPercentValue(totalPnlPct)})
+            </span>
+          </div>
+        </div>
+
+        <div className="hidden rounded-md border overflow-x-auto md:block">
           <Table>
             <TableHeader>
               <TableRow>

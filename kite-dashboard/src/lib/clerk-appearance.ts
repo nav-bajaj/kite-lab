@@ -1,13 +1,16 @@
 /**
- * Brand appearance for the Clerk <SignIn> / <SignUp> components on the
- * light-locked marketing surfaces. Lichen primary, Outfit type, mist/white
- * surfaces, 8px radius — mirrors the @marketworks/design role tokens.
+ * Brand appearance for the Clerk <SignIn> / <SignUp> components. Lichen
+ * primary, Outfit type, white surfaces, 8px radius — mirrors the
+ * @marketworks/design Mint tokens. Literal hexes on purpose: Clerk derives
+ * hover/shade colors from these values, so var() references would break its
+ * color math — the widget stays Mint-branded inside palette-themed shells
+ * (standard embedded-widget behavior).
  * Typed structurally where it's passed to the `appearance` prop (avoids a
  * direct dep on the transitive @clerk/types package).
  */
 export const clerkAppearance = {
   variables: {
-    colorPrimary: "#14715F", // lichen
+    colorPrimary: "#0C7A62", // lichen (vibrance pass 2026.07.22)
     colorText: "#1A1A1A", // ink
     colorTextSecondary: "#737373", // neutral-500
     colorBackground: "#FFFFFF",

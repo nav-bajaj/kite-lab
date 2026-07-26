@@ -65,7 +65,57 @@ export default async function SectorsPage({
           <summary className="cursor-pointer text-[13px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline">
             Full table — close, day %, and every RS horizon
           </summary>
-          <div className="mt-3 overflow-x-auto">
+          {/* Mobile: one stacked row per sector — rank + day move on top,
+              every RS horizon in a labeled mini-grid (no horizontal scroll). */}
+          <div className="mt-3 flex flex-col md:hidden">
+            {leaderboard_60d.map((s) => (
+              <div key={s.sector} className="border-b border-border py-3 last:border-0">
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="text-sm font-semibold text-foreground">
+                    <span className="mr-1.5 text-muted-foreground">
+                      {s.rank_60d ? `#${s.rank_60d}` : "—"}
+                    </span>
+                    {s.sector.replace("NIFTY_", "")}
+                  </span>
+                  <span className="tabular-nums text-sm">
+                    <Pct v={s.sector_chg_today_pct} decimals={2} />
+                  </span>
+                </div>
+                <dl className="mt-2 grid grid-cols-3 gap-x-4 gap-y-1.5 text-[13px] tabular-nums">
+                  {(
+                    [
+                      ["5d", s.rs_5d],
+                      ["20d", s.rs_20d],
+                      ["60d", s.rs_60d],
+                      ["120d", s.rs_120d],
+                      ["252d", s.rs_252d],
+                    ] as const
+                  ).map(([label, v]) => (
+                    <div key={label}>
+                      <dt className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">
+                        {label}
+                      </dt>
+                      <dd><Pct v={v} /></dd>
+                    </div>
+                  ))}
+                  <div>
+                    <dt className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">
+                      Δ wow
+                    </dt>
+                    <dd className="text-muted-foreground">
+                      {s.rank_change_wow_60d === null
+                        ? "—"
+                        : s.rank_change_wow_60d > 0
+                          ? `+${s.rank_change_wow_60d}`
+                          : s.rank_change_wow_60d}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-3 hidden overflow-x-auto md:block">
             <table className="w-full text-sm">
               <thead className="border-b border-border text-left text-muted-foreground">
                 <tr>
@@ -252,7 +302,50 @@ function SubgroupSection({
         {[...byParent.entries()].map(([parent, groups]) => (
           <div key={parent} className="flex flex-col gap-2">
             <h4 className="text-sm font-semibold text-foreground">{parent.replace("NIFTY_", "")}</h4>
-            <div className="overflow-x-auto">
+            {/* Mobile: stacked subgroup rows with labeled mini-grid */}
+            <div className="flex flex-col md:hidden">
+              {groups.map((g) => (
+                <div key={g.subgroup} className="border-b border-border py-3 last:border-0">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <span className="text-sm font-medium text-foreground">{g.label}</span>
+                    <span className="tabular-nums text-sm">
+                      <Pct v={g.today_chg_pct} decimals={2} />
+                    </span>
+                  </div>
+                  <dl className="mt-2 grid grid-cols-3 gap-x-4 gap-y-1.5 text-[13px] tabular-nums">
+                    {(
+                      [
+                        ["5d", g.rs_5d],
+                        ["20d", g.rs_20d],
+                        ["60d", g.rs_60d],
+                        ["Δ wow", g.rs_60d_wow_delta],
+                      ] as const
+                    ).map(([label, v]) => (
+                      <div key={label}>
+                        <dt className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">
+                          {label}
+                        </dt>
+                        <dd><Pct v={v} /></dd>
+                      </div>
+                    ))}
+                    <div>
+                      <dt className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">
+                        &gt; 200-DMA
+                      </dt>
+                      <dd className="text-muted-foreground">{fmtPct(g.pct_above_200dma, 0)}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">
+                        Tracked
+                      </dt>
+                      <dd className="text-muted-foreground">{g.n_covered}/{g.n_total}</dd>
+                    </div>
+                  </dl>
+                </div>
+              ))}
+            </div>
+
+            <div className="hidden overflow-x-auto md:block">
               <table className="w-full text-sm">
                 <thead className="border-b border-border text-left text-muted-foreground">
                   <tr>

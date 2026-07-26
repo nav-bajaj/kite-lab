@@ -2,8 +2,12 @@ import Link from "next/link";
 
 import { getUniverse } from "@/lib/universes";
 import type { UniverseId } from "@/lib/types";
-import { MarketingNav } from "@/components/marketing/marketing-nav";
-import { MarketingFooter } from "@/components/marketing/marketing-footer";
+import { FloatingNav } from "@/components/marketing/floating-nav";
+import { FooterPanel } from "@/components/marketing/footer-panel";
+import { FlowGrid } from "@/components/marketing/flow-grid";
+import { MarketingCard } from "@/components/marketing/marketing-card";
+import { SectionPanel } from "@/components/marketing/section-panel";
+import { Reveal } from "@/components/marketing/reveal";
 
 export const metadata = {
   title: "Portfolios — Marketworks",
@@ -79,6 +83,14 @@ const DETAILS = new Map<UniverseId, PortfolioDetail>([
 // with plain-language detail are shown.
 const ORDER: UniverseId[] = ["l6_v2", "combo_defensive", "om25_v3"];
 
+// Accent rotation encodes sibling identity (DESIGN.md §2.6) — position-based,
+// matching the homepage portfolio cards. Static strings for Tailwind.
+const CARD_ACCENTS = [
+  "border-acc1-line bg-acc1 text-acc1-fg",
+  "border-acc2-line bg-acc2 text-acc2-fg",
+  "border-acc4-line bg-acc4 text-acc4-fg",
+] as const;
+
 export default function PortfoliosPage() {
   const portfolios = ORDER.map((id) => ({
     universe: getUniverse(id),
@@ -89,40 +101,42 @@ export default function PortfoliosPage() {
   );
 
   return (
-    <div className="mw-brand flex min-h-screen flex-col bg-background">
-      <MarketingNav active="Portfolios" />
+    <div className="mw-brand relative min-h-screen overflow-hidden bg-surface-base">
+      <FlowGrid />
+      <FloatingNav />
 
-      <main className="flex-1">
+      <main className="relative z-10">
         {/* Hero */}
-        <section className="px-6 py-24 sm:px-12 sm:py-28">
+        <section className="px-6 pb-14 pt-32 sm:px-12 sm:pt-36">
           <div className="mx-auto flex max-w-[720px] flex-col gap-6">
-            <span className="text-[13px] font-semibold uppercase tracking-[0.16em] text-primary">
-              The portfolios
-            </span>
-            <h1 className="font-serif text-[2.5rem] font-medium leading-[1.08] tracking-[-0.02em] text-foreground sm:text-[3.5rem]">
-              Three ready-made ways to follow the market.
-            </h1>
-            <p className="text-xl leading-[1.6] text-muted-foreground">
-              Each portfolio is a plain list of Indian stocks that our system
-              rebuilds on a fixed schedule — a &ldquo;rebalance&rdquo; — so it
-              keeps holding the names that are currently leading the market. They
-              all run on the same idea, momentum, but with different levels of
-              risk. Pick the one that fits how you like to invest.
-            </p>
+            <Reveal>
+              <span className="text-[13px] font-semibold uppercase tracking-[0.16em] text-primary">
+                The portfolios
+              </span>
+              <h1 className="mt-4 font-serif text-[2.5rem] font-medium leading-[1.08] tracking-[-0.02em] text-balance text-foreground sm:text-[3.5rem]">
+                Three ready-made ways to follow the market.
+              </h1>
+              <p className="mt-5 text-xl leading-[1.6] text-muted-foreground">
+                Each portfolio is a plain list of Indian stocks that our system
+                rebuilds on a fixed schedule — a &ldquo;rebalance&rdquo; — so it
+                keeps holding the names that are currently leading the market.
+                They all run on the same idea, momentum, but with different
+                levels of risk. Pick the one that fits how you like to invest.
+              </p>
+            </Reveal>
           </div>
         </section>
 
-        {/* Portfolio detail cards */}
-        <section className="border-t border-border px-6 py-16 sm:px-12 sm:py-20">
+        {/* Portfolio detail cards — the accent rotation carries card identity */}
+        <section className="px-6 pb-4 sm:px-12">
           <div className="mx-auto flex max-w-[820px] flex-col gap-6">
-            {portfolios.map(({ universe, detail }) => {
-              return (
-                <article
-                  key={universe.id}
-                  className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-7 sm:p-9"
-                >
+            {portfolios.map(({ universe, detail }, i) => (
+              <Reveal key={universe.id} delayMs={i * 80}>
+                <MarketingCard interactive={false} className="flex flex-col gap-5 sm:p-9">
                   <div className="flex flex-wrap items-center justify-between gap-3">
-                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+                    <span
+                      className={`rounded-full border px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.14em] ${CARD_ACCENTS[i % CARD_ACCENTS.length]}`}
+                    >
                       {detail.tag}
                     </span>
                     <span className="font-mono text-sm text-muted-foreground">
@@ -160,59 +174,71 @@ export default function PortfoliosPage() {
                       </dd>
                     </div>
                   </dl>
-                </article>
-              );
-            })}
+                </MarketingCard>
+              </Reveal>
+            ))}
+          </div>
+        </section>
 
-            <div className="flex flex-col gap-3 border-t border-border pt-8">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
+        {/* Research note — the deep contrast moment, shared with the homepage */}
+        <Reveal>
+          <SectionPanel variant="deep" className="!max-w-[820px]">
+            <div className="flex flex-col gap-4">
+              <span className="text-xs font-semibold uppercase tracking-[0.16em] text-secondary">
                 Process over prediction
               </span>
-              <p className="max-w-[620px] text-[15px] leading-[1.6] text-foreground">
+              <p className="max-w-[620px] text-lg leading-[1.65] text-surface-panel-deep-foreground/85">
                 All three are built from the same research: momentum tested over
                 years of Indian market history and validated on data our models
                 had never seen. We don&apos;t predict where the market is going —
                 we run a disciplined process that stays with the leaders and
-                steps away as they fade.{" "}
-                <Link
-                  href="/"
-                  className="font-medium text-primary underline-offset-2 hover:underline"
-                >
-                  More on the thinking →
-                </Link>
+                steps away as they fade.
               </p>
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 text-base font-semibold text-secondary transition-opacity hover:opacity-80"
+              >
+                More on the thinking <span aria-hidden>→</span>
+              </Link>
             </div>
+          </SectionPanel>
+        </Reveal>
 
-            <p className="max-w-[620px] text-[15px] leading-[1.6] text-muted-foreground">
-              These are model portfolios for research and education — a
-              transparent look at what a rules-based momentum strategy would
-              hold. They are not personalised advice or a recommendation to buy
-              or sell any stock, and all investing carries risk.
-            </p>
-          </div>
+        <section className="px-6 pt-6 sm:px-12">
+          <p className="mx-auto max-w-[820px] text-[15px] leading-[1.6] text-muted-foreground">
+            These are model portfolios for research and education — a
+            transparent look at what a rules-based momentum strategy would hold.
+            They are not personalised advice or a recommendation to buy or sell
+            any stock, and all investing carries risk.
+          </p>
         </section>
 
-        {/* CTA band */}
-        <section className="px-6 py-20 sm:px-12 sm:py-24">
-          <div className="mx-auto flex max-w-[820px] flex-col items-start gap-6 rounded-2xl bg-primary px-8 py-14 sm:px-14">
-            <h2 className="max-w-[620px] font-serif text-[2rem] font-medium leading-[1.15] text-primary-foreground sm:text-[2.5rem]">
-              See the live portfolios.
-            </h2>
-            <p className="max-w-[560px] text-lg leading-[1.6] text-primary-foreground/85">
-              Sign up to follow all three — see exactly what each one holds and
-              what changed at the last rebalance. Free while we&apos;re in beta.
-            </p>
-            <Link
-              href="/sign-up"
-              className="rounded-lg bg-background px-6 py-3 text-base font-semibold text-primary transition-opacity hover:opacity-90"
-            >
-              Get beta access
-            </Link>
-          </div>
-        </section>
+        {/* CTA — inset primary panel, same language as the homepage */}
+        <Reveal>
+          <SectionPanel variant="lichen" className="!max-w-[820px]">
+            <div className="flex max-w-[620px] flex-col items-start gap-6">
+              <h2 className="font-serif text-[2rem] font-medium leading-[1.15] text-primary-foreground sm:text-[2.5rem]">
+                See the live portfolios.
+              </h2>
+              <p className="text-lg leading-[1.6] text-primary-foreground/85">
+                Sign up to follow all three — see exactly what each one holds
+                and what changed at the last rebalance. Free while we&apos;re in
+                beta.
+              </p>
+              <Link
+                href="/sign-up"
+                className="rounded-full bg-surface-base px-6 py-3 text-base font-semibold text-primary transition-[transform,box-shadow] duration-200 ease-expo hover:-translate-y-px hover:shadow-md"
+              >
+                Get beta access
+              </Link>
+            </div>
+          </SectionPanel>
+        </Reveal>
+
+        <div className="relative z-10 pb-6 pt-8">
+          <FooterPanel />
+        </div>
       </main>
-
-      <MarketingFooter />
     </div>
   );
 }

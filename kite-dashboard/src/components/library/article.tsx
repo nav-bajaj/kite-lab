@@ -113,8 +113,8 @@ export function Figure({
 
 export function TakeawayCard({ children }: { children: React.ReactNode }) {
   return (
-    <aside className="flex flex-col gap-2.5 rounded-xl bg-primary/[0.06] p-7">
-      <span className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+    <aside className="flex flex-col gap-2.5 rounded-xl bg-wash2 p-7">
+      <span className="text-xs font-semibold uppercase tracking-[0.16em] text-acc2-fg">
         The takeaway
       </span>
       <p className="font-serif text-2xl font-medium leading-[1.3] text-foreground">
