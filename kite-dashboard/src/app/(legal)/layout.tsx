@@ -1,12 +1,13 @@
-import { MarketingNav } from "@/components/marketing/marketing-nav";
-import { MarketingFooter } from "@/components/marketing/marketing-footer";
+import { FloatingNav } from "@/components/marketing/floating-nav";
+import { FooterPanel } from "@/components/marketing/footer-panel";
+import { FlowGrid } from "@/components/marketing/flow-grid";
 
 /**
  * Public legal surface layout (/terms, /privacy, /disclaimer). Mirrors the
- * /library layout: the same brand-scoped top nav + footer so these pages are
- * no longer orphaned — visitors who land on a legal page can navigate back to
- * the rest of the site. `.mw-brand` scopes the brand role tokens + Outfit body
- * font (light-locked per DESIGN.md §8.5) without touching the authed dashboard.
+ * /library layout: the layered marketing surface (floating glass nav,
+ * quant-grid base, footer panel) so these pages read as part of the site.
+ * `.mw-brand` scopes the brand role tokens + Outfit body font;
+ * palette-transparent like every other surface.
  */
 export default function LegalLayout({
   children,
@@ -14,10 +15,13 @@ export default function LegalLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mw-brand flex min-h-screen flex-col bg-background">
-      <MarketingNav />
-      <div className="flex-1">{children}</div>
-      <MarketingFooter />
+    <div className="mw-brand relative flex min-h-screen flex-col overflow-hidden bg-surface-base">
+      <FlowGrid />
+      <FloatingNav />
+      <div className="relative z-10 flex-1 pt-16 sm:pt-20">{children}</div>
+      <div className="relative z-10 pb-6">
+        <FooterPanel />
+      </div>
     </div>
   );
 }
