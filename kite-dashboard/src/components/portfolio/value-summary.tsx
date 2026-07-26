@@ -1,10 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePortfolio, useHoldings, useEquityCurve } from "@/lib/hooks";
 import { formatCurrency, formatPercentValue } from "@/lib/utils";
 import { InfoHint } from "@/components/shared/info-hint";
+import { PiggyBank, TrendingUp, TrendingDown, CalendarClock, Waves } from "lucide-react";
 
 /** The Overview's headline stats. All four describe the *current* open
  *  positions: what they're worth vs what they cost, the open profit on them,
@@ -38,19 +39,22 @@ export function ValueSummary() {
   const profitUp = data.total_return >= 0;
 
   return (
-    // Two combo cards instead of four (UX study pattern): related metrics
-    // share a card as labeled cells, so mobile scrolls two cards, not four.
+    // Two combo cards, no title rows (UX study "D2" primitive): the mini
+    // accent chips carry each cell's identity; a single hairline splits the
+    // pair. Mobile scrolls two compact cards instead of four.
     <div className="grid gap-4 lg:grid-cols-2">
       {/* What it's worth + what that means in profit */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium">Value &amp; profit</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-x-6">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-                Portfolio value
+      <Card className="py-0">
+        <CardContent className="p-0">
+          <div className="grid grid-cols-2">
+            <div className="min-h-[96px] px-4 py-4 sm:px-5">
+              <p className="flex items-center gap-1.5">
+                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-acc1 text-acc1-fg">
+                  <PiggyBank className="h-3 w-3" aria-hidden />
+                </span>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.09em] text-muted-foreground">
+                  Portfolio value
+                </span>
               </p>
               <div className="mt-1 text-xl font-bold tabular-nums sm:text-2xl">
                 {formatCurrency(data.total_value)}
@@ -59,10 +63,15 @@ export function ValueSummary() {
                 Cost {formatCurrency(data.invested)} · {data.holdings_count} holding{data.holdings_count === 1 ? "" : "s"}
               </p>
             </div>
-            <div>
-              <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-                Current profit
-                <InfoHint text="Unrealised profit on the stocks held right now — the gain if you sold today. Not the strategy's long-term return." />
+            <div className="min-h-[96px] border-l border-border px-4 py-4 sm:px-5">
+              <p className="flex items-center gap-1.5">
+                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-acc2 text-acc2-fg">
+                  {profitUp ? <TrendingUp className="h-3 w-3" aria-hidden /> : <TrendingDown className="h-3 w-3" aria-hidden />}
+                </span>
+                <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.09em] text-muted-foreground">
+                  Current profit
+                  <InfoHint text="Unrealised profit on the stocks held right now — the gain if you sold today. Not the strategy's long-term return." />
+                </span>
               </p>
               <div
                 className={
@@ -82,16 +91,18 @@ export function ValueSummary() {
       </Card>
 
       {/* How the book is positioned: age of the holdings + distance off peak */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium">Position character</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-x-6">
-            <div>
-              <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-                Avg. holding age
-                <InfoHint text="The average time the current stocks have been held. Momentum portfolios rotate, so this is usually weeks to a few months." />
+      <Card className="py-0">
+        <CardContent className="p-0">
+          <div className="grid grid-cols-2">
+            <div className="min-h-[96px] px-4 py-4 sm:px-5">
+              <p className="flex items-center gap-1.5">
+                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-acc3 text-acc3-fg">
+                  <CalendarClock className="h-3 w-3" aria-hidden />
+                </span>
+                <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.09em] text-muted-foreground">
+                  Avg. holding age
+                  <InfoHint text="The average time the current stocks have been held. Momentum portfolios rotate, so this is usually weeks to a few months." />
+                </span>
               </p>
               <div className="mt-1 text-xl font-bold tabular-nums sm:text-2xl">
                 {avgAge === null ? "—" : `${avgAge} days`}
@@ -100,10 +111,15 @@ export function ValueSummary() {
                 Average age of the current holdings
               </p>
             </div>
-            <div>
-              <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-                Current drawdown
-                <InfoHint text="How far below its highest recent value the portfolio is right now. A small dip is normal; a big one means it's well off its peak." />
+            <div className="min-h-[96px] border-l border-border px-4 py-4 sm:px-5">
+              <p className="flex items-center gap-1.5">
+                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-acc4 text-acc4-fg">
+                  <Waves className="h-3 w-3" aria-hidden />
+                </span>
+                <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.09em] text-muted-foreground">
+                  Current drawdown
+                  <InfoHint text="How far below its highest recent value the portfolio is right now. A small dip is normal; a big one means it's well off its peak." />
+                </span>
               </p>
               <div
                 className={
@@ -129,14 +145,17 @@ function ValueSummarySkeleton() {
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       {[1, 2].map((i) => (
-        <Card key={i}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <Skeleton className="h-4 w-28" />
-            <Skeleton className="h-4 w-4" />
-          </CardHeader>
-          <CardContent>
-            <Skeleton className="mb-2 h-8 w-32" />
-            <Skeleton className="h-3 w-40" />
+        <Card key={i} className="py-0">
+          <CardContent className="p-0">
+            <div className="grid grid-cols-2">
+              {[1, 2].map((j) => (
+                <div key={j} className={`min-h-[96px] px-4 py-4 sm:px-5 ${j === 2 ? "border-l border-border" : ""}`}>
+                  <Skeleton className="h-4 w-28" />
+                  <Skeleton className="mt-2 h-7 w-32" />
+                  <Skeleton className="mt-2 h-3 w-36" />
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       ))}
