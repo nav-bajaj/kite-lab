@@ -3,15 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  PiggyBank,
-  Clock,
-  Activity,
-  CalendarDays,
-} from "lucide-react";
+import { Clock, Activity, CalendarDays } from "lucide-react";
 import { formatCurrency, formatPercentValue, getPnLClass } from "@/lib/utils";
 import { FlashOnChange } from "@/components/ui/flash-on-change";
 import type { PositionsSummary as PositionsSummaryType, MarketStatus } from "@/lib/types";
@@ -39,28 +31,25 @@ export function PositionsSummary({
 
   const holdingsDate = holdingsAsOf ? new Date(holdingsAsOf) : null;
 
-  const cards = [
+  // One combo card instead of four (UX study pattern): the four headline
+  // metrics share a card as labeled cells — a 2×2 grid on mobile (one card
+  // of scroll instead of four), a single row on desktop.
+  const cells = [
     {
-      title: "Total Invested",
+      title: "Invested",
       value: formatCurrency(summary.total_invested),
       flashValue: summary.total_invested,
-      icon: PiggyBank,
-      iconColor: "text-blue-500",
     },
     {
-      title: "Current Value",
+      title: "Current value",
       value: formatCurrency(summary.total_current_value),
       flashValue: summary.total_current_value,
-      icon: DollarSign,
-      iconColor: "text-purple-500",
     },
     {
       title: "Total P&L",
       value: formatCurrency(summary.total_pnl),
       flashValue: summary.total_pnl,
       subValue: formatPercentValue(summary.total_pnl_pct),
-      icon: summary.total_pnl >= 0 ? TrendingUp : TrendingDown,
-      iconColor: summary.total_pnl >= 0 ? "text-green-500" : "text-red-500",
       valueColor: getPnLClass(summary.total_pnl),
     },
     {
@@ -68,8 +57,6 @@ export function PositionsSummary({
       value: formatCurrency(summary.day_pnl),
       flashValue: summary.day_pnl,
       subValue: formatPercentValue(summary.day_pnl_pct),
-      icon: summary.day_pnl >= 0 ? TrendingUp : TrendingDown,
-      iconColor: summary.day_pnl >= 0 ? "text-green-500" : "text-red-500",
       valueColor: getPnLClass(summary.day_pnl),
     },
   ];
@@ -101,31 +88,30 @@ export function PositionsSummary({
         </div>
       )}
 
-      {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {cards.map((card) => (
-          <Card key={card.title}>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">{card.title}</p>
-                  <p className={`text-2xl font-bold ${card.valueColor || ""}`}>
-                    <FlashOnChange value={card.flashValue}>
-                      {card.value}
-                    </FlashOnChange>
+      {/* Combo summary card */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-5 md:grid-cols-4">
+            {cells.map((cell) => (
+              <div key={cell.title} className="space-y-1">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                  {cell.title}
+                </p>
+                <p className={`text-xl font-bold tabular-nums sm:text-2xl ${cell.valueColor || ""}`}>
+                  <FlashOnChange value={cell.flashValue}>
+                    {cell.value}
+                  </FlashOnChange>
+                </p>
+                {cell.subValue && (
+                  <p className={`text-sm tabular-nums ${cell.valueColor || ""}`}>
+                    {cell.subValue}
                   </p>
-                  {card.subValue && (
-                    <p className={`text-sm ${card.valueColor || ""}`}>
-                      {card.subValue}
-                    </p>
-                  )}
-                </div>
-                <card.icon className={`h-8 w-8 ${card.iconColor}`} />
+                )}
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Stats Row */}
       <div className="flex items-center gap-6 text-sm text-muted-foreground">
@@ -170,8 +156,8 @@ function PositionsSummarySkeleton() {
         <Skeleton className="h-5 w-40" />
         <Skeleton className="h-6 w-24" />
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {[1, 2, 3, 4].map((i) => (
+      <div className="grid gap-4">
+        {[1].map((i) => (
           <Card key={i}>
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">

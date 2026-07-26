@@ -54,97 +54,146 @@ const groupDate = (iso: string) =>
 const realizedOf = (t: Trade) =>
   t.matches?.reduce((sum, m) => sum + m.realized_pnl, 0) ?? 0;
 
-/** Mobile trade log (UX study D2): trades grouped by rebalance date, the
- *  group's net realized P&L in its header, values labeled in words. */
+/** Mobile trade log (UX study D2, revised): rebalance-day groups are
+ *  COLLAPSED by default — the list reads as a calendar of events; tapping a
+ *  day reveals its trades, and tapping a SELL trade reveals the same
+ *  matched-buy stats panel the desktop table shows. */
 function MobileTradeGroups({ trades }: { trades: Trade[] }) {
-  const groups: { date: string; trades: Trade[]; realized: number }[] = [];
+  const [openDays, setOpenDays] = useState<Set<string>>(new Set());
+  const [openTrades, setOpenTrades] = useState<Set<number>>(new Set());
+
+  const toggleDay = (date: string) =>
+    setOpenDays((prev) => {
+      const next = new Set(prev);
+      if (next.has(date)) next.delete(date);
+      else next.add(date);
+      return next;
+    });
+
+  const toggleTrade = (id: number) =>
+    setOpenTrades((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+
+  const groups: { date: string; trades: Trade[] }[] = [];
   for (const trade of trades) {
     const last = groups[groups.length - 1];
-    if (last && last.date === trade.date) {
-      last.trades.push(trade);
-      last.realized += realizedOf(trade);
-    } else {
-      groups.push({ date: trade.date, trades: [trade], realized: realizedOf(trade) });
-    }
+    if (last && last.date === trade.date) last.trades.push(trade);
+    else groups.push({ date: trade.date, trades: [trade] });
   }
 
   return (
     <div className="overflow-hidden rounded-md border">
-      {groups.map((group) => (
-        <div key={group.date}>
-          <div className="flex items-center justify-between bg-muted/60 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-            <span>{groupDate(group.date)}</span>
-            {group.realized !== 0 && (
-              <span
-                className={cn(
-                  "tabular-nums",
-                  group.realized >= 0
-                    ? "text-[color:var(--positive)]"
-                    : "text-[color:var(--negative)]",
-                )}
-              >
-                {inrSigned(group.realized)}
+      {groups.map((group) => {
+        const dayOpen = openDays.has(group.date);
+        return (
+          <div key={group.date} className="border-b last:border-0">
+            <button
+              type="button"
+              onClick={() => toggleDay(group.date)}
+              aria-expanded={dayOpen}
+              className="flex w-full items-center justify-between bg-muted/60 px-3 py-2.5 text-left"
+            >
+              <span className="text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                {groupDate(group.date)}
               </span>
-            )}
-          </div>
-          {group.trades.map((trade) => {
-            const realized = realizedOf(trade);
-            const isSellWithPnl =
-              trade.side === "SELL" && (trade.matches?.length ?? 0) > 0;
-            return (
-              <div
-                key={trade.id}
-                className="flex items-center justify-between border-t px-3 py-2.5"
-              >
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={cn(
-                        "rounded px-1.5 py-px text-[10px] font-bold tracking-[0.06em]",
-                        trade.side === "BUY"
-                          ? "bg-[color:var(--positive)]/12 text-[color:var(--positive)]"
-                          : "bg-[color:var(--negative)]/12 text-[color:var(--negative)]",
+              <span className="flex items-center gap-2 text-xs text-muted-foreground">
+                {group.trades.length} trade{group.trades.length === 1 ? "" : "s"}
+                {dayOpen ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : (
+                  <ChevronDown className="h-4 w-4" />
+                )}
+              </span>
+            </button>
+            {dayOpen &&
+              group.trades.map((trade) => {
+                const realized = realizedOf(trade);
+                const isSellWithPnl =
+                  trade.side === "SELL" && (trade.matches?.length ?? 0) > 0;
+                const tradeOpen = openTrades.has(trade.id);
+                const Row = (
+                  <div className="flex w-full items-center justify-between px-3 py-2.5">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={cn(
+                            "rounded px-1.5 py-px text-[10px] font-bold tracking-[0.06em]",
+                            trade.side === "BUY"
+                              ? "bg-[color:var(--positive)]/12 text-[color:var(--positive)]"
+                              : "bg-[color:var(--negative)]/12 text-[color:var(--negative)]",
+                          )}
+                        >
+                          {trade.side}
+                        </span>
+                        <span className="text-sm font-semibold">{trade.symbol}</span>
+                        {isSellWithPnl &&
+                          (tradeOpen ? (
+                            <ChevronUp className="h-3.5 w-3.5 text-muted-foreground" />
+                          ) : (
+                            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                          ))}
+                      </div>
+                      <div className="mt-0.5 text-left text-xs text-muted-foreground tabular-nums">
+                        {trade.shares.toLocaleString()} × {inr(trade.price)}
+                      </div>
+                    </div>
+                    <div className="text-right tabular-nums">
+                      {isSellWithPnl ? (
+                        <>
+                          <div
+                            className={cn(
+                              "text-sm font-semibold",
+                              realized >= 0
+                                ? "text-[color:var(--positive)]"
+                                : "text-[color:var(--negative)]",
+                            )}
+                          >
+                            {inrSigned(realized)}
+                          </div>
+                          <div className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">
+                            realized
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="text-sm font-medium">{inr(trade.notional)}</div>
+                          <div className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">
+                            notional
+                          </div>
+                        </>
                       )}
-                    >
-                      {trade.side}
-                    </span>
-                    <span className="text-sm font-semibold">{trade.symbol}</span>
+                    </div>
                   </div>
-                  <div className="mt-0.5 text-xs text-muted-foreground tabular-nums">
-                    {trade.shares.toLocaleString()} × {inr(trade.price)}
-                  </div>
-                </div>
-                <div className="text-right tabular-nums">
-                  {isSellWithPnl ? (
-                    <>
-                      <div
-                        className={cn(
-                          "text-sm font-semibold",
-                          realized >= 0
-                            ? "text-[color:var(--positive)]"
-                            : "text-[color:var(--negative)]",
-                        )}
+                );
+                return (
+                  <div key={trade.id} className="border-t">
+                    {isSellWithPnl ? (
+                      <button
+                        type="button"
+                        onClick={() => toggleTrade(trade.id)}
+                        aria-expanded={tradeOpen}
+                        className="w-full text-left"
                       >
-                        {inrSigned(realized)}
+                        {Row}
+                      </button>
+                    ) : (
+                      Row
+                    )}
+                    {isSellWithPnl && tradeOpen && (
+                      <div className="bg-muted/30 px-3 py-3">
+                        <MatchedBuyPanel trade={trade} />
                       </div>
-                      <div className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">
-                        realized
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="text-sm font-medium">{inr(trade.notional)}</div>
-                      <div className="text-[10.5px] uppercase tracking-[0.08em] text-muted-foreground">
-                        notional
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      ))}
+                    )}
+                  </div>
+                );
+              })}
+          </div>
+        );
+      })}
     </div>
   );
 }

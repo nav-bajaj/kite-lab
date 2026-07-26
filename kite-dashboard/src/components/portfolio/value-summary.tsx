@@ -5,7 +5,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { usePortfolio, useHoldings, useEquityCurve } from "@/lib/hooks";
 import { formatCurrency, formatPercentValue } from "@/lib/utils";
 import { InfoHint } from "@/components/shared/info-hint";
-import { Wallet, TrendingUp, TrendingDown, CalendarClock, Waves } from "lucide-react";
 
 /** The Overview's headline stats. All four describe the *current* open
  *  positions: what they're worth vs what they cost, the open profit on them,
@@ -39,94 +38,87 @@ export function ValueSummary() {
   const profitUp = data.total_return >= 0;
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {/* Portfolio Value — current value, with holding cost underneath */}
+    // Two combo cards instead of four (UX study pattern): related metrics
+    // share a card as labeled cells, so mobile scrolls two cards, not four.
+    <div className="grid gap-4 lg:grid-cols-2">
+      {/* What it's worth + what that means in profit */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Portfolio Value</CardTitle>
-          <Wallet className="h-4 w-4 text-muted-foreground" />
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium">Value &amp; profit</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatCurrency(data.total_value)}</div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Cost {formatCurrency(data.invested)}
-          </p>
-          <p className="text-xs text-muted-foreground">
-            {data.holdings_count} holding{data.holdings_count === 1 ? "" : "s"}
-          </p>
+          <div className="grid grid-cols-2 gap-x-6">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                Portfolio value
+              </p>
+              <div className="mt-1 text-xl font-bold tabular-nums sm:text-2xl">
+                {formatCurrency(data.total_value)}
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Cost {formatCurrency(data.invested)} · {data.holdings_count} holding{data.holdings_count === 1 ? "" : "s"}
+              </p>
+            </div>
+            <div>
+              <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                Current profit
+                <InfoHint text="Unrealised profit on the stocks held right now — the gain if you sold today. Not the strategy's long-term return." />
+              </p>
+              <div
+                className={
+                  profitUp
+                    ? "mt-1 text-xl font-bold tabular-nums text-[color:var(--positive)] sm:text-2xl"
+                    : "mt-1 text-xl font-bold tabular-nums text-[color:var(--negative)] sm:text-2xl"
+                }
+              >
+                {formatPercentValue(data.total_return_pct)}
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {formatCurrency(data.total_return)} open profit
+              </p>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Current Profit — open (unrealised) profit on the positions held now */}
+      {/* How the book is positioned: age of the holdings + distance off peak */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="flex items-center gap-1.5 text-sm font-medium">
-            Current Profit
-            <InfoHint text="Unrealised profit on the stocks held right now — the gain if you sold today. Not the strategy's long-term return." />
-          </CardTitle>
-          {profitUp ? (
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          ) : (
-            <TrendingDown className="h-4 w-4 text-muted-foreground" />
-          )}
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium">Position character</CardTitle>
         </CardHeader>
         <CardContent>
-          <div
-            className={
-              profitUp
-                ? "text-2xl font-bold text-[color:var(--positive)]"
-                : "text-2xl font-bold text-[color:var(--negative)]"
-            }
-          >
-            {formatPercentValue(data.total_return_pct)}
+          <div className="grid grid-cols-2 gap-x-6">
+            <div>
+              <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                Avg. holding age
+                <InfoHint text="The average time the current stocks have been held. Momentum portfolios rotate, so this is usually weeks to a few months." />
+              </p>
+              <div className="mt-1 text-xl font-bold tabular-nums sm:text-2xl">
+                {avgAge === null ? "—" : `${avgAge} days`}
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Average age of the current holdings
+              </p>
+            </div>
+            <div>
+              <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                Current drawdown
+                <InfoHint text="How far below its highest recent value the portfolio is right now. A small dip is normal; a big one means it's well off its peak." />
+              </p>
+              <div
+                className={
+                  currentDD !== null && currentDD < -0.05
+                    ? "mt-1 text-xl font-bold tabular-nums text-[color:var(--negative)] sm:text-2xl"
+                    : "mt-1 text-xl font-bold tabular-nums text-foreground sm:text-2xl"
+                }
+              >
+                {currentDD === null ? "—" : formatPercentValue(currentDD)}
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Distance below the recent high
+              </p>
+            </div>
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {formatCurrency(data.total_return)} open profit on current holdings
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* Avg holding age — over roughly what time this profit was earned */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="flex items-center gap-1.5 text-sm font-medium">
-            Avg. Holding Age
-            <InfoHint text="The average time the current stocks have been held. Momentum portfolios rotate, so this is usually weeks to a few months." />
-          </CardTitle>
-          <CalendarClock className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">
-            {avgAge === null ? "—" : `${avgAge} days`}
-          </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Average age of the current holdings
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* Current drawdown */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="flex items-center gap-1.5 text-sm font-medium">
-            Current Drawdown
-            <InfoHint text="How far below its highest recent value the portfolio is right now. A small dip is normal; a big one means it's well off its peak." />
-          </CardTitle>
-          <Waves className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div
-            className={
-              currentDD !== null && currentDD < -0.05
-                ? "text-2xl font-bold text-[color:var(--negative)]"
-                : "text-2xl font-bold text-foreground"
-            }
-          >
-            {currentDD === null ? "—" : formatPercentValue(currentDD)}
-          </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            How far below its recent high the portfolio is now
-          </p>
         </CardContent>
       </Card>
     </div>
@@ -135,8 +127,8 @@ export function ValueSummary() {
 
 function ValueSummarySkeleton() {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {[1, 2, 3, 4].map((i) => (
+    <div className="grid gap-4 lg:grid-cols-2">
+      {[1, 2].map((i) => (
         <Card key={i}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <Skeleton className="h-4 w-28" />
