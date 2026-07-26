@@ -5,9 +5,8 @@ import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { Home, Menu } from "lucide-react";
-import { MobileSidebar } from "./mobile-sidebar";
+import { Sheet, SheetClose, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
+import { BookOpen, Layers, Home as HomeIcon, LineChart, Menu, Settings, User as UserIcon } from "lucide-react";
 import { UniverseSelector } from "./universe-selector";
 import { PalettePicker } from "./palette-picker";
 import { getInsightsNavItem } from "@/lib/nav";
@@ -37,17 +36,57 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b bg-background px-3 sm:gap-4 sm:px-4 lg:px-6">
-      {/* Mobile menu button */}
+      {/* Mobile menu — the WEBSITE pages (marketing surfaces) plus the
+          app extras that have no bottom-nav slot. The dashboard sections
+          themselves live in the bottom nav now (UX study D3 revision). */}
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon" className="shrink-0 lg:hidden">
             <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle menu</span>
+            <span className="sr-only">Open site menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-64">
-          <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-          <MobileSidebar />
+        <SheetContent side="left" className="w-64 p-4">
+          <SheetTitle className="sr-only">Site menu</SheetTitle>
+          <div className="mt-6 flex flex-col gap-1">
+            <span className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+              Marketworks
+            </span>
+            {[
+              { name: "Home", href: "/", icon: HomeIcon },
+              { name: "Portfolios", href: "/portfolios", icon: Layers },
+              { name: "Library", href: "/library", icon: BookOpen },
+            ].map((item) => (
+              <SheetClose asChild key={item.href}>
+                <Link
+                  href={item.href}
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-primary/10"
+                >
+                  <item.icon className="h-4.5 w-4.5 text-muted-foreground" />
+                  {item.name}
+                </Link>
+              </SheetClose>
+            ))}
+            <div className="my-2 border-t" />
+            <span className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+              Your account
+            </span>
+            {[
+              ...(insightsItem ? [{ name: "Insights", href: "/insights", icon: LineChart }] : []),
+              { name: "Account", href: "/account", icon: UserIcon },
+              ...(isAdmin ? [{ name: "Admin", href: "/admin", icon: Settings }] : []),
+            ].map((item) => (
+              <SheetClose asChild key={item.href}>
+                <Link
+                  href={item.href}
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-primary/10"
+                >
+                  <item.icon className="h-4.5 w-4.5 text-muted-foreground" />
+                  {item.name}
+                </Link>
+              </SheetClose>
+            ))}
+          </div>
         </SheetContent>
       </Sheet>
 
@@ -100,7 +139,7 @@ export function Navbar() {
               wordmark links home too. */}
           <Button variant="ghost" size="icon" asChild className="hidden sm:inline-flex">
             <Link href="/" aria-label="Marketworks home">
-              <Home className="h-5 w-5" />
+              <HomeIcon className="h-5 w-5" />
             </Link>
           </Button>
         </div>
