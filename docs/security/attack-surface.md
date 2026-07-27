@@ -43,6 +43,12 @@ Base URL: `https://kite-lab-production.up.railway.app`
 | GET | `/api/system/callback` | system_service | **Zerodha OAuth callback (R-004)** — exchanges request_token for access_token |
 | GET | `/api/positions/market-status` | positions_service | NSE market open/close — no user data |
 
+### Admin-only ops intel (require_admin)
+
+| Method | Path | Service | Rationale |
+|---|---|---|---|
+| GET | `/api/options/worker-status` | worker_health_store (reads `options_worker_health` heartbeat written by the options-worker Railway service) | Live capture monitoring for /admin. Passes the worker's JSON snapshot through verbatim — standing constraint (R-026): `health_snapshot()` must never include token/secret/connection-string fields. |
+
 ### Unauthenticated by design — insights read surface (R-023)
 
 | Method | Path | Service | Rationale |

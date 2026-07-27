@@ -9,6 +9,7 @@ import {
   ScheduleTable,
   SystemStatus,
   FreshnessPanel,
+  OptionsWorkerPanel,
 } from "@/components/admin";
 
 export default function AdminPage() {
@@ -29,6 +30,9 @@ export default function AdminPage() {
 
       {/* Quick Actions */}
       <QuickActions />
+
+      {/* Options data worker heartbeat (full width) */}
+      <OptionsWorkerPanel />
 
       {/* Data freshness monitor (full width) */}
       <FreshnessPanel />
