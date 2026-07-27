@@ -1,6 +1,7 @@
 """
 System Service - Health checks, token status, and sync information.
 """
+import logging
 from datetime import datetime, date, timedelta
 from pathlib import Path
 from typing import Optional
@@ -374,5 +375,14 @@ class SystemService:
             raise TypeError(f"Type {type(obj)} not serializable")
 
         session_path.write_text(json.dumps(data, indent=2, default=_json_serial))
+
+        # Mirror to Postgres for services on other Railway volumes (options
+        # worker). Best-effort — a DB hiccup must not fail the login.
+        try:
+            from app.services.token_store import upsert_token
+
+            upsert_token(access_token, user_name=data.get("user_name", ""), login_source="oauth_exchange")
+        except Exception:
+            logging.getLogger(__name__).warning("kite_session mirror failed (login still OK)", exc_info=True)
 
         return {"access_token": access_token, "user_name": data.get("user_name", "")}

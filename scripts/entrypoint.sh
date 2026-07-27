@@ -14,5 +14,12 @@ fi
 # Ensure /app symlinks are owned by appuser
 chown -R appuser:appuser /app
 
-# Step 3: Run migrations and start server as appuser
+# Step 3: Start the requested service as appuser.
+# SERVICE_ROLE=options-worker runs the options data worker (no migrations —
+# the web service owns the Alembic chain; the worker's kite_session table
+# is created idempotently in code). Default: migrations + API server.
+if [ "$SERVICE_ROLE" = "options-worker" ]; then
+    exec gosu appuser python -m app.workers.options.worker
+fi
+
 exec gosu appuser sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"

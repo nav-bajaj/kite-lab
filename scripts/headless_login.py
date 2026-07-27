@@ -183,7 +183,30 @@ def headless_login():
     print(f"\nHeadless login successful! User: {user_name}")
     print(f"Access token saved to {token_path}")
 
+    _upsert_token_to_db(access_token, user_name)
+
     return {"access_token": access_token, "user_name": user_name}
+
+
+def _upsert_token_to_db(access_token, user_name):
+    """Mirror the token into Postgres (kite_session) so services that can't
+    read this container's volume — the options worker — get the day's token.
+    Best-effort: the file above stays the primary store; a DB failure must
+    never fail the login itself."""
+    if not os.getenv("DATABASE_URL"):
+        return
+    try:
+        from app.services.token_store import upsert_token
+    except ImportError:
+        # Local runs from the repo root don't have kite-api/app on the path;
+        # in the Docker container PYTHONPATH=/app makes it importable.
+        print("token DB mirror skipped: app package not importable")
+        return
+    try:
+        upsert_token(access_token, user_name=user_name, login_source="headless_login")
+        print("Access token mirrored to Postgres (kite_session)")
+    except Exception as e:
+        print(f"WARNING: token DB mirror failed (login still OK): {e}")
 
 
 if __name__ == "__main__":
