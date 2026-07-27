@@ -25,13 +25,14 @@ from app.workers.options.subscriptions import SubscriptionManager
 log = logging.getLogger("options_worker")
 
 
-def _read_access_token() -> str:
-    """Day token, kite_session (Postgres) first, access_token.txt fallback.
+def _read_credentials() -> "tuple[str, str]":
+    """(api_key, access_token) — kite_session (Postgres) first,
+    access_token.txt fallback, freshest wins when both exist.
 
-    On Railway the worker has no access to the web service's volume, so the
-    DB row (mirrored by the daily login) is the only source. Locally the
-    file usually exists and the DB may not — hence the fallback order:
-    freshest wins when both exist."""
+    A token only validates under the Kite app key that generated it, and
+    logins happen from environments holding different apps (local .env vs
+    the Railway web service) — so the DB row carries its api_key and the
+    pair is used together. File fallback pairs with the env's own key."""
     from app.config import get_settings
 
     settings = get_settings()
@@ -46,6 +47,9 @@ def _read_access_token() -> str:
     token_path = settings.data_dir / "access_token.txt"
     file_token = token_path.read_text().strip() if token_path.exists() else None
 
+    def _from_db():
+        return (db_row.get("api_key") or settings.kite_api_key, db_row["access_token"])
+
     if db_row and file_token:
         from datetime import timezone
 
@@ -53,21 +57,20 @@ def _read_access_token() -> str:
         if db_ts.tzinfo is None:  # SQLite drops tz; token_store writes UTC
             db_ts = db_ts.replace(tzinfo=timezone.utc)
         file_mtime = datetime.fromtimestamp(token_path.stat().st_mtime, tz=timezone.utc)
-        return db_row["access_token"] if db_ts >= file_mtime else file_token
+        return _from_db() if db_ts >= file_mtime else (settings.kite_api_key, file_token)
     if db_row:
-        return db_row["access_token"]
+        return _from_db()
     if file_token:
-        return file_token
+        return (settings.kite_api_key, file_token)
     raise FileNotFoundError("no access token in kite_session or access_token.txt")
 
 
 def _kite_client():
     from kiteconnect import KiteConnect
 
-    from app.config import get_settings
-
-    kite = KiteConnect(api_key=get_settings().kite_api_key)
-    kite.set_access_token(_read_access_token())
+    api_key, token = _read_credentials()
+    kite = KiteConnect(api_key=api_key)
+    kite.set_access_token(token)
     return kite
 
 
@@ -238,12 +241,12 @@ class OptionsWorker:
         log.info("capture start: %d contracts", len(self.selection.contracts))
 
     def _start_ticker(self) -> None:
-        from app.config import get_settings
         from app.workers.options.websocket import TickerClient
 
+        api_key, token = _read_credentials()
         self.ticker = TickerClient(
-            api_key=get_settings().kite_api_key,
-            access_token=_read_access_token(),
+            api_key=api_key,
+            access_token=token,
             tokens=self.subs.tokens(),
             on_ticks=self._on_ticks,
         )

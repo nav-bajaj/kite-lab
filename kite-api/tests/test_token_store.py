@@ -17,14 +17,16 @@ class TestTokenStore:
         assert token_store.read_token(database_url=db_url) is None
 
     def test_upsert_creates_then_overwrites_single_row(self, db_url):
-        token_store.upsert_token("tok-one", user_name="Nav", login_source="test", database_url=db_url)
+        token_store.upsert_token("tok-one", api_key="key-a", user_name="Nav", login_source="test", database_url=db_url)
         row = token_store.read_token(database_url=db_url)
         assert row["access_token"] == "tok-one"
+        assert row["api_key"] == "key-a"
         assert row["login_source"] == "test"
 
-        token_store.upsert_token("tok-two", user_name="Nav", login_source="test2", database_url=db_url)
+        token_store.upsert_token("tok-two", api_key="key-b", user_name="Nav", login_source="test2", database_url=db_url)
         row = token_store.read_token(database_url=db_url)
         assert row["access_token"] == "tok-two"
+        assert row["api_key"] == "key-b"
         assert row["id"] == 1
 
         from sqlalchemy import create_engine, text
@@ -58,24 +60,29 @@ class TestWorkerTokenPrecedence:
         )
         return worker_mod
 
-    def test_db_only(self, monkeypatch, tmp_path, db_url):
+    def test_db_only_pairs_stored_api_key(self, monkeypatch, tmp_path, db_url):
         worker_mod = self._patch_env(monkeypatch, tmp_path, db_url)
-        token_store.upsert_token("db-token", database_url=db_url)
-        assert worker_mod._read_access_token() == "db-token"
+        token_store.upsert_token("db-token", api_key="db-app-key", database_url=db_url)
+        assert worker_mod._read_credentials() == ("db-app-key", "db-token")
 
-    def test_file_only(self, monkeypatch, tmp_path, db_url):
+    def test_db_row_without_api_key_falls_back_to_env_key(self, monkeypatch, tmp_path, db_url):
+        worker_mod = self._patch_env(monkeypatch, tmp_path, db_url)
+        token_store.upsert_token("db-token", database_url=db_url)  # api_key empty
+        assert worker_mod._read_credentials() == ("k", "db-token")
+
+    def test_file_only_pairs_env_key(self, monkeypatch, tmp_path, db_url):
         worker_mod = self._patch_env(monkeypatch, tmp_path, db_url)
         (tmp_path / "access_token.txt").write_text("file-token\n")
-        assert worker_mod._read_access_token() == "file-token"
+        assert worker_mod._read_credentials() == ("k", "file-token")
 
     def test_fresher_source_wins(self, monkeypatch, tmp_path, db_url):
         worker_mod = self._patch_env(monkeypatch, tmp_path, db_url)
         (tmp_path / "access_token.txt").write_text("file-token")
         time.sleep(0.05)
-        token_store.upsert_token("db-token", database_url=db_url)
-        assert worker_mod._read_access_token() == "db-token"
+        token_store.upsert_token("db-token", api_key="db-app-key", database_url=db_url)
+        assert worker_mod._read_credentials() == ("db-app-key", "db-token")
 
     def test_neither_raises(self, monkeypatch, tmp_path, db_url):
         worker_mod = self._patch_env(monkeypatch, tmp_path, db_url)
         with pytest.raises(FileNotFoundError):
-            worker_mod._read_access_token()
+            worker_mod._read_credentials()
