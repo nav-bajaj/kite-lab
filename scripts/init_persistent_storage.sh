@@ -108,6 +108,10 @@ link "$VOLUME/nifty_100_tests"   "$APP/nifty_100_tests"
 link "$VOLUME/nifty_250_tests"   "$APP/nifty_250_tests"
 link "$VOLUME/experiments"       "$APP/experiments"
 link "$VOLUME/logs/jobs"         "$APP/logs/jobs"
+# Options data engine (worker service): tick Parquet, instrument dumps,
+# day token lists. Must persist across worker redeploys.
+mkdir -p "$VOLUME/options"
+link "$VOLUME/options"           "$APP/data/options"
 # v3 strategy portfolio dirs — see mkdir block above.
 link "$VOLUME/om25_v3_portfolios"          "$APP/data/om25_v3_portfolios"
 link "$VOLUME/tl25_v3_portfolios"          "$APP/data/tl25_v3_portfolios"
