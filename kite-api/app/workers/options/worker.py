@@ -17,7 +17,10 @@ from typing import Optional
 from app.workers.options import instrument_loader
 from app.workers.options.config import OptionsWorkerSettings, get_worker_settings
 from app.workers.options.health import start_health_server
+from app.workers.options.recorder import TickRecorder
 from app.workers.options.scheduler import Phase, market_phase, now_ist
+from app.workers.options.state import ChainState
+from app.workers.options.subscriptions import SubscriptionManager
 
 log = logging.getLogger("options_worker")
 
@@ -47,6 +50,13 @@ class OptionsWorker:
         self.started_at: datetime = now_ist()
         self.last_error: Optional[str] = None
         self._stop = False
+        # capture stack, live only during CAPTURE
+        self.chain: Optional[ChainState] = None
+        self.subs: Optional[SubscriptionManager] = None
+        self.ticker = None
+        self.recorder: Optional[TickRecorder] = None
+        self._nfo_rows = None  # the day's dump, kept for the widen universe
+        self._last_flush: datetime = now_ist()
 
     # -- lifecycle ---------------------------------------------------------
 
@@ -84,6 +94,11 @@ class OptionsWorker:
         if self.phase == Phase.PRE_MARKET and self.selection_date != now.date():
             self._run_daily_selection(now)
 
+        if self.phase == Phase.CAPTURE and self.recorder is not None:
+            if (now - self._last_flush).total_seconds() >= self.settings.flush_seconds:
+                self.recorder.flush()
+                self._last_flush = now
+
     def _on_transition(self, old: Phase, new: Phase, now: datetime) -> None:
         if new == Phase.CAPTURE:
             self._enter_capture(now)
@@ -119,9 +134,10 @@ class OptionsWorker:
         instrument_loader.save_selection(selection, self.settings.tokens_dir / f"{now.date().isoformat()}.json")
         self.selection = selection
         self.selection_date = now.date()
+        self._nfo_rows = rows
         log.info("daily selection: %s", selection.summary())
 
-    # -- phase hooks (Phase 2-3 fill these in) -----------------------------
+    # -- capture -----------------------------------------------------------
 
     def _enter_capture(self, now: datetime) -> None:
         if self.selection is None:
@@ -135,18 +151,76 @@ class OptionsWorker:
             else:
                 log.warning("entering capture with no selection — running selection now")
                 self._run_daily_selection(now)
-        log.info("capture start (websocket lands in Phase 2)")
+        if self.selection is None:
+            log.error("no selection — cannot start capture; will retry next poll")
+            self.phase = Phase.IDLE  # forces re-entry attempt on the next tick
+            return
+
+        if self._nfo_rows is None:
+            dump_path = self.settings.dump_dir / f"nfo_{now.date().isoformat()}.json"
+            if dump_path.exists():
+                self._nfo_rows = instrument_loader.load_dump(dump_path)
+
+        self.chain = ChainState(self.selection.contracts)
+        self.subs = SubscriptionManager(
+            self.selection,
+            self._nfo_rows or [],
+            strike_window=self.settings.strike_window,
+            drift_strikes=self.settings.recenter_drift_strikes,
+        )
+        self.recorder = TickRecorder(self.settings.ticks_dir)
+        self._start_ticker()
+        log.info("capture start: %d contracts", len(self.selection.contracts))
+
+    def _start_ticker(self) -> None:
+        from app.config import get_settings
+        from app.workers.options.websocket import TickerClient
+
+        settings = get_settings()
+        token_path = settings.data_dir / "access_token.txt"
+        self.ticker = TickerClient(
+            api_key=settings.kite_api_key,
+            access_token=token_path.read_text().strip(),
+            tokens=self.subs.tokens(),
+            on_ticks=self._on_ticks,
+        )
+        self.ticker.start()
+
+    def _on_ticks(self, ticks, recv_ts: datetime) -> None:
+        """Ticker-thread callback — keep it allocation-light and lock-safe."""
+        widen: list = []
+        for tick in ticks:
+            cs = self.chain.apply_tick(tick, recv_ts)
+            if cs is None:
+                continue
+            self.recorder.add(tick, cs.contract, recv_ts)
+            if cs.contract.kind == "SPOT" and self.subs:
+                widen = self.subs.on_spot(cs.ltp) or widen
+        if widen:
+            self.chain.register(widen)
+            self.ticker.subscribe_more([c.instrument_token for c in widen])
+            instrument_loader.save_selection(
+                self.selection, self.settings.tokens_dir / f"{self.selection.trade_date.isoformat()}.json"
+            )
 
     def _exit_capture(self, now: datetime) -> None:
+        if self.ticker:
+            self.ticker.stop()
+            self.ticker = None
+        if self.recorder:
+            self.recorder.flush()
         log.info("capture stop")
 
     def _enter_eod_flush(self, now: datetime) -> None:
+        if self.recorder:
+            self.recorder.flush()
+            log.info("eod: recorder %s", self.recorder.counters())
         log.info("eod flush (aggregator/persistence land in Phase 3)")
 
     # -- health ------------------------------------------------------------
 
     def health_snapshot(self) -> dict:
-        return {
+        snap = {
             "phase": self.phase.value,
             "started_at": self.started_at.isoformat(),
             "now": now_ist().isoformat(),
@@ -155,6 +229,16 @@ class OptionsWorker:
             "atm_strike": self.selection.atm_strike if self.selection else None,
             "last_error": self.last_error,
         }
+        if self.ticker:
+            snap["ws"] = self.ticker.counters()
+        if self.chain:
+            snap["chain"] = self.chain.counters()
+            snap["staleness_seconds"] = self.chain.staleness_seconds(now_ist())
+        if self.recorder:
+            snap["recorder"] = self.recorder.counters()
+        if self.subs:
+            snap["widen_events"] = self.subs.widen_events
+        return snap
 
     def _handle_stop(self, signum, frame) -> None:
         log.info("signal %s — stopping", signum)

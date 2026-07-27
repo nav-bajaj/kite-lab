@@ -24,6 +24,7 @@ httpx==0.28.1
 # Data processing
 pandas==2.3.3
 numpy==2.0.2
+pyarrow==21.0.0  # options worker raw-tick Parquet archive
 
 # Zerodha API
 kiteconnect==5.0.1

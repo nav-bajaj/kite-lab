@@ -35,6 +35,9 @@ class OptionsWorkerSettings(BaseSettings):
     # Main-loop cadence while idle / between clock checks
     poll_seconds: float = 5.0
 
+    # Time-based raw-tick flush (size-based flush is recorder.FLUSH_ROWS)
+    flush_seconds: float = 60.0
+
     class Config:
         env_prefix = "OPTIONS_"
         env_file = ".env"
@@ -52,6 +55,10 @@ class OptionsWorkerSettings(BaseSettings):
     @property
     def tokens_dir(self) -> Path:
         return self.options_data_dir / "tokens"
+
+    @property
+    def ticks_dir(self) -> Path:
+        return self.options_data_dir / "ticks"
 
 
 def get_worker_settings() -> OptionsWorkerSettings:

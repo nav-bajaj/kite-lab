@@ -14,13 +14,17 @@ Phases per PLAN.md. Local-first: 1-3 run on the laptop; Railway is Phase 4.
 
 ## Phase 2 — Market data (local)
 
-- [ ] Save a real NFO dump + real selection on a live token morning;
-      promote it to a test fixture alongside the synthetic one
-- [ ] KiteTicker wrapper: connect, subscribe FULL, auto-reconnect, gap log
-- [ ] Tick parser -> in-memory chain state (`state.py`)
-- [ ] Intraday widen: spot drift >= 2 strikes -> dynamic subscribe
-- [ ] Record one session's raw ticks to Parquet; build replay fixtures
-- [ ] Exit: chain updates in memory through a live session, disconnects recovered
+- [x] Save a real NFO dump + real selection (2026-07-27, spot 23995.95,
+      ATM 24000, 87 contracts); promoted to tests/fixtures/*.json.gz
+- [x] KiteTicker wrapper: connect, subscribe FULL, auto-reconnect hooks,
+      gap log (live-verified post-close: 87/87 contracts ticked, real
+      depth/OI, staleness 0.09s)
+- [x] Tick parser -> in-memory chain state (`state.py`, lock-guarded)
+- [x] Intraday widen: spot drift >= 2 strikes -> dynamic subscribe,
+      widen-only, selection file re-saved for crash recovery
+- [x] Raw-tick Parquet recorder (size + time flush, replay-safe filenames)
+- [ ] Record one full session's raw ticks; build replay fixtures from it
+- [ ] Exit: chain updates through a full live session, disconnects recovered
 
 ## Phase 3 — Aggregation + persistence (local)
 
