@@ -30,6 +30,9 @@ Phases per PLAN.md. Local-first: 1-3 run on the laptop; Railway is Phase 4.
 
 - [ ] Minute-bar builder (OHLC, volume delta, OI o/h/l/c, spread, depth
       imbalance, quote count)
+- [ ] Historical backfill into option_minute_bars (OHLC/volume/OI only;
+      depth columns NULL) — capability verified 2026-07-27, ~30d available,
+      see research/RESULTS_2026-07-27_history_probe.md
 - [ ] Bulk insert `option_minute_bars` (unique contract_id+minute)
 - [ ] `option_chain_snapshots` upsert <= 10s staleness
 - [ ] `daily_sessions` EOD stats + flush
