@@ -381,7 +381,12 @@ class SystemService:
         try:
             from app.services.token_store import upsert_token
 
-            upsert_token(access_token, user_name=data.get("user_name", ""), login_source="oauth_exchange")
+            upsert_token(
+                access_token,
+                api_key=api_key,
+                user_name=data.get("user_name", ""),
+                login_source="oauth_exchange",
+            )
         except Exception:
             logging.getLogger(__name__).warning("kite_session mirror failed (login still OK)", exc_info=True)
 

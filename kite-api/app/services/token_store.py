@@ -29,6 +29,11 @@ kite_session = Table(
     _metadata,
     Column("id", Integer, primary_key=True),
     Column("access_token", Text, nullable=False),
+    # The Kite app key the token was generated under. A token only
+    # validates with its own app's key, and logins can happen from
+    # different environments (local .env vs Railway web service) holding
+    # DIFFERENT Kite apps — so the pair must travel together.
+    Column("api_key", String(40), nullable=True),
     Column("user_name", String(120), nullable=True),
     Column("login_source", String(40), nullable=True),
     Column("updated_at", DateTime(timezone=True), nullable=False),
@@ -45,27 +50,51 @@ def _resolve_url(database_url: Optional[str]) -> str:
     return get_settings().database_url
 
 
+def _ensure_schema(engine) -> None:
+    _metadata.create_all(engine, checkfirst=True)
+    # api_key was added after the table first shipped; create_all won't
+    # add columns to an existing table, so patch it in idempotently.
+    from sqlalchemy import text
+
+    try:
+        with engine.begin() as conn:
+            if engine.dialect.name == "postgresql":
+                conn.execute(text("ALTER TABLE kite_session ADD COLUMN IF NOT EXISTS api_key VARCHAR(40)"))
+            else:
+                conn.execute(text("ALTER TABLE kite_session ADD COLUMN api_key VARCHAR(40)"))
+    except Exception:
+        pass  # column already exists (non-postgres path)
+
+
 def upsert_token(
     access_token: str,
+    api_key: str = "",
     user_name: str = "",
     login_source: str = "",
     database_url: Optional[str] = None,
 ) -> None:
     engine = create_engine(_resolve_url(database_url))
     try:
-        _metadata.create_all(engine, checkfirst=True)
+        _ensure_schema(engine)
         now = datetime.now(timezone.utc)
         with engine.begin() as conn:
             updated = conn.execute(
                 kite_session.update()
                 .where(kite_session.c.id == _ROW_ID)
-                .values(access_token=access_token, user_name=user_name, login_source=login_source, updated_at=now)
+                .values(
+                    access_token=access_token,
+                    api_key=api_key,
+                    user_name=user_name,
+                    login_source=login_source,
+                    updated_at=now,
+                )
             )
             if updated.rowcount == 0:
                 conn.execute(
                     kite_session.insert().values(
                         id=_ROW_ID,
                         access_token=access_token,
+                        api_key=api_key,
                         user_name=user_name,
                         login_source=login_source,
                         updated_at=now,
@@ -81,6 +110,7 @@ def read_token(database_url: Optional[str] = None) -> Optional[dict]:
     engine = None
     try:
         engine = create_engine(_resolve_url(database_url))
+        _ensure_schema(engine)
         with engine.connect() as conn:
             row = conn.execute(select(kite_session).where(kite_session.c.id == _ROW_ID)).mappings().first()
         if row is None:
