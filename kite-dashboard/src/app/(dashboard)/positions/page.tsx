@@ -12,16 +12,16 @@ import type { PositionsResponse } from "@/lib/types";
 export default function PositionsPage() {
   const { universeId } = useUniverse();
   const [isStreaming, setIsStreaming] = useState(false);
-  const [streamData, setStreamData] = useState<PositionsResponse | null>(null);
   const [reconnectNonce, setReconnectNonce] = useState(0);
 
   // Poll only while the SSE stream isn't carrying updates — no double-fetch.
-  const { data, isLoading, error, mutate } = usePositions({
+  // Stream updates are written into this SWR cache entry (not local state) so
+  // every subscriber of the key — including the bottom-nav Day P&L notch —
+  // sees the same live data.
+  const { data: positionsData, isLoading, error, mutate } = usePositions({
     enablePolling: !isStreaming,
   });
 
-  // Prefer live stream data; fall back to polled data.
-  const positionsData = streamData || data;
   const marketOpen = positionsData?.market_status?.is_open ?? false;
 
   // Live price stream. Open it only while the market is open AND the tab is
@@ -49,9 +49,10 @@ export default function PositionsPage() {
 
       eventSource.addEventListener("price_update", (event) => {
         try {
-          setStreamData(
-            JSON.parse((event as MessageEvent).data) as PositionsResponse
-          );
+          const update = JSON.parse(
+            (event as MessageEvent).data
+          ) as PositionsResponse;
+          mutate(update, { revalidate: false });
         } catch (e) {
           console.error("Failed to parse price update:", e);
         }
@@ -60,7 +61,9 @@ export default function PositionsPage() {
       eventSource.addEventListener("market_status", (event) => {
         try {
           const status = JSON.parse((event as MessageEvent).data);
-          setStreamData((prev) => (prev ? { ...prev, market_status: status } : prev));
+          mutate((prev) => (prev ? { ...prev, market_status: status } : prev), {
+            revalidate: false,
+          });
         } catch (e) {
           console.error("Failed to parse market status:", e);
         }
@@ -88,11 +91,10 @@ export default function PositionsPage() {
       if (retryTimer) clearTimeout(retryTimer);
       close();
     };
-  }, [marketOpen, universeId, reconnectNonce]);
+  }, [marketOpen, universeId, reconnectNonce, mutate]);
 
   const handleRefresh = () => {
     mutate();
-    setStreamData(null);
   };
 
   return (
