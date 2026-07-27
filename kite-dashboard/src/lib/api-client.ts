@@ -530,6 +530,49 @@ export async function getFreshnessReport() {
   return apiFetch<FreshnessReport>("/api/freshness");
 }
 
+// Options data worker heartbeat (admin-only). Mirrors the payload written by
+// kite-api/app/workers/options/worker.py health_snapshot() into
+// options_worker_health (see app/services/worker_health_store.py).
+export interface OptionsWorkerSnapshot {
+  phase: string;
+  started_at: string;
+  now: string;
+  selection_date: string | null;
+  contracts: number;
+  atm_strike: number | null;
+  last_error: string | null;
+  ws?: {
+    connected: boolean;
+    packets: number;
+    reconnects: number;
+    last_tick_at: string | null;
+    subscribed: number;
+    last_error: string | null;
+  };
+  chain?: {
+    contracts: number;
+    contracts_ticked: number;
+    total_ticks: number;
+    spot_price: number;
+  };
+  staleness_seconds?: number | null;
+  recorder?: { rows_written: number; files_written: number; buffered: number };
+  widen_events?: number;
+}
+
+export interface OptionsWorkerStatus {
+  found: boolean;
+  phase?: string;
+  updated_at?: string;
+  age_seconds?: number;
+  heartbeat_stale?: boolean;
+  snapshot?: OptionsWorkerSnapshot;
+}
+
+export async function getOptionsWorkerStatus() {
+  return apiFetch<OptionsWorkerStatus>("/api/options/worker-status");
+}
+
 export async function getTokenStatus() {
   return apiFetch<TokenStatus>("/api/system/token");
 }

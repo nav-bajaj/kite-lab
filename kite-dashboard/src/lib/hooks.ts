@@ -24,6 +24,7 @@ import {
   getSchedule,
   getSystemStatus,
   getFreshnessReport,
+  getOptionsWorkerStatus,
   getHealth,
   getPositions,
   getMarketStatus,
@@ -32,6 +33,7 @@ import {
   type ScheduleListResponse,
   type SystemStatus,
   type FreshnessReport,
+  type OptionsWorkerStatus,
 } from "./api-client";
 import type { PositionsResponse, MarketStatus } from "./types";
 
@@ -322,6 +324,15 @@ export function useSystemStatus() {
 export function useFreshnessReport() {
   return useAuthedSWR<FreshnessReport>("freshness", getFreshnessReport, {
     refreshInterval: 60000,
+    revalidateOnFocus: true,
+  });
+}
+
+export function useOptionsWorkerStatus() {
+  // Live ops view — the worker heartbeats every 30s, poll a bit faster so
+  // a stalled capture surfaces within a minute.
+  return useAuthedSWR<OptionsWorkerStatus>("options-worker", getOptionsWorkerStatus, {
+    refreshInterval: 15000,
     revalidateOnFocus: true,
   });
 }
