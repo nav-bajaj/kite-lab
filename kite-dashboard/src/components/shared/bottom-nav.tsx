@@ -28,7 +28,8 @@ import { cn, formatCurrency, formatPercentValue, getPnLClass } from "@/lib/utils
  * always-visible pulse; Kite's sticky strip re-imagined as part of the nav).
  * Mounted only on /positions, so its SWR hook shares the page's cache entry
  * (same key) and never fetches elsewhere. Polling stays off — the page's own
- * hook keeps the cache fresh.
+ * hook keeps the cache fresh (polling while the market is closed, SSE stream
+ * writes via mutate while it's open).
  */
 function DayPnlNotch() {
   const { data } = usePositions({ enablePolling: false });
