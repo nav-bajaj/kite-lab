@@ -38,12 +38,18 @@ Phases per PLAN.md. Local-first: 1-3 run on the laptop; Railway is Phase 4.
 - [ ] `daily_sessions` EOD stats + flush
 - [ ] Soak: 2-3 full sessions, exit criteria in PLAN.md
 
-## Phase 4 — Production deploy
+## Phase 4 — Production deploy (pulled forward 2026-07-27 for the 07-28 live test)
 
-- [ ] `kite_session` migration + login upsert + worker reader fallback
-- [ ] Second Railway service (same image, start command override) + volume
-- [ ] Env wiring (OPTIONS_HEALTH_HOST=0.0.0.0 for container healthcheck)
-- [ ] Parity check vs a local run
+- [x] `kite_session` token handoff: login mirrors to Postgres (headless +
+      OAuth paths), worker reads DB-first/file-fallback; R-025 register row;
+      security-reviewer APPROVE-WITH-NOTES
+- [x] entrypoint SERVICE_ROLE=options-worker dispatch; /data/options volume
+      dir; railway.worker.toml (no healthcheck, on_failure restarts)
+- [x] Dead-ticker self-heal: rebuild client with fresh token after 60s grace
+- [ ] USER: merge options-token-handoff -> beta_gtm_mvp (web deploy tonight)
+- [ ] USER: create Railway worker service (branch options_data_v1, config
+      railway.worker.toml, SERVICE_ROLE/DATABASE_URL/KITE_API_KEY, volume)
+- [ ] Live test 2026-07-28: full-session capture on Railway (expiry day)
 
 ## Phase 5 — Monitoring
 

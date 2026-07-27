@@ -1,0 +1,21 @@
+# Railway config for the options-worker service.
+# In the worker service's settings, set "Config-as-code file path" to
+# railway.worker.toml — otherwise the service picks up railway.toml, whose
+# /api/health healthcheck the worker (no public HTTP) can never pass.
+#
+# Required service variables:
+#   SERVICE_ROLE=options-worker   (entrypoint dispatch)
+#   DATABASE_URL=<reference the shared Postgres>
+#   KITE_API_KEY=<same as web service>
+# Volume: mount at /data (tick Parquet, dumps, day token lists).
+
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# No healthcheckPath: the worker's health endpoint binds loopback only and
+# Railway must not route public traffic here. Liveness = restart policy +
+# the worker_health DB heartbeat (Phase 5 monitoring).
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 10
