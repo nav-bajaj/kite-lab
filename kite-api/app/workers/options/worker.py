@@ -25,19 +25,49 @@ from app.workers.options.subscriptions import SubscriptionManager
 log = logging.getLogger("options_worker")
 
 
+def _read_access_token() -> str:
+    """Day token, kite_session (Postgres) first, access_token.txt fallback.
+
+    On Railway the worker has no access to the web service's volume, so the
+    DB row (mirrored by the daily login) is the only source. Locally the
+    file usually exists and the DB may not — hence the fallback order:
+    freshest wins when both exist."""
+    from app.config import get_settings
+
+    settings = get_settings()
+    db_row = None
+    try:
+        from app.services.token_store import read_token
+
+        db_row = read_token()
+    except Exception as exc:
+        log.debug("kite_session read unavailable: %s", exc)
+
+    token_path = settings.data_dir / "access_token.txt"
+    file_token = token_path.read_text().strip() if token_path.exists() else None
+
+    if db_row and file_token:
+        from datetime import timezone
+
+        db_ts = db_row["updated_at"]
+        if db_ts.tzinfo is None:  # SQLite drops tz; token_store writes UTC
+            db_ts = db_ts.replace(tzinfo=timezone.utc)
+        file_mtime = datetime.fromtimestamp(token_path.stat().st_mtime, tz=timezone.utc)
+        return db_row["access_token"] if db_ts >= file_mtime else file_token
+    if db_row:
+        return db_row["access_token"]
+    if file_token:
+        return file_token
+    raise FileNotFoundError("no access token in kite_session or access_token.txt")
+
+
 def _kite_client():
-    """Daily-token Kite client. Local runs read access_token.txt; on Railway
-    this switches to the kite_session Postgres row (Phase 4)."""
     from kiteconnect import KiteConnect
 
     from app.config import get_settings
 
-    settings = get_settings()
-    token_path = settings.data_dir / "access_token.txt"
-    if not token_path.exists():
-        raise FileNotFoundError(f"no access token at {token_path}")
-    kite = KiteConnect(api_key=settings.kite_api_key)
-    kite.set_access_token(token_path.read_text().strip())
+    kite = KiteConnect(api_key=get_settings().kite_api_key)
+    kite.set_access_token(_read_access_token())
     return kite
 
 
@@ -57,6 +87,7 @@ class OptionsWorker:
         self.recorder: Optional[TickRecorder] = None
         self._nfo_rows = None  # the day's dump, kept for the widen universe
         self._last_flush: datetime = now_ist()
+        self._capture_started_at: Optional[datetime] = None
 
     # -- lifecycle ---------------------------------------------------------
 
@@ -98,6 +129,21 @@ class OptionsWorker:
             if (now - self._last_flush).total_seconds() >= self.settings.flush_seconds:
                 self.recorder.flush()
                 self._last_flush = now
+
+        if self.phase == Phase.CAPTURE and self.chain is not None:
+            # KiteTicker reconnects on its own; this catches the cases it
+            # can't fix — gave-up reconnects, dead tokens, or a client that
+            # never started — by rebuilding with a freshly-read token.
+            dead = self.ticker is None or (not self.ticker.connected and self._ticker_dead_for(now) > 60)
+            if dead:
+                log.warning("ticker dead — rebuilding client with fresh token")
+                if self.ticker is not None:
+                    self.ticker.stop()
+                try:
+                    self._start_ticker()
+                except Exception as exc:
+                    self.last_error = f"ticker restart failed: {exc}"
+                    log.error("ticker restart failed (will retry): %s", exc)
 
     def _on_transition(self, old: Phase, new: Phase, now: datetime) -> None:
         if new == Phase.CAPTURE:
@@ -169,6 +215,7 @@ class OptionsWorker:
             drift_strikes=self.settings.recenter_drift_strikes,
         )
         self.recorder = TickRecorder(self.settings.ticks_dir)
+        self._capture_started_at = now
         self._start_ticker()
         log.info("capture start: %d contracts", len(self.selection.contracts))
 
@@ -176,14 +223,13 @@ class OptionsWorker:
         from app.config import get_settings
         from app.workers.options.websocket import TickerClient
 
-        settings = get_settings()
-        token_path = settings.data_dir / "access_token.txt"
         self.ticker = TickerClient(
-            api_key=settings.kite_api_key,
-            access_token=token_path.read_text().strip(),
+            api_key=get_settings().kite_api_key,
+            access_token=_read_access_token(),
             tokens=self.subs.tokens(),
             on_ticks=self._on_ticks,
         )
+        self._capture_started_at = now_ist()  # grace window for the new client
         self.ticker.start()
 
     def _on_ticks(self, ticks, recv_ts: datetime) -> None:
@@ -239,6 +285,13 @@ class OptionsWorker:
         if self.subs:
             snap["widen_events"] = self.subs.widen_events
         return snap
+
+    def _ticker_dead_for(self, now: datetime) -> float:
+        """Seconds since the ticker last looked alive (tick or connect)."""
+        last = self.ticker.last_tick_at
+        if last is None:
+            last = self._capture_started_at or now
+        return (now - last).total_seconds()
 
     def _handle_stop(self, signum, frame) -> None:
         log.info("signal %s — stopping", signum)
