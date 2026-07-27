@@ -94,10 +94,22 @@ matter. Widening to the full chain later is a selection-config change only —
 nothing downstream cares how many contracts exist. All instruments
 subscribed in FULL mode (LTP, volume, OI, OHLC, 5-level depth).
 
-ATM is fixed at morning selection (spot LTP at ~08:45). If NIFTY drifts
-intraday the window is not re-centered in V1 — ±10 gives ~250 points of
-headroom each side; a large gap day just means the far edge thins out.
-Log the drift in daily_sessions so we can revisit.
+**ATM anchor: spot, not futures** (decided 2026-07-27). NIFTY options
+settle to the spot close, and for near expiries the forward-to-expiry is
+within a few points of spot — whereas the monthly future carries ~20–60
+points of basis to month-end, which would skew the window up by up to a
+strike. Futures are captured anyway, so basis history (and later a
+synthetic-forward "true ATM" from put-call parity) comes out of the
+recorded data; it is not needed live.
+
+**Intraday adjustment: widen, never re-center.** Initial window from spot
+LTP at morning selection. If spot's nearest strike moves >= 2 strikes
+(100 points) from the current window center, dynamically subscribe the
+strikes newly inside ATM +/- 10 (KiteTicker supports mid-session
+subscribe). Never unsubscribe intraday — dropping a strike punches holes
+in its bar history, and even a wild trend day only grows the set to
+~±14 strikes (~112 instruments). Next morning's selection re-centers.
+Log window growth + max drift in daily_sessions.
 
 Every contract gets a stable internal id — `NIFTY_20260730_25000_CE` —
 because `instrument_token` is not durable across days. Tokens map to
