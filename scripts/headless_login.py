@@ -183,12 +183,12 @@ def headless_login():
     print(f"\nHeadless login successful! User: {user_name}")
     print(f"Access token saved to {token_path}")
 
-    _upsert_token_to_db(access_token, user_name)
+    _upsert_token_to_db(access_token, api_key, user_name)
 
     return {"access_token": access_token, "user_name": user_name}
 
 
-def _upsert_token_to_db(access_token, user_name):
+def _upsert_token_to_db(access_token, api_key, user_name):
     """Mirror the token into Postgres (kite_session) so services that can't
     read this container's volume — the options worker — get the day's token.
     Best-effort: the file above stays the primary store; a DB failure must
@@ -203,7 +203,7 @@ def _upsert_token_to_db(access_token, user_name):
         print("token DB mirror skipped: app package not importable")
         return
     try:
-        upsert_token(access_token, user_name=user_name, login_source="headless_login")
+        upsert_token(access_token, api_key=api_key, user_name=user_name, login_source="headless_login")
         print("Access token mirrored to Postgres (kite_session)")
     except Exception as e:
         print(f"WARNING: token DB mirror failed (login still OK): {e}")
