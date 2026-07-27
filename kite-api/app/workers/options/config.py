@@ -38,6 +38,14 @@ class OptionsWorkerSettings(BaseSettings):
     # Time-based raw-tick flush (size-based flush is recorder.FLUSH_ROWS)
     flush_seconds: float = 60.0
 
+    # Heartbeat cadence to options_worker_health (admin dashboard source)
+    heartbeat_seconds: float = 30.0
+
+    # Testing only: capture regardless of the market clock (post-close
+    # snapshot ticks still flow). Never leave on in normal operation —
+    # it bypasses the session lifecycle entirely.
+    force_capture: bool = False
+
     class Config:
         env_prefix = "OPTIONS_"
         env_file = ".env"

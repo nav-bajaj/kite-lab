@@ -87,6 +87,7 @@ class OptionsWorker:
         self.recorder: Optional[TickRecorder] = None
         self._nfo_rows = None  # the day's dump, kept for the widen universe
         self._last_flush: datetime = now_ist()
+        self._last_heartbeat: datetime = now_ist()
         self._capture_started_at: Optional[datetime] = None
 
     # -- lifecycle ---------------------------------------------------------
@@ -113,7 +114,7 @@ class OptionsWorker:
     def tick(self, now: datetime) -> None:
         """One state-machine step. Split from run() so tests can drive it
         with a fixed clock and no sleeping."""
-        new_phase = market_phase(now)
+        new_phase = Phase.CAPTURE if self.settings.force_capture else market_phase(now)
         if new_phase != self.phase:
             log.info("phase %s -> %s", self.phase.value, new_phase.value)
             old_phase = self.phase
@@ -129,6 +130,23 @@ class OptionsWorker:
             if (now - self._last_flush).total_seconds() >= self.settings.flush_seconds:
                 self.recorder.flush()
                 self._last_flush = now
+                # One INFO line per flush window — remote log monitoring
+                # (Railway logs are the only live view besides /admin)
+                log.info(
+                    "stats: ws=%s chain=%s recorder=%s",
+                    self.ticker.counters() if self.ticker else None,
+                    self.chain.counters() if self.chain else None,
+                    self.recorder.counters(),
+                )
+
+        if (now - self._last_heartbeat).total_seconds() >= self.settings.heartbeat_seconds:
+            self._last_heartbeat = now
+            try:
+                from app.services.worker_health_store import write_heartbeat
+
+                write_heartbeat(self.phase.value, self.health_snapshot())
+            except Exception as exc:
+                log.debug("heartbeat skipped: %s", exc)
 
         if self.phase == Phase.CAPTURE and self.chain is not None:
             # KiteTicker reconnects on its own; this catches the cases it
