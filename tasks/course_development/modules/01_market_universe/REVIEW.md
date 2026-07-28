@@ -80,6 +80,39 @@ bullets each given a one-clause gloss. Glossary gained "Nifty Microcap
 250"; the rubric gained the cycle-2 pitfall (opening-script hooks reuse
 terms before glossing them).
 
+## MODULE.html build-finalization pass (28 July 2026)
+
+After the content review closed, the learner web build was taken to the
+most finished state the existing (reviewed) content allows — short of
+production architecture, which is a separate decision (fonts still load
+from Google Fonts with system fallbacks; the page is light-theme only by
+brand intent). Build changes, verified by driving every interaction in a
+real browser:
+
+- Accessibility: quiz correctness was signalled by fieldset colour alone.
+  Added a per-question text verdict ("Correct" / "Not quite" /
+  "No answer yet") so the result no longer depends on colour (WCAG 1.4.1).
+- Robustness: added a favicon and theme-color meta, a `<noscript>`
+  fallback banner, and fixed the progress-bar denominator (was `/4` with
+  five trackable interactions).
+- Pack consistency: the NSE date-stamp now reads "excludes mutual funds,
+  ETFs, and bonds", matching the reviewed lesson wording.
+
+Interactions confirmed working in-browser: first-guess, five-word sort
+(5/5), ten-stock reveal, quiz scoring (Passed · 6 of 8 with Q7 required),
+per-question markers distinguishing correct/wrong/blank, worksheet
+localStorage save, and progress reaching 100%.
+
+Re-review verdict: **pass — 39/40, rigor gate 5/5** (up from 38/40; the
+debt→bonds fix resolved the last dimension-8 nit). The reviewer confirmed
+the new user-facing strings (noscript, quiz markers) meet the voice bar
+and verified the quiz key still reads b c c b c b c a. Two non-blocking
+fixes it prescribed were then applied: "bonds" glossed to match its ETF/
+REIT/InvIT neighbours, and the dense 200-DMA sentence split to align with
+the already-split lesson. "bond" added to the glossary. A build-pass
+pitfall (voice-check every added UI string; re-key changed verdict logic
+against its source sequence) was appended to the rubric.
+
 ## Module status
 
 All seven documents hold a **pass** verdict under the course-voice rubric

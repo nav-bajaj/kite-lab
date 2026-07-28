@@ -150,3 +150,9 @@ next module doesn't repeat it. Seeded from the Module 1 second pass:
   formally glosses them — treat the first spoken sentence of an opening
   script as a first-use site and gloss every term in it, even the
   "obvious" ones. (Module 1 cycle-2 review, 28 July 2026)
+- Build-finalization passes (favicons, noscript, ARIA/marker text,
+  denominator fixes) can silently alter learner-visible copy — treat any
+  added user-facing string (fallback banners, state labels, grading
+  markers) as a first-use site and voice-check it, and re-key any changed
+  answer/verdict logic against its source-of-truth sequence. (Module 1
+  build-finalization review, 28 July 2026)

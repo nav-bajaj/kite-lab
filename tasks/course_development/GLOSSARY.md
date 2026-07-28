@@ -30,6 +30,7 @@ Rules:
 | ETF | a fund you can buy and sell like a single stock | — |
 | REIT | a security that gives you a slice of rental-property income | — |
 | InvIT | a security that gives you a slice of infrastructure income (roads, power lines) | — |
+| bond | a loan you make to a company or government that pays you interest and returns your money on a set date | — |
 | SME / Emerge platform | a separate NSE platform for very small companies, with its own rules | — |
 | Nifty Total Market | a much wider NSE index than the Nifty 500 — it reaches down past the small caps into the very small microcap companies | — |
 | Nifty Microcap 250 | the NSE index of the next 250 companies just below the Nifty 500 on size — the top of the microcap tail | — |

@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 1 Tutor Guide — What exactly is "the market"?</title>
+<style>
+  :root {
+    --ink: #22302b; --muted: #5f6f68; --line: #dde5e1;
+    --bg: #f6f8f7; --card: #ffffff; --accent: #0f766e; --accent-soft: #e6f2f0;
+    --warn-bg: #fdf3e7; --warn-line: #e8c9a0; --pass: #1a7f4e;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+         color: var(--ink); background: var(--bg); line-height: 1.6; }
+  header.page { background: var(--card); border-bottom: 1px solid var(--line); padding: 28px 24px 20px; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 8px; }
+  header.page h1 { margin: 0 0 4px; font-size: 24px; }
+  header.page .sub { color: var(--muted); font-size: 14px; margin: 0; }
+  .badges { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge { font-size: 12px; padding: 3px 10px; border-radius: 12px; background: var(--accent-soft);
+           color: var(--accent); border: 1px solid var(--line); }
+  .badge.pass { background: #e8f5ee; color: var(--pass); }
+  nav.toc { position: sticky; top: 0; z-index: 5; background: var(--card); border-bottom: 1px solid var(--line);
+            padding: 8px 24px; font-size: 13px; overflow-x: auto; white-space: nowrap; }
+  nav.toc a { color: var(--accent); text-decoration: none; margin-right: 16px; }
+  main { padding: 10px 24px 60px; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+            padding: 22px 26px; margin: 18px auto; max-width: 980px; }
+  h2 { font-size: 18px; margin: 0 0 12px; color: var(--accent); }
+  h3 { font-size: 15px; margin: 22px 0 8px; }
+  p { margin: 8px 0; font-size: 14.5px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; margin: 10px 0; }
+  th, td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--bg); font-weight: 600; }
+  td.num, th.num { text-align: right; }
+  code, .mono { font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; }
+  pre { background: #f0f4f2; border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px;
+        font-size: 12.5px; line-height: 1.5; overflow-x: auto; }
+  .callout { background: var(--accent-soft); border-left: 4px solid var(--accent); border-radius: 6px;
+             padding: 10px 14px; margin: 12px 0; font-size: 14px; }
+  .warn { background: var(--warn-bg); border-left: 4px solid var(--warn-line); border-radius: 6px;
+          padding: 10px 14px; margin: 12px 0; font-size: 14px; }
+  ul, ol { margin: 8px 0; padding-left: 22px; font-size: 14.5px; }
+  li { margin: 4px 0; }
+  a { color: var(--accent); }
+  .qa { border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; margin: 10px 0; }
+  .qa .q { font-weight: 600; margin: 0 0 6px; }
+  .qa .a { margin: 0; color: var(--ink); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .grid2 { grid-template-columns: 1fr; } }
+  .key { color: var(--pass); font-weight: 600; }
+  footer { text-align: center; color: var(--muted); font-size: 12.5px; padding: 20px; }
+</style>
+</head>
+<body>
+
+<header class="page">
+  <div class="wrap">
+    <h1>Module 1 Tutor Guide — What exactly is "the market"?</h1>
+    <p class="sub">Everything you need to teach this module: plan, script anchors, answers, dated facts, guardrails, and review status. Compiled 28 July 2026 from the reviewed module pack.</p>
+    <div class="badges">
+      <span class="badge pass">Review: all 7 documents pass</span>
+      <span class="badge">60 minutes</span>
+      <span class="badge">Artifact: universe decision card</span>
+      <span class="badge">Mastery: quiz 6/8, Q7 required</span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc"><div class="wrap">
+  <a href="#glance">At a glance</a>
+  <a href="#runofshow">Run of show</a>
+  <a href="#arc">Concept arc</a>
+  <a href="#terms">Terms &amp; analogies</a>
+  <a href="#facts">Dated facts</a>
+  <a href="#walkthrough">Live walkthrough</a>
+  <a href="#answers">Answer keys</a>
+  <a href="#misconceptions">Misconceptions</a>
+  <a href="#guardrails">Guardrails</a>
+  <a href="#review">Review status</a>
+  <a href="#production">Production</a>
+  <a href="#files">Pack files</a>
+</div></nav>
+
+<main>
+
+<section id="glance">
+  <h2>At a glance</h2>
+  <p><strong>Module promise:</strong> by the end, the learner can tell apart a company, a share, an exchange, an index, and a research universe; explain how India's thousands of listings narrow to the Nifty 500; say why Marketworks starts there; and name what that list cannot tell you.</p>
+  <p><strong>The one habit this module installs:</strong> never interpret a market statistic without asking — which stocks, why that list, how were they picked, weighted or one-vote-each, which date's list, how many actually counted, and what sits outside it.</p>
+  <table>
+    <tr><th>Layer</th><th class="num">Learner time</th><th>Purpose</th></tr>
+    <tr><td>Four video chapters (4:30 / 6:30 / 7:30 / 5:30)</td><td class="num">24 min</td><td>Frame, explain, demonstrate</td></tr>
+    <tr><td>Written lesson and source notes</td><td class="num">16 min</td><td>Clarify, qualify, revisit</td></tr>
+    <tr><td>Interactive checks and worksheet</td><td class="num">14 min</td><td>Apply and produce</td></tr>
+    <tr><td>Quiz and exit ticket</td><td class="num">6 min</td><td>Verify mastery</td></tr>
+  </table>
+  <p><strong>Completion evidence:</strong> the learner submits a universe map + decision card that separates the five objects, shows the funnel to the Nifty 500, states the official name and the Marketworks shorthand, explains fit, carries an as-of date and coverage count, and names at least three blind spots.</p>
+  <div class="callout"><strong>Authoring boundary:</strong> this module presents the Nifty 500 as a learning and research universe. It is never a portfolio suggestion, and index membership is never a recommendation.</div>
+</section>
+
+<section id="runofshow">
+  <h2>60-minute run of show</h2>
+  <table>
+    <tr><th>Time</th><th>Segment</th><th>Learner action</th><th>Evidence</th></tr>
+    <tr><td>0–5</td><td>Hook: how many stocks?</td><td>Give and revise an initial answer, out loud</td><td>Recognizes the ambiguity</td></tr>
+    <tr><td>5–13</td><td>Five objects</td><td>Sort company, security, exchange, index, universe</td><td>Worksheet Part A</td></tr>
+    <tr><td>13–22</td><td>Indian-market funnel</td><td>Complete the listing-to-universe map</td><td>Worksheet Part B</td></tr>
+    <tr><td>22–32</td><td>Nifty 500 construction</td><td>Explain eligibility, size ladder, weighting, review</td><td>Quiz checks 3–6</td></tr>
+    <tr><td>32–42</td><td>Marketworks walkthrough</td><td>Locate universe, date, weighting, denominator</td><td>Universe contract card</td></tr>
+    <tr><td>42–50</td><td>Weighted index vs breadth</td><td>Calculate the ten-stock fixture</td><td>Worksheet Part D</td></tr>
+    <tr><td>50–56</td><td>Universe decision card</td><td>State fit and blind spots</td><td>Module artifact (Part E)</td></tr>
+    <tr><td>56–60</td><td>Quiz + exit ticket</td><td>Complete the core check</td><td>6/8, Q7 required</td></tr>
+  </table>
+  <p>If the live walkthrough runs to 15 minutes, shorten the whole-group discussion in the decision-card segment — never the index-versus-breadth exercise.</p>
+  <h3>Opening script anchor</h3>
+  <p>Display "The Indian market rose today." Ask: which market? which index or stock set? weighted how? as of when? how many stocks participated? Then ask for a number: how many stocks are in the Indian stock market? Accept 50, 500, 750, 2,000+, and "I don't know" — write them side by side. The reveal: almost every number said is correct, about a different thing. Fifty is the headline number seen every evening — that kind of rules-based basket, tracked as one figure, is called an index. Thousands is everything listed on the exchanges — the regulated marketplaces, like NSE and BSE, where shares are bought and sold. Today's job is learning to name the thing before reading it.</p>
+</section>
+
+<section id="arc">
+  <h2>Concept arc — the module in six moves</h2>
+  <ol>
+    <li><strong>"The market" is not one list.</strong> Five words that sound interchangeable get pulled apart: company (the business), security (any tradable claim), exchange (the venue, not the merchandise), index (a measuring stick picked by written rules), research universe (the list you chose for your question). Anchor: an election result means nothing until you know who was on the voter list.</li>
+    <li><strong>From thousands to 500.</strong> The funnel: everything listed on Indian exchanges → companies on NSE → ordinary shares that actually trade → the Nifty 500 → the Marketworks dated universe. "Everything" mixes stocks that are nothing alike as data; narrowing builds a clean first laboratory, not a verdict on the excluded.</li>
+    <li><strong>Meet the Nifty 500.</strong> Selection rules in plain words (trades on 90% of days, enough free float, impact cost ≈ ≤1%, top-800 rank, then the 500 biggest by six-month average value). Anchor: picked like a cricket team — written rules, scheduled reviews, no lifetime guarantee. Naming discipline: "Nifty 500" = official index; "Marketworks Nifty 500-derived universe" = our dated copy; "NSE 500" = product shorthand only.</li>
+    <li><strong>Why Marketworks starts here.</strong> Five reasons: coverage (most of the market's value), range (large + mid + small), pre-filtered for tradability (not quality), enough stocks to compare, one shared measuring stick for everyone.</li>
+    <li><strong>The index can rise while most stocks fall.</strong> The module's payoff. Anchor: a class average lifted by two toppers while most students slipped. The ten-stock fixture makes it concrete: index +0.30%, yet 8 of 10 fell, breadth 20%. Index = weighted direction; breadth = one-vote-each participation. Read them together.</li>
+    <li><strong>What the list cannot tell you.</strong> Not quality, not equal tradability, not the microcap tail, never a recommendation, and not a time machine: today's list projected backward creates survivorship bias (judging a journey by interviewing only the finishers). And 500 members ≠ 500 measured — a metric needing 200 days of history may cover, say, 480 of 500, and the display should say so.</li>
+  </ol>
+</section>
+
+<section id="terms">
+  <h2>Terms and canonical analogies</h2>
+  <p>Say the idea first, then hand over the term. These are the approved glosses (canonical source: <span class="mono">tasks/course_development/GLOSSARY.md</span>).</p>
+  <table>
+    <tr><th>Term</th><th>Say it like this</th><th>Analogy (use once)</th></tr>
+    <tr><td>universe</td><td>the list of stocks you've decided to ask your question about</td><td>voter list</td></tr>
+    <tr><td>security</td><td>any tradable claim — a share is a claim on a slice of the business</td><td>—</td></tr>
+    <tr><td>exchange</td><td>the regulated marketplace where securities trade — the venue, not the merchandise</td><td>—</td></tr>
+    <tr><td>index</td><td>a measuring stick: a basket picked by written rules, tracked as one number</td><td>cricket team selection</td></tr>
+    <tr><td>market capitalization</td><td>share price × number of shares — the cost of buying the whole company</td><td>—</td></tr>
+    <tr><td>free float</td><td>the shares actually available for the public to trade — promoters' locked-in holdings don't count</td><td>—</td></tr>
+    <tr><td>free-float market-cap weighted</td><td>big companies' moves count for more, in proportion to their publicly tradable value</td><td>class average — toppers move it more</td></tr>
+    <tr><td>impact cost</td><td>how much the price moves against you just because you traded</td><td>—</td></tr>
+    <tr><td>breadth</td><td>how many stocks joined the move — a head-count, one equal vote each</td><td>students passed vs class average</td></tr>
+    <tr><td>denominator / coverage</td><td>how many stocks were actually counted, out of the intended list, as of which date</td><td>—</td></tr>
+    <tr><td>reconstitution</td><td>the member list gets refreshed twice a year (end of March and September)</td><td>team selection day</td></tr>
+    <tr><td>survivorship bias</td><td>judging the past with today's list studies only the survivors; the failed and delisted have vanished from the record</td><td>interviewing only the finishers</td></tr>
+    <tr><td>200-DMA</td><td>each stock's average closing price over its last 200 trading days — a slow line showing the long-term trend</td><td>—</td></tr>
+    <tr><td>ETF / REIT / InvIT</td><td>a fund you buy like a single stock / a slice of rental-property income / a slice of infrastructure income</td><td>—</td></tr>
+    <tr><td>promoter</td><td>the founding or controlling owners, whose large holdings are usually locked in</td><td>—</td></tr>
+    <tr><td>broker-search "everything"</td><td>not a universe — availability is not a plan for what to study</td><td>wedding guest list from your whole contacts app</td></tr>
+  </table>
+</section>
+
+<section id="facts">
+  <h2>Dated facts — refresh before every cohort</h2>
+  <div class="warn"><strong>Rule:</strong> never narrate a changing number without its date. Every value below drifts; the date is part of the number. Refresh from the primary source before recording or teaching, and update the pack if a value has moved.</div>
+  <table>
+    <tr><th>Fact</th><th class="num">Value taught</th><th>As of</th><th>Source</th></tr>
+    <tr><td>Companies listed on NSE</td><td class="num">2,898</td><td>31 Dec 2025</td><td><a href="https://nsearchives.nseindia.com/web/pressrelease/2026-01/PR_cc_01012026_20260101194417.pdf">NSE Annual Highlights 2025</a></td></tr>
+    <tr><td>NSE main-board companies</td><td class="num">2,358</td><td>31 Dec 2025</td><td>same (count excludes mutual funds, ETFs, bonds)</td></tr>
+    <tr><td>Nifty 500 share of NSE free-float market value</td><td class="num">92.04%</td><td>30 Mar 2026</td><td><a href="https://www.niftyindices.com/indices/equity/broad-based-indices/nifty-500">Official Nifty 500 page</a></td></tr>
+    <tr><td>Nifty 500 share of six-month traded value</td><td class="num">84.07%</td><td>Mar 2026 period end</td><td>same</td></tr>
+    <tr><td>Refresh schedule</td><td class="num">Mar / Sep</td><td>current page</td><td><a href="https://niftyindices.com/resources/index-rebalancing-schedule">Reconstitution calendar</a></td></tr>
+    <tr><td>Internal check: nse500 universe file</td><td class="num">500 EQ symbols</td><td>28 Jul 2026</td><td><span class="mono">data/static/nse500_universe.csv</span> (instructor-only; not a published fact)</td></tr>
+  </table>
+  <h3>Pre-teaching checklist</h3>
+  <ul>
+    <li>Reconfirm the official Nifty 500 page, methodology link, coverage figures, and refresh schedule.</li>
+    <li>Record the course universe snapshot date and row count; note the Marketworks latest completed data date.</li>
+    <li>Record the current metric-eligible denominator for % above 200-DMA and any missing symbols.</li>
+    <li>If an official dated file shows a count other than 500 around a maintenance event, report it as published — never round to 500, never invent a reason.</li>
+  </ul>
+  <p>Methodology and white-paper sources: <a href="https://www.niftyindices.com/Methodology/Method_NIFTY_Equity_Indices.pdf">Nifty equity-index methodology (Mar 2026)</a> · <a href="https://www.niftyindices.com/docs/default-source/indices/nifty-500/nifty-500-whitepaper_2025.pdf?sfvrsn=7b2c6635_4">Nifty 500 white paper (Oct 2025)</a> · <a href="https://www.sebi.gov.in/stock-exchanges.html">SEBI recognized exchanges</a></p>
+</section>
+
+<section id="walkthrough">
+  <h2>Live walkthrough (12–15 min) — sequence</h2>
+  <table>
+    <tr><th>Time</th><th>Screen</th><th>Teaching move</th></tr>
+    <tr><td>0:00–1:30</td><td>Pulse page <span class="mono">/insights</span></td><td>Gloss "index" up front, then manufacture the need: when this page says "the market", which stocks does it actually mean? Don't answer yet.</td></tr>
+    <tr><td>1:30–4:00</td><td>Official Nifty 500 page</td><td>Point at the official name, top-500 selection, dated coverage figures, downloads. Which number shows coverage width? Which phrase shows weighting?</td></tr>
+    <tr><td>4:00–6:30</td><td>Official methodology</td><td>The eligibility funnel without reading legal lines: security type, trading frequency, impact cost, free float, top-800 rank, top-500 size. Share price ≠ company size; membership ≠ quality.</td></tr>
+    <tr><td>6:30–8:30</td><td>Size ladder</td><td>1–100 large, 101–250 mid, 251–500 small, then Nifty Microcap 250 beyond. 500 is materially different from 50 — new layers, not just more giants.</td></tr>
+    <tr><td>8:30–11:00</td><td>Breadth panel + <span class="mono">/insights/learn/pct-above-200dma</span></td><td>The weighted index vs the one-vote-each breadth count (gloss the 200-day average in full). Run the ten-stock example: +0.30% vs 2 of 10 up.</td></tr>
+    <tr><td>11:00–13:30</td><td>Screener <span class="mono">/insights/screener</span></td><td>Rows returned, data date, coverage. Fewer than 500 usable rows is a fact to say out loud, not hide. Do not open a stock and discuss buying it.</td></tr>
+    <tr><td>13:30–15:00</td><td>Back to Pulse</td><td>Fill the universe contract: official index, product universe, snapshot date, metric, weighting, counting method, stocks actually counted, known exclusions.</td></tr>
+  </table>
+  <h3>Red flags — stop and correct if you hear yourself say</h3>
+  <ul>
+    <li>"NSE 500 is the 500 stocks on NSE." · "These are the 500 safest Indian companies." · "Nifty 500 covers the entire Indian market."</li>
+    <li>"There are exactly 500 usable stocks on every date." · "The index rose, so most constituents rose." · "Index inclusion makes the stock a good investment."</li>
+  </ul>
+</section>
+
+<section id="answers">
+  <h2>Answer keys</h2>
+  <div class="grid2">
+    <div>
+      <h3>Worksheet Part A — name the object</h3>
+      <ol>
+        <li class="key">exchange</li>
+        <li class="key">index</li>
+        <li class="key">company</li>
+        <li class="key">research universe</li>
+        <li class="key">security</li>
+      </ol>
+      <h3>Part B — funnel blanks, in order</h3>
+      <pre>exchanges · NSE · small · shares · 500
+100 / 150 / 250 · date · measure</pre>
+      <p>Accept close synonyms only when the learner can explain the idea behind the word.</p>
+      <h3>Part C — universe for the question</h3>
+      <ul>
+        <li>Q1 largest companies as one basket → <span class="key">Nifty 50</span>; can't describe wider participation.</li>
+        <li>Q2 broad long-term trend → <span class="key">Nifty 500</span>; excludes the microcap tail, membership changes.</li>
+        <li>Q3 microcaps beyond the 500 → <span class="key">Nifty Total Market or a defined custom list</span>; thin trading, data-quality challenges.</li>
+        <li>Q4 % above 200-DMA today → <span class="key">the dated Marketworks Nifty 500-derived universe</span>; must travel with membership date, data date, intended count, measured count, missing count.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Part D — ten-stock fixture</h3>
+      <pre>A: +0.60%   B: +0.20%   C–J: −0.50%
+Weighted index return:  +0.30%
+Stocks that rose:       2 of 10
+Stocks that fell:       8 of 10
+Percentage rising:      20%</pre>
+      <p>Completion: the index finished <em>up</em> while participation was <em>weak/narrow</em>. Neither number invalidates the other.</p>
+      <h3>Quiz key</h3>
+      <table>
+        <tr><th>Q</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+        <tr><th>Ans</th><td class="key">B</td><td class="key">C</td><td class="key">C</td><td class="key">B</td><td class="key">C</td><td class="key">B</td><td class="key">C</td><td class="key">A</td></tr>
+      </table>
+      <p><strong>Mastery:</strong> 6 of 8, and Q7 (index up while most stocks fell) is required — it is the bridge to Module 2. Remediation: misses on 1–3 → revisit the five objects; 4–6 → Nifty 500 selection and weighting; 7 → redo worksheet Part D; 8 → add date and measured count to the decision card.</p>
+      <h3>Exit-ticket standard</h3>
+      <p>Pass if the answer names a universe, an as-of/membership date, and a weighting/counting or denominator question. Strong form: "Which dated universe are you calling the market, how are its members selected and counted, and how many have usable data?"</p>
+    </div>
+  </div>
+  <h3>Part E — model decision card (strong example)</h3>
+  <pre>QUESTION      How broad is the trend across a practical large-, mid-, and small-cap Indian equity universe?
+OFFICIAL      Nifty 500.
+PRODUCT       The Marketworks member-list snapshot named in the course manifest, with membership date and coverage report.
+ELIGIBILITY   Ordinary NSE share, trades regularly, enough free float, low impact cost, ranks high enough on value and activity.
+SIZE          100 large, 150 mid, 250 small.
+WEIGHTING     Official index: bigger companies count for more (free-float market-cap weighted).
+COUNTING      Breadth: one equal vote per stock actually measured that day.
+DATE/COVERAGE Membership date from the manifest; intended members; stocks actually measurable; missing noted explicitly.
+WHY           Covers most market value; spans three size layers; screened for tradability; one shared list for everyone.
+BLIND SPOTS   Microcap tail excluded; membership says nothing about risk or price; list changes twice a year — and
+              judging the past with today's list drops the companies that failed or left.
+PLAIN         Marketworks starts with the Nifty 500 because it is a wide, rules-based, dated list — enough stocks to
+              compare, screened to trade cleanly, shared so everyone measures the same thing. A learning laboratory,
+              not a list of good stocks.</pre>
+</section>
+
+<section id="misconceptions">
+  <h2>Misconception playbook</h2>
+  <div class="qa"><p class="q">"So the Nifty 500 is the safest 500 stocks?"</p>
+    <p class="a">That's a reasonable thought — the entry filters do sound like a safety check. The missing piece: the filters test tradability, not quality or price. Filtered is not the same as recommended, and small-cap members can still be volatile and risky.</p></div>
+  <div class="qa"><p class="q">"Why not just use the Nifty 50? It drives the headlines."</p>
+    <p class="a">Use it when the question is about the largest companies. Fifty giants can't tell you whether hundreds of mid and small companies joined a move — the universe follows the question.</p></div>
+  <div class="qa"><p class="q">"Why not use every listed company and be fully comprehensive?"</p>
+    <p class="a">Valid research project if you can define security type, liquidity, history, and coverage rules. As a first laboratory it makes the answer harder to trust, not more complete. Start with a clean room; add the mess later, on purpose, with rules.</p></div>
+  <div class="qa"><p class="q">"If Marketworks has 500 symbols, why does a metric sometimes show fewer?"</p>
+    <p class="a">Being on the list and being measurable are different. The 200-day average needs 200 days of history; a recent joiner doesn't have it. Some days we measure, say, 480 of 500 — and the screen should say exactly that. The count actually measured is the denominator.</p></div>
+  <div class="qa"><p class="q">"Why does Marketworks say NSE 500 if the official name is Nifty 500?"</p>
+    <p class="a">"NSE 500" is the product's nickname for our dated copy of the member list, built from NSE-listed stocks. In course language: "Nifty 500" for the official index, "Marketworks Nifty 500-derived universe" for our dated snapshot. NSE is an exchange; Nifty 500 is an index.</p></div>
+</section>
+
+<section id="guardrails">
+  <h2>Guardrails</h2>
+  <div class="grid2">
+    <div>
+      <h3>Always</h3>
+      <ul>
+        <li>Say "starting learning/research universe".</li>
+        <li>Date every changing count and coverage figure.</li>
+        <li>Distinguish membership from usable-data coverage.</li>
+        <li>Explain index weighting versus breadth counting.</li>
+        <li>Disclose current-snapshot / survivorship limitations.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Never</h3>
+      <ul>
+        <li>Suggest learners put money into these specific companies.</li>
+        <li>Imply constituents are safe, liquid, or high quality.</li>
+        <li>Call the Nifty 500 the entire Indian market.</li>
+        <li>Present index inclusion as due diligence.</li>
+        <li>Add NSE and BSE company counts.</li>
+        <li>Discuss an individual stock as a recommendation.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="review">
+  <h2>Review status</h2>
+  <p>Full-pack review under the course-voice rubric (eight dimensions, hard gate on rigor, term audit against the glossary), 28 July 2026. Full record with fixes: <span class="mono">REVIEW.md</span>.</p>
+  <table>
+    <tr><th>Document</th><th class="num">Score</th><th>Verdict</th></tr>
+    <tr><td>LESSON.md</td><td class="num">40/40</td><td class="key">pass</td></tr>
+    <tr><td>QUIZ.md</td><td class="num">38/40</td><td class="key">pass</td></tr>
+    <tr><td>MODULE.html</td><td class="num">38/40</td><td class="key">pass</td></tr>
+    <tr><td>FACILITATOR.md</td><td class="num">37/40</td><td class="key">pass (cycle 2)</td></tr>
+    <tr><td>VIDEO_SCRIPT.md</td><td class="num">36/40</td><td class="key">pass</td></tr>
+    <tr><td>WALKTHROUGH.md</td><td class="num">36/40</td><td class="key">pass</td></tr>
+    <tr><td>WORKSHEET.md</td><td class="num">34/40</td><td class="key">pass</td></tr>
+  </table>
+  <p>All rigor gates 5/5. All reviewer-prescribed fixes applied; declined suggestions documented with reasons in REVIEW.md.</p>
+</section>
+
+<section id="production">
+  <h2>Production status</h2>
+  <ul>
+    <li>Manuscript, quiz, worksheet, facilitator guide, walkthrough, video script: <span class="key">drafted, reviewed, pass</span>.</li>
+    <li>Learner web build (<span class="mono">MODULE.html</span>): built and reviewed.</li>
+    <li>Diagrams (five-object cards, overlap circles, funnel, size ladder, eligibility icons, index-vs-breadth pair, contract card): specified in ASSETS.md, not yet produced.</li>
+    <li>Product screenshots (dated footers, no personal information): specified, not yet captured.</li>
+    <li>Fixture CSVs: specified, not yet packaged.</li>
+    <li>Recorded video, captions, transcript, audio descriptions: not yet produced.</li>
+  </ul>
+</section>
+
+<section id="files">
+  <h2>Pack files</h2>
+  <table>
+    <tr><th>File</th><th>What it is</th></tr>
+    <tr><td class="mono">LESSON.md</td><td>Learner-facing lesson manuscript (the voice exemplar)</td></tr>
+    <tr><td class="mono">MODULE.html</td><td>Self-contained learner web build with interactions and quiz</td></tr>
+    <tr><td class="mono">VIDEO_SCRIPT.md</td><td>Four-chapter presenter script, shot plan, production checklist</td></tr>
+    <tr><td class="mono">WALKTHROUGH.md</td><td>Timed live product demonstration with spoken blocks</td></tr>
+    <tr><td class="mono">WORKSHEET.md</td><td>Parts A–E exercises and the decision-card artifact</td></tr>
+    <tr><td class="mono">QUIZ.md</td><td>Eight questions, key, feedback, remediation</td></tr>
+    <tr><td class="mono">FACILITATOR.md</td><td>Run of show, slides, answer guide, misconception responses</td></tr>
+    <tr><td class="mono">ASSETS.md</td><td>Visual specs, data fixtures, source ledger</td></tr>
+    <tr><td class="mono">REVIEW.md</td><td>Rubric review record, both cycles</td></tr>
+    <tr><td class="mono">../GLOSSARY.md</td><td>Canonical term explanations (course-wide)</td></tr>
+  </table>
+</section>
+
+</main>
+
+<footer>Module 1 Tutor Guide · compiled 28 July 2026 · sources: the reviewed module pack · regenerate when any pack file changes</footer>
+
+</body>
+</html>

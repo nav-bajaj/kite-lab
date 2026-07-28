@@ -143,6 +143,13 @@ learner-facing document:
 4. **Close the loop** — when the module passes: merge NEW glossary entries,
    and append any `PITFALL:` line from the review to RUBRIC.md's
    "Recurring pitfalls" so the next module starts smarter.
+5. **Ship the tutor guide** — compile `TUTOR_GUIDE.html` in the module
+   folder per `tasks/course_development/TUTOR_GUIDE_SPEC.md`: the
+   single page that tells the tutor everything about the module (run of
+   show, concept arc, glosses, dated facts, answer keys, misconceptions,
+   guardrails, review scoreboard). It is compiled from reviewed sources —
+   excluded from the review ledger, but regenerated whenever any pack
+   file changes.
 
 A module is not done while any of its documents holds a "revise" verdict.
 

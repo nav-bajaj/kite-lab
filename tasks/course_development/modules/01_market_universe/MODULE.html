@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Marketworks Market State Lab, Module 1: What exactly is 'the market'? Learn to name the list of stocks behind any market claim.">
 <title>Module 1 — What exactly is “the market”? | Marketworks</title>
+<meta name="theme-color" content="#0c7a62">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230c7a62'/%3E%3Crect x='8' y='17' width='4' height='7' rx='1' fill='%23f0f7f3'/%3E%3Crect x='14' y='12' width='4' height='12' rx='1' fill='%2355c374'/%3E%3Crect x='20' y='8' width='4' height='16' rx='1' fill='%23f0f7f3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
@@ -104,6 +106,17 @@
   }
 
   .skip-link:focus { transform: translateY(0); }
+
+  .no-js {
+    width: min(1180px, calc(100% - 48px));
+    margin: 20px auto 0;
+    padding: 14px 18px;
+    border: 1px solid var(--acc2-line);
+    border-radius: 12px;
+    background: var(--acc2-bg);
+    color: var(--acc2-fg);
+    font-size: 14px;
+  }
 
   .flow-grid {
     position: fixed;
@@ -1244,6 +1257,20 @@
   .question.correct .quiz-feedback,
   .question.incorrect .quiz-feedback { display: block; }
 
+  .question-mark {
+    display: none;
+    margin-top: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .question.graded .question-mark { display: inline-flex; }
+  .question-mark[data-state="correct"] { color: var(--positive); }
+  .question-mark[data-state="wrong"] { color: var(--negative); }
+  .question-mark[data-state="blank"] { color: var(--warning); }
+
   .quiz-result {
     display: none;
     margin-top: 24px;
@@ -1554,6 +1581,10 @@
   <div class="progress-line" aria-hidden="true"><span id="top-progress"></span></div>
 </header>
 
+<noscript>
+  <div class="no-js">This page's try-it panels, worksheet saving, and quiz grading need JavaScript. The full lesson still reads without it — every explanation, table, and source is on the page.</div>
+</noscript>
+
 <main id="lesson">
   <header class="hero">
     <p class="eyebrow">Day 01 · Module 01 · Read</p>
@@ -1781,7 +1812,7 @@
           </div>
           <div class="definition">
             <dt>Security</dt>
-            <dd>When you buy a share, you’re buying a small slice of ownership in a business. The market’s general word for any tradable claim like this is a security. An ordinary share is one kind of security. Exchanges also trade others: funds you can buy and sell like a single stock (ETFs), securities that hand you a slice of rental-property income (REITs), securities that hand you a slice of infrastructure income like roads and power lines (InvITs), and bonds — and your broker app shows all of them mixed together.</dd>
+            <dd>When you buy a share, you’re buying a small slice of ownership in a business. The market’s general word for any tradable claim like this is a security. An ordinary share is one kind of security. Exchanges also trade others: funds you can buy and sell like a single stock (ETFs), securities that hand you a slice of rental-property income (REITs), securities that hand you a slice of infrastructure income like roads and power lines (InvITs), and bonds (a loan you make to a company or government, repaid with interest) — and your broker app shows all of them mixed together.</dd>
           </div>
           <div class="definition">
             <dt>Exchange</dt>
@@ -1896,7 +1927,7 @@
             <strong>2,358</strong>
             <span>companies on the main board</span>
           </div>
-          <div class="date-stamp">As of 31 December 2025 · NSE Annual Highlights · total excludes mutual funds, ETFs, and debt securities</div>
+          <div class="date-stamp">As of 31 December 2025 · NSE Annual Highlights · total excludes mutual funds, ETFs, and bonds</div>
         </div>
 
         <div class="prose">
@@ -2137,13 +2168,13 @@
             properly.
           </p>
           <p>
-            Second, an honest wrinkle. A metric like “% of stocks above their
-            200-day average” — that average being each stock’s average closing
-            price over its last 200 trading days, a slow-moving line that shows
-            its long-term trend — needs 200 days of price history per stock, and
-            a recent joiner doesn’t have that yet. So on a given day, Marketworks
-            might compute a metric on, say, 480 of the 500, and the display
-            should tell you so. The reverse happens too: around a merger or an
+            Second, an honest wrinkle. Take a metric like “% of stocks above
+            their 200-day average.” That average is each stock’s average closing
+            price over its last 200 trading days — a slow-moving line that shows
+            its long-term trend. Computing it needs 200 days of price history per
+            stock, and a stock that joined recently doesn’t have that yet. So on
+            a given day, Marketworks might compute a metric on, say, 480 of the
+            500, and the display should tell you so. The reverse happens too: around a merger or an
             index maintenance event, even the official dated member file can
             briefly hold slightly more or fewer than 500 securities. When that
             occurs, we report the official count as published — we never
@@ -2460,13 +2491,14 @@
 
 <script>
   const storageKey = "marketworks-module-01";
+  const totalInteractions = 5;
   const completed = new Set();
   const progressSections = [...document.querySelectorAll("[data-progress-section]")];
   const topProgress = document.getElementById("top-progress");
   const railPercent = document.getElementById("rail-percent");
 
   function updateProgress() {
-    const interactionProgress = completed.size / 4;
+    const interactionProgress = completed.size / totalInteractions;
     const scrollable = document.documentElement.scrollHeight - window.innerHeight;
     const scrollProgress = scrollable > 0 ? window.scrollY / scrollable : 0;
     const combined = Math.min(1, Math.max(scrollProgress * 0.75, interactionProgress));
@@ -2608,11 +2640,27 @@
     let score = 0;
     let q7Correct = false;
     questions.forEach((question) => {
-      question.classList.remove("correct", "incorrect");
+      question.classList.remove("correct", "incorrect", "graded");
+      let marker = question.querySelector(".question-mark");
+      if (!marker) {
+        marker = document.createElement("p");
+        marker.className = "question-mark";
+        question.insertBefore(marker, question.querySelector(".quiz-feedback"));
+      }
       const selected = question.querySelector("input:checked");
       const correct = selected && selected.value === question.dataset.answer;
-      question.classList.add(correct ? "correct" : "incorrect");
-      if (correct) score += 1;
+      question.classList.add("graded", correct ? "correct" : "incorrect");
+      if (correct) {
+        marker.dataset.state = "correct";
+        marker.textContent = "Correct";
+        score += 1;
+      } else if (!selected) {
+        marker.dataset.state = "blank";
+        marker.textContent = "No answer yet";
+      } else {
+        marker.dataset.state = "wrong";
+        marker.textContent = "Not quite — see the note below";
+      }
       if (question.dataset.question === "q7") q7Correct = Boolean(correct);
     });
     const passed = score >= 6 && q7Correct;

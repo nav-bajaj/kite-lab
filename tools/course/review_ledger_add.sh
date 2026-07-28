@@ -13,6 +13,7 @@ f="$(jq -r '.tool_input.file_path // empty')"
 
 case "$f" in
   */REVIEW.md) exit 0 ;;
+  */TUTOR_GUIDE.html) exit 0 ;;
 esac
 case "$f" in
   "$ROOT"/tasks/course_development/modules/*.md) ;;
