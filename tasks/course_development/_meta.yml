@@ -21,7 +21,7 @@ course_shape:
   duration_days: 3
   total_hours: 6
   modules: 6
-  capstone: AI-assisted local market-state dashboard
+  capstone: AI-assisted local market-state and quantitative-pattern dashboard
   ai_tools:
     - Codex
     - Claude Code

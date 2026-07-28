@@ -16,7 +16,8 @@ coherent job:
 > By the end, you can describe the state of the Indian equity market with
 > dated evidence, explain the basic logic of quantitative investing, and run a
 > local daily dashboard that tracks breadth, trend, leadership, relative
-> strength, and transparent breakout-pattern observations.
+> strength, simple price landmarks, and quantitatively detected chart
+> structures with inspectable visual overlays.
 
 The promise is a repeatable observation process, not a forecast or a list of
 stocks to buy.
@@ -75,11 +76,16 @@ observation list rather than an instruction to trade.
    describe price behavior. They do not prove future returns.
 5. **Context before pattern.** A breakout is read with breadth, regime,
    extension, and relative strength—not in isolation.
-6. **AI as an implementation partner.** It may write and test code, but the
+6. **Quantitative plus visual.** A chart structure must pass versioned numerical
+   criteria and display the exact pivots and boundaries used by the detector.
+   The visual audits the calculation; it does not override it.
+7. **No pattern score.** Show a pass/fail criteria matrix and rejection reasons,
+   not a composite confidence, quality, or buy score.
+8. **AI as an implementation partner.** It may write and test code, but the
    learner owns metric definitions and signs off on every output.
-7. **Data date always visible.** Freshness, universe coverage, missing symbols,
+9. **Data date always visible.** Freshness, universe coverage, missing symbols,
    and benchmark date are part of the dashboard, not footnotes.
-8. **Conditions, not instructions.** The capstone never displays buy/sell,
+10. **Conditions, not instructions.** The capstone never displays buy/sell,
    target, position size, or order language.
 
 ## The teaching loop
@@ -115,7 +121,7 @@ The capstone should answer five questions in under ten minutes:
 2. **How many stocks are participating?**
 3. **Where is leadership concentrated?**
 4. **Which stocks are outperforming the benchmark?**
-5. **Which names match one of three transparent price-pattern definitions?**
+5. **Which names match a transparent price landmark or chart structure?**
 
 Required views:
 
@@ -125,14 +131,21 @@ Required views:
 - advance/decline or another single breadth-momentum view;
 - sector relative strength and sector breadth;
 - 126-day stock relative strength versus Nifty 50;
-- pattern watchlists for:
+- simple landmark/condition watchlists for:
   - fresh 20-day breakouts above the 50-DMA;
   - fresh 52-week breakouts above the 50-DMA; and
   - low-volatility coiled springs above the 50-DMA and 200-DMA;
+- geometric pattern-family watchlists for:
+  - converging triangle breakouts;
+  - rectangle/base breakouts; and
+  - bull flag breakouts;
+- candidate drill-down with program-generated pivots, boundaries, breakout
+  level, diagnostic values, and failed criteria;
 - plain-language “what this does and does not mean” notes.
 
 The pattern list is an **observation shortlist**. It must not rank “best
 stocks,” prescribe entries, calculate position sizes, or connect to a broker.
+The pattern methodology is specified in `QUANT_PATTERN_SPEC.md`.
 
 ## Recommended implementation architecture
 
@@ -163,6 +176,8 @@ stocks,” prescribe entries, calculate position sizes, or connect to a broker.
 - A generic investing curriculum or product catalogue.
 - A stock-picking promise, tips product, or “top stocks today” list.
 - Intraday signals, candlestick libraries, options, leverage, or order entry.
+- A large pattern catalog, discretionary trendline drawing, or an image model
+  that cannot expose the pivots and boundaries behind a match.
 - A strategy optimizer or portfolio backtest in this course.
 - Broker OAuth, API keys, alerts, order files, or automatic refresh against an
   unapproved source.

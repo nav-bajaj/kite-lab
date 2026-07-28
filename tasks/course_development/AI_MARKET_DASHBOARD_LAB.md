@@ -1,5 +1,11 @@
 # AI Market Dashboard Lab — build a daily market desk on your device
 
+> **Implementation status:** the curriculum now includes the geometric pattern
+> contract in `QUANT_PATTERN_SPEC.md`. This document keeps the intended
+> dashboard interface aligned, but the agent prompt sequence, detector
+> architecture, charting library, and pattern tests will be redesigned in the
+> next dedicated AI pass.
+
 ## Purpose
 
 This is the capstone for a mildly technical learner. Codex or Claude Code acts
@@ -165,7 +171,9 @@ Every breadth value shows its denominator and coverage.
 - sector and current trend context; and
 - visible distinction between relative strength and RSI.
 
-### Panel 5 — pattern observation lists
+### Panel 5 — landmark and chart-structure observations
+
+#### Simple landmarks and conditions
 
 1. **Fresh 20-day breakout**
    - close today > highest close of the previous 20 sessions;
@@ -182,6 +190,18 @@ Every breadth value shows its denominator and coverage.
    - recent 20-session realized volatility is below the first quartile of that
      stock's available rolling 20-session volatility history.
 
+#### Geometric chart structures
+
+1. **Converging triangle breakout**
+2. **Rectangle/base breakout**
+3. **Bull flag breakout**
+
+All three use the frozen definitions in `QUANT_PATTERN_SPEC.md`. A drill-down
+must render the same confirmed pivots, boundaries, breakout buffer, and
+diagnostic values used by the detector. It also shows a pass/fail criteria
+matrix and explicit rejection reasons. No learner-drawn boundary changes the
+program result.
+
 Each row includes:
 
 - symbol and sector;
@@ -194,7 +214,7 @@ Each row includes:
 - data-quality flag; and
 - a short failure-context note.
 
-The app must never sort by an invented “buy score.”
+The app must never sort by an invented confidence, quality, or “buy” score.
 
 ### Panel 6 — five-line note
 
@@ -333,24 +353,22 @@ Requirements:
 Run tests and explain failures before changing definitions.
 ```
 
-### Prompt 5 — add leadership and patterns
+### Prompt 5 — reserved for the dedicated AI design pass
 
-```text
-Implement sector RS, stock RS, and the three pattern lists exactly as
-defined in METRICS.md.
+Do not ask a learner to generate the geometric detector from a loose prompt.
+Before this prompt is finalized, the next design pass must:
 
-Requirements:
-- align stock and benchmark dates before calculating returns;
-- distinguish relative strength from RSI in the UI;
-- exclude today from prior-high breakout windows;
-- require stated minimum history;
-- label coiled spring as pre-breakout, not breakout;
-- show context fields and data-quality flags;
-- add no composite buy score, forecast, target, or recommendation;
-- add focused tests for each rule.
+1. convert `QUANT_PATTERN_SPEC.md` into a frozen starter-kit methodology file;
+2. select and scaffold the pivot, boundary-fit, and chart-overlay code paths;
+3. create synthetic pass, rejection, intraday-only, and data-error fixtures;
+4. ensure the criteria matrix and chart use the same detector output;
+5. define macOS/Windows recovery behavior; and
+6. write focused tests for look-ahead, geometry, containment, and breakout
+   status.
 
-Run the full test suite and show the result.
-```
+The final prompt will add sector/stock relative strength, simple landmarks, and
+the three geometric families without exposing the learner to an unbounded
+code-generation task.
 
 ### Prompt 6 — red-team the dashboard
 
@@ -407,6 +425,10 @@ The learner checks every item in plain English:
 - [ ] A hand-calculated 20-day breakout example matches the code.
 - [ ] A hand-calculated breadth example matches the code.
 - [ ] Coiled spring is labeled pre-breakout.
+- [ ] Pattern pivots are not used before their confirmation date.
+- [ ] Triangle, rectangle, and bull-flag fixtures match their criteria tables.
+- [ ] Rejected near-matches show the exact failed criterion.
+- [ ] The chart overlay and detector use identical pivots and boundaries.
 - [ ] Volume context disappears or carries a warning when volume is unreliable.
 - [ ] Every named-security list says observation, not recommendation.
 - [ ] No buy/sell, target, stop, position size, alert, or order output exists.
@@ -419,7 +441,9 @@ Maintain a separate instructor-only branch or patch with:
 1. a breakout window that incorrectly includes today;
 2. breadth that divides by the full universe despite missing prices;
 3. stock RS calculated on dates not shared with the benchmark; and
-4. stale stock data combined with a current benchmark date.
+4. stale stock data combined with a current benchmark date;
+5. a pivot used before its confirmation delay; and
+6. a chart boundary drawn from different pivots than the detector used.
 
 Learners should detect at least two before seeing the answers.
 

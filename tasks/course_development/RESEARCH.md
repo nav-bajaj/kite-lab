@@ -141,6 +141,30 @@ The narrowed scope matches the strongest existing Marketworks surfaces:
 - stock relative strength; and
 - transparent watchlist patterns.
 
+### Why pattern recognition must be quantitative and visual
+
+Popular chart patterns are usually introduced as pictures. That creates a
+teaching problem: learners can move trendlines until a shape appears, while two
+people may label the same history differently.
+
+Lo, Mamaysky, and Wang's *Foundations of Technical Analysis* treats that
+subjectivity as a central obstacle and demonstrates a systematic, automatic
+approach to pattern recognition. It does not validate the proposed teaching
+thresholds or establish an Indian-market trading edge. Its useful curriculum
+lesson is narrower: a visual pattern can be converted into explicit geometry
+and applied consistently.
+
+The course therefore separates:
+
+- simple landmarks and conditions: 20-day high, 52-week high, coiled spring;
+- geometric structures: triangle, rectangle/base, and bull flag;
+- detection: a criteria matrix calculated from adjusted OHLCV;
+- visualization: the exact pivots and boundaries used by the detector; and
+- outcome research: deliberately outside this six-hour course.
+
+The visual is an audit surface for the program, not a discretionary override.
+`QUANT_PATTERN_SPEC.md` contains the curriculum contract.
+
 ## 5. AI-agent opportunity — a local daily dashboard
 
 Codex and Claude Code can help a mildly technical learner build an inspectable
@@ -182,6 +206,9 @@ stocks.” The design must actively surface:
 - unreliable volume comparisons;
 - a one-day gap dominating relative strength;
 - pattern matches presented as expected returns;
+- hand-drawn boundaries that disagree with program-selected pivots;
+- unconfirmed pivots leaking later sessions into an as-of pattern;
+- a corporate-action gap creating a false geometric structure;
 - data/source licensing;
 - secrets or broker credentials pasted into a prompt; and
 - recommendation-like natural-language summaries.
@@ -236,6 +263,9 @@ skill.
 - [SEBI: investing do's and don'ts](https://investor.sebi.gov.in/securities-dos_and_donts.html)
 - [SEBI February 2026 Master Circular for Research Analysts](https://www.sebi.gov.in/sebi_data/attachdocs/feb-2026/1770375507051.pdf)
 - [SEBI Investor Charter](https://investor.sebi.gov.in/Investor-charter.html)
+- [SEBI: technical analysis versus fundamental analysis](https://investor.sebi.gov.in/tech_fund_analysis.html)
+- [SEBI: due diligence before investing](https://investor.sebi.gov.in/due_diligence.html)
+- [NBER: Foundations of Technical Analysis](https://www.nber.org/papers/w7613)
 - [AMFI: Indian mutual-fund industry statistics](https://www.amfiindia.com/articles/indian-mutual)
 - [NSE: July 2025 investor-account milestone](https://www.nseindia.com/mediacoverage/nse-crosses-crore-investor-accounts)
 - [SEBI: Household Savings through Indian Securities Market, May 2026](https://www.sebi.gov.in/reports-and-statistics/research/may-2026/household-savings-through-indian-securities-market_101531.html)

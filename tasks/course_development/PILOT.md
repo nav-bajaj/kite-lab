@@ -14,6 +14,8 @@
    easier to understand and create voluntary return visits.
 6. Explicit “observation, not recommendation” design can prevent pattern lists
    from being interpreted as stock picks.
+7. A numerical criteria matrix plus program-drawn overlay will produce better
+   pattern understanding than unaided visual recognition.
 
 ## Cohort
 
@@ -64,6 +66,8 @@ Recruit 24 if possible, assuming pre-start attrition.
   - sector/stock relative strength;
   - 20-day breakouts; and
   - coiled springs.
+- New teaching fixtures for triangle, rectangle/base, and bull flag geometry;
+  these do not imply production Marketworks signals.
 
 ### Do not build
 
@@ -73,6 +77,7 @@ Recruit 24 if possible, assuming pre-start attrition.
 - Broker or personal portfolio integration.
 - Alerts, order files, or trading automation.
 - Forward-return statistics or pattern win rates.
+- A pattern quality/buy score or large chart-pattern library.
 - Personalized recommendations.
 - Portfolio backtest or strategy optimizer.
 - Certificate.
@@ -125,10 +130,20 @@ Prototype Module 4 after Slice B runs:
 - relative strength versus RSI check;
 - 20-day breakout;
 - 52-week breakout; and
-- coiled-spring/pre-breakout distinction.
+- coiled-spring/pre-breakout distinction;
+- confirmed pivots, ATR tolerance, and completed-close confirmation;
+- converging triangle breakout;
+- rectangle/base breakout; and
+- bull flag breakout.
 
-Test whether five learners can identify the rule, context, and failure mode for
-one match without being prompted to trade.
+For each geometric family, provide one accepted overlay and one near-match
+rejected by the criteria matrix. Test whether five learners can:
+
+- point from each diagnostic value to the corresponding chart geometry;
+- explain why confirmed pivots arrive with a delay;
+- reject the near-match without redrawing the lines by eye;
+- distinguish a match from an outcome forecast; and
+- identify context and one failure mode without being prompted to trade.
 
 ### Slice D — full pilot
 
@@ -145,7 +160,8 @@ Author the remaining material only after Slices A-C meet their gates.
 | Index versus breadth | 85% explain why they can diverge |
 | Quant anatomy | 80% identify universe, lookback, benchmark, and output |
 | Relative strength | 80% distinguish RS from RSI |
-| Pattern literacy | 80% reproduce one pattern rule and one failure mode |
+| Pattern literacy | 80% reconcile one detector result with its visual overlay |
+| Pattern rejection | 80% reject a near-match using the failed criterion |
 | Dashboard literacy | 75% manually reconcile one displayed value |
 | Safety | 100% identify watchlists as observations, not recommendations |
 

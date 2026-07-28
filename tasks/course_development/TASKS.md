@@ -8,6 +8,9 @@ founder approves the concept and the compliance/data gate.
 - [x] Pivot from four-week foundations to a three-day market-state intensive.
 - [x] Draft six modules totaling six instructional hours.
 - [x] Replace the paper-portfolio backtest with a local daily dashboard.
+- [x] Select three geometric pattern families for the core course.
+- [x] Draft quantitative-plus-visual pattern contracts.
+- [x] Expand all six modules into 60-minute lesson plans.
 - [ ] Approve or rename “Marketworks Market State Lab.”
 - [ ] Confirm target is existing subscribers, acquisition, or mixed funnel.
 - [ ] Choose consecutive days or three sessions within one week.
@@ -55,6 +58,13 @@ founder approves the concept and the compliance/data gate.
 - [ ] Add fresh 20-day breakout.
 - [ ] Add fresh 52-week breakout with descriptive-only label.
 - [ ] Add coiled-spring/pre-breakout watch.
+- [ ] Validate confirmed-pivot and ATR-tolerance language with five learners.
+- [ ] Create converging-triangle pass, rejection, and intraday-only fixtures.
+- [ ] Create rectangle/base pass, rejection, and intraday-only fixtures.
+- [ ] Create bull-flag pass, rejection, and intraday-only fixtures.
+- [ ] Generate pivots, boundaries, and criteria matrices from the same code
+  path.
+- [ ] Add visual/numeric disagreement fixture.
 - [ ] Add context and data-quality columns; no composite buy score.
 - [ ] Test with five learners.
 
@@ -67,6 +77,8 @@ founder approves the concept and the compliance/data gate.
 - [ ] Create all six learner artifacts.
 - [ ] Write `DASHBOARD_AUDIT.md` and `RUN_DAILY.md` templates.
 - [ ] Create instructor-only buggy examples.
+- [ ] Create annotated pattern charts and criteria-matrix answer keys.
+- [ ] Lock pattern curriculum language before the AI implementation pass.
 - [ ] Red-team calculations, claims, links, dates, and examples.
 - [ ] Accessibility, macOS, Windows, and mobile review.
 

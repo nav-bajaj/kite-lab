@@ -11,7 +11,8 @@ recommendations.
 A three-day, six-hour intensive for a mutual-fund investor who wants to read
 the state of the Indian market, understand the basic logic of quantitative
 investing, and use Codex or Claude Code to build a local daily dashboard for
-breadth, trend, relative strength, and transparent breakout-pattern screens.
+breadth, trend, relative strength, simple price landmarks, and quantitatively
+detected chart structures with visual overlays.
 
 The core learning loop is:
 
@@ -23,6 +24,7 @@ The core learning loop is:
 - `PLAN.md` — product thesis, scope, experience principles, and decisions.
 - `RESEARCH.md` — repo audit, audience evidence, market context, and source log.
 - `CURRICULUM.md` — detailed six-module, three-day course blueprint.
+- `QUANT_PATTERN_SPEC.md` — numerical and visual contract for three chart-pattern families.
 - `AI_MARKET_DASHBOARD_LAB.md` — provider-neutral local dashboard capstone design.
 - `PILOT.md` — MVP, experiments, instrumentation, and success criteria.
 - `TASKS.md` — phased path from study to a validated pilot.
