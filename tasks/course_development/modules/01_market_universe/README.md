@@ -11,6 +11,10 @@ Status: first complete authoring draft.
 ## Pack contents
 
 - `LESSON.md` — learner-facing lesson manuscript.
+- `MODULE.html` — self-contained responsive review build with the lesson,
+  interactions, worksheet, quiz, sources, and video treatment.
+- `VIDEO_SCRIPT.md` — four-chapter presenter script, shot plan, learner
+  handoffs, and production checklist.
 - `WALKTHROUGH.md` — exact Marketworks and Nifty Indices demonstration.
 - `WORKSHEET.md` — in-session exercises and the module artifact.
 - `QUIZ.md` — eight-question assessment with feedback.

@@ -38,7 +38,10 @@ founder approves the concept and the compliance/data gate.
 
 - [x] Author Module 1 lesson, walkthrough, worksheet, quiz, facilitator guide,
   and asset/source plan.
+- [x] Build the responsive Module 1 review webpage and four-chapter video
+  treatment.
 - [ ] Produce Module 1 diagrams, screenshots, and packaged fixture files.
+- [ ] Record, caption, transcribe, and edit the four Module 1 video chapters.
 - [ ] Test Module 1 with five learners and revise language/density.
 - [ ] Script Module 2 concept lesson and product walkthrough.
 - [ ] Create five-line market-state worksheet and rubric.

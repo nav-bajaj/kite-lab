@@ -91,6 +91,9 @@ instruction.
 does Marketworks begin with a dated Nifty 500-derived universe?
 
 The complete authored pack is in `modules/01_market_universe/`.
+Open `modules/01_market_universe/MODULE.html` for the integrated learner-page
+review build and `modules/01_market_universe/VIDEO_SCRIPT.md` for the
+four-chapter shooting script.
 
 ### Learner can
 

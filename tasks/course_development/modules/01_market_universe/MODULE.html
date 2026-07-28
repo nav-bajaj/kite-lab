@@ -1,0 +1,2585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Marketworks Market State Lab, Module 1: Define the market before you read it.">
+<title>Module 1 — Define the market | Marketworks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --background: #f0f7f3;
+    --foreground: #1a1a1a;
+    --card: #ffffff;
+    --card-foreground: #1a1a1a;
+    --primary: #0c7a62;
+    --primary-foreground: #f0f7f3;
+    --secondary: #55c374;
+    --accent: #9750f8;
+    --marigold: #e8a33d;
+    --muted: #f5f5f5;
+    --muted-foreground: #737373;
+    --border: #d4d4d4;
+    --positive: #3f8059;
+    --negative: #a64c42;
+    --warning: #9e6a35;
+    --info: #42608e;
+    --surface-base: #fcfdfd;
+    --surface-panel-mist: #f0f7f3;
+    --surface-panel-tint: #f6faf8;
+    --surface-panel-deep: #0e3b32;
+    --surface-panel-deep-foreground: #f0f7f3;
+    --shadow-card: 0 6px 24px -3px rgba(26, 26, 26, 0.13), 0 1px 2px -4px rgba(26, 26, 26, 0.13);
+    --shadow-panel: 0 10px 40px -12px rgba(26, 26, 26, 0.18), 0 2px 6px -4px rgba(26, 26, 26, 0.12);
+    --acc1-bg: #eaf4ec;
+    --acc1-line: #9ccca9;
+    --acc1-fg: #2e6b44;
+    --acc2-bg: #fbf1dc;
+    --acc2-line: #e8c27a;
+    --acc2-fg: #7a5a18;
+    --acc3-bg: #e8f1fa;
+    --acc3-line: #96bfe3;
+    --acc3-fg: #2d5a85;
+    --acc4-bg: #f1ebfb;
+    --acc4-line: #c3a8ee;
+    --acc4-fg: #5c3a9e;
+    --acc5-bg: #e5f3f1;
+    --acc5-line: #8bc8bf;
+    --acc5-fg: #1f645b;
+    --acc6-bg: #faecef;
+    --acc6-line: #e5a3b3;
+    --acc6-fg: #8e3a52;
+    --radius-control: 8px;
+    --radius-card: 24px;
+    --radius-panel: 32px;
+    --serif: "Fraunces", "Iowan Old Style", Georgia, serif;
+    --sans: "Outfit", system-ui, -apple-system, sans-serif;
+    --mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    margin: 0;
+    color: var(--foreground);
+    background: var(--surface-base);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  button,
+  input,
+  select,
+  textarea { font: inherit; }
+
+  button { cursor: pointer; }
+
+  a { color: inherit; }
+
+  :focus-visible {
+    outline: 3px solid rgba(12, 122, 98, 0.34);
+    outline-offset: 3px;
+  }
+
+  section[id] { scroll-margin-top: 108px; }
+
+  .skip-link {
+    position: fixed;
+    z-index: 200;
+    top: 12px;
+    left: 12px;
+    padding: 10px 16px;
+    border-radius: var(--radius-control);
+    background: var(--foreground);
+    color: white;
+    transform: translateY(-160%);
+  }
+
+  .skip-link:focus { transform: translateY(0); }
+
+  .flow-grid {
+    position: fixed;
+    z-index: -1;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(12, 122, 98, 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(12, 122, 98, 0.035) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(85% 65% at 50% 22%, #000 30%, transparent 100%);
+  }
+
+  .site-nav {
+    position: sticky;
+    z-index: 100;
+    top: 0;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.1);
+    background: rgba(240, 247, 243, 0.94);
+    backdrop-filter: blur(14px);
+  }
+
+  .site-nav-inner {
+    display: grid;
+    width: min(1280px, calc(100% - 48px));
+    min-height: 72px;
+    margin-inline: auto;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+  }
+
+  .wordmark {
+    color: var(--primary);
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    text-decoration: none;
+  }
+
+  .course-crumb {
+    color: var(--muted-foreground);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .review-badge {
+    justify-self: end;
+    padding: 8px 14px;
+    border: 1px solid var(--acc1-line);
+    border-radius: 999px;
+    background: var(--acc1-bg);
+    color: var(--acc1-fg);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .progress-line {
+    height: 3px;
+    background: rgba(12, 122, 98, 0.12);
+  }
+
+  .progress-line span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--primary);
+    transition: width 200ms ease-out;
+  }
+
+  .hero {
+    width: min(960px, calc(100% - 48px));
+    margin-inline: auto;
+    padding: 96px 0 72px;
+    text-align: center;
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .hero h1 {
+    max-width: 900px;
+    margin: 20px auto 0;
+    font-family: var(--serif);
+    font-size: clamp(3.1rem, 7vw, 4.5rem);
+    font-weight: 500;
+    line-height: 1.03;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  .hero h1 em {
+    color: var(--primary);
+    font-style: normal;
+  }
+
+  .hero-lede {
+    max-width: 720px;
+    margin: 24px auto 0;
+    color: var(--muted-foreground);
+    font-size: 20px;
+    line-height: 1.6;
+    text-wrap: balance;
+  }
+
+  .module-meta {
+    display: flex;
+    margin-top: 28px;
+    color: var(--muted-foreground);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .module-meta span {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .module-meta span + span::before {
+    width: 4px;
+    height: 4px;
+    margin: 0 12px;
+    border-radius: 50%;
+    background: var(--secondary);
+    content: "";
+  }
+
+  .review-note {
+    display: flex;
+    max-width: 760px;
+    margin: 40px auto 0;
+    padding: 20px 22px;
+    border: 1px solid var(--acc2-line);
+    border-radius: 16px;
+    background: var(--acc2-bg);
+    color: var(--acc2-fg);
+    gap: 14px;
+    text-align: left;
+  }
+
+  .review-note strong { color: var(--foreground); }
+
+  .page-shell {
+    display: grid;
+    width: min(1180px, calc(100% - 48px));
+    margin-inline: auto;
+    padding-bottom: 128px;
+    gap: 72px;
+    grid-template-columns: 240px minmax(0, 760px);
+    justify-content: center;
+  }
+
+  .lesson-rail {
+    position: sticky;
+    top: 108px;
+    align-self: start;
+  }
+
+  .rail-label {
+    margin: 0 0 16px;
+    color: var(--muted-foreground);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .rail-nav {
+    display: grid;
+    border-left: 1px solid var(--border);
+  }
+
+  .rail-nav a {
+    position: relative;
+    padding: 9px 0 9px 18px;
+    color: var(--muted-foreground);
+    font-size: 14px;
+    line-height: 1.35;
+    text-decoration: none;
+    transition: color 120ms ease-out;
+  }
+
+  .rail-nav a::before {
+    position: absolute;
+    top: 50%;
+    left: -1px;
+    width: 2px;
+    height: 0;
+    background: var(--primary);
+    content: "";
+    transform: translateY(-50%);
+    transition: height 120ms ease-out;
+  }
+
+  .rail-nav a:hover,
+  .rail-nav a[aria-current="true"] { color: var(--foreground); }
+
+  .rail-nav a[aria-current="true"]::before { height: 28px; }
+
+  .rail-progress {
+    margin-top: 28px;
+    padding: 18px;
+    border-radius: 16px;
+    background: var(--surface-panel-mist);
+  }
+
+  .rail-progress span {
+    display: block;
+    color: #666666;
+    font-size: 12px;
+  }
+
+  .rail-progress strong {
+    display: block;
+    margin-top: 4px;
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mobile-outline { display: none; }
+
+  .lesson-content { min-width: 0; }
+
+  .lesson-section {
+    padding: 80px 0;
+    border-top: 1px solid rgba(26, 26, 26, 0.11);
+  }
+
+  .lesson-section:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .section-kicker {
+    display: flex;
+    margin-bottom: 18px;
+    color: var(--primary);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.08em;
+    gap: 10px;
+    align-items: center;
+    text-transform: uppercase;
+  }
+
+  .section-kicker::before {
+    width: 30px;
+    height: 2px;
+    background: var(--secondary);
+    content: "";
+  }
+
+  h2,
+  h3,
+  h4 {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 500;
+  }
+
+  h2 {
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-size: 28px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  h4 {
+    font-size: 21px;
+    line-height: 1.3;
+  }
+
+  .section-lede {
+    max-width: 680px;
+    margin: 20px 0 0;
+    color: var(--muted-foreground);
+    font-size: 18px;
+    line-height: 1.65;
+  }
+
+  .prose {
+    margin-top: 32px;
+    color: #252525;
+    font-size: 17px;
+    line-height: 1.68;
+  }
+
+  .prose p { margin: 0 0 22px; }
+
+  .prose a {
+    color: var(--info);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .pull-quote {
+    margin: 40px 0;
+    padding: 10px 0 10px 28px;
+    border-left: 3px solid var(--secondary);
+    color: var(--primary);
+    font-family: var(--serif);
+    font-size: clamp(1.65rem, 4vw, 2rem);
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .takeaway {
+    margin-top: 36px;
+    padding: 28px;
+    border-radius: 18px;
+    background: rgba(12, 122, 98, 0.07);
+  }
+
+  .takeaway span {
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .takeaway p {
+    margin: 10px 0 0;
+    font-family: var(--serif);
+    font-size: 23px;
+    line-height: 1.35;
+  }
+
+  /* Video */
+  .video-panel {
+    overflow: hidden;
+    margin-top: 36px;
+    border-radius: var(--radius-panel);
+    background: var(--surface-panel-deep);
+    color: var(--surface-panel-deep-foreground);
+    box-shadow: var(--shadow-panel);
+  }
+
+  .video-stage {
+    position: relative;
+    min-height: 380px;
+    padding: 48px;
+    background-image:
+      radial-gradient(circle at 85% 12%, rgba(85, 195, 116, 0.18), transparent 27%),
+      linear-gradient(rgba(240, 247, 243, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(240, 247, 243, 0.045) 1px, transparent 1px);
+    background-size: auto, 40px 40px, 40px 40px;
+  }
+
+  .video-topline {
+    display: flex;
+    color: rgba(240, 247, 243, 0.68);
+    font-family: var(--mono);
+    font-size: 12px;
+    justify-content: space-between;
+  }
+
+  .video-stage h3 {
+    max-width: 530px;
+    margin-top: 74px;
+    color: var(--surface-panel-deep-foreground);
+    font-size: clamp(2.2rem, 5vw, 3.25rem);
+    line-height: 1.08;
+  }
+
+  .video-stage p {
+    max-width: 520px;
+    margin: 18px 0 0;
+    color: rgba(240, 247, 243, 0.75);
+    font-size: 16px;
+  }
+
+  .play-button {
+    display: inline-flex;
+    width: 54px;
+    height: 54px;
+    margin-top: 28px;
+    border: 1px solid rgba(240, 247, 243, 0.28);
+    border-radius: 50%;
+    background: var(--secondary);
+    color: #123026;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .play-button svg { margin-left: 3px; }
+
+  .video-chapters {
+    display: grid;
+    padding: 16px;
+    gap: 8px;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .chapter-button {
+    min-height: 108px;
+    padding: 16px;
+    border: 1px solid rgba(240, 247, 243, 0.12);
+    border-radius: 14px;
+    background: transparent;
+    color: rgba(240, 247, 243, 0.65);
+    text-align: left;
+  }
+
+  .chapter-button strong {
+    display: block;
+    margin-top: 8px;
+    color: var(--surface-panel-deep-foreground);
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  .chapter-button[aria-pressed="true"] {
+    border-color: rgba(85, 195, 116, 0.7);
+    background: rgba(85, 195, 116, 0.12);
+  }
+
+  /* Outcomes */
+  .outcome-list {
+    display: grid;
+    margin-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .outcome-row {
+    display: grid;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 20px;
+    grid-template-columns: 52px 1fr;
+  }
+
+  .outcome-number {
+    color: var(--primary);
+    font-family: var(--serif);
+    font-size: 30px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .outcome-row strong {
+    display: block;
+    font-size: 17px;
+    font-weight: 600;
+  }
+
+  .outcome-row p {
+    margin: 5px 0 0;
+    color: var(--muted-foreground);
+    font-size: 15px;
+  }
+
+  /* Interactions */
+  .interaction {
+    margin-top: 40px;
+    padding: 30px;
+    border: 1px solid rgba(26, 26, 26, 0.09);
+    border-radius: var(--radius-card);
+    background: var(--card);
+    box-shadow: var(--shadow-card);
+  }
+
+  .interaction-head {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .interaction-label {
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .interaction h3 { margin-top: 8px; }
+
+  .time-chip {
+    flex: 0 0 auto;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: var(--muted);
+    color: #666666;
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+
+  .choice-row {
+    display: flex;
+    margin-top: 24px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .choice-button,
+  .secondary-button,
+  .primary-button {
+    min-height: 44px;
+    padding: 10px 16px;
+    border-radius: var(--radius-control);
+    font-weight: 600;
+    transition: transform 120ms ease-out, opacity 120ms ease-out, background 120ms ease-out;
+  }
+
+  .choice-button {
+    border: 1px solid var(--border);
+    background: var(--surface-panel-tint);
+    color: var(--foreground);
+  }
+
+  .choice-button:hover,
+  .secondary-button:hover,
+  .primary-button:hover { transform: translateY(-1px); }
+
+  .choice-button[aria-pressed="true"] {
+    border-color: var(--primary);
+    background: var(--acc1-bg);
+    color: var(--primary);
+  }
+
+  .secondary-button {
+    border: 1px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+  }
+
+  .primary-button {
+    border: 1px solid var(--primary);
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  .feedback {
+    display: none;
+    margin-top: 22px;
+    padding: 18px;
+    border-left: 3px solid var(--secondary);
+    background: var(--acc1-bg);
+    color: var(--acc1-fg);
+  }
+
+  .feedback.visible { display: block; }
+
+  .sort-grid {
+    display: grid;
+    margin-top: 24px;
+    gap: 12px;
+  }
+
+  .sort-row {
+    display: grid;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    gap: 16px;
+    grid-template-columns: 1fr 190px;
+    align-items: center;
+  }
+
+  select,
+  textarea,
+  input[type="text"],
+  input[type="date"] {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-control);
+    background: var(--surface-base);
+    color: var(--foreground);
+  }
+
+  select,
+  input[type="text"],
+  input[type="date"] {
+    min-height: 44px;
+    padding: 9px 12px;
+  }
+
+  textarea {
+    min-height: 112px;
+    padding: 12px;
+    line-height: 1.5;
+    resize: vertical;
+  }
+
+  /* Definitions */
+  .definition-list {
+    display: grid;
+    margin-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .definition {
+    display: grid;
+    padding: 26px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 28px;
+    grid-template-columns: 150px 1fr;
+  }
+
+  .definition dt {
+    color: var(--primary);
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 500;
+  }
+
+  .definition dd {
+    margin: 0;
+    color: #2b2b2b;
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  /* Universe funnel */
+  .funnel {
+    display: grid;
+    margin-top: 44px;
+    gap: 10px;
+    justify-items: center;
+  }
+
+  .funnel-stage {
+    position: relative;
+    width: var(--stage-width);
+    padding: 19px 24px;
+    border: 1px solid rgba(12, 122, 98, 0.18);
+    border-radius: 14px;
+    background: var(--surface-panel-mist);
+    text-align: center;
+  }
+
+  .funnel-stage::after {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 1px;
+    height: 11px;
+    background: var(--primary);
+    content: "";
+  }
+
+  .funnel-stage:last-child::after { display: none; }
+
+  .funnel-stage strong {
+    display: block;
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .funnel-stage span {
+    display: block;
+    margin-top: 3px;
+    color: #666666;
+    font-size: 12px;
+  }
+
+  .funnel-stage:nth-child(1) { --stage-width: 100%; }
+  .funnel-stage:nth-child(2) { --stage-width: 90%; }
+  .funnel-stage:nth-child(3) { --stage-width: 80%; }
+  .funnel-stage:nth-child(4) { --stage-width: 70%; }
+  .funnel-stage:nth-child(5) {
+    --stage-width: 60%;
+    border-color: var(--primary);
+    background: var(--primary);
+  }
+
+  .funnel-stage:nth-child(5) strong,
+  .funnel-stage:nth-child(5) span { color: var(--primary-foreground); }
+
+  .funnel-stage:nth-child(6) {
+    --stage-width: 52%;
+    border-color: var(--secondary);
+    background: var(--surface-panel-deep);
+  }
+
+  .funnel-stage:nth-child(6) strong { color: var(--secondary); }
+  .funnel-stage:nth-child(6) span { color: rgba(240, 247, 243, 0.72); }
+
+  .source-note {
+    margin-top: 18px;
+    color: var(--muted-foreground);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .source-note a { color: var(--info); }
+
+  .dated-scale {
+    display: grid;
+    margin: 42px 0;
+    padding: 34px;
+    border-radius: var(--radius-panel);
+    background: var(--surface-panel-mist);
+    gap: 28px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .scale-stat strong {
+    display: block;
+    color: var(--primary);
+    font-family: var(--serif);
+    font-size: clamp(2.6rem, 7vw, 4rem);
+    font-weight: 500;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .scale-stat span {
+    display: block;
+    margin-top: 10px;
+    color: var(--foreground);
+    font-size: 14px;
+  }
+
+  .date-stamp {
+    grid-column: 1 / -1;
+    padding-top: 20px;
+    border-top: 1px solid rgba(26, 26, 26, 0.12);
+    color: #666666;
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+
+  /* Nifty construction */
+  .criteria {
+    display: grid;
+    margin: 34px 0;
+    padding: 0;
+    list-style: none;
+    gap: 0;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .criteria li {
+    position: relative;
+    padding: 18px 20px 18px 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .criteria li:nth-child(odd) { border-right: 1px solid var(--border); }
+
+  .criteria li::before {
+    position: absolute;
+    top: 24px;
+    left: 16px;
+    width: 9px;
+    height: 9px;
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    content: "";
+  }
+
+  .size-ladder {
+    display: grid;
+    overflow: hidden;
+    margin-top: 40px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    grid-template-columns: 2fr 3fr 5fr;
+  }
+
+  .size-step {
+    min-height: 150px;
+    padding: 24px 18px;
+    border-right: 1px solid var(--border);
+  }
+
+  .size-step:last-child { border-right: 0; }
+  .size-step:nth-child(1) { background: var(--acc1-bg); }
+  .size-step:nth-child(2) { background: var(--acc3-bg); }
+  .size-step:nth-child(3) { background: var(--acc2-bg); }
+
+  .size-step strong {
+    display: block;
+    font-family: var(--serif);
+    font-size: 40px;
+    font-weight: 500;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .size-step span {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .size-step small {
+    display: block;
+    margin-top: 8px;
+    color: #626262;
+    font-size: 12px;
+  }
+
+  .outside-tail {
+    display: flex;
+    margin-top: 10px;
+    padding: 15px 18px;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    color: var(--muted-foreground);
+    font-size: 13px;
+    gap: 12px;
+    justify-content: space-between;
+  }
+
+  .coverage {
+    display: grid;
+    margin-top: 46px;
+    gap: 28px;
+  }
+
+  .coverage-row {
+    display: grid;
+    gap: 12px;
+  }
+
+  .coverage-label {
+    display: flex;
+    gap: 20px;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .coverage-label strong {
+    color: var(--primary);
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .coverage-label span {
+    color: var(--muted-foreground);
+    font-size: 14px;
+  }
+
+  .coverage-track {
+    overflow: hidden;
+    height: 14px;
+    border-radius: 999px;
+    background: var(--muted);
+  }
+
+  .coverage-track span {
+    display: block;
+    width: var(--coverage);
+    height: 100%;
+    border-radius: inherit;
+    background: var(--primary);
+  }
+
+  .reason-list {
+    display: grid;
+    margin-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .reason {
+    display: grid;
+    padding: 26px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 24px;
+    grid-template-columns: 46px 170px 1fr;
+    align-items: baseline;
+  }
+
+  .reason > span {
+    color: var(--primary);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .reason strong {
+    font-family: var(--serif);
+    font-size: 21px;
+    font-weight: 500;
+  }
+
+  .reason p {
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: 15px;
+  }
+
+  .not-list {
+    display: grid;
+    margin: 34px 0 0;
+    padding: 0;
+    list-style: none;
+    gap: 10px;
+  }
+
+  .not-list li {
+    position: relative;
+    padding: 14px 18px 14px 46px;
+    border-radius: 12px;
+    background: var(--acc6-bg);
+    color: var(--acc6-fg);
+  }
+
+  .not-list li::before {
+    position: absolute;
+    top: 14px;
+    left: 18px;
+    content: "Not";
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  /* Breadth fixture */
+  .fixture-wrap {
+    overflow-x: auto;
+    margin-top: 28px;
+  }
+
+  .fixture-table {
+    width: 100%;
+    min-width: 620px;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .fixture-table th,
+  .fixture-table td {
+    padding: 11px 12px;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+  }
+
+  .fixture-table th:first-child,
+  .fixture-table td:first-child { text-align: left; }
+
+  .fixture-table th {
+    color: var(--muted-foreground);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .return-positive { color: var(--positive); }
+  .return-negative { color: var(--negative); }
+
+  .scenario-results {
+    display: grid;
+    margin-top: 26px;
+    gap: 12px;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .result {
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface-panel-tint);
+  }
+
+  .result span {
+    display: block;
+    color: var(--muted-foreground);
+    font-size: 12px;
+  }
+
+  .result strong {
+    display: block;
+    margin-top: 6px;
+    font-family: var(--serif);
+    font-size: 27px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .result [data-result] { filter: blur(5px); }
+  .scenario-results.revealed [data-result] { filter: none; }
+
+  /* Contract and worksheet */
+  .contract {
+    display: grid;
+    margin-top: 38px;
+    padding: 30px;
+    border-radius: var(--radius-panel);
+    background: var(--surface-panel-deep);
+    color: var(--surface-panel-deep-foreground);
+    gap: 12px;
+  }
+
+  .contract-row {
+    display: grid;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(240, 247, 243, 0.12);
+    gap: 20px;
+    grid-template-columns: 200px 1fr;
+  }
+
+  .contract-row:last-child { border-bottom: 0; }
+
+  .contract-row span {
+    color: rgba(240, 247, 243, 0.62);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .contract-row strong {
+    color: var(--surface-panel-deep-foreground);
+    font-size: 14px;
+  }
+
+  .worksheet {
+    display: grid;
+    margin-top: 36px;
+    gap: 24px;
+  }
+
+  .field {
+    display: grid;
+    gap: 8px;
+  }
+
+  .field label {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .field small {
+    color: var(--muted-foreground);
+    font-size: 12px;
+  }
+
+  .field-pair {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .worksheet-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .save-state {
+    align-self: center;
+    color: var(--muted-foreground);
+    font-size: 12px;
+  }
+
+  /* Quiz */
+  .quiz-form {
+    display: grid;
+    margin-top: 40px;
+    gap: 18px;
+  }
+
+  .question {
+    margin: 0;
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--card);
+  }
+
+  .question legend {
+    max-width: 100%;
+    padding: 0 6px;
+    font-family: var(--serif);
+    font-size: 19px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .question-number {
+    color: var(--primary);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+
+  .option {
+    display: grid;
+    margin-top: 11px;
+    padding: 11px 12px;
+    border-radius: 10px;
+    color: #333;
+    cursor: pointer;
+    gap: 10px;
+    grid-template-columns: 18px 1fr;
+    align-items: start;
+  }
+
+  .option:hover { background: var(--surface-panel-tint); }
+  .option input { margin-top: 5px; }
+
+  .question.correct {
+    border-color: rgba(63, 128, 89, 0.55);
+    background: rgba(63, 128, 89, 0.06);
+  }
+
+  .question.incorrect {
+    border-color: rgba(166, 76, 66, 0.45);
+    background: rgba(166, 76, 66, 0.05);
+  }
+
+  .quiz-feedback {
+    display: none;
+    margin-top: 10px;
+    color: #626262;
+    font-size: 13px;
+  }
+
+  .question.correct .quiz-feedback,
+  .question.incorrect .quiz-feedback { display: block; }
+
+  .quiz-result {
+    display: none;
+    margin-top: 24px;
+    padding: 28px;
+    border-radius: 18px;
+    background: var(--surface-panel-mist);
+  }
+
+  .quiz-result.visible { display: block; }
+
+  .quiz-result strong {
+    display: block;
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 500;
+  }
+
+  .quiz-result p {
+    margin: 8px 0 0;
+    color: #626262;
+  }
+
+  /* Video plan */
+  .episode-list {
+    display: grid;
+    margin-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .episode {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .episode summary {
+    display: grid;
+    padding: 24px 0;
+    cursor: pointer;
+    list-style: none;
+    gap: 22px;
+    grid-template-columns: 82px 1fr auto;
+    align-items: center;
+  }
+
+  .episode summary::-webkit-details-marker { display: none; }
+
+  .episode-time {
+    color: var(--primary);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .episode-title strong {
+    display: block;
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 500;
+  }
+
+  .episode-title span {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted-foreground);
+    font-size: 13px;
+  }
+
+  .episode-toggle {
+    color: var(--primary);
+    font-size: 20px;
+    transition: transform 120ms ease-out;
+  }
+
+  .episode[open] .episode-toggle { transform: rotate(45deg); }
+
+  .episode-body {
+    padding: 0 0 30px 104px;
+  }
+
+  .episode-body h4 { margin: 22px 0 8px; }
+
+  .episode-body p,
+  .episode-body li {
+    color: #333;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .episode-body blockquote {
+    margin: 20px 0;
+    padding: 18px 22px;
+    border-left: 3px solid var(--secondary);
+    background: var(--surface-panel-mist);
+    color: var(--foreground);
+  }
+
+  .production-grid {
+    display: grid;
+    margin-top: 38px;
+    gap: 24px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .production-note {
+    padding: 24px;
+    border-top: 2px solid var(--primary);
+    background: var(--surface-panel-tint);
+  }
+
+  .production-note h4 { font-size: 20px; }
+
+  .production-note ul {
+    margin: 14px 0 0;
+    padding-left: 20px;
+    color: var(--muted-foreground);
+    font-size: 14px;
+  }
+
+  /* Sources and footer */
+  .sources {
+    display: grid;
+    margin-top: 36px;
+    gap: 12px;
+  }
+
+  .source-link {
+    display: grid;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--info);
+    gap: 18px;
+    grid-template-columns: 110px 1fr;
+    text-decoration: none;
+  }
+
+  .source-link span {
+    color: var(--muted-foreground);
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+
+  .module-footer {
+    margin-top: 72px;
+    padding: 40px;
+    border-radius: var(--radius-panel);
+    background: var(--surface-panel-deep);
+    color: var(--surface-panel-deep-foreground);
+  }
+
+  .module-footer .wordmark { color: var(--surface-panel-deep-foreground); }
+
+  .module-footer p {
+    max-width: 650px;
+    margin: 18px 0 0;
+    color: rgba(240, 247, 243, 0.68);
+    font-size: 13px;
+  }
+
+  .next-module {
+    display: flex;
+    margin-top: 32px;
+    padding-top: 26px;
+    border-top: 1px solid rgba(240, 247, 243, 0.15);
+    gap: 24px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .next-module span {
+    color: var(--secondary);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .next-module strong {
+    display: block;
+    margin-top: 6px;
+    font-family: var(--serif);
+    font-size: 23px;
+    font-weight: 500;
+  }
+
+  @media (max-width: 980px) {
+    .page-shell {
+      width: min(760px, calc(100% - 48px));
+      grid-template-columns: 1fr;
+    }
+
+    .lesson-rail { display: none; }
+
+    .mobile-outline {
+      display: block;
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--card);
+    }
+
+    .mobile-outline summary {
+      padding: 14px 16px;
+      color: var(--primary);
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .mobile-outline nav {
+      display: grid;
+      padding: 0 16px 14px;
+    }
+
+    .mobile-outline a {
+      padding: 8px 0;
+      color: var(--muted-foreground);
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .video-chapters { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 700px) {
+    .site-nav-inner {
+      width: min(100% - 32px, 1280px);
+      min-height: 64px;
+      grid-template-columns: 1fr auto;
+    }
+
+    .course-crumb { display: none; }
+    .wordmark { font-size: 21px; }
+    .review-badge { padding: 7px 10px; }
+    .hero { width: min(100% - 32px, 960px); padding: 72px 0 56px; }
+    .hero h1 { font-size: clamp(2.75rem, 13vw, 3.7rem); }
+    .hero-lede { font-size: 18px; }
+    .review-note { padding: 18px; }
+    .page-shell { width: min(100% - 32px, 760px); padding-bottom: 72px; }
+    .lesson-section { padding: 64px 0; }
+    .video-stage { min-height: 390px; padding: 30px 24px; }
+    .video-stage h3 { margin-top: 56px; }
+    .video-chapters { grid-template-columns: 1fr; }
+    .outcome-row { grid-template-columns: 40px 1fr; }
+    .interaction { padding: 22px 18px; border-radius: 18px; }
+    .interaction-head { display: block; }
+    .time-chip { display: inline-block; margin-top: 12px; }
+    .sort-row { grid-template-columns: 1fr; }
+    .definition { gap: 8px; grid-template-columns: 1fr; }
+    .funnel-stage:nth-child(n) { width: 100%; }
+    .dated-scale { padding: 24px; grid-template-columns: 1fr; }
+    .date-stamp { grid-column: auto; }
+    .criteria { grid-template-columns: 1fr; }
+    .criteria li:nth-child(odd) { border-right: 0; }
+    .size-ladder { grid-template-columns: 1fr; }
+    .size-step { min-height: 120px; border-right: 0; border-bottom: 1px solid var(--border); }
+    .size-step:last-child { border-bottom: 0; }
+    .reason { gap: 8px 16px; grid-template-columns: 34px 1fr; }
+    .reason p { grid-column: 2; }
+    .scenario-results { grid-template-columns: 1fr; }
+    .contract-row { gap: 5px; grid-template-columns: 1fr; }
+    .field-pair { grid-template-columns: 1fr; }
+    .episode summary { gap: 8px 16px; grid-template-columns: 66px 1fr auto; }
+    .episode-body { padding-left: 0; }
+    .production-grid { grid-template-columns: 1fr; }
+    .source-link { gap: 5px; grid-template-columns: 1fr; }
+    .module-footer { padding: 28px 24px; }
+    .next-module { display: block; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+
+  @media print {
+    .site-nav,
+    .lesson-rail,
+    .mobile-outline,
+    .choice-row,
+    .worksheet-actions,
+    .primary-button,
+    .secondary-button { display: none !important; }
+
+    .page-shell { display: block; width: 100%; }
+    .lesson-section { break-inside: avoid; }
+    .video-panel { color: var(--foreground); background: var(--surface-panel-mist); box-shadow: none; }
+    .video-stage h3,
+    .video-stage p,
+    .video-topline { color: var(--foreground); }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#lesson">Skip to lesson</a>
+<div class="flow-grid" aria-hidden="true"></div>
+
+<header class="site-nav">
+  <div class="site-nav-inner">
+    <a class="wordmark" href="../../OVERVIEW.html">marketworks</a>
+    <span class="course-crumb">Market State Lab / Module 01</span>
+    <span class="review-badge">Course draft</span>
+  </div>
+  <div class="progress-line" aria-hidden="true"><span id="top-progress"></span></div>
+</header>
+
+<main id="lesson">
+  <header class="hero">
+    <p class="eyebrow">Day 01 · Module 01 · Read</p>
+    <h1>Define the market <em>before you read it.</em></h1>
+    <p class="hero-lede">
+      Learn how India’s several-thousand-company listed landscape becomes a
+      dated, measurable Marketworks universe—and why the Nifty 500 is a useful
+      place to begin, not a list of stocks to blindly own.
+    </p>
+    <div class="module-meta" aria-label="Module details">
+      <span>60 minutes</span>
+      <span>4 video chapters</span>
+      <span>3 interactions</span>
+      <span>1 learner artifact</span>
+      <span>8-question quiz</span>
+    </div>
+    <aside class="review-note">
+      <span aria-hidden="true">◌</span>
+      <div>
+        <strong>Review build.</strong> Video frames are production treatments,
+        not recorded media. Worksheet responses remain only in this browser.
+        Current market facts are dated and linked to official sources.
+      </div>
+    </aside>
+  </header>
+
+  <div class="page-shell">
+    <aside class="lesson-rail" aria-label="Lesson outline">
+      <p class="rail-label">In this module</p>
+      <nav class="rail-nav">
+        <a href="#start">Start here</a>
+        <a href="#outcomes">What you will achieve</a>
+        <a href="#objects">Five different objects</a>
+        <a href="#landscape">India’s equity landscape</a>
+        <a href="#nifty500">The Nifty 500</a>
+        <a href="#why">Why Marketworks starts here</a>
+        <a href="#breadth">Index versus breadth</a>
+        <a href="#contract">Universe contract</a>
+        <a href="#worksheet">Build your artifact</a>
+        <a href="#quiz">Mastery check</a>
+        <a href="#video-plan">Video treatment</a>
+        <a href="#sources">Sources</a>
+      </nav>
+      <div class="rail-progress">
+        <span>Review progress</span>
+        <strong id="rail-percent">0%</strong>
+      </div>
+    </aside>
+
+    <article class="lesson-content">
+      <details class="mobile-outline">
+        <summary>Module outline</summary>
+        <nav>
+          <a href="#start">Start here</a>
+          <a href="#outcomes">What you will achieve</a>
+          <a href="#objects">Five different objects</a>
+          <a href="#landscape">India’s equity landscape</a>
+          <a href="#nifty500">The Nifty 500</a>
+          <a href="#why">Why Marketworks starts here</a>
+          <a href="#breadth">Index versus breadth</a>
+          <a href="#contract">Universe contract</a>
+          <a href="#worksheet">Build your artifact</a>
+          <a href="#quiz">Mastery check</a>
+          <a href="#video-plan">Video treatment</a>
+          <a href="#sources">Sources</a>
+        </nav>
+      </details>
+
+      <section class="lesson-section" id="start" data-progress-section>
+        <div class="section-kicker">Start here</div>
+        <h2>How many stocks are in “the Indian market”?</h2>
+        <p class="section-lede">
+          Fifty, five hundred, seven hundred and fifty, and several thousand
+          can each describe a real market object. The problem is the missing
+          definition.
+        </p>
+
+        <div class="video-panel" aria-label="Module video chapters">
+          <div class="video-stage" aria-live="polite">
+            <div class="video-topline">
+              <span id="video-number">Video 01 / 04</span>
+              <span id="video-duration">04:30</span>
+            </div>
+            <h3 id="video-title">How many stocks are in the Indian market?</h3>
+            <p id="video-description">
+              The opening frame separates company, security, exchange, index,
+              and research universe.
+            </p>
+            <button class="play-button" id="video-placeholder" type="button" aria-label="Show video production status">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M6.8 4.4L15 10l-8.2 5.6V4.4Z" fill="currentColor"/>
+              </svg>
+            </button>
+          </div>
+          <div class="video-chapters">
+            <button class="chapter-button" type="button" aria-pressed="true"
+              data-number="Video 01 / 04" data-duration="04:30"
+              data-title="How many stocks are in the Indian market?"
+              data-description="The opening frame separates company, security, exchange, index, and research universe.">
+              <span class="video-topline">04:30</span>
+              <strong>Which object are you counting?</strong>
+            </button>
+            <button class="chapter-button" type="button" aria-pressed="false"
+              data-number="Video 02 / 04" data-duration="06:30"
+              data-title="From several thousand listings to a usable universe"
+              data-description="Build the Indian listed-equity funnel and see why eligibility is a measurement decision.">
+              <span class="video-topline">06:30</span>
+              <strong>Narrow with intent</strong>
+            </button>
+            <button class="chapter-button" type="button" aria-pressed="false"
+              data-number="Video 03 / 04" data-duration="07:30"
+              data-title="Why Marketworks begins with the Nifty 500"
+              data-description="Understand its size ladder, broad coverage, selection logic, and important limitations.">
+              <span class="video-topline">07:30</span>
+              <strong>Why these 500?</strong>
+            </button>
+            <button class="chapter-button" type="button" aria-pressed="false"
+              data-number="Video 04 / 04" data-duration="05:30"
+              data-title="The index can rise while most stocks fall"
+              data-description="Calculate weighted direction and equal-stock participation using the same ten stocks.">
+              <span class="video-topline">05:30</span>
+              <strong>Direction is not participation</strong>
+            </button>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p>
+            You might answer 50 because the Nifty 50 appears in the news. You
+            might answer 500 because Marketworks frequently discusses the NSE
+            500. You might open a broker app, search broadly, and conclude
+            there are several thousand.
+          </p>
+          <p>
+            Each answer points to something real. None defines “the market” by
+            itself. Before we call the market strong, weak, broad, narrow,
+            expensive, or stressed, we need to say <strong>which securities we
+            are measuring</strong>.
+          </p>
+        </div>
+
+        <blockquote class="pull-quote">
+          A market statistic without a universe is an answer without a
+          population.
+        </blockquote>
+
+        <div class="interaction" id="estimate-interaction">
+          <div class="interaction-head">
+            <div>
+              <span class="interaction-label">Opening diagnostic</span>
+              <h3>What was your first answer?</h3>
+            </div>
+            <span class="time-chip">1 min</span>
+          </div>
+          <p>Select the number you instinctively associate with “the market.”</p>
+          <div class="choice-row">
+            <button class="choice-button estimate-choice" type="button" aria-pressed="false">50</button>
+            <button class="choice-button estimate-choice" type="button" aria-pressed="false">500</button>
+            <button class="choice-button estimate-choice" type="button" aria-pressed="false">750</button>
+            <button class="choice-button estimate-choice" type="button" aria-pressed="false">2,000+</button>
+            <button class="choice-button estimate-choice" type="button" aria-pressed="false">Not sure</button>
+          </div>
+          <div class="feedback" id="estimate-feedback">
+            Good. Keep the number, but change the next question to:
+            <strong>“Which object did I just count?”</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="outcomes" data-progress-section>
+        <div class="section-kicker">The learner promise</div>
+        <h2>What you will be able to do</h2>
+        <p class="section-lede">
+          The goal is not to memorize an index fact sheet. It is to define the
+          population behind any market claim.
+        </p>
+        <div class="outcome-list">
+          <div class="outcome-row">
+            <span class="outcome-number">01</span>
+            <div><strong>Separate the objects.</strong><p>Distinguish a company, security, exchange listing, index, and research universe.</p></div>
+          </div>
+          <div class="outcome-row">
+            <span class="outcome-number">02</span>
+            <div><strong>Map the listed landscape.</strong><p>Show how overlapping exchanges and multiple security types narrow to eligible common equity.</p></div>
+          </div>
+          <div class="outcome-row">
+            <span class="outcome-number">03</span>
+            <div><strong>Explain the Nifty 500.</strong><p>Describe its large-, mid-, and small-cap layers and its current selection logic in plain language.</p></div>
+          </div>
+          <div class="outcome-row">
+            <span class="outcome-number">04</span>
+            <div><strong>Defend the starting universe.</strong><p>Explain why it fits Marketworks’ learning questions without treating index inclusion as advice.</p></div>
+          </div>
+          <div class="outcome-row">
+            <span class="outcome-number">05</span>
+            <div><strong>Read two versions of “up.”</strong><p>Distinguish free-float-weighted index movement from equal-stock breadth.</p></div>
+          </div>
+          <div class="outcome-row">
+            <span class="outcome-number">06</span>
+            <div><strong>Publish a universe contract.</strong><p>State the membership date, usable denominator, exclusions, and blind spots.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="objects" data-progress-section>
+        <div class="section-kicker">Part 01 · Vocabulary</div>
+        <h2>“The market” is not one list</h2>
+        <p class="section-lede">
+          Five different objects are routinely compressed into one casual
+          phrase. Pulling them apart is the first quantitative habit.
+        </p>
+
+        <dl class="definition-list">
+          <div class="definition">
+            <dt>Company</dt>
+            <dd>The underlying business: its factories, employees, software, brands, contracts, debts, cash flows, assets, and legal obligations.</dd>
+          </div>
+          <div class="definition">
+            <dt>Security</dt>
+            <dd>A financial claim. A company’s ordinary equity share is one kind. ETFs, debt securities, preference shares, REITs, and InvITs are others.</dd>
+          </div>
+          <div class="definition">
+            <dt>Exchange</dt>
+            <dd>A regulated venue where eligible securities are admitted and traded. NSE and BSE both operate equity segments, and many companies trade on both.</dd>
+          </div>
+          <div class="definition">
+            <dt>Index</dt>
+            <dd>A rules-based measurement of a selected basket, with eligibility, selection, weighting, calculation, and review rules.</dd>
+          </div>
+          <div class="definition">
+            <dt>Research universe</dt>
+            <dd>The explicitly defined set of securities to which we apply a question or calculation.</dd>
+          </div>
+        </dl>
+
+        <div class="takeaway">
+          <span>The broker-search trap</span>
+          <p>“Available in my broker app” is a product search result, not a reproducible research-universe definition.</p>
+        </div>
+
+        <div class="interaction" id="sort-interaction">
+          <div class="interaction-head">
+            <div>
+              <span class="interaction-label">Concept check</span>
+              <h3>Label the object</h3>
+            </div>
+            <span class="time-chip">3 min</span>
+          </div>
+          <div class="sort-grid">
+            <label class="sort-row">NSE, a regulated trading venue
+              <select data-answer="exchange">
+                <option value="">Choose…</option>
+                <option value="company">Company</option>
+                <option value="security">Security</option>
+                <option value="exchange">Exchange</option>
+                <option value="index">Index</option>
+                <option value="universe">Research universe</option>
+              </select>
+            </label>
+            <label class="sort-row">A rules-based, weighted basket
+              <select data-answer="index">
+                <option value="">Choose…</option>
+                <option value="company">Company</option>
+                <option value="security">Security</option>
+                <option value="exchange">Exchange</option>
+                <option value="index">Index</option>
+                <option value="universe">Research universe</option>
+              </select>
+            </label>
+            <label class="sort-row">The underlying operating business
+              <select data-answer="company">
+                <option value="">Choose…</option>
+                <option value="company">Company</option>
+                <option value="security">Security</option>
+                <option value="exchange">Exchange</option>
+                <option value="index">Index</option>
+                <option value="universe">Research universe</option>
+              </select>
+            </label>
+            <label class="sort-row">A common equity share
+              <select data-answer="security">
+                <option value="">Choose…</option>
+                <option value="company">Company</option>
+                <option value="security">Security</option>
+                <option value="exchange">Exchange</option>
+                <option value="index">Index</option>
+                <option value="universe">Research universe</option>
+              </select>
+            </label>
+            <label class="sort-row">The dated set used for a breadth calculation
+              <select data-answer="universe">
+                <option value="">Choose…</option>
+                <option value="company">Company</option>
+                <option value="security">Security</option>
+                <option value="exchange">Exchange</option>
+                <option value="index">Index</option>
+                <option value="universe">Research universe</option>
+              </select>
+            </label>
+          </div>
+          <div class="choice-row">
+            <button class="secondary-button" id="check-sort" type="button">Check labels</button>
+          </div>
+          <div class="feedback" id="sort-feedback" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="landscape" data-progress-section>
+        <div class="section-kicker">Part 02 · The funnel</div>
+        <h2>A practical map of India’s listed-equity landscape</h2>
+        <p class="section-lede">
+          We narrow the market one explicit decision at a time. Every step
+          changes the population—and therefore the question we can answer.
+        </p>
+
+        <div class="funnel" aria-label="Indian equity universe funnel">
+          <div class="funnel-stage"><strong>India’s exchange-listed landscape</strong><span>Multiple recognized exchanges and overlapping listings</span></div>
+          <div class="funnel-stage"><strong>Multiple security and product types</strong><span>Common equity, SME equity, ETFs, REITs, InvITs, debt, and others</span></div>
+          <div class="funnel-stage"><strong>NSE-listed companies</strong><span>Main board, Emerge, and other eligible listings</span></div>
+          <div class="funnel-stage"><strong>Eligible, traded common equity</strong><span>Security type, history, free float, trading, and liquidity conditions</span></div>
+          <div class="funnel-stage"><strong>Official Nifty 500</strong><span>Large, mid, and small companies selected under a published methodology</span></div>
+          <div class="funnel-stage"><strong>Marketworks dated universe</strong><span>Constituent snapshot + available histories + active denominator</span></div>
+        </div>
+
+        <div class="dated-scale">
+          <div class="scale-stat">
+            <strong>2,898</strong>
+            <span>companies listed on NSE</span>
+          </div>
+          <div class="scale-stat">
+            <strong>2,358</strong>
+            <span>companies on the main board</span>
+          </div>
+          <div class="date-stamp">As of 31 December 2025 · NSE Annual Highlights · total excludes mutual funds, ETFs, and debt securities</div>
+        </div>
+
+        <div class="prose">
+          <p>
+            India has more than one recognized stock exchange. A company may
+            have securities admitted on multiple exchanges, so NSE and BSE
+            company counts cannot simply be added. A broker search can also mix
+            ordinary shares with other instruments and segments.
+          </p>
+          <p>
+            “Everything listed” sounds comprehensive, but it mixes securities
+            with very different liquidity, trading frequency, listing history,
+            market capitalization, information availability, and data quality.
+            A beginner can mistake a low share price for a cheap valuation or a
+            large percentage move for meaningful information without noticing
+            how little value traded.
+          </p>
+          <p>
+            The purpose of narrowing is not to declare the excluded companies
+            bad. It is to create a coherent first laboratory.
+          </p>
+        </div>
+
+        <div class="takeaway">
+          <span>A universe follows a question</span>
+          <p>Largest companies, broad participation, and microcap liquidity are three different questions. They should not inherit the same denominator by accident.</p>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="nifty500" data-progress-section>
+        <div class="section-kicker">Part 03 · The index</div>
+        <h2>What the Nifty 500 actually is</h2>
+        <p class="section-lede">
+          The official name is <strong>Nifty 500</strong>. “NSE 500” is product
+          shorthand; it is not the index’s official name.
+        </p>
+
+        <div class="prose">
+          <p>
+            In course material, <strong>Nifty 500</strong> means the official
+            index. <strong>Marketworks Nifty 500-derived universe</strong>
+            means the dated constituent and data snapshot used by a
+            calculation. That wording keeps exchange, index, and product
+            dataset separate.
+          </p>
+          <p>
+            The official methodology first forms an eligible NSE universe.
+            Its current criteria include:
+          </p>
+        </div>
+
+        <ul class="criteria">
+          <li>Indian domicile and NSE trading or permitted-to-trade status</li>
+          <li>Eligible security types and specified exclusions</li>
+          <li>Minimum free float or free-float market capitalization</li>
+          <li>Trading on at least 90% of days in the prior six months</li>
+          <li>Average impact cost not greater than 1%</li>
+          <li>A listing-history condition for newly listed securities</li>
+          <li>Top-800 rank on average turnover and full market capitalization</li>
+          <li>Top 500 selected by six-month average full market capitalization</li>
+        </ul>
+
+        <p class="source-note">
+          Plain-language summary only. The complete, changeable rules belong to
+          the <a href="https://www.niftyindices.com/Methodology/Method_NIFTY_Equity_Indices.pdf">official Nifty equity-index methodology, March 2026</a>.
+        </p>
+
+        <h3 style="margin-top: 52px;">What sits inside the 500?</h3>
+        <div class="size-ladder" aria-label="Nifty 500 market capitalization ladder">
+          <div class="size-step"><strong>100</strong><span>Large cap</span><small>Top layer</small></div>
+          <div class="size-step"><strong>150</strong><span>Mid cap</span><small>Next layer</small></div>
+          <div class="size-step"><strong>250</strong><span>Small cap</span><small>Subsequent layer</small></div>
+        </div>
+        <div class="outside-tail"><span>Outside the starting universe</span><strong>Microcap and the longer listed tail →</strong></div>
+
+        <div class="prose">
+          <p>
+            The Nifty 500 brings the first three size layers together. That
+            gives the learner exposure to different company sizes without
+            immediately moving into the longer, less liquid tail.
+          </p>
+          <p>
+            The index level is <strong>free-float market-capitalization
+            weighted</strong>. Market capitalization is share price multiplied
+            by shares outstanding. Free float is the portion considered
+            available for public trading rather than tightly held strategic or
+            promoter ownership. Larger free-float companies therefore have
+            more influence on the index return.
+          </p>
+          <p>
+            Under the current schedule, Nifty 500 reconstitution changes are
+            effective on the last working day of March and September, with
+            additional review possible for events such as schemes,
+            suspensions, and delistings. Membership is data, and it has a date.
+          </p>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="why" data-progress-section>
+        <div class="section-kicker">Part 04 · The rationale</div>
+        <h2>Why Marketworks begins here</h2>
+        <p class="section-lede">
+          The Nifty 500 is not the whole Indian market. It balances coverage,
+          range, investability logic, analytical depth, and a common language.
+        </p>
+
+        <div class="coverage">
+          <div class="coverage-row">
+            <div class="coverage-label"><span>NSE-listed free-float market capitalization</span><strong>92.04%</strong></div>
+            <div class="coverage-track" role="progressbar" aria-label="Nifty 500 free-float market capitalization coverage" aria-valuemin="0" aria-valuemax="100" aria-valuenow="92.04"><span style="--coverage:92.04%"></span></div>
+          </div>
+          <div class="coverage-row">
+            <div class="coverage-label"><span>Six-month traded value of all NSE stocks</span><strong>84.07%</strong></div>
+            <div class="coverage-track" role="progressbar" aria-label="Nifty 500 six-month traded-value coverage" aria-valuemin="0" aria-valuemax="100" aria-valuenow="84.07"><span style="--coverage:84.07%"></span></div>
+          </div>
+        </div>
+        <p class="source-note">Official Nifty 500 page · as of 30 March 2026 · percentages change over time</p>
+
+        <div class="reason-list">
+          <div class="reason"><span>01</span><strong>Coverage</strong><p>It captures most of the economically relevant listed market while leaving the unmeasured tail visible.</p></div>
+          <div class="reason"><span>02</span><strong>Range</strong><p>Large-, mid-, and small-cap companies make participation and leadership questions more meaningful than a headline-only Nifty 50 view.</p></div>
+          <div class="reason"><span>03</span><strong>Eligibility</strong><p>Trading frequency, impact cost, free float, security type, and other conditions reduce obvious noise before size selection.</p></div>
+          <div class="reason"><span>04</span><strong>Cross-section</strong><p>Roughly five hundred intended members support breadth, relative-strength, sector, and unusual-condition comparisons.</p></div>
+          <div class="reason"><span>05</span><strong>Shared language</strong><p>A dated common universe makes calculations reproducible and comparable across learners and product views.</p></div>
+        </div>
+
+        <h3 style="margin-top: 56px;">A research universe is not a starter portfolio</h3>
+        <ul class="not-list">
+          <li>proof that every constituent is high quality or attractively valued</li>
+          <li>a guarantee that every security suits every investor or order size</li>
+          <li>the entire Indian listed market or the full microcap tail</li>
+          <li>a permanent historical list free from survivorship bias</li>
+          <li>a recommendation to buy, hold, or sell any constituent</li>
+        </ul>
+      </section>
+
+      <section class="lesson-section" id="breadth" data-progress-section>
+        <div class="section-kicker">Part 05 · Two market views</div>
+        <h2>The index can rise while most stocks fall</h2>
+        <p class="section-lede">
+          A weighted index measures the movement of capital-weighted members.
+          Breadth measures how many covered stocks participated.
+        </p>
+
+        <div class="interaction" id="scenario-interaction">
+          <div class="interaction-head">
+            <div>
+              <span class="interaction-label">Worked calculation</span>
+              <h3>Run the ten-stock market day</h3>
+            </div>
+            <span class="time-chip">4 min</span>
+          </div>
+          <p>Two large stocks hold half the index weight. The other eight share the remainder.</p>
+          <div class="fixture-wrap" tabindex="0" aria-label="Scrollable ten-stock weighted-index calculation">
+            <table class="fixture-table">
+              <thead><tr><th>Stock</th><th>Index weight</th><th>Day return</th><th>Weighted contribution</th></tr></thead>
+              <tbody>
+                <tr><td>Atlas</td><td>30%</td><td class="return-positive">+2.0%</td><td class="return-positive">+0.60%</td></tr>
+                <tr><td>Beacon</td><td>20%</td><td class="return-positive">+1.0%</td><td class="return-positive">+0.20%</td></tr>
+                <tr><td>Cedar</td><td>15%</td><td class="return-negative">−1.0%</td><td class="return-negative">−0.15%</td></tr>
+                <tr><td>Delta</td><td>10%</td><td class="return-negative">−1.0%</td><td class="return-negative">−0.10%</td></tr>
+                <tr><td>Ember</td><td>8%</td><td class="return-negative">−1.0%</td><td class="return-negative">−0.08%</td></tr>
+                <tr><td>Flint</td><td>5%</td><td class="return-negative">−1.0%</td><td class="return-negative">−0.05%</td></tr>
+                <tr><td>Grove</td><td>4%</td><td class="return-negative">−1.0%</td><td class="return-negative">−0.04%</td></tr>
+                <tr><td>Harbor</td><td>3%</td><td class="return-negative">−1.0%</td><td class="return-negative">−0.03%</td></tr>
+                <tr><td>Indigo</td><td>3%</td><td class="return-negative">−1.0%</td><td class="return-negative">−0.03%</td></tr>
+                <tr><td>Juniper</td><td>2%</td><td class="return-negative">−1.0%</td><td class="return-negative">−0.02%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="scenario-results" id="scenario-results">
+            <div class="result"><span>Weighted index return</span><strong class="return-positive" data-result>+0.30%</strong></div>
+            <div class="result"><span>Advancing stocks</span><strong data-result>2 of 10</strong></div>
+            <div class="result"><span>Equal-stock breadth</span><strong class="return-negative" data-result>20%</strong></div>
+          </div>
+          <div class="choice-row">
+            <button class="primary-button" id="run-scenario" type="button">Reveal the two views</button>
+          </div>
+          <div class="feedback" id="scenario-feedback">
+            Both statements are true: <strong>the weighted index rose</strong>
+            and <strong>eight of ten stocks fell</strong>. Direction and
+            participation answer different questions.
+          </div>
+        </div>
+
+        <div class="prose">
+          <p>
+            Marketworks often counts each eligible, covered stock once for
+            breadth, even though the official Nifty 500 index gives larger
+            free-float companies more influence. Neither view is “the real
+            market.” Together they reveal more than either alone.
+          </p>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="contract" data-progress-section>
+        <div class="section-kicker">Part 06 · Data discipline</div>
+        <h2>Membership is not the same as usable coverage</h2>
+        <p class="section-lede">
+          A metric may need more history than every current member possesses.
+          The denominator must disclose that difference.
+        </p>
+
+        <div class="prose">
+          <p>
+            A current Nifty 500 list used to calculate today’s breadth is a
+            current cross-section. Projecting that same list backward for ten
+            years omits companies that disappeared and includes current members
+            before they joined. That creates survivorship and membership bias.
+          </p>
+          <p>
+            An official index may target 500 companies while a dashboard has
+            usable history for fewer on a specific date. A dated official
+            factsheet can also temporarily publish a different security count
+            during maintenance or a corporate action. Preserve the official
+            dated count, check official notices, and never silently force it to
+            500.
+          </p>
+        </div>
+
+        <div class="contract" aria-label="Marketworks universe contract">
+          <div class="contract-row"><span>Official reference</span><strong>Nifty 500 methodology and dated constituent file</strong></div>
+          <div class="contract-row"><span>Product universe</span><strong>Marketworks Nifty 500-derived snapshot</strong></div>
+          <div class="contract-row"><span>Membership date</span><strong>Always shown with the calculation</strong></div>
+          <div class="contract-row"><span>Counting method</span><strong>Free-float weighted for index; equal eligible stock for breadth</strong></div>
+          <div class="contract-row"><span>Coverage</span><strong>Intended members, metric-eligible members, and missing/excluded</strong></div>
+          <div class="contract-row"><span>Outside</span><strong>Microcap tail, other exchanges or instruments, and insufficient history</strong></div>
+        </div>
+
+        <div class="takeaway">
+          <span>The operating rule</span>
+          <p>What is the universe? Why does it fit? How is it selected and counted? Which date and denominator apply? What sits outside?</p>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="worksheet" data-progress-section>
+        <div class="section-kicker">Your Module 1 artifact</div>
+        <h2>Build a universe decision card</h2>
+        <p class="section-lede">
+          Use the template to make the research population explicit. Your
+          responses are saved locally in this browser.
+        </p>
+
+        <div class="worksheet" id="worksheet-form">
+          <div class="field">
+            <label for="market-question">1. What market question are you trying to answer?</label>
+            <input id="market-question" type="text" data-save placeholder="Example: How broad is the trend across large, mid, and small companies?">
+          </div>
+          <div class="field-pair">
+            <div class="field">
+              <label for="official-universe">2. Official reference universe</label>
+              <input id="official-universe" type="text" data-save value="Nifty 500">
+            </div>
+            <div class="field">
+              <label for="membership-date">3. Membership or snapshot date</label>
+              <input id="membership-date" type="date" data-save>
+            </div>
+          </div>
+          <div class="field">
+            <label for="selection-logic">4. How are members selected?</label>
+            <textarea id="selection-logic" data-save placeholder="Summarize eligibility, size selection, and review in your own words."></textarea>
+          </div>
+          <div class="field">
+            <label for="counting-method">5. How will the metric count members?</label>
+            <input id="counting-method" type="text" data-save placeholder="Example: equal eligible stock for breadth; free-float weighted for index return">
+          </div>
+          <div class="field-pair">
+            <div class="field">
+              <label for="fit-reasons">6. Three reasons this universe fits</label>
+              <textarea id="fit-reasons" data-save placeholder="Coverage, size range, eligibility logic…"></textarea>
+            </div>
+            <div class="field">
+              <label for="blind-spots">7. At least three blind spots</label>
+              <textarea id="blind-spots" data-save placeholder="Microcap tail, current-snapshot bias, index inclusion is not quality…"></textarea>
+            </div>
+          </div>
+          <div class="field-pair">
+            <div class="field">
+              <label for="intended-count">8. Intended member count</label>
+              <input id="intended-count" type="text" data-save placeholder="Design target">
+            </div>
+            <div class="field">
+              <label for="eligible-count">9. Metric-eligible count</label>
+              <input id="eligible-count" type="text" data-save placeholder="Usable denominator on the date">
+            </div>
+          </div>
+          <div class="field">
+            <label for="exit-ticket">Exit ticket: what should you ask before interpreting any market statistic?</label>
+            <textarea id="exit-ticket" data-save placeholder="Write one complete sentence."></textarea>
+            <small>A strong answer names the universe, date, selection/counting method, usable denominator, and exclusions.</small>
+          </div>
+          <div class="worksheet-actions">
+            <button class="primary-button" id="download-notes" type="button">Download my notes</button>
+            <button class="secondary-button" id="clear-notes" type="button">Clear responses</button>
+            <span class="save-state" id="save-state" aria-live="polite">Saved locally</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="lesson-section" id="quiz" data-progress-section>
+        <div class="section-kicker">Mastery check</div>
+        <h2>Which market are you measuring?</h2>
+        <p class="section-lede">
+          Mastery is 6 of 8 correct, with Question 7 required. Feedback appears
+          after submission.
+        </p>
+
+        <form class="quiz-form" id="quiz-form">
+          <fieldset class="question" data-question="q1" data-answer="b">
+            <legend><span class="question-number">01</span><br>What is a research universe?</legend>
+            <label class="option"><input type="radio" name="q1" value="a"><span>Every security visible in a broker app</span></label>
+            <label class="option"><input type="radio" name="q1" value="b"><span>A defined set of securities to which a question or calculation is applied</span></label>
+            <label class="option"><input type="radio" name="q1" value="c"><span>The exchange with the most listed companies</span></label>
+            <label class="option"><input type="radio" name="q1" value="d"><span>The current holdings in an investor’s demat account</span></label>
+            <p class="quiz-feedback">A research universe is the explicitly defined set to which an analysis is applied.</p>
+          </fieldset>
+
+          <fieldset class="question" data-question="q2" data-answer="c">
+            <legend><span class="question-number">02</span><br>Why should NSE and BSE company counts not simply be added?</legend>
+            <label class="option"><input type="radio" name="q2" value="a"><span>BSE does not operate an equity segment</span></label>
+            <label class="option"><input type="radio" name="q2" value="b"><span>NSE lists only index funds</span></label>
+            <label class="option"><input type="radio" name="q2" value="c"><span>Many companies and securities appear on both exchanges</span></label>
+            <label class="option"><input type="radio" name="q2" value="d"><span>The exchanges use the same symbol for every company</span></label>
+            <p class="quiz-feedback">Large parts of the two equity sets overlap; adding them double-counts shared listings.</p>
+          </fieldset>
+
+          <fieldset class="question" data-question="q3" data-answer="c">
+            <legend><span class="question-number">03</span><br>Which statement best describes the official Nifty 500?</legend>
+            <label class="option"><input type="radio" name="q3" value="a"><span>Every ordinary equity share listed anywhere in India</span></label>
+            <label class="option"><input type="radio" name="q3" value="b"><span>The 500 shares with the highest market price</span></label>
+            <label class="option"><input type="radio" name="q3" value="c"><span>A rules-based index selected from an eligible NSE universe</span></label>
+            <label class="option"><input type="radio" name="q3" value="d"><span>A permanent list chosen by Marketworks</span></label>
+            <p class="quiz-feedback">The Nifty 500 has published eligibility, selection, weighting, and maintenance rules.</p>
+          </fieldset>
+
+          <fieldset class="question" data-question="q4" data-answer="b">
+            <legend><span class="question-number">04</span><br>Which market-cap layers are represented in the course’s Nifty 500 construction?</legend>
+            <label class="option"><input type="radio" name="q4" value="a"><span>Only 500 large-cap companies</span></label>
+            <label class="option"><input type="radio" name="q4" value="b"><span>100 large cap, 150 mid cap, and 250 small cap</span></label>
+            <label class="option"><input type="radio" name="q4" value="c"><span>50 large cap and 450 microcap</span></label>
+            <label class="option"><input type="radio" name="q4" value="d"><span>All listed companies in equal proportions</span></label>
+            <p class="quiz-feedback">The ladder covers the top 100, next 150, and subsequent 250 companies.</p>
+          </fieldset>
+
+          <fieldset class="question" data-question="q5" data-answer="c">
+            <legend><span class="question-number">05</span><br>Why is the Nifty 500 useful as a starting learning universe?</legend>
+            <label class="option"><input type="radio" name="q5" value="a"><span>Index inclusion guarantees business quality</span></label>
+            <label class="option"><input type="radio" name="q5" value="b"><span>Every constituent has identical liquidity and risk</span></label>
+            <label class="option"><input type="radio" name="q5" value="c"><span>It combines broad coverage, size range, eligibility screens, and a reproducible common set</span></label>
+            <label class="option"><input type="radio" name="q5" value="d"><span>It includes every SME and microcap in India</span></label>
+            <p class="quiz-feedback">It is a broad, rules-based laboratory—not a quality certificate or complete listed-market set.</p>
+          </fieldset>
+
+          <fieldset class="question" data-question="q6" data-answer="b">
+            <legend><span class="question-number">06</span><br>What does free-float market-cap weighting imply?</legend>
+            <label class="option"><input type="radio" name="q6" value="a"><span>Every constituent has the same effect on the index</span></label>
+            <label class="option"><input type="radio" name="q6" value="b"><span>Companies with larger publicly tradable market value generally have more influence</span></label>
+            <label class="option"><input type="radio" name="q6" value="c"><span>The highest share price always creates the largest weight</span></label>
+            <label class="option"><input type="radio" name="q6" value="d"><span>Promoter-held shares receive extra weight</span></label>
+            <p class="quiz-feedback">Index influence depends on publicly tradable market value, not share price alone.</p>
+          </fieldset>
+
+          <fieldset class="question" data-question="q7" data-answer="c">
+            <legend><span class="question-number">07 · Required</span><br>A weighted ten-stock index rose, but only two constituents advanced. Which interpretation is correct?</legend>
+            <label class="option"><input type="radio" name="q7" value="a"><span>The data must be wrong</span></label>
+            <label class="option"><input type="radio" name="q7" value="b"><span>The index rose, therefore breadth was strong</span></label>
+            <label class="option"><input type="radio" name="q7" value="c"><span>Large-weight winners can lift the index while equal-stock participation remains weak</span></label>
+            <label class="option"><input type="radio" name="q7" value="d"><span>Breadth is invalid unless it uses index weights</span></label>
+            <p class="quiz-feedback">Weighted direction and equal-stock participation can legitimately disagree.</p>
+          </fieldset>
+
+          <fieldset class="question" data-question="q8" data-answer="a">
+            <legend><span class="question-number">08</span><br>Why must a universe have an as-of date?</legend>
+            <label class="option"><input type="radio" name="q8" value="a"><span>Index membership, listings, and usable data coverage can change</span></label>
+            <label class="option"><input type="radio" name="q8" value="b"><span>The number 500 changes every trading minute</span></label>
+            <label class="option"><input type="radio" name="q8" value="c"><span>Historical prices expire after six months</span></label>
+            <label class="option"><input type="radio" name="q8" value="d"><span>A date guarantees freedom from survivorship bias</span></label>
+            <p class="quiz-feedback">A date makes changing membership and coverage inspectable; it does not remove bias by itself.</p>
+          </fieldset>
+
+          <div>
+            <button class="primary-button" type="submit">Check my answers</button>
+          </div>
+          <div class="quiz-result" id="quiz-result" aria-live="polite"></div>
+        </form>
+      </section>
+
+      <section class="lesson-section" id="video-plan" data-progress-section>
+        <div class="section-kicker">Video production treatment</div>
+        <h2>Four chapters, one connected mental model</h2>
+        <p class="section-lede">
+          The video layer totals 24 minutes. Each chapter creates a frame,
+          demonstrates it visually, and hands the learner into an interaction.
+          It does not narrate the article word for word.
+        </p>
+
+        <div class="episode-list">
+          <details class="episode" open>
+            <summary>
+              <span class="episode-time">04:30</span>
+              <span class="episode-title"><strong>How many stocks are in the Indian market?</strong><span>Create the need for an explicit universe.</span></span>
+              <span class="episode-toggle" aria-hidden="true">+</span>
+            </summary>
+            <div class="episode-body">
+              <h4>Cold open</h4>
+              <blockquote>“Fifty sounds reasonable. Five hundred also sounds reasonable. Open a broker search and the answer can look like several thousand. Each points to something real.”</blockquote>
+              <h4>Visual argument</h4>
+              <p>Introduce the five object labels—company, security, exchange, index, and research universe—one at a time. Demonstrate the broker-search trap without using a real broker brand.</p>
+              <h4>Handoff</h4>
+              <p>Pause on “Which object did you count?” and send the learner to the opening estimate and object-label interaction.</p>
+            </div>
+          </details>
+
+          <details class="episode">
+            <summary>
+              <span class="episode-time">06:30</span>
+              <span class="episode-title"><strong>From several thousand listings to a usable universe</strong><span>Build the Indian listed-equity funnel.</span></span>
+              <span class="episode-toggle" aria-hidden="true">+</span>
+            </summary>
+            <div class="episode-body">
+              <h4>Core explanation</h4>
+              <p>Show overlapping exchanges and multiple security types, attach the dated NSE scale reference, then narrow to eligible, traded common equity. Explain why “everything” is not automatically the best beginner laboratory.</p>
+              <blockquote>“Narrowing the universe is not a verdict on excluded companies. It creates a coherent first laboratory.”</blockquote>
+              <h4>Handoff</h4>
+              <p>The learner annotates every narrowing step with the property that changed—not the phrase “bad stocks removed.”</p>
+            </div>
+          </details>
+
+          <details class="episode">
+            <summary>
+              <span class="episode-time">07:30</span>
+              <span class="episode-title"><strong>Why Marketworks begins with the Nifty 500</strong><span>Explain construction, coverage, benefits, and limits.</span></span>
+              <span class="episode-toggle" aria-hidden="true">+</span>
+            </summary>
+            <div class="episode-body">
+              <h4>Core explanation</h4>
+              <p>Correct the official name, animate the 100/150/250 size ladder, show dated coverage bars, and work through the five reasons Marketworks begins here.</p>
+              <blockquote>“This is a learning and research universe, not a starter portfolio.”</blockquote>
+              <h4>Handoff</h4>
+              <p>The learner completes the universe decision card. Any reason claiming these are “the best stocks” must be revised.</p>
+            </div>
+          </details>
+
+          <details class="episode">
+            <summary>
+              <span class="episode-time">05:30</span>
+              <span class="episode-title"><strong>The index can rise while most stocks fall</strong><span>Separate weighted direction from participation.</span></span>
+              <span class="episode-toggle" aria-hidden="true">+</span>
+            </summary>
+            <div class="episode-body">
+              <h4>Worked demonstration</h4>
+              <p>Animate the ten-stock fixture to a +0.30% index return while only two stocks advance. Then split intended members from metric-eligible coverage.</p>
+              <blockquote>“Direction without participation can hide concentration. Participation without the benchmark can hide the economic weight of the leaders.”</blockquote>
+              <h4>Handoff</h4>
+              <p>The learner reveals the calculation, completes the quiz and writes the exit ticket before moving to Module 2.</p>
+            </div>
+          </details>
+        </div>
+
+        <div class="production-grid">
+          <div class="production-note">
+            <h4>Visual language</h4>
+            <ul>
+              <li>One calm presenter; no trading-floor B-roll.</li>
+              <li>Mint ground, lichen type, restrained data motion.</li>
+              <li>Dates and denominators remain on screen.</li>
+              <li>The universe funnel recurs across all four chapters.</li>
+            </ul>
+          </div>
+          <div class="production-note">
+            <h4>Required deliverables</h4>
+            <ul>
+              <li>Four addressable video files with chapter metadata.</li>
+              <li>Human-edited captions and downloadable transcript.</li>
+              <li>Audio-described material diagrams.</li>
+              <li>Controlled product captures with no private data.</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="source-note">
+          The complete presenter script, shot list, edit checklist, and
+          acceptance criteria are in <a href="VIDEO_SCRIPT.md">VIDEO_SCRIPT.md</a>.
+        </p>
+      </section>
+
+      <section class="lesson-section" id="sources" data-progress-section>
+        <div class="section-kicker">Source ledger</div>
+        <h2>Current facts stay dated and inspectable</h2>
+        <p class="section-lede">
+          Official definitions come from NSE Indices, listing scale from NSE,
+          and exchange context from SEBI. Product implementation is not treated
+          as the official index definition.
+        </p>
+        <div class="sources">
+          <a class="source-link" href="https://www.niftyindices.com/indices/equity/broad-based-indices/nifty-500"><span>30 Mar 2026</span><strong>Official Nifty 500 page and coverage statistics</strong></a>
+          <a class="source-link" href="https://www.niftyindices.com/Methodology/Method_NIFTY_Equity_Indices.pdf"><span>Mar 2026</span><strong>Nifty equity-index methodology</strong></a>
+          <a class="source-link" href="https://niftyindices.com/resources/index-rebalancing-schedule"><span>Current page</span><strong>Index reconstitution calendar</strong></a>
+          <a class="source-link" href="https://www.niftyindices.com/docs/default-source/indices/nifty-500/nifty-500-whitepaper_2025.pdf?sfvrsn=7b2c6635_4"><span>Oct 2025</span><strong>Nifty 500 white paper and size ladder</strong></a>
+          <a class="source-link" href="https://nsearchives.nseindia.com/web/pressrelease/2026-01/PR_cc_01012026_20260101194417.pdf"><span>31 Dec 2025</span><strong>NSE Annual Highlights 2025 listing statistics</strong></a>
+          <a class="source-link" href="https://www.sebi.gov.in/stock-exchanges.html"><span>Current page</span><strong>SEBI details of recognized stock exchanges</strong></a>
+        </div>
+
+        <footer class="module-footer">
+          <a class="wordmark" href="../../OVERVIEW.html">marketworks</a>
+          <p>
+            This course is educational. The Nifty 500 is used as a learning and
+            research universe, not as a personalized portfolio or a
+            recommendation to buy or sell any security. Markets carry risk;
+            index inclusion does not establish quality, valuation, or
+            suitability.
+          </p>
+          <div class="next-module">
+            <div>
+              <span>Next · Module 02</span>
+              <strong>Is the move broad, or is the index hiding the market?</strong>
+            </div>
+            <span>Trend · breadth · stress →</span>
+          </div>
+        </footer>
+      </section>
+    </article>
+  </div>
+</main>
+
+<script>
+  const storageKey = "marketworks-module-01";
+  const completed = new Set();
+  const progressSections = [...document.querySelectorAll("[data-progress-section]")];
+  const topProgress = document.getElementById("top-progress");
+  const railPercent = document.getElementById("rail-percent");
+
+  function updateProgress() {
+    const interactionProgress = completed.size / 4;
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    const scrollProgress = scrollable > 0 ? window.scrollY / scrollable : 0;
+    const combined = Math.min(1, Math.max(scrollProgress * 0.75, interactionProgress));
+    const percent = Math.round(combined * 100);
+    topProgress.style.width = percent + "%";
+    railPercent.textContent = percent + "%";
+  }
+
+  window.addEventListener("scroll", updateProgress, { passive: true });
+  updateProgress();
+
+  const railLinks = [...document.querySelectorAll(".rail-nav a")];
+  const sectionObserver = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter((entry) => entry.isIntersecting)
+      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (!visible) return;
+    railLinks.forEach((link) => {
+      const current = link.getAttribute("href") === "#" + visible.target.id;
+      if (current) link.setAttribute("aria-current", "true");
+      else link.removeAttribute("aria-current");
+    });
+  }, { rootMargin: "-20% 0px -68% 0px", threshold: [0, 0.2, 0.5] });
+  progressSections.forEach((section) => sectionObserver.observe(section));
+
+  const chapterButtons = [...document.querySelectorAll(".chapter-button")];
+  chapterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      chapterButtons.forEach((item) => item.setAttribute("aria-pressed", "false"));
+      button.setAttribute("aria-pressed", "true");
+      document.getElementById("video-number").textContent = button.dataset.number;
+      document.getElementById("video-duration").textContent = button.dataset.duration;
+      document.getElementById("video-title").textContent = button.dataset.title;
+      document.getElementById("video-description").textContent = button.dataset.description;
+    });
+  });
+
+  document.getElementById("video-placeholder").addEventListener("click", () => {
+    document.getElementById("video-description").textContent =
+      "Review treatment only—the recording, captions, and final transcript have not yet been produced.";
+  });
+
+  const estimateChoices = [...document.querySelectorAll(".estimate-choice")];
+  estimateChoices.forEach((button) => {
+    button.addEventListener("click", () => {
+      estimateChoices.forEach((item) => item.setAttribute("aria-pressed", "false"));
+      button.setAttribute("aria-pressed", "true");
+      document.getElementById("estimate-feedback").classList.add("visible");
+      completed.add("estimate");
+      updateProgress();
+    });
+  });
+
+  document.getElementById("check-sort").addEventListener("click", () => {
+    const selects = [...document.querySelectorAll("#sort-interaction select")];
+    const answered = selects.filter((select) => select.value).length;
+    const correct = selects.filter((select) => select.value === select.dataset.answer).length;
+    const feedback = document.getElementById("sort-feedback");
+    feedback.classList.add("visible");
+    if (answered < selects.length) {
+      feedback.textContent = "Label all five objects before checking.";
+      return;
+    }
+    feedback.innerHTML = correct === selects.length
+      ? "<strong>5 of 5.</strong> You separated venue, basket, business, claim, and analytical population."
+      : "<strong>" + correct + " of 5.</strong> Revisit the definitions: an index is a basket; a research universe is the set receiving the calculation.";
+    if (correct === selects.length) completed.add("sort");
+    updateProgress();
+  });
+
+  document.getElementById("run-scenario").addEventListener("click", () => {
+    document.getElementById("scenario-results").classList.add("revealed");
+    document.getElementById("scenario-feedback").classList.add("visible");
+    document.getElementById("run-scenario").textContent = "Scenario revealed";
+    completed.add("scenario");
+    updateProgress();
+  });
+
+  const savedFields = [...document.querySelectorAll("[data-save]")];
+  let savedData = {};
+  try {
+    savedData = JSON.parse(localStorage.getItem(storageKey) || "{}");
+  } catch {
+    savedData = {};
+  }
+  savedFields.forEach((field) => {
+    if (Object.prototype.hasOwnProperty.call(savedData, field.id)) {
+      field.value = savedData[field.id];
+    }
+    field.addEventListener("input", () => {
+      const next = {};
+      savedFields.forEach((item) => { next[item.id] = item.value; });
+      localStorage.setItem(storageKey, JSON.stringify(next));
+      const state = document.getElementById("save-state");
+      state.textContent = "Saved locally";
+      completed.add("worksheet");
+      updateProgress();
+    });
+  });
+
+  document.getElementById("clear-notes").addEventListener("click", () => {
+    savedFields.forEach((field) => { field.value = ""; });
+    document.getElementById("official-universe").value = "Nifty 500";
+    localStorage.removeItem(storageKey);
+    document.getElementById("save-state").textContent = "Responses cleared";
+  });
+
+  document.getElementById("download-notes").addEventListener("click", () => {
+    const labels = {
+      "market-question": "Market question",
+      "official-universe": "Official reference universe",
+      "membership-date": "Membership or snapshot date",
+      "selection-logic": "Selection logic",
+      "counting-method": "Counting method",
+      "fit-reasons": "Reasons the universe fits",
+      "blind-spots": "Blind spots",
+      "intended-count": "Intended member count",
+      "eligible-count": "Metric-eligible count",
+      "exit-ticket": "Exit ticket"
+    };
+    const content = [
+      "MARKETWORKS MARKET STATE LAB",
+      "Module 1 — Universe decision card",
+      "",
+      ...savedFields.flatMap((field) => [labels[field.id], field.value || "—", ""])
+    ].join("\n");
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "marketworks-module-01-universe-card.txt";
+    anchor.click();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById("quiz-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const questions = [...document.querySelectorAll(".question")];
+    let score = 0;
+    let q7Correct = false;
+    questions.forEach((question) => {
+      question.classList.remove("correct", "incorrect");
+      const selected = question.querySelector("input:checked");
+      const correct = selected && selected.value === question.dataset.answer;
+      question.classList.add(correct ? "correct" : "incorrect");
+      if (correct) score += 1;
+      if (question.dataset.question === "q7") q7Correct = Boolean(correct);
+    });
+    const passed = score >= 6 && q7Correct;
+    const result = document.getElementById("quiz-result");
+    result.classList.add("visible");
+    result.innerHTML = passed
+      ? "<strong>Mastery reached · " + score + " of 8</strong><p>You also answered the required index-versus-breadth question correctly. Complete the exit ticket to close the module.</p>"
+      : "<strong>Not yet · " + score + " of 8</strong><p>You need 6 of 8 and Question 7 correct. Review the highlighted items, especially weighting versus participation.</p>";
+    if (passed) completed.add("quiz");
+    updateProgress();
+    result.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+</script>
+</body>
+</html>

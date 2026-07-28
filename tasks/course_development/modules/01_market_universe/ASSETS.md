@@ -248,7 +248,11 @@ authoritative definition of the official Nifty 500.
 ## Production status
 
 - Copy/manuscript: drafted.
+- Responsive review webpage: built in `MODULE.html`.
+- Four-chapter video treatment and presenter script: drafted in
+  `VIDEO_SCRIPT.md`.
 - Diagrams: specified, not produced.
 - Screenshots: specified, not captured.
 - Fixture CSVs: specified, not packaged.
+- Recorded video, captions, and final transcript: not produced.
 - Accessibility descriptions: specified at asset level, final review pending.
