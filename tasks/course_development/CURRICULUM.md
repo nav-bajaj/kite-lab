@@ -23,9 +23,9 @@ Working promise:
 
 At completion, a learner can:
 
-1. **Describe market state.** Write a dated description of Indian equity-market
-   direction, participation, leadership, drawdown, and stress without turning
-   the description into a prediction.
+1. **Define and describe the market.** Explain the Indian listed-equity funnel,
+   justify the course's dated Nifty 500-derived universe, and write a dated
+   market-state description without turning it into a prediction.
 2. **Read beneath an index.** Explain why index direction and broad-market
    breadth may disagree, and identify what the index headline leaves unknown.
 3. **Think quantitatively.** Convert a narrative into a versioned metric or
@@ -47,7 +47,7 @@ The learner leaves with six artifacts:
 
 | Module | Artifact | What it proves |
 |---|---|---|
-| 1 | Market-state question map | Knows what an index headline omits |
+| 1 | Indian equity universe map + decision card | Can define which market is being measured and why |
 | 2 | Five-line market-state note | Can synthesize dated, conflicting evidence |
 | 3 | Signal anatomy card | Can turn an intuition into a reproducible definition |
 | 4 | Pattern criteria sheet + observation shortlist | Can reconcile quantitative detection with a visual overlay |
@@ -58,7 +58,7 @@ The learner leaves with six artifacts:
 
 | Day | Module | Central question | Main transition |
 |---|---|---|---|
-| 1 | 1. What state is the market in? | What does “the market is up” hide? | Headline → question set |
+| 1 | 1. Define the market before reading it | Which stocks do we mean by “the market”? | Listed landscape → dated universe |
 | 1 | 2. Read trend, breadth, and stress | Is the move broad and internally supported? | Indicators → dated synthesis |
 | 2 | 3. Think like a quant | How does an idea become a transparent measurement? | Intuition → specification |
 | 2 | 4. Find leadership and chart structures | Can a visual shape be detected reproducibly? | Eyeballing → geometry + overlay |
@@ -85,104 +85,126 @@ instruction.
 
 # Day 1 — Read the market, not the headline
 
-## Module 1 — What state is the market in?
+## Module 1 — Define the market before reading it
 
-**Central question:** What does a Nifty headline tell you, and what does it
-leave out?
+**Central question:** Which stocks do we mean by “the Indian market,” and why
+does Marketworks begin with a dated Nifty 500-derived universe?
+
+The complete authored pack is in `modules/01_market_universe/`.
 
 ### Learner can
 
 By the end of the hour, the learner can:
 
-- distinguish an index, benchmark, and investable universe;
-- name the five layers of the course's market-state stack;
-- classify a sentence as observation, inference, forecast, or instruction; and
-- turn a market headline into five better questions.
+- distinguish a company, security, exchange, listing, index, and research
+  universe;
+- map the funnel from India's overlapping exchange-listed landscape to
+  eligible common equity;
+- explain the Nifty 500's large-, mid-, and small-cap construction;
+- justify the Nifty 500 as a practical first learning/research universe without
+  calling every constituent suitable to own;
+- distinguish free-float index weighting from equal-stock breadth counting; and
+- state the universe date, active denominator, and material exclusions.
 
 ### Core vocabulary
 
-Index, constituent, weight, benchmark, universe, market state, trend,
-participation, leadership, drawdown, volatility, observation, inference.
+Company, security, listing, exchange, main board, SME, index, constituent,
+research universe, eligibility, market capitalization, free float, liquidity,
+impact cost, breadth, membership date, coverage.
 
 ### 60-minute lesson plan
 
 | Time | Activity | Instructor/product role |
 |---|---|---|
-| 0-5 | Opening diagnostic: “Nifty rose 1%; what do we know?” | Collect answers without correcting them |
-| 5-13 | Index versus market | Use a weighted-index example with five stocks |
-| 13-22 | Market-state stack | Introduce direction, participation, leadership, stress, and uncertainty |
-| 22-30 | Language boundary | Sort observation, inference, forecast, and instruction cards |
-| 30-42 | Marketworks walkthrough | Read Pulse/market overview from as-of date outward |
-| 42-54 | Individual mission | Build a question map for a supplied headline |
-| 54-60 | Exit check and debrief | Compare questions, not market opinions |
+| 0-5 | Hook: “How many stocks are in the Indian market?” | Collect 50, 500, 750, 2,000+, and uncertain answers |
+| 5-13 | Five different objects | Sort company, security, exchange, index, and universe |
+| 13-22 | Indian-market funnel | Map exchanges/products to eligible common equity |
+| 22-32 | Nifty 500 construction | Explain eligibility, size ladder, weighting, and review |
+| 32-42 | Marketworks walkthrough | Locate official index, dated universe, metric denominator, and exclusions |
+| 42-50 | Weighted index versus breadth | Calculate the ten-stock divergence fixture |
+| 50-56 | Individual mission | Complete the universe map and decision card |
+| 56-60 | Quiz and exit ticket | Require the index-versus-breadth question |
 
-### Concept model — the five-layer state stack
+### Concept model — the universe funnel
 
-1. **Direction:** where the broad benchmark sits relative to its own history.
-2. **Participation:** how much of the universe shares the move.
-3. **Leadership:** which sectors and stocks account for the move.
-4. **Stress:** drawdown, volatility, extension, and unusual dispersion.
-5. **Uncertainty:** stale, missing, contradictory, or method-dependent evidence.
+```text
+India's exchange-listed landscape
+→ NSE-listed companies and multiple security types
+→ eligible, traded common equity
+→ official Nifty 500
+→ Marketworks dated constituent and data-coverage snapshot
+```
 
-No layer receives a permanent master status. A valid state description may be
-mixed.
+The official Nifty 500 contains the large-cap 100, mid-cap 150, and small-cap
+250 layers under the current index framework. The course explains that it
+covers most, not all, of the NSE market and does not include the full microcap
+and listed tail.
 
-### Marketworks walkthrough script
+### Marketworks walkthrough
 
-The instructor opens the current Pulse or equivalent market overview and asks,
-in order:
+The instructor moves between:
 
-1. What is the latest completed data date?
-2. Which index and universe are shown?
-3. What is directly observed?
-4. Which label is a methodology output?
-5. What participation evidence supports or contradicts the index?
-6. Which sector view would we open next?
-7. What does this page not establish?
-
-The instructor deliberately avoids starting with a regime label. Learners
-first identify the raw observations that feed the label.
-
-### Mission — market-state question map
-
-Prompt:
-
-> “Nifty closes at a record high.”
+1. the official Nifty 500 definition and methodology;
+2. the Marketworks Pulse page;
+3. `% above 200-DMA` Learn content; and
+4. the screener.
 
 The learner completes:
 
 ```text
-Headline observation:
-Direction question:
-Participation question:
-Leadership question:
-Stress question:
-Data-quality/uncertainty question:
-One statement the headline does not justify:
+Official index:
+Product universe:
+Membership/snapshot date:
+Index weighting:
+Breadth counting method:
+Intended members:
+Metric-eligible members:
+Missing/excluded:
 ```
+
+### Mission — Indian equity universe map + decision card
+
+The learner draws the funnel and then states:
+
+- the market question;
+- official reference universe;
+- product snapshot and date;
+- eligibility logic;
+- size coverage;
+- weighting versus counting method;
+- three reasons the universe fits; and
+- at least three blind spots.
 
 ### Mastery evidence
 
 The artifact passes when:
 
-- all five questions can be answered with data;
-- no question embeds a bullish or bearish conclusion;
-- benchmark and universe are not treated as synonyms; and
-- the unsupported statement is correctly rejected.
+- NSE/BSE counts are not added as disjoint companies;
+- index and exchange are not treated as synonyms;
+- the official Nifty 500 name is distinguished from product shorthand;
+- the learner explains both broad coverage and excluded tail;
+- index weighting and breadth counting are distinguished;
+- membership date and active denominator are visible; and
+- index inclusion is not presented as quality certification or advice.
 
 ### Misconceptions to surface
 
-- “Nifty rose, therefore most stocks rose.”
-- “A bull regime means tomorrow will be positive.”
-- “An index at a record high means every constituent is near a high.”
-- “A dashboard label is a fact rather than a methodology output.”
+- “The Nifty 500 is every stock on NSE.”
+- “These are the 500 safest Indian stocks.”
+- “A broker search is a research universe.”
+- “The company with the highest share price is the largest.”
+- “If the index is positive, most constituents must be positive.”
+- “Exactly 500 stocks have usable history on every date.”
 
 ### Instructor preparation
 
-- one five-stock weighted-index demonstration;
-- one broad-rally snapshot and one narrow-rally snapshot;
-- sentence-sorting cards; and
-- a current Marketworks view whose as-of date is visible.
+- five-object card set;
+- exchange-overlap diagram;
+- Indian equity-universe funnel;
+- Nifty 500 eligibility and size-ladder visual;
+- ten-stock weighted-index/breadth fixture;
+- dated Marketworks universe contract; and
+- current official sources and product screenshots.
 
 ## Module 2 — Read trend, breadth, and stress
 

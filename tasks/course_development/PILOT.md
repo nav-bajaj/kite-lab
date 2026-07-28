@@ -91,7 +91,8 @@ Do not author all six modules before testing the two highest-friction slices.
 
 Prototype Modules 1-2 with:
 
-- one 15-minute concept lesson;
+- one authored universe lesson and one market-state concept lesson;
+- one Indian equity-universe map and decision card;
 - one annotated Marketworks walkthrough;
 - three Learn links;
 - one misconception check; and
@@ -99,6 +100,9 @@ Prototype Modules 1-2 with:
 
 Test with five learners. Observe whether they:
 
+- distinguish exchange, index, and research universe;
+- explain why the Nifty 500 is broad but not the whole listed market;
+- distinguish free-float weighting from equal-stock breadth;
 - check the as-of date;
 - distinguish index direction from breadth;
 - describe a contradiction; and

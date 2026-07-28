@@ -26,6 +26,7 @@ The core learning loop is:
 - `CURRICULUM.md` — detailed six-module, three-day course blueprint.
 - `QUANT_PATTERN_SPEC.md` — numerical and visual contract for three chart-pattern families.
 - `AI_MARKET_DASHBOARD_LAB.md` — provider-neutral local dashboard capstone design.
+- `modules/` — fully authored module packs, beginning with Module 1.
 - `PILOT.md` — MVP, experiments, instrumentation, and success criteria.
 - `TASKS.md` — phased path from study to a validated pilot.
 - `_meta.yml` — machine-readable initiative metadata.

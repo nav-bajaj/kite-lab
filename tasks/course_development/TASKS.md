@@ -36,7 +36,11 @@ founder approves the concept and the compliance/data gate.
 
 ### A. Market-state note
 
-- [ ] Script Modules 1-2 concept lesson and product walkthrough.
+- [x] Author Module 1 lesson, walkthrough, worksheet, quiz, facilitator guide,
+  and asset/source plan.
+- [ ] Produce Module 1 diagrams, screenshots, and packaged fixture files.
+- [ ] Test Module 1 with five learners and revise language/density.
+- [ ] Script Module 2 concept lesson and product walkthrough.
 - [ ] Create five-line market-state worksheet and rubric.
 - [ ] Create observation/inference/unsupported concept check.
 - [ ] Test with five learners.
