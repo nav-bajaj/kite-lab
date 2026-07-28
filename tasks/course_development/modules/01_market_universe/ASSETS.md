@@ -7,11 +7,13 @@
 Format: five cards.
 
 ```text
-COMPANY     the business
-SECURITY    a financial claim
-EXCHANGE    a regulated trading venue
-INDEX       a rules-based measurement
-UNIVERSE    the set an analysis is applied to
+COMPANY     the actual business — it exists whether or not anyone trades it
+SECURITY    any tradable claim on a business, such as an ordinary share
+EXCHANGE    the regulated marketplace where securities trade — the venue,
+            not the merchandise
+INDEX       a measuring stick — a rules-picked basket of stocks tracked
+            as one number
+UNIVERSE    the list of stocks you've decided to ask your question about
 ```
 
 Accessibility: do not rely on color alone; each card needs an icon and
@@ -71,7 +73,8 @@ Format: five icon filters.
 
 Footer:
 
-> Simplified for learning. Current official methodology controls.
+> Simplified so it's easy to learn. The official NSE Indices methodology
+> document is the authoritative version, and it changes over time.
 
 ### A6 — Weighted index versus breadth
 
@@ -82,29 +85,29 @@ Left:
 - ten bars sized by index weight;
 - two largest bars green;
 - eight smaller bars red;
-- weighted index return `+0.30%`.
+- label: "Index return, weighted by size: `+0.30%`".
 
 Right:
 
 - ten equal dots;
 - two green, eight red;
-- advance participation `20%`.
+- label: "Stocks that rose: 2 of 10 (`20%`)".
 
-Accessibility: label green as “advanced” and red as “declined.”
+Accessibility: label green as "rose" and red as "fell."
 
 ### A7 — Universe contract
 
 Format: reusable card.
 
 ```text
-Official reference
-Constituent snapshot date
-Price-data date
-Intended members
-Metric-eligible members
-Missing/excluded
-Weighting/counting method
-Methodology version
+Official reference — which official index this list comes from
+Constituent snapshot date — the member list as it stood on this date
+Price-data date — the day the prices themselves are from
+Intended members — how many stocks the list is designed to hold
+Metric-eligible members — stocks we could actually measure
+Missing/excluded — stocks left out of the calculation, and why
+Weighting/counting method — do big stocks count for more, or one vote each?
+Methodology version — which edition of the official selection rules applied
 ```
 
 This asset should reappear in Modules 2-6.

@@ -124,7 +124,7 @@ NIFTY 500  ← the official index
         │  150 mid-sized companies
         │  250 smaller companies
         ▼
-MARKETWORKS NIFTY 500-DERIVED UNIVERSE
+MARKETWORKS DATED UNIVERSE
         the Nifty 500 list as it stood on a specific date,
         plus a record of which stocks we have usable data for
 ```
@@ -332,11 +332,9 @@ one sentence: *a universe list is data, and it has a date.*
 
 ## "500 members" doesn't mean "500 measured"
 
-One more honest wrinkle. Take a metric like "% of stocks above their
-200-day average". That average is each stock's average closing price over
-its last 200 trading days — a slow-moving line that shows its long-term
-trend. Computing it needs 200 days of price history per stock, and a
-company that joined the market recently doesn't have that yet. So on a given day, Marketworks
+One more honest wrinkle. A metric like "% of stocks above their 200-day
+average" needs 200 days of price history per stock. A company that joined
+the market recently doesn't have that yet. So on a given day, Marketworks
 might compute that metric on, say, 480 of the 500 — and the display should
 tell you so.
 

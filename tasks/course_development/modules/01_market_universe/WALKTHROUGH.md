@@ -1,29 +1,33 @@
-# Module 1 walkthrough — From “the market” to the Marketworks universe
+# Module 1 walkthrough — Watching "the market" become a named list
 
 Target time: 12-15 minutes.
 
 ## Walkthrough outcome
 
-The learner should leave able to point to four different objects:
+By the end, the learner can point at four different things on screen and
+name each one:
 
 1. the official Nifty 500 index;
-2. a dated constituent universe;
-3. the subset with usable data for a calculation; and
-4. the Nifty 500 index series used as a weighted benchmark.
+2. the member list as it stood on a specific date — the dated universe;
+3. the smaller set of stocks with usable data for a given calculation; and
+4. the Nifty 500 index series itself, used as the weighted yardstick.
 
-The instructor should not use “NSE,” “Nifty,” “index,” and “universe”
-interchangeably.
+Instructor discipline: never use "NSE," "Nifty," "index," and "universe" as
+if they were the same word. Keeping them apart is the whole point of this
+walkthrough.
 
 ## Before recording or teaching
 
 Verify on the delivery date:
 
 - current official Nifty 500 page and methodology links;
-- official coverage and traded-value statistics;
-- current reconstitution schedule;
+- official coverage and traded-value statistics, with their as-of dates;
+- the current refresh schedule for index membership (the reconstitution
+  calendar);
 - course universe-manifest version and row count;
 - Marketworks latest completed data date;
-- current active denominator for `% above 200-DMA`;
+- the count of stocks actually measured today (the denominator) for
+  `% above 200-DMA`;
 - any missing symbols or price histories; and
 - the product's exact universe label.
 
@@ -49,14 +53,20 @@ Open the Marketworks Pulse page at `/insights`.
 
 Say:
 
-> “This page says something about the market. Before we read whether it is
-> strong or weak, we need to know what the page means by market.”
+> "This page is telling us something about the market. Most of what you see
+> here is built from an index — a measuring stick: a basket of stocks picked
+> by written rules and tracked as one number. Before we read whether the
+> news is good or bad, let's ask a more basic question: when this page says
+> 'the market', which stocks does it actually mean?"
 
 Ask the learner:
 
-- Is the headline describing an index or a collection of stocks?
-- If an index is green, do we know how many stocks are green?
-- Where would we look for the universe and date?
+- "Is this headline describing one index number, or lots of individual
+  stocks?"
+- "If the index is green today, do we know how many stocks are actually
+  green?"
+- "Where on this page would you look to find which stocks were counted, and
+  on what date?"
 
 Do not answer yet.
 
@@ -66,44 +76,51 @@ Open the [official Nifty 500 page](https://www.niftyindices.com/indices/equity/b
 
 Point out:
 
-- official name: Nifty 500;
-- top-500 selection from an eligible NSE universe;
-- dated free-float market-cap coverage;
-- dated traded-value coverage;
-- factsheet, constituent, and methodology downloads; and
-- sector distribution.
+- the official name: Nifty 500;
+- the top-500 selection from the pool of eligible NSE stocks;
+- the coverage figure — how much of the market's value this index captures,
+  measured on the publicly tradable portion of shares (the free float) —
+  with its date;
+- the traded-value coverage figure, with its date;
+- the factsheet, member-list, and methodology downloads; and
+- the sector distribution.
 
 Say:
 
-> “This page defines an index. It does not say that every listed Indian company
-> is in the basket, and it does not say every company has equal weight.”
+> "This page is a definition. Notice two things it does not say. It never
+> says every listed Indian company is in this basket. And it never says every
+> company gets an equal vote."
 
 Ask:
 
-> “Which number on this page tells us how wide the coverage is? Which phrase
-> tells us how the index is weighted?”
+> "Two treasure hunts on this page. First: which number tells us how much of
+> the market this index covers? Second: which phrase tells us whether big
+> companies count for more than small ones?"
 
 ## 4:00-6:30 — Show the eligibility funnel
 
 Open the official broad-market methodology and show, without reading every
 legal line:
 
-- eligible security types;
-- minimum trading frequency;
-- impact-cost/liquidity condition;
-- free-float condition;
-- top-800 turnover and market-cap rank condition; and
-- top-500 size selection.
+- which kinds of securities are allowed in;
+- the minimum trading-regularity requirement;
+- the cost-to-trade check — the price shouldn't move against you much just
+  because you traded (the impact cost);
+- the requirement for enough publicly tradable shares (the free float);
+- the top-800 rank condition on trading activity and company value; and
+- the final top-500 selection by size.
 
 Say:
 
-> “The index is not simply the 500 highest share prices. It begins with an
-> investability screen and then uses company size.”
+> "The index is not simply the 500 highest share prices. First comes a screen
+> that asks: does this stock actually trade, and can you get in and out
+> without moving the price against yourself? Only after that screen does
+> company size decide who makes the cut."
 
 Check:
 
-- Share price is not market capitalization.
-- Index membership is not a quality certification.
+- Share price is not company size (market capitalization).
+- Being in the index is not a quality certificate.
 
 ## 6:30-8:30 — Show the size ladder
 
@@ -119,10 +136,12 @@ beyond      remaining eligible/listed tail
 
 Say:
 
-> “This is why 500 is materially different from 50. We are not merely adding
-> more large companies; we are adding the mid- and small-cap layers.”
+> "This is why 500 is a genuinely different view from 50. We're not just
+> adding more giants. We're adding the middle of the market and the smaller
+> players — the layers the Nifty 50 can't see."
 
-Clarify that the ranks and membership are reviewed and can change.
+Clarify that membership is reviewed on a schedule, and stocks join and drop
+out.
 
 ## 8:30-11:00 — Return to Marketworks breadth
 
@@ -133,31 +152,37 @@ Open:
 
 Point to:
 
-- “NSE 500” product shorthand;
-- latest completed date;
-- breadth value;
-- denominator/coverage if visible; and
-- link to methodology or Learn explanation.
+- the "NSE 500" product shorthand;
+- the latest completed date;
+- the breadth value;
+- the denominator and coverage, if visible; and
+- the link to the methodology or Learn explanation.
 
 Say:
 
-> “The official index return gives larger free-float companies more influence.
-> This breadth metric asks a different question: of the covered universe, how
-> many stocks are above their own 200-day average?”
+> "The official index return gives bigger companies a bigger vote — the more
+> of a company's shares the public can actually trade, the more its move
+> counts. This breadth number asks a different question: out of the stocks we
+> could measure today, how many are above their own 200-day average — that's
+> each stock's average closing price over its last 200 trading days, a
+> slow-moving line that shows its long-term trend. Here, every stock gets
+> one equal vote."
 
 Use the prepared ten-stock example:
 
 - weighted index return: `+0.30%`;
-- advancing stocks: `2 of 10`;
-- declining stocks: `8 of 10`; and
-- advance breadth: `20%`.
+- rising stocks: `2 of 10`;
+- falling stocks: `8 of 10`; and
+- share of stocks rising (advance breadth): `20%`.
 
 Ask:
 
-> “Can the index be positive while participation is weak?”
+> "Here's the puzzle: can the index finish the day up while most stocks
+> finish down?"
 
-Expected answer: yes, because the index is weighted and breadth counts stock
-participation.
+Expected answer: yes. The index is a weighted average, so two heavyweights
+can lift it while eight stocks fall. Breadth counts heads — one equal vote
+each — so it shows the weakness the index hides.
 
 ## 11:00-13:30 — Open the screener
 
@@ -166,18 +191,19 @@ Open `/insights/screener`.
 Point out:
 
 - the number of rows returned;
-- any current filters;
+- any filters currently applied;
 - the data date;
-- an individual stock's sector; and
+- one stock's sector; and
 - whether the product shows missing or partial coverage.
 
 Say:
 
-> “The screener is a view over a dated data universe. If it displays fewer than
-> 500 usable rows, that is a coverage fact to explain—not a number to hide.”
+> "The screener is a window onto a dated list. If it shows fewer than 500
+> usable rows, that is not a problem to hide — it's a fact to say out loud:
+> this many stocks had usable data today."
 
 Do not open a stock and discuss whether it should be bought. This walkthrough
-is about the set, not a selection from the set.
+is about the list, not about picking from the list.
 
 ## 13:30-15:00 — Close with the universe contract
 
@@ -190,14 +216,15 @@ Membership/snapshot date:
 Metric:
 Index weighting:
 Breadth counting method:
-Active denominator:
+Stocks actually counted (denominator):
 Known exclusions:
 ```
 
 Close with:
 
-> “From now on, ‘the market’ is not enough. We will name the universe, date,
-> denominator, and weighting before interpreting the result.”
+> "From today, 'the market went up' is an unfinished sentence. Before we read
+> any result, we'll name four things: which list, as of which date, how many
+> stocks were actually counted, and whether every stock got an equal vote."
 
 # Screenshot fallback
 
@@ -224,16 +251,17 @@ Methodology/version:
 
 Stop and correct the narration if the instructor says:
 
-- “NSE 500 is the 500 stocks on NSE.”
-- “These are the 500 safest Indian companies.”
-- “Nifty 500 covers the entire Indian market.”
-- “There are exactly 500 usable stocks on every date.”
-- “The index rose, so most constituents rose.”
-- “Index inclusion makes the stock a good investment.”
+- "NSE 500 is the 500 stocks on NSE."
+- "These are the 500 safest Indian companies."
+- "Nifty 500 covers the entire Indian market."
+- "There are exactly 500 usable stocks on every date."
+- "The index rose, so most constituents rose."
+- "Index inclusion makes the stock a good investment."
 
 # Product follow-ups
 
-The current Learn copy may use a simplified denominator such as “320 of 500.”
+The current Learn copy may use a simplified denominator such as "320 of 500."
 Before course publication, align it with the production breadth calculation,
 which uses the count of members with sufficient history for that date. The
-course should show both intended membership and metric-eligible denominator.
+course should show both the intended membership and the count of stocks
+actually measured (the metric-eligible denominator).

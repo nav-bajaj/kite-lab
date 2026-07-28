@@ -2,141 +2,215 @@
 
 Recommended time: 7 minutes.
 
-Mastery threshold: 6 of 8 correct, with Question 7 required.
+Mastery threshold: 6 of 8 correct, and Question 7 must be one of them — it
+carries the idea Module 2 is built on.
+
+A note before you start: any market term you meet below is re-explained in a
+short phrase, so you can take this quiz even if the lesson isn't fresh in
+your mind.
 
 ## Learner questions
 
 ### 1. What is a research universe?
 
-- A. Every security visible in a broker app
-- B. A defined set of securities to which a question or calculation is applied
-- C. The exchange with the most listed companies
-- D. The current holdings in an investor's demat account
+Before any market question can be answered, someone has to pick the list of
+stocks it will be asked about. Which of these is that list — the thing this
+course calls a research universe?
 
-### 2. Why should NSE and BSE company counts not simply be added together?
+- A. Everything your broker app can show you when you search
+- B. The list of stocks you've deliberately chosen to ask your question about
+- C. Whichever exchange has the most companies listed on it
+- D. The stocks you happen to hold in your own demat account — the account
+  that stores the shares you've already bought
 
-- A. BSE does not operate an equity segment
-- B. NSE lists only index funds
-- C. Many companies and securities appear on both exchanges
-- D. The exchanges use the same trading symbol for every company
+### 2. Why can't you just add the NSE and BSE company counts?
 
-### 3. Which statement best describes the official Nifty 500?
+NSE and BSE are India's two big stock exchanges — the marketplaces where
+shares trade. Why can't you add their company counts together to get "the
+total number of Indian listed companies"?
 
-- A. Every ordinary equity share listed anywhere in India
-- B. The 500 shares with the highest market price
-- C. A rules-based index selected from an eligible NSE universe
-- D. A permanent list of companies chosen by Marketworks
+- A. BSE doesn't list ordinary company shares
+- B. NSE lists only funds, not companies
+- C. Most large companies are listed on both, so you'd count them twice
+- D. The two exchanges publish their counts on different dates
 
-### 4. Which market-cap layers are represented in the Nifty 500 construction
-described in the course?
+### 3. Which of these best describes the official Nifty 500 — the broad
+index (a basket of stocks picked by written rules and tracked as one
+number) that this course starts from?
 
-- A. Only the 500 largest large-cap companies
-- B. 100 large cap, 150 mid cap, and 250 small cap
-- C. 50 large cap and 450 microcap
-- D. All listed companies in equal proportions
+- A. Every ordinary share listed anywhere in India
+- B. The 500 stocks with the highest price per share
+- C. An index — a rules-picked basket — built from NSE stocks that pass
+  written eligibility checks
+- D. A permanent list of companies hand-picked by Marketworks
 
-### 5. Why is the Nifty 500 a useful starting learning universe for
-Marketworks?
+### 4. Which company sizes make up the Nifty 500?
 
-- A. Index inclusion guarantees business quality
-- B. Every constituent has identical liquidity and risk
-- C. It combines broad market coverage, multiple size segments, investability
-  filters, and a reproducible common set
-- D. It includes every SME and microcap listed in India
+The lesson describes India's listed companies as a ladder of sizes, where
+"size" means market capitalization — share price × number of shares, roughly
+what it would cost to buy the whole company. Which rungs of that ladder does
+the Nifty 500 hold?
 
-### 6. What does free-float market-cap weighting imply?
+- A. Five hundred giant companies only, with nothing mid-sized or smaller
+- B. The 100 biggest companies, the next 150 mid-sized ones, and the 250
+  smaller ones after that
+- C. Fifty large companies plus 450 microcap companies — the very
+  smallest, thinnest-traded names that sit below the Nifty 500's size
+  ladder
+- D. Every listed company in India, all in equal proportion
 
-- A. Every constituent has the same effect on the index
-- B. Companies with larger publicly tradable market value generally have more
-  influence on the index
-- C. The company with the highest share price always has the largest weight
-- D. Promoter-held shares receive extra weight
+### 5. Why is the Nifty 500 a useful starting universe for Marketworks?
 
-### 7. A weighted ten-stock index rose, but only two constituents advanced.
-Which interpretation is correct?
+- A. Being in the index proves a company's business is high quality
+- B. Every stock in it is equally easy to trade and equally risky
+- C. It covers most of the market's value, spans large, mid-sized, and
+  smaller companies, screens out the hardest-to-trade stocks, and gives
+  every learner the same dated list to measure
+- D. It includes every small and microcap company listed in India
 
-- A. The data must be wrong
-- B. The index rose, therefore breadth was strong
-- C. Large-weight winners can lift the index while equal-stock participation
-  remains weak
-- D. Breadth should also use index weights, otherwise it is invalid
+### 6. What does free-float market-cap weighting actually mean?
 
-### 8. Why must a universe have an as-of date?
+The Nifty 500 is "free-float market-cap weighted." Free float means the
+shares actually available for the public to trade — not the ones promoters
+keep locked away. In plain words, what does this weighting mean for the
+index number?
 
-- A. Index membership, listings, and usable data coverage can change
-- B. The number 500 changes every trading minute
-- C. Historical prices expire after six months
-- D. A dated universe guarantees freedom from survivorship bias
+- A. Every stock moves the index equally — one stock, one vote
+- B. Companies whose publicly tradable shares are worth more move the
+  index more
+- C. The stock with the highest price per share always has the biggest weight
+- D. Shares locked away by promoters get counted with extra weight
+
+### 7. The index rose, but only two of ten stocks did. What happened?
+
+A ten-stock weighted index finished the day up, yet only two of its ten
+stocks actually rose. How should you read that?
+
+- A. One of the two numbers must be a data error
+- B. If the index rose, most stocks must have risen too
+- C. Two heavyweight stocks can lift the whole index even while the other
+  eight fall — both facts can be true at once
+- D. Counting the risers is meaningless unless the head-count uses index
+  weights too
+
+### 8. Why must a universe always carry an as-of date?
+
+Marketworks stamps its universe with a date — "the list as it stood on this
+day." Why?
+
+- A. The member list, the companies listed, and the stocks we can actually
+  measure all change over time
+- B. The number 500 itself changes every trading minute
+- C. Price history is deleted after six months, so old lists can't be checked
+- D. Once a list carries a date, survivorship bias — the trap of studying
+  only the stocks that survived into today's list — can no longer affect any
+  study built on it
 
 # Answer key and feedback
 
 ## 1. Correct answer: B
 
-A research universe is the explicitly defined set to which an analysis is
-applied.
+A universe is a list you choose on purpose, to fit the question you're
+asking — and that choice comes before any calculation.
 
-- **A is incorrect:** a broker search can mix security and product types.
-- **C is incorrect:** an exchange is a venue, not the analyst's defined set.
-- **D is incorrect:** holdings are a portfolio, not necessarily a research
-  universe.
+If you picked A, you've met the wedding-guest-list trap from the lesson: a
+broker search is your entire contacts app — shares, ETFs, bonds, all mixed
+together, chosen by nobody. C mixes up the venue with the list: an exchange
+is the marketplace where trading happens, not a list you chose. D describes
+a portfolio — the stocks you own. What you own and what you've decided to
+measure are usually different lists.
 
 ## 2. Correct answer: C
 
-Large parts of the NSE and BSE equity sets overlap. Adding exchange counts
-double-counts shared companies or securities.
+Most large companies are listed on both NSE and BSE, so the two lists
+overlap heavily. Add the counts and you'd count Reliance twice.
+
+A and B aren't true — both exchanges list plenty of ordinary company shares.
+D points at a genuinely good habit (always check the date on any count), but
+even perfectly matched dates wouldn't fix the double-counting.
 
 ## 3. Correct answer: C
 
-The Nifty 500 is built from written eligibility, selection, weighting, and
-review rules.
+The Nifty 500 is picked the way a cricket team is: written selection rules,
+a review on a schedule, players added and dropped.
 
-- It is not every Indian listing.
-- Selection is not based on share price.
-- Marketworks does not permanently choose official index constituents.
+A is far too big — most Indian listings sit outside the index. B confuses
+price per share with company size: a ₹5 share can belong to a huge company
+or a tiny one. D is wrong twice over — NSE Indices maintains the official
+list, not Marketworks, and no spot on it is permanent.
 
 ## 4. Correct answer: B
 
-The course uses the official size ladder described by NSE Indices: top 100
-large cap, next 150 mid cap, and subsequent 250 small cap.
+NSE Indices describes the ladder like this: the biggest 100 companies are
+large cap, the next 150 are mid cap, and the 250 after that are small cap.
+The Nifty 500 is those three rungs together.
+
+That's the whole point of the index — you can watch the giants and the
+middle and the smaller players at once. The microcap tail below the ladder
+stays outside, which is worth remembering, not forgetting.
 
 ## 5. Correct answer: C
 
-The universe is broad, spans three size segments, uses investability-related
-eligibility criteria, and gives learners a reproducible common laboratory.
+Four things working together: wide coverage of the market's value, three
+company sizes, filters that clear out the hardest-to-trade stocks, and one
+shared dated list so everyone measures the same thing.
 
-It does not certify quality, equalize risk, or include the complete listed
-tail.
+A is the trap most worth remembering: the filters check tradability, not
+quality. Filtered is not the same as recommended — index membership is never
+advice. B isn't true either: a small-cap member trades far thinner than a
+giant bank. And D is the opposite of the design — the tiniest companies are
+deliberately left outside.
 
 ## 6. Correct answer: B
 
-Free-float market cap reflects price, shares, and the portion considered
-available for public trading. Larger free-float companies generally influence
-the index more.
+Each company's vote in the index is sized by the market value of its
+publicly tradable shares — its free float. So a giant bank moves the index
+far more than the 400th company on the list.
 
-Share price alone does not determine company size or index weight.
+Price per share alone (C) tells you nothing about company size — it depends
+entirely on how many shares exist. And promoter-locked shares (D) are
+excluded from the weight, not boosted.
 
 ## 7. Correct answer: C
 
-Index return and breadth answer different questions. A small number of
-large-weight stocks can lift the weighted basket while most stocks decline.
+This is the class-average idea from the lesson. A class average can rise
+because two toppers scored 98 while most of the class slipped — and a
+weighted index is exactly that kind of average, with the biggest companies
+as the toppers.
 
-Question 7 is required for mastery because this distinction prepares the
-learner for Module 2.
+So "the index rose" and "eight of ten stocks fell" can both be true. The
+head-count of how many stocks joined the move is called breadth, and it
+deliberately gives every stock one equal vote. That equal vote is the whole
+point, not a flaw — which is why D is wrong. Nothing is broken in the data
+(A), and B assumes the index is a head-count when it isn't.
+
+This question is required for mastery because Module 2 is built entirely on
+this distinction.
 
 ## 8. Correct answer: A
 
-Index membership, listed-company sets, security status, and data availability
-change. A date makes the universe reproducible.
+Companies list, delist, and merge. Index members come and go at every
+refresh. And on any given day, some stocks don't yet have enough price
+history to be measured. A date pins down exactly which list you used, so
+your measurement can be repeated and checked.
 
-A date alone does not remove survivorship bias; historical analysis needs
-point-in-time membership data or an explicit limitation.
+B and C aren't true: the count doesn't tick by the minute, and price history
+doesn't expire. D is the subtle one. A date is necessary but not enough on
+its own — if you take today's dated list and study the past, you're still
+interviewing only the survivors, because the stocks that failed or left
+along the way have vanished from your study. That mistake is called
+survivorship bias, and escaping it needs the list as it stood on each past
+date, or an honestly stated limitation.
 
 # Remediation
 
 If the learner misses:
 
-- **Questions 1-3:** revisit company/security/exchange/index/universe.
-- **Questions 4-6:** revisit Nifty 500 selection and weighting.
-- **Question 7:** repeat the ten-stock worksheet before Module 2.
-- **Question 8:** add membership date and active denominator to the universe
-  decision card.
+- **Questions 1-3:** reread Part 1 of the lesson — the five words that sound
+  the same but aren't (company, share, exchange, index, universe).
+- **Questions 4-6:** reread Part 3 — how a stock gets into the Nifty 500,
+  and why big companies' moves count for more.
+- **Question 7:** redo Part D of the worksheet (the ten-stock table) before
+  starting Module 2.
+- **Question 8:** go back to the universe decision card and fill in the
+  membership date and how many stocks were actually counted.

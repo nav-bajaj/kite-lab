@@ -1,0 +1,939 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 1 lesson — voice comparison</title>
+<style>
+  :root {
+    --ink: #22302b; --muted: #5f6f68; --line: #dde5e1;
+    --bg: #f6f8f7; --card: #ffffff; --accent: #0f766e;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+         color: var(--ink); background: var(--bg); }
+  header { position: sticky; top: 0; z-index: 5; background: var(--card);
+           border-bottom: 1px solid var(--line); padding: 14px 22px;
+           display: flex; flex-wrap: wrap; gap: 14px; align-items: baseline; }
+  header h1 { font-size: 17px; margin: 0 18px 0 0; }
+  header p { margin: 0; color: var(--muted); font-size: 13px; }
+  .tog { font-size: 13px; color: var(--ink); background: var(--bg);
+         border: 1px solid var(--line); border-radius: 20px; padding: 4px 12px;
+         cursor: pointer; user-select: none; }
+  .tog input { accent-color: var(--accent); margin-right: 4px; }
+  main { display: flex; gap: 14px; padding: 14px; height: calc(100vh - 62px); }
+  .col { flex: 1 1 0; min-width: 0; background: var(--card); border: 1px solid var(--line);
+         border-radius: 10px; overflow-y: auto; }
+  .col.hidden { display: none; }
+  .colhead { position: sticky; top: 0; background: var(--card); padding: 14px 20px 10px;
+             border-bottom: 1px solid var(--line); }
+  .colhead h2 { margin: 0 0 2px; font-size: 15px; color: var(--accent); }
+  .colhead .sub { margin: 0; font-size: 12px; color: var(--muted); font-family: ui-monospace, Menlo, monospace; }
+  .colhead .desc { margin: 6px 0 0; font-size: 12.5px; color: var(--muted); }
+  .doc { padding: 10px 22px 40px; font-size: 14.5px; line-height: 1.62; }
+  .doc h1 { font-size: 20px; margin-top: 34px; }
+  .doc h2 { font-size: 16px; margin-top: 26px; }
+  .doc h3 { font-size: 14.5px; margin-top: 20px; }
+  .doc pre { background: #f0f4f2; border: 1px solid var(--line); border-radius: 8px;
+             padding: 12px; font-size: 12px; line-height: 1.5; overflow-x: auto; }
+  .doc code { font-family: ui-monospace, Menlo, monospace; }
+  .doc blockquote { border-left: 3px solid var(--accent); margin: 14px 0; padding: 2px 14px;
+                    color: var(--muted); }
+  .doc a { color: var(--accent); }
+  .doc table { border-collapse: collapse; font-size: 13px; }
+  .doc td, .doc th { border: 1px solid var(--line); padding: 5px 9px; }
+  @media (max-width: 900px) { main { flex-direction: column; height: auto; }
+    .col { max-height: 80vh; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Module 1 lesson — three versions</h1>
+  <p>Untick columns to compare any two side by side. Each column scrolls on its own.</p>
+  <label class="tog"><input type="checkbox" data-col="v0" checked> Original draft</label>
+<label class="tog"><input type="checkbox" data-col="v1" checked> Course-voice pass</label>
+<label class="tog"><input type="checkbox" data-col="v2" checked> Deslop pass</label>
+</header>
+<main>
+
+    <section class="col" id="v0">
+      <div class="colhead">
+        <h2>Original draft</h2>
+        <p class="sub">Pass 1 — as authored on the branch</p>
+        <p class="desc">Methodology-document register: precise, dense, jargon largely unexplained.</p>
+      </div>
+      <div class="doc"><h1>Module 1 lesson — Define the market before you read it</h1>
+<p>Estimated learner time: 60 minutes including walkthrough, worksheet, and quiz.</p>
+<h2>Opening question</h2>
+<p>How many stocks are in “the Indian stock market”?</p>
+<p>You might answer 50 because the Nifty 50 appears in the news. You might answer
+500 because Marketworks frequently discusses the NSE 500. You might open a
+broker app, search broadly, and conclude there are several thousand.</p>
+<p>Each answer points to something real. None defines “the market” by itself.</p>
+<p>Before we ask whether the market is strong, weak, broad, narrow, expensive, or
+stressed, we need to say <strong>which securities we are measuring</strong>.</p>
+<p>That chosen set is our <strong>universe</strong>.</p>
+<h2>What you will be able to do</h2>
+<p>At the end of this module, you can:</p>
+<ol>
+<li>distinguish a company, security, exchange listing, index, and research
+   universe;</li>
+<li>sketch the main layers of India's exchange-listed equity landscape;</li>
+<li>explain how the official Nifty 500 narrows the wider market;</li>
+<li>explain why Marketworks uses a Nifty 500-derived universe;</li>
+<li>distinguish free-float index weighting from equal-stock breadth; and</li>
+<li>state what the Nifty 500 leaves out.</li>
+</ol>
+<h1>Part 1 — “The market” is not one list</h1>
+<h2>Company</h2>
+<p>A company is the business: its factories, employees, software, brands,
+contracts, debts, cash flows, and legal obligations.</p>
+<h2>Security</h2>
+<p>A security is a financial claim. A company's common equity share is one kind
+of security. The market also contains ETFs, debt securities, preference
+shares, REITs, InvITs, and other instruments.</p>
+<p>Buying one ordinary equity share means owning a small residual claim on a
+company. It does not mean owning every security associated with that company.</p>
+<h2>Exchange</h2>
+<p>An exchange is a regulated venue where eligible securities are admitted and
+traded. India has more than one recognized stock exchange. NSE and BSE both
+operate equity segments, and many large companies trade on both.</p>
+<p>This creates an immediate counting trap:</p>
+<blockquote>
+<p>You cannot add the number of NSE-listed companies to the number of BSE-listed
+companies and call the result “Indian companies.”</p>
+</blockquote>
+<p>The two sets overlap.</p>
+<p>SEBI maintains the current list of recognized exchanges and their permitted
+segments: <a href="https://www.sebi.gov.in/stock-exchanges.html">SEBI — details of stock exchanges</a>.</p>
+<h2>Listing</h2>
+<p>A listing connects a security with an exchange and a trading segment. One
+company may have securities admitted on multiple exchanges. A broker search
+can also show products that are not ordinary main-board equity shares.</p>
+<p>“Available in my broker app” is therefore not a useful research-universe
+definition.</p>
+<h2>Index</h2>
+<p>An index is a rules-based measurement of a selected basket. It has:</p>
+<ul>
+<li>an eligibility universe;</li>
+<li>selection rules;</li>
+<li>a weighting method;</li>
+<li>a calculation method; and</li>
+<li>a review schedule.</li>
+</ul>
+<p>An index is not the exchange, and it is not a complete list of everything an
+investor could buy.</p>
+<h2>Research universe</h2>
+<p>A research universe is the set of securities to which we apply a question or
+calculation.</p>
+<p>Examples:</p>
+<ul>
+<li>“How are India's largest companies performing?” may use the Nifty 50.</li>
+<li>“How broad is the trend across large, mid, and small companies?” needs a
+  broader universe.</li>
+<li>“Which microcaps have adequate liquidity?” needs a different universe and a
+  much stricter risk discussion.</li>
+</ul>
+<p>There is no universally correct universe. There is a universe that is more or
+less appropriate for a stated question.</p>
+<h1>Part 2 — A practical map of India's listed equity landscape</h1>
+<p>Use this funnel:</p>
+<pre><code class="language-text">INDIA'S EXCHANGE-LISTED LANDSCAPE
+        │
+        ├── multiple recognized exchanges and overlapping listings
+        │
+        ├── multiple security/product types
+        │     common equity, SME equity, ETFs, REITs, InvITs, debt, others
+        │
+        ▼
+NSE-LISTED COMPANIES
+        │
+        ├── main board
+        └── SME / Emerge and other eligible listings
+        ▼
+ELIGIBLE, TRADED COMMON EQUITY
+        │
+        ├── Indian domicile / permitted eligibility
+        ├── trading-frequency and liquidity checks
+        ├── free-float requirement
+        └── security-type and suspension exclusions
+        ▼
+NIFTY 500
+        │
+        ├── 100 large-cap companies
+        ├── 150 mid-cap companies
+        └── 250 small-cap companies
+        ▼
+MARKETWORKS DATED UNIVERSE
+        ├── constituent snapshot/version
+        ├── available price histories
+        └── displayed active denominator and missing coverage
+</code></pre>
+<h2>How large is the wider NSE company set?</h2>
+<p>NSE's calendar-year 2025 annual highlights reported, as of 31 December 2025:</p>
+<ul>
+<li>2,898 companies listed on NSE;</li>
+<li>2,358 companies on the main board; and</li>
+<li>the total-company count excluded mutual funds, ETFs, and debt securities.</li>
+</ul>
+<p>These are dated exchange statistics, not timeless constants. Listings,
+delistings, migrations, mergers, and corporate actions change the count.</p>
+<p>Source: <a href="https://nsearchives.nseindia.com/web/pressrelease/2026-01/PR_cc_01012026_20260101194417.pdf">NSE Annual Highlights — Calendar Year 2025</a>.</p>
+<h2>Why not begin with every listed company?</h2>
+<p>“Everything listed” sounds comprehensive, but it mixes together securities
+with very different:</p>
+<ul>
+<li>liquidity;</li>
+<li>trading frequency;</li>
+<li>listing histories;</li>
+<li>market capitalization;</li>
+<li>information availability;</li>
+<li>operational/data quality; and</li>
+<li>product structures.</li>
+</ul>
+<p>A beginner can mistake a very low price for cheap valuation, or a large
+one-day percentage move for meaningful information, without noticing that few
+shares traded.</p>
+<p>The goal of narrowing is not to declare the excluded companies bad. It is to
+create a more coherent first laboratory.</p>
+<h1>Part 3 — What the Nifty 500 actually is</h1>
+<p>The official name is <strong>Nifty 500</strong>.</p>
+<p>Marketworks and some internal product surfaces may say <strong>NSE 500</strong> as shorthand
+for the NSE-based stock universe. In course material:</p>
+<ul>
+<li>use <strong>Nifty 500</strong> when referring to the official index; and</li>
+<li>use <strong>Marketworks Nifty 500-derived universe</strong> when referring to the dated
+  constituent and data snapshot used by a calculation.</li>
+</ul>
+<p>This wording prevents the learner from confusing an exchange with an index.</p>
+<h2>Selection in plain language</h2>
+<p>The official methodology first creates an eligible NSE universe. Its current
+criteria include:</p>
+<ul>
+<li>Indian domicile and NSE trading/permitted-to-trade status;</li>
+<li>exclusion of instruments such as convertible stock, bonds, warrants, rights,
+  fixed-return preferred stock, suspended stocks, and BZ-series stocks;</li>
+<li>minimum free-float or free-float market-cap requirement;</li>
+<li>trading on at least 90% of days in the previous six months;</li>
+<li>average impact cost not greater than 1%;</li>
+<li>a minimum listing-history rule for new securities; and</li>
+<li>a rank within the top 800 on both average daily turnover and average full
+  market capitalization.</li>
+</ul>
+<p>From that eligible set, the index selects the top 500 using six-month average
+full market capitalization.</p>
+<p>The complete rules belong to the official methodology, which can change:
+<a href="https://www.niftyindices.com/Methodology/Method_NIFTY_Equity_Indices.pdf">Nifty equity-index methodology, March 2026</a>.</p>
+<h2>What sits inside the 500?</h2>
+<p>NSE Indices' 2025 Nifty 500 white paper describes the Indian market-cap ladder
+as:</p>
+<ul>
+<li>top 100 companies: large cap;</li>
+<li>next 150: mid cap;</li>
+<li>subsequent 250: small cap; and</li>
+<li>remaining eligible companies: microcap and beyond.</li>
+</ul>
+<p>The Nifty 500 brings the first three groups together. That gives the learner
+exposure to different company sizes without immediately moving into the
+longer, less liquid tail.</p>
+<p>Source: <a href="https://www.niftyindices.com/docs/default-source/indices/nifty-500/nifty-500-whitepaper_2025.pdf?sfvrsn=7b2c6635_4">Nifty 500 white paper, October 2025</a>.</p>
+<h2>How is the index weighted?</h2>
+<p>The Nifty 500 index level is <strong>free-float market-capitalization weighted</strong>.</p>
+<p>Break that phrase into two ideas:</p>
+<ol>
+<li><strong>Market capitalization:</strong> share price multiplied by shares outstanding.</li>
+<li><strong>Free float:</strong> the portion considered available for public trading, rather
+   than tightly held strategic/promoter ownership.</li>
+</ol>
+<p>Larger free-float companies therefore have more influence on the index return.
+The index is not an equal vote among 500 companies.</p>
+<h2>How often does membership change?</h2>
+<p>The Nifty 500 is reconstituted semi-annually, with changes effective on the
+last working day of March and September under the current schedule.</p>
+<p>Source: <a href="https://niftyindices.com/resources/index-rebalancing-schedule">Nifty Indices reconstitution calendar</a>.</p>
+<p>An analysis must therefore answer:</p>
+<blockquote>
+<p>“Which version of the universe, as of which date?”</p>
+</blockquote>
+<h1>Part 4 — Why Marketworks begins here</h1>
+<p>The Nifty 500 is not the whole Indian stock market. It is a useful starting
+research universe because it balances five needs.</p>
+<h2>1. It captures most of the economically relevant listed market</h2>
+<p>As of 30 March 2026, NSE Indices reported that the Nifty 500 represented:</p>
+<ul>
+<li>about 92.04% of NSE-listed stocks' free-float market capitalization; and</li>
+<li>about 84.07% of the six-month traded value of all NSE stocks.</li>
+</ul>
+<p>Those figures move over time and must carry their date.</p>
+<p>Source: <a href="https://www.niftyindices.com/indices/equity/broad-based-indices/nifty-500">Nifty 500 official index page</a>.</p>
+<p>This is broad enough to study the market without pretending the unmeasured tail
+does not exist.</p>
+<h2>2. It includes large, mid, and small companies</h2>
+<p>The Nifty 50 can tell us a great deal about India's largest companies. It
+cannot, by itself, tell us whether hundreds of mid- and small-cap stocks share
+the move.</p>
+<p>The broader universe makes questions about participation and leadership much
+more meaningful.</p>
+<h2>3. It applies investability screens before size selection</h2>
+<p>The official eligible universe incorporates trading frequency, impact cost,
+free float, security type, and other filters. That is a stronger starting point
+than an unfiltered broker search.</p>
+<p>It reduces obvious noise. It does not remove investment risk.</p>
+<h2>4. It is broad enough for cross-sectional comparison</h2>
+<p>Marketworks asks:</p>
+<ul>
+<li>How many stocks are above their long-term trend?</li>
+<li>Which sectors have broad participation?</li>
+<li>Which stocks are stronger than the benchmark?</li>
+<li>How unusual is a price or volatility condition across peers?</li>
+</ul>
+<p>Five hundred intended constituents provide a useful cross-section for those
+questions while remaining understandable and computationally manageable.</p>
+<h2>5. It creates a shared language</h2>
+<p>If every learner chooses a different stock list, two breadth readings cannot be
+compared. A versioned common universe lets us reproduce, challenge, and discuss
+the same calculation.</p>
+<h1>Part 5 — Index return and breadth are different views</h1>
+<p>Suppose a ten-stock index has the following weights:</p>
+<pre><code class="language-text">Two largest stocks: 50% combined weight
+Other eight stocks: 50% combined weight
+</code></pre>
+<p>On one day:</p>
+<ul>
+<li>both large stocks rise;</li>
+<li>the other eight stocks fall; and</li>
+<li>the weighted index finishes positive.</li>
+</ul>
+<p>Two statements can now be true:</p>
+<ol>
+<li><strong>The index rose.</strong></li>
+<li><strong>Only 20% of stocks rose.</strong></li>
+</ol>
+<p>The index asks:</p>
+<blockquote>
+<p>What happened to this weighted basket?</p>
+</blockquote>
+<p>Breadth asks:</p>
+<blockquote>
+<p>How many covered stocks participated?</p>
+</blockquote>
+<p>Marketworks often counts each eligible covered stock once for breadth, even
+though the official Nifty 500 index return gives larger free-float companies
+more weight.</p>
+<p>Neither view is “the real market.” Together they reveal more than either alone.</p>
+<h1>Part 6 — What the Nifty 500 does not solve</h1>
+<p>Starting here does not mean:</p>
+<ul>
+<li>every constituent is high quality;</li>
+<li>every constituent is liquid enough for every investor or order size;</li>
+<li>small-cap constituents carry the same risks as large caps;</li>
+<li>the universe includes the full microcap tail;</li>
+<li>an index member is attractively valued;</li>
+<li>the current constituent list existed unchanged in the past;</li>
+<li>a stock remains in the index forever; or</li>
+<li>index inclusion is a recommendation.</li>
+</ul>
+<h2>Current-snapshot versus historical-universe risk</h2>
+<p>A current Nifty 500 list used to calculate today's breadth is a current
+cross-section.</p>
+<p>The same current list projected backward for ten years is not a historical
+point-in-time universe. It omits companies that disappeared and includes
+current members before they joined. That can create survivorship and membership
+bias.</p>
+<p>Module 3 will formalize this problem. For now, remember:</p>
+<blockquote>
+<p>Universe membership is data, and it has a date.</p>
+</blockquote>
+<h2>Coverage can be less than membership</h2>
+<p>An official index may intend 500 constituent companies, while a dashboard has
+usable history for fewer on a specific date.</p>
+<p>The reverse can also appear in a dated official factsheet: the index's design
+target may be 500 companies while the published security count temporarily
+differs during index maintenance or a corporate action. Use the dated official
+constituent file as published. Do not silently force the count to 500, and do
+not invent an explanation that is absent from an official maintenance notice.</p>
+<p>The calculation must show:</p>
+<ul>
+<li>intended universe count;</li>
+<li>eligible count for the metric;</li>
+<li>missing/excluded count; and</li>
+<li>as-of date.</li>
+</ul>
+<p>A breadth value without a denominator is incomplete.</p>
+<h1>The Module 1 operating rule</h1>
+<p>Before interpreting any market statistic, ask:</p>
+<pre><code class="language-text">What is the universe?
+Why does this universe fit the question?
+How are members selected?
+Is the result weighted or equal-count?
+What is the membership date?
+How many members have usable data?
+What sits outside the universe?
+</code></pre>
+<p>If those questions have no answer, the market statistic is not ready to
+interpret.</p>
+<h1>Closing thought</h1>
+<p>The Nifty 500 is useful because it is neither a headline-only view of the
+largest companies nor an unfiltered list of every security that happens to
+trade.</p>
+<p>It is a wide, rules-based starting laboratory for learning how India's large,
+mid, and small companies move together and apart.</p>
+<p>In Module 2, we will use that laboratory to answer the next question:</p>
+<blockquote>
+<p>Is the market's movement broad, or is the index hiding what most stocks are
+doing?</p>
+</blockquote></div>
+    </section>
+    <section class="col" id="v1">
+      <div class="colhead">
+        <h2>Course-voice pass</h2>
+        <p class="sub">Pass 2 — .claude/skills/course-voice</p>
+        <p class="desc">Warm teacher register: idea-first jargon, analogies, direct address, second person.</p>
+      </div>
+      <div class="doc"><h1>Module 1 lesson — What exactly is "the market"?</h1>
+<p>Time: about 60 minutes, including the walkthrough, worksheet, and quiz.</p>
+<h2>Start with a question you can't answer yet</h2>
+<p>How many stocks are in the Indian stock market?</p>
+<p>Take a guess before reading on. Seriously — pick a number.</p>
+<p>If you said 50, that's a reasonable guess. The Nifty 50 is the number that
+shows up in the news every evening. If you said 500, also reasonable —
+Marketworks talks about 500 stocks all the time. And if you've ever typed a
+random letter into your broker app and scrolled, you might say "thousands,
+surely."</p>
+<p>Here's the strange part: every one of those answers is correct about
+<em>something</em>. None of them is "the market."</p>
+<p>Think of it like an election. If someone tells you "the people have voted
+yes," your first question should be: <em>which people?</em> Everyone in the country?
+One state? One housing society? The result means nothing until you know who
+was on the voter list.</p>
+<p>Markets work the same way. Before anyone can say the market is strong, weak,
+or expensive, they have to say <strong>which stocks they measured</strong>. That chosen
+list has a name: your <strong>universe</strong>. Choosing it well is the first real skill
+in this course.</p>
+<h2>What you'll be able to do after this module</h2>
+<p>By the end, you'll be able to tell apart five things that sound
+interchangeable — a company, a share, an exchange, an index, and a research
+universe. You'll know how India's thousands of listings get narrowed down to
+the 500 stocks Marketworks studies, why we start there, and — just as
+important — what that list of 500 <em>cannot</em> tell you.</p>
+<h1>Part 1 — Five words that sound the same but aren't</h1>
+<p>People say "I bought Tata Motors on the NSE, it's in the Nifty" in one
+breath. That sentence quietly mixes four different things. Let's pull them
+apart, because the rest of the course leans on these distinctions.</p>
+<h2>The company</h2>
+<p>A company is the actual business: the factories, the employees, the brands,
+the software, the debts, the cash coming in and going out. It exists whether
+or not anyone trades it.</p>
+<h2>The share (and its cousins)</h2>
+<p>When you buy one share, you're buying a small slice of ownership in that
+business — a claim on a piece of what it earns and owns. The market's
+general word for any tradable claim like this is a <strong>security</strong>.</p>
+<p>An ordinary share is one kind of security. But exchanges also trade other
+kinds: funds you can buy like a stock (ETFs), slices of rental property
+income (REITs), slices of infrastructure income (InvITs), bonds, and more.
+This matters because your broker app shows <em>all</em> of them mixed together.</p>
+<h2>The exchange</h2>
+<p>An exchange is the regulated marketplace where these securities trade — the
+venue, not the merchandise. India has more than one. NSE and BSE are the two
+big ones, and here's the trap: <strong>most large companies are listed on both.</strong></p>
+<p>So you can't count "companies on NSE" plus "companies on BSE" and call the
+total "Indian companies." You'd be counting Reliance twice. The two lists
+overlap heavily.</p>
+<p>SEBI, the market regulator, maintains the official list of recognized
+exchanges: <a href="https://www.sebi.gov.in/stock-exchanges.html">SEBI — details of stock exchanges</a>.</p>
+<h2>The index</h2>
+<p>An index is not a place and not a product you own. It's a <strong>measuring
+stick</strong>: a basket of stocks picked by written rules, whose combined value is
+tracked as one number so we can talk about "how that basket did."</p>
+<p>A useful comparison: an index is picked like a cricket team. There are
+written selection rules, a selection review on a schedule, and players get
+dropped and added. Being on the team says you met the selection criteria on
+selection day. It is not a lifetime guarantee, and it doesn't make you the
+best at everything.</p>
+<h2>The research universe</h2>
+<p>Finally, the one this module is really about. A research universe is simply
+<strong>the list of stocks you've decided to ask your question about</strong>.</p>
+<p>Different questions need different lists. "How are India's biggest companies
+doing?" — the Nifty 50 works fine. "Are mid-sized and smaller companies
+rising too, or just the giants?" — 50 stocks can't answer that; you need a
+wider list. "Which tiny companies are quietly gaining?" — that needs a
+different list again, plus a much more careful conversation about risk.</p>
+<p>There is no single correct universe. There's only a universe that fits your
+question, or doesn't.</p>
+<p>And note what a universe is <em>not</em>: "whatever my broker app shows me." That's
+like planning a wedding by inviting your entire phone contacts list —
+technically complete, useless for the actual decision.</p>
+<h1>Part 2 — From thousands of listings to a workable 500</h1>
+<p>Here's the whole journey on one page. We'll walk down it step by step.</p>
+<pre><code class="language-text">EVERYTHING LISTED ON INDIAN EXCHANGES
+        │  several exchanges, overlapping lists,
+        │  shares mixed with ETFs, REITs, bonds, and more
+        ▼
+COMPANIES LISTED ON NSE
+        │  the main board, plus a separate platform
+        │  for very small companies (SME / Emerge)
+        ▼
+ORDINARY SHARES THAT ACTUALLY TRADE
+        │  filters: trades regularly? enough shares
+        │  publicly available? cheap enough to trade in
+        │  and out of? not suspended?
+        ▼
+NIFTY 500  ← the official index
+        │  100 large companies
+        │  150 mid-sized companies
+        │  250 smaller companies
+        ▼
+MARKETWORKS DATED UNIVERSE
+        the Nifty 500 list as it stood on a specific date,
+        plus a record of which stocks we have usable data for
+</code></pre>
+<h2>How big is the starting pool, really?</h2>
+<p>NSE's own year-end summary reported that as of 31 December 2025 there were
+<strong>2,898 companies listed on NSE</strong>, of which 2,358 were on the main board.
+(NSE noted this count excludes mutual funds, ETFs, and bonds.)</p>
+<p>Notice we attached a date to that number. That's deliberate, and it's a
+habit you'll see through the whole course. Companies list, delist, and merge
+all the time — a count without a date goes stale without telling you.</p>
+<p>Source: <a href="https://nsearchives.nseindia.com/web/pressrelease/2026-01/PR_cc_01012026_20260101194417.pdf">NSE Annual Highlights — Calendar Year 2025</a>.</p>
+<h2>Why not just study all ~2,900?</h2>
+<p>"Everything" sounds thorough. In practice it mixes companies that are
+nothing alike as <em>data</em>.</p>
+<p>Some stocks trade crores of rupees every day; others barely trade at all. A
+stock that hardly trades can show a dramatic 15% jump on a day when only a
+handful of shares changed hands — the move looks like information, but it's
+mostly noise. And a beginner can look at a ₹5 share and think "cheap!", when
+the price of one share tells you nothing about what the whole company is
+worth or whether it's good value.</p>
+<p>Narrowing the list isn't a judgment that the excluded companies are bad.
+It's about building a clean first laboratory — a set of stocks similar
+enough that comparing them actually means something.</p>
+<h1>Part 3 — Meet the Nifty 500</h1>
+<p>The official index we start from is called the <strong>Nifty 500</strong>.</p>
+<p>One naming note before anything else: inside Marketworks you'll sometimes
+see the shorthand "NSE 500". In this course we'll be precise. <strong>Nifty 500</strong>
+means the official index. <strong>Marketworks Nifty 500-derived universe</strong> means
+our dated copy of its member list, with our data attached. Keeping those
+names separate stops you from ever confusing an exchange (NSE) with an
+index (Nifty 500).</p>
+<h2>How a stock gets in — the selection rules, in plain words</h2>
+<p>Remember the cricket-team idea? Here are the actual selection rules, as
+written by NSE Indices, translated into everyday language. To be eligible, a
+stock must:</p>
+<ul>
+<li>be an ordinary share of an Indian company trading on NSE (no bonds,
+  warrants, suspended shares, or similar instruments);</li>
+<li>have actually traded on at least 90% of days over the past six months —
+  no ghost stocks;</li>
+<li>have enough shares genuinely available for the public to buy and sell
+  (this publicly tradable portion is called the <strong>free float</strong> — it excludes
+  what promoters and strategic holders keep locked away);</li>
+<li>be cheap to get in and out of — when you trade, the price shouldn't move
+  against you by more than about 1% just because you traded (the market
+  calls this slippage the <strong>impact cost</strong>);</li>
+<li>have some listing history, and rank among the top 800 stocks on both
+  trading activity and total company value.</li>
+</ul>
+<p>From everything that qualifies, the index takes the <strong>500 biggest
+companies</strong>, measured by average total value over six months. Total company
+value here means <strong>market capitalization</strong>: share price × number of shares —
+roughly, what it would cost to buy the entire company.</p>
+<p>These are the current rules and they do change. The authoritative version
+lives with NSE Indices:
+<a href="https://www.niftyindices.com/Methodology/Method_NIFTY_Equity_Indices.pdf">Nifty equity-index methodology, March 2026</a>.</p>
+<h2>What the 500 contains</h2>
+<p>NSE Indices describes India's listed companies as a ladder by size. The
+biggest 100 companies are "large cap." The next 150 are "mid cap." The 250
+after that are "small cap." Everything beyond is "microcap" and smaller
+still. ("Cap" is just short for market capitalization — company size.)</p>
+<p>The Nifty 500 is the top three rungs together: 100 large + 150 mid + 250
+small. That's the point of it — you see the giants <em>and</em> the middle <em>and</em>
+the smaller players, without yet wading into the thinnest, hardest-to-trade
+end of the market.</p>
+<p>Source: <a href="https://www.niftyindices.com/docs/default-source/indices/nifty-500/nifty-500-whitepaper_2025.pdf?sfvrsn=7b2c6635_4">Nifty 500 white paper, October 2025</a>.</p>
+<h2>One index number, unequal votes</h2>
+<p>When the news says "the Nifty 500 rose 1%," how is that one number made
+from 500 stocks?</p>
+<p>Not by equal votes. Each company counts in proportion to the market value of
+its publicly tradable shares — its free float. A giant like a top bank moves
+the index far more than the 400th company on the list. The official term for
+this is <strong>free-float market-cap weighted</strong>; the plain version is: <em>big
+companies' moves count for more</em>.</p>
+<p>Hold onto that. It becomes the key to Part 5.</p>
+<h2>The list is not permanent</h2>
+<p>The Nifty 500 is refreshed twice a year — under the current schedule,
+changes take effect on the last working day of March and September. Stocks
+join; stocks drop out.</p>
+<p>Source: <a href="https://niftyindices.com/resources/index-rebalancing-schedule">Nifty Indices reconstitution calendar</a>.</p>
+<p>So "the Nifty 500" is really a series of dated lists. Any serious analysis
+has to say <em>which</em> list: the members as of which date. You'll see
+Marketworks stamp that date on its data everywhere.</p>
+<h1>Part 4 — Why Marketworks starts here</h1>
+<p>Out of every possible universe, why this one? Five reasons.</p>
+<p><strong>It covers most of the market that matters economically.</strong> As of 30 March
+2026, NSE Indices reported the Nifty 500 covered about 92% of the market
+value of all NSE-listed stocks (measured on free float) and about 84% of
+everything traded over the prior six months. Those percentages drift over
+time — hence the date — but the picture is stable: this list captures the
+overwhelming bulk of where India's listed money sits and trades.
+Source: <a href="https://www.niftyindices.com/indices/equity/broad-based-indices/nifty-500">Nifty 500 official index page</a>.</p>
+<p><strong>It includes large, mid, and small companies.</strong> The Nifty 50 can tell you
+about giants. It can't tell you whether hundreds of mid and small companies
+are joining a rally or sitting it out — and that difference is exactly what
+this course teaches you to see.</p>
+<p><strong>It's pre-filtered for tradability.</strong> Every member already passed the
+trading-regularity, free-float, and cost-to-trade checks. That clears out
+the noisiest data problems before we start. It does <em>not</em> mean the stocks
+are safe — filtered is not the same as recommended.</p>
+<p><strong>Five hundred stocks is enough to compare.</strong> Marketworks constantly asks
+questions like "how many stocks are above their long-term trend?" and
+"which sectors are moving together?" Those questions need a crowd. Five
+hundred is a real crowd that's still small enough to understand.</p>
+<p><strong>Everyone measures the same thing.</strong> If every learner picked their own
+stock list, no two readings could be compared. A shared, dated universe
+means your number and my number can disagree for interesting reasons, not
+because we counted different stocks.</p>
+<h1>Part 5 — The index went up. Did most stocks?</h1>
+<p>Here's the payoff for everything so far — the single most useful idea in
+this module.</p>
+<p>Think of a school exam. The class <em>average</em> can go up because two toppers
+scored 98, even while most of the class scored worse than last time. "The
+average rose" and "most students did worse" can both be true. They answer
+different questions.</p>
+<p>Indexes work exactly like that average — and remember from Part 3, the
+"toppers" (biggest companies) carry extra weight.</p>
+<p>Try it with a toy index of ten stocks, where the two biggest carry half the
+total weight between them. One day, those two rise and the other eight all
+fall. Run the numbers (you will, in the worksheet) and the weighted index
+finishes <em>up</em> about +0.3% — even though <strong>eight out of ten stocks fell</strong>.</p>
+<p>Two honest headlines for the same day:</p>
+<ol>
+<li>"The index rose."</li>
+<li>"Only 20% of stocks rose."</li>
+</ol>
+<p>The first tells you what happened to the weighted basket. The second tells
+you how many stocks actually joined the move — the market's word for this is
+<strong>breadth</strong>, and it's simply a head-count: each stock gets one equal vote,
+big or small.</p>
+<p>Marketworks shows you both views on purpose. The index without breadth can
+hide a rally carried by three giants. Breadth without the index can hide
+where the actual money is. Neither one is "the real market." Read them
+together.</p>
+<h1>Part 6 — What the Nifty 500 can't tell you</h1>
+<p>Every universe leaves things out. Naming your blind spots isn't pessimism —
+it's the difference between a measurement and a guess. Starting with the
+Nifty 500 does <strong>not</strong> mean:</p>
+<ul>
+<li>these are 500 <em>good</em> companies (the filters check tradability, not
+  quality or price);</li>
+<li>they're all equally easy to trade (a small-cap member is far thinner than
+  a large bank);</li>
+<li>the smallest companies in India are represented (the microcap tail sits
+  entirely outside);</li>
+<li>being in the index is a recommendation (it never is);</li>
+<li>today's list was always the list (members come and go every six months).</li>
+</ul>
+<h2>The time-travel trap</h2>
+<p>That last point deserves its own warning, because it produces one of the
+most common mistakes in market analysis.</p>
+<p>Today's Nifty 500 list is a photograph of today. If you take today's list
+and study "how these 500 stocks performed over the last ten years," you've
+quietly cheated: you're studying only the companies that <em>survived and
+succeeded enough to be in the index today</em>. The ones that shrank, failed, or
+got delisted along the way have vanished from your study.</p>
+<p>This is called <strong>survivorship bias</strong> — judging a journey by interviewing
+only the people who finished it. Module 3 tackles it properly. For now, keep
+one sentence: <em>a universe list is data, and it has a date.</em></p>
+<h2>"500 members" doesn't mean "500 measured"</h2>
+<p>One more honest wrinkle. A metric like "% of stocks above their 200-day
+average" needs 200 days of price history per stock. A company that joined
+the market recently doesn't have that yet. So on a given day, Marketworks
+might compute that metric on, say, 480 of the 500 — and the display should
+tell you so.</p>
+<p>(The reverse also happens: around a merger or an index maintenance event,
+even the <em>official</em> dated member file can briefly hold slightly more or
+fewer than 500 securities. When that occurs, we report the official count
+as published — we never quietly round it to 500 or invent a reason.)</p>
+<p>So any statistic you trust should answer: counted <strong>how many</strong>, out of
+<strong>what list</strong>, as of <strong>when</strong>, and <strong>what was left out</strong>. A percentage
+without those answers is a number wearing a costume.</p>
+<h1>The habit this module leaves you with</h1>
+<p>Whenever anyone — including Marketworks, including this course — shows you a
+market statistic, run this checklist:</p>
+<pre><code class="language-text">Which stocks were measured, exactly?
+Why is that the right list for this question?
+How did stocks get onto the list?
+Does every stock count equally, or do big ones count more?
+Which date's list is this?
+How many stocks were actually counted?
+What's outside the list that I should remember exists?
+</code></pre>
+<p>If those questions have no answers, the statistic isn't wrong — it's just
+not ready to be believed yet.</p>
+<h1>Closing thought</h1>
+<p>The Nifty 500 is a good starting point precisely because it's neither
+extreme: not the 50-stock headline view that misses most of the market, and
+not the everything-in-the-broker-app view that drowns you in noise. It's a
+wide, rules-based, dated list — a laboratory built for learning how India's
+large, mid, and small companies move together and apart.</p>
+<p>In Module 2, we put the laboratory to work on its first real question:</p>
+<blockquote>
+<p>When the index rises, is the whole market really rising — or is the index
+hiding what most stocks are doing?</p>
+</blockquote></div>
+    </section>
+    <section class="col" id="v2">
+      <div class="colhead">
+        <h2>Deslop pass</h2>
+        <p class="sub">Pass 3 — course-voice + stephenturner/skill-deslop</p>
+        <p class="desc">Same plain-language content, AI writing tells stripped: no em dashes, no throat-clearing, no punchy fragments.</p>
+      </div>
+      <div class="doc"><h1>Module 1 lesson — Say which stocks you mean</h1>
+<p>Time: about 60 minutes, including the walkthrough, worksheet, and quiz.</p>
+<h2>The question that opens the course</h2>
+<p>How many stocks are in the Indian stock market?</p>
+<p>Guess before you read on. Fifty is a reasonable answer; the Nifty 50 fills
+the evening news. Five hundred is reasonable too, since Marketworks talks
+about 500 stocks constantly. Scroll a broker app for a minute and you might
+say several thousand.</p>
+<p>Each answer counts something real. None of them is "the market."</p>
+<p>An election result tells you nothing until you know who was allowed to vote.
+A market claim works the same way. Before anyone can call the market strong
+or weak, they have to say which stocks they measured. That chosen list is
+called a universe. Choosing it well is the first skill this course teaches.</p>
+<h2>What this module teaches</h2>
+<p>Five terms that get used interchangeably: company, share, exchange, index,
+and research universe. How India's thousands of listings narrow to the 500
+stocks Marketworks studies. Why the course starts there, and what the list
+of 500 cannot tell you.</p>
+<h1>Part 1 — Five terms, five different things</h1>
+<p>"I bought Tata Motors on the NSE, it's in the Nifty" names four different
+things in one breath. The rest of the course depends on telling them apart.</p>
+<h2>The company</h2>
+<p>A company is the business itself: factories, employees, brands, software,
+debts, cash coming in and going out. It exists whether or not anyone trades
+it.</p>
+<h2>The share and its cousins</h2>
+<p>One share is a small slice of ownership in that business, a claim on part of
+what it earns and owns. The market's word for any tradable claim is a
+security. An ordinary share is one kind. Exchanges also trade ETFs (funds
+you buy like a stock), REITs (slices of rental-property income), InvITs
+(slices of infrastructure income), bonds, and more. Your broker app shows
+all of them mixed together, which matters in a moment.</p>
+<h2>The exchange</h2>
+<p>An exchange is the regulated marketplace where securities trade. It is the
+venue, not the merchandise. India has more than one. NSE and BSE are the two
+big ones, and most large companies are listed on both. Add "companies on
+NSE" to "companies on BSE" and you count Reliance twice; the two lists
+overlap.</p>
+<p>SEBI, the market regulator, maintains the official list of recognized
+exchanges: <a href="https://www.sebi.gov.in/stock-exchanges.html">SEBI — details of stock exchanges</a>.</p>
+<h2>The index</h2>
+<p>An index is a measuring stick: a basket of stocks picked by written rules,
+tracked as one number so people can discuss how the basket did.</p>
+<p>An index is picked the way a cricket team is picked. There are written
+selection rules and scheduled reviews, and players get added and dropped.
+Selection means a player met the criteria on selection day. It is not a
+lifetime guarantee, and it says nothing about form next season.</p>
+<h2>The research universe</h2>
+<p>A research universe is the list of stocks you decided to ask your question
+about. Different questions need different lists. "How are India's biggest
+companies doing?" works with the Nifty 50. "Are mid-sized and smaller
+companies rising too?" needs a wider list. "Which tiny companies are
+gaining?" needs a different list again, plus a harder conversation about
+risk. No universe is correct in general; a universe fits your question or it
+doesn't.</p>
+<p>"Whatever my broker app shows" is not a universe. That is a wedding guest
+list copied from your entire contacts app: complete, and useless for
+planning.</p>
+<h1>Part 2 — From thousands of listings to 500</h1>
+<p>The whole journey on one page:</p>
+<pre><code class="language-text">EVERYTHING LISTED ON INDIAN EXCHANGES
+        |  several exchanges, overlapping lists,
+        |  shares mixed with ETFs, REITs, bonds, and more
+        v
+COMPANIES LISTED ON NSE
+        |  the main board, plus a separate platform
+        |  for very small companies (SME / Emerge)
+        v
+ORDINARY SHARES THAT ACTUALLY TRADE
+        |  filters: trades regularly? enough shares
+        |  publicly available? cheap enough to trade in
+        |  and out of? not suspended?
+        v
+NIFTY 500  &lt;- the official index
+        |  100 large companies
+        |  150 mid-sized companies
+        |  250 smaller companies
+        v
+MARKETWORKS DATED UNIVERSE
+        the Nifty 500 list as it stood on a specific date,
+        plus a record of which stocks we have usable data for
+</code></pre>
+<h2>The starting pool</h2>
+<p>NSE's year-end summary reported 2,898 companies listed on NSE as of
+31 December 2025, with 2,358 on the main board. The count excludes mutual
+funds, ETFs, and bonds. The date matters: companies list, delist, and merge
+all year, so a count without a date goes stale without warning you.</p>
+<p>Source: <a href="https://nsearchives.nseindia.com/web/pressrelease/2026-01/PR_cc_01012026_20260101194417.pdf">NSE Annual Highlights — Calendar Year 2025</a>.</p>
+<h2>The case against studying all 2,900</h2>
+<p>"Everything" sounds thorough. In practice it mixes companies that behave
+nothing alike as data. Some stocks trade crores of rupees a day; others
+barely trade at all. A stock that rarely trades can jump 15% on a handful of
+shares, and the move is noise rather than information. A Rs 5 share can look
+cheap, but the price of one share says nothing about what the whole company
+is worth.</p>
+<p>Narrowing the list is not a verdict on the excluded companies. It builds a
+first laboratory of stocks similar enough that comparing them means
+something.</p>
+<h1>Part 3 — The Nifty 500</h1>
+<p>The official index this course starts from is the Nifty 500.</p>
+<p>One naming note. Inside Marketworks you will sometimes see the shorthand
+"NSE 500". This course keeps the names separate: Nifty 500 means the
+official index, and "Marketworks Nifty 500-derived universe" means our dated
+copy of its member list with our data attached. NSE is an exchange. The
+Nifty 500 is an index.</p>
+<h2>The selection rules in plain words</h2>
+<p>The rules are written by NSE Indices, the cricket selectors from Part 1. To
+qualify, a stock must:</p>
+<ul>
+<li>be an ordinary share of an Indian company trading on NSE (no bonds,
+  warrants, or suspended shares);</li>
+<li>have traded on at least 90% of days over the past six months;</li>
+<li>have enough shares available for the public to buy and sell (this public
+  portion is called the free float; promoters' locked-in holdings do not
+  count);</li>
+<li>be cheap to trade in and out of, meaning the price moves against you by no
+  more than about 1% when you trade (this cost is called the impact cost);</li>
+<li>have some listing history, and rank in the top 800 on both trading
+  activity and total company value.</li>
+</ul>
+<p>From everything that qualifies, the index takes the 500 biggest companies by
+six-month average value. Company value here means market capitalization:
+share price times number of shares, roughly the cost of buying the whole
+company.</p>
+<p>The rules change from time to time. The authoritative version lives with NSE
+Indices: <a href="https://www.niftyindices.com/Methodology/Method_NIFTY_Equity_Indices.pdf">Nifty equity-index methodology, March 2026</a>.</p>
+<h2>Inside the 500</h2>
+<p>NSE Indices describes listed companies as a ladder by size. The biggest 100
+are large cap, the next 150 mid cap, the 250 after that small cap, and
+everything beyond microcap and smaller. ("Cap" is short for market
+capitalization, company size.) The Nifty 500 is the top three rungs
+together: you see the giants, the middle, and the smaller players, without
+the thinnest end of the market.</p>
+<p>Source: <a href="https://www.niftyindices.com/docs/default-source/indices/nifty-500/nifty-500-whitepaper_2025.pdf?sfvrsn=7b2c6635_4">Nifty 500 white paper, October 2025</a>.</p>
+<h2>Unequal votes</h2>
+<p>"The Nifty 500 rose 1%" is one number built from 500 stocks, and the votes
+are unequal. Each company counts in proportion to the market value of its
+publicly tradable shares. A top bank moves the index far more than the 400th
+company on the list. The official term is free-float market-cap weighted;
+the plain version is that big companies' moves count for more. Part 5 turns
+on this fact.</p>
+<h2>A dated list</h2>
+<p>The Nifty 500 is refreshed twice a year, with changes taking effect on the
+last working day of March and September. Stocks join and stocks drop out.</p>
+<p>Source: <a href="https://niftyindices.com/resources/index-rebalancing-schedule">Nifty Indices reconstitution calendar</a>.</p>
+<p>"The Nifty 500" is a series of dated lists, so an analysis has to say which
+date's list it used. Marketworks stamps that date on its data everywhere.</p>
+<h1>Part 4 — The case for starting here</h1>
+<p>Coverage: as of 30 March 2026, NSE Indices reported the Nifty 500 covered
+about 92% of the market value of all NSE-listed stocks (measured on free
+float) and about 84% of everything traded over the prior six months. The
+percentages drift, which is why they carry a date, but the picture is
+stable: most of the listed market's value and trading sits inside this list.
+Source: <a href="https://www.niftyindices.com/indices/equity/broad-based-indices/nifty-500">Nifty 500 official index page</a>.</p>
+<p>Range: the Nifty 50 describes the giants. It cannot say whether hundreds of
+mid and small companies joined a rally or sat it out, and that difference is
+what this course teaches you to see.</p>
+<p>Pre-filtering: every member passed the trading-regularity, free-float, and
+cost-to-trade checks, which clears the worst data problems before we start.
+Filtered is not the same as recommended; the checks test tradability, not
+quality.</p>
+<p>Enough stocks to compare: Marketworks keeps asking questions like "how many
+stocks are above their long-term trend?" Those questions need a crowd, and
+500 is a crowd you can still understand.</p>
+<p>A shared measuring stick: if every learner picked their own stock list, no
+two readings could be compared. With a shared, dated universe, your number
+and mine can disagree for interesting reasons instead of because we counted
+different stocks.</p>
+<h1>Part 5 — The index can rise while most stocks fall</h1>
+<p>A class average can rise because two toppers scored 98 while most of the
+class slipped. "The average rose" and "most students did worse" are both
+true; they answer different questions. An index is that average, and from
+Part 3 you know the biggest companies are toppers with extra weight.</p>
+<p>Take a toy index of ten stocks in which the two biggest carry half the total
+weight between them. One day those two rise and the other eight fall. The
+weighted index finishes up about +0.3% while eight of ten stocks fell. You
+will run these numbers yourself in the worksheet.</p>
+<p>Two honest headlines describe that day. "The index rose." "Only 20% of
+stocks rose." The first describes the weighted basket. The second counts how
+many stocks joined the move; the market's word for that head-count is
+breadth, and in a breadth count every stock gets one vote regardless of
+size.</p>
+<p>Marketworks shows both on purpose. The index alone can hide a rally carried
+by three giants. Breadth alone hides where the money is. Read them together.</p>
+<h1>Part 6 — What the list cannot tell you</h1>
+<p>Every universe leaves things out, and naming the blind spots is what
+separates a measurement from a guess. Starting with the Nifty 500 does not
+mean:</p>
+<ul>
+<li>these are 500 good companies (the filters test tradability, not quality or
+  price);</li>
+<li>they are all equally easy to trade (a small-cap member trades far thinner
+  than a large bank);</li>
+<li>India's smallest companies are represented (the microcap tail sits
+  outside);</li>
+<li>membership is a recommendation (it never is);</li>
+<li>today's list was always the list (members change twice a year).</li>
+</ul>
+<h2>Judging the past with today's list</h2>
+<p>The last point produces one of the most common mistakes in market analysis.
+Today's Nifty 500 is a photograph of today. Study "how these 500 stocks
+performed over the last ten years" and you are studying only the companies
+that survived and succeeded enough to be on today's list. The ones that
+shrank, failed, or delisted along the way are missing from your record.</p>
+<p>The name for this mistake is survivorship bias: judging a journey by
+interviewing only the people who finished it. Module 3 treats it properly.
+Until then, one sentence covers it: a universe list is data, and data has a
+date.</p>
+<h2>Members and measured are different counts</h2>
+<p>A metric like "% of stocks above their 200-day average" needs 200 days of
+price history per stock. A company that listed recently does not have that
+yet. On a given day Marketworks may compute the metric on 480 of the 500,
+and the display should say so.</p>
+<p>The official side has its own wrinkle: around a merger or an index
+maintenance event, the official dated member file can briefly hold a few
+more or fewer than 500 securities. When that happens we report the official
+count as published. We do not round it to 500, and we do not invent a
+reason.</p>
+<p>A statistic you can trust answers four things: counted how many, out of
+which list, as of which date, and with what left out.</p>
+<h1>The habit this module leaves you with</h1>
+<p>Whenever anyone, including Marketworks and including this course, shows you
+a market statistic, run this checklist:</p>
+<pre><code class="language-text">Which stocks were measured, exactly?
+Why is that the right list for this question?
+How did stocks get onto the list?
+Does every stock count equally, or do big ones count more?
+Which date's list is this?
+How many stocks were actually counted?
+What's outside the list that I should remember exists?
+</code></pre>
+<p>A statistic that cannot answer these is not wrong. It is unready.</p>
+<h1>Closing</h1>
+<p>The Nifty 500 avoids two bad extremes. The 50-stock headline view misses
+most of the market. The everything-in-the-app view drowns you in noise. In
+between sits a wide, rules-based, dated list, built for learning how India's
+large, mid, and small companies move together and apart.</p>
+<p>Module 2 asks the first working question: when the index rises, is the whole
+market rising, or is the index hiding what most stocks are doing?</p></div>
+    </section>
+</main>
+<script>
+  document.querySelectorAll('.tog input').forEach(cb => {
+    cb.addEventListener('change', () => {
+      document.getElementById(cb.dataset.col).classList.toggle('hidden', !cb.checked);
+    });
+  });
+</script>
+</body>
+</html>

@@ -67,12 +67,13 @@ Handoff: opening estimate interaction and five-object sort.
 
 > How many stocks are in the Indian stock market?
 >
-> Fifty sounds reasonable. That is the Nifty number most people meet in the
-> news. Five hundred also sounds reasonable, especially if you use
-> Marketworks. Open a broker search and the answer can look like several
-> thousand.
+> Take a guess. Fifty? That's a reasonable guess — it's the Nifty number in
+> the news every evening. Five hundred? Also reasonable — Marketworks talks
+> about 500 stocks all the time. Or maybe you've scrolled a broker app and
+> thought, "thousands, surely."
 >
-> These answers are not equally useful—but each points to something real.
+> Here's the strange part. Every one of those answers is right about
+> *something*. And none of them is "the market."
 
 ### 00:25–01:05 — The question beneath every dashboard
 
@@ -81,14 +82,16 @@ appear around an empty circle labelled `which stocks?`.
 
 **Presenter**
 
-> Before we call the market strong, weak, broad, narrow, expensive, or
-> stressed, we have to say which securities we measured.
+> Think of an election. Someone tells you, "the people have voted yes." Your
+> first question should be — which people? The whole country? One state? One
+> housing society? The result means nothing until you know who was on the
+> voter list.
 >
-> A market statistic without that definition is like an election result
-> without saying who was allowed to vote.
+> Market statistics work the same way. Before anyone calls the market strong,
+> weak, or expensive, they have to say which stocks they measured.
 >
-> The selected set of securities is called a research universe. It is the
-> population to which we apply a question or calculation.
+> That chosen list has a name: your research universe. It's simply the set of
+> stocks you've decided to ask your question about.
 
 ### 01:05–02:40 — Five objects that sound interchangeable
 
@@ -97,27 +100,33 @@ illustration.
 
 **Presenter**
 
-> We need to separate five objects.
+> People say "I bought Tata Motors on the NSE, it's in the Nifty" in one
+> breath. That sentence quietly mixes several different things. Let's pull
+> them apart.
 >
-> A company is the underlying business—its operations, employees, cash flows,
-> assets, and obligations.
+> First, the company. That's the actual business — the factories, the people,
+> the brands, the money coming in and going out. It exists whether or not
+> anyone trades it.
 >
-> A security is a financial claim. An ordinary equity share is one kind.
-> Exchange-traded funds, debt securities, preference shares, REITs, and InvITs
-> are other kinds.
+> Second, the share. When you buy one share, you own a small slice of that
+> business — a claim on a piece of what it earns. The market's word for any
+> tradable claim like this is a security. An ordinary share is one kind.
+> There are others: ETFs, which are funds you buy and sell like a single
+> stock; REITs, a slice of rental-property income; InvITs, a slice of
+> infrastructure income like roads and power lines; and bonds. Your broker
+> app shows them all mixed together.
 >
-> An exchange is a regulated venue where eligible securities are admitted and
-> traded. NSE and BSE both operate equity markets, and many companies appear on
-> both. So adding their listing counts does not give us a clean count of
-> distinct Indian companies.
+> Third, the exchange. That's the regulated marketplace — the venue, not the
+> merchandise. NSE and BSE are the two big ones, and here's the trap: most
+> large companies are listed on both. Add the two lists together and you'd
+> count Reliance twice.
 >
-> An index is a rules-based measurement of a selected basket. It has
-> eligibility rules, a selection method, weights, a calculation method, and a
-> review schedule.
+> Fourth, the index. Not a place, not a product you own — a measuring stick. A
+> basket of stocks picked by written rules, tracked as one number.
 >
-> A research universe is the set we choose for a specific analysis. An index
-> can supply that set, but the index, exchange, and research universe are not
-> synonyms.
+> And fifth, the research universe — the list you choose for your question. An
+> index can supply that list. But an index, an exchange, and a universe are
+> not the same thing.
 
 ### 02:40–03:35 — The broker-search trap
 
@@ -126,12 +135,16 @@ ETF, REIT, debt, and an SME listing. The labels, not logos, are the focus.
 
 **Presenter**
 
-> “Everything visible in my broker” is not a research definition. A search can
-> mix security types, trading segments, multiple listings, and instruments
-> with very different histories and liquidity.
+> So what about "everything I can see in my broker app"? That's not a
+> universe. That's like planning a wedding by inviting your entire phone
+> contacts list — technically complete, useless for the actual decision.
 >
-> That does not make those instruments bad. It makes the search result an
-> unsuitable denominator for a clean market question.
+> A broker search mixes ordinary shares with ETFs, property trusts, debt, and
+> very small listings — instruments with completely different histories and
+> very different ease of trading.
+>
+> That doesn't make any of them bad. It just makes the search result the
+> wrong list to divide by when you want a clean answer to a market question.
 
 ### 03:35–04:30 — Learner handoff
 
@@ -140,15 +153,15 @@ universe funnel.
 
 **Presenter**
 
-> Your first task is deliberately simple. Estimate how many stocks you think
-> “the Indian market” contains. Then sort five examples into company,
-> security, exchange, index, and research universe.
+> Your first task is deliberately simple. Write down your estimate — how many
+> stocks do you think "the Indian market" contains? Then sort five examples
+> into company, security, exchange, index, and research universe.
 >
-> Do not worry about getting the estimate right. The point is to notice which
-> object you were counting.
+> Don't worry about getting the estimate right. Any number you write is right
+> about something. The point is to notice which thing you were counting.
 >
-> When you return, we will map the wider Indian listed landscape and begin
-> narrowing it with intent.
+> When you come back, we'll map out everything listed in India — and start
+> narrowing it down, on purpose, one decision at a time.
 
 **End card:** `Pause · Complete “What are you counting?” · 3 minutes`
 
@@ -169,12 +182,14 @@ Handoff: universe-funnel annotation.
 
 **Presenter**
 
-> Your estimate may have been fifty, five hundred, seven hundred and fifty, or
-> several thousand. Now we can place each number in context.
+> Whatever you wrote down — fifty, five hundred, seven-fifty, a few thousand
+> — hold onto it. Every one of those numbers has a home, and now we can find
+> it.
 >
-> India has multiple recognized exchanges, overlapping listings, and multiple
-> security types. We are going to narrow that landscape, one decision at a
-> time, until the denominator matches the question Marketworks wants to ask.
+> India has more than one exchange, listing lists that overlap, and many
+> kinds of securities mixed together. We're going to narrow that whole
+> landscape, one decision at a time, until the list matches the question
+> Marketworks wants to ask.
 
 ### 00:35–01:40 — The exchange-listed landscape
 
@@ -183,17 +198,20 @@ SME equity, ETFs, REITs, InvITs, debt, and “other admitted securities.”
 
 **Presenter**
 
-> Start with the exchange-listed landscape. A company can have securities
-> admitted on more than one exchange. An exchange can list instruments that
-> are not ordinary company shares. Main-board and SME segments also represent
-> different operating and liquidity contexts.
+> Start at the widest point: everything listed on Indian exchanges.
 >
-> This is why there is no honest single answer to “how many stocks?” until we
-> define the security type, venue, and segment.
+> A company can be listed on more than one exchange. An exchange lists things
+> that aren't ordinary company shares at all. And beside the main board, NSE
+> runs a separate platform for very small companies, where trading is much
+> thinner.
 >
-> SEBI maintains the recognized-exchange landscape. For this course, we then
-> move to NSE because the official index methodology we use begins from an
-> eligible NSE universe.
+> This is why "how many stocks?" still has no honest single answer. Until you
+> say which kind of security, on which exchange, in which segment, you're
+> counting different things.
+>
+> SEBI, the market regulator, keeps the official list of recognized
+> exchanges. For this course, we now move to NSE — because the official index
+> we'll build from starts with an eligible NSE universe.
 
 ### 01:40–02:30 — A dated scale reference
 
@@ -203,18 +221,20 @@ SME equity, ETFs, REITs, InvITs, debt, and “other admitted securities.”
 
 `2,358 on the main board`
 
-`As of 31 December 2025 · excludes mutual funds, ETFs and debt`
+`As of 31 December 2025 · excludes mutual funds, ETFs and bonds`
 
 **Presenter**
 
-> A dated reference helps us understand the scale. NSE's 2025 annual
-> highlights reported two thousand eight hundred and ninety-eight listed
-> companies at year-end. Two thousand three hundred and fifty-eight were on
-> the main board. NSE noted that the total excluded mutual funds, ETFs, and
-> debt securities.
+> So how big is the NSE pool, really? Here's a dated reference.
 >
-> These are not permanent constants. Listings, delistings, mergers, migrations,
-> and corporate actions change the count. Keep the date attached.
+> NSE's own year-end summary says that as of 31 December 2025, there were two
+> thousand eight hundred and ninety-eight companies listed on NSE. Two
+> thousand three hundred and fifty-eight of those were on the main board. And
+> NSE noted the count excludes mutual funds, ETFs, and bonds.
+>
+> Notice we said the date. That's a habit, not decoration. Companies list,
+> delist, and merge all the time — a count without a date goes stale without
+> telling you. Keep the date attached.
 
 ### 02:30–04:35 — Why “everything” is not the beginner's best laboratory
 
@@ -223,29 +243,35 @@ eligibility labels attach to its edge.
 
 **Presenter**
 
-> Why not begin with every listed company?
+> So why not just study all two thousand nine hundred?
 >
-> “Everything” sounds comprehensive, but it mixes businesses and securities
-> with very different trading frequency, liquidity, listing history,
-> information availability, market capitalization, and data quality.
+> "Everything" sounds thorough. In practice, it mixes companies that are
+> nothing alike as data.
 >
-> A beginner can see a five-rupee share and conclude that the company is cheap.
-> Share price alone tells us neither the company's total market value nor its
-> valuation. A beginner can also see a large percentage move without noticing
-> how little value traded.
+> Some stocks trade crores of rupees every day. Others barely trade at all. A
+> stock that hardly trades can jump fifteen percent on a day when only a
+> handful of shares changed hands — the move looks like information, but it's
+> mostly noise. And a beginner can see a five-rupee share and think, "cheap!"
+> The price of one share tells you nothing about what the whole company is
+> worth, or whether it's good value.
 >
-> Narrowing the universe is not a verdict on excluded companies. It creates a
-> coherent first laboratory.
+> Narrowing the list is not a verdict on the companies we leave out. It's how
+> you build a clean first laboratory — stocks similar enough that comparing
+> them actually means something.
 >
-> The Nifty methodology starts by defining eligible securities. In plain
-> language, it considers Indian domicile and NSE trading status, eligible
-> security types, free float, trading frequency, impact cost, listing history,
-> turnover, and market capitalization. Suspended securities and specified
-> ineligible instrument types are excluded.
+> The Nifty methodology does this narrowing with written rules. In plain
+> words: the stock must be an ordinary share of an Indian company trading on
+> NSE. It must actually trade regularly — no ghost stocks. Enough of its
+> shares must be genuinely available for the public to buy and sell — that
+> publicly tradable portion is called the free float. Trading it shouldn't
+> move the price against you by much just because you traded — that slippage
+> is called impact cost. And it needs some listing history, plus enough
+> trading activity and total company value. Suspended shares and ineligible
+> instrument types are out.
 >
-> The complete rules live in the official methodology and can change. Our job
-> is to understand the purpose of those rules, preserve the source, and date
-> the version we use.
+> The complete rules live in the official methodology document, and they can
+> change. Our job is to understand what the rules are for, keep the source,
+> and note which dated version we used.
 
 ### 04:35–05:35 — Universe choice follows the question
 
@@ -254,18 +280,20 @@ microcap-liquidity universe.
 
 **Presenter**
 
-> There is no universally correct universe.
+> There is no single correct universe. There's only a universe that fits your
+> question — or doesn't.
 >
-> “How are India's largest companies performing?” can reasonably use the Nifty
-> 50.
+> "How are India's biggest companies doing?" The Nifty 50 answers that fine.
 >
-> “How broad is the trend across large, mid, and small companies?” needs a
-> wider set.
+> "Is the trend broad — are mid-sized and smaller companies rising too, or
+> just the giants?" Fifty stocks can't answer that. You need a wider list.
 >
-> “Which microcaps trade with adequate liquidity?” needs another universe and
-> a much stronger risk and data discussion.
+> "Which tiny companies trade with enough ease to study at all?" That's a
+> different list again — and a much more serious conversation about risk and
+> data.
 >
-> The universe is defensible only in relation to the question.
+> Same market, three questions, three universes. Your list is only defensible
+> in relation to your question.
 
 ### 05:35–06:30 — Learner handoff
 
@@ -273,15 +301,16 @@ microcap-liquidity universe.
 
 **Presenter**
 
-> Complete the funnel from the Indian exchange-listed landscape to eligible,
-> traded common equity. At each narrowing step, write what changed and why.
+> Now it's your turn. Complete the funnel — from everything listed on Indian
+> exchanges down to eligible, regularly traded ordinary shares. At each
+> narrowing step, write what changed and why.
 >
-> One warning: do not write “bad stocks removed.” Write the actual property:
-> different instrument type, insufficient trading history, liquidity filter,
-> or outside the selected market-cap range.
+> One warning. Don't write "bad stocks removed." Nothing here judges quality.
+> Write the actual property: different instrument type, too little trading
+> history, too thin to trade cheaply, or outside the chosen size range.
 >
-> Next, we will see why the official Nifty 500 is a particularly useful first
-> answer for Marketworks.
+> When you're back, we'll meet the official Nifty 500 — and see why it's a
+> particularly useful first answer for Marketworks.
 
 **End card:** `Pause · Annotate the universe funnel · 4 minutes`
 
@@ -302,15 +331,16 @@ Handoff: universe decision card.
 
 **Presenter**
 
-> The official name is Nifty 500.
+> First, let's get the name right.
 >
-> You may see “NSE 500” used as product shorthand for an NSE-based stock
-> universe. In this course, we will be precise. Nifty 500 means the official
-> index. Marketworks Nifty 500-derived universe means the dated constituent
-> and data snapshot used in one of our calculations.
+> The official index is called the Nifty 500. Inside Marketworks, you'll
+> sometimes see the shorthand "NSE 500." In this course, we'll be precise.
 >
-> That distinction prevents us from confusing an exchange, an index, and a
-> product dataset.
+> Nifty 500 means the official index. Marketworks Nifty 500-derived universe
+> means our dated copy of its member list, with our data attached.
+>
+> Keeping those names separate stops you from ever mixing up three different
+> things: an exchange, an index, and a product dataset.
 
 ### 00:40–02:05 — How the 500 is formed
 
@@ -319,19 +349,28 @@ are highlighted.
 
 **Presenter**
 
-> Under the current methodology, candidates first have to qualify for the
-> eligible NSE universe. The methodology includes trading-frequency,
-> free-float, impact-cost, security-type, listing-history, turnover, and
-> market-capitalization conditions.
+> So how does a stock get into the Nifty 500?
 >
-> Candidates must rank within the top eight hundred on both average daily
-> turnover and average full market capitalization. From the eligible set, the
-> top five hundred are selected using six-month average full market
-> capitalization.
+> Think of a cricket team. There are written selection rules. There's a
+> selection review on a schedule. Players get dropped and added. Being on the
+> team means you met the criteria on selection day — nothing more.
 >
-> Treat that as a plain-language map, not a substitute for the methodology
-> document. Index rules can change. The source document and effective date
-> belong beside the calculation.
+> The index works the same way. First, a stock has to qualify for the
+> eligible pool — the checks from the last video: an ordinary share, trades
+> regularly, enough shares available to the public, cheap to get in and out
+> of, some listing history.
+>
+> Then it must rank in the top eight hundred on two counts at once: how much
+> of it trades every day, and the total value of the company.
+>
+> From everyone who qualifies, the index takes the five hundred biggest
+> companies, measured by average total value over six months. Total company
+> value here means market capitalization: share price times the number of
+> shares — roughly, what it would cost to buy the entire company.
+>
+> Treat this as a plain-language map, not the rulebook. Index rules can
+> change. The source document and its effective date belong beside every
+> calculation.
 
 ### 02:05–03:15 — The size ladder
 
@@ -341,18 +380,21 @@ are highlighted.
 
 **Presenter**
 
-> The five hundred also gives us a useful market-cap ladder.
+> The five hundred also comes with a useful ladder.
 >
-> The top one hundred companies form the large-cap layer. The next one hundred
-> and fifty form the mid-cap layer. The subsequent two hundred and fifty form
-> the small-cap layer.
+> NSE Indices sorts listed companies by size. The biggest one hundred are
+> called large cap. The next one hundred and fifty are mid cap. The two
+> hundred and fifty after that are small cap. "Cap" is just short for market
+> capitalization — company size.
 >
-> Beyond the Nifty 500 sits the next microcap layer and the longer listed tail.
-> That tail matters, but it is not part of our starting universe.
+> The Nifty 500 is those top three rungs together: one hundred large, one
+> hundred and fifty mid, two hundred and fifty small.
 >
-> Marketworks therefore sees more of the market than a headline Nifty 50 view,
-> without immediately mixing the analysis with the least liquid end of the
-> market.
+> Beyond it sits the microcap layer and the long tail of tiny listings. That
+> tail matters — but it's not part of our starting universe.
+>
+> So Marketworks sees far more of the market than the headline Nifty 50 view,
+> without wading into the thinnest, hardest-to-trade end of the market.
 
 ### 03:15–04:20 — Coverage with a date
 
@@ -366,13 +408,17 @@ are highlighted.
 
 **Presenter**
 
-> As of the thirtieth of March 2026, NSE Indices reported that the Nifty 500
-> represented about ninety-two percent of the free-float market
-> capitalization of NSE-listed stocks, and about eighty-four percent of their
-> six-month traded value.
+> How much of the market does this list actually capture?
 >
-> The exact figures move. The principle is more durable: this is broad coverage
-> of the economically relevant and actively traded market, but it is not the
+> As of the thirtieth of March 2026, NSE Indices reported that the Nifty 500
+> covered about ninety-two percent of the market value of NSE-listed stocks —
+> measured on the shares actually available to the public, the free float.
+> And about eighty-four percent of everything traded over the previous six
+> months.
+>
+> The exact figures drift over time — that's why the date stays on screen.
+> But the picture is stable. This list captures the overwhelming bulk of
+> where India's listed money sits and trades. It's broad, but it is not the
 > whole listed market.
 
 ### 04:20–05:40 — The five reasons
@@ -382,24 +428,28 @@ funnel.
 
 **Presenter**
 
-> Marketworks begins here for five reasons.
+> So why does Marketworks begin here? Five reasons.
 >
-> First, coverage: it captures most of the listed market by free-float value
-> and traded value.
+> One, coverage. As we just saw, it captures most of the listed market — by
+> value and by trading.
 >
-> Second, range: it includes large, mid, and small companies, so participation
-> and leadership questions become meaningful.
+> Two, range. It holds large, mid, and small companies together, so we can
+> ask whether a rally is everyone — or just the giants.
 >
-> Third, investability logic: the eligible universe applies trading and
-> liquidity-related screens before size selection.
+> Three, it's pre-filtered for tradability. Every member already passed the
+> trading-regularity, free-float, and cost-to-trade checks. That clears out
+> the noisiest data problems before we start. It does not mean the stocks are
+> safe.
 >
-> Fourth, cross-sectional depth: roughly five hundred intended members give us
-> enough observations for breadth, relative-strength, sector, and unusual-
-> condition comparisons.
+> Four, it's a real crowd. Marketworks constantly asks questions like "how
+> many stocks are above their long-term trend?" Questions like that need many
+> stocks compared side by side, on the same day. Five hundred is a crowd
+> that's still small enough to understand.
 >
-> Fifth, shared language: if every learner uses a different stock list, their
-> breadth readings are not comparable. A dated common universe makes the
-> calculation reproducible and discussable.
+> Five, shared language. If every learner picked their own stock list, no two
+> readings could be compared. A shared, dated universe means your number and
+> my number can disagree for interesting reasons — not because we counted
+> different stocks.
 
 ### 05:40–06:55 — What index inclusion does not mean
 
@@ -409,17 +459,23 @@ remains.
 
 **Presenter**
 
+> Now the honest part — what being in this index does not mean.
+>
 > This is a learning and research universe, not a starter portfolio.
 >
-> Index membership does not certify that a business is high quality, that its
-> shares are attractively valued, or that its liquidity suits every investor
-> and order size. Small-cap members do not carry the same risks as the largest
-> companies. Membership changes, and the present list did not exist unchanged
-> throughout history.
+> Index membership doesn't certify that a business is high quality, that its
+> shares are attractively priced, or that it's easy to trade in the size
+> you'd want. A small-cap member carries very different risks from the
+> largest companies. And being picked is not a recommendation — it never is.
 >
-> A current list projected backward can introduce survivorship and membership
-> bias. We will treat that formally when we learn to specify quantitative
-> signals.
+> Membership also changes. The list is refreshed twice a year — under the
+> current schedule, changes take effect at the end of March and September. So
+> today's list did not exist unchanged through history. Take today's members and study their past ten years, and you've
+> quietly cheated — you're interviewing only the survivors, the companies
+> that lasted long enough to be in the index today. The ones that shrank,
+> failed, or got delisted have vanished from your study. That trap is called
+> survivorship bias, and we'll deal with it properly when we learn to specify
+> quantitative signals.
 
 ### 06:55–07:30 — Learner handoff
 
@@ -427,12 +483,13 @@ remains.
 
 **Presenter**
 
-> Complete your universe decision card. State the question, the official
-> reference universe, the Marketworks snapshot date, the selection logic,
-> three reasons it fits, and three things it cannot tell you.
+> Time to make this yours. Complete your universe decision card: the question
+> you're asking, the official reference universe, the Marketworks snapshot
+> date, how members get selected, three reasons this list fits — and three
+> things it cannot tell you.
 >
-> If one of your reasons says “these are the best stocks,” revise it. A sound
-> universe narrows a measurement problem. It does not finish the investment
+> If one of your reasons says "these are the best stocks," revise it. A sound
+> universe narrows a measurement problem. It doesn't finish the investment
 > decision.
 
 **End card:** `Pause · Complete the universe decision card · 5 minutes`
@@ -455,13 +512,19 @@ weight; eight smaller bars represent the other 50%.
 
 **Presenter**
 
-> We now have a universe. But we can still ask two different questions of it.
+> We have our universe. Now here's the most useful idea in this whole module.
 >
-> Suppose a ten-stock index gives half of its total weight to its two largest
-> companies. The other eight companies share the remaining half.
+> Think of a school exam. The class average can go up because two toppers
+> scored ninety-eight — even while most of the class did worse than last
+> time. "The average rose" and "most students slipped" can both be true. They
+> answer different questions.
 >
-> Today, the two largest rise. The other eight fall. The weighted index still
-> closes up.
+> Indexes work exactly like that average. So let's build a toy one. Ten
+> stocks. The two biggest carry half the total weight between them — the
+> toppers. The other eight share the rest.
+>
+> Today, the two big ones rise. The other eight fall. Watch what the index
+> does.
 
 ### 00:45–02:10 — Calculate the two views
 
@@ -475,15 +538,21 @@ weight; eight smaller bars represent the other 50%.
 
 **Presenter**
 
-> The index asks: what happened to this basket after applying its weights?
+> The index asks one question: what happened to this basket, once big
+> companies' moves count for more?
 >
-> The breadth measure asks: how many covered stocks participated?
+> Run the numbers — you'll do this yourself in the worksheet — and the
+> weighted index finishes *up*. Positive zero point three percent.
 >
-> In our fixture, the index return is positive zero point three percent. Only
-> two of ten stocks advanced, so equal-stock breadth is twenty percent.
+> Now ask a different question: how many stocks actually joined the move?
+> Give every stock one equal vote, big or small, and count. Two out of ten
+> rose. That's twenty percent. The market's word for this head-count is
+> breadth.
 >
-> “The index rose” and “most stocks fell” are both true. The first statement
-> reflects weighted direction. The second reflects participation.
+> So here are two honest headlines for the same day. "The index rose." And
+> "only twenty percent of stocks rose." Both are true. The first tells you the
+> weighted direction. The second tells you participation — how many stocks
+> came along.
 
 ### 02:10–03:10 — Why Marketworks shows both
 
@@ -492,15 +561,18 @@ line with an equal-stock breadth line.
 
 **Presenter**
 
-> Marketworks often counts each eligible, covered stock once for breadth, even
-> though the official Nifty 500 return gives larger free-float companies more
-> influence.
+> This is why Marketworks shows you both views, on purpose.
 >
-> Neither measure is the one true market. Direction without participation can
-> hide concentration. Participation without the benchmark can hide the
-> economic weight of the leaders.
+> For breadth, we usually count each eligible, covered stock once — one
+> stock, one vote. The official Nifty 500 return, meanwhile, gives companies
+> with a larger free float more influence.
 >
-> Read them together.
+> Neither one is "the real market." The index without breadth can hide a
+> rally carried by three giants. Breadth without the index can hide where the
+> actual money is moving.
+>
+> Read them together. That one habit will change how you hear every market
+> headline.
 
 ### 03:10–04:20 — Membership is not coverage
 
@@ -509,20 +581,23 @@ line with an equal-stock breadth line.
 
 **Presenter**
 
-> One final distinction: index membership and usable data coverage are not
-> always identical.
+> One last honest wrinkle: being in the universe and being measurable are not
+> always the same thing.
 >
-> A metric may need two hundred trading days of history. A recent listing may
-> be in the universe but lack that history. A suspended or missing series can
-> also reduce the denominator for a date.
+> Say a metric needs two hundred trading days of history. A company that
+> listed recently is in the universe — but it doesn't have that history yet.
+> A suspended or missing price series can shrink the count too.
 >
-> The dashboard should show the intended universe, the metric-eligible count,
-> what was missing or excluded, and the as-of date.
+> So on a given day, we might compute a metric on, say, four hundred and
+> eighty of the five hundred. The dashboard should tell you exactly that: the
+> intended list, how many were actually counted, what was missing or
+> excluded, and the as-of date.
 >
-> Even a dated official factsheet can temporarily publish a security count
-> different from the index's design target during index maintenance or a
-> corporate action. Preserve the official dated count. Check official notices.
-> Never silently force the number to five hundred or invent an explanation.
+> And one more thing. Around a merger or index maintenance, even the official
+> dated member file can briefly hold slightly more or fewer than five hundred
+> securities. When that happens, report the official count as published, and
+> check the official notices. Never quietly round it to five hundred, and
+> never invent an explanation.
 
 ### 04:20–05:05 — The operating rule
 
@@ -530,13 +605,16 @@ line with an equal-stock breadth line.
 
 **Presenter**
 
-> Before you interpret a market statistic, ask:
+> So here's the habit this module leaves you with. Before you trust any
+> market statistic, ask:
 >
-> What is the universe? Why does it fit the question? How are members selected?
-> Is the result weighted or equal-count? What is the membership date? How many
-> members have usable data? And what sits outside the universe?
+> Which stocks were measured? Why is that the right list for this question?
+> How did stocks get onto it? Does every stock count equally, or do big ones
+> count for more? Which date's list is this? How many stocks were actually
+> counted? And what sits outside the list?
 >
-> If those questions have no answer, the statistic is not ready to interpret.
+> If those questions have no answers, the statistic isn't wrong. It's just
+> not ready to be believed yet.
 
 ### 05:05–05:30 — Close and bridge to Module 2
 
@@ -545,11 +623,12 @@ question.
 
 **Presenter**
 
-> Run the ten-stock scenario, complete the quiz, and submit the exit ticket in
-> one sentence.
+> Now put it to work. Run the ten-stock scenario yourself, take the quiz, and
+> write your exit ticket in one sentence.
 >
-> In Module 2, we keep this exact universe and ask the next question: is the
-> market's movement broad, or is the index hiding what most stocks are doing?
+> In Module 2, we keep this exact universe and ask the next question: when
+> the index rises, is the whole market really rising — or is the index hiding
+> what most stocks are doing?
 
 **End card:** `Calculate · Quiz · Exit ticket · 9 minutes`
 
@@ -565,7 +644,7 @@ question.
 - Replace any production screen that exposes private account or subscriber
   information with a controlled demo account or approved static capture.
 - Have compliance review the phrases “learning and research universe,”
-  “investability logic,” and the full limitations segment in Video 3.
+  “pre-filtered for tradability,” and the full limitations segment in Video 3.
 
 ## During recording
 

@@ -1,12 +1,16 @@
-# Module 1 — Define the market before you read it
+# Module 1 — What exactly is "the market"?
 
-Status: first complete authoring draft.
+Status: complete authoring draft, revised for the plain-language course
+voice. All learner-facing copy in this pack follows
+`.claude/skills/course-voice/SKILL.md`.
 
 ## Module promise
 
-> By the end of this module, you can explain what sits inside India's listed
-> equity market, why different market universes answer different questions,
-> and why Marketworks begins with a dated Nifty 500-derived universe.
+> By the end of this module, you can answer the question in the title. You'll
+> be able to tell apart a company, a share, an exchange, an index, and a
+> research universe; explain how India's thousands of listings narrow down to
+> the 500 stocks Marketworks studies; and — just as important — say what that
+> dated list of 500 cannot tell you.
 
 ## Pack contents
 
@@ -26,15 +30,19 @@ Status: first complete authoring draft.
 The learner submits an **Indian equity universe map + universe decision card**
 that:
 
-1. separates exchange, company, security, index, and research universe;
-2. shows the funnel from listed companies to the Nifty 500;
-3. states the official index name and the Marketworks shorthand;
-4. explains why the universe fits the learner's question;
-5. gives an as-of date and coverage count; and
-6. names at least three blind spots.
+1. tells apart an exchange, a company, a security, an index, and a research
+   universe;
+2. traces the journey from everything listed in India down to the Nifty 500;
+3. names the official index (Nifty 500) and the Marketworks shorthand
+   (NSE 500);
+4. explains why this list fits the question being asked;
+5. says which date's list it is and how many stocks were actually counted;
+   and
+6. names at least three things the list cannot tell you (blind spots).
 
 ## Authoring boundary
 
-This module recommends the Nifty 500 as a practical **learning and research
-universe**, not as a personalized portfolio or a claim that every constituent
-is suitable to own.
+This module treats the Nifty 500 as a good place to learn and measure — a
+shared, dated stock list for study. It is not a portfolio suggestion. Being
+in the index never means a stock is safe, well priced, or right for anyone
+to own.

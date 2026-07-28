@@ -4,9 +4,13 @@ Name or learner ID:
 
 Date:
 
+Keep the lesson nearby as you work. Nothing here needs more maths than
+multiplying and adding.
+
 ## Part A — Name the object
 
-Match each statement to one term:
+Five words from the lesson sound interchangeable but aren't. Match each
+description below to one of these terms:
 
 ```text
 company
@@ -16,103 +20,109 @@ index
 research universe
 ```
 
-1. A regulated venue on which eligible instruments trade:
-2. A rules-based measurement of a selected basket:
-3. The business that produces goods or services:
-4. The set of symbols to which your analysis will be applied:
-5. A financial claim such as an ordinary equity share:
+1. The regulated marketplace where shares and other tradable claims are
+   bought and sold:
+2. A basket of stocks picked by written rules, tracked as one number:
+3. The actual business — the factories, people, products, and debts:
+4. The list of stocks you've decided to ask your question about:
+5. Any tradable claim, such as one ordinary share of a company:
 
 ## Part B — Draw the funnel
 
-Complete the missing labels:
+The lesson walked from everything listed in India down to the 500 stocks
+Marketworks studies. Fill in the missing words.
 
 ```text
-India's ______________________________ landscape
-        │
-        ├── multiple exchanges with overlapping __________________
-        ├── equity plus other security/product types
+EVERYTHING LISTED ON INDIAN ______________________
+        │  several exchanges, overlapping lists, shares mixed
+        │  with other tradable things — funds you buy like a
+        │  single stock (ETFs), slices of rental-property
+        │  income (REITs), bonds, and more
         ▼
-NSE-listed __________________
-        │
-        ├── main board
-        └── __________________ platform
+COMPANIES LISTED ON ________
+        │  the main board, plus a separate platform
+        │  for very ______________ companies
         ▼
-Eligible, traded __________________ equity
-        │
-        ├── trading-frequency/liquidity checks
-        ├── free-float condition
-        └── security-type exclusions
+ORDINARY ______________ THAT ACTUALLY TRADE
+        │  trades regularly? enough shares publicly
+        │  available for trading (the free float)?
+        │  cheap enough to get in and out of?
         ▼
-Official __________________ 500
-        │
-        ├── ______ large-cap companies
-        ├── ______ mid-cap companies
-        └── ______ small-cap companies
+NIFTY ________  ← the official index
+        │  ______ large companies
+        │  ______ mid-sized companies
+        │  ______ smaller companies
         ▼
-Marketworks dated universe
-        ├── snapshot date
-        ├── intended count
-        └── metric-eligible __________________
+MARKETWORKS DATED UNIVERSE
+        the list as it stood on a specific ____________,
+        plus a record of how many stocks we could
+        actually ________________
 ```
 
 ## Part C — Choose a universe for the question
 
-Choose the best starting universe and explain one limitation.
+Different questions need different lists. For each question below, pick the
+list that fits best, say why in a line, and name one thing that list still
+can't tell you. Every universe has a blind spot — finding it is part of the
+exercise.
 
-Available choices:
+Your choices:
 
-- Nifty 50;
-- Nifty 500;
-- Nifty Total Market;
-- all securities returned by a broker search; or
-- a custom, explicitly defined universe.
+- Nifty 50 (the 50 biggest companies)
+- Nifty 500
+- Nifty Total Market (a much wider index that also reaches down into the
+  very small microcap companies)
+- everything a broker search returns
+- a custom list you define yourself
 
 ### Question 1
 
-How did India's largest, most prominent listed companies perform as a weighted
-basket?
+How did India's biggest, best-known companies do as one weighted basket?
 
-Choice:
+Your choice:
 
-Why:
+Why it fits:
 
-One limitation:
+One thing it can't tell you:
 
 ### Question 2
 
-How broad is the long-term trend across large-, mid-, and small-cap NSE
-companies?
+Is the long-term trend broad — are large, mid-sized, and smaller NSE
+companies all rising — or is it narrow?
 
-Choice:
+Your choice:
 
-Why:
+Why it fits:
 
-One limitation:
+One thing it can't tell you:
 
 ### Question 3
 
-How are microcap companies beyond the Nifty 500 behaving?
+How are the very small microcap companies outside the Nifty 500 behaving?
 
-Choice:
+Your choice:
 
-Why:
+Why it fits:
 
-One limitation:
+One thing it can't tell you:
 
 ### Question 4
 
-What percentage of the stocks Marketworks can actually calculate today are
-above their 200-DMA?
+Of the stocks Marketworks can actually measure today, what percentage are
+above their 200-day moving average? (That average is just the mean of the
+last 200 daily closing prices — a slow line that shows the long-term trend.)
 
-Choice:
+Your choice:
 
-Why:
+Why it fits:
 
-What additional metadata is required:
+What extra facts must travel with the answer (think dates and counts):
 
-## Part D — Weighted index versus participation
+## Part D — The index versus the head-count
 
-The table shows a simplified ten-stock index.
+Here's a toy index of ten stocks. The weight column is each stock's share of
+the index — remember, in a weighted index, big stocks' moves count for more.
+Start by marking each stock up or down.
 
 | Stock | Index weight | Daily return | Up or down? |
 |---|---:|---:|---|
@@ -127,66 +137,73 @@ The table shows a simplified ten-stock index.
 | I | 3% | -1.0% |  |
 | J | 2% | -1.0% |  |
 
-Calculate:
+Now calculate. For the index return, multiply each stock's weight by its
+return and add up the ten results.
 
 ```text
 Approximate weighted index return:
-Advancing stocks:
-Declining stocks:
-Percentage advancing:
+Stocks that rose:
+Stocks that fell:
+Percentage of stocks that rose:
 ```
 
-Complete:
+Complete the sentence:
 
-> The index was __________, while participation was __________.
+> The weighted index finished __________, while the share of stocks that
+> actually rose was __________.
 
-Does one result invalidate the other? Explain:
+Both numbers describe the same day. Does one make the other wrong? Explain
+in a sentence or two:
 
-## Part E — Module artifact: universe decision card
+## Part E — Module artifact: your universe decision card
 
-Complete this for the universe Marketworks will use in the course.
+This card is the module's take-away. Fill it in for the universe this course
+uses — you'll meet the same card again in later modules.
 
 ```text
 QUESTION
-What market question are we trying to answer?
+  What are we trying to find out about the market?
 
 OFFICIAL REFERENCE
-What is the official index/universe name?
+  Which official index the universe comes from.
 
 PRODUCT UNIVERSE
-What exact dated constituent file or list does Marketworks use?
+  The exact dated member list Marketworks uses — the list as it stood on
+  which date?
 
 ELIGIBILITY
-What broad filters must a company pass before index selection?
+  The checks a stock must pass before the index will even consider it.
 
 SIZE COVERAGE
-Which market-cap layers are included?
+  Which company sizes are included — large, mid-sized, small?
 
 WEIGHTING
-How is the official index weighted?
+  In the official index, do big companies' moves count for more? How?
 
 COUNTING
-How will the course's breadth calculation count stocks?
+  When the course counts how many stocks joined a move (breadth), does
+  each stock get one equal vote?
 
 DATE AND COVERAGE
-What is the membership date?
-How many intended members?
-How many metric-eligible members?
-How many missing/excluded?
+  Which date's list, and how many stocks could actually be measured?
+  Membership date:
+  Intended members:
+  Stocks we could actually measure:
+  Missing or left out (and why):
 
 WHY THIS UNIVERSE
-Give three reasons it fits the course.
+  Three reasons this list fits the course's questions.
 
 BLIND SPOTS
-Give at least three things it excludes or does not prove.
+  At least three things this list leaves out or cannot prove.
 
 PLAIN-LANGUAGE EXPLANATION
-In no more than 60 words, explain why Marketworks begins here.
+  In 60 words or fewer, explain to a friend why Marketworks begins here.
 ```
 
 ## Exit ticket
 
-Complete both sentences:
+Finish both sentences in your own words:
 
 > An index is ________________________________________________.
 
@@ -194,5 +211,5 @@ Complete both sentences:
 
 Then answer:
 
-> What is the first universe question you will ask when someone says, “the
-> market is strong”?
+> The next time someone tells you "the market is strong," what is the first
+> question you'll ask about their list?
