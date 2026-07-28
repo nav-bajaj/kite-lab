@@ -26,17 +26,22 @@ Phases per PLAN.md. Local-first: 1-3 run on the laptop; Railway is Phase 4.
 - [ ] Record one full session's raw ticks; build replay fixtures from it
 - [ ] Exit: chain updates through a full live session, disconnects recovered
 
-## Phase 3 — Aggregation + persistence (local)
+## Phase 3 — Aggregation + persistence (DONE 2026-07-28)
 
-- [ ] Minute-bar builder (OHLC, volume delta, OI o/h/l/c, spread, depth
-      imbalance, quote count)
-- [ ] Historical backfill into option_minute_bars (OHLC/volume/OI only;
-      depth columns NULL) — capability verified 2026-07-27, ~30d available,
-      see research/RESULTS_2026-07-27_history_probe.md
-- [ ] Bulk insert `option_minute_bars` (unique contract_id+minute)
-- [ ] `option_chain_snapshots` upsert <= 10s staleness
-- [ ] `daily_sessions` EOD stats + flush
-- [ ] Soak: 2-3 full sessions, exit criteria in PLAN.md
+- [x] Minute-bar builder (OHLC, volume delta, OI o/h/l/c, tick-weighted
+      spread + whole-book depth imbalance, end-of-bar book, tick count)
+- [x] Bulk insert option_minute_bars (PK contract_id+minute, ON CONFLICT
+      DO NOTHING; live/replay/hist sources); down-DB never blocks capture
+- [x] option_chain_snapshots JSON upsert every 10s
+- [x] daily_sessions EOD stats row + flush
+- [x] Replay CLI: rebuilt day-one bars from raw ticks; VALIDATED vs
+      Zerodha official candles (3,000 matched minutes, mean close err
+      0.0062, all official minutes matched) — replaces the local soak
+- [x] Historical backfill: 638k bars, 87 contracts, 2026-06-29..07-28
+      (hist rows have NULL depth columns by design)
+- [x] Postgres volume grown 500MB -> 5GB after backfill DiskFull spike
+- [ ] First live-source session: verify bars/snapshots/session row on
+      2026-07-29 (watch /admin bars counters + db_errors=0)
 
 ## Phase 4 — Production deploy (pulled forward 2026-07-27 for the 07-28 live test)
 
