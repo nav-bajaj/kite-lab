@@ -1,324 +1,363 @@
-# Curriculum blueprint — From SIP to Stock Sense
+# Curriculum blueprint — Marketworks Market State Lab
+
+Working promise:
+
+> Read the Indian market with evidence, understand how a quant turns ideas into
+> rules, and build a local daily dashboard with Codex or Claude Code.
 
 ## Course-level outcomes
 
 At completion, a learner can:
 
-1. draw the path from an Indian company raising capital to an investor holding
-   and selling a security;
-2. compare common market products by ownership, return source, risk, liquidity,
-   cost, tax questions, and effort;
-3. write a dated, evidence-based description of the Indian market's state;
-4. evaluate a stock idea with a business/price/risk checklist without turning
-   the checklist into a tip;
-5. explain diversification, drawdown, position sizing, rebalancing, and
-   benchmarking;
-6. distinguish a narrative, a signal, a rule, a backtest, and a forecast;
-7. use Codex or Claude Code to build and challenge a simple paper strategy; and
-8. identify common fraud, data, AI, and behavioral risks.
+1. write a dated description of Indian equity-market state using trend,
+   breadth, volatility/stress, concentration, and leadership;
+2. explain why an index move and broad-market participation can tell different
+   stories;
+3. distinguish a market narrative, metric, signal, screen, rule, backtest, and
+   forecast;
+4. calculate and interpret sector and stock relative strength against a stated
+   benchmark without confusing relative strength with RSI;
+5. apply three transparent pattern definitions and document their false-positive
+   risks; and
+6. use Codex or Claude Code to build, test, and operate a local market-state
+   dashboard with visible data freshness and an “observation, not
+   recommendation” boundary.
 
-## Four-week sequence
+## Three-day sequence
 
-| Week | Module | Learner artifact | Marketworks interaction |
+| Day | Module | Central question | Learner artifact |
 |---|---|---|---|
-| 1 | 0. Your investing starting point | Learner passport | Choose questions to track |
-| 1 | 1. How Indian capital markets work | Market plumbing map | Map portfolio holdings to the system |
-| 2 | 2. The product shelf | Product comparison grid | Identify what each portfolio is and is not |
-| 2 | 3. Read the Indian market today | Market weather report | Pulse, sectors, Learn |
-| 3 | 4. Stock picking without tips | Observation dossier | Screener and stock detail |
-| 3 | 5. Build a portfolio, not a pile | Portfolio policy | Compare four portfolio rule sets |
-| 4 | 6. Build a strategy with AI | Strategy card + backtest | Compare process and drawdown |
-| 4 | 7. Keep a process when markets move | 30-day operating plan | Schedule weekly return visits |
+| 1 | 1. What state is the market in? | What does “the market is up” hide? | Market-state question map |
+| 1 | 2. Read trend, breadth, and stress | Is the move broad, healthy, and supported? | Five-line market-state note |
+| 2 | 3. Think like a quant | How does an idea become a transparent measurement? | Signal anatomy card |
+| 2 | 4. Find leadership and patterns | Who is leading, and what price events are observable? | Pattern definition sheet + shortlist |
+| 3 | 5. Build the local dashboard with AI | Can the frozen definitions be reproduced on-device? | Running dashboard |
+| 3 | 6. Audit it and create a daily habit | Can the learner trust, explain, and update the output? | Dashboard audit + ten-minute routine |
 
-## Module 0 — Your investing starting point
+Each module is approximately 60 minutes:
 
-**Question:** What are you trying to learn, and what decisions are not part of
-this course?
+- 15 minutes — concept in plain English;
+- 15 minutes — annotated Marketworks walkthrough;
+- 20 minutes — individual mission; and
+- 10 minutes — concept check, explanation, and debrief.
 
-### Lessons
+## Day 1 — Read the market, not the headline
 
-1. Investing, trading, and speculation are different activities.
-2. Goal, horizon, liquidity need, and ability to tolerate loss are different
-   dimensions.
-3. Mutual funds are already portfolios; direct stocks create a different job.
-4. What Marketworks does: observation, research, and model portfolios.
-5. What the course does not do: personalized advice or trade execution.
+### Module 1 — What state is the market in?
 
-### Mission
+**Question:** What does a Nifty headline tell you, and what does it leave out?
 
-Complete a learner passport:
+#### Concepts
 
-- three questions I want the course to answer;
-- what I currently own by product type, without amounts or account details;
-- a hypothetical one-year drawdown I would find hard to tolerate;
-- one source I currently trust and why; and
-- one behavior I want to stop.
+1. “Market state” is a dated description, not a prediction.
+2. Index, benchmark, and investable universe are different objects.
+3. Price direction, participation, leadership, volatility, and drawdown answer
+   different questions.
+4. Market state can be mixed; one indicator does not need to win.
+5. Observation, inference, implication, and instruction must stay separate.
 
-### Check for understanding
+#### Marketworks walkthrough
 
-Scenario questions distinguish financial capacity, emotional comfort, time
-horizon, and return desire. The quiz should reject “high return target” as a
-risk profile.
+Open the current Pulse or equivalent market overview and identify:
 
-## Module 1 — How Indian capital markets work
+- the as-of date;
+- the broad index direction and trend reference;
+- the stated market regime;
+- the breadth reading;
+- the stress/volatility context; and
+- one thing the page does not establish.
 
-**Question:** What actually happens between a company needing money and a share
-appearing in your demat account?
+#### Mission — market-state question map
 
-### Lessons
+For a supplied headline such as “Nifty closes at a record high,” write the next
+five questions:
 
-1. Why companies and governments issue equity or debt.
-2. Primary market vs secondary market.
-3. Exchange, broker, depository, clearing corporation, bank, registrar, and
-   regulator.
-4. Demat and trading accounts; order, trade, settlement, and contract note.
-5. Indices: measurement rules, not “the market.”
-6. Corporate actions: dividend, split, bonus, rights issue, buyback.
+1. Is the index above its medium/long-term trend?
+2. How many stocks are participating?
+3. Is leadership broad or concentrated?
+4. Which sectors are leading?
+5. Is volatility/stress confirming or contradicting the move?
 
-### Mission
+#### Check for understanding
 
-Arrange a set of cards into the correct market flow, then explain in 100 words
-how a stock purchase reaches the demat account.
+The learner must reject:
 
-### Marketworks bridge
+- “Nifty rose, therefore most stocks rose.”
+- “A bull regime means the market will rise tomorrow.”
+- “A strong market means every breakout is valid.”
 
-Open one current portfolio holding and label:
+### Module 2 — Read trend, breadth, and stress
 
-- the listed company;
-- the exchange-traded security;
-- the index/universe from which it was eligible; and
-- the model rule that selected it.
+**Question:** Is the current move broad, healthy, and supported?
 
-No claim is made about whether the learner should own it.
+#### Concepts
 
-## Module 2 — The product shelf
+1. Trend: close relative to a stated moving average.
+2. Breadth level: percentage of an NSE 500-like universe above the 50-DMA and
+   200-DMA.
+3. Breadth momentum: advances versus declines or one simple breadth oscillator.
+4. Drawdown and extension: distance from a recent peak and from trend.
+5. Volatility/stress as context, not a direction forecast.
+6. Concentration: an index can rise while participation narrows.
+7. Direction matters: 60% breadth rising from 40% differs from 60% falling from
+   80%.
 
-**Question:** If all products can help money grow, why are they not
-interchangeable?
+#### Marketworks walkthrough
 
-### Lessons
+Use the breadth history, stress/regime, and concentration views to answer:
 
-1. Direct stock: part ownership, dividends, price risk, concentration, work.
-2. Mutual fund: pooled vehicle, active/passive, NAV, direct/regular, expense.
-3. Index fund vs ETF: same idea, different trading and operational details.
-4. Government/corporate debt: coupon, maturity, credit, duration, liquidity.
-5. REIT/InvIT and gold fund/ETF: exposure without direct ownership of the
-   underlying physical asset.
-6. IPOs: a capital-raising event, not a product category with guaranteed gains.
-7. Futures/options: risk-transfer and leverage; recognition only in this course.
-8. The cost stack: expense ratio, brokerage, spread, impact, tax questions.
+- Is long-term participation above or below half the universe?
+- Is breadth improving or deteriorating?
+- Is the market trend broad or dependent on a few names?
+- Is the current reading calm, stretched, drifting, or stressed?
+- What is the data date and coverage?
 
-### Mission
+#### Mission — five-line market-state note
 
-Build a comparison grid for five products:
+Write exactly five dated lines:
 
-- what is owned;
-- expected return source;
-- main loss mechanisms;
-- liquidity;
-- diversification;
-- time/skill required;
-- visible and less-visible costs; and
-- which questions must be asked before use.
+1. **Direction:** broad index relative to trend.
+2. **Participation:** breadth level and direction.
+3. **Leadership:** leading sectors and whether leadership is broad.
+4. **Risk context:** volatility, stress, drawdown, or extension.
+5. **Uncertainty:** one contradiction or missing input.
 
-### Marketworks bridge
+No line may contain “buy,” “sell,” “target,” “must,” or “will.”
 
-Explain why a Marketworks model portfolio is neither a mutual fund nor a
-personalized managed account, and identify who executes any real-world
-decision.
+#### Check for understanding
 
-## Module 3 — Read the Indian market today
+Given three market snapshots, choose the most defensible description and mark
+each sentence as observation, inference, or unsupported claim.
+
+## Day 2 — Turn a market idea into a quant rule
+
+### Module 3 — Think like a quant
+
+**Question:** How does a useful idea become a transparent measurement?
+
+#### Concepts
+
+1. The quant chain:
+   **question → universe → data → metric → comparison → screen → review**.
+2. A metric describes; a signal transforms; a screen filters; a rule specifies
+   an action; a backtest studies historical behavior; a forecast claims
+   something about the future.
+3. Universe and benchmark choice change the answer.
+4. Lookbacks are design choices, not natural laws.
+5. No future-data access: values must use information available as of the
+   displayed date.
+6. Missing data, survivorship, corporate actions, and stale prices can create
+   clean but wrong outputs.
+7. Reproducibility beats complexity.
 
-**Question:** How can an index rise while most stocks feel weak?
+#### Marketworks walkthrough
 
-### Lessons
+Reverse-engineer three existing readings:
+
+- `% above 200-DMA`;
+- six-month relative strength versus Nifty 50; and
+- a 20-day breakout.
 
-1. Price direction vs breadth.
-2. Concentration and why index weights matter.
-3. Trend, regime, and drawdown.
-4. India VIX as expected uncertainty, not a direction signal.
-5. Sector leadership and relative strength.
-6. Dispersion, extension, and the difference between strong and safe.
-7. Dated evidence: every market statement needs an “as of.”
+For each, identify universe, input, lookback, comparison, output, and one
+failure mode.
 
-### Mission: the five-line market weather report
+#### Mission — signal anatomy card
 
-Using a specified Marketworks snapshot, write:
+Freeze one metric in plain language:
 
-1. direction;
-2. participation;
-3. leadership;
-4. risk/uncertainty; and
-5. one unresolved question.
+```text
+Question:
+Universe:
+Input columns:
+As-of rule:
+Lookback:
+Calculation:
+Benchmark/comparison:
+Output:
+What it describes:
+What it does not prove:
+Known failure modes:
+```
 
-Each line must cite the displayed data and avoid buy/sell language.
+#### Check for understanding
 
-### Required Learn links
+Learners diagnose:
 
-Regime, breadth/% above 200-DMA, concentration, India VIX, sector relative
-strength, dispersion, drawdown, and stress score.
+- relative strength versus RSI;
+- today’s close compared with a high that accidentally includes today;
+- a breadth calculation that silently drops half the universe; and
+- a screen described as a forecast.
 
-### Return trigger
+### Module 4 — Find leadership and price patterns
 
-Repeat the weather report seven days later and mark what changed. This is the
-first designed repeat visit.
+**Question:** Who is leading, and which observable price events deserve a
+closer look?
 
-## Module 4 — Stock picking without tips
+#### Concepts
 
-**Question:** What evidence would make a stock idea worth further research?
+1. Sector relative strength: sector return minus Nifty 50 return over a stated
+   window.
+2. Stock relative strength: stock return minus benchmark return over 126
+   trading days.
+3. RS level versus RS direction and leadership tenure.
+4. Why a one-day gap can create misleading relative strength.
+5. Breakout level, closing confirmation, trend context, volume context, and
+   extension risk.
+6. Pattern matches are observation lists, not entries.
 
-### Lessons
+#### Three pattern definitions
 
-1. A company, its stock, and its price are three different objects.
-2. Business questions: customer, revenue engine, competitive position, capital
-   needs, management claims.
-3. Financial questions: growth quality, margins, cash conversion, debt,
-   dilution, and return on capital. Use official filings or authorized sources;
-   Marketworks does not currently provide fundamentals.
-4. Market questions: trend, relative strength, volume participation, extension,
-   beta, drawdown, and liquidity.
-5. Valuation as expectations embedded in price, not a single magic ratio.
-6. Base rates and disconfirming evidence.
-7. Difference between “interesting,” “well-researched,” and “suitable for me.”
+1. **Fresh 20-day breakout**
+   - close today is above the highest close of the previous 20 sessions;
+   - the previous-high window excludes today; and
+   - close is above the 50-DMA.
 
-### Mission: observation dossier
+2. **Fresh 52-week breakout**
+   - close today is above the highest close of the previous 252 sessions;
+   - the previous-high window excludes today; and
+   - close is above the 50-DMA.
+   - This is descriptive only; the course makes no forward-return claim.
 
-Choose one company from a neutral instructor-assigned list and produce:
+3. **Coiled spring / pre-breakout watch**
+   - close is above the 50-DMA and 200-DMA;
+   - 20-day realized volatility is below the stock’s own historical first
+     quartile; and
+   - it is explicitly labeled a setup, not a breakout.
 
-- what the company does in one sentence;
-- three verified business facts with source dates;
-- the current Marketworks trend/risk readings;
-- two reasons the idea could be wrong;
-- data that is missing; and
-- the next question to investigate.
+Every candidate also shows:
 
-The dossier contains no rating, target, expected return, or position size.
+- as-of date;
+- sector;
+- 126-day RS versus Nifty 50;
+- distance from the relevant level;
+- distance from 50-DMA and 200-DMA;
+- volume ratio when trustworthy volume data is available;
+- data-quality/coverage flag; and
+- a reason the match may fail.
 
-## Module 5 — Build a portfolio, not a pile
+#### Marketworks walkthrough
 
-**Question:** Why can ten individually reasonable ideas form an unreasonable
-portfolio?
+Compare the sector, RS leader, breakout, coiled-spring, extension, and stock
+detail views. Find one example where:
 
-### Lessons
+- a strong stock sits in a weak sector;
+- a breakout appears in weak breadth; or
+- an RS leader is too extended to call “early.”
 
-1. Position sizing and concentration.
-2. Sector and factor overlap.
-3. Correlation changes and false diversification.
-4. Rebalancing, turnover, costs, and taxes.
-5. Benchmark and opportunity cost.
-6. Drawdown, volatility, and path dependence.
-7. Entry, exit, and cash rules must be explicit.
-8. Why the best backtest is not automatically the best design.
+#### Mission — observation shortlist
 
-### Mission 1: four portfolio philosophies
+Select one candidate from each pattern list and write:
 
-Compare Quality Momentum, Trend Leaders, Core Momentum, and Defensive Blend on:
+- the exact rule it matched;
+- market and sector context;
+- one confirming observation;
+- one contradiction;
+- the level or condition that would invalidate the pattern description; and
+- what additional fundamental research would still be required.
 
-- universe;
-- signal family;
-- number of holdings;
-- cadence;
-- regime behavior;
-- likely turnover;
-- concentration;
-- drawdown controls; and
-- what trade-off the design appears to accept.
+The artifact title must say **observation shortlist**, never “stock picks.”
 
-Historical performance is shown only after the learner predicts the trade-off.
+## Day 3 — Build and own the dashboard
 
-### Mission 2: portfolio policy
+### Module 5 — Build the local dashboard with AI
 
-Write a paper-only policy with blanks for:
+**Question:** Can Codex or Claude Code reproduce the frozen definitions on the
+learner’s device?
 
-- purpose and benchmark;
-- universe;
-- maximum holdings and maximum position;
-- maximum sector exposure;
-- rebalance schedule;
-- exit rule;
-- transaction-cost assumption;
-- review interval; and
-- conditions that would invalidate the experiment.
+#### Concepts
 
-## Module 6 — Build a strategy with AI
+1. AI coding agent versus AI market oracle.
+2. Starter folder, data dictionary, environment, permissions, and test loop.
+3. Why `METRICS.md` is frozen before implementation.
+4. Separating data preparation, calculations, presentation, and commentary.
+5. A dashboard is only as current and complete as its inputs.
 
-**Question:** Can you turn a plain-English investing idea into a testable rule
-without pretending the result predicts the future?
+#### Mission
 
-### Lessons
+Complete prompts 1-5 in `AI_MARKET_DASHBOARD_LAB.md`:
 
-1. Agent setup and permissions.
-2. The difference between a prompt, a specification, and code.
-3. Data dictionary and decision-time availability.
-4. Backtest timeline: signal date, execution date, holding period.
-5. Benchmark, costs, drawdown, turnover, and rolling results.
-6. Leakage, survivorship, overfitting, and robustness.
-7. Reading and challenging an AI-generated report.
+- inspect the starter kit;
+- freeze `METRICS.md`;
+- plan the build;
+- implement the local dashboard;
+- run tests and reconcile one sample calculation manually.
 
-### Mission
+Required dashboard panels:
 
-Complete the workflow in `AI_PORTFOLIO_LAB.md`. Submit:
+1. data date, universe, benchmark, and coverage;
+2. broad trend, drawdown, and volatility context;
+3. breadth above 50-DMA and 200-DMA;
+4. sector breadth and relative-strength table;
+5. stock relative-strength leaders; and
+6. the three pattern observation lists.
 
-- `STRATEGY.md`;
-- a strategy card;
-- a backtest report on synthetic/delayed data;
-- a validation checklist; and
-- a one-page failure memo.
+No learner needs to write code from scratch. They must be able to explain what
+the agent built and locate the metric definitions.
 
-Success does not depend on outperforming the benchmark.
+### Module 6 — Audit it and create a daily habit
 
-## Module 7 — Keep a process when markets move
+**Question:** Can the learner trust, explain, and update the dashboard?
 
-**Question:** What keeps one surprising week from rewriting your entire plan?
+#### Concepts
 
-### Lessons
+1. Data freshness, incomplete sessions, missing symbols, adjusted prices, and
+   universe drift.
+2. Calculation tests versus visual checks.
+3. False precision and unsupported natural-language summaries.
+4. Pattern false positives in narrow, stressed, or extended markets.
+5. Versioning definitions before changing them.
+6. Comparing a local educational build with a production research platform.
 
-1. Outcome vs decision quality.
-2. Recency, confirmation, loss aversion, and social proof.
-3. A journal that records forecasts before outcomes.
-4. Scam/deepfake/guaranteed-return warning signs.
-5. Verify registration, platform, payment handle, statement, and complaint path.
-6. When education ends and registered professional advice begins.
-7. Monthly process review, not daily strategy reinvention.
+#### Mission — dashboard audit
 
-### Final mission: 30-day operating plan
+Complete the required checks in `AI_MARKET_DASHBOARD_LAB.md`, then ask the agent to
+produce:
 
-- Monday: read the market weather.
-- Midweek: investigate one term or one company fact.
-- Weekend: review one portfolio rule or journal entry.
-- End of month: compare beliefs with outcomes and change at most one rule after
-  documenting why.
+- a one-page `DASHBOARD_AUDIT.md`;
+- a plain-language data freshness banner;
+- a visible “observation, not recommendation” label;
+- a five-line daily note generated only from displayed metrics; and
+- a `RUN_DAILY.md` guide.
 
-### Completion reflection
+#### Ten-minute operating routine
 
-Answer:
+1. **Minute 0-1:** confirm data date and coverage.
+2. **Minute 1-3:** read broad trend, drawdown, and stress.
+3. **Minute 3-5:** read breadth level and direction.
+4. **Minute 5-7:** identify leading and weakening sectors.
+5. **Minute 7-9:** inspect pattern lists in market context.
+6. **Minute 9-10:** write one observation, one contradiction, and one question.
 
-- What can I now explain that I could not explain before?
-- What market claim am I now less likely to trust?
-- Which rule in my paper system is weakest?
-- What would require a registered adviser or analyst rather than an AI chat?
+The learner then compares the local note with the equivalent Marketworks views:
+
+- Which readings agree?
+- Which differ because of universe, benchmark, date, or methodology?
+- What does Marketworks calculate that the local build does not?
+- Which output would be unsafe to treat as an instruction?
 
 ## Assessment design
 
-Use low-stakes checks after every short lesson and artifact rubrics after each
-module.
+### Module artifact rubric
 
-### Artifact rubric
+Score each artifact 0-2 on:
 
-| Dimension | Meets the bar |
-|---|---|
-| Definitions | Terms are used correctly and defined on use |
-| Evidence | Claims have source and as-of date |
-| Reasoning | Observation is separated from inference |
-| Risk | At least one credible failure mode is stated |
-| Process | Rule can be followed without hindsight |
-| Language | No instruction, guarantee, or implied suitability |
+| Dimension | 0 | 1 | 2 |
+|---|---|---|---|
+| Definition | Missing/wrong | Partly correct | Correct and plain-language |
+| Evidence | Unsupported | Some dated evidence | Dated, sourced, reproducible |
+| Separation | Advice/prediction | Mixed categories | Observation/inference clearly separated |
+| Limitations | None | Generic caveat | Specific failure mode or contradiction |
+| Independence | Cannot explain | Explains with help | Explains and reproduces one calculation |
 
 ### Completion standard
 
-- at least 80% on concept checks, with unlimited retries and explanations;
-- all seven core artifacts submitted or saved locally;
-- AI lab validation checklist complete; and
-- final reflection completed.
+- all six modules attempted;
+- at least five of six artifacts complete;
+- dashboard runs locally from the documented command;
+- freshness, coverage, and educational-purpose labels visible;
+- one calculation manually reconciled;
+- dashboard audit complete; and
+- no broker connection, personal portfolio data, or trade instruction.
 
-Do not award completion for watch time alone.
+Completion does not depend on finding a “successful” pattern or forming a
+bullish/bearish view.

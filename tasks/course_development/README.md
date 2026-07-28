@@ -6,12 +6,12 @@ recommendations.
 
 ## Recommended concept
 
-**Marketworks Foundations: From SIP to Stock Sense**
+**Marketworks Market State Lab: Read the Market. Build Your Dashboard.**
 
-A practical course for a mutual-fund investor who wants to understand Indian
-capital markets, evaluate stocks without depending on tips, read the current
-market through Marketworks, and build a rules-based paper portfolio on their
-own device with Codex or Claude Code.
+A three-day, six-hour intensive for a mutual-fund investor who wants to read
+the state of the Indian market, understand the basic logic of quantitative
+investing, and use Codex or Claude Code to build a local daily dashboard for
+breadth, trend, relative strength, and transparent breakout-pattern screens.
 
 The core learning loop is:
 
@@ -22,20 +22,19 @@ The core learning loop is:
 - `OVERVIEW.html` — one-page learner-outcomes and course-concept overview.
 - `PLAN.md` — product thesis, scope, experience principles, and decisions.
 - `RESEARCH.md` — repo audit, audience evidence, market context, and source log.
-- `CURRICULUM.md` — detailed eight-module course blueprint.
-- `AI_PORTFOLIO_LAB.md` — provider-neutral Codex/Claude Code capstone design.
+- `CURRICULUM.md` — detailed six-module, three-day course blueprint.
+- `AI_MARKET_DASHBOARD_LAB.md` — provider-neutral local dashboard capstone design.
 - `PILOT.md` — MVP, experiments, instrumentation, and success criteria.
 - `TASKS.md` — phased path from study to a validated pilot.
 - `_meta.yml` — machine-readable initiative metadata.
 
 ## Current recommendation
 
-Run a 20-person, four-week pilot before building a full course CMS. Use
-build-time course pages under `/library/courses`, local progress for the pilot,
-the existing Learn explainers as prerequisites, and a downloadable AI lab
-folder. The pilot should use delayed or synthetic data and paper portfolios
-only.
+Run a 20-person, three-day pilot before building a full course CMS. Use
+build-time course pages under `/library/courses`, local progress, the existing
+Learn explainers as prerequisites, and a downloadable dashboard starter kit.
+The pilot should use synthetic or appropriately licensed delayed data.
 
-Any public AI portfolio lab, strategy template, model-portfolio comparison, or
-performance claim needs legal/compliance review against the current SEBI
-Research Analyst framework before publication.
+Any public named-security screen, pattern claim, AI-generated market
+commentary, or redistributed market dataset needs legal/compliance and
+data-rights review before publication.

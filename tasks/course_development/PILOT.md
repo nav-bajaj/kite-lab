@@ -1,99 +1,138 @@
-# Pilot plan — prove learning and product pull before building an LMS
+# Pilot plan — three-day Market State Lab
 
 ## Hypotheses
 
-1. A sequenced course will convert the current Learn reference layer into a
-   repeat Marketworks habit.
-2. The “SIP to stock sense” frame will feel relevant to a young mutual-fund
-   investor without promising stock-picking success.
-3. A constrained AI paper lab will increase perceived agency and completion.
-4. Learners who create artifacts will retain concepts better than learners who
-   only watch videos.
-5. The live market-weather exercise will create more authentic return visits
-   than notifications or generic CTAs.
+1. A six-hour intensive can teach one durable market-reading process more
+   effectively than a broad multi-week foundations course.
+2. Learners who compare index direction with breadth and leadership will write
+   more evidence-based market descriptions.
+3. Basic quantitative reasoning becomes accessible when every metric is reduced
+   to universe, input, lookback, comparison, output, and failure mode.
+4. A constrained local dashboard build will increase agency without requiring
+   prior programming.
+5. Building a small version of the Insights workflow will make Marketworks
+   easier to understand and create voluntary return visits.
+6. Explicit “observation, not recommendation” design can prevent pattern lists
+   from being interpreted as stock picks.
 
 ## Cohort
 
 - 20 existing or waitlisted subscribers aged roughly 22-28.
-- Must have at least one mutual-fund investment.
-- Self-described beginner or early intermediate in stocks.
-- Mix of Codex/Claude familiarity, including at least half who have never used a
-  terminal coding agent.
-- No requirement to disclose portfolio values, account statements, or income.
+- Has at least one mutual-fund investment or equivalent basic market exposure.
+- Self-described beginner or early intermediate in direct equities.
+- At least half have never used a terminal coding agent.
+- Mix of macOS and Windows learners.
+- No requirement to disclose portfolio values, account statements, income, or
+  personal holdings.
 
-Recruit 24 if possible, assuming 15-20% pre-start attrition.
+Recruit 24 if possible, assuming pre-start attrition.
 
 ## Format
 
-- Four weeks, two modules per week.
-- One optional 45-minute group clinic each week.
-- Private feedback channel.
-- Course content released in two-module batches.
-- AI lab office hour in week four.
+- Three days with one two-hour block per day.
+- Two modules per block, approximately 60 minutes each.
+- Can run on consecutive days or within one week.
+- One private support channel limited to setup and course questions.
+- One optional 30-minute setup check before Day 3, counted as support rather
+  than course instruction.
 - One 20-minute exit interview per participant.
+- One seven-day follow-up to measure whether the dashboard or Marketworks was
+  used after completion.
 
 ## MVP scope
 
 ### Build
 
 - One course landing page.
-- Eight module pages.
-- 16-24 short videos or annotated walkthroughs.
-- Concept checks with explanatory feedback.
-- Seven downloadable worksheets.
-- AI lab ZIP with synthetic data.
+- Six module pages.
+- 9-12 concise videos or annotated walkthroughs.
+- Six concept checks with explanatory feedback.
+- Four worksheets plus dashboard audit and daily routine templates.
+- Versioned AI dashboard starter ZIP.
+- Synthetic or appropriately licensed delayed dataset.
 - Local progress tracking.
-- Anonymous event instrumentation.
-- Start, midpoint, completion, and confidence surveys.
+- Privacy-minimal event instrumentation.
+- Pre-course, end-of-day, completion, and seven-day follow-up surveys.
 
 ### Reuse
 
-- Existing design system and marketing/library shell.
+- Existing Marketworks design system and library shell.
 - Existing Learn explainers and glossary.
-- Current Insights pages as live missions.
-- Existing portfolio methodology documentation, rewritten for beginners.
+- Current Pulse, breadth, sector, watchlist, and stock-detail views.
+- Existing production definitions for:
+  - percentage above 200-DMA;
+  - sector/stock relative strength;
+  - 20-day breakouts; and
+  - coiled springs.
 
 ### Do not build
 
-- New backend course service.
+- New backend course service or LMS.
 - Cross-device progress.
-- Community feed.
+- Live market-data downloader before rights and reliability are approved.
+- Broker or personal portfolio integration.
+- Alerts, order files, or trading automation.
+- Forward-return statistics or pattern win rates.
+- Personalized recommendations.
+- Portfolio backtest or strategy optimizer.
 - Certificate.
 - Billing changes.
-- Real-data downloader.
-- Broker integration.
-- Personalized recommendations.
 
 ## Prototype order
 
-Do not author all eight modules before testing the teaching loop.
+Do not author all six modules before testing the two highest-friction slices.
 
-### Slice A — market weather
+### Slice A — market-state note
 
-Prototype Module 3 with:
+Prototype Modules 1-2 with:
 
-- one video;
-- one annotated walkthrough;
-- five Learn links;
-- one quiz; and
-- the five-line weather artifact.
+- one 15-minute concept lesson;
+- one annotated Marketworks walkthrough;
+- three Learn links;
+- one misconception check; and
+- the five-line market-state artifact.
 
-Test with five learners. Watch them use the product without intervening.
+Test with five learners. Observe whether they:
 
-### Slice B — AI lab
+- check the as-of date;
+- distinguish index direction from breadth;
+- describe a contradiction; and
+- avoid forecast language.
 
-Prototype the lab setup, prompts 1-5, and a synthetic dataset. Test with:
+### Slice B — local dashboard
+
+Prototype the starter-kit setup, frozen `METRICS.md`, market-state/breadth
+panels, one pattern list, and tests. Test with:
 
 - two terminal beginners;
-- two AI-chat users;
+- two AI-chat users; and
 - one technically confident user.
 
-Record setup time, approval confusion, help requests, and whether each person
-can explain the timeline of the backtest.
+Record:
 
-### Slice C — full pilot
+- time to first successful local run;
+- installation and permission friction;
+- help requests;
+- whether the learner can locate the metric definition;
+- whether one value can be reconciled manually; and
+- whether a named match is described as a pick.
 
-Only author the remaining modules after both slices meet their gates.
+### Slice C — leadership and patterns
+
+Prototype Module 4 after Slice B runs:
+
+- sector and stock relative strength;
+- relative strength versus RSI check;
+- 20-day breakout;
+- 52-week breakout; and
+- coiled-spring/pre-breakout distinction.
+
+Test whether five learners can identify the rule, context, and failure mode for
+one match without being prompted to trade.
+
+### Slice D — full pilot
+
+Author the remaining material only after Slices A-C meet their gates.
 
 ## Success metrics
 
@@ -101,131 +140,162 @@ Only author the remaining modules after both slices meet their gates.
 
 | Metric | Pilot target |
 |---|---|
-| Concept-score improvement | +25 percentage points from pre to post |
-| Market-weather rubric | 80% distinguish observation from inference |
-| Product map | 80% correctly compare stock, MF, ETF, and bond risk |
-| Backtest literacy | 75% identify look-ahead in a fresh scenario |
-| Safety | 100% know not to paste credentials or treat AI output as advice |
+| Concept-score improvement | +25 percentage points pre to post |
+| Market-state note | 80% separate observation from inference |
+| Index versus breadth | 85% explain why they can diverge |
+| Quant anatomy | 80% identify universe, lookback, benchmark, and output |
+| Relative strength | 80% distinguish RS from RSI |
+| Pattern literacy | 80% reproduce one pattern rule and one failure mode |
+| Dashboard literacy | 75% manually reconcile one displayed value |
+| Safety | 100% identify watchlists as observations, not recommendations |
 
-### Engagement
+### Completion and usability
 
 | Metric | Pilot target |
 |---|---|
-| Start rate | >=80% of enrolled learners |
-| Module 3 completion | >=70% |
-| Full completion | >=50% |
-| Repeat Insights visits | median >=2 separate days/week |
-| Artifact completion | median >=5 of 7 |
-| AI lab attempted | >=60% |
+| Start rate | >=85% of enrolled learners |
+| Day 1 completion | >=80% |
+| Full completion | >=70% |
+| Dashboard setup attempted | >=85% |
+| Dashboard running by end of Day 3 | >=75% |
+| Median setup time | <=20 minutes |
+| Median artifacts complete | >=5 of 6 |
+| Critical support requests | <=2 per learner |
 
 ### Product signal
 
 | Metric | Pilot target |
 |---|---|
-| “Made Marketworks easier to use” | >=70% agree |
-| “Would miss the course if removed” | >=40% very disappointed |
-| Course-driven dashboard discovery | >=3 distinct Insights surfaces/learner |
-| Subscriber intent | Directional only; no hard conversion claim at n=20 |
+| “Made Marketworks easier to understand” | >=75% agree |
+| Course-driven Insights discovery | >=4 distinct surfaces per learner |
+| Seven-day Marketworks return | >=60% visit on at least two separate days |
+| Seven-day local-dashboard reuse | >=50% run it at least twice |
+| “Would miss this if removed” | >=40% very disappointed |
 
-Completion and learning outrank time-on-site. Do not optimize for clicks that
-do not improve understanding.
+Learning and independent operation outrank time-on-site.
 
 ## Suggested event model
 
-For the pilot, use privacy-minimal identifiers and avoid portfolio data.
+For the pilot, use privacy-minimal identifiers and never capture local
+dashboard contents.
 
 ```text
 course_viewed
+day_started
 module_started
 lesson_completed
 concept_check_answered
 artifact_downloaded
 insight_deeplink_opened
 module_completed
-ai_lab_downloaded
-ai_lab_self_reported_complete
+dashboard_kit_downloaded
+dashboard_setup_self_reported
+dashboard_self_reported_running
 course_completed
-feedback_submitted
+followup_submitted
 ```
 
 Useful properties:
 
 ```text
 course_slug
+day_number
 module_id
 lesson_id
 attempt_number
 correct
 insight_destination
-device_class
+device_os
 cohort_id
 ```
 
-Do not log prompt contents, local filenames, strategy parameters, or learner
-financial information.
+Do not log prompts, local filenames, symbols, pattern matches, metric values,
+data files, financial information, or machine identifiers.
 
 ## Research instruments
 
 ### Pre-course
 
-- Explain the difference between a stock and an equity mutual fund.
-- What does the Nifty rising tell you—and not tell you?
-- How would you decide whether a stock idea deserves research?
-- What do you think a backtest proves?
-- Confidence on five course outcomes, 1-5.
+- What does a 1% rise in Nifty tell you and not tell you?
+- What does market breadth mean?
+- What is relative strength?
+- What is the difference between a screen and a forecast?
+- How would you check whether a breakout calculation is valid?
+- Confidence on six course outcomes, 1-5.
 
-### Weekly pulse
+### End of Day 1
 
-- Most useful idea.
-- Most confusing term.
-- Where you got stuck.
-- Whether Marketworks answered a real question this week.
-- Time spent, self-reported.
+- Read a fresh market snapshot aloud.
+- Mark each sentence observation, inference, or unsupported.
+- Name one contradiction.
+
+### End of Day 2
+
+- Explain a supplied metric from universe to output.
+- Distinguish RS from RSI.
+- Reproduce one pattern definition.
+- Explain why a match may fail.
+
+### End of Day 3
+
+- Start the dashboard without facilitator control.
+- Confirm its data date and coverage.
+- Reconcile one metric manually.
+- Show where definitions live.
+- Explain one difference from Marketworks.
+- Identify one unsafe inference.
 
 ### Exit interview
 
 - Show me how you read the market now.
-- Which module changed a belief?
+- Which panel changed your interpretation?
 - What did the AI get wrong or leave uncertain?
-- What would make you return next week?
-- What felt like a sales pitch?
-- Would you prefer this bundled, paid separately, or used as onboarding?
+- Did any watchlist feel like a recommendation?
+- What would stop you from running the dashboard again?
+- Did building locally make Marketworks clearer or less necessary?
+- Would you take a follow-on course on systems or portfolio construction?
 
 ## Go/no-go gates
 
 ### Proceed to full pilot when
 
-- 4/5 Slice A learners can complete the weather report without facilitator help.
-- 4/5 Slice B learners create a report.
-- 4/5 Slice B learners can explain signal vs execution date.
+- 4/5 Slice A learners complete the note without facilitator wording.
+- 4/5 Slice B learners get the dashboard running.
+- 4/5 Slice B learners reconcile one metric.
+- 4/5 Slice C learners distinguish RS from RSI.
+- 5/5 Slice C learners label matches observations, not stock picks.
 - No learner is encouraged to connect a broker or use real money.
-- Compliance counsel approves or supplies required changes.
+- Compliance and data-rights reviewers approve or supply required changes.
 
 ### Proceed to product build when
 
-- full-pilot completion is at least 50%;
-- learning targets are met on at least four of five core measures;
-- repeat product visits increase without push reminders;
-- AI lab support burden is manageable; and
-- at least 8 participants independently ask for a next-level course or ongoing
-  practice.
+- full completion is at least 70%;
+- at least six of eight learning/usability targets are met;
+- setup support is manageable on both macOS and Windows;
+- follow-up shows voluntary dashboard or Marketworks reuse;
+- no material recommendation misunderstanding occurs; and
+- at least eight participants ask for ongoing market-state practice or a
+  next-level quant course.
 
 ### Stop or redesign when
 
-- learners interpret the course as security recommendations;
-- the AI lab becomes the dominant support burden;
-- repeat visits are driven only by completion requirements;
-- artifact quality does not improve from pre-course ability; or
-- compliance changes remove the practical distinction of the concept.
+- learners treat named-security screens as trade instructions;
+- setup consumes more than one-third of Day 3;
+- data freshness or rights cannot be explained clearly;
+- AI output cannot be audited by the learner;
+- the dashboard duplicates Marketworks without teaching the methodology;
+- completion falls below 50%; or
+- local-dashboard use replaces Marketworks without creating deeper
+  understanding.
 
 ## Likely follow-on products
 
-Only after the foundations pilot:
+Only after the intensive pilot:
 
-1. **Market Weather: 10 minutes a week** — recurring practice layer.
-2. **Stock Research Lab** — filings plus price/market evidence.
-3. **System Builder II** — out-of-sample testing and portfolio construction.
-4. **Portfolio Methodologies** — deeper study of the four Marketworks systems.
+1. **Market State: 10 minutes a day** — recurring practice and comparison.
+2. **Quant System Builder** — hypothesis, backtest, and out-of-sample testing.
+3. **Portfolio Construction Lab** — diversification, sizing, and rebalancing.
+4. **Stock Research Lab** — fundamentals plus market evidence.
 
-Derivatives, options, intraday trading, and live automation should not be the
-next course for this persona.
+Derivatives, options, intraday trading, live automation, and broker integration
+should not be the next course for this persona.

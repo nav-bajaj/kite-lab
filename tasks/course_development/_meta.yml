@@ -12,15 +12,16 @@ depends_on:
   - client_portal
 supersedes: []
 
-working_title: "Marketworks Foundations: From SIP to Stock Sense"
+working_title: "Marketworks Market State Lab: Read the Market. Build Your Dashboard."
 audience: |
   Indian investor aged 22-28 with one or more mutual-fund SIPs, some stock
   awareness, mild technical confidence, and regular use of AI chat/search.
 
 course_shape:
-  duration_weeks: 4
-  modules: 8
-  capstone: AI-assisted rules-based paper portfolio
+  duration_days: 3
+  total_hours: 6
+  modules: 6
+  capstone: AI-assisted local market-state dashboard
   ai_tools:
     - Codex
     - Claude Code
@@ -32,7 +33,7 @@ compliance_gates:
   - Indian securities counsel review
   - current SEBI Research Analyst framework review
   - AI-use disclosure design
-  - model-portfolio content classification
+  - named-security screen content classification
   - market-data redistribution rights
 
 branch_safety:

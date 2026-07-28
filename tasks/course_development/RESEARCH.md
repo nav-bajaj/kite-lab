@@ -119,74 +119,75 @@ The opening lecture may provide a dated “India now” snapshot, but its number
 must be generated near publication and carry an as-of date. Marketworks is best
 used as the live layer that keeps this module fresh.
 
-## 4. Product landscape for a beginner
+## 4. Scope decision — teach one market-reading job
 
-The course should teach products through five questions: What do I own? How can
-I earn? What can go wrong? How liquid is it? How much work and cost does it
-require?
+The initial study proposed a broad foundations course covering market plumbing,
+products, stock research, portfolio construction, and a paper-strategy
+backtest. That is too much conceptual distance for a short, useful course.
 
-Core map:
+The recommended intensive instead teaches one recurring job: describe the
+state of the Indian equity market with dated evidence. Product education,
+fundamental stock research, portfolio construction, and derivatives remain
+valid follow-on topics, but they are not prerequisites for this six-hour
+experience.
 
-- direct listed equity;
-- active mutual funds;
-- index funds and ETFs;
-- government and corporate debt;
-- REITs and InvITs;
-- gold ETFs/funds;
-- IPOs and other primary issues; and
-- derivatives as risk-transfer instruments, taught for recognition and risk
-  only in this beginner course.
+The narrowed scope matches the strongest existing Marketworks surfaces:
 
-SEBI's investor portal similarly distinguishes shares, bonds, mutual funds,
-ETFs, derivatives, REITs, and InvITs and emphasizes that each has different
-features and risks. The learner should finish with a comparison grid, not a
-ranking.
+- broad index trend and drawdown;
+- percentage of stocks above moving averages;
+- breadth momentum and concentration;
+- regime and stress context;
+- sector breadth and relative strength;
+- stock relative strength; and
+- transparent watchlist patterns.
 
-## 5. AI-agent opportunity
+## 5. AI-agent opportunity — a local daily dashboard
 
-Codex and Claude Code now make a local quantitative exercise possible for a
-mildly technical learner because each can:
+Codex and Claude Code can help a mildly technical learner build an inspectable
+local dashboard because each can:
 
 - inspect a folder and its instructions;
-- create and edit files;
-- write Python and tests;
-- run commands in a permission-controlled environment; and
-- iterate on a report in plain language.
+- create and edit Python and presentation files;
+- run tests and local commands with permission;
+- explain calculations in plain language; and
+- iterate on an audit and operating guide.
 
-OpenAI's current Codex guidance recommends prompts containing a goal, context,
-constraints, and a definition of done, plus planning before complex tasks and
-review/testing before acceptance. Anthropic likewise offers a plan permission
-mode and a default permission model that keeps the learner in the approval
+OpenAI's Codex guidance recommends prompts containing a goal, context,
+constraints, and definition of done, plus planning and verification. Anthropic
+likewise provides permission controls that can keep the learner in the approval
 loop.
 
-The agent should translate a strategy, not invent one after seeing returns.
-The pedagogical value is the conversation:
+The agent should implement frozen metric definitions, not invent a stock screen
+from the latest results. The useful conversation becomes:
 
-- Which universe?
-- What data existed at the decision date?
-- What exactly triggers entry and exit?
-- When is the decision executed?
-- What costs apply?
-- What benchmark and failure threshold matter?
+- What universe and benchmark are being measured?
+- What is the latest completed common data date?
+- What does the metric calculate?
+- Does a rolling window accidentally include today's observation?
+- What happens when prices or sector mappings are missing?
+- Is the output a description, screen, forecast, or recommendation?
+- Can one displayed value be reproduced manually?
 
-## 6. AI and portfolio risks
+## 6. AI and named-security screen risks
 
-The capstone fails educationally if it becomes “ask AI for the best strategy.”
-The design must actively surface:
+The capstone fails educationally if it becomes “ask AI for today's best
+stocks.” The design must actively surface:
 
-- hallucinated facts and code that runs but is economically wrong;
-- look-ahead bias;
-- survivorship bias;
-- corporate actions and missing-data errors;
-- execution at an unavailable price;
-- ignored taxes, fees, and slippage;
-- overfitting through repeated parameter searches;
+- hallucinated facts and code that runs but implements the wrong definition;
+- stale or incomplete data presented as current;
+- current-session leakage into prior-high windows;
+- survivorship bias and universe drift;
+- corporate-action and missing-data errors;
+- unaligned benchmark and stock dates;
+- unreliable volume comparisons;
+- a one-day gap dominating relative strength;
+- pattern matches presented as expected returns;
 - data/source licensing;
 - secrets or broker credentials pasted into a prompt; and
-- confusion between a backtest and a forecast.
+- recommendation-like natural-language summaries.
 
-The most important capstone output may be the **failure memo**, not the return
-chart.
+The most important capstone output is the **dashboard audit**, not the length of
+the breakout list.
 
 ## 7. Regulatory design inputs
 
