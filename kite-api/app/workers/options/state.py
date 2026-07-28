@@ -130,6 +130,29 @@ class ChainState:
             return None
         return (now - max(latest)).total_seconds()
 
+    def snapshot_payload(self) -> dict:
+        """Compact serializable latest-chain view for option_chain_snapshots."""
+        with self._lock:
+            contracts = {}
+            for cid, cs in self.by_id.items():
+                if not cs.tick_count:
+                    continue
+                c = cs.contract
+                contracts[cid] = {
+                    "kind": c.kind,
+                    "expiry": c.expiry.isoformat() if c.expiry else None,
+                    "strike": c.strike,
+                    "ltp": cs.ltp,
+                    "oi": cs.oi,
+                    "volume": cs.volume,
+                    "bid": cs.best_bid,
+                    "ask": cs.best_ask,
+                    "bid_qty": cs.total_buy_qty,
+                    "ask_qty": cs.total_sell_qty,
+                    "exch_ts": cs.exch_ts.isoformat() if cs.exch_ts else None,
+                }
+            return {"spot": self.spot_price, "contracts": contracts}
+
     def counters(self) -> dict:
         with self._lock:
             ticked = sum(1 for cs in self.by_id.values() if cs.tick_count)

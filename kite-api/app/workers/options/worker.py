@@ -14,7 +14,10 @@ import time
 from datetime import date, datetime
 from typing import Optional
 
+import threading
+
 from app.workers.options import instrument_loader
+from app.workers.options.aggregator import MinuteBuilder
 from app.workers.options.config import OptionsWorkerSettings, get_worker_settings
 from app.workers.options.health import start_health_server
 from app.workers.options.recorder import TickRecorder
@@ -88,6 +91,13 @@ class OptionsWorker:
         self.subs: Optional[SubscriptionManager] = None
         self.ticker = None
         self.recorder: Optional[TickRecorder] = None
+        self.builder: Optional[MinuteBuilder] = None
+        self.bar_store = None
+        self._pending_bars: list = []
+        self._bars_lock = threading.Lock()
+        self.bars_inserted = 0
+        self.db_errors = 0
+        self._last_snapshot: datetime = now_ist()
         self._nfo_rows = None  # the day's dump, kept for the widen universe
         self._last_flush: datetime = now_ist()
         self._last_heartbeat: datetime = now_ist()
@@ -141,6 +151,17 @@ class OptionsWorker:
                     self.chain.counters() if self.chain else None,
                     self.recorder.counters(),
                 )
+
+        if self.phase == Phase.CAPTURE:
+            self._drain_bars()
+            if self.chain is not None and self.bar_store is not None:
+                if (now - self._last_snapshot).total_seconds() >= self.settings.snapshot_seconds:
+                    self._last_snapshot = now
+                    try:
+                        self.bar_store.upsert_chain_snapshot(self.chain.snapshot_payload())
+                    except Exception as exc:
+                        self.db_errors += 1
+                        log.warning("snapshot upsert failed: %s", exc)
 
         if (now - self._last_heartbeat).total_seconds() >= self.settings.heartbeat_seconds:
             self._last_heartbeat = now
@@ -236,9 +257,23 @@ class OptionsWorker:
             drift_strikes=self.settings.recenter_drift_strikes,
         )
         self.recorder = TickRecorder(self.settings.ticks_dir)
+        self.builder = MinuteBuilder()
+        self._init_bar_store()
         self._capture_started_at = now
         self._start_ticker()
         log.info("capture start: %d contracts", len(self.selection.contracts))
+
+    def _init_bar_store(self) -> None:
+        """DB persistence is additive: raw Parquet is the safety net, so a
+        down database must never block capture. Retried from the loop."""
+        try:
+            from app.workers.options.bar_store import BarStore
+
+            self.bar_store = BarStore()
+        except Exception as exc:
+            self.bar_store = None
+            self.db_errors += 1
+            log.warning("bar store unavailable (capture continues, will retry): %s", exc)
 
     def _start_ticker(self) -> None:
         from app.workers.options.websocket import TickerClient
@@ -254,15 +289,22 @@ class OptionsWorker:
         self.ticker.start()
 
     def _on_ticks(self, ticks, recv_ts: datetime) -> None:
-        """Ticker-thread callback — keep it allocation-light and lock-safe."""
+        """Ticker-thread callback — keep it allocation-light and lock-safe.
+        Bars close here but INSERT on the worker loop, never this thread."""
         widen: list = []
+        closed: list = []
         for tick in ticks:
             cs = self.chain.apply_tick(tick, recv_ts)
             if cs is None:
                 continue
             self.recorder.add(tick, cs.contract, recv_ts)
+            if self.builder is not None:
+                closed.extend(self.builder.add(tick, cs.contract, recv_ts))
             if cs.contract.kind == "SPOT" and self.subs:
                 widen = self.subs.on_spot(cs.ltp) or widen
+        if closed:
+            with self._bars_lock:
+                self._pending_bars.extend(closed)
         if widen:
             self.chain.register(widen)
             self.ticker.subscribe_more([c.instrument_token for c in widen])
@@ -282,7 +324,31 @@ class OptionsWorker:
         if self.recorder:
             self.recorder.flush()
             log.info("eod: recorder %s", self.recorder.counters())
-        log.info("eod flush (aggregator/persistence land in Phase 3)")
+        if self.builder is not None:
+            with self._bars_lock:
+                self._pending_bars.extend(self.builder.close_all())
+            self._drain_bars()
+            log.info("eod: bars emitted=%d inserted=%d db_errors=%d",
+                     self.builder.bars_emitted, self.bars_inserted, self.db_errors)
+        if self.bar_store is not None:
+            try:
+                self.bar_store.upsert_daily_session(now.date(), self._session_stats(now))
+            except Exception as exc:
+                self.db_errors += 1
+                log.warning("daily_sessions write failed: %s", exc)
+
+    def _session_stats(self, now: datetime) -> dict:
+        return {
+            "selection": self.selection.summary() if self.selection else None,
+            "ws": self.ticker.counters() if self.ticker else None,
+            "chain": self.chain.counters() if self.chain else None,
+            "recorder": self.recorder.counters() if self.recorder else None,
+            "bars_emitted": self.builder.bars_emitted if self.builder else 0,
+            "bars_inserted": self.bars_inserted,
+            "db_errors": self.db_errors,
+            "widen_events": self.subs.widen_events if self.subs else 0,
+            "closed_at": now.isoformat(),
+        }
 
     # -- health ------------------------------------------------------------
 
@@ -305,7 +371,40 @@ class OptionsWorker:
             snap["recorder"] = self.recorder.counters()
         if self.subs:
             snap["widen_events"] = self.subs.widen_events
+        if self.builder is not None:
+            with self._bars_lock:
+                pending = len(self._pending_bars)
+            snap["bars"] = {
+                "emitted": self.builder.bars_emitted,
+                "inserted": self.bars_inserted,
+                "pending": pending,
+                "db_errors": self.db_errors,
+            }
         return snap
+
+    def _drain_bars(self) -> None:
+        """Move closed bars from the ticker-thread buffer into Postgres.
+        On DB failure the rows go back to the buffer (bounded — the raw
+        Parquet is the authoritative recovery source, not this buffer)."""
+        with self._bars_lock:
+            if not self._pending_bars:
+                return
+            rows, self._pending_bars = self._pending_bars, []
+        if self.bar_store is None:
+            self._init_bar_store()
+        if self.bar_store is None:
+            self._requeue(rows)
+            return
+        try:
+            self.bars_inserted += self.bar_store.insert_bars(rows)
+        except Exception as exc:
+            self.db_errors += 1
+            log.warning("bar insert failed (%d rows requeued): %s", len(rows), exc)
+            self._requeue(rows)
+
+    def _requeue(self, rows: list) -> None:
+        with self._bars_lock:
+            self._pending_bars = (rows + self._pending_bars)[:50_000]
 
     def _ticker_dead_for(self, now: datetime) -> float:
         """Seconds since the ticker last looked alive (tick or connect)."""

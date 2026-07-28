@@ -41,6 +41,9 @@ class OptionsWorkerSettings(BaseSettings):
     # Heartbeat cadence to options_worker_health (admin dashboard source)
     heartbeat_seconds: float = 30.0
 
+    # Chain snapshot upsert cadence (goal: no stale chain >10s in hours)
+    snapshot_seconds: float = 10.0
+
     # Testing only: capture regardless of the market clock (post-close
     # snapshot ticks still flow). Never leave on in normal operation —
     # it bypasses the session lifecycle entirely.
