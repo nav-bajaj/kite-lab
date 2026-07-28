@@ -19,6 +19,7 @@ The core learning loop is:
 
 ## Documents
 
+- `OVERVIEW.html` — one-page learner-outcomes and course-concept overview.
 - `PLAN.md` — product thesis, scope, experience principles, and decisions.
 - `RESEARCH.md` — repo audit, audience evidence, market context, and source log.
 - `CURRICULUM.md` — detailed eight-module course blueprint.

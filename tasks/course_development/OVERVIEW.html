@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A learner-outcomes-first overview of the proposed Marketworks beginner course, From SIP to Stock Sense.">
+<title>From SIP to Stock Sense — Course Overview</title>
+<style>
+  :root {
+    --ink: #17211e;
+    --ink-soft: #44524d;
+    --paper: #fbfaf5;
+    --mist: #ecf3ef;
+    --lichen: #14715f;
+    --lichen-dark: #0c4d41;
+    --signal: #55c374;
+    --violet: #9750f8;
+    --amber: #f3b44b;
+    --line: rgba(23, 33, 30, 0.14);
+    --white: #ffffff;
+    --serif: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    --sans: "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+  body {
+    margin: 0;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at 10% 6%, rgba(85, 195, 116, 0.12), transparent 26rem),
+      var(--paper);
+    font-family: var(--sans);
+    line-height: 1.55;
+  }
+
+  a { color: inherit; }
+  .wrap { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
+  .eyebrow {
+    margin: 0 0 12px;
+    color: var(--lichen);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .eyebrow.light { color: #a9e7bd; }
+  .section-title {
+    max-width: 760px;
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4.3vw, 3.7rem);
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    line-height: 1.03;
+  }
+  .section-lede {
+    max-width: 700px;
+    margin: 18px 0 0;
+    color: var(--ink-soft);
+    font-size: 1.04rem;
+  }
+  section { padding: 96px 0; }
+
+  /* Navigation */
+  .nav {
+    position: relative;
+    z-index: 2;
+    padding: 24px 0;
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+  .brand-mark {
+    display: grid;
+    width: 25px;
+    height: 25px;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: end;
+    gap: 2px;
+  }
+  .brand-mark span { background: var(--lichen); border-radius: 1px; }
+  .brand-mark span:nth-child(1) { height: 40%; }
+  .brand-mark span:nth-child(2) { height: 72%; }
+  .brand-mark span:nth-child(3) { height: 100%; }
+  .nav-links { display: flex; align-items: center; gap: 24px; }
+  .nav-links a {
+    color: var(--ink-soft);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .nav-tag {
+    padding: 7px 11px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Hero */
+  .hero { padding: 68px 0 96px; }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.12fr) minmax(360px, 0.88fr);
+    align-items: stretch;
+    gap: 34px;
+  }
+  .hero-copy { padding: 24px 0; }
+  .hero h1 {
+    max-width: 760px;
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(3.5rem, 7.8vw, 7rem);
+    font-weight: 500;
+    letter-spacing: -0.06em;
+    line-height: 0.88;
+  }
+  .hero h1 em {
+    display: block;
+    color: var(--lichen);
+    font-weight: 500;
+  }
+  .hero-lede {
+    max-width: 690px;
+    margin: 30px 0 0;
+    color: var(--ink-soft);
+    font-size: clamp(1.05rem, 1.8vw, 1.28rem);
+    line-height: 1.55;
+  }
+  .hero-lede strong { color: var(--ink); }
+  .course-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin: 32px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .course-facts li {
+    padding: 9px 13px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.54);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+  }
+  .hero-card {
+    display: flex;
+    min-height: 560px;
+    padding: 38px;
+    border-radius: 22px;
+    background: var(--lichen-dark);
+    color: var(--white);
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 24px 60px rgba(12, 77, 65, 0.17);
+  }
+  .persona-label {
+    color: #a9e7bd;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+  .persona {
+    max-width: 360px;
+    margin: 12px 0 0;
+    color: rgba(255, 255, 255, 0.77);
+    font-size: 0.92rem;
+  }
+  .transformation { margin-top: 48px; }
+  .state { padding: 20px 0; border-top: 1px solid rgba(255, 255, 255, 0.15); }
+  .state:first-child { border-top: 0; }
+  .state small {
+    display: block;
+    margin-bottom: 6px;
+    color: rgba(255, 255, 255, 0.55);
+    font-family: var(--mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .state p {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(1.25rem, 2.2vw, 1.62rem);
+    line-height: 1.18;
+  }
+  .state.after p { color: #bdf3c8; }
+  .transformation-arrow {
+    width: 2px;
+    height: 28px;
+    margin-left: 4px;
+    background: linear-gradient(var(--signal), transparent);
+  }
+  .promise {
+    margin: 24px 0 0;
+    padding: 15px 0 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.78rem;
+  }
+  .promise strong { color: var(--white); }
+
+  /* Why now */
+  .evidence { padding: 0 0 96px; }
+  .evidence-grid {
+    display: grid;
+    grid-template-columns: 1.2fr repeat(3, 1fr);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .evidence-intro, .stat { padding: 27px 24px; }
+  .evidence-intro { padding-left: 0; }
+  .evidence-intro p {
+    max-width: 270px;
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.88rem;
+  }
+  .stat { border-left: 1px solid var(--line); }
+  .stat strong {
+    display: block;
+    color: var(--lichen);
+    font-family: var(--serif);
+    font-size: clamp(2.25rem, 4.4vw, 3.7rem);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .stat span {
+    display: block;
+    margin-top: 9px;
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+
+  /* Outcomes */
+  .outcomes { background: var(--mist); }
+  .outcome-intro {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 36px;
+    margin-bottom: 48px;
+  }
+  .outcome-intro .section-lede { max-width: 380px; margin: 0 0 5px; }
+  .outcome-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .outcome-card {
+    min-height: 330px;
+    padding: 26px;
+    border: 1px solid rgba(20, 113, 95, 0.15);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.76);
+  }
+  .outcome-number {
+    display: flex;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--lichen);
+    color: white;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+  }
+  .outcome-card h3 {
+    margin: 44px 0 10px;
+    font-family: var(--serif);
+    font-size: 1.48rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+  }
+  .outcome-card p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+  }
+  .evidence-of-learning {
+    display: block;
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    color: var(--lichen);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    line-height: 1.45;
+  }
+
+  /* Change matrix */
+  .change-grid {
+    display: grid;
+    margin-top: 44px;
+    border-top: 1px solid var(--line);
+    grid-template-columns: 0.62fr 1fr 44px 1fr;
+  }
+  .change-row { display: contents; }
+  .change-grid > div {
+    min-height: 88px;
+    padding: 20px 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .change-topic {
+    padding-left: 0 !important;
+    color: var(--lichen);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .change-before { color: #69756f; }
+  .change-after { font-weight: 650; }
+  .change-arrow {
+    position: relative;
+    padding: 0 !important;
+  }
+  .change-arrow::before {
+    position: absolute;
+    top: 50%;
+    left: 9px;
+    width: 24px;
+    height: 1px;
+    background: var(--lichen);
+    content: "";
+  }
+  .change-arrow::after {
+    position: absolute;
+    top: calc(50% - 3px);
+    right: 9px;
+    width: 6px;
+    height: 6px;
+    border-top: 1px solid var(--lichen);
+    border-right: 1px solid var(--lichen);
+    content: "";
+    transform: rotate(45deg);
+  }
+
+  /* Loop */
+  .learning-loop { padding-top: 0; }
+  .loop-shell {
+    display: grid;
+    overflow: hidden;
+    border-radius: 20px;
+    background: var(--ink);
+    color: white;
+    grid-template-columns: 0.8fr 1.2fr;
+  }
+  .loop-copy { padding: 54px; }
+  .loop-copy h2 {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3.3rem);
+    font-weight: 500;
+    line-height: 1.02;
+  }
+  .loop-copy p {
+    margin: 18px 0 0;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.92rem;
+  }
+  .loop-steps {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .loop-step {
+    min-height: 190px;
+    padding: 28px;
+    border-left: 1px solid rgba(255, 255, 255, 0.11);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.11);
+  }
+  .loop-step:nth-child(3), .loop-step:nth-child(4) { border-bottom: 0; }
+  .loop-step span {
+    color: var(--signal);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+  }
+  .loop-step h3 {
+    margin: 28px 0 8px;
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-weight: 500;
+  }
+  .loop-step p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 0.82rem;
+  }
+
+  /* Journey */
+  .journey-head {
+    display: grid;
+    margin-bottom: 48px;
+    grid-template-columns: 1fr 0.7fr;
+    align-items: end;
+    gap: 40px;
+  }
+  .journey-head .section-lede { margin: 0; }
+  .week {
+    display: grid;
+    padding: 31px 0;
+    border-top: 1px solid var(--line);
+    grid-template-columns: 0.4fr 1fr 1fr;
+    gap: 26px;
+  }
+  .week:last-child { border-bottom: 1px solid var(--line); }
+  .week-label span {
+    color: var(--lichen);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .week-label strong {
+    display: block;
+    margin-top: 4px;
+    font-family: var(--serif);
+    font-size: 1.45rem;
+  }
+  .module { padding-right: 20px; }
+  .module small {
+    color: #7c8882;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .module h3 {
+    margin: 7px 0 8px;
+    font-family: var(--serif);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.15;
+  }
+  .module p { margin: 0; color: var(--ink-soft); font-size: 0.82rem; }
+  .artifact-tag {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 5px 8px;
+    border-radius: 4px;
+    background: var(--mist);
+    color: var(--lichen);
+    font-family: var(--mono);
+    font-size: 0.62rem;
+  }
+
+  /* Graduate kit */
+  .graduate-kit { padding-top: 0; }
+  .kit-shell {
+    display: grid;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: white;
+    grid-template-columns: 0.82fr 1.18fr;
+  }
+  .kit-copy { padding: 52px; background: var(--mist); }
+  .kit-copy h2 {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 500;
+    line-height: 1.02;
+  }
+  .kit-copy p { margin: 18px 0 0; color: var(--ink-soft); }
+  .kit-list {
+    display: grid;
+    padding: 26px 38px;
+    grid-template-columns: repeat(2, 1fr);
+    align-content: center;
+    gap: 0 28px;
+  }
+  .kit-item {
+    display: grid;
+    min-height: 92px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+    grid-template-columns: 32px 1fr;
+    gap: 10px;
+  }
+  .kit-item:nth-last-child(-n + 2) { border-bottom: 0; }
+  .kit-item span {
+    color: var(--lichen);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+  }
+  .kit-item strong { display: block; font-size: 0.9rem; }
+  .kit-item small { color: var(--ink-soft); font-size: 0.75rem; }
+
+  /* AI Lab */
+  .ai-lab { background: var(--lichen-dark); color: white; }
+  .ai-grid {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 70px;
+  }
+  .ai-copy h2 {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(2.4rem, 5.4vw, 4.8rem);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 0.98;
+  }
+  .ai-copy > p {
+    max-width: 470px;
+    margin: 22px 0 0;
+    color: rgba(255, 255, 255, 0.68);
+  }
+  .ai-copy code {
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #c8f4d2;
+    font-family: var(--mono);
+    font-size: 0.82em;
+  }
+  .ai-principle {
+    margin-top: 34px;
+    padding: 22px;
+    border: 1px solid rgba(169, 231, 189, 0.28);
+    border-radius: 10px;
+    color: #c8f4d2;
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    line-height: 1.3;
+  }
+  .terminal {
+    overflow: hidden;
+    align-self: center;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 14px;
+    background: #102a24;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2);
+  }
+  .terminal-bar {
+    display: flex;
+    padding: 13px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    align-items: center;
+    justify-content: space-between;
+  }
+  .terminal-dots { display: flex; gap: 6px; }
+  .terminal-dots i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.22);
+  }
+  .terminal-bar span {
+    color: rgba(255, 255, 255, 0.42);
+    font-family: var(--mono);
+    font-size: 0.63rem;
+  }
+  .terminal-body { padding: 28px; font-family: var(--mono); }
+  .terminal-step {
+    display: grid;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    grid-template-columns: 30px 1fr;
+    gap: 12px;
+  }
+  .terminal-step:last-child { border-bottom: 0; }
+  .terminal-step b { color: var(--signal); font-size: 0.72rem; }
+  .terminal-step strong { display: block; color: white; font-size: 0.78rem; }
+  .terminal-step small {
+    display: block;
+    margin-top: 4px;
+    color: rgba(255, 255, 255, 0.48);
+    font-size: 0.66rem;
+    line-height: 1.5;
+  }
+  .lab-rules {
+    display: grid;
+    margin-top: 48px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .lab-rule {
+    min-height: 130px;
+    padding: 22px;
+    background: var(--lichen-dark);
+  }
+  .lab-rule span {
+    color: #a9e7bd;
+    font-family: var(--mono);
+    font-size: 0.64rem;
+    text-transform: uppercase;
+  }
+  .lab-rule p {
+    margin: 16px 0 0;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.81rem;
+  }
+
+  /* Product fit + pilot */
+  .product-grid {
+    display: grid;
+    margin-top: 48px;
+    grid-template-columns: 0.82fr 1.18fr;
+    gap: 70px;
+  }
+  .product-thesis {
+    padding: 34px;
+    border-left: 4px solid var(--signal);
+    background: var(--mist);
+  }
+  .product-thesis p {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    line-height: 1.35;
+  }
+  .product-thesis small {
+    display: block;
+    margin-top: 18px;
+    color: var(--ink-soft);
+    font-size: 0.8rem;
+  }
+  .surface-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .surface {
+    min-height: 130px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: white;
+  }
+  .surface strong { display: block; font-size: 0.9rem; }
+  .surface p { margin: 8px 0 0; color: var(--ink-soft); font-size: 0.78rem; }
+
+  .pilot { padding-top: 0; }
+  .pilot-shell {
+    padding: 52px;
+    border-radius: 20px;
+    background: #efe8fb;
+  }
+  .pilot-head {
+    display: grid;
+    grid-template-columns: 1fr 0.75fr;
+    align-items: end;
+    gap: 30px;
+  }
+  .pilot-head h2 {
+    max-width: 670px;
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3.35rem);
+    font-weight: 500;
+    line-height: 1.03;
+  }
+  .pilot-head p { margin: 0; color: var(--ink-soft); }
+  .pilot-grid {
+    display: grid;
+    margin-top: 38px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .pilot-card {
+    min-height: 145px;
+    padding: 20px;
+    border: 1px solid rgba(151, 80, 248, 0.15);
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.62);
+  }
+  .pilot-card strong {
+    display: block;
+    color: #6d2ec3;
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    font-weight: 600;
+  }
+  .pilot-card p { margin: 10px 0 0; color: var(--ink-soft); font-size: 0.78rem; }
+  .next-step {
+    display: flex;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(151, 80, 248, 0.2);
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+  }
+  .next-step p { margin: 0; font-size: 0.9rem; }
+  .next-step strong { color: #6d2ec3; }
+  .next-step span {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: var(--violet);
+    color: white;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* Trust boundary */
+  .trust { padding-top: 0; }
+  .trust-grid {
+    display: grid;
+    padding: 42px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    grid-template-columns: 0.75fr 1.25fr;
+    gap: 60px;
+  }
+  .trust h2 {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 2.3rem;
+    font-weight: 500;
+    line-height: 1.05;
+  }
+  .trust-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px 30px;
+  }
+  .trust-item {
+    padding-left: 18px;
+    border-left: 2px solid var(--signal);
+  }
+  .trust-item strong { display: block; font-size: 0.84rem; }
+  .trust-item p { margin: 5px 0 0; color: var(--ink-soft); font-size: 0.75rem; }
+
+  /* Footer */
+  footer { padding: 0 0 46px; }
+  .footer-inner {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+  }
+  .footer-inner p {
+    max-width: 600px;
+    margin: 0;
+    color: #6c7772;
+    font-size: 0.72rem;
+  }
+  .footer-meta {
+    flex: 0 0 auto;
+    color: #6c7772;
+    font-family: var(--mono);
+    font-size: 0.64rem;
+    text-align: right;
+  }
+  .source-link {
+    color: var(--lichen);
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 960px) {
+    .hero-grid, .ai-grid, .product-grid { grid-template-columns: 1fr; }
+    .hero-card { min-height: auto; }
+    .outcome-grid { grid-template-columns: repeat(2, 1fr); }
+    .loop-shell, .kit-shell { grid-template-columns: 1fr; }
+    .lab-rules, .pilot-grid { grid-template-columns: repeat(2, 1fr); }
+    .evidence-grid { grid-template-columns: repeat(3, 1fr); }
+    .evidence-intro { grid-column: 1 / -1; padding-left: 0; }
+    .stat:first-of-type { border-left: 0; }
+  }
+
+  @media (max-width: 700px) {
+    .wrap { width: min(100% - 28px, 1160px); }
+    section { padding: 72px 0; }
+    .nav-links a { display: none; }
+    .hero { padding-top: 32px; }
+    .hero-grid { gap: 20px; }
+    .hero h1 { font-size: clamp(3.15rem, 17vw, 5.2rem); }
+    .hero-card { padding: 27px; border-radius: 15px; }
+    .outcome-intro, .journey-head, .pilot-head, .trust-grid {
+      display: block;
+    }
+    .outcome-intro .section-lede, .journey-head .section-lede, .pilot-head p {
+      margin-top: 18px;
+    }
+    .outcome-grid { grid-template-columns: 1fr; }
+    .outcome-card { min-height: auto; }
+    .outcome-card h3 { margin-top: 28px; }
+    .change-grid { grid-template-columns: 1fr; }
+    .change-row {
+      display: grid;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+      grid-template-columns: 1fr 28px 1fr;
+    }
+    .change-grid > .change-row > div {
+      min-height: auto;
+      padding: 0 10px;
+      border: 0;
+    }
+    .change-topic { grid-column: 1 / -1; margin-bottom: 12px; }
+    .change-arrow::before { left: 2px; }
+    .change-arrow::after { right: 2px; }
+    .loop-copy, .kit-copy, .pilot-shell { padding: 34px 26px; }
+    .loop-steps, .kit-list, .surface-list, .trust-list { grid-template-columns: 1fr; }
+    .loop-step { border-left: 0; }
+    .loop-step:nth-child(3) { border-bottom: 1px solid rgba(255, 255, 255, 0.11); }
+    .kit-list { padding: 18px 26px; }
+    .kit-item:nth-last-child(2) { border-bottom: 1px solid var(--line); }
+    .week { grid-template-columns: 1fr; gap: 20px; }
+    .week-label { padding-bottom: 4px; }
+    .ai-grid { gap: 42px; }
+    .lab-rules, .pilot-grid { grid-template-columns: 1fr; }
+    .evidence-grid { grid-template-columns: 1fr; }
+    .stat { padding-left: 0; border-top: 1px solid var(--line); border-left: 0; }
+    .next-step, .footer-inner { display: block; }
+    .next-step span { display: inline-block; margin-top: 18px; }
+    .trust-list { margin-top: 30px; }
+    .footer-meta { margin-top: 16px; text-align: left; }
+  }
+
+  @media print {
+    body { background: white; }
+    .nav-links, .nav-tag { display: none; }
+    section { padding: 48px 0; }
+    .hero-card, .loop-shell, .ai-lab {
+      background: #123f35 !important;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+    .outcomes, .mist, .pilot-shell, .kit-copy {
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+    .outcome-card, .week, .kit-shell, .terminal, .pilot-card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <nav class="nav" aria-label="Course overview navigation">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top" aria-label="Marketworks course overview">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        Marketworks
+      </a>
+      <div class="nav-links">
+        <a href="#outcomes">Outcomes</a>
+        <a href="#journey">Journey</a>
+        <a href="#ai-lab">AI Lab</a>
+        <a href="#pilot">Pilot</a>
+      </div>
+      <span class="nav-tag">Exploratory concept</span>
+    </div>
+  </nav>
+
+  <main id="top">
+    <header class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Marketworks Foundations</p>
+          <h1>From SIP to <em>Stock Sense.</em></h1>
+          <p class="hero-lede">
+            A practical beginner course for young Indian investors who have started with mutual funds
+            and now want to understand markets, investigate stocks, and build a disciplined process.
+            <strong>The promise is competence, not returns.</strong>
+          </p>
+          <ul class="course-facts" aria-label="Course facts">
+            <li>4 weeks</li>
+            <li>8 modules</li>
+            <li>30–45 min each</li>
+            <li>7 core artifacts</li>
+            <li>1 local AI lab</li>
+          </ul>
+        </div>
+
+        <aside class="hero-card" aria-label="Learner transformation">
+          <div>
+            <span class="persona-label">The learner</span>
+            <p class="persona">Age 22–28. Has a mutual-fund SIP, recognizes some stock-market terms, uses AI chat and search, and is curious—but does not yet have a repeatable way to learn or decide.</p>
+          </div>
+          <div class="transformation">
+            <div class="state">
+              <small>Starts here</small>
+              <p>“I follow the market, but I am not sure what the numbers mean or how to judge an idea.”</p>
+            </div>
+            <div class="transformation-arrow" aria-hidden="true"></div>
+            <div class="state after">
+              <small>Graduates here</small>
+              <p>“I can explain the market, test a simple rule, spot weak evidence, and know what I still need to learn.”</p>
+            </div>
+          </div>
+          <p class="promise"><strong>Emotional outcome:</strong> calmer, more skeptical, and more capable—not falsely certain.</p>
+        </aside>
+      </div>
+    </header>
+
+    <section class="evidence" aria-labelledby="why-now">
+      <div class="wrap evidence-grid">
+        <div class="evidence-intro">
+          <p class="eyebrow" id="why-now">Why this course, now</p>
+          <p>SEBI’s 2025 investor survey describes an “aware beginner” audience: familiarity is growing faster than understanding.</p>
+        </div>
+        <div class="stat">
+          <strong>63%</strong>
+          <span>of surveyed households knew at least one securities-market product.</span>
+        </div>
+        <div class="stat">
+          <strong>9.5%</strong>
+          <span>participated in the securities market—the confidence gap is still large.</span>
+        </div>
+        <div class="stat">
+          <strong>64%</strong>
+          <span>of investors had limited market knowledge, despite already participating.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="outcomes" id="outcomes" aria-labelledby="outcome-title">
+      <div class="wrap">
+        <div class="outcome-intro">
+          <div>
+            <p class="eyebrow">The graduate profile</p>
+            <h2 class="section-title" id="outcome-title">What can the learner actually do at the end?</h2>
+          </div>
+          <p class="section-lede">Each goal produces visible evidence. Completion means explaining, comparing, testing, and reflecting—not simply watching all the videos.</p>
+        </div>
+
+        <div class="outcome-grid">
+          <article class="outcome-card">
+            <span class="outcome-number">01</span>
+            <h3>Explain how the market works</h3>
+            <p>Trace how an Indian company raises capital and how an order becomes a settled security in a demat account. Explain exchanges, brokers, depositories, clearing, indices, and corporate actions in plain language.</p>
+            <span class="evidence-of-learning">Evidence: a market-plumbing map</span>
+          </article>
+          <article class="outcome-card">
+            <span class="outcome-number">02</span>
+            <h3>Choose better questions about products</h3>
+            <p>Compare stocks, mutual funds, ETFs, debt, REITs, InvITs, gold, IPOs, and derivatives by ownership, return source, risk, liquidity, cost, tax questions, and effort—without reducing the answer to a ranking.</p>
+            <span class="evidence-of-learning">Evidence: a product comparison grid</span>
+          </article>
+          <article class="outcome-card">
+            <span class="outcome-number">03</span>
+            <h3>Read the Indian market today</h3>
+            <p>Use direction, breadth, leadership, concentration, volatility, and context to write a dated market view. Separate what the data shows from what the learner infers.</p>
+            <span class="evidence-of-learning">Evidence: a five-line market weather report</span>
+          </article>
+          <article class="outcome-card">
+            <span class="outcome-number">04</span>
+            <h3>Investigate a stock without chasing a tip</h3>
+            <p>Frame a business question, note price and risk evidence, identify missing fundamentals, and record the conditions that would disprove a thesis. Recognize when deeper research or a registered professional is needed.</p>
+            <span class="evidence-of-learning">Evidence: an observation dossier</span>
+          </article>
+          <article class="outcome-card">
+            <span class="outcome-number">05</span>
+            <h3>Design a portfolio process</h3>
+            <p>Explain diversification, drawdown, position sizing, rebalancing, and benchmarking. Compare portfolio philosophies by their trade-offs, then write rules that make decisions consistent.</p>
+            <span class="evidence-of-learning">Evidence: a one-page portfolio policy</span>
+          </article>
+          <article class="outcome-card">
+            <span class="outcome-number">06</span>
+            <h3>Use AI as a junior analyst—not an oracle</h3>
+            <p>Turn an idea into an inspectable rule, use Codex or Claude Code to build a paper backtest locally, challenge its assumptions, and explain why the result could be wrong. Recognize data, AI, fraud, and behavioral red flags before acting.</p>
+            <span class="evidence-of-learning">Evidence: strategy card, report, tests, and failure memo</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="change-title">
+      <div class="wrap">
+        <p class="eyebrow">The meaningful change</p>
+        <h2 class="section-title" id="change-title">Not more market vocabulary. Better market judgment.</h2>
+        <div class="change-grid" role="table" aria-label="Learner before and after comparison">
+          <div class="change-row" role="row">
+            <div class="change-topic" role="rowheader">Market news</div>
+            <div class="change-before" role="cell">Sees a Nifty headline and a few winners.</div>
+            <div class="change-arrow" aria-hidden="true"></div>
+            <div class="change-after" role="cell">Checks direction, participation, leadership, risk, and the data date.</div>
+          </div>
+          <div class="change-row" role="row">
+            <div class="change-topic" role="rowheader">Stock ideas</div>
+            <div class="change-before" role="cell">Asks, “Is this a good stock?”</div>
+            <div class="change-arrow" aria-hidden="true"></div>
+            <div class="change-after" role="cell">Asks what evidence supports the idea, what is missing, and what would falsify it.</div>
+          </div>
+          <div class="change-row" role="row">
+            <div class="change-topic" role="rowheader">Portfolio</div>
+            <div class="change-before" role="cell">Collects holdings without a shared logic.</div>
+            <div class="change-arrow" aria-hidden="true"></div>
+            <div class="change-after" role="cell">Writes rules for purpose, universe, size, review, rebalancing, and risk.</div>
+          </div>
+          <div class="change-row" role="row">
+            <div class="change-topic" role="rowheader">AI</div>
+            <div class="change-before" role="cell">Asks a chatbot what to buy.</div>
+            <div class="change-arrow" aria-hidden="true"></div>
+            <div class="change-after" role="cell">Gives an agent a frozen specification, reviews its work, and red-teams the result.</div>
+          </div>
+          <div class="change-row" role="row">
+            <div class="change-topic" role="rowheader">Confidence</div>
+            <div class="change-before" role="cell">Mistakes certainty and recent returns for skill.</div>
+            <div class="change-arrow" aria-hidden="true"></div>
+            <div class="change-after" role="cell">Can act with a process while naming uncertainty, limitations, and boundaries.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="learning-loop" aria-labelledby="loop-title">
+      <div class="wrap loop-shell">
+        <div class="loop-copy">
+          <p class="eyebrow light">The course engine</p>
+          <h2 id="loop-title">One loop, repeated until it becomes a habit.</h2>
+          <p>Marketworks is the live practice surface. Every module asks the learner to do something with real observations and leave a trace of their reasoning.</p>
+        </div>
+        <div class="loop-steps">
+          <article class="loop-step">
+            <span>01</span>
+            <h3>Observe</h3>
+            <p>Open a relevant Marketworks view and notice the current evidence.</p>
+          </article>
+          <article class="loop-step">
+            <span>02</span>
+            <h3>Explain</h3>
+            <p>Translate the reading into plain English before forming a conclusion.</p>
+          </article>
+          <article class="loop-step">
+            <span>03</span>
+            <h3>Test</h3>
+            <p>Apply a checklist, comparison, or simple rule to challenge the first impression.</p>
+          </article>
+          <article class="loop-step">
+            <span>04</span>
+            <h3>Reflect</h3>
+            <p>Record what remains uncertain, what would change the view, and when to return.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="journey" aria-labelledby="journey-title">
+      <div class="wrap">
+        <div class="journey-head">
+          <div>
+            <p class="eyebrow">Four-week journey</p>
+            <h2 class="section-title" id="journey-title">From orientation to an independent operating rhythm.</h2>
+          </div>
+          <p class="section-lede">Two short modules per week. Lessons come in five-to-eight-minute pieces, with one practical mission and an optional weekly clinic.</p>
+        </div>
+
+        <div class="week">
+          <div class="week-label"><span>Week 01</span><strong>Orient</strong></div>
+          <article class="module">
+            <small>Module 0</small>
+            <h3>Your investing starting point</h3>
+            <p>Separate goals, horizon, liquidity, capacity for loss, and emotional comfort. Set the questions the course should answer.</p>
+            <span class="artifact-tag">Learner passport</span>
+          </article>
+          <article class="module">
+            <small>Module 1</small>
+            <h3>How Indian capital markets work</h3>
+            <p>Follow capital, orders, settlement, ownership, market institutions, indices, and corporate actions.</p>
+            <span class="artifact-tag">Market-plumbing map</span>
+          </article>
+        </div>
+
+        <div class="week">
+          <div class="week-label"><span>Week 02</span><strong>Observe</strong></div>
+          <article class="module">
+            <small>Module 2</small>
+            <h3>The product shelf</h3>
+            <p>Understand what different market products are, how they create returns, and how they can lose money.</p>
+            <span class="artifact-tag">Product comparison grid</span>
+          </article>
+          <article class="module">
+            <small>Module 3</small>
+            <h3>Read the Indian market today</h3>
+            <p>Build a repeatable, dated market view from trend, breadth, concentration, sectors, volatility, and context.</p>
+            <span class="artifact-tag">Market weather report</span>
+          </article>
+        </div>
+
+        <div class="week">
+          <div class="week-label"><span>Week 03</span><strong>Evaluate</strong></div>
+          <article class="module">
+            <small>Module 4</small>
+            <h3>Stock picking without tips</h3>
+            <p>Move from story to evidence with a business, price, and risk checklist—and make missing information visible.</p>
+            <span class="artifact-tag">Observation dossier</span>
+          </article>
+          <article class="module">
+            <small>Module 5</small>
+            <h3>Build a portfolio, not a pile</h3>
+            <p>Compare four Marketworks methodologies, predict trade-offs, and write a simple portfolio policy.</p>
+            <span class="artifact-tag">Portfolio policy</span>
+          </article>
+        </div>
+
+        <div class="week">
+          <div class="week-label"><span>Week 04</span><strong>Systematize</strong></div>
+          <article class="module">
+            <small>Module 6</small>
+            <h3>Build a strategy with AI</h3>
+            <p>Specify, implement, test, and challenge one simple rules-based paper strategy on the learner’s own device.</p>
+            <span class="artifact-tag">Strategy pack + backtest</span>
+          </article>
+          <article class="module">
+            <small>Module 7</small>
+            <h3>Keep a process when markets move</h3>
+            <p>Turn learning into a weekly observation habit, with a journal that records beliefs before outcomes.</p>
+            <span class="artifact-tag">30-day operating plan</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="graduate-kit" aria-labelledby="kit-title">
+      <div class="wrap kit-shell">
+        <div class="kit-copy">
+          <p class="eyebrow">The graduate kit</p>
+          <h2 id="kit-title">They leave with work they can inspect, improve, and reuse.</h2>
+          <p>No certificate-as-proof shortcut. The artifacts show whether the learner can apply the ideas independently.</p>
+        </div>
+        <div class="kit-list">
+          <div class="kit-item"><span>01</span><div><strong>Learner passport</strong><small>Questions, boundaries, and starting behavior</small></div></div>
+          <div class="kit-item"><span>02</span><div><strong>Market-plumbing map</strong><small>A plain-language capital-market flow</small></div></div>
+          <div class="kit-item"><span>03</span><div><strong>Product grid</strong><small>A framework for comparing choices</small></div></div>
+          <div class="kit-item"><span>04</span><div><strong>Market weather report</strong><small>A dated, evidence-based weekly view</small></div></div>
+          <div class="kit-item"><span>05</span><div><strong>Observation dossier</strong><small>A stock idea with evidence and unknowns</small></div></div>
+          <div class="kit-item"><span>06</span><div><strong>Portfolio policy</strong><small>Rules for structure, review, and risk</small></div></div>
+          <div class="kit-item"><span>07</span><div><strong>AI strategy pack</strong><small>Specification, report, tests, and failure memo</small></div></div>
+          <div class="kit-item"><span>08</span><div><strong>30-day operating plan</strong><small>A sustainable Marketworks learning rhythm</small></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ai-lab" id="ai-lab" aria-labelledby="ai-title">
+      <div class="wrap">
+        <div class="ai-grid">
+          <div class="ai-copy">
+            <p class="eyebrow light">AI Portfolio Lab</p>
+            <h2 id="ai-title">Build a paper strategy. Then try to break it.</h2>
+            <p>Codex or Claude Code acts as a local implementation partner. No prior coding is assumed: guided prompts begin with the simple <code>codex</code> or <code>claude</code> command. The learner owns the idea, freezes the rules before seeing results, reviews every file, and keeps all work on their own device.</p>
+            <div class="ai-principle">The lab succeeds when the learner can explain why the backtest may be wrong—not when the chart goes up.</div>
+          </div>
+          <div class="terminal" aria-label="AI lab workflow">
+            <div class="terminal-bar">
+              <div class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+              <span>local strategy workspace</span>
+            </div>
+            <div class="terminal-body">
+              <div class="terminal-step"><b>01</b><div><strong>Understand before editing</strong><small>Inspect the starter folder, explain the data, and interview the learner about the idea.</small></div></div>
+              <div class="terminal-step"><b>02</b><div><strong>Freeze STRATEGY.md</strong><small>Define universe, signal, execution date, position size, rebalance, costs, and benchmark.</small></div></div>
+              <div class="terminal-step"><b>03</b><div><strong>Plan, build, and verify</strong><small>Create an inspectable implementation with tests for dates, missing data, weights, and costs.</small></div></div>
+              <div class="terminal-step"><b>04</b><div><strong>Red-team the result</strong><small>Search for look-ahead, survivorship bias, weak assumptions, overfitting, and misleading charts.</small></div></div>
+              <div class="terminal-step"><b>05</b><div><strong>Explain and compare</strong><small>Write the failure memo, then compare process and risk with a Marketworks methodology.</small></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lab-rules" aria-label="AI lab safety rules">
+          <div class="lab-rule"><span>Paper only</span><p>Synthetic or appropriately licensed delayed end-of-day data. No real money or orders.</p></div>
+          <div class="lab-rule"><span>No credentials</span><p>No broker connection, API keys, demat details, account data, or personal portfolio amounts.</p></div>
+          <div class="lab-rule"><span>One simple rule</span><p>One signal choice and one risk rule. No parameter hunt, leverage, options, or return optimization.</p></div>
+          <div class="lab-rule"><span>Human accountable</span><p>AI use is disclosed. The learner reviews assumptions, output, limitations, and every final claim.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="fit-title">
+      <div class="wrap">
+        <p class="eyebrow">Why it belongs inside Marketworks</p>
+        <h2 class="section-title" id="fit-title">The product already has the pieces. The course adds sequence and purpose.</h2>
+        <div class="product-grid">
+          <div class="product-thesis">
+            <p>“A glossary answers ‘what does this mean?’ A course answers ‘what should I learn next, and what can I now do?’”</p>
+            <small>The dashboard becomes a field lab, not a destination linked at the end of a lesson.</small>
+          </div>
+          <div class="surface-list">
+            <article class="surface"><strong>22 Learn explainers + glossary</strong><p>Become short prerequisites and contextual reference, instead of a list the learner must navigate alone.</p></article>
+            <article class="surface"><strong>Market pulse and breadth</strong><p>Power the market-weather mission and create a reason to return on separate days.</p></article>
+            <article class="surface"><strong>Sectors, screeners, stock detail</strong><p>Support evidence gathering and observation dossiers without becoming security recommendations.</p></article>
+            <article class="surface"><strong>Four portfolio methodologies</strong><p>Make rule design, concentration, cadence, drawdown, and philosophical trade-offs observable.</p></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pilot" id="pilot" aria-labelledby="pilot-title">
+      <div class="wrap pilot-shell">
+        <div class="pilot-head">
+          <h2 id="pilot-title">Prove learning and product pull before building a course platform.</h2>
+          <p>Run a small, static pilot first. Completion and artifact quality outrank time-on-site or click volume.</p>
+        </div>
+        <div class="pilot-grid">
+          <article class="pilot-card"><strong>20–24</strong><p>subscriber learners in one four-week cohort</p></article>
+          <article class="pilot-card"><strong>+25 pts</strong><p>target improvement from pre-course to post-course concept score</p></article>
+          <article class="pilot-card"><strong>≥50%</strong><p>full-course completion, with a median of at least five artifacts</p></article>
+          <article class="pilot-card"><strong>≥2 days</strong><p>median weekly return visits to distinct Marketworks Insights surfaces</p></article>
+        </div>
+        <div class="next-step">
+          <p><strong>First experiment:</strong> prototype the market-weather mission and the constrained AI lab with five learners each. Author the full course only after both can be completed independently and safely.</p>
+          <span>Next build</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="trust" aria-labelledby="trust-title">
+      <div class="wrap trust-grid">
+        <div>
+          <p class="eyebrow">Trust boundary</p>
+          <h2 id="trust-title">Conditions, not instructions.</h2>
+        </div>
+        <div class="trust-list">
+          <div class="trust-item"><strong>Educational scope</strong><p>No personalized advice, named buy/sell calls, price targets, guarantees, or trade execution.</p></div>
+          <div class="trust-item"><strong>Dated evidence</strong><p>Market views carry an as-of date and distinguish observation, inference, and uncertainty.</p></div>
+          <div class="trust-item"><strong>Safe AI use</strong><p>No credentials or personal portfolio data; paper exercises only; assumptions and AI assistance disclosed.</p></div>
+          <div class="trust-item"><strong>Compliance review</strong><p>Public strategy templates, model comparisons, security analysis, and performance claims require legal review before launch.</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <p>
+        Course concept prepared from the Marketworks product audit and exploratory curriculum study.
+        Audience context uses <a class="source-link" href="https://www.sebi.gov.in/reports-and-statistics/research/jan-2026/investor-survey-2025-_99170.html">SEBI Investor Survey 2025</a>.
+        Research figures should be rechecked at publication. This concept is educational and is not investment advice.
+      </p>
+      <div class="footer-meta">COURSE DEVELOPMENT / 28 JUL 2026<br>EXPLORATORY STUDY</div>
+    </div>
+  </footer>
+</body>
+</html>
