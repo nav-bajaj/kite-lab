@@ -336,6 +336,18 @@ class OptionsWorker:
             except Exception as exc:
                 self.db_errors += 1
                 log.warning("daily_sessions write failed: %s", exc)
+        self._materialize_greeks(now)
+
+    def _materialize_greeks(self, now: datetime) -> None:
+        """EOD: derive IV/Greeks for the day's bars (microstructure Stage 1).
+        Analytics must never take the capture path down — best-effort."""
+        try:
+            from app.microstructure.materialize import run as materialize_run
+
+            n = materialize_run(days=[now.date().isoformat()])
+            log.info("eod: greeks materialized for %s (%d rows)", now.date(), n)
+        except Exception as exc:
+            log.warning("greeks materialization failed (bars are safe, rerun manually): %s", exc)
 
     def _session_stats(self, now: datetime) -> dict:
         return {

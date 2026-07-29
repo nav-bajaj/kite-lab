@@ -33,16 +33,22 @@
 
 ## Stage-1 assumptions (documented, versioned — never hidden)
 
-- Black-Scholes on SPOT with flat r = 6.5% p.a., q = 0. For weekly
-  expiries (T <= ~10 trading days) carry error is negligible vs quote
-  noise; revisit with futures-implied forward (Black-76) in Stage 2.
+- UPGRADED 2026-07-29 to `b76-parityfwd-v1`: Black-76 on the
+  PARITY-IMPLIED FORWARD — per (expiry, minute), F = median over strike
+  pairs of K + (C-P)e^{rT} (>=3 pairs; else spot-carry fallback,
+  labeled in `underlying_src`). Model-free and self-validating: the
+  same-strike CE/PE IV gap collapsed from ~+3.4 vol pts (spot/q=0 v1)
+  to ~0.00 across all 23 days; futures de-carry was rejected (AUG basis
+  noise over-corrected to -1.8). IV coverage rose to 99.7%.
 - Expiry cutoff 15:30 IST on expiry date; T in calendar-days/365.
 - IV inverted from bar CLOSE (last trade of the minute), not mid — bars
   carry bid/ask so a mid-based variant can be added and compared.
 - Rows where close < intrinsic, or T <= 0, or no spot bar that minute:
   IV NULL (never fabricated).
-- `engine_version` column on every row; recompute = new version, old
-  rows replaced only deliberately (reproducibility principle).
+- `engine_version` column on every row. Decision: exactly ONE
+  materialized version at a time (replace is deliberate, per-day);
+  reproducibility lives in engine_version + git history, not parallel
+  table copies.
 
 ## TDD
 

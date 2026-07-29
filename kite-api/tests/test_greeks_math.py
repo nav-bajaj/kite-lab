@@ -144,3 +144,33 @@ class TestMaterializer:
         # idempotent re-run replaces, not duplicates
         n2 = M.run(days=["2026-07-29"], database_url=url)
         assert n2 == 2
+
+
+class TestBlack76:
+    F, T2 = 24010.0, 6 / 365  # forward de-carried to option expiry
+
+    def test_b76_parity(self):
+        c = G.b76_price(self.F, K, self.T2, R, SIG, "CE")
+        p = G.b76_price(self.F, K, self.T2, R, SIG, "PE")
+        disc = math.exp(-R * self.T2)
+        assert c - p == pytest.approx(disc * (self.F - K), abs=1e-6)
+
+    def test_b76_iv_round_trip(self):
+        px = G.b76_price(self.F, K, self.T2, R, 0.134, "CE")
+        iv = G.implied_vol_b76(np.array([px]), np.array([self.F]), np.array([K]),
+                               np.array([self.T2]), R, np.array(["CE"]))[0]
+        assert iv == pytest.approx(0.134, abs=1e-4)
+
+    def test_b76_delta_relation(self):
+        g_c = G.greeks_b76(np.array([self.F]), np.array([K]), np.array([self.T2]), R,
+                           np.array([SIG]), np.array(["CE"]))
+        g_p = G.greeks_b76(np.array([self.F]), np.array([K]), np.array([self.T2]), R,
+                           np.array([SIG]), np.array(["PE"]))
+        disc = math.exp(-R * self.T2)
+        assert g_c["delta"][0] - g_p["delta"][0] == pytest.approx(disc, abs=1e-9)
+
+    def test_forward_decarry(self):
+        # futures expiring later than the option: F_opt < F_fut under positive r
+        f_opt = G.forward_from_futures(24100.0, t_fut=27 / 365, t_opt=6 / 365, r=R)
+        assert f_opt == pytest.approx(24100.0 * math.exp(-R * (21 / 365)), rel=1e-12)
+        assert f_opt < 24100.0

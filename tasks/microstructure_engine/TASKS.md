@@ -1,18 +1,21 @@
 # Microstructure Engine — Tasks
 
-## Stage 1 — IV + first-order Greeks (measured math)
+## Stage 1 — IV + first-order Greeks (DONE 2026-07-29)
 
-- [ ] Spec tests: BS known values, IV round-trip, parity, symmetry, edges
-- [ ] greeks.py: vectorized BS price / IV inversion / delta gamma vega theta
-- [ ] option_greeks_minute table + materializer CLI (assumptions + version cols)
-- [ ] Materialize full bar history; validation readout (ATM IV levels, smile,
-      gamma peak at ATM, parity residuals)
-- [ ] Nightly materialization for each new session (hook or cron)
+- [x] 19 spec tests (TDD red-first): BS + B76 known values, IV round-trips,
+      parity, symmetry, edges, materializer roundtrip
+- [x] greeks.py: BS + Black-76, vectorized bisection IV, delta/gamma/vega/theta
+- [x] option_greeks_minute + materializer CLI; 651,934 rows materialized
+- [x] Worker EOD hook: each session auto-materializes after bars insert
+- [x] Forward upgraded to parity-implied (b76-parityfwd-v1): CE/PE gap
+      3.4 -> 0.0 vol pts, IV coverage 99.7%; futures de-carry rejected
 
-## Stage 2 — gamma aggregation (next)
+## Stage 2 — gamma aggregation (readout live, tables next)
 
-- [ ] Gamma-by-strike profile per minute/day; max-gamma strike; concentration
-- [ ] Futures-implied forward (Black-76) variant; compare IVs vs Stage 1
+- [x] stage2_gamma_profile.py: GEX/1% by strike, max-gamma strike,
+      concentration — expiry day pinned 57% single-strike vs trend day 20%
+- [ ] Materialize daily gamma profile table + /admin surface
+- [ ] Zero-gamma / walls need Stage 3 dealer-sign assumptions (labeled)
 
 ## Stage 3 / 4 — estimated + flow-adjusted positioning (later; assumptions
       surfaced with confidence levels per the vision doc)

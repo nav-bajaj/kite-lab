@@ -26,11 +26,13 @@ from sqlalchemy import (
     Column, Date, DateTime, Float, MetaData, String, Table, create_engine, text,
 )
 
-from app.microstructure.greeks import ENGINE_VERSION, greeks, implied_vol, t_years
+from app.microstructure.greeks import greeks_b76, implied_vol_b76, t_years
 
 log = logging.getLogger(__name__)
 
 RISK_FREE = 0.065
+ENGINE_VERSION = "b76-parityfwd-v1"
+MIN_PARITY_PAIRS = 3
 
 _metadata = MetaData()
 
@@ -42,7 +44,8 @@ option_greeks_minute = Table(
     Column("expiry", Date),
     Column("strike", Float),
     Column("kind", String(4)),
-    Column("underlying", Float),
+    Column("underlying", Float),  # the forward actually used
+    Column("underlying_src", String(12)),  # 'parity' | 'spot_carry'
     Column("iv", Float),
     Column("delta", Float),
     Column("gamma", Float),
@@ -83,14 +86,40 @@ def materialize_day(conn, day: str) -> int:
         t_years(t.to_pydatetime(), e) if pd.notna(e) else 0.0
         for t, e in zip(ts, df["expiry"])
     ])
-    S = df["underlying"].to_numpy(dtype=float)
+    df["T"] = T
+
+    # Forward per (expiry, minute): put-call parity across strike pairs —
+    # F = K + (C - P) e^{rT}. Model-free; validated 2026-07-29 (13 strikes,
+    # std 0.56 pts, same-strike CE/PE IV gap -> 0.00). Fallback when fewer
+    # than MIN_PARITY_PAIRS pairs exist: spot-carry S e^{rT} (the old
+    # Stage-1 assumption), labeled so consumers can filter.
+    pair_rows = df.pivot_table(index=["expiry", "minute", "strike"], columns="kind",
+                               values="close", aggfunc="first")
+    pair_rows = pair_rows.dropna() if {"CE", "PE"} <= set(pair_rows.columns) else pair_rows.iloc[0:0]
+    if not pair_rows.empty:
+        pr = pair_rows.reset_index()
+        tmap = df.drop_duplicates(["expiry", "minute"]).set_index(["expiry", "minute"])["T"]
+        pr = pr.merge(tmap.rename("T"), on=["expiry", "minute"])
+        pr["F"] = pr["strike"] + (pr["CE"] - pr["PE"]) * np.exp(RISK_FREE * pr["T"])
+        fw = pr.groupby(["expiry", "minute"]).agg(F=("F", "median"), n=("F", "size")).reset_index()
+        fw = fw[fw["n"] >= MIN_PARITY_PAIRS][["expiry", "minute", "F"]]
+    else:
+        fw = pd.DataFrame(columns=["expiry", "minute", "F"])
+    df = df.merge(fw, on=["expiry", "minute"], how="left")
+    df["F"] = pd.to_numeric(df["F"], errors="coerce")
+
+    spot_carry = df["underlying"].to_numpy(dtype=float) * np.exp(RISK_FREE * df["T"].to_numpy())
+    F_used = np.where(np.isfinite(df["F"].to_numpy(dtype=float)), df["F"].to_numpy(dtype=float), spot_carry)
+    src = np.where(np.isfinite(df["F"].to_numpy(dtype=float)), "parity", "spot_carry")
+
     K = df["strike"].to_numpy(dtype=float)
     P = df["close"].to_numpy(dtype=float)
     kind = df["kind"].to_numpy()
+    T = df["T"].to_numpy()
 
     with np.errstate(all="ignore"):
-        iv = implied_vol(P, S, K, T, RISK_FREE, kind)
-        g = greeks(S, K, T, RISK_FREE, iv, kind)
+        iv = implied_vol_b76(P, F_used, K, T, RISK_FREE, kind)
+        g = greeks_b76(F_used, K, T, RISK_FREE, iv, kind)
 
     now = datetime.now(timezone.utc)
     records = []
@@ -101,7 +130,8 @@ def materialize_day(conn, day: str) -> int:
             "expiry": df["expiry"].iloc[i],
             "strike": float(K[i]),
             "kind": df["kind"].iloc[i],
-            "underlying": None if np.isnan(S[i]) else float(S[i]),
+            "underlying": None if np.isnan(F_used[i]) else float(F_used[i]),
+            "underlying_src": str(src[i]),
             "iv": None if np.isnan(iv[i]) else float(iv[i]),
             "delta": None if np.isnan(g["delta"][i]) else float(g["delta"][i]),
             "gamma": None if np.isnan(g["gamma"][i]) else float(g["gamma"][i]),
@@ -111,17 +141,30 @@ def materialize_day(conn, day: str) -> int:
             "engine_version": ENGINE_VERSION,
             "computed_at": now,
         })
-    conn.execute(
-        text("delete from option_greeks_minute where date(minute) = :d and engine_version = :v"),
-        {"d": day, "v": ENGINE_VERSION},
-    )
+    # Deliberate replace: exactly one materialized engine version at a time.
+    # Reproducibility lives in engine_version + git history, not in keeping
+    # parallel copies (see PLAN.md — versioning decision).
+    conn.execute(text("delete from option_greeks_minute where date(minute) = :d"), {"d": day})
     conn.execute(option_greeks_minute.insert(), records)
     return len(records)
 
 
+def _ensure_schema(engine) -> None:
+    _metadata.create_all(engine, checkfirst=True)
+    # underlying_src added after first ship; patch existing tables in place
+    try:
+        with engine.begin() as conn:
+            if engine.dialect.name == "postgresql":
+                conn.execute(text("ALTER TABLE option_greeks_minute ADD COLUMN IF NOT EXISTS underlying_src VARCHAR(12)"))
+            else:
+                conn.execute(text("ALTER TABLE option_greeks_minute ADD COLUMN underlying_src VARCHAR(12)"))
+    except Exception:
+        pass  # column already exists
+
+
 def run(days=None, all_days=False, database_url: Optional[str] = None) -> int:
     engine = create_engine(_resolve_url(database_url))
-    _metadata.create_all(engine, checkfirst=True)
+    _ensure_schema(engine)
     total = 0
     with engine.begin() as conn:
         if all_days:
