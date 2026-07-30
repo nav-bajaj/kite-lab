@@ -31,17 +31,18 @@ LOT = 75
 
 
 def load_day(day, source, expiry):
+    d = day.split(" ")[0] if not day[4] == "-" else day[:10]
     q = """
       select minute, kind, strike, close, bid_close, ask_close, oi_close
       from option_minute_bars
-      where source=:src and expiry=:exp and kind in ('CE','PE')
+      where source=:src and expiry=:exp and kind in ('CE','PE') and date(minute)=:d
       order by minute
     """
-    df = pd.read_sql(text(q), ENGINE, params={"src": source, "exp": expiry})
+    df = pd.read_sql(text(q), ENGINE, params={"src": source, "exp": expiry, "d": d})
     spot = pd.read_sql(text("""
       select minute, close from option_minute_bars
-      where source=:src and contract_id='NIFTY_SPOT' order by minute
-    """), ENGINE, params={"src": source})
+      where source=:src and contract_id='NIFTY_SPOT' and date(minute)=:d order by minute
+    """), ENGINE, params={"src": source, "d": d})
     for d in (df, spot):
         d["ist"] = pd.to_datetime(d["minute"], utc=True).dt.tz_convert("Asia/Kolkata")
         d["hm"] = d["ist"].dt.strftime("%H:%M")
@@ -151,6 +152,10 @@ def oi_warning_day2():
 
 
 if __name__ == "__main__":
-    run_day("2026-07-28 (expiry pin day)", "replay", "2026-07-28")
-    run_day("2026-07-29 (trend day)", "live", "2026-08-04")
-    oi_warning_day2()
+    import sys as _sys
+    if len(_sys.argv) > 1:
+        run_day(_sys.argv[1], _sys.argv[2], _sys.argv[3])
+    else:
+        run_day("2026-07-28 (expiry pin day)", "replay", "2026-07-28")
+        run_day("2026-07-29 (trend day)", "live", "2026-08-04")
+        oi_warning_day2()
