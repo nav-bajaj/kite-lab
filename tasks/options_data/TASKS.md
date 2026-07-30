@@ -94,9 +94,12 @@ consumes bars only) · proprietary dataset compounding daily.
 - [x] EOD auto-materialization of IV/Greeks (microstructure Stage 1)
 - [x] Daily report generator at EOD (spot/session/gamma/OI/IV/friction)
 - [x] Founder risk-threshold framework fixed (research/NOTE_risk_thresholds.md)
-- [ ] MAE ledger: paper-straddle section in daily report + stored table
-      (per-session MAE, timing, underwater duration, regime at MAE)
-- [ ] Stage 2 gamma-profile table + /admin card (intraday regime read)
+- [x] MAE ledger (2026-07-30): paper_straddle_ledger table + daily-report
+      section + EOD hook; regime-at-MAE join queued with day-type library
+- [x] Stage 2 gamma tables + LIVE VIEW (2026-07-30): gamma_profile_daily
+      rows at 10:00/13:00/15:15; /api/options/live-analytics (R-026
+      extended, authz 291) computing parity forward/ATM IV/GEX/regime
+      from the 10s chain snapshot; /admin Options Analytics card
 - [ ] Morning day-plan generator prototype (advisory; builds call track
       record for the autonomy gates)
 - [ ] 2026-08-04 expiry: straddle-ledger first verdict; second pin-day

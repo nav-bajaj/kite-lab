@@ -14,7 +14,8 @@
 
 - [x] stage2_gamma_profile.py: GEX/1% by strike, max-gamma strike,
       concentration — expiry day pinned 57% single-strike vs trend day 20%
-- [ ] Materialize daily gamma profile table + /admin surface
+- [x] gamma_profile_daily table + live compute_from_snapshot + /admin
+      Options Analytics card via /api/options/live-analytics (2026-07-30)
 - [ ] Zero-gamma / walls need Stage 3 dealer-sign assumptions (labeled)
 
 ## Stage 3 / 4 — estimated + flow-adjusted positioning (later; assumptions
