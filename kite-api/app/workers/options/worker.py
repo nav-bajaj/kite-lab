@@ -349,6 +349,20 @@ class OptionsWorker:
                 log.warning("daily_sessions write failed: %s", exc)
         self._materialize_greeks(now)
         self._archive_ticks(now)
+        self._write_daily_report(now)
+
+    def _write_daily_report(self, now: datetime) -> None:
+        """EOD: render the analytics digest to the volume. Best-effort."""
+        try:
+            from app.microstructure.daily_report import generate
+
+            md = generate(now.date().isoformat())
+            report_dir = self.settings.options_data_dir / "reports"
+            report_dir.mkdir(parents=True, exist_ok=True)
+            (report_dir / f"{now.date().isoformat()}.md").write_text(md)
+            log.info("eod: daily report written (%d chars)", len(md))
+        except Exception as exc:
+            log.warning("daily report failed (rerun via daily_report CLI): %s", exc)
 
     def _archive_ticks(self, now: datetime) -> None:
         """EOD: compress + prune old raw-tick days (Phase 5 retention).
