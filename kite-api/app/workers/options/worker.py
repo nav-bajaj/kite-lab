@@ -102,6 +102,7 @@ class OptionsWorker:
         self._last_flush: datetime = now_ist()
         self._last_heartbeat: datetime = now_ist()
         self._capture_started_at: Optional[datetime] = None
+        self._selection_failures = 0
 
     # -- lifecycle ---------------------------------------------------------
 
@@ -203,10 +204,17 @@ class OptionsWorker:
             rows = instrument_loader.fetch_nfo_dump(kite)
             spot = instrument_loader.fetch_nifty_spot(kite)
         except Exception as exc:
-            # Missing/expired token before 09:00 is expected some mornings;
-            # keep retrying each poll until the login lands.
-            self.last_error = f"selection fetch failed: {exc}"
-            log.warning("daily selection fetch failed (will retry): %s", exc)
+            # Auth failures right after 08:30 are EXPECTED — selection
+            # retries start at the same moment the morning login job does,
+            # and lose the race for a few seconds. Only surface last_error
+            # (which turns the /admin dot red) once failures persist past
+            # the grace window; before that, log quietly and retry.
+            self._selection_failures += 1
+            if self._selection_failures > self.settings.selection_error_grace_polls:
+                self.last_error = f"selection fetch failed: {exc}"
+                log.warning("daily selection fetch failed (attempt %d): %s", self._selection_failures, exc)
+            else:
+                log.info("selection waiting on morning token (attempt %d): %s", self._selection_failures, exc)
             return
 
         selection = instrument_loader.select_contracts(
@@ -223,6 +231,9 @@ class OptionsWorker:
         self.selection = selection
         self.selection_date = now.date()
         self._nfo_rows = rows
+        # success supersedes any transient morning failure
+        self._selection_failures = 0
+        self.last_error = None
         log.info("daily selection: %s", selection.summary())
 
     # -- capture -----------------------------------------------------------
@@ -337,6 +348,25 @@ class OptionsWorker:
                 self.db_errors += 1
                 log.warning("daily_sessions write failed: %s", exc)
         self._materialize_greeks(now)
+        self._archive_ticks(now)
+
+    def _archive_ticks(self, now: datetime) -> None:
+        """EOD: compress + prune old raw-tick days (Phase 5 retention).
+        Best-effort — a failure leaves raw data in place, never the
+        other way around."""
+        try:
+            from app.workers.options.archive import archive_old_days
+
+            stats = archive_old_days(
+                self.settings.ticks_dir,
+                self.settings.ticks_archive_dir,
+                self.settings.keep_raw_days,
+                now.date(),
+            )
+            if any(stats.values()):
+                log.info("eod: tick archive %s", stats)
+        except Exception as exc:
+            log.warning("tick archival failed (raw data untouched): %s", exc)
 
     def _materialize_greeks(self, now: datetime) -> None:
         """EOD: derive IV/Greeks for the day's bars (microstructure Stage 1).

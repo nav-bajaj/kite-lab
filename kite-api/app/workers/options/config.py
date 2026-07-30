@@ -44,6 +44,16 @@ class OptionsWorkerSettings(BaseSettings):
     # Chain snapshot upsert cadence (goal: no stale chain >10s in hours)
     snapshot_seconds: float = 10.0
 
+    # Polls (5s each) of failing selection tolerated quietly before
+    # last_error is surfaced — covers the expected 08:30 login race.
+    # 24 polls ~= 2 minutes.
+    selection_error_grace_polls: int = 24
+
+    # Raw-tick retention: day dirs older than this are tar.gz'd and the
+    # raw dir removed (the archive stays on the volume; bars+DB remain
+    # the queryable layer, the archive the replay source).
+    keep_raw_days: int = 2
+
     # Testing only: capture regardless of the market clock (post-close
     # snapshot ticks still flow). Never leave on in normal operation —
     # it bypasses the session lifecycle entirely.
@@ -70,6 +80,10 @@ class OptionsWorkerSettings(BaseSettings):
     @property
     def ticks_dir(self) -> Path:
         return self.options_data_dir / "ticks"
+
+    @property
+    def ticks_archive_dir(self) -> Path:
+        return self.options_data_dir / "ticks_archive"
 
 
 def get_worker_settings() -> OptionsWorkerSettings:
