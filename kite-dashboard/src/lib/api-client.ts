@@ -573,6 +573,41 @@ export async function getOptionsWorkerStatus() {
   return apiFetch<OptionsWorkerStatus>("/api/options/worker-status");
 }
 
+// Live options analytics (admin-only): computed from the worker's 10s
+// chain snapshot. Mirrors /api/options/live-analytics.
+export interface OptionsLiveAnalytics {
+  found: boolean;
+  snapshot_at?: string;
+  snapshot_age_seconds?: number;
+  analytics?: {
+    expiry: string;
+    forward: number;
+    spot?: number;
+    total_gex_cr: number;
+    max_gamma_strike: number;
+    concentration: number | null;
+    atm_strike: number;
+    atm_iv: number | null;
+    atm_straddle: number | null;
+    regime: "PIN-GRAVITY" | "DIFFUSE" | "MIXED";
+    top_strikes: Record<string, number>;
+  } | null;
+  paper_straddle?: {
+    session_date: string;
+    strike: number;
+    entry_credit: number;
+    final_pnl: number;
+    mae: number;
+    mae_time: string | null;
+    underwater_minutes: number;
+    live_pnl?: number;
+  } | null;
+}
+
+export async function getOptionsLiveAnalytics() {
+  return apiFetch<OptionsLiveAnalytics>("/api/options/live-analytics");
+}
+
 export async function getTokenStatus() {
   return apiFetch<TokenStatus>("/api/system/token");
 }

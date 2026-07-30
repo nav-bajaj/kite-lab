@@ -203,6 +203,7 @@ ADMIN_ENDPOINTS: list[tuple[str, str]] = [
     ("GET", "/api/freshness"),
     # options_worker.py — admin-only options-worker heartbeat (ops intel)
     ("GET", "/api/options/worker-status"),
+    ("GET", "/api/options/live-analytics"),
 ]
 # Note: POST /api/sync/upload-data and POST /api/jobs/{id}/cancel above already
 # cover sync.py(3rd) and jobs.py respectively. POST /api/sync/upload-data is

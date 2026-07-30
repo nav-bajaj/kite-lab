@@ -25,6 +25,7 @@ import {
   getSystemStatus,
   getFreshnessReport,
   getOptionsWorkerStatus,
+  getOptionsLiveAnalytics,
   getHealth,
   getPositions,
   getMarketStatus,
@@ -34,6 +35,7 @@ import {
   type SystemStatus,
   type FreshnessReport,
   type OptionsWorkerStatus,
+  type OptionsLiveAnalytics,
 } from "./api-client";
 import type { PositionsResponse, MarketStatus } from "./types";
 
@@ -324,6 +326,13 @@ export function useSystemStatus() {
 export function useFreshnessReport() {
   return useAuthedSWR<FreshnessReport>("freshness", getFreshnessReport, {
     refreshInterval: 60000,
+    revalidateOnFocus: true,
+  });
+}
+
+export function useOptionsLiveAnalytics() {
+  return useAuthedSWR<OptionsLiveAnalytics>("options-live", getOptionsLiveAnalytics, {
+    refreshInterval: 15000,
     revalidateOnFocus: true,
   });
 }

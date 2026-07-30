@@ -48,6 +48,7 @@ Base URL: `https://kite-lab-production.up.railway.app`
 | Method | Path | Service | Rationale |
 |---|---|---|---|
 | GET | `/api/options/worker-status` | worker_health_store (reads `options_worker_health` heartbeat written by the options-worker Railway service) | Live capture monitoring for /admin. Passes the worker's JSON snapshot through verbatim — standing constraint (R-026): `health_snapshot()` must never include token/secret/connection-string fields. |
+| GET | `/api/options/live-analytics` | app/microstructure (reads `option_chain_snapshots` + minute bars) | Live gamma/IV/regime analytics for /admin. Returns DERIVED values only, never the raw payload; R-026 market-data-only constraint also applies to the worker's `snapshot_payload()` writer. |
 
 ### Unauthenticated by design — insights read surface (R-023)
 
