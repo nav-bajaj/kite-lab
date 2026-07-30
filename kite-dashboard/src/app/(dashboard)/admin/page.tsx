@@ -10,6 +10,7 @@ import {
   SystemStatus,
   FreshnessPanel,
   OptionsWorkerPanel,
+  OptionsAnalyticsPanel,
 } from "@/components/admin";
 
 export default function AdminPage() {
@@ -33,6 +34,9 @@ export default function AdminPage() {
 
       {/* Options data worker heartbeat (full width) */}
       <OptionsWorkerPanel />
+
+      {/* Live options analytics (full width) */}
+      <OptionsAnalyticsPanel />
 
       {/* Data freshness monitor (full width) */}
       <FreshnessPanel />
