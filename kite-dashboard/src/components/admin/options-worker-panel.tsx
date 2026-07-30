@@ -46,14 +46,19 @@ export function OptionsWorkerPanel() {
 
   const snap = data?.snapshot;
   const ws = snap?.ws;
+  // Live state outranks a stale error: a connected, fresh capture is
+  // green even if last_error still holds a transient from hours ago
+  // (the error strip below stays visible either way).
   const status: "ok" | "warn" | "bad" | "off" = !data?.found
     ? "off"
-    : data.heartbeat_stale || snap?.last_error
+    : data.heartbeat_stale
     ? "bad"
     : data.phase === "capture"
     ? ws?.connected
       ? "ok"
       : "bad"
+    : snap?.last_error
+    ? "bad"
     : "warn";
 
   return (
