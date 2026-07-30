@@ -1,8 +1,8 @@
 name: options_data
-status: planned  # consolidated V1 plan 2026-07-27 (June capture plan + handover doc merged)
+status: shipped-operating  # V1 complete 2026-07-30 (handover §22 criteria met); ops + analytics program ongoing
 opened: 2026-06-19
-closed: null
-related_commits: []
+closed: null  # stays open while the ops/analytics program runs
+related_commits: [3d52680, 59e8d70, 3cd8ce2, 511bbce, 22f60b3, 21e1454, c211a01, f63876c]
 supersedes: []
 depends_on: []
-register_rows: []
+register_rows: [R-025, R-026]

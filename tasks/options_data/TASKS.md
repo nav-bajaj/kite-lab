@@ -23,8 +23,10 @@ Phases per PLAN.md. Local-first: 1-3 run on the laptop; Railway is Phase 4.
 - [x] Intraday widen: spot drift >= 2 strikes -> dynamic subscribe,
       widen-only, selection file re-saved for crash recovery
 - [x] Raw-tick Parquet recorder (size + time flush, replay-safe filenames)
-- [ ] Record one full session's raw ticks; build replay fixtures from it
-- [ ] Exit: chain updates through a full live session, disconnects recovered
+- [x] Record full sessions' raw ticks (3 sessions, 2.0-2.3M ticks each);
+      replay CLI turns any recorded day into fixtures/bars
+- [x] Exit met 2026-07-28/29/30: full live sessions, 0 unrecovered
+      disconnects (0 reconnects at all on all three days)
 
 ## Phase 3 — Aggregation + persistence (DONE 2026-07-28)
 
@@ -40,8 +42,8 @@ Phases per PLAN.md. Local-first: 1-3 run on the laptop; Railway is Phase 4.
 - [x] Historical backfill: 638k bars, 87 contracts, 2026-06-29..07-28
       (hist rows have NULL depth columns by design)
 - [x] Postgres volume grown 500MB -> 5GB after backfill DiskFull spike
-- [ ] First live-source session: verify bars/snapshots/session row on
-      2026-07-29 (watch /admin bars counters + db_errors=0)
+- [x] First live-source session 2026-07-29: 39,744 bars, db_errors=0,
+      snapshots fresh to 10s of close; repeated cleanly 07-30
 
 ## Phase 4 — Production deploy (pulled forward 2026-07-27 for the 07-28 live test)
 
@@ -51,16 +53,54 @@ Phases per PLAN.md. Local-first: 1-3 run on the laptop; Railway is Phase 4.
 - [x] entrypoint SERVICE_ROLE=options-worker dispatch; /data/options volume
       dir; railway.worker.toml (no healthcheck, on_failure restarts)
 - [x] Dead-ticker self-heal: rebuild client with fresh token after 60s grace
-- [ ] USER: merge options-token-handoff -> beta_gtm_mvp (web deploy tonight)
-- [ ] USER: create Railway worker service (branch options_data_v1, config
-      railway.worker.toml, SERVICE_ROLE/DATABASE_URL/KITE_API_KEY, volume)
-- [ ] Live test 2026-07-28: full-session capture on Railway (expiry day)
+- [x] Merged options-token-handoff -> beta_gtm_mvp; web deployed 2026-07-27
+- [x] Railway worker service created + configured via CLI/GraphQL
+      (branch options_data_v1, railway.worker.toml, env refs, 5GB volume)
+- [x] Live test 2026-07-28 PASSED: full expiry-day session unattended
+      (2.24M ticks, 87/87 contracts, 0 reconnects); api_key/token pairing
+      bug found in pre-prod test and fixed (pair travels in kite_session)
 
-## Phase 5 — Monitoring
+## Phase 5 — Monitoring (DONE 2026-07-27/30)
 
-- [ ] Admin-only worker-status endpoints (require_admin; security-reviewer pass)
-- [ ] /admin panel + staleness alerting; data-quality checks
+- [x] GET /api/options/worker-status (require_admin; security-reviewer
+      APPROVE-WITH-NOTES; R-026; authz suite 288 assertions)
+- [x] /admin Options Worker panel: phase, heartbeat age, ws state,
+      packets, staleness, bars counters, widen events, error strip
+- [x] Error lifecycle 2026-07-30: 08:30 login race gets a 2-min grace
+      window; success clears last_error; dot prefers live capture state
+- [ ] Push alerting (beyond panel red-dot) — optional, not scheduled
 
-## Phase 6 — Optimization + retention
+## Phase 6 — Optimization + retention (archival DONE 2026-07-30)
 
-- [ ] Partitioning, Parquet compression/archival, insert tuning
+- [x] EOD tick archival: day dirs > keep_raw_days tar.gz'd + verified +
+      pruned; crash-resumable; volume runway ~3 weeks -> months
+- [ ] GDrive offload of archives (worker needs own creds path) — later
+- [ ] option_minute_bars partitioning + insert tuning — when size demands
+
+## V1 SUCCESS CRITERIA (handover doc §22) — ALL MET as of 2026-07-30
+
+Worker runs unattended through market hours (3/3 sessions) · accurate
+1-min bars for every subscribed contract (validated vs official candles,
+mean err 0.0062) · chain snapshots continuously available (<=10s) · data
+survives restarts/network failures (proven live) · health monitoring
+reports status + quality (/admin + heartbeat + daily_sessions) ·
+analytics added WITHOUT touching ingestion (microstructure engine
+consumes bars only) · proprietary dataset compounding daily.
+**The Options Data Engine V1 is complete. Work continues as operations
++ the analytics/strategy program (see below + PROGRAM_NOTE.md).**
+
+## Operations & analytics layer (post-V1, ongoing)
+
+- [x] EOD auto-materialization of IV/Greeks (microstructure Stage 1)
+- [x] Daily report generator at EOD (spot/session/gamma/OI/IV/friction)
+- [x] Founder risk-threshold framework fixed (research/NOTE_risk_thresholds.md)
+- [ ] MAE ledger: paper-straddle section in daily report + stored table
+      (per-session MAE, timing, underwater duration, regime at MAE)
+- [ ] Stage 2 gamma-profile table + /admin card (intraday regime read)
+- [ ] Morning day-plan generator prototype (advisory; builds call track
+      record for the autonomy gates)
+- [ ] 2026-08-04 expiry: straddle-ledger first verdict; second pin-day
+      MAE path; gamma-concentration signature out-of-sample test
+- [ ] Threshold calibration once day-type library >= 15-20 sessions
+- [ ] Housekeeping: merge options_data_v1 -> main (closes R-025/R-026
+      Alembic condition); prune old branches/stash

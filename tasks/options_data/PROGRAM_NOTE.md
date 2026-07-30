@@ -1,6 +1,6 @@
 # Options Program — Comprehensive Note
 
-**Written:** 2026-07-30 · **Covers:** 2026-06-19 (first plan) → 2026-07-30
+**Written:** 2026-07-30 (updated same day EOD) · **Covers:** 2026-06-19 (first plan) → 2026-07-30 close
 **Scope:** the options data engine (this folder), the Market Microstructure
 Engine (`tasks/microstructure_engine/`), the research produced so far, and
 the road to an autonomous options strategy.
@@ -194,18 +194,64 @@ evidence supports it.
   endpoint) cherry-picked between them. Convergence to `main` will
   close R-025/R-026's Alembic condition.
 
-## 8. Open items (ranked)
+## 8. Status declaration & open items (updated 2026-07-30 EOD)
 
-1. Phase 5 tick archival (deadline ~mid-Aug).
-2. Stage 2 gamma-profile table + /admin card.
-3. Daily auto-report (doubles as the day-plan generator skeleton).
-4. 08-04 expiry (next Tue): first straddle-ledger verdict + second
-   expiry day for the gamma-concentration signature.
-5. Stage 3 (dealer-sign assumptions, zero-gamma, walls — labeled
-   ESTIMATED).
-6. Strategy engine + paper mode (per §6).
-7. Housekeeping: merge to main; old rebalance backup branch + redesign
-   stash; delete the pre-resize dump.
+**V1 is COMPLETE per the handover doc's §22 success criteria** — all
+seven met and verified across three unattended production sessions (see
+TASKS.md for the itemized evidence). The program continues as
+operations + the analytics/strategy track.
+
+Done since this note was first written (same day): tick archival
+(runway ~3 weeks → months), daily auto-report at EOD, error-lifecycle
+fix (grace window + dot logic), founder risk-threshold framework
+(research/NOTE_risk_thresholds.md — the MAE problem; probabilistic
+state-conditioned calls, never price-predictive).
+
+Remaining, ranked:
+
+1. MAE ledger: paper-straddle section in the daily report + stored
+   per-session rows (MAE, timing, underwater duration, regime at MAE).
+2. Stage 2 gamma-profile table + /admin card (intraday regime read).
+3. 08-04 expiry (Tue): straddle ledger's first verdict; second pin-day
+   MAE path; gamma-concentration out-of-sample test. Arrives on its own.
+4. Morning day-plan generator prototype (advisory; builds the call
+   track record the autonomy gates need).
+5. Stage 3 (dealer-sign assumptions — labeled ESTIMATED).
+6. Threshold calibration at 15-20+ sessions (~mid-Aug).
+7. Strategy engine + paper mode (per §6).
+8. Housekeeping: GDrive offload of tick archives; merge to main
+   (closes R-025/R-026 Alembic condition); old rebalance branch +
+   redesign stash; delete the pre-resize dump.
+
+## 9. On-track assessment (2026-07-30)
+
+Deviations from the original plans, all deliberate and documented:
+
+- **Local-first soak was compressed** (plan: 2-3 local sessions before
+  Railway). Founder pulled prod forward for the 07-28 expiry-day test;
+  compensated with the replay-vs-official-candles validation and a full
+  pre-prod dress rehearsal of the morning chain. Outcome vindicated it
+  (3 clean sessions), and the replay CLI now provides the equivalent of
+  a soak for any recorded day.
+- **Analytics arrived early** (V1 doc said out of scope). Sanctioned by
+  the founder's Gamma Engine vision doc; built as a separate layered
+  initiative (microstructure_engine) that consumes bars only — the V1
+  ingestion pipeline was never touched, which is itself V1 criterion #6
+  working.
+- **Chain snapshot is a single JSON row** (handover suggested a table);
+  chosen for atomicity + fast lookup, documented in bar_store.
+- **No standalone `instruments` table** (handover §13): contract
+  metadata rides on selection files (volume) + denormalized bar
+  columns. Adequate for NIFTY-only V1; revisit when BankNifty lands.
+- **Scope discipline held**: no BankNifty/FinNifty/stock options, no
+  public APIs from the worker, no trading. The one scope addition
+  (research/strategy studies) is the program's stated purpose and runs
+  strictly on captured data.
+
+Verdict: **on track, ahead of the original schedule, with scope
+changes that were founder-directed rather than drift.** The main
+watch-item is discipline going forward: strategy conclusions stay
+embargoed until the day-type library reaches calibration size.
 
 ---
 
