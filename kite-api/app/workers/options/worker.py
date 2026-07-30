@@ -349,7 +349,27 @@ class OptionsWorker:
                 log.warning("daily_sessions write failed: %s", exc)
         self._materialize_greeks(now)
         self._archive_ticks(now)
+        self._eod_analytics(now)
         self._write_daily_report(now)
+
+    def _eod_analytics(self, now: datetime) -> None:
+        """EOD: MAE-ledger row + gamma-profile snapshots. Best-effort."""
+        try:
+            from app.microstructure.paper_straddle import store_day
+
+            row = store_day(now.date().isoformat())
+            if row:
+                log.info("eod: paper straddle %s: final %+.1f, MAE %+.1f at %s",
+                         now.date(), row["final_pnl"], row["mae"], row["mae_time"])
+        except Exception as exc:
+            log.warning("paper-straddle ledger failed: %s", exc)
+        try:
+            from app.microstructure.gamma_profile import store_daily
+
+            n = store_daily(now.date().isoformat())
+            log.info("eod: gamma profile rows stored: %d", n)
+        except Exception as exc:
+            log.warning("gamma profile store failed: %s", exc)
 
     def _write_daily_report(self, now: datetime) -> None:
         """EOD: render the analytics digest to the volume. Best-effort."""
