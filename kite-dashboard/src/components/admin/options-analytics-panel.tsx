@@ -96,14 +96,22 @@ export function OptionsAnalyticsPanel() {
                 value={a.concentration != null ? `${(a.concentration * 100).toFixed(0)}%` : "—"}
               />
               <Stat
-                label="Paper straddle today"
+                label={stale ? "Paper straddle (15:15 exit)" : "Paper straddle (live mark)"}
                 value={
                   ps ? (
-                    <span className={cn((ps.live_pnl ?? ps.final_pnl) >= 0 ? "text-green-600 dark:text-green-500" : "text-destructive")}>
-                      {(ps.live_pnl ?? ps.final_pnl) >= 0 ? "+" : ""}
-                      {(ps.live_pnl ?? ps.final_pnl).toFixed(1)} pts
-                      <span className="text-muted-foreground font-normal"> (MAE {ps.mae.toFixed(1)})</span>
-                    </span>
+                    // Live mark uses snapshot LTPs (no spread crossed) and is
+                    // only honest while the snapshot is fresh; once the market
+                    // closes, show the ledger's disciplined 15:15 ask-exit P&L.
+                    (() => {
+                      const pnl = !stale && ps.live_pnl != null ? ps.live_pnl : ps.final_pnl;
+                      return (
+                        <span className={cn(pnl >= 0 ? "text-green-600 dark:text-green-500" : "text-destructive")}>
+                          {pnl >= 0 ? "+" : ""}
+                          {pnl.toFixed(1)} pts
+                          <span className="text-muted-foreground font-normal"> (MAE {ps.mae.toFixed(1)})</span>
+                        </span>
+                      );
+                    })()
                   ) : (
                     "—"
                   )
