@@ -132,6 +132,6 @@
 
 ---
 
-*Next entry: 2026-08-01 (Fri). Aug-04 expiry (Tue) is the week's key
+*Next entry: 2026-08-03 (Mon — 08-01/02 are the weekend). Aug-04 expiry (Tue) is the week's key
 session: pin-signature out-of-sample test #2, first completed
 implied-vs-realized ledger verdict, second expiry MAE path.*
