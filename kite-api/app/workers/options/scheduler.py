@@ -30,7 +30,10 @@ def is_trading_day(dt: datetime) -> bool:
     return dt.weekday() < 5 and not is_nse_holiday(dt)
 
 
-def market_phase(now: datetime) -> Phase:
+def market_phase(now: datetime, capture_close: time = MARKET_CLOSE) -> Phase:
+    """capture_close overrides the 15:30 default for special sessions
+    (exchange circulars extending F&O hours). The EOD window follows the
+    actual close; its end stays anchored at EOD_FLUSH_END."""
     if now.tzinfo is None:
         now = IST.localize(now)
     now = now.astimezone(IST)
@@ -39,9 +42,9 @@ def market_phase(now: datetime) -> Phase:
     t = now.time()
     if PRE_MARKET_START <= t < MARKET_OPEN:
         return Phase.PRE_MARKET
-    if MARKET_OPEN <= t < MARKET_CLOSE:
+    if MARKET_OPEN <= t < capture_close:
         return Phase.CAPTURE
-    if MARKET_CLOSE <= t < EOD_FLUSH_END:
+    if capture_close <= t < EOD_FLUSH_END:
         return Phase.EOD_FLUSH
     return Phase.IDLE
 

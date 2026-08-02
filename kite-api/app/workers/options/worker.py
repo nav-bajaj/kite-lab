@@ -128,7 +128,8 @@ class OptionsWorker:
     def tick(self, now: datetime) -> None:
         """One state-machine step. Split from run() so tests can drive it
         with a fixed clock and no sleeping."""
-        new_phase = Phase.CAPTURE if self.settings.force_capture else market_phase(now)
+        new_phase = (Phase.CAPTURE if self.settings.force_capture
+                     else market_phase(now, capture_close=self.settings.capture_close_time))
         if new_phase != self.phase:
             log.info("phase %s -> %s", self.phase.value, new_phase.value)
             old_phase = self.phase

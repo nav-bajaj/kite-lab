@@ -44,6 +44,19 @@ class OptionsWorkerSettings(BaseSettings):
     # Chain snapshot upsert cadence (goal: no stale chain >10s in hours)
     snapshot_seconds: float = 10.0
 
+    # Capture close, "HH:MM" IST. Default is the normal 15:30 F&O close;
+    # override via OPTIONS_CAPTURE_CLOSE for special sessions announced by
+    # exchange circular (e.g. "15:40"). REMOVE the override afterwards —
+    # a lingering value silently shifts every future EOD.
+    capture_close: str = "15:30"
+
+    @property
+    def capture_close_time(self):
+        from datetime import time as _time
+
+        h, m = map(int, self.capture_close.split(":"))
+        return _time(h, m)
+
     # Polls (5s each) of failing selection tolerated quietly before
     # last_error is surfaced — covers the expected 08:30 login race.
     # 24 polls ~= 2 minutes.
