@@ -180,6 +180,36 @@
       convergence. Tomorrow tests whether it forms ON expiry day with
       spot starting at max-gamma. (pin sample still n=1)
 
+### CORRECTION (2026-08-03 evening, founder-verified vs NSE)
+
+The 24,774.30 print is the OFFICIAL NSE close — NOT a phantom/bad tick.
+My same-evening diagnosis was wrong about the cause. What stands, and
+now matters MORE: the derivatives complex (options chain, parity
+forward) priced the underlying at ~24,574-24,602 through the entire
+15:20-15:40 window — a ~175-200 pt DISLOCATION between the official
+index close and where F&O actually traded, on day one of the new NSE
+timings (F&O to 15:40, till further notice; the whole market was
+confused). Re-labeled findings:
+
+- This was a MARKET-STRUCTURE EVENT, not a data error. The engine
+  recorded both sides of the dislocation faithfully — that recording
+  may be unique data.
+- The queued "phantom guard" is reframed as a spot-vs-parity
+  DIVERGENCE MONITOR: divergence can be a bad tick OR a real
+  dislocation; either way it must be surfaced, not auto-discarded.
+- Day change +407.5 to the official close is correct as reported;
+  note the official close level never traded intraday (traded high
+  ~24,580 before the closing computation).
+- EXPIRY IMPLICATION (tomorrow!): settlement anchors to the official
+  close mechanism. If tomorrow's official close can again print
+  ~200 pts from where the chain trades at 15:30-15:40, expiry
+  settlement can surprise anyone positioned off the tape. Watch the
+  final-window basis explicitly; hypothesis 16 below.
+
+  16. Under the new timings, official-close vs derivatives-traded-level
+      divergence is a live risk transferred INTO expiry settlement.
+      Measure the 15:30-15:40 chain-vs-close basis daily. (n=1)
+
 ---
 
 *Next entry: 2026-08-04 (Tue) — EXPIRY DAY: pin test #2 with spot
