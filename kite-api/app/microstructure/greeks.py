@@ -18,6 +18,12 @@ import numpy as np
 ENGINE_VERSION = "bs-spot-q0-v1"
 
 IST = timezone(timedelta(hours=5, minutes=30))
+# Expiry cutoff for T. F&O now TRADES to 15:40 (NSE change 2026-08),
+# but index-option settlement is anchored to the underlying's close
+# (equity session, 15:30) — so T runs to 15:30 pending confirmation
+# from the circular. Expiry-day bars after 15:30 therefore get T=0 ->
+# IV NULL (honest). First extended expiry (2026-08-04) will show
+# empirically whether premium persists 15:30-15:40; revisit then.
 EXPIRY_CUTOFF = time(15, 30)
 
 _erf = np.frompyfunc(math.erf, 1, 1)

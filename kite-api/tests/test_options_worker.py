@@ -189,7 +189,9 @@ class TestMarketPhase:
         assert market_phase(self._at(d, 9, 14)) == Phase.PRE_MARKET
         assert market_phase(self._at(d, 9, 15)) == Phase.CAPTURE
         assert market_phase(self._at(d, 15, 29)) == Phase.CAPTURE
-        assert market_phase(self._at(d, 15, 30)) == Phase.EOD_FLUSH
+        # NSE F&O close moved to 15:40 (till further notice, 2026-08)
+        assert market_phase(self._at(d, 15, 30)) == Phase.CAPTURE
+        assert market_phase(self._at(d, 15, 40)) == Phase.EOD_FLUSH
         assert market_phase(self._at(d, 15, 59)) == Phase.EOD_FLUSH
         assert market_phase(self._at(d, 16, 0)) == Phase.IDLE
 

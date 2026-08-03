@@ -182,7 +182,7 @@ def _depth_section(conn, day, spotinfo, out):
         out.append("- no live depth bars (replay/hist day)")
         return
     ist = _ist(df.minute)
-    df["bucket"] = pd.cut(ist.dt.hour * 60 + ist.dt.minute, bins=[555, 630, 810, 870, 931],
+    df["bucket"] = pd.cut(ist.dt.hour * 60 + ist.dt.minute, bins=[555, 630, 810, 870, 941],
                           labels=["open-10:30", "10:30-13:30", "13:30-14:30", "14:30-close"])
     df["pct"] = df.avg_spread / df.close.clip(lower=0.5) * 100
     agg = df.groupby("bucket", observed=True).agg(sp=("avg_spread", "mean"), pct=("pct", "mean"))

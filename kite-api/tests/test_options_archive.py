@@ -96,15 +96,15 @@ class TestCaptureCloseOverride:
         from app.workers.options.scheduler import Phase, market_phase
 
         d = datetime(2026, 8, 3, 15, 35)  # Monday 15:35 IST
-        assert market_phase(d) == Phase.EOD_FLUSH  # default 15:30 close
-        assert market_phase(d, capture_close=t(15, 40)) == Phase.CAPTURE
+        assert market_phase(d) == Phase.CAPTURE  # standing 15:40 close
+        assert market_phase(d, capture_close=t(15, 30)) == Phase.EOD_FLUSH
         d2 = datetime(2026, 8, 3, 15, 41)
-        assert market_phase(d2, capture_close=t(15, 40)) == Phase.EOD_FLUSH
+        assert market_phase(d2) == Phase.EOD_FLUSH
 
     def test_settings_parse_and_default(self, monkeypatch):
         from datetime import time as t
         from app.workers.options.config import OptionsWorkerSettings
 
-        assert OptionsWorkerSettings().capture_close_time == t(15, 30)
-        monkeypatch.setenv("OPTIONS_CAPTURE_CLOSE", "15:40")
         assert OptionsWorkerSettings().capture_close_time == t(15, 40)
+        monkeypatch.setenv("OPTIONS_CAPTURE_CLOSE", "15:30")
+        assert OptionsWorkerSettings().capture_close_time == t(15, 30)

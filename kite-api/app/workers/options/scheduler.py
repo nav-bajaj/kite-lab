@@ -15,15 +15,18 @@ PRE_MARKET_START = time(8, 30)   # instrument master download window
 SELECTION_TIME = time(8, 45)     # contract selection
 CONNECT_TIME = time(9, 0)        # websocket connect + subscribe
 MARKET_OPEN = time(9, 15)
-MARKET_CLOSE = time(15, 30)
+# NSE policy change (founder note 2026-08-03): F&O session runs to 15:40
+# "till further notice". The worker's close is F&O; the equity-side 15:30
+# in market_service is separate and unchanged.
+MARKET_CLOSE = time(15, 40)
 EOD_FLUSH_END = time(16, 0)      # flush + stats budget after close
 
 
 class Phase(str, Enum):
     IDLE = "idle"              # non-trading day, or outside the session window
     PRE_MARKET = "pre_market"  # 08:30-09:15: load instruments, select, connect
-    CAPTURE = "capture"        # 09:15-15:30: recording
-    EOD_FLUSH = "eod_flush"    # 15:30-16:00: flush, stats, compress
+    CAPTURE = "capture"        # 09:15-15:40: recording (F&O close)
+    EOD_FLUSH = "eod_flush"    # close-16:00: flush, stats, compress
 
 
 def is_trading_day(dt: datetime) -> bool:

@@ -44,11 +44,11 @@ class OptionsWorkerSettings(BaseSettings):
     # Chain snapshot upsert cadence (goal: no stale chain >10s in hours)
     snapshot_seconds: float = 10.0
 
-    # Capture close, "HH:MM" IST. Default is the normal 15:30 F&O close;
-    # override via OPTIONS_CAPTURE_CLOSE for special sessions announced by
-    # exchange circular (e.g. "15:40"). REMOVE the override afterwards —
-    # a lingering value silently shifts every future EOD.
-    capture_close: str = "15:30"
+    # Capture close, "HH:MM" IST. 15:40 is the STANDING F&O close per the
+    # NSE policy change (till further notice, founder note 2026-08-03).
+    # OPTIONS_CAPTURE_CLOSE overrides for one-off special sessions; remove
+    # any override afterwards.
+    capture_close: str = "15:40"
 
     @property
     def capture_close_time(self):
