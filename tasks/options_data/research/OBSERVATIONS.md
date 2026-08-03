@@ -130,8 +130,58 @@
       keeping pin theta — the natural low-IV expiry adaptation to
       paper-test alongside the straddle.
 
+
+## 2026-08-03 (day 5) — special 15:40 session; gap+trend into expiry-eve; TWO landmark data points
+
+- Tape: +152 gap up (3rd consecutive up-gap), trend to ~24,580 by 10:13,
+  midday fade to VWAP, afternoon recovery; REAL close ~24,598
+  (chain-implied). Day change ~+230 pts. Special F&O session ran to
+  15:40; capture followed exactly (override worked, removed after).
+- DATA FLAG: index feed printed a PHANTOM +200 jump to 24774.30 at
+  ~15:29 and froze there through 15:40 (equity/index calc ends 15:30;
+  only F&O extended). Verified phantom via parity forward: the chain
+  priced the underlying at 24,574-24,602 throughout. Auto-report's
+  high/close/day-change for 08-03 are contaminated; Greeks are CLEAN
+  (parity forward, not spot). Widen #3 was phantom-triggered — harmless
+  by design (widen-only). Follow-up queued: report should cross-check
+  spot vs parity forward and flag divergence.
+- Regime: DIFFUSE (20->25->25%) — NO pin formed on expiry-eve; the
+  midday MIXED reading (founder watched it live) was transient, resolved
+  back to diffuse as the afternoon leg ran. BUT: spot ended parked
+  almost exactly ON the static max-gamma strike 24600 — tomorrow opens
+  with a ready-made pin candidate and spot already at the magnet.
+- Vol: THE WEEKEND VEGA WARNING LANDED. IV snapped 8.41% (Fri) ->
+  11.52% (Mon open) — +3.1 vol pts. Counterfactual computed from real
+  bars: Friday's 168.7-pt straddle held over the weekend = -61.2 pts
+  (-36% of credit) at Monday 09:20, from gap + vega together. First
+  concrete loss instance in the ledger's counterfactual column;
+  hypothesis #10 confirmed in one session. Intraday-only entry dodged
+  it entirely.
+- Paper straddle: +10.8 (credit 131.9 @ 24550) | MAE only -5.3 at 11:03
+  | underwater 85 shallow min. Post-gap entry again neutralized the
+  trend (5/5 profitable, but see the counterfactual above for what the
+  ledger does NOT measure: overnight risk).
+- OI migration: covering-fuel 4/4 — near calls drained (24550 CE -60%)
+  while 24850/24950 CE BUILT (+42/+54%); writers re-established two
+  rungs up. Puts drained too (rally).
+- Engine: biggest day (2.50M ticks, 39,437 bars, 0 errors); 3 widens;
+  triple archival (Jul 29/30/31) after the weekend; EOD chain ran at
+  15:40 exactly.
+- Observations:
+  13. Overnight/weekend carry is the short straddle's dominant risk, not
+      intraday moves: first measured instance -61.2 pts vs worst
+      intraday MAE -19.1 across 5 sessions. Any live strategy is
+      intraday-only until the ledger says otherwise. (n=1 carry event)
+  14. Phantom index prints are a real failure mode around special
+      sessions; parity forward is the authoritative underlying for
+      analytics AND the sanity check for spot. (n=1)
+  15. Expiry-eve did NOT pin this time (trend day instead) — pin
+      formation is not a calendar effect; it needs the OI/gamma
+      convergence. Tomorrow tests whether it forms ON expiry day with
+      spot starting at max-gamma. (pin sample still n=1)
+
 ---
 
-*Next entry: 2026-08-03 (Mon — 08-01/02 are the weekend). Aug-04 expiry (Tue) is the week's key
-session: pin-signature out-of-sample test #2, first completed
-implied-vs-realized ledger verdict, second expiry MAE path.*
+*Next entry: 2026-08-04 (Tue) — EXPIRY DAY: pin test #2 with spot
+opening at the 24600 max-gamma strike; first completed straddle-ledger
+verdict; second expiry MAE path.*
