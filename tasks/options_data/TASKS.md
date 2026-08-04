@@ -102,8 +102,15 @@ consumes bars only) · proprietary dataset compounding daily.
       from the 10s chain snapshot; /admin Options Analytics card
 - [ ] Morning day-plan generator prototype (advisory; builds call track
       record for the autonomy gates)
-- [ ] 2026-08-04 expiry: straddle-ledger first verdict; second pin-day
-      MAE path; gamma-concentration signature out-of-sample test
+- [x] 2026-08-04 expiry (all three landed): ledger verdict #1 —
+      realized BEAT implied across the compression week (0.69% vs
+      1.02%); first LOSS row (-55.2, MAE -78.3 on 93 credit); NO pin
+      (concentration fell 32->22%, pin sample 1/2). Settlement basis
+      decoded: official close, established ~15:28-15:30; extended
+      window trades at settlement values; greeks cutoff 15:30 CONFIRMED
+- [ ] Spot-vs-parity divergence monitor in the daily report + live card
+      (official close printed +150/+200 above late tape 2/2 days under
+      the new timings)
 - [ ] Threshold calibration once day-type library >= 15-20 sessions
 - [ ] Housekeeping: merge options_data_v1 -> main (closes R-025/R-026
       Alembic condition); prune old branches/stash

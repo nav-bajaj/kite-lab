@@ -1,6 +1,6 @@
 # Options Program — Comprehensive Note
 
-**Written:** 2026-07-30 (updated same day EOD) · **Covers:** 2026-06-19 (first plan) → 2026-07-30 close
+**Written:** 2026-07-30 · **Updated:** 2026-08-04 post-expiry · **Covers:** 2026-06-19 (first plan) → 2026-08-04 close
 **Scope:** the options data engine (this folder), the Market Microstructure
 Engine (`tasks/microstructure_engine/`), the research produced so far, and
 the road to an autonomous options strategy.
@@ -100,8 +100,31 @@ OTM depth comparison), analysis suites for both captured days.
 
 ## 4. What the data has said so far (honest ledger)
 
-Sample: ~23 days of OHLC/OI bars, **2 days of depth** — everything below
-is diagnostic until the day-type library grows.
+Sample: ~26 days of OHLC/OI bars, **6 days of depth** — everything below
+is diagnostic until the day-type library grows. (Updated 2026-08-04;
+the daily OBSERVATIONS.md log in research/ is the running detail.)
+
+**Added 2026-08-04 (the pivotal week):**
+
+- **The short-vol distribution arrived in session six**: five straddle
+  wins (+66.4 total) nearly erased by one expiry-day loss (-55.2, MAE
+  -78.3 on a 93-pt credit). Net +11.2. Hypothesis 10 (thin-credit
+  expiry risk) confirmed exactly as written.
+- **Overnight carry measured**: Fri->Mon counterfactual -61.2 pts (gap
+  + IV 8.4%->11.5% snap). Intraday-only until the ledger says
+  otherwise.
+- **Ledger verdict #1**: realized beat implied through the low-IV
+  compression — the "cheap" premium was cheap.
+- **Settlement mechanics under the new NSE timings (F&O to 15:40,
+  standing)**: settlement = official close, established ~15:28-15:30;
+  expiring options pin to intrinsic through the extended window.
+  Greeks' 15:30 cutoff empirically confirmed.
+- **Close-print structure**: the official close printed +150/+200 above
+  the late continuous tape on both days of the new regime — a real
+  recurring dislocation (chain converged to it on expiry day, stood
+  apart on the non-expiry day). Divergence monitor is the top build.
+- **Pin humbled**: expiry ≠ pin (1 of 2). Pin needs OI convergence,
+  not a calendar slot.
 
 **Confirmed / promising**
 
@@ -181,7 +204,7 @@ evidence supports it.
 - **Daily rhythm:** fully unattended. Optional glances: /admin ~09:20
   (green dot, CAPTURE, packets climbing) and the `eod:` log lines
   ~15:31 (recorder counters, bars inserted, greeks materialized).
-- **Push freeze 09:00–15:30 IST** on `options_data_v1` (worker restart =
+- **Push freeze 09:00–15:40 IST** (F&O close moved to 15:40, NSE policy, standing) on `options_data_v1` (worker restart =
   ~1-min gap) and `beta_gtm_mvp` (web restart = SSE blip). Evenings are
   free; every deploy so far has been post-close.
 - **Costs/limits:** 1 of 3 allowed WebSocket connections; REST usage

@@ -59,3 +59,31 @@ MAE / final-profit ratios: 1.4x, 1.5x, 0.8x.
 Until the library is large enough, every number above is provisional —
 the note exists so the framework is fixed before the data arrives, not
 fitted after.
+
+
+## Addendum — 2026-08-04, the framework's first full test
+
+The ledger now holds the distribution the note anticipated:
+
+| Session | Final | MAE | Note |
+|---|---|---|---|
+| Jul 28 (expiry, pin) | +13.2 | -19.1 | profit back-loaded to final minutes |
+| Jul 29 (gap+trend) | +7.8 | -11.6 | |
+| Jul 30 (range) | +16.2 | -13.3 | |
+| Jul 31 (gap-drift) | +18.4 | -12.2 | |
+| Aug 03 (gap+trend) | +10.8 | -5.3 | special 15:40 session |
+| Aug 04 (expiry, two-sided) | **-55.2** | **-78.3** | credit only 93 pts |
+
+Net +11.2 pts over six sessions: five wins nearly erased by one loss.
+Plus the measured overnight event: Friday->Monday carry counterfactual
+-61.2 pts (never held; computed from real bars).
+
+What this validates: (a) the MAE band from winning days (-11..-19) said
+NOTHING about the loss day — thresholds must be conditioned on regime
+AND credit, exactly as framed; (b) a -20/-25 stop derived from the win
+band would have cut the -78.3 day early (good) but the same logic
+would have cut Jul-28's -19.1 winner (bad) — the conditioning variable
+is expiry-day credit thinness (93 vs 195-273 pts), not the MAE level;
+(c) the exit-discipline question is genuinely open (Aug-04's loss
+recovered to ~+78 AFTER the 15:15 exit; Jul-28's win required holding
+almost to it) — n=2 expiries, opposite verdicts, unchanged rule.
