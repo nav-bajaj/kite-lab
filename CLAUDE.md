@@ -57,6 +57,15 @@ script, or removed `.md`. Don't push to that branch.
 - **Scripts**: production set is closed; new research probes go in `tasks/<name>/`, not in `scripts/`. See `scripts/README.md` for the "how not to" list.
 - **No emojis in files** unless the user explicitly asks. No comments narrating *what* code does — only *why* when non-obvious.
 
+## Content OS (sibling repo)
+
+The Marketworks **Content OS** lives at `~/finance-content-os` (branch
+`content-os-v3`) — the editorial engine (idea radars → dossier → frame →
+write → two gates → posting kits / /library). kite-lab's roles in it:
+`scripts/analyse_topic.py` (dossiers), `scripts/content_radar.py` (daily idea
+inbox), `data/topic_dossiers/`, and `/library` hosting in kite-dashboard.
+**Working on content? Start from `~/finance-content-os/reconstruct/HANDOFF.md`.**
+
 ## Workflows
 
 | Goal | Playbook |
