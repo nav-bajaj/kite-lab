@@ -1,0 +1,20 @@
+{
+  "pairs": [
+    [
+      55,
+      20
+    ],
+    [
+      20,
+      10
+    ]
+  ],
+  "max_active": 25,
+  "quartile": 0.75,
+  "slippage": 0.002,
+  "study": [
+    "2010-06-01",
+    "2026-05-08"
+  ],
+  "score": "126d momentum / max(annualized 126d vol, 0.05), pct-rank per day"
+}

@@ -1,0 +1,788 @@
+<title>One engine, two markets — Marketworks research note</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<style>
+@font-face{font-family:'Fraunces';font-style:normal;font-weight:300 700;font-display:swap;src:url(data:font/woff2;base64,__FRAUNCES_B64__) format('woff2')}
+@font-face{font-family:'Outfit';font-style:normal;font-weight:300 700;font-display:swap;src:url(data:font/woff2;base64,__OUTFIT_B64__) format('woff2')}
+
+/* Marketworks brand tokens — light-locked editorial surface (DESIGN.md §8.5).
+   The lichen identity is the page; the viewer theme toggle does not re-skin it. */
+:root, :root[data-theme="dark"], :root[data-theme="light"]{
+  --surface-base:#FAFCFB;
+  --mist:#ECF3EF;
+  --tint:#F3F8F5;
+  --deep:#0E3B32;
+  --lichen:#14715F;
+  --signal:#55C374;
+  --marigold:#E8A33D;
+  --ink:#1A1A1A;
+  --n900:#171717; --n700:#404040; --n500:#737373; --n300:#D4D4D4; --n100:#F5F5F5;
+  --positive:#3F8059; --negative:#A64C42;
+  --chart-in:#0B7E65;      /* chart-tuned lichen (validated) */
+  --chart-us:#3E68A8;      /* chart-tuned denim (validated) */
+  --chart-bench:#8C9490;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Outfit',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,monospace;
+  --radius:8px; --radius-card:24px; --radius-panel:32px;
+  --shadow-card:0 1px 2px rgba(26,26,26,.05),0 4px 16px rgba(26,26,26,.06);
+  --shadow-card-hover:0 2px 4px rgba(26,26,26,.06),0 10px 28px rgba(26,26,26,.09);
+  --shadow-panel:0 2px 6px rgba(26,26,26,.04),0 18px 48px rgba(26,26,26,.07);
+  --ease-expo:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box}
+html{color-scheme:light only}
+body{
+  margin:0;background:var(--surface-base);color:var(--ink);
+  font-family:var(--sans);font-size:16px;line-height:1.55;
+  font-feature-settings:'onum';
+  background-image:
+    linear-gradient(rgba(20,113,95,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(20,113,95,.035) 1px,transparent 1px);
+  background-size:48px 48px;
+}
+h1,h2,h3{font-family:var(--serif);font-feature-settings:normal;text-wrap:balance;margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+.wrap-narrow{max-width:960px;margin:0 auto;padding:0 24px}
+
+/* ---------- header ---------- */
+header.top{padding:28px 0}
+header.top .wrap{display:flex;align-items:baseline;justify-content:space-between;gap:16px}
+.wordmark{font-family:var(--sans);font-weight:600;font-size:24px;color:var(--lichen);letter-spacing:-.01em;text-decoration:none}
+.top-meta{font-size:12px;line-height:1.45;color:var(--n500);letter-spacing:.08em;text-transform:uppercase;font-weight:500}
+
+/* ---------- hero ---------- */
+.hero{padding:72px 0 56px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--lichen);margin:0 0 20px}
+.hero h1{font-size:clamp(40px,7vw,64px);line-height:1.05;letter-spacing:-.02em;font-weight:500;max-width:15ch}
+.hero h1 em{font-style:normal;color:var(--lichen)}
+.standfirst{font-size:18px;line-height:1.55;color:var(--n700);max-width:60ch;margin:28px 0 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:32px}
+.chip{font-family:var(--mono);font-size:12.5px;line-height:1;padding:8px 12px;border:1px solid var(--n300);border-radius:999px;color:var(--n700);background:#fff;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* ---------- stat story cards ---------- */
+.stats{padding:24px 0 72px}
+.stats .wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.stat-card{background:#fff;border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:28px;display:flex;flex-direction:column;gap:10px;transition:box-shadow .2s ease-out,transform .2s ease-out}
+.stat-card:hover{box-shadow:var(--shadow-card-hover);transform:translateY(-2px)}
+.stat-kicker{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--n500)}
+.stat-num{font-family:var(--serif);font-size:clamp(27px,3vw,34px);line-height:1.1;letter-spacing:-.015em;font-weight:600;color:var(--lichen);font-variant-numeric:tabular-nums lining-nums}
+.stat-card p{margin:0;font-size:14px;line-height:1.5;color:var(--n700)}
+.stat-card p strong{font-weight:600;color:var(--ink)}
+
+/* ---------- section scaffolding ---------- */
+.section-head{max-width:680px;margin:0 0 40px}
+.section-head h2{font-size:clamp(28px,4vw,36px);line-height:1.15;letter-spacing:-.015em;font-weight:500}
+.section-head p{color:var(--n700);margin:14px 0 0}
+
+/* ---------- chart panel (mist inset) ---------- */
+.panel{border-radius:var(--radius-panel);box-shadow:var(--shadow-panel);padding:clamp(28px,4.5vw,56px)}
+.panel-mist{background:var(--mist)}
+.panel-tint{background:var(--tint)}
+section.charts{padding:24px 0 96px}
+.controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px}
+.tabs{display:flex;background:rgba(255,255,255,.65);border:1px solid rgba(20,113,95,.16);border-radius:999px;padding:4px;gap:2px}
+.tab{appearance:none;border:0;background:transparent;border-radius:999px;padding:9px 18px;font-family:var(--sans);font-size:14px;font-weight:500;color:var(--n700);cursor:pointer;transition:background .12s ease-out,color .12s ease-out}
+.tab[aria-selected="true"]{background:var(--lichen);color:var(--mist);font-weight:600}
+.tab:focus-visible,.scale-btn:focus-visible{outline:2px solid var(--lichen);outline-offset:2px}
+.scale-toggle{display:flex;border:1px solid rgba(20,113,95,.16);background:rgba(255,255,255,.65);border-radius:999px;padding:4px;gap:2px}
+.scale-btn{appearance:none;border:0;background:transparent;border-radius:999px;padding:7px 14px;font-family:var(--sans);font-size:12.5px;font-weight:500;color:var(--n700);cursor:pointer}
+.scale-btn[aria-pressed="true"]{background:#fff;box-shadow:var(--shadow-card);color:var(--ink);font-weight:600}
+.chart-card{background:#fff;border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:24px 24px 16px;position:relative}
+.chart-card + .chart-card{margin-top:20px}
+.chart-title-row{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;margin:0 0 4px}
+.chart-title{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ink)}
+.chart-sub{font-size:12px;color:var(--n500)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0 2px;font-size:12.5px;color:var(--n700)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.swatch{width:14px;height:0;border-top:2.5px solid;border-radius:2px;display:inline-block}
+.swatch.dashed{border-top-style:dashed;border-top-width:2px}
+.chart-host{position:relative}
+.chart-host svg{display:block;width:100%;height:auto}
+.tooltip{position:absolute;pointer-events:none;background:#fff;border:1px solid var(--n300);border-radius:10px;box-shadow:var(--shadow-card-hover);padding:10px 12px;font-size:12.5px;line-height:1.5;min-width:150px;opacity:0;transition:opacity .12s ease-out;z-index:5}
+.tooltip .tt-date{font-weight:600;color:var(--ink);margin-bottom:4px}
+.tooltip .tt-row{display:flex;align-items:center;justify-content:space-between;gap:14px;color:var(--n700)}
+.tooltip .tt-row b{font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink)}
+.tooltip .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;flex:none}
+
+/* ---------- table ---------- */
+section.table-sec{padding:0 0 96px}
+.table-card{background:#fff;border-radius:var(--radius-card);box-shadow:var(--shadow-card);padding:8px 8px 4px;overflow-x:auto}
+table.metrics{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+table.metrics th,table.metrics td{padding:11px 16px;text-align:right;font-variant-numeric:tabular-nums lining-nums;white-space:nowrap}
+table.metrics th{font-weight:600;color:var(--ink)}
+table.metrics thead th{font-size:12.5px;border-bottom:2px solid var(--n300);vertical-align:bottom}
+table.metrics thead .grp{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--n500);border-bottom:0;padding-bottom:2px}
+table.metrics tbody th{text-align:left;color:var(--n700);font-weight:500}
+table.metrics tbody tr{border-bottom:1px solid var(--n100)}
+table.metrics tbody tr:hover{background:var(--tint)}
+table.metrics td.best{color:var(--lichen);font-weight:600}
+table.metrics td.bench{color:var(--n500)}
+.table-note{font-size:12px;color:var(--n500);margin:14px 4px 8px}
+
+/* ---------- findings (deep panel) ---------- */
+section.findings{padding:0 0 96px}
+.panel-deep{background:var(--deep);color:var(--mist);border-radius:var(--radius-panel);box-shadow:var(--shadow-panel);padding:clamp(32px,5vw,64px)}
+.panel-deep .eyebrow{color:var(--signal)}
+.panel-deep h2{font-size:clamp(28px,4vw,36px);font-weight:500;letter-spacing:-.015em;line-height:1.15;color:#fff;max-width:22ch}
+.findings-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px 48px;margin-top:44px}
+.finding h3{font-family:var(--serif);font-size:22px;font-weight:500;line-height:1.25;color:#fff;margin:0 0 10px}
+.finding p{margin:0;font-size:15px;line-height:1.6;color:rgba(236,243,239,.82)}
+.finding p b{color:#fff;font-weight:600;font-variant-numeric:tabular-nums}
+.pull{grid-column:1/-1;margin-top:12px;padding-top:36px;border-top:1px solid rgba(236,243,239,.18)}
+.pull blockquote{margin:0;font-family:var(--serif);font-size:clamp(22px,3vw,30px);line-height:1.3;font-weight:400;color:#fff;max-width:30ch}
+.pull blockquote em{font-style:normal;color:var(--signal)}
+
+/* ---------- methodology ---------- */
+section.method{padding:0 0 96px}
+.method-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px 48px;margin-top:8px}
+.method-item h3{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--ink);margin:0 0 6px}
+.method-item p{margin:0;font-size:14px;line-height:1.6;color:var(--n700)}
+.disclaimer{margin-top:40px;padding:20px 24px;background:#fff;border-radius:var(--radius);border:1px solid var(--n300);font-size:12.5px;line-height:1.6;color:var(--n500)}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--n300);padding:36px 0 56px;margin-top:8px}
+footer .wrap{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px}
+footer .fine{font-size:12px;color:var(--n500)}
+
+/* reveals */
+.rv{opacity:0;transform:translateY(14px);transition:opacity .4s var(--ease-expo),transform .5s var(--ease-expo)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .rv{opacity:1;transform:none;transition:none}
+  .stat-card{transition:none}
+}
+@media (max-width:900px){
+  .stats .wrap{grid-template-columns:1fr}
+  .findings-grid{grid-template-columns:1fr}
+  .method-grid{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .hero{padding:48px 0 40px}
+  .controls{flex-direction:column;align-items:flex-start}
+}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="wordmark" href="https://marketworks.in">marketworks</a>
+    <div class="top-meta">Research note · Private beta</div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap-narrow">
+    <p class="eyebrow rv">Marketworks Research · July 2026</p>
+    <h1 class="rv">One engine, <em>two markets.</em></h1>
+    <p class="standfirst rv">We took the exact momentum configurations that run our Indian production
+    portfolios — Core Momentum and Quality Momentum — and ran them on U.S. large-caps.
+    Not a single parameter retuned. Seven full years, 2019 through 2025.
+    This note shows what came back.</p>
+    <div class="chips rv">
+      <span class="chip">2019-01-01 → 2025-12-31</span>
+      <span class="chip">NSE 500 · Nifty 250</span>
+      <span class="chip">S&amp;P 500 ∪ Nasdaq 100</span>
+      <span class="chip">slippage 20 bps/side</span>
+      <span class="chip">backtested</span>
+    </div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="wrap">
+    <div class="stat-card rv">
+      <span class="stat-kicker">Core Momentum · India</span>
+      <span class="stat-num">₹10L&nbsp;→&nbsp;₹1.64Cr</span>
+      <p><strong>49.1% a year</strong> for seven years, against the NIFTY 100's 13.5%.
+      Still ₹93L after a flat 25% tax on each year's gains — the same engine that
+      runs in your dashboard today.</p>
+    </div>
+    <div class="stat-card rv">
+      <span class="stat-kicker">Core Momentum · United States</span>
+      <span class="stat-num">$1M&nbsp;→&nbsp;$9.9M</span>
+      <p><strong>38.7% a year</strong> on U.S. large-caps — with zero retuning — against
+      the S&amp;P 500's 17.2%. $6.1M after the same 25% annual tax. The signal is not
+      an Indian quirk.</p>
+    </div>
+    <div class="stat-card rv">
+      <span class="stat-kicker">Quality Momentum · India</span>
+      <span class="stat-num">Sharpe 2.26</span>
+      <p>The best risk-adjusted run in the study — <strong>48.2% a year</strong> with the
+      shallowest drawdown of any strategy or index here (−32.9%).</p>
+    </div>
+  </div>
+</section>
+
+<section class="charts">
+  <div class="wrap">
+    <div class="panel panel-mist rv">
+      <div class="section-head">
+        <h2>The same rules, side by side</h2>
+        <p>Growth of ₹/$ 1,000,000 under identical locked parameters, next to each
+        market's benchmark index. Hover for values on any week.</p>
+      </div>
+      <div class="controls">
+        <div class="tabs" role="tablist" aria-label="Strategy">
+          <button class="tab" role="tab" id="tab-core" aria-selected="true" data-strat="core">Core Momentum</button>
+          <button class="tab" role="tab" id="tab-quality" aria-selected="false" data-strat="quality">Quality Momentum</button>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <div class="scale-toggle" role="group" aria-label="Tax treatment">
+            <button class="scale-btn" data-tax="pre" aria-pressed="true">Pre-tax</button>
+            <button class="scale-btn" data-tax="post" aria-pressed="false">After 25% tax</button>
+          </div>
+          <div class="scale-toggle" role="group" aria-label="Y-axis scale">
+            <button class="scale-btn" data-scale="log" aria-pressed="true">Log</button>
+            <button class="scale-btn" data-scale="linear" aria-pressed="false">Linear</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title-row">
+          <span class="chart-title" id="growth-title">Growth of 1,000,000 — Core Momentum</span>
+          <span class="chart-sub" id="growth-sub">weekly · rebased to 1× at Jan 2019 · net of costs</span>
+        </div>
+        <div class="legend" id="growth-legend"></div>
+        <div class="chart-host" id="growth-chart"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title-row">
+          <span class="chart-title" id="dd-title">Drawdown from peak</span>
+          <span class="chart-sub">strategy curves only · pre-tax</span>
+        </div>
+        <div class="chart-host" id="dd-chart"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title-row">
+          <span class="chart-title" id="yearly-title">Calendar-year returns</span>
+          <span class="chart-sub" id="yearly-sub">ticks mark each market's index</span>
+        </div>
+        <div class="legend" id="yearly-legend"></div>
+        <div class="chart-host" id="yearly-chart"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="table-sec">
+  <div class="wrap">
+    <div class="section-head rv">
+      <h2>Every number, one table</h2>
+      <p>Metrics computed on daily equity curves over the identical window,
+      2019-01-01 to 2025-12-31, net of 20 bps slippage per side.</p>
+    </div>
+    <div class="table-card rv">
+      <table class="metrics">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="grp" colspan="2">Core Momentum</th>
+            <th class="grp" colspan="2">Quality Momentum</th>
+            <th class="grp" colspan="2">Benchmarks</th>
+          </tr>
+          <tr>
+            <th style="text-align:left">Metric</th>
+            <th>India</th><th>US</th>
+            <th>India</th><th>US</th>
+            <th>NIFTY 100</th><th>SPY</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th>CAGR</th><td class="best">49.1%</td><td>38.7%</td><td>48.2%</td><td>34.2%</td><td class="bench">13.5%</td><td class="bench">17.2%</td></tr>
+          <tr><th>1,000,000 became</th><td class="best">16.39M</td><td>9.87M</td><td>15.71M</td><td>7.82M</td><td class="bench">2.42M</td><td class="bench">3.03M</td></tr>
+          <tr><th>CAGR after 25% annual tax</th><td class="best">37.5%</td><td>29.4%</td><td>36.7%</td><td>26.0%</td><td class="bench">—</td><td class="bench">—</td></tr>
+          <tr><th>1,000,000 became, after tax</th><td class="best">9.30M</td><td>6.09M</td><td>8.92M</td><td>5.03M</td><td class="bench">—</td><td class="bench">—</td></tr>
+          <tr><th>Sharpe</th><td>1.91</td><td>1.28</td><td class="best">2.26</td><td>1.23</td><td class="bench">0.77</td><td class="bench">0.87</td></tr>
+          <tr><th>Sortino</th><td>2.24</td><td>1.68</td><td class="best">2.66</td><td>1.58</td><td class="bench">—</td><td class="bench">—</td></tr>
+          <tr><th>Max drawdown</th><td>−37.8%</td><td>−35.6%</td><td class="best">−32.9%</td><td>−41.2%</td><td class="bench">−38.1%</td><td class="bench">−33.7%</td></tr>
+          <tr><th>Calmar</th><td>1.30</td><td>1.09</td><td class="best">1.47</td><td>0.83</td><td class="bench">0.35</td><td class="bench">0.51</td></tr>
+          <tr><th>Volatility (ann.)</th><td>25.7%</td><td>30.2%</td><td class="best">21.4%</td><td>27.8%</td><td class="bench">17.4%</td><td class="bench">19.8%</td></tr>
+          <tr><th>Beta to home index</th><td>0.97</td><td>1.08</td><td class="best">0.90</td><td>0.97</td><td class="bench">1.00</td><td class="bench">1.00</td></tr>
+          <tr><th>Hit rate</th><td>49.5%</td><td>49.1%</td><td class="best">56.2%</td><td>52.1%</td><td class="bench">—</td><td class="bench">—</td></tr>
+          <tr><th>Round-trip trades</th><td>2,594</td><td>2,806</td><td>934</td><td>1,565</td><td class="bench">—</td><td class="bench">—</td></tr>
+        </tbody>
+      </table>
+      <p class="table-note">Green figures mark the best strategy value in each row. Benchmark Sharpe shown without a risk-free adjustment, same convention as the strategy figures. After-tax rows apply a flat 25% tax to each year's net gain with losses carried forward; benchmarks are left untaxed because buy-and-hold defers realisation.</p>
+    </div>
+  </div>
+</section>
+
+<section class="findings">
+  <div class="wrap">
+    <div class="panel-deep rv">
+      <p class="eyebrow">What we take from this</p>
+      <h2>Momentum is a property of markets, not of one market.</h2>
+      <div class="findings-grid">
+        <div class="finding rv">
+          <h3>The premium travels.</h3>
+          <p>Both strategies beat their home index by <b>17–36 percentage points a year</b>,
+          in both countries, under parameters that had never seen a U.S. price. That is the
+          strongest kind of out-of-sample evidence we can produce.</p>
+        </div>
+        <div class="finding rv">
+          <h3>India is the stronger home.</h3>
+          <p>Quality Momentum's Sharpe falls from <b>2.26 in India to 1.23 in the U.S.</b> —
+          its quality signal was tuned on emerging-market dispersion, and U.S. large-caps
+          are a tighter, more crowded field.</p>
+        </div>
+        <div class="finding rv">
+          <h3>Quality Momentum changes character abroad.</h3>
+          <p>At home it is the defensive book — the shallowest drawdown in the study.
+          On U.S. data it carried the deepest (<b>−41.2%</b>, mostly the 2022 Fed cycle).
+          Same rules, different market structure.</p>
+        </div>
+        <div class="finding rv">
+          <h3>The two markets complement each other.</h3>
+          <p>India carried 2021–22 while the U.S. went sideways; the U.S. carried 2025
+          (<b>+60.6%</b> for Core Momentum) while Indian momentum rested at <b>−8.6%</b>.
+          Different years, different leaders — the discipline is the constant.</p>
+        </div>
+        <div class="pull rv">
+          <blockquote>We didn't fit a strategy to a market.
+          We found a behaviour that <em>repeats</em> — and wrote it down as rules.</blockquote>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="method">
+  <div class="wrap">
+    <div class="panel panel-tint rv">
+      <div class="section-head">
+        <h2>How to read these numbers</h2>
+        <p>The honest fine print — the same caveats we hold ourselves to internally.</p>
+      </div>
+      <div class="method-grid">
+        <div class="method-item rv">
+          <h3>Backtested, not live</h3>
+          <p>These are simulated results from historical prices, not client returns.
+          Indian curves use the exact production configurations; U.S. curves come from our
+          May 2026 cross-market study. Both start trading in 2017 so the 2019 window opens
+          with a realistic, already-invested portfolio.</p>
+        </div>
+        <div class="method-item rv">
+          <h3>Costs are counted</h3>
+          <p>Every trade is charged 20 basis points of slippage per side in both markets.
+          For U.S. large-caps that is conservative — real spreads are tighter — so the U.S.
+          figures are, if anything, understated.</p>
+        </div>
+        <div class="method-item rv">
+          <h3>Universe construction</h3>
+          <p>India trades the NSE 500 (Core) and Nifty 250 (Quality); the U.S. runs use
+          S&amp;P 500 ∪ Nasdaq 100 (516 names). Both use today's index membership, which
+          flatters absolute returns somewhat — but identically on both sides, so the
+          India–U.S. comparison itself is clean.</p>
+        </div>
+        <div class="method-item rv">
+          <h3>What "unchanged" means</h3>
+          <p>Lookbacks, ranking rules, position counts, rebalance cadence, exits, stops —
+          all locked at Indian production values. The only substitutions are the price
+          panel, the trading calendar, and the regime index (NIFTY 100 → SPY).</p>
+        </div>
+        <div class="method-item rv">
+          <h3>How the tax view is modelled</h3>
+          <p>The after-tax toggle deducts a flat 25% of each calendar year's net gain at
+          year-end, with losses carried forward to offset future gains. Benchmarks stay
+          untaxed — a buy-and-hold investor defers tax until sale. The flat rate is a
+          deliberate simplification, not a reflection of actual short- and long-term
+          capital-gains rates in either country.</p>
+        </div>
+      </div>
+      <div class="disclaimer rv">
+        Hypothetical performance has inherent limitations: it is constructed with hindsight,
+        does not reflect actual capital at risk, and past performance — simulated or real —
+        does not guarantee future results. Tax figures use a simplified flat rate and are
+        not tax advice. Nothing here is investment advice or an offer of
+        any product. Shared with Marketworks private-beta testers for feedback; please don't
+        redistribute.
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="wordmark" style="font-size:18px">marketworks</span>
+    <span class="fine">Momentum investing for Indian markets · marketworks.in</span>
+    <span class="fine">Research note · 20 July 2026</span>
+  </div>
+</footer>
+
+<script>
+const DATA = __DATA_JSON__;
+
+const S = {
+  core:    { in_: "Core Momentum (L6 v2) — India",    us: "Core Momentum (L6 v2) — US",
+             yIn: "Core Momentum (L6 v2) — India",    yUs: "Core Momentum (L6 v2) — US",
+             name: "Core Momentum" },
+  quality: { in_: "Quality Momentum (OM25 v3) — India", us: "Quality Momentum (OM25 v3) — US",
+             yIn: "Quality Momentum (OM25 v3) — India", yUs: "Quality Momentum (OM25 v3) — US",
+             name: "Quality Momentum" },
+};
+const BENCH = { nifty: "NIFTY 100", spy: "SPY" };
+const Y_BENCH = { nifty: "NIFTY 100 (India benchmark)", spy: "SPY (US benchmark)" };
+const C = { in_: "#0B7E65", us: "#3E68A8", bench: "#8C9490", grid: "rgba(26,26,26,.07)",
+            axis: "#737373", ink: "#1A1A1A" };
+
+let state = { strat: "core", scale: "log", tax: "pre" };
+const $ = (id) => document.getElementById(id);
+const SVGNS = "http://www.w3.org/2000/svg";
+function el(name, attrs, parent) {
+  const n = document.createElementNS(SVGNS, name);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+const dates = DATA.series[S.core.in_].dates.map(d => new Date(d + "T00:00:00Z"));
+const T0 = dates[0].getTime(), T1 = dates[dates.length - 1].getTime();
+const fmtDate = (d) => d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+const fmtX = (v) => (v >= 10 ? v.toFixed(1) : v.toFixed(2)) + "×";
+const fmtPct = (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
+
+function chartWidth(host) { return Math.max(320, host.clientWidth); }
+
+/* ---------- growth chart ---------- */
+function drawGrowth() {
+  const host = $("growth-chart");
+  host.innerHTML = "";
+  const st = S[state.strat];
+  const W = chartWidth(host), narrow = W < 640;
+  const H = 380, ML = 44, MR = narrow ? 14 : 118, MT = 14, MB = 30;
+  const iw = W - ML - MR, ih = H - MT - MB;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: "img",
+    "aria-label": st.name + " growth of one million, India versus US versus benchmarks" }, host);
+
+  const taxed = state.tax === "post";
+  const seriesDefs = [
+    { vals: taxed ? DATA.series_tax[st.in_] : DATA.series[st.in_].values,
+      color: C.in_,  w: 2.5, dash: null, label: "India" },
+    { vals: taxed ? DATA.series_tax[st.us] : DATA.series[st.us].values,
+      color: C.us,   w: 2.5, dash: null, label: "US" },
+    { vals: DATA.series[BENCH.nifty].values, color: C.bench, w: 1.6, dash: "5 4", label: "NIFTY 100" },
+    { vals: DATA.series[BENCH.spy].values,   color: C.bench, w: 1.6, dash: "2 4", label: "SPY" },
+  ];
+  const allVals = seriesDefs.flatMap(s => s.vals);
+  const vmin = Math.min(...allVals), vmax = Math.max(...allVals);
+
+  let yOf, ticks;
+  if (state.scale === "log") {
+    const lmin = Math.log(vmin * 0.95), lmax = Math.log(vmax * 1.05);
+    yOf = v => MT + ih - (Math.log(v) - lmin) / (lmax - lmin) * ih;
+    ticks = [0.5, 1, 2, 4, 8, 16].filter(t => t >= vmin * 0.9 && t <= vmax * 1.1);
+  } else {
+    const lo = 0, hi = vmax * 1.05;
+    yOf = v => MT + ih - (v - lo) / (hi - lo) * ih;
+    ticks = [];
+    const step = vmax > 12 ? 4 : 2;
+    for (let t = 0; t <= hi; t += step) ticks.push(t);
+  }
+  const xOf = t => ML + (t - T0) / (T1 - T0) * iw;
+
+  for (const t of ticks) {
+    const y = yOf(Math.max(t, 0.0001));
+    if (t > 0) el("line", { x1: ML, x2: ML + iw, y1: y, y2: y, stroke: C.grid, "stroke-width": 1 }, svg);
+    el("text", { x: ML - 8, y: y + 4, "text-anchor": "end", fill: C.axis,
+      "font-size": 11.5, "font-family": "Outfit, sans-serif" }, svg).textContent = t + "×";
+  }
+  for (let yr = 2019; yr <= 2026; yr++) {
+    const t = Date.UTC(yr, 0, 1);
+    if (t < T0 - 86400e3 || t > T1) continue;
+    const x = xOf(t);
+    el("line", { x1: x, x2: x, y1: MT, y2: MT + ih, stroke: C.grid, "stroke-width": 1 }, svg);
+    if (!narrow || yr % 2 === 1)
+      el("text", { x, y: H - 8, "text-anchor": "middle", fill: C.axis,
+        "font-size": 11.5, "font-family": "Outfit, sans-serif" }, svg).textContent = yr;
+  }
+  el("line", { x1: ML, x2: ML + iw, y1: yOf(1), y2: yOf(1), stroke: "#B9C4BF", "stroke-width": 1.2 }, svg);
+
+  const endLabels = [];
+  for (const s of seriesDefs) {
+    const vals = s.vals;
+    let d = "";
+    for (let i = 0; i < dates.length; i++)
+      d += (i ? "L" : "M") + xOf(dates[i].getTime()).toFixed(1) + " " + yOf(vals[i]).toFixed(1);
+    const attrs = { d, fill: "none", stroke: s.color, "stroke-width": s.w,
+      "stroke-linejoin": "round", "stroke-linecap": "round" };
+    if (s.dash) attrs["stroke-dasharray"] = s.dash;
+    el("path", attrs, svg);
+    const vy = yOf(vals[vals.length - 1]);
+    el("circle", { cx: xOf(T1), cy: vy, r: 3.5, fill: s.color, stroke: "#fff", "stroke-width": 1.5 }, svg);
+    if (!narrow) endLabels.push({ y: vy, color: s.color, text: s.label + " " + fmtX(vals[vals.length - 1]) });
+  }
+  endLabels.sort((a, b) => a.y - b.y);
+  for (let i = 1; i < endLabels.length; i++)
+    if (endLabels[i].y - endLabels[i - 1].y < 15) endLabels[i].y = endLabels[i - 1].y + 15;
+  for (const L of endLabels)
+    el("text", { x: ML + iw + 10, y: L.y + 4, fill: L.color, "font-size": 12,
+      "font-weight": 600, "font-family": "Outfit, sans-serif" }, svg).textContent = L.text;
+
+  attachCrosshair(host, svg, { xOf, yFor: v => yOf(v), W, H, MT, ih, ML, iw,
+    rows: seriesDefs.map(s => ({ vals: s.vals, color: s.color, label: s.label, fmt: fmtX })) });
+
+  const lg = $("growth-legend");
+  lg.innerHTML = "";
+  for (const s of seriesDefs) {
+    const sp = document.createElement("span");
+    const sw = document.createElement("i");
+    sw.className = "swatch" + (s.dash ? " dashed" : "");
+    sw.style.borderTopColor = s.color;
+    sp.appendChild(sw); sp.appendChild(document.createTextNode(s.label));
+    lg.appendChild(sp);
+  }
+  $("growth-title").textContent = "Growth of 1,000,000 — " + st.name +
+    (taxed ? " · after 25% annual tax" : "");
+  $("growth-sub").textContent = taxed
+    ? "strategies taxed 25% on each year's gain · benchmarks untaxed (buy & hold)"
+    : "weekly · rebased to 1× at Jan 2019 · net of costs";
+}
+
+/* ---------- drawdown chart ---------- */
+function drawDD() {
+  const host = $("dd-chart");
+  host.innerHTML = "";
+  const st = S[state.strat];
+  const W = chartWidth(host), narrow = W < 640;
+  const H = 170, ML = 44, MR = narrow ? 14 : 118, MT = 10, MB = 26;
+  const iw = W - ML - MR, ih = H - MT - MB;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: "img",
+    "aria-label": st.name + " drawdown from peak, India versus US" }, host);
+
+  const defs = [
+    { key: st.in_, color: C.in_, label: "India" },
+    { key: st.us,  color: C.us,  label: "US" },
+  ];
+  const lo = Math.min(...defs.flatMap(s => DATA.drawdown[s.key])) * 1.12;
+  const yOf = v => MT + (v / lo) * ih;
+  const xOf = t => ML + (t - T0) / (T1 - T0) * iw;
+
+  for (const t of [0, -0.2, -0.4]) {
+    if (t < lo) continue;
+    const y = yOf(t);
+    el("line", { x1: ML, x2: ML + iw, y1: y, y2: y,
+      stroke: t === 0 ? "#B9C4BF" : C.grid, "stroke-width": t === 0 ? 1.2 : 1 }, svg);
+    el("text", { x: ML - 8, y: y + 4, "text-anchor": "end", fill: C.axis,
+      "font-size": 11.5, "font-family": "Outfit, sans-serif" }, svg).textContent = (t * 100) + "%";
+  }
+  for (let yr = 2019; yr <= 2026; yr++) {
+    const t = Date.UTC(yr, 0, 1);
+    if (t < T0 - 86400e3 || t > T1) continue;
+    if (!narrow || yr % 2 === 1)
+      el("text", { x: xOf(t), y: H - 6, "text-anchor": "middle", fill: C.axis,
+        "font-size": 11.5, "font-family": "Outfit, sans-serif" }, svg).textContent = yr;
+  }
+  for (const s of defs) {
+    const vals = DATA.drawdown[s.key];
+    let d = "", area = "M" + xOf(T0).toFixed(1) + " " + yOf(0).toFixed(1);
+    for (let i = 0; i < dates.length; i++) {
+      const pt = xOf(dates[i].getTime()).toFixed(1) + " " + yOf(vals[i]).toFixed(1);
+      d += (i ? "L" : "M") + pt; area += "L" + pt;
+    }
+    area += "L" + xOf(T1).toFixed(1) + " " + yOf(0).toFixed(1) + "Z";
+    el("path", { d: area, fill: s.color, opacity: .10 }, svg);
+    el("path", { d, fill: "none", stroke: s.color, "stroke-width": 1.8, "stroke-linejoin": "round" }, svg);
+  }
+  attachCrosshair(host, svg, { xOf, yFor: v => yOf(v), W, H, MT, ih, ML, iw,
+    rows: defs.map(s => ({ vals: DATA.drawdown[s.key], color: s.color, label: s.label,
+      fmt: v => (v * 100).toFixed(1) + "%" })) });
+  $("dd-title").textContent = "Drawdown from peak — " + st.name;
+}
+
+/* ---------- crosshair + tooltip ---------- */
+function attachCrosshair(host, svg, cfg) {
+  const cross = el("line", { y1: cfg.MT, y2: cfg.MT + cfg.ih, stroke: "#1A1A1A",
+    "stroke-width": 1, "stroke-dasharray": "3 3", opacity: 0 }, svg);
+  const dots = cfg.rows.map(r =>
+    el("circle", { r: 4, fill: r.color, stroke: "#fff", "stroke-width": 1.5, opacity: 0 }, svg));
+  const tt = document.createElement("div");
+  tt.className = "tooltip";
+  host.appendChild(tt);
+  const hit = el("rect", { x: cfg.ML, y: cfg.MT, width: cfg.iw, height: cfg.ih,
+    fill: "transparent" }, svg);
+
+  function onMove(ev) {
+    const rect = svg.getBoundingClientRect();
+    const px = (ev.clientX - rect.left) * (svg.viewBox.baseVal.width / rect.width);
+    const frac = Math.min(1, Math.max(0, (px - cfg.ML) / cfg.iw));
+    const t = T0 + frac * (T1 - T0);
+    let i = 0, best = Infinity;
+    for (let j = 0; j < dates.length; j++) {
+      const d = Math.abs(dates[j].getTime() - t);
+      if (d < best) { best = d; i = j; }
+    }
+    const x = cfg.xOf(dates[i].getTime());
+    cross.setAttribute("x1", x); cross.setAttribute("x2", x);
+    cross.setAttribute("opacity", .35);
+    let html = `<div class="tt-date">${fmtDate(dates[i])}</div>`;
+    const items = cfg.rows.map((r, k) => ({ r, k, v: r.vals[i] }))
+      .sort((a, b) => b.v - a.v);
+    for (const it of items) {
+      html += `<div class="tt-row"><span><span class="dot" style="background:${it.r.color}"></span>${it.r.label}</span><b>${it.r.fmt(it.v)}</b></div>`;
+    }
+    for (const it of items) {
+      dots[it.k].setAttribute("cx", x);
+      dots[it.k].setAttribute("cy", cfg.yFor(it.v));
+      dots[it.k].setAttribute("opacity", 1);
+    }
+    tt.innerHTML = html;
+    tt.style.opacity = 1;
+    const hostRect = host.getBoundingClientRect();
+    const ttW = tt.offsetWidth, xPix = x / (svg.viewBox.baseVal.width) * hostRect.width;
+    const left = xPix + 14 + ttW > hostRect.width ? xPix - ttW - 14 : xPix + 14;
+    tt.style.left = Math.max(0, left) + "px";
+    tt.style.top = "24px";
+  }
+  function onLeave() {
+    cross.setAttribute("opacity", 0);
+    dots.forEach(d => d.setAttribute("opacity", 0));
+    tt.style.opacity = 0;
+  }
+  hit.addEventListener("mousemove", onMove);
+  hit.addEventListener("mouseleave", onLeave);
+  hit.addEventListener("touchstart", e => { onMove(e.touches[0]); e.preventDefault(); }, { passive: false });
+  hit.addEventListener("touchmove", e => { onMove(e.touches[0]); e.preventDefault(); }, { passive: false });
+  hit.addEventListener("touchend", onLeave);
+}
+
+/* ---------- yearly bars ---------- */
+function drawYearly() {
+  const host = $("yearly-chart");
+  host.innerHTML = "";
+  const st = S[state.strat];
+  const W = chartWidth(host), narrow = W < 640;
+  const H = 300, ML = 44, MR = 14, MT = 16, MB = 30;
+  const iw = W - ML - MR, ih = H - MT - MB;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: "img",
+    "aria-label": st.name + " calendar year returns, India versus US, with benchmark ticks" }, host);
+
+  const years = [2019, 2020, 2021, 2022, 2023, 2024, 2025];
+  const taxed = state.tax === "post";
+  const inY = taxed ? DATA.yearly_tax[st.in_] : DATA.yearly[st.yIn];
+  const usY = taxed ? DATA.yearly_tax[st.us] : DATA.yearly[st.yUs];
+  const nfY = DATA.yearly[Y_BENCH.nifty], spY = DATA.yearly[Y_BENCH.spy];
+  const all = years.flatMap(y => [inY[y], usY[y], nfY[y], spY[y]]);
+  const hi = Math.max(...all) * 1.12, lo = Math.min(0, Math.min(...all) * 1.3);
+  const yOf = v => MT + (hi - v) / (hi - lo) * ih;
+  const step = hi > 100 ? 50 : 25;
+
+  for (let t = Math.ceil(lo / step) * step; t <= hi; t += step) {
+    const y = yOf(t);
+    el("line", { x1: ML, x2: ML + iw, y1: y, y2: y,
+      stroke: t === 0 ? "#B9C4BF" : C.grid, "stroke-width": t === 0 ? 1.2 : 1 }, svg);
+    el("text", { x: ML - 8, y: y + 4, "text-anchor": "end", fill: C.axis,
+      "font-size": 11.5, "font-family": "Outfit, sans-serif" }, svg).textContent = t + "%";
+  }
+
+  const group = iw / years.length;
+  const barW = Math.min(34, group * 0.28);
+  const tt = document.createElement("div");
+  tt.className = "tooltip";
+  host.appendChild(tt);
+
+  years.forEach((yr, gi) => {
+    const cx = ML + group * (gi + 0.5);
+    el("text", { x: cx, y: H - 8, "text-anchor": "middle", fill: C.axis,
+      "font-size": 11.5, "font-family": "Outfit, sans-serif" }, svg).textContent = yr;
+    const defs = [
+      { v: inY[yr], color: C.in_, dx: -barW - 1, label: "India", bench: nfY[yr], bLabel: "NIFTY 100" },
+      { v: usY[yr], color: C.us,  dx: 1,         label: "US",    bench: spY[yr], bLabel: "SPY" },
+    ];
+    for (const d of defs) {
+      const y0 = yOf(0), y1 = yOf(d.v);
+      const top = Math.min(y0, y1), hgt = Math.max(2, Math.abs(y1 - y0));
+      const up = d.v >= 0;
+      const r = Math.min(4, hgt);
+      const x = cx + d.dx;
+      const path = up
+        ? `M${x} ${y0}V${top + r}Q${x} ${top} ${x + r} ${top}H${x + barW - r}Q${x + barW} ${top} ${x + barW} ${top + r}V${y0}Z`
+        : `M${x} ${y0}V${top + hgt - r}Q${x} ${top + hgt} ${x + r} ${top + hgt}H${x + barW - r}Q${x + barW} ${top + hgt} ${x + barW} ${top + hgt - r}V${y0}Z`;
+      const bar = el("path", { d: path, fill: d.color }, svg);
+      const by = yOf(d.bench);
+      el("line", { x1: x - 1, x2: x + barW + 1, y1: by, y2: by, stroke: "#5C6660",
+        "stroke-width": 2 }, svg);
+      const zone = el("rect", { x: x - 2, y: MT, width: barW + 4, height: ih, fill: "transparent" }, svg);
+      zone.addEventListener("mousemove", (ev) => {
+        bar.setAttribute("opacity", .85);
+        tt.innerHTML = `<div class="tt-date">${yr} — ${d.label}</div>` +
+          `<div class="tt-row"><span><span class="dot" style="background:${d.color}"></span>${st.name}</span><b>${fmtPct(d.v)}</b></div>` +
+          `<div class="tt-row"><span><span class="dot" style="background:#5C6660"></span>${d.bLabel}</span><b>${fmtPct(d.bench)}</b></div>`;
+        tt.style.opacity = 1;
+        const hostRect = host.getBoundingClientRect();
+        const xPix = (x + barW / 2) / W * hostRect.width;
+        const ttW = tt.offsetWidth;
+        tt.style.left = Math.max(0, xPix + 14 + ttW > hostRect.width ? xPix - ttW - 14 : xPix + 14) + "px";
+        tt.style.top = "16px";
+      });
+      zone.addEventListener("mouseleave", () => { bar.setAttribute("opacity", 1); tt.style.opacity = 0; });
+    }
+  });
+
+  const lg = $("yearly-legend");
+  lg.innerHTML = "";
+  [["India", C.in_, false], ["US", C.us, false], ["Benchmark (tick)", "#5C6660", true]].forEach(([label, color, dash]) => {
+    const sp = document.createElement("span");
+    const sw = document.createElement("i");
+    sw.className = "swatch";
+    sw.style.borderTopColor = color;
+    if (dash) sw.style.borderTopWidth = "3px";
+    sp.appendChild(sw); sp.appendChild(document.createTextNode(label));
+    lg.appendChild(sp);
+  });
+  $("yearly-title").textContent = "Calendar-year returns — " + st.name +
+    (taxed ? " · after 25% annual tax" : "");
+  $("yearly-sub").textContent = taxed
+    ? "bars after tax · index ticks untaxed"
+    : "ticks mark each market's index";
+}
+
+/* ---------- growth/dd need per-scale y accessors for hover dots ---------- */
+/* Simplify: redraw stores scale closures on cfg via drawAll wrapper below. */
+
+function drawAll() {
+  drawGrowth();
+  drawDD();
+  drawYearly();
+}
+
+document.querySelectorAll(".tab").forEach(btn => {
+  btn.addEventListener("click", () => {
+    state.strat = btn.dataset.strat;
+    document.querySelectorAll(".tab").forEach(b =>
+      b.setAttribute("aria-selected", b === btn ? "true" : "false"));
+    drawAll();
+  });
+});
+document.querySelectorAll(".scale-btn[data-scale]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    state.scale = btn.dataset.scale;
+    document.querySelectorAll(".scale-btn[data-scale]").forEach(b =>
+      b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+    drawGrowth();
+  });
+});
+document.querySelectorAll(".scale-btn[data-tax]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    state.tax = btn.dataset.tax;
+    document.querySelectorAll(".scale-btn[data-tax]").forEach(b =>
+      b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+    drawGrowth();
+    drawYearly();
+  });
+});
+
+let rsz;
+window.addEventListener("resize", () => { clearTimeout(rsz); rsz = setTimeout(drawAll, 150); });
+drawAll();
+
+/* reveals */
+const io = new IntersectionObserver(entries => {
+  for (const e of entries) if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+}, { threshold: 0.12 });
+document.querySelectorAll(".rv").forEach((n, i) => {
+  n.style.transitionDelay = Math.min((i % 4) * 60, 180) + "ms";
+  io.observe(n);
+});
+</script>

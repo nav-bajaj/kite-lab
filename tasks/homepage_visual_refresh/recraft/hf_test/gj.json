@@ -1,0 +1,21 @@
+{
+  "created_at": "2026-07-19T19:13:38.114912Z",
+  "display_name": "Nano Banana Pro",
+  "id": "ef92ab60-777a-40de-8939-f539c3ff7b6a",
+  "job_type": "nano_banana_pro",
+  "min_result_url": null,
+  "params": {
+    "application": null,
+    "aspect_ratio": "1:1",
+    "batch_size": 1,
+    "height": 1024,
+    "input_image": null,
+    "input_images": [],
+    "prompt": "A calm person seen from behind gently tending a small cluster of green plants growing from a garden bed in soft bright morning light; unhurried, quietly hopeful, a feeling of steady growth. Soft matte chalk-pastel illustration, hand-painted with a gentle grainy paper texture, flat airy muted and calm, soft brush strokes, NOT glossy, NOT 3D, NOT a shiny vector icon. Cool brand palette only: soft sage and fresh green, mist off-white, soft lavender, pale sky blue; no warm rust orange red or brown; bright light and cheerful, lots of soft negative space. No text, no words, no logos.",
+    "resolution": "2k",
+    "surface": null,
+    "width": 1024
+  },
+  "result_url": null,
+  "status": "queued"
+}

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<meta name="theme-color" content="#FAFCFB">
+<title>Marketworks — homepage mock v3 (inset panels + grid)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme:light only;
+    --base:#FAFCFB; --mist:#ECF3EF; --tint:#F3F8F5; --card:#FFFFFF;
+    --lichen:#14715F; --lichen-deep:#0E3B32; --signal:#55C374; --purple:#9750F8;
+    --ink:#1A1A1A; --muted-fg:#5C6B66; --border:#E5E5E5;
+    --radius:8px; --radius-card:24px; --radius-panel:32px;
+    --shadow-sm:0px 6px 24px -3px rgba(26,26,26,.07);
+    --shadow:0px 6px 24px -3px rgba(26,26,26,.13),0px 1px 2px -4px rgba(26,26,26,.13);
+    --shadow-lg:0px 6px 24px -3px rgba(26,26,26,.13),0px 4px 6px -4px rgba(26,26,26,.13);
+    --shadow-panel:0px 10px 40px -12px rgba(26,26,26,.18),0px 2px 6px -4px rgba(26,26,26,.12);
+    --font-serif:'Fraunces','Iowan Old Style',Georgia,serif;
+    --font-sans:'Outfit',ui-sans-serif,system-ui,sans-serif;
+    --font-mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;
+    --ease-expo:cubic-bezier(.22,1,.36,1); --ease-ui:cubic-bezier(.2,.8,.2,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;background:var(--base)}
+  body{font-family:var(--font-sans);background:var(--base);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+  /* ---------- fixed quant grid in the white flow (Spade) ---------- */
+  .gridfield{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .grid-bg{position:absolute;inset:-8% 0;will-change:transform;
+    background-image:
+      linear-gradient(to right, rgba(20,113,95,.055) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(20,113,95,.055) 1px, transparent 1px);
+    background-size:46px 46px;
+    -webkit-mask-image:radial-gradient(120% 80% at 70% 8%, #000 0%, rgba(0,0,0,.5) 45%, transparent 78%);
+    mask-image:radial-gradient(120% 80% at 70% 8%, #000 0%, rgba(0,0,0,.5) 45%, transparent 78%)}
+  @media (prefers-reduced-motion:reduce){ .grid-bg{transform:none!important} html{scroll-behavior:auto} }
+
+  .page{position:relative;z-index:1}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+  .section{padding:clamp(28px,5vw,56px) 0}
+  .section-lg{padding:clamp(56px,8vw,96px) 0}
+
+  /* ---------- inset floating panels (never full-bleed) ---------- */
+  .panel{border-radius:var(--radius-panel);box-shadow:var(--shadow-panel);
+    padding:clamp(36px,6vw,72px);position:relative;overflow:hidden}
+  .panel-mist{background:var(--mist)}
+  .panel-tint{background:var(--tint)}
+  .panel-lichen{background:var(--lichen);color:var(--mist)}
+  .panel-deep{background:var(--lichen-deep);color:var(--mist)}
+  .panel-deep .p-glow{position:absolute;inset:auto -8% -50% 46%;width:52%;height:120%;border-radius:50%;
+    background:radial-gradient(circle,rgba(85,195,116,.20)0%,transparent 62%);pointer-events:none}
+
+  /* ---------- floating nav (Acctual) ---------- */
+  .nav{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;justify-content:center;padding:18px 20px 0;transition:padding .3s var(--ease-ui)}
+  .nav.shrink{padding:8px 20px 0}
+  .nav__pill{max-width:1080px;width:100%;display:flex;align-items:center;justify-content:space-between;
+    padding:8px 12px 8px 22px;border-radius:9999px;background:rgba(255,255,255,.82);
+    -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid rgba(26,26,26,.06);
+    box-shadow:0 0 .5px .5px rgba(26,26,26,.05),.5px .5px 1px 0 rgba(26,26,26,.1)}
+  .wordmark{font-weight:600;font-size:1.2rem;color:var(--ink);letter-spacing:-.01em}
+  .nav__links{display:flex;align-items:center;gap:26px;font-size:.92rem;font-weight:500}
+  .nav__links a{color:var(--ink);text-decoration:none;transition:color .15s var(--ease-ui)}
+  .nav__links a:hover{color:var(--lichen)}
+  @media(max-width:720px){.nav__links a:not(.btn){display:none}}
+
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;text-decoration:none;border-radius:9999px;
+    padding:11px 20px;font-size:.95rem;cursor:pointer;border:1px solid transparent;
+    transition:transform .15s var(--ease-ui),box-shadow .2s var(--ease-ui)}
+  .btn-primary{background:var(--lichen);color:var(--mist)}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px -6px rgba(20,113,95,.5)}
+  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--border)}
+  .btn-ghost:hover{border-color:rgba(20,113,95,.45)}
+  .btn-sm{padding:9px 16px;font-size:.88rem}
+  .btn-onlichen{background:var(--base);color:var(--lichen)}
+  .btn-onlichen:hover{transform:translateY(-1px);box-shadow:0 8px 22px -8px rgba(0,0,0,.35)}
+  .btn-onsignal{background:var(--signal);color:var(--ink)}
+
+  /* ---------- type ---------- */
+  .eyebrow{font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.16em;color:var(--lichen)}
+  .panel-lichen .eyebrow,.panel-deep .eyebrow{color:var(--signal)}
+  h1{font-family:var(--font-serif);font-optical-sizing:auto;font-weight:500;font-size:clamp(2.75rem,6vw,4.5rem);line-height:1.03;letter-spacing:-.02em;text-wrap:balance}
+  h2{font-family:var(--font-serif);font-weight:500;font-size:clamp(2rem,4vw,2.75rem);line-height:1.12;letter-spacing:-.015em;text-wrap:balance}
+  h3{font-family:var(--font-serif);font-weight:500;font-size:1.4rem;line-height:1.2}
+  .lede{font-size:1.2rem;line-height:1.6;color:var(--muted-fg);max-width:34em;text-wrap:pretty}
+  .panel-lichen .lede,.panel-deep .lede{color:rgba(236,243,239,.85)}
+  p.body{font-size:1.125rem;line-height:1.65;color:var(--muted-fg);text-wrap:pretty}
+  .panel-deep p.body{color:rgba(236,243,239,.82)}
+  .measure{max-width:640px}
+  .em{color:var(--ink)} .panel-deep .em{color:#fff}
+  .accent-word{color:var(--lichen);position:relative;white-space:nowrap}
+  .accent-word svg{position:absolute;left:-2%;bottom:-.13em;width:104%;height:.2em;overflow:visible}
+
+  /* ---------- hero ---------- */
+  .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;padding-top:clamp(128px,17vw,190px);padding-bottom:clamp(48px,7vw,88px)}
+  @media(max-width:900px){.hero{grid-template-columns:1fr;gap:24px}}
+  .hero .cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
+  .trust{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:24px;font-family:var(--font-mono);font-size:.8rem;color:var(--muted-fg);font-variant-numeric:tabular-nums}
+  .trust .dot{width:3px;height:3px;border-radius:50%;background:var(--border)}
+  .graphic{position:relative;border-radius:var(--radius-card);background:var(--tint);box-shadow:var(--shadow);padding:30px;min-height:400px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .graphic .tag{position:absolute;top:14px;left:16px;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.05em;color:var(--muted-fg);opacity:.7}
+  .halftone{position:absolute;inset:0;background-image:radial-gradient(circle,var(--lichen) 1px,transparent 1.7px);background-size:7px 7px;opacity:.1;
+    -webkit-mask-image:radial-gradient(circle at 68% 40%,#000,transparent 70%);mask-image:radial-gradient(circle at 68% 40%,#000,transparent 70%)}
+  .graphic svg.resolve{position:relative;width:100%;max-width:400px;height:auto}
+
+  /* ---------- cards ---------- */
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+  @media(max-width:860px){.grid3,.grid2{grid-template-columns:1fr}}
+  .card{background:var(--card);border-radius:var(--radius-card);box-shadow:var(--shadow);padding:26px;display:flex;flex-direction:column;gap:14px;
+    transition:box-shadow .25s var(--ease-ui),transform .25s var(--ease-ui)}
+  .card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+  .card .cpanel{position:relative;border-radius:14px;background:var(--tint);height:120px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .card .cpanel .halftone{opacity:.12;-webkit-mask-image:radial-gradient(circle at 60% 50%,#000,transparent 72%);mask-image:radial-gradient(circle at 60% 50%,#000,transparent 72%)}
+  .card p{font-size:.98rem;line-height:1.55;color:var(--muted-fg)}
+  .step-num{font-family:var(--font-mono);font-size:.8rem;color:var(--lichen)}
+  .lbl{font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--lichen)}
+  .more{margin-top:auto;font-weight:600;font-size:.95rem;color:var(--lichen);text-decoration:none;display:inline-flex;gap:6px;align-items:center}
+  .pcard .pmeta{display:flex;gap:18px;font-family:var(--font-mono);font-size:.8rem;color:var(--muted-fg);border-top:1px dashed var(--border);padding-top:14px;margin-top:4px}
+  .pcard .pmeta b{color:var(--ink);font-weight:600}
+
+  /* contrast stat inside deep panel */
+  .stat{display:flex;align-items:baseline;gap:14px;margin-top:26px}
+  .stat b{font-family:var(--font-serif);font-weight:500;font-size:3rem;line-height:1;color:var(--signal)}
+  .stat span{font-size:.95rem;color:rgba(236,243,239,.75);max-width:16em}
+
+  footer{position:relative;z-index:1}
+  .foot-grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:28px;align-items:flex-start}
+  .foot-links{display:flex;gap:48px;font-size:.9rem}
+  .foot-links a{color:rgba(236,243,239,.85);text-decoration:none}
+  .disclaimer{max-width:520px;font-size:.8rem;line-height:1.5;color:rgba(236,243,239,.55)}
+
+  /* ---------- motion ---------- */
+  .js .rev{opacity:0;transform:translateY(20px);transition:opacity .7s var(--ease-expo),transform .7s var(--ease-expo)}
+  .js .rev.in{opacity:1;transform:none}
+  .js .draw{stroke-dashoffset:var(--len,1);transition:stroke-dashoffset 1100ms var(--ease-expo)}
+  .js .draw.in{stroke-dashoffset:0}
+  .js .fade{opacity:0;transition:opacity .7s var(--ease-expo)} .js .fade.in{opacity:1}
+  @media (prefers-reduced-motion:reduce){ .js .rev,.js .fade{opacity:1!important;transform:none!important} .js .draw{stroke-dashoffset:0!important} }
+</style>
+</head>
+<body>
+
+<div class="gridfield" aria-hidden="true"><div class="grid-bg" id="grid"></div></div>
+
+<nav class="nav" id="nav">
+  <div class="nav__pill">
+    <span class="wordmark">marketworks</span>
+    <div class="nav__links">
+      <a href="#">Portfolios</a><a href="#">Library</a><a href="#">Sign in</a>
+      <a href="#" class="btn btn-primary btn-sm">Get beta access</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- HERO — on continuous white base, grid shows behind -->
+  <div class="wrap">
+    <header class="hero">
+      <div>
+        <div class="eyebrow rev">Private beta</div>
+        <h1 class="rev" style="margin:18px 0 22px">Indian markets, the <span class="accent-word">calm<svg viewBox="0 0 200 12" preserveAspectRatio="none"><path d="M3 8 C 55 3, 150 3, 197 7" stroke="#55C374" stroke-width="3" fill="none" stroke-linecap="round"/></svg></span> way.</h1>
+        <p class="lede rev">Marketworks helps you follow the strongest stocks in the Indian market — without watching it all day. You get three ready-made portfolios and a daily market read, built on live data instead of news and noise.</p>
+        <div class="cta rev">
+          <a href="#" class="btn btn-primary">Get beta access</a>
+          <a href="#" class="btn btn-ghost">Read the library</a>
+        </div>
+        <div class="trust rev">
+          <span>Built on live NSE data</span><span class="dot"></span>
+          <span>Rebalanced weekly</span><span class="dot"></span>
+          <span>SEBI-registered research</span>
+        </div>
+      </div>
+      <div class="graphic rev" aria-hidden="true">
+        <span class="tag">illustration placeholder · halftone + resolve</span>
+        <div class="halftone"></div>
+        <svg class="resolve" viewBox="0 0 400 340" fill="none">
+          <line x1="34" y1="286" x2="372" y2="286" stroke="#D4D4D4" stroke-width="1.5"/>
+          <g fill="#14715F" opacity="0.5">
+            <circle class="fade" data-d="1" cx="70" cy="250" r="3"/><circle class="fade" data-d="1" cx="118" cy="228" r="3"/>
+            <circle class="fade" data-d="2" cx="150" cy="238" r="3"/><circle class="fade" data-d="2" cx="196" cy="196" r="3"/>
+            <circle class="fade" data-d="3" cx="236" cy="176" r="3"/><circle class="fade" data-d="3" cx="286" cy="140" r="3"/>
+            <circle class="fade" data-d="4" cx="330" cy="110" r="3"/>
+          </g>
+          <path class="draw" data-d="2" d="M60 262 C 140 236, 210 200, 270 164 C 312 140, 344 120, 366 104" stroke="#14715F" stroke-width="2.6" stroke-linecap="round"/>
+          <circle class="fade" data-d="5" cx="366" cy="104" r="9" fill="none" stroke="#55C374" stroke-width="2.4"/>
+          <circle class="fade" data-d="5" cx="366" cy="104" r="3.6" fill="#55C374"/>
+        </svg>
+      </div>
+    </header>
+  </div>
+
+  <!-- WELCOME — inset mist panel -->
+  <div class="section"><div class="wrap"><div class="panel panel-mist rev">
+    <div class="measure">
+      <div class="eyebrow">Welcome to the beta</div>
+      <h2 style="margin:16px 0 20px">New here? Here's the whole idea in a minute.</h2>
+      <p class="body" style="margin-bottom:18px">Thanks for being one of our first testers. Marketworks is a simpler way to invest in Indian stocks. Instead of picking names yourself or reacting to the news, you follow ready-made portfolios that are rebuilt on a fixed schedule — a &ldquo;rebalance&rdquo; — around the stocks currently leading the market.</p>
+      <p class="body">It all runs on one idea called <span class="em">momentum</span>: stocks that have been rising tend to keep leading for a while.</p>
+    </div>
+  </div></div></div>
+
+  <!-- HOW IT WORKS — cards float on white+grid -->
+  <div class="section-lg"><div class="wrap">
+    <h2 class="rev" style="max-width:560px;margin-bottom:40px">How it works</h2>
+    <div class="grid3">
+      <div class="card rev"><div class="cpanel"><div class="halftone"></div>
+        <svg width="120" height="70" viewBox="0 0 120 70" fill="none"><g stroke="#14715F" stroke-width="6" stroke-linecap="round"><line x1="16" y1="20" x2="104" y2="20" stroke="#55C374"/><line x1="16" y1="38" x2="80" y2="38" opacity=".8"/><line x1="16" y1="56" x2="60" y2="56" opacity=".6"/></g></svg></div>
+        <span class="step-num">01</span><h3>We rank the market</h3><p>Every week our system scores stocks by momentum — names already trending up tend to keep leading for a while.</p></div>
+      <div class="card rev"><div class="cpanel"><div class="halftone"></div>
+        <svg width="120" height="70" viewBox="0 0 120 70" fill="none"><g stroke="#14715F" stroke-width="2.2" fill="none"><rect x="20" y="16" width="34" height="38" rx="5"/><rect x="66" y="16" width="34" height="38" rx="5" stroke="#55C374"/></g></svg></div>
+        <span class="step-num">02</span><h3>We build the portfolios</h3><p>The strongest names go into ready-made lists you can follow. When the leaders change, the list updates.</p></div>
+      <div class="card rev"><div class="cpanel"><div class="halftone"></div>
+        <svg width="120" height="70" viewBox="0 0 120 70" fill="none"><path d="M18 52 C 40 44, 58 30, 80 22 S 104 14, 108 12" stroke="#14715F" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="80" cy="22" r="6" fill="none" stroke="#55C374" stroke-width="2.4"/></svg></div>
+        <span class="step-num">03</span><h3>You follow along</h3><p>See exactly what each portfolio holds, what changed at the last rebalance, and why — in plain language.</p></div>
+    </div>
+  </div></div>
+
+  <!-- RESEARCH — inset DEEP panel (the dark contrast moment) -->
+  <div class="section"><div class="wrap"><div class="panel panel-deep rev">
+    <div class="p-glow"></div>
+    <div class="measure" style="position:relative">
+      <div class="eyebrow">The research behind it</div>
+      <h2 style="margin:16px 0 20px;color:#fff">Process over prediction.</h2>
+      <p class="body">Momentum isn't a hunch. It's a <span class="em">factor</span> — one of a small handful of forces decades of research have shown drive returns over time. We've spent years studying how it behaves in Indian equities: validating it on periods our models had never seen, and stress-testing it through crashes and rallies.</p>
+      <div class="stat"><b>Only rules that hold</b><span>on unseen, out-of-sample data earn a place in a portfolio.</span></div>
+    </div>
+  </div></div></div>
+
+  <!-- PORTFOLIOS — cards float on white -->
+  <div class="section-lg"><div class="wrap">
+    <div class="rev" style="max-width:560px;margin-bottom:36px">
+      <div class="eyebrow" style="margin-bottom:14px">The portfolios</div>
+      <h2>Three ways to follow momentum.</h2>
+    </div>
+    <div class="grid2">
+      <div class="card pcard rev"><span class="lbl">Growth-focused · NSE 500</span><h3>Core Momentum</h3>
+        <p>The flagship. A rules-based list of the strongest names in the market, rebuilt on a schedule so it stays with the current leaders.</p>
+        <div class="pmeta"><span>Holdings <b>24</b></span><span>Rebalance <b>Weekly</b></span></div>
+        <a class="more" href="#">View portfolio <span aria-hidden>↗</span></a></div>
+      <div class="card pcard rev"><span class="lbl">Drawdown-reduced · NSE 500</span><h3>Defensive Blend</h3>
+        <p>A calmer ride. Blends momentum with cash in weaker market regimes to soften the deepest drawdowns.</p>
+        <div class="pmeta"><span>Holdings <b>50/50</b></span><span>Rebalance <b>Weekly</b></span></div>
+        <a class="more" href="#">View portfolio <span aria-hidden>↗</span></a></div>
+    </div>
+  </div></div>
+
+  <!-- CTA — inset lichen panel -->
+  <div class="section"><div class="wrap"><div class="panel panel-lichen rev">
+    <div class="measure" style="display:flex;flex-direction:column;gap:22px;align-items:flex-start">
+      <h2 style="color:var(--mist)">Marketworks is in private beta.</h2>
+      <p class="lede">Sign up to follow the three portfolios and the daily market read. Free while we're in beta.</p>
+      <a href="#" class="btn btn-onlichen">Get beta access</a>
+    </div>
+  </div></div></div>
+
+  <!-- FOOTER — inset deep panel (page terminus) -->
+  <footer class="section" style="padding-bottom:40px"><div class="wrap"><div class="panel panel-deep">
+    <div class="p-glow"></div>
+    <div class="foot-grid" style="position:relative">
+      <div><div class="wordmark" style="color:var(--mist);margin-bottom:14px">marketworks</div>
+        <p class="disclaimer">Investments in securities are subject to market risks. Read all related documents carefully. Nothing here is investment advice.</p></div>
+      <div class="foot-links">
+        <div style="display:flex;flex-direction:column;gap:10px"><a href="#">Portfolios</a><a href="#">Library</a><a href="#">Insights</a></div>
+        <div style="display:flex;flex-direction:column;gap:10px"><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Disclaimer</a></div>
+      </div>
+    </div>
+    <div style="position:relative;margin-top:32px;padding-top:18px;border-top:1px solid rgba(236,243,239,.15);font-size:.8rem;color:rgba(236,243,239,.55)">© 2026 Marketworks Research · SEBI Registered Research Analyst</div>
+  </div></div></footer>
+
+</div>
+
+<script>
+(function(){
+  var reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var root=document.documentElement; if(!reduced) root.classList.add('js');
+  function playIn(scope){
+    scope.querySelectorAll('.draw').forEach(function(p){ if(p.getTotalLength) p.style.setProperty('--len',p.getTotalLength()); });
+    scope.querySelectorAll('.fade,.draw').forEach(function(el){ var d=parseInt(el.getAttribute('data-d')||'0',10); setTimeout(function(){el.classList.add('in');},80+d*120); });
+  }
+  if(reduced){}
+  else if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');if(e.target.querySelector('.draw,.fade'))playIn(e.target);io.unobserve(e.target);}});},{threshold:0.16});
+    document.querySelectorAll('.rev').forEach(function(el){io.observe(el);});
+  } else { document.querySelectorAll('.rev').forEach(function(el){el.classList.add('in');}); }
+
+  var nav=document.getElementById('nav');
+  window.addEventListener('scroll',function(){nav.classList.toggle('shrink',(window.scrollY||0)>40);},{passive:true});
+
+  if(reduced) return;
+  // gentle grid parallax (eased)
+  var grid=document.getElementById('grid'),ty=0,cy=0,active=true;
+  window.addEventListener('scroll',function(){ty=window.scrollY||0;},{passive:true});
+  document.addEventListener('visibilitychange',function(){active=!document.hidden;if(active)requestAnimationFrame(tick);});
+  function tick(){ if(!active)return; cy+=((ty*0.04)-cy)*0.08; if(grid)grid.style.transform='translateY('+(-cy)+'px)'; requestAnimationFrame(tick); }
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+[
+  {
+    "created_at": "2026-07-19T19:11:43.904901Z",
+    "display_name": "Nano Banana Pro",
+    "id": "8b5d36d6-0506-4e9a-8b15-51673658f09e",
+    "job_type": "nano_banana_pro",
+    "min_result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_38WQ3lGGtRuZa4LYURKFOyv57oN/hf_20260719_191143_8b5d36d6-0506-4e9a-8b15-51673658f09e_min.webp",
+    "params": {
+      "application": null,
+      "aspect_ratio": "1:1",
+      "batch_size": 1,
+      "height": 2048,
+      "input_image": null,
+      "input_images": [],
+      "prompt": "Soft bright pastel illustration with smooth clean light gradients, airy and modern editorial style. A small fresh green seedling growing upward from a neat stack of round coins in bright soft morning light, a few leaves gently unfurling; hopeful, uplifting, steady growth and investing. Cool calm brand palette only: fresh green (#55C374 and deep #14715F), mist off-white (#ECF3EF), soft lavender, pale sky blue; NO warm rust, orange, red or brown; bright, light, cheerful, lots of soft negative space. No text, no words, no logos.",
+      "resolution": "2k",
+      "surface": null,
+      "width": 2048
+    },
+    "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_38WQ3lGGtRuZa4LYURKFOyv57oN/hf_20260719_191143_8b5d36d6-0506-4e9a-8b15-51673658f09e.png",
+    "status": "completed"
+  }
+]

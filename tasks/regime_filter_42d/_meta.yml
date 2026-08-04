@@ -1,0 +1,11 @@
+name: regime_filter_42d
+status: shipped
+opened: 2026-07-25
+closed: 2026-07-25
+related_commits: []
+supersedes: []
+depends_on: []
+notes: >
+  Negative result. Nifty 500 42d-return no-invest gate (3-day confirm)
+  tested as overlay on OM25 v3 and COMBO equity curves. Cuts CAGR
+  10-14pts, no drawdown benefit (COMBO max DD worsens). Rejected.

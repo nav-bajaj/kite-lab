@@ -1,0 +1,20 @@
+{
+  "entry": "fresh cross above prior 20d high, mom pct-rank >= 0.75, uncapped",
+  "exits": [
+    "don10",
+    "don20",
+    "don55",
+    "mid20",
+    "pct10_peak",
+    "pct15_peak",
+    "atr4_peak",
+    "time40",
+    "momq",
+    "don10_or_momq"
+  ],
+  "slippage": 0.002,
+  "study": [
+    "2010-06-01",
+    "2026-05-08"
+  ]
+}

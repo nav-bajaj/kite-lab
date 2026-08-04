@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Light-locked marketing surface (DESIGN.md §8.5). Opt out of Android forced-dark. -->
+<meta name="color-scheme" content="light only">
+<meta name="theme-color" content="#ECF3EF">
+<title>Marketworks — hero mock v2 (brand-locked)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Mock only: real app loads Fraunces + Outfit via next/font (CDN is CSP-blocked in prod). -->
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light only;
+    --mist:#ECF3EF;
+    --ink:#1A1A1A;
+    --card:#FFFFFF;
+    --lichen:#14715F;
+    --signal:#55C374;
+    --muted-fg:#5C6B66;      /* darkened from #737373 for AA body contrast on mist */
+    --border:#D4D4D4;
+    --radius:0.5rem;
+    --font-serif:'Fraunces','Iowan Old Style',Georgia,serif;
+    --font-sans:'Outfit',ui-sans-serif,system-ui,sans-serif;
+    --font-mono:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;
+    --ease-out:cubic-bezier(0.16,1,0.3,1);   /* ease-out-expo, no bounce */
+    --motion-slow:640ms;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;background:var(--mist)}
+  body{
+    font-family:var(--font-sans);background:var(--mist);color:var(--ink);
+    line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+
+  /* ---------- soft glows only (full-bleed, no streamlines behind text) ---------- */
+  .glowfield{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .glow{position:absolute;border-radius:50%;filter:blur(96px);will-change:transform}
+  .glow-a{top:-14vh;right:-6vw;width:48vw;height:48vw;max-width:720px;max-height:720px;
+    background:radial-gradient(circle,rgba(85,195,116,.22) 0%,transparent 68%)}
+  .glow-b{top:100vh;left:-14vw;width:52vw;height:52vw;max-width:760px;max-height:760px;
+    background:radial-gradient(circle,rgba(20,113,95,.13) 0%,transparent 68%)}
+  @media(max-width:640px){.glow{filter:blur(60px)}}
+
+  .page{position:relative;z-index:1}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+
+  nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0}
+  .wordmark{font-family:var(--font-sans);font-weight:600;font-size:1.25rem;color:var(--lichen);letter-spacing:-.01em}
+  .nav-links{display:flex;gap:28px;align-items:center;font-size:.94rem;font-weight:500;color:var(--muted-fg)}
+  .nav-links a{color:inherit;text-decoration:none;transition:color .2s var(--ease-out)}
+  .nav-links a:hover{color:var(--ink)}
+  .btn{display:inline-block;font-family:var(--font-sans);font-weight:600;font-size:.98rem;
+    text-decoration:none;padding:12px 22px;border-radius:var(--radius);cursor:pointer;
+    border:1px solid transparent;transition:opacity .2s var(--ease-out),border-color .2s var(--ease-out)}
+  .btn-primary{background:var(--lichen);color:var(--mist)}
+  .btn-primary:hover{opacity:.9}
+  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--border)}
+  .btn-ghost:hover{border-color:rgba(20,113,95,.45)}
+  .btn:focus-visible{outline:2px solid var(--lichen);outline-offset:2px}
+  .btn-sm{padding:9px 18px;font-size:.9rem}
+
+  /* ---------- hero ---------- */
+  .hero{display:grid;grid-template-columns:1.04fr .96fr;gap:48px;align-items:center;
+    min-height:min(76vh,680px);padding:48px 0 88px}
+  @media(max-width:900px){.hero{grid-template-columns:1fr;gap:8px;padding:32px 0 64px}}
+
+  .eyebrow{font-family:var(--font-sans);font-weight:600;font-size:.8125rem;
+    text-transform:uppercase;letter-spacing:.16em;color:var(--lichen)}
+  h1{font-family:var(--font-serif);font-optical-sizing:auto;font-weight:500;
+    font-size:clamp(2.75rem,6vw,4.25rem);line-height:1.04;letter-spacing:-.02em;
+    text-wrap:balance;margin:20px 0 24px}
+  h1 .calm{color:var(--lichen);position:relative;white-space:nowrap}
+  h1 .calm svg{position:absolute;left:-2%;bottom:-.13em;width:104%;height:.2em;overflow:visible}
+  .lede{font-size:1.1875rem;line-height:1.6;color:var(--muted-fg);max-width:34em;text-wrap:pretty}
+  .cta{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:32px}
+  .trust{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:26px;
+    font-family:var(--font-mono);font-size:.8125rem;color:var(--muted-fg);font-variant-numeric:tabular-nums}
+  .trust .dot{width:3px;height:3px;border-radius:50%;background:var(--border)}
+
+  /* ---------- art column ---------- */
+  .art{position:relative;min-height:460px;display:flex;align-items:center;justify-content:center}
+  @media(max-width:900px){.art{min-height:340px;margin-top:12px}}
+  /* contained streamlines behind the motif — motion lives on the side now */
+  .art .streams{position:absolute;inset:-6% -8%;z-index:0;pointer-events:none;overflow:visible}
+  .art .streams path{fill:none}
+  .art .motif{position:relative;z-index:1;width:100%;max-width:480px}
+  .art .motif svg{width:100%;height:auto;display:block;overflow:visible}
+  .art [data-concept]{display:none}
+  .art [data-concept].active{display:block}
+
+  /* draw + fade primitives (visible by default; JS+motion enhance) */
+  .draw{stroke-dasharray:var(--len,1);stroke-dashoffset:0}
+  .rise{opacity:1;transform:none}
+  .js .anim{opacity:0;transform:translateY(18px);
+    transition:opacity var(--motion-slow) var(--ease-out),transform var(--motion-slow) var(--ease-out)}
+  .js .anim.in{opacity:1;transform:none}
+  .js .draw{stroke-dashoffset:var(--len,1);transition:stroke-dashoffset 1100ms var(--ease-out)}
+  .js .draw.in{stroke-dashoffset:0}
+  .js .fade{opacity:0;transition:opacity var(--motion-slow) var(--ease-out)}
+  .js .fade.in{opacity:1}
+  .js .pop{opacity:0;transform:scale(.4);transform-origin:center;transform-box:fill-box;
+    transition:opacity .4s var(--ease-out),transform .5s var(--ease-out)}
+  .js .pop.in{opacity:1;transform:scale(1)}
+
+  /* ---------- peek of next section ---------- */
+  section.next{border-top:1px solid var(--border);padding:80px 0 120px}
+  .measure{max-width:680px}
+  .kicker{font-family:var(--font-sans);font-weight:600;font-size:.8125rem;text-transform:uppercase;letter-spacing:.16em;color:var(--lichen)}
+  h2{font-family:var(--font-serif);font-weight:500;font-size:clamp(2rem,3.6vw,2.5rem);line-height:1.15;letter-spacing:-.01em;text-wrap:balance;margin:16px 0 20px}
+  .next p{font-size:1.125rem;line-height:1.65;color:var(--muted-fg);margin-bottom:18px;text-wrap:pretty}
+  .next p .em{color:var(--ink)}
+
+  /* ---------- mock-only concept switcher ---------- */
+  .switch{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:50;
+    display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);
+    border-radius:999px;padding:6px;box-shadow:0 6px 24px -12px rgba(16,53,46,.35)}
+  .switch .lbl{font-family:var(--font-mono);font-size:.68rem;color:var(--muted-fg);padding:0 8px;letter-spacing:.04em}
+  .switch button{font-family:var(--font-sans);font-weight:600;font-size:.82rem;color:var(--ink);
+    background:transparent;border:none;border-radius:999px;padding:7px 14px;cursor:pointer;transition:background .18s var(--ease-out),color .18s var(--ease-out)}
+  .switch button[aria-pressed="true"]{background:var(--lichen);color:var(--mist)}
+</style>
+</head>
+<body>
+
+<div class="glowfield" aria-hidden="true">
+  <div class="glow glow-a" id="glowA"></div>
+  <div class="glow glow-b" id="glowB"></div>
+</div>
+
+<div class="page">
+<div class="wrap">
+
+  <nav>
+    <div class="wordmark">marketworks</div>
+    <div class="nav-links">
+      <a href="#">Portfolios</a>
+      <a href="#">Library</a>
+      <a href="#">Sign in</a>
+      <a href="#" class="btn btn-primary btn-sm">Get beta access</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow anim">Private beta</div>
+      <h1 class="anim">
+        Indian markets, the <span class="calm">calm<svg viewBox="0 0 200 12" preserveAspectRatio="none"><path d="M3 8 C 55 3, 150 3, 197 7" stroke="#55C374" stroke-width="3" fill="none" stroke-linecap="round"/></svg></span> way.
+      </h1>
+      <p class="lede anim">
+        Marketworks helps you follow the strongest stocks in the Indian market — without
+        watching it all day. You get three ready-made portfolios and a daily market read,
+        built on live data instead of news and noise.
+      </p>
+      <div class="cta anim">
+        <a href="#" class="btn btn-primary">Get beta access</a>
+        <a href="#" class="btn btn-ghost">Read the library</a>
+      </div>
+      <div class="trust anim">
+        <span>Built on live NSE data</span><span class="dot"></span>
+        <span>Rebalanced weekly</span><span class="dot"></span>
+        <span>SEBI-registered research</span>
+      </div>
+    </div>
+
+    <!-- ============ side art (3 toggleable concepts) ============ -->
+    <div class="art" aria-hidden="true">
+      <svg class="streams" viewBox="0 0 520 480" preserveAspectRatio="xMidYMid meet">
+        <g id="streamG">
+          <path d="M-20 120 C 140 70, 340 180, 540 120" stroke="#14715F" stroke-width="1.1" opacity="0.12"/>
+          <path d="M-20 250 C 160 200, 360 300, 540 240" stroke="#55C374" stroke-width="1.1" opacity="0.16"/>
+          <path d="M-20 380 C 150 340, 360 430, 540 370" stroke="#14715F" stroke-width="1" opacity="0.09"/>
+        </g>
+      </svg>
+
+      <div class="motif">
+        <!-- Concept A: Distribution (quant / statistics / research) -->
+        <svg data-concept="dist" class="active" viewBox="0 0 480 440" fill="none">
+          <line x1="48" y1="372" x2="440" y2="372" stroke="#D4D4D4" stroke-width="1.5"/>
+          <path class="fade" data-d="1" d="M74 372 C 150 368, 198 316, 244 132 C 290 316, 338 368, 414 372 Z" fill="#55C374" opacity="0.10"/>
+          <line class="draw" data-d="2" x1="244" y1="140" x2="244" y2="372" stroke="#5C6B66" stroke-width="1.2" stroke-dasharray="3 6" opacity="0.55"/>
+          <path class="draw" data-d="1" d="M74 372 C 150 368, 198 316, 244 132 C 290 316, 338 368, 414 372" stroke="#14715F" stroke-width="2.4" stroke-linecap="round"/>
+          <g stroke="#14715F" stroke-width="1.5" opacity="0.4" class="fade" data-d="3">
+            <line x1="170" y1="368" x2="170" y2="378"/>
+            <line x1="318" y1="368" x2="318" y2="378"/>
+          </g>
+          <circle class="pop" data-d="4" cx="244" cy="132" r="9" fill="none" stroke="#55C374" stroke-width="2.2"/>
+          <circle class="pop" data-d="4" cx="244" cy="132" r="3.6" fill="#55C374"/>
+          <text x="244" y="398" font-family="ui-monospace,Menlo,monospace" font-size="12" fill="#5C6B66" text-anchor="middle" class="fade" data-d="3">μ</text>
+          <text x="170" y="398" font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#5C6B66" text-anchor="middle" class="fade" data-d="3">−σ</text>
+          <text x="318" y="398" font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#5C6B66" text-anchor="middle" class="fade" data-d="3">+σ</text>
+        </svg>
+
+        <!-- Concept B: Compounding (wealth / money) -->
+        <svg data-concept="compound" viewBox="0 0 480 440" fill="none">
+          <g stroke="#D4D4D4" stroke-width="1" stroke-dasharray="2 8" opacity="0.7">
+            <line x1="64" y1="300" x2="440" y2="300"/>
+            <line x1="64" y1="216" x2="440" y2="216"/>
+            <line x1="64" y1="132" x2="440" y2="132"/>
+          </g>
+          <line x1="64" y1="88" x2="64" y2="376" stroke="#D4D4D4" stroke-width="1.5"/>
+          <line x1="64" y1="376" x2="440" y2="376" stroke="#D4D4D4" stroke-width="1.5"/>
+          <path class="fade" data-d="1" d="M74 372 C 200 366, 292 320, 350 232 C 388 176, 414 128, 428 104 L428 372 Z" fill="#55C374" opacity="0.09"/>
+          <path class="draw" data-d="1" d="M74 372 C 200 366, 292 320, 350 232 C 388 176, 414 128, 428 104" stroke="#14715F" stroke-width="2.4" stroke-linecap="round"/>
+          <circle class="pop" data-d="3" cx="428" cy="104" r="9" fill="none" stroke="#55C374" stroke-width="2.2"/>
+          <circle class="pop" data-d="3" cx="428" cy="104" r="3.6" fill="#55C374"/>
+          <text x="428" y="88" font-family="var(--font-serif),serif" font-size="19" fill="#14715F" text-anchor="middle" class="fade" data-d="3">₹</text>
+          <g font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#5C6B66" text-anchor="middle" class="fade" data-d="2">
+            <text x="110" y="396">Y1</text><text x="200" y="396">Y3</text>
+            <text x="290" y="396">Y5</text><text x="380" y="396">Y8</text>
+          </g>
+        </svg>
+
+        <!-- Concept C: Ranked strength (systematic ranking) -->
+        <svg data-concept="rank" viewBox="0 0 480 440" fill="none">
+          <g font-family="ui-monospace,Menlo,monospace" font-size="12" fill="#5C6B66">
+            <!-- rows: rank number + bar (drawn) ; leader highlighted -->
+            <text x="40" y="92"  class="fade" data-d="1">01</text>
+            <line class="draw rankbar" data-d="1" x1="74" y1="88" x2="430" y2="88" stroke="#55C374" stroke-width="7" stroke-linecap="round"/>
+            <text x="40" y="140" class="fade" data-d="2">02</text>
+            <line class="draw rankbar" data-d="2" x1="74" y1="136" x2="372" y2="136" stroke="#14715F" stroke-width="6" stroke-linecap="round" opacity="0.9"/>
+            <text x="40" y="188" class="fade" data-d="3">03</text>
+            <line class="draw rankbar" data-d="3" x1="74" y1="184" x2="330" y2="184" stroke="#14715F" stroke-width="6" stroke-linecap="round" opacity="0.78"/>
+            <text x="40" y="236" class="fade" data-d="4">04</text>
+            <line class="draw rankbar" data-d="4" x1="74" y1="232" x2="292" y2="232" stroke="#14715F" stroke-width="6" stroke-linecap="round" opacity="0.66"/>
+            <text x="40" y="284" class="fade" data-d="5">05</text>
+            <line class="draw rankbar" data-d="5" x1="74" y1="280" x2="250" y2="280" stroke="#14715F" stroke-width="6" stroke-linecap="round" opacity="0.54"/>
+            <text x="40" y="332" class="fade" data-d="6">06</text>
+            <line class="draw rankbar" data-d="6" x1="74" y1="328" x2="210" y2="328" stroke="#14715F" stroke-width="6" stroke-linecap="round" opacity="0.42"/>
+          </g>
+          <circle class="pop" data-d="2" cx="430" cy="88" r="4" fill="#55C374"/>
+        </svg>
+      </div>
+    </div>
+  </header>
+
+  <section class="next">
+    <div class="measure">
+      <div class="kicker anim">Welcome to the beta</div>
+      <h2 class="anim">New here? Here's the whole idea in a minute.</h2>
+      <p class="anim">
+        Thanks for being one of our first testers. Marketworks is a simpler way to invest in
+        Indian stocks. Instead of picking names yourself or reacting to the news, you follow
+        ready-made portfolios that are rebuilt on a fixed schedule — a &ldquo;rebalance&rdquo; —
+        around the stocks that are currently leading the market.
+      </p>
+      <p class="anim">
+        It all runs on one idea called <span class="em">momentum</span>: stocks that have been
+        rising tend to keep leading for a while. Our system measures this across the market every
+        week, so the portfolios quietly stay with the leaders and step away as they fade.
+      </p>
+    </div>
+  </section>
+
+</div>
+</div>
+
+<!-- mock-only: compare the three side-art concepts -->
+<div class="switch" role="group" aria-label="Art concept (mock control)">
+  <span class="lbl">ART</span>
+  <button data-pick="dist" aria-pressed="true">Distribution</button>
+  <button data-pick="compound" aria-pressed="false">Compounding</button>
+  <button data-pick="rank" aria-pressed="false">Ranking</button>
+</div>
+
+<script>
+(function(){
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var root = document.documentElement;
+
+  // Enhance-an-already-visible-default: only opt into hidden pre-states when we
+  // can actually animate. No JS / reduced-motion / headless => content stays visible.
+  if (!reduced) root.classList.add('js');
+
+  function playIn(scope){
+    var items = scope.querySelectorAll('.anim,.draw,.fade,.pop');
+    // measure path lengths for draws
+    scope.querySelectorAll('.draw').forEach(function(p){
+      if (p.getTotalLength) p.style.setProperty('--len', p.getTotalLength());
+    });
+    items.forEach(function(el){
+      var d = parseInt(el.getAttribute('data-d') || '0', 10);
+      var base = el.classList.contains('anim') ? 90 : 120;   // stagger
+      setTimeout(function(){ el.classList.add('in'); }, 60 + d * base);
+    });
+  }
+
+  if (reduced){
+    // nothing to do — everything is already in its final visible state
+  } else {
+    // hero + active concept on load
+    requestAnimationFrame(function(){
+      playIn(document.querySelector('.hero-copy'));
+      playIn(document.querySelector('.art [data-concept].active'));
+    });
+    // next section on scroll
+    if ('IntersectionObserver' in window){
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){ if (e.isIntersecting){ playIn(e.target); io.unobserve(e.target); } });
+      }, {threshold:0.25});
+      io.observe(document.querySelector('.next'));
+    } else {
+      playIn(document.querySelector('.next'));
+    }
+  }
+
+  // concept switcher (mock only)
+  var buttons = document.querySelectorAll('.switch button');
+  buttons.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var pick = btn.getAttribute('data-pick');
+      buttons.forEach(function(b){ b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+      document.querySelectorAll('.art [data-concept]').forEach(function(svg){
+        var on = svg.getAttribute('data-concept') === pick;
+        svg.classList.toggle('active', on);
+        if (on && !reduced){
+          // reset then replay entrance for the newly shown concept
+          svg.querySelectorAll('.draw,.fade,.pop').forEach(function(el){ el.classList.remove('in'); });
+          requestAnimationFrame(function(){ playIn(svg); });
+        }
+      });
+    });
+  });
+
+  if (reduced) return;
+
+  // whisper-quiet ambient drift on the glows + side streamlines
+  var gA=document.getElementById('glowA'), gB=document.getElementById('glowB'), sg=document.getElementById('streamG');
+  var t=0, active=true, sy=0, ty=0;
+  window.addEventListener('scroll', function(){ ty = window.scrollY || 0; }, {passive:true});
+  document.addEventListener('visibilitychange', function(){ active=!document.hidden; if(active) requestAnimationFrame(tick); });
+  function tick(){
+    if(!active) return;
+    sy += (ty - sy) * 0.08; t += 0.004;
+    var dx=Math.sin(t)*7, dy=Math.cos(t*0.8)*5;
+    gA.style.transform='translate3d('+(dx)+'px,'+(sy*0.10)+'px,0)';
+    gB.style.transform='translate3d('+(-dx*0.8)+'px,'+(-sy*0.05)+'px,0)';
+    if(sg) sg.setAttribute('transform','translate('+(dx*0.9)+','+(dy)+')');
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

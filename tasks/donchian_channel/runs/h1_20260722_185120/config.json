@@ -1,0 +1,23 @@
+{
+  "gh": "close / 252d rolling max(high), inclusive (George-Hwang)",
+  "blend": "0.5*pct_rank(GH) + 0.5*pct_rank(L6 z-score)",
+  "execution": "top-25 biweekly Fri, exit-buffer 20, 20% stop, 7.5% cap, 20bps",
+  "windows": {
+    "IS": [
+      "2009-09-01",
+      "2016-12-31"
+    ],
+    "OOS-A": [
+      "2017-01-01",
+      "2019-12-31"
+    ],
+    "OOS-B": [
+      "2020-01-01",
+      "2022-12-31"
+    ],
+    "OOS-C": [
+      "2023-01-01",
+      "2026-05-08"
+    ]
+  }
+}

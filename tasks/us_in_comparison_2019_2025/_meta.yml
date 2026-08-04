@@ -1,0 +1,13 @@
+name: us_in_comparison_2019_2025
+status: complete
+started: 2026-07-20
+closed: 2026-07-24
+kind: analysis
+summary: >
+  Core Momentum (L6 v2) + Quality Momentum (OM25 v3), India vs US,
+  2019-2025 common window; pre-tax and flat-25%-annual-tax views;
+  published as a brand-faithful interactive artifact for beta testers.
+artifact_url: https://claude.ai/code/artifact/82d096ff-4597-472c-9732-a6dd13a1720c
+depends_on:
+  - branch us-data (experiments/us_strategies_2017 curves)
+  - scripts/_clean_engine.py, _momentum_engine.py, om25_v3.py (locked configs)

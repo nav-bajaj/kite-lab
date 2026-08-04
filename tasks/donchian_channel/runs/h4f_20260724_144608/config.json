@@ -1,0 +1,6 @@
+{
+  "universe": "SP500+NDX+SP400 (916 symbols, yfinance)",
+  "grid": "cap{50,100} x stop{none,atr10} x exit_rank{0.50,0.35}",
+  "lookback": 126,
+  "tail_start": "2023-07-01"
+}
