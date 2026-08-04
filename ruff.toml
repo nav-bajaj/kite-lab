@@ -1,0 +1,8 @@
+# Repo-wide ruff settings. Rule selection stays on the CLI (--select S in
+# pre-commit and /security-audit); this file only carries exclusions.
+
+[lint.per-file-ignores]
+# S101 (assert used) is the pytest idiom, not a security issue.
+"tests/**" = ["S101"]
+"kite-api/tests/**" = ["S101"]
+"tasks/**" = ["S101"]
