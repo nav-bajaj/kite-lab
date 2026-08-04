@@ -210,8 +210,64 @@ confused). Re-labeled findings:
       divergence is a live risk transferred INTO expiry settlement.
       Measure the 15:30-15:40 chain-vs-close basis daily. (n=1)
 
+## 2026-08-04 (day 6) — EXPIRY 2: first LOSS, settlement mechanics decoded, pin thesis humbled
+
+- Tape: first DOWN-gap (-141), rally to 24,648, hard sell to 24,428 low
+  (~13:57), then a ~150-pt MELT-UP into the close: 24,463 at 15:26 ->
+  24,614.9 official close by 15:28. Day -0.64%, range 220 pts,
+  two-sided. Widens BOTH directions (10:56 up, 13:15 down).
+- THE FIRST LOSS (and the most valuable ledger row): sold 24600
+  straddle 09:20 for just 93.0 pts (expiry thin credit, as hyp. 10
+  warned) -> final -55.2 (-59% of credit), MAE -78.3 at 13:57 (4x the
+  previous worst), underwater 213/356 minutes. Six-session ledger: five
+  wins +66.4, one loss -55.2, net +11.2 — one bad day nearly erased
+  five good ones. The short-vol distribution, measured.
+- DISCIPLINE CUT BOTH WAYS: the 15:15 exit locked -55.2; holding to
+  ~15:28 would have finished ~+78 as the melt-up carried spot back to
+  the strike (straddle -> ~15 pts intrinsic). Jul-28 the late hold paid
+  WITHIN the window; today it paid AFTER it. n=2 expiries, opposite
+  verdicts on late exits — do not touch the exit rule on this evidence;
+  gamma-lottery in the final minutes runs both ways.
+- SETTLEMENT MECHANICS DECODED (the cutoff experiment): expiring 24500
+  CE pinned to ~114.7 = EXACT intrinsic vs the 24,614.9 official close
+  from 15:28 through 15:40; PE bled to 0.05. Options converged to
+  intrinsic-vs-official-close BEFORE 15:30 and the extended window
+  traded at settlement values. EXPIRY_CUTOFF 15:30 empirically
+  CONFIRMED — greeks assumption stands.
+- CLOSE-PRINT STRUCTURE (hyp. 16, 2nd observation): the official close
+  again printed far above the late tape (+150 vs 15:26), but TODAY the
+  chain converged to it (parity fwd 24,561@15:26 -> 24,615@15:28,
+  matching official). New-timings close dynamics are real and
+  recurring; on expiry, settlement forces derivatives into agreement.
+  Yesterday's 200-pt divergence remains the non-expiry variant. The
+  spot-vs-parity divergence monitor stays essential (still queued).
+- PIN TEST #2: NO pin. Concentration 32% -> 28% -> 22% (fell all day);
+  max-gamma migrated 24600 -> 24500 chasing the sell-off. Two expiries:
+  one textbook pin, one two-sided breaker. Pin formation needs its
+  OI-convergence conditions, not the calendar. (pin sample n=1/2)
+- Vol: regime shift — ATM IV 17.8% open (gap fear) -> 24% midday panic
+  (the 103% 15:15 print is T->0 arithmetic noise, not information).
+  Last week's 8-10% world is gone.
+- LEDGER VERDICT #1 (implied vs realized, 08-04 cycle): realized beat
+  implied — Fri 15:15 implied 0.69% vs Fri->settle realized +1.02%;
+  Wed implied 0.91% vs +1.35% realized to settle. The low-IV
+  compression UNDER-priced the move; late-week sellers were
+  undercompensated, and today collected the bill. First completed
+  verdict row.
+- Engine: biggest session (2.71M ticks, 40,096 bars, 0 errors), 3
+  widens incl. first down-side widen, EOD chain 8s after the 15:40
+  close.
+- Observations:
+  17. Expiry-day short premium at thin credit is the program's worst
+      measured trade: credit 93, MAE -78.3. Any expiry-day short-vol
+      rule must be regime-AND-credit conditioned. (n=2 expiries)
+  18. Settlement basis = official close, established ~15:28-15:30;
+      15:30-15:40 F&O trades at settlement values on expiry day.
+      (n=1 extended expiry)
+  19. Official close prints far from the late continuous tape under the
+      new timings (2/2 days, +150 and +200). Anything marked or
+      triggered off the 15:20-15:30 tape inherits this risk daily.
+
 ---
 
-*Next entry: 2026-08-04 (Tue) — EXPIRY DAY: pin test #2 with spot
-opening at the 24600 max-gamma strike; first completed straddle-ledger
-verdict; second expiry MAE path.*
+*Next entry: 2026-08-05 (Wed) — first session of the new expiry cycle (08-11) in the new vol regime; divergence monitor build queued.*
