@@ -100,17 +100,38 @@ consumes bars only) · proprietary dataset compounding daily.
       rows at 10:00/13:00/15:15; /api/options/live-analytics (R-026
       extended, authz 291) computing parity forward/ATM IV/GEX/regime
       from the 10s chain snapshot; /admin Options Analytics card
-- [ ] Morning day-plan generator prototype (advisory; builds call track
-      record for the autonomy gates)
+- [x] Morning day-plan generator prototype (2026-08-05): advisory
+      Judgment-layer module `microstructure/day_plan.py` — regime (shared
+      concentration cutoffs) + IV percentile (vs gamma_profile_daily history)
+      + gamma walls + ATM credit -> structure selection (short-straddle /
+      iron-fly / directional-debit / defined-risk / reduced-size / aside),
+      risk band QUOTED from the actual ledger (never fabricated), standing
+      constraints. Pure `recommend_structure` core exhaustively unit-tested
+      (tests/test_day_plan.py, 8 cases); wired into the EOD daily report so
+      the advisory call is recorded each session (builds the track record).
+      Live /admin path reuses recommend_structure — beta_gtm_mvp follow-up.
 - [x] 2026-08-04 expiry (all three landed): ledger verdict #1 —
       realized BEAT implied across the compression week (0.69% vs
       1.02%); first LOSS row (-55.2, MAE -78.3 on 93 credit); NO pin
       (concentration fell 32->22%, pin sample 1/2). Settlement basis
       decoded: official close, established ~15:28-15:30; extended
       window trades at settlement values; greeks cutoff 15:30 CONFIRMED
-- [ ] Spot-vs-parity divergence monitor in the daily report + live card
-      (official close printed +150/+200 above late tape 2/2 days under
-      the new timings)
+- [~] Spot-vs-parity divergence monitor (2026-08-05): DAILY REPORT half
+      done — `_divergence_section` measures spot vs chain parity-forward per
+      minute, absorbs carry via the day's own median gap, flags dislocation
+      beyond DIVERGENCE_FLAG_PTS (40); live compute field (`divergence` +
+      `divergence_flag`) added to gamma_profile.compute_from_snapshot. Tests
+      in test_paper_straddle_gamma.py (report + live). REMAINING: surface the
+      field on the /admin Options Analytics CARD (options_worker.py + UI live
+      on beta_gtm_mvp — cross-branch follow-up).
 - [ ] Threshold calibration once day-type library >= 15-20 sessions
 - [ ] Housekeeping: merge options_data_v1 -> main (closes R-025/R-026
       Alembic condition); prune old branches/stash
+- [ ] **Stage 3 — signed dealer gamma (GEX sign)** — DEFERRED TO END of
+      the analytics/strategy track. Sign the dealer/writer book from our
+      own tick data (aggressor classification -> signed dOI ->
+      signed gamma), NOT the US CE-long/PE-short assumption (NIFTY writers
+      are structurally net short gamma). Out-of-sample test: does the
+      empirical sign match the behavioural regime label on every logged
+      day? Full detailed spec + build order + strategy hookup:
+      research/NOTE_stage3_signed_gex.md. Do LAST, after the items above.

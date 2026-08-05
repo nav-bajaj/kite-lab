@@ -29,6 +29,27 @@ log = logging.getLogger(__name__)
 RISK_FREE = 0.065
 CR = 1e7
 
+# Spot vs parity-forward gap beyond which we flag a dislocation. Near-expiry
+# carry is a few points; 40 sits well above it and below the ~150-200 pt
+# close-print events. Heuristic, uncalibrated — widens the day-type library.
+DIVERGENCE_FLAG_PTS = 40.0
+
+# Gamma-concentration regime cutoffs (max-gamma strike's share of total).
+# Single-sourced so the daily report and day-plan generator agree with the
+# live read. Heuristic, uncalibrated — thresholds firm up as the library grows.
+CONC_PIN = 0.35       # >= this -> PIN-GRAVITY (long-gamma-like, mean-reverting)
+CONC_DIFFUSE = 0.25   # <  this -> DIFFUSE (short-gamma-like, trend-capable)
+
+
+def regime_from_concentration(conc: Optional[float]) -> str:
+    if conc is None:
+        return "UNKNOWN"
+    if conc > CONC_PIN:
+        return "PIN-GRAVITY"
+    if conc < CONC_DIFFUSE:
+        return "DIFFUSE"
+    return "MIXED"
+
 _metadata = MetaData()
 
 gamma_profile_daily = Table(
@@ -88,12 +109,23 @@ def compute_from_snapshot(payload: dict, now_ist: datetime) -> Optional[dict]:
     atm_iv = float(np.nanmean(iv[np.isclose(K, atm_k)]))
     straddle = float(piv.loc[atm_k].sum()) if atm_k in piv.index else None
 
-    regime = ("PIN-GRAVITY" if conc and conc > 0.35 else
-              "DIFFUSE" if conc and conc < 0.25 else "MIXED")
+    # Spot vs derivatives divergence. The parity forward F is where the chain
+    # is actually pricing the underlying; the index spot is the published
+    # level. They should agree to within cost-of-carry (a few pts near expiry).
+    # A larger gap is a real dislocation — the new-timings close print stood
+    # ~150-200 pts above the late tape on both days it was first seen. Surface
+    # it, never auto-discard: it may be a bad tick OR a genuine dislocation.
+    spot = payload.get("spot")
+    divergence = round(float(spot) - F, 1) if spot else None
+    divergence_flag = divergence is not None and abs(divergence) > DIVERGENCE_FLAG_PTS
+
+    regime = regime_from_concentration(conc)
     return {
         "expiry": near,
         "forward": round(F, 1),
-        "spot": payload.get("spot"),
+        "spot": spot,
+        "divergence": divergence,
+        "divergence_flag": divergence_flag,
         "total_gex_cr": round(total, 0),
         "max_gamma_strike": kmax,
         "concentration": round(conc, 3) if conc else None,

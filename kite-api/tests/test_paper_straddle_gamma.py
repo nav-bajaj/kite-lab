@@ -91,9 +91,82 @@ class TestLiveGammaProfile:
         assert out["max_gamma_strike"] == pytest.approx(24000.0)  # gamma peaks ATM
         assert out["regime"] in ("PIN-GRAVITY", "MIXED", "DIFFUSE")
         assert out["total_gex_cr"] > 0
+        # spot == forward here -> no divergence, no flag
+        assert out["divergence"] == pytest.approx(0.0, abs=2.0)
+        assert out["divergence_flag"] is False
+
+    def test_compute_from_snapshot_divergence_flag(self):
+        # same arbitrage-consistent chain at F=24000, but the index spot prints
+        # 200 pts above where the chain trades -> dislocation flag fires.
+        F, T, r, sig = 24000.0, 5 / 365, 0.065, 0.12
+        contracts = {}
+        for k in range(23500, 24550, 100):
+            for kind in ("CE", "PE"):
+                px = b76_price(F, float(k), T, r, sig, kind)
+                contracts[f"NIFTY_20260804_{k}_{kind}"] = {
+                    "kind": kind, "expiry": "2026-08-04", "strike": float(k),
+                    "ltp": round(px, 2), "oi": 100000, "volume": 0,
+                    "bid": px - 0.5, "ask": px + 0.5, "bid_qty": 0, "ask_qty": 0,
+                }
+        now = datetime(2026, 7, 30, 15, 30, tzinfo=timezone(timedelta(hours=5, minutes=30)))
+        out = GP.compute_from_snapshot({"spot": 24200.0, "contracts": contracts}, now)
+        assert out is not None
+        assert out["divergence"] == pytest.approx(200.0, abs=3.0)
+        assert out["divergence_flag"] is True
 
     def test_snapshot_without_pairs_returns_none(self):
         contracts = {"X": {"kind": "CE", "expiry": "2026-08-04", "strike": 24000.0,
                            "ltp": 100.0, "oi": 1}}
         now = datetime(2026, 7, 30, 12, 0, tzinfo=timezone(timedelta(hours=5, minutes=30)))
         assert GP.compute_from_snapshot({"contracts": contracts}, now) is None
+
+
+class TestDivergenceSection:
+    """EOD spot-vs-parity-forward dislocation (daily_report._divergence_section)."""
+
+    def _seed(self, url, day="2026-08-03"):
+        from app.microstructure.materialize import _ensure_schema, option_greeks_minute
+
+        exp = date(2026, 8, 4)
+        # forward (chain-implied underlying) flat at 24400; spot flat at 24400
+        # until a +180 close print at 15:29 -> the new-timings dislocation.
+        minutes = [(10, 0, 24400.0), (13, 0, 24400.0), (15, 20, 24400.0), (15, 29, 24580.0)]
+        store = BarStore(database_url=url)
+        spot_rows = []
+        for h, m, px in minutes:
+            minute = datetime(2026, 8, 3, h, m) - timedelta(hours=5, minutes=30)
+            spot_rows.append(dict(
+                contract_id="NIFTY_SPOT", kind="SPOT", expiry=None, strike=None, minute=minute,
+                open=0, high=0, low=0, close=px, volume=0, oi_open=0, oi_high=0, oi_low=0,
+                oi_close=0, bid_close=None, ask_close=None, bid_qty_close=None,
+                ask_qty_close=None, avg_spread=None, avg_depth_imbalance=None, tick_count=1))
+        store.insert_bars(spot_rows)
+        store.dispose()
+
+        e = create_engine(url)
+        _ensure_schema(e)
+        now = datetime.now(timezone.utc)
+        recs = [dict(
+            contract_id="NIFTY_20260804_24400_CE", minute=datetime(2026, 8, 3, h, m) - timedelta(hours=5, minutes=30),
+            expiry=exp, strike=24400.0, kind="CE", underlying=24400.0, underlying_src="parity",
+            iv=0.12, delta=0.5, gamma=0.0001, vega=1.0, theta_day=-1.0, r=0.065,
+            engine_version="test", computed_at=now) for h, m, _ in minutes]
+        with e.begin() as c:
+            c.execute(option_greeks_minute.insert(), recs)
+        e.dispose()
+
+    def test_close_print_dislocation_flags(self, tmp_path):
+        from app.microstructure import daily_report as DR
+
+        url = f"sqlite:///{tmp_path}/dv.db"
+        self._seed(url)
+        e = create_engine(url)
+        out = []
+        with e.connect() as conn:
+            res = DR._divergence_section(conn, "2026-08-03", {"close": 24580.0}, out)
+        e.dispose()
+        assert res is not None
+        assert res["baseline_gap"] == pytest.approx(0.0, abs=1.0)  # spot==forward normally
+        assert res["max_dev"] == pytest.approx(180.0, abs=1.0)     # the close print
+        assert res["max_dev_hm"] == "15:29"
+        assert any("DIVERGENCE FLAG" in line for line in out)
