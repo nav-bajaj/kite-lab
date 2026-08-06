@@ -370,6 +370,18 @@ html:not(.dark) .mw-horizon {
   background-size: 22px 22px;
 }
 
+/* Snap-to-section scrolling (founder request, loop 5): the viewport settles
+ * on the band being viewed. Proximity, not mandatory, so long bands and
+ * mid-band reading are never trapped; applies only on pages that opt in. */
+html:has(.mw-snap) {
+  scroll-snap-type: y proximity;
+}
+@media (prefers-reduced-motion: reduce) {
+  html:has(.mw-snap) {
+    scroll-snap-type: none;
+  }
+}
+
 /* Quant grid re-tinted for the primary drench band: hairlines in the
  * band's own foreground so the texture self-themes on every palette. */
 .mw-grid-inverse {

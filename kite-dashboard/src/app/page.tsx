@@ -11,7 +11,7 @@ import {
 import { UNIVERSES } from "@/lib/universes";
 import { FloatingNav } from "@/components/marketing/floating-nav";
 import { FooterPanel } from "@/components/marketing/footer-panel";
-import { HeroQuant } from "@/components/marketing/hero-quant";
+import { HeroFlow } from "@/components/marketing/hero-flow";
 
 export const metadata = {
   title: "Marketworks — Indian markets, the calm way",
@@ -32,16 +32,19 @@ const STEPS = [
     title: "We rank the market",
     body: "Every week our system scores stocks by momentum: the simple idea that names already trending up tend to keep leading for a while.",
     Icon: TrendingUp,
+    accent: "text-acc1-fg",
   },
   {
     title: "We build the portfolios",
     body: "The strongest names go into ready-made lists you can follow. When the leaders change, the list updates. No guessing, no headlines.",
     Icon: ListChecks,
+    accent: "text-acc2-fg",
   },
   {
     title: "You follow along",
     body: "See exactly what each portfolio holds, what changed at the last rebalance, and why, all in plain language.",
     Icon: Eye,
+    accent: "text-acc6-fg",
   },
 ];
 
@@ -64,18 +67,30 @@ const RISK_ACCENTS: Record<keyof typeof PROFILE_ICONS, string> = {
   quality: "text-acc1-fg",
 };
 
-/* The takeover band: full-bleed, opaque, sticky on desktop so the next band
- * slides over it (P12). Content is height-capped to one viewport on lg. */
+const RISK_KEYLINES: Record<keyof typeof PROFILE_ICONS, string> = {
+  defensive: "border-acc6-line",
+  growth: "border-acc2-line",
+  quality: "border-acc1-line",
+};
+
+/* Full-bleed band, sized to its content (loop-5 feedback: uniform full-height
+ * bands read too big). `tall` opts the dramatic moments (hero) into a
+ * viewport-filling band; everything else breathes on padding alone. Bands are
+ * snap targets — the page scroll settles on the band in view. */
 function Band({
+  tall = false,
   className,
   children,
 }: {
+  tall?: boolean;
   className?: string;
   children: React.ReactNode;
 }) {
   return (
     <section
-      className={`relative w-full lg:sticky lg:top-0 lg:flex lg:min-h-screen lg:flex-col lg:justify-center ${className ?? ""}`}
+      className={`relative w-full snap-start ${
+        tall ? "flex min-h-[88vh] flex-col justify-center" : ""
+      } ${className ?? ""}`}
     >
       {children}
     </section>
@@ -136,18 +151,18 @@ export default async function LandingPage() {
   const betaLabel = userId ? "View dashboard" : "Get beta access";
 
   return (
-    <div className="mw-brand mw-horizon relative min-h-screen bg-white">
+    <div className="mw-brand mw-horizon mw-snap relative min-h-screen bg-white">
       <FloatingNav />
 
       <main className="relative">
         {/* Band 1 — atmospheric gradient hero (R4/P13): giant tight sans in
             white on the Horizon sky; dot texture whispers in the dark zone */}
-        <Band className="mw-hero-sky overflow-hidden">
+        <Band tall className="mw-hero-sky overflow-hidden">
           <div
             aria-hidden
             className="mw-dots-light absolute inset-x-0 top-0 h-1/2 opacity-40 [mask-image:linear-gradient(to_bottom,#000,transparent)]"
           />
-          <div className="relative mx-auto w-full max-w-[1240px] px-6 pb-24 pt-40 text-center lg:pb-16 lg:pt-24">
+          <div className="relative mx-auto w-full max-w-[1240px] px-6 pb-24 pt-40 text-center lg:pb-16 lg:pt-28">
             <p className="font-mono text-sm text-white/70">private beta</p>
             <h1 className="mx-auto mt-6 max-w-[12ch] text-[3.4rem] font-medium leading-[1.02] tracking-[-0.035em] text-balance text-white sm:text-[6rem]">
               Indian markets, the calm way.
@@ -175,38 +190,43 @@ export default async function LandingPage() {
           </div>
         </Band>
 
-        {/* Band 2 — welcome, white band; the quant candles live here now,
-            drawn on the white ground under the copy */}
+        {/* Band 2 — welcome: headline on the band, the explainer paragraphs
+            in a card (loop-5 feedback: flat paragraphs), and the original
+            flow-field motion returns on the right */}
         <Band className="bg-white">
-          <div className="mx-auto w-full max-w-[1240px] px-6 py-20 lg:py-0">
-            <div className="grid items-center gap-12 lg:grid-cols-[1fr_0.85fr]">
-              <div className="max-w-[640px]">
+          <div className="mx-auto w-full max-w-[1240px] px-6 py-20 sm:py-24">
+            <div className="grid items-center gap-12 lg:grid-cols-[1fr_0.9fr]">
+              <div>
                 <h2 className={`${bandHeading} text-foreground`}>
                   New here? Here&apos;s the whole idea in a minute.
                 </h2>
-                <p className="mt-5 text-lg leading-[1.65] text-muted-foreground">
-                  Thanks for being one of our first testers. Marketworks is a
-                  simpler way to invest in Indian stocks. Instead of picking
-                  names yourself or reacting to the news, you follow ready-made
-                  portfolios that are rebuilt on a fixed schedule (a
-                  &ldquo;rebalance&rdquo;) around the stocks that are currently
-                  leading the market.
-                </p>
-                <p className="mt-4 text-lg leading-[1.65] text-muted-foreground">
-                  It all runs on one idea called{" "}
-                  <span className="text-foreground">momentum</span>: stocks
-                  that have been rising tend to keep leading for a while. Our
-                  system measures this across the market every week, so the
-                  portfolios quietly stay with the leaders and step away as
-                  they fade.
-                </p>
+                <div className="mt-8 rounded-xl border border-acc1-line/30 bg-wash1 p-7 sm:p-8">
+                  <p className="text-[17px] leading-[1.65] text-foreground/85">
+                    Thanks for being one of our first testers. Marketworks is a
+                    simpler way to invest in Indian stocks. Instead of picking
+                    names yourself or reacting to the news, you follow
+                    ready-made portfolios that are rebuilt on a fixed schedule
+                    (a &ldquo;rebalance&rdquo;) around the stocks that are
+                    currently leading the market.
+                  </p>
+                  <p className="mt-4 text-[17px] leading-[1.65] text-foreground/85">
+                    It all runs on one idea called{" "}
+                    <span className="font-semibold text-foreground">
+                      momentum
+                    </span>
+                    : stocks that have been rising tend to keep leading for a
+                    while. Our system measures this across the market every
+                    week, so the portfolios quietly stay with the leaders and
+                    step away as they fade.
+                  </p>
+                </div>
               </div>
-              <div className="relative h-[260px] lg:h-[340px]">
+              <div className="relative h-[280px] lg:h-[380px]">
                 <div
                   aria-hidden
                   className="mw-grid absolute inset-0 opacity-70 [mask-image:radial-gradient(ellipse_80%_85%_at_50%_50%,#000_35%,transparent_85%)]"
                 />
-                <HeroQuant className="absolute inset-0" />
+                <HeroFlow className="absolute inset-0" />
               </div>
             </div>
           </div>
@@ -216,9 +236,9 @@ export default async function LandingPage() {
             section scale; flat columns, no cards */}
         <Band className="bg-acc1">
           <div aria-hidden className="mw-grid absolute inset-0 opacity-50" />
-          <div className="relative mx-auto w-full max-w-[1240px] px-6 py-20 lg:py-0">
+          <div className="relative mx-auto w-full max-w-[1240px] px-6 py-16 sm:py-20">
             <h2 className={`${bandHeading} text-foreground`}>How it works</h2>
-            <div className="mt-12 grid gap-10 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-[color:var(--acc1-line)]/25">
+            <div className="mt-10 grid gap-10 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-[color:var(--acc1-line)]/25">
               {STEPS.map((step, i) => (
                 <div key={step.title} className="sm:px-8 sm:first:pl-0 sm:last:pr-0">
                   <div className="flex items-center justify-between">
@@ -226,9 +246,9 @@ export default async function LandingPage() {
                       size={22}
                       strokeWidth={1.75}
                       aria-hidden
-                      className="text-primary"
+                      className={step.accent}
                     />
-                    <span className="font-mono text-sm text-primary">
+                    <span className={`font-mono text-sm ${step.accent}`}>
                       0{i + 1}
                     </span>
                   </div>
@@ -247,7 +267,7 @@ export default async function LandingPage() {
         {/* Band 4 — research, deep navy band with the loved dot texture */}
         <Band className="bg-[#0A1B3D] text-white">
           <div aria-hidden className="mw-dots-light absolute inset-0 opacity-30" />
-          <div className="relative mx-auto w-full max-w-[1240px] px-6 py-20 lg:py-0">
+          <div className="relative mx-auto w-full max-w-[1240px] px-6 py-20 sm:py-24">
             <div className="grid items-center gap-12 lg:grid-cols-[1fr_0.8fr]">
               <div className="max-w-[640px]">
                 <h2 className={bandHeading}>Process over prediction.</h2>
@@ -291,7 +311,7 @@ export default async function LandingPage() {
 
         {/* Band 5 — portfolios, white band, flat divided columns */}
         <Band className="bg-white">
-          <div className="mx-auto w-full max-w-[1240px] px-6 py-20 lg:py-0">
+          <div className="mx-auto w-full max-w-[1240px] px-6 py-16 sm:py-20">
             <div className="max-w-[640px]">
               <h2 className={`${bandHeading} text-foreground`}>
                 Three ways to follow momentum.
@@ -302,7 +322,7 @@ export default async function LandingPage() {
                 portfolios for research and education, not personalised advice.
               </p>
             </div>
-            <div className="mt-12 grid gap-10 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-border">
+            <div className="mt-10 grid gap-10 sm:grid-cols-3 sm:gap-8">
               {portfolios.map((universe) => {
                 const kind = riskKind(universe.riskProfile);
                 /* eslint-disable security/detect-object-injection -- kind is
@@ -310,12 +330,13 @@ export default async function LandingPage() {
                  * module-level const maps */
                 const Icon = PROFILE_ICONS[kind];
                 const accent = RISK_ACCENTS[kind];
+                const keyline = RISK_KEYLINES[kind];
                 /* eslint-enable security/detect-object-injection */
                 return (
                   <Link
                     key={universe.id}
                     href="/portfolios"
-                    className="group flex h-full flex-col sm:px-8 sm:first:pl-0 sm:last:pr-0"
+                    className={`group flex h-full flex-col border-t-2 pt-6 ${keyline}`}
                   >
                     <div className="flex min-h-10 items-baseline justify-between gap-3">
                       <span
@@ -361,7 +382,7 @@ export default async function LandingPage() {
             aria-hidden
             className="mw-grid-inverse absolute inset-0 [mask-image:linear-gradient(to_left,#000_15%,transparent_62%)]"
           />
-          <div className="relative mx-auto w-full max-w-[1240px] px-6 py-24 lg:py-0">
+          <div className="relative mx-auto w-full max-w-[1240px] px-6 py-24 sm:py-28">
             <h2 className="max-w-[640px] text-[2rem] font-semibold leading-[1.1] tracking-[-0.02em] text-balance text-primary-foreground sm:text-[3rem]">
               Marketworks is in private beta.
             </h2>
