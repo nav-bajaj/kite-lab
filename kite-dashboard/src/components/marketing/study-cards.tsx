@@ -35,9 +35,9 @@ export function GrainCard({
       )}
       style={{
         background:
-          "radial-gradient(ellipse 70% 110% at 0% 30%, color-mix(in oklab, var(--secondary) 34%, #ffffff) 0%, transparent 62%)," +
-          "radial-gradient(ellipse 60% 80% at 100% 100%, color-mix(in oklab, var(--primary) 10%, #ffffff) 0%, transparent 70%)," +
-          "linear-gradient(120deg, color-mix(in oklab, var(--primary) 6%, #ffffff), #f6f7f7 70%)",
+          "radial-gradient(ellipse 70% 110% at 0% 30%, color-mix(in oklab, var(--secondary) 34%, var(--card)) 0%, transparent 62%)," +
+          "radial-gradient(ellipse 60% 80% at 100% 100%, color-mix(in oklab, var(--primary) 10%, var(--card)) 0%, transparent 70%)," +
+          "linear-gradient(120deg, color-mix(in oklab, var(--primary) 6%, var(--card)), color-mix(in oklab, var(--foreground) 3%, var(--card)) 70%)",
       }}
     >
       {/* abstract oversized glyph, cropped at the right edge */}
@@ -123,7 +123,7 @@ export function CollageCard({
         aria-hidden
         className={cn(
           "absolute inset-x-10 bottom-6 top-16 rounded-[40px]",
-          blobClassName ?? "bg-[color-mix(in_oklab,var(--primary)_26%,#ffffff)]",
+          blobClassName ?? "bg-[color-mix(in_oklab,var(--primary)_26%,var(--card))]",
         )}
       />
       <div className="absolute inset-0">{children}</div>
@@ -206,11 +206,14 @@ export function SectionHeader({
 /** Soft feature tile: icon, generous air, heading, body (clay 3-up row). */
 export function FeatureTile({
   icon,
+  iconClassName,
   title,
   children,
   className,
 }: {
   icon?: ReactNode;
+  /** color utility for the icon, e.g. "text-acc1-line" (defaults to primary) */
+  iconClassName?: string;
   title: string;
   children: ReactNode;
   className?: string;
@@ -222,7 +225,9 @@ export function FeatureTile({
         className,
       )}
     >
-      {icon ? <div className="mb-10 text-primary">{icon}</div> : null}
+      {icon ? (
+        <div className={cn("mb-10", iconClassName ?? "text-primary")}>{icon}</div>
+      ) : null}
       <h3 className="text-xl font-semibold leading-[1.25] tracking-[-0.01em] text-foreground">
         {title}
       </h3>

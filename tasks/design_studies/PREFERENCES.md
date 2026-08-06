@@ -485,3 +485,38 @@ Hero (drama sky + tuned grain), drench CTA, and flat footer unchanged.
 Verified desktop full-page and mobile (no horizontal overflow; panels
 stack). Open: GuideCard/StackCard media slots await real product
 screenshots; palette endgame + light/dark question still parked.
+
+## Loop 19 (2026-08-06) — clay.com decoded; the two-theme system (branch design_studies_clay)
+
+Founder direction: study clay.com's TYPOGRAPHY and build a COLOR
+PALETTE from it for our site; collapse the six-palette picker to just
+light + dark; Ocean stays the base; below the hero the ground goes
+almost white with the color carried by elements on top.
+
+Study ran on the live site (Playwright) — full findings in
+CLAY_STUDY.md; references saved (clay_home_hero / _yellow_card /
+_stacked_cards.png). Headlines: ONE variable sans (Roobert VF) does
+everything — hierarchy is size/weight/tracking, lh 1.0 + tracking to
+-4% at display sizes, eyebrows the inverse (12px semibold uppercase
++9%); warm-paper near-whites (their "oat" ramp) make the cool vivids
+pop; and the signature per-section monochrome TRIAD — pastel surface ·
+vivid pill/action · deep same-hue text — which maps 1:1 onto our
+accN-bg/-line/-fg sockets.
+
+Built: Ocean slot rewritten as the Clay-formula LIGHT theme (warm
+paper ground #FBFAF7, ink #1B1A17, primary #0A5CFF, six vivid triads —
+blue/sun/matcha/coral/ube/magenta, washes now true pastels) and a new
+`.dark .mw-brand` DARK companion (ink-navy #0A111F ground, primary
+#4D8DFF, triads inverted deep-wash/bright-line/pale-fg, hero sky
+variant exiting into the dark ground). Marketing nav: PalettePicker →
+sun/moon ThemeToggle (light = ocean slot, dark = .dark; device-local,
+no Clerk roam). Homepage: hero type tightened per the study
+(lh 1.0, tracking -0.035em), section eyebrows now Clay-style colored
+uppercase, the 02 feature tiles take one triad hue each
+(blue/sun/matcha tints + vivid icons). GrainCard/CollageCard
+hardcoded whites replaced with var(--card) so they survive dark.
+
+Verified both themes desktop full-page (evidence/loop19_*). tsc
+clean. Open: dashboard picker still six-swatch (merge-checklist);
+remaining palettes (mint2 etc.) untouched pending founder verdict on
+this pair.

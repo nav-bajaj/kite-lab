@@ -278,31 +278,82 @@
  * picking Ocean in the picker renders the marketing surface in the vivid
  * blue/sun/coral system. Extend to other palettes only if the founder
  * approves the Ocean trial. */
+/* Loop 19 (design_studies_clay, CLAY_STUDY.md): the Ocean slot becomes the
+ * LIGHT half of a two-theme system built on the Clay formula — warm paper
+ * near-white ground (their oat trick: warm neutrals make the cool vivids
+ * pop), white cards, ink text, and six accent TRIADS (tint bg · vivid
+ * line · deep fg) retuned to Clay vibrance. Vivids meet 4.5:1 as text only
+ * where used at display sizes; every accN-fg is >= 4.5:1 on its accN-bg
+ * AND on white. The dark companion is the .dark .mw-brand block below. */
 html[data-palette="ocean"]:not(.dark) .mw-brand {
+  --background: #FBFAF7;
+  --foreground: #1B1A17;
+  --muted-foreground: #615E56;
+  --border: #E6E3DB;
+  --input: #E6E3DB;
   --primary: #0A5CFF;
   --primary-foreground: #FFFFFF;
-  --secondary: #E8A33D;
-  --secondary-foreground: #1A1A1A;
+  --secondary: #F5B71E;
+  --secondary-foreground: #1B1A17;
   --ring: #0A5CFF;
-  --display-accent: #E0604D;
-  --acc1-bg: #E8F0FF; --acc1-line: #0A5CFF; --acc1-fg: #0847C8;
-  --acc2-bg: #FDF1DC; --acc2-line: #E8A33D; --acc2-fg: #86590E;
-  --acc3-bg: #E3F6EA; --acc3-line: #2EA860; --acc3-fg: #17693A;
-  --acc4-bg: #FDEBE6; --acc4-line: #E0604D; --acc4-fg: #A63825;
-  --acc5-bg: #F2EAFE; --acc5-line: #9750F8; --acc5-fg: #6B2BD8;
-  --acc6-bg: #E0F4F0; --acc6-line: #0C9C82; --acc6-fg: #08604F;
-  --wash1: #F4F8FF; --wash2: #FEF8EC; --wash3: #FDF0EC;
+  --display-accent: #FF5A3C;
+  --acc1-bg: #EAF1FF; --acc1-line: #0A5CFF; --acc1-fg: #0846C4;
+  --acc2-bg: #FEF3CF; --acc2-line: #F5B71E; --acc2-fg: #7A5308;
+  --acc3-bg: #DFF6E7; --acc3-line: #12A85F; --acc3-fg: #0E6B3C;
+  --acc4-bg: #FFEBE3; --acc4-line: #FF5A3C; --acc4-fg: #B03414;
+  --acc5-bg: #EFEAFF; --acc5-line: #7C4BF5; --acc5-fg: #5318D9;
+  --acc6-bg: #FDE8F5; --acc6-line: #E44FBE; --acc6-fg: #A5107C;
+  --wash1: #F1F6FF; --wash2: #FEF8E6; --wash3: #FFF1EC;
   --chart-series-1: #0A5CFF;
   --chart-series-2: #C77E14;
   --chart-series-3: #64748B;
-  /* Deep panel (footer) follows the palette: ink-navy, not lichen green. */
-  --surface-panel-deep: #0A2C66;
+  /* Deep panel (footer + drench) follows the palette: ink-navy. */
+  --surface-panel-deep: #081F4D;
   --surface-panel-deep-foreground: #EAF1FF;
-  /* Panel surfaces re-derived toward the Horizon hue so the production
-   * SectionPanel/card system coheres under this palette (loop 6). */
-  --surface-panel-mist: #EEF4FD;
-  --surface-panel-tint: #F6F9FE;
-  --surface-base: #FAFCFF;
+  /* Panels sit warm-neutral on the paper ground (Clay oat-100/200), not
+   * blue-tinted — color below the hero comes from ELEMENTS, not fields. */
+  --surface-panel-mist: #F4F2EC;
+  --surface-panel-tint: #F8F7F2;
+  --surface-base: #FBFAF7;
+}
+
+/* Marketworks Dark — the dark half of the two-theme system (fires for the
+ * Midnight/dark picks; scoped to marketing surfaces during the study).
+ * Ink-navy ground rather than Midnight's blue-grey, so the Ocean identity
+ * holds in the dark: brightened Horizon primary, and the same six triads
+ * inverted — deep wash · bright line · pale fg. */
+.dark .mw-brand {
+  --background: #0A111F;
+  --foreground: #EDF1F8;
+  --card: #131C2E;
+  --card-foreground: #EDF1F8;
+  --popover: #131C2E;
+  --popover-foreground: #EDF1F8;
+  --muted: #162033;
+  --muted-foreground: #98A2B3;
+  --border: #263248;
+  --input: #263248;
+  --primary: #4D8DFF;
+  --primary-foreground: #071022;
+  --secondary: #FFC94D;
+  --secondary-foreground: #1B1A17;
+  --ring: #4D8DFF;
+  --display-accent: #FF7A5C;
+  --acc1-bg: #122344; --acc1-line: #4D8DFF; --acc1-fg: #A8C6FF;
+  --acc2-bg: #2E2408; --acc2-line: #FFC94D; --acc2-fg: #FFD98A;
+  --acc3-bg: #0D2B1D; --acc3-line: #2ECC7A; --acc3-fg: #8FE6B4;
+  --acc4-bg: #331410; --acc4-line: #FF7A5C; --acc4-fg: #FFAE9A;
+  --acc5-bg: #221541; --acc5-line: #9B76FF; --acc5-fg: #C9B3FF;
+  --acc6-bg: #331028; --acc6-line: #F06AD0; --acc6-fg: #F5A9E1;
+  --wash1: #101B31; --wash2: #221D10; --wash3: #291511;
+  --chart-series-1: #4D8DFF;
+  --chart-series-2: #FFC94D;
+  --chart-series-3: #8A94A6;
+  --surface-panel-deep: #060F26;
+  --surface-panel-deep-foreground: #EAF1FF;
+  --surface-panel-mist: #121A2A;
+  --surface-panel-tint: #0E1626;
+  --surface-base: #0A111F;
 }
 
 
@@ -349,6 +400,19 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
     color-mix(in oklab, var(--primary) 88%, #ffffff) 66%,
     color-mix(in oklab, var(--primary) 24%, #ffffff) 90%,
     var(--surface-base, #ffffff) 100%
+  );
+}
+/* Dark theme: same drama arc, but the pale exit would strobe against the
+ * ink-navy ground — the sky instead crests luminous mid-page and settles
+ * into the dark surface. */
+.dark .mw-hero-drama {
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--primary) 16%, #01040c) 0%,
+    color-mix(in oklab, var(--primary) 52%, #030b20) 45%,
+    color-mix(in oklab, var(--primary) 74%, #0a1a3a) 68%,
+    color-mix(in oklab, var(--primary) 30%, var(--surface-base)) 90%,
+    var(--surface-base) 100%
   );
 }
 

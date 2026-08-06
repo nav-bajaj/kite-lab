@@ -7,7 +7,7 @@ import { Menu, X } from "lucide-react";
 
 import { INSIGHTS_ACCESS } from "@/lib/flags";
 import { cn } from "@/lib/utils";
-import { PalettePicker } from "@/components/shared/palette-picker";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 
 // Same public link set as the legacy MarketingNav — Insights only advertised on
 // a full public launch (access=all).
@@ -75,9 +75,9 @@ export function FloatingNav() {
               1fr track is wider than the cluster, and only an inner
               justify-end pins the children to the right edge. */}
           <div className="flex items-center justify-end justify-self-end gap-2 sm:gap-3">
-            {/* Palette picker — signed-out choices persist per device;
-                signed-in choices roam via Clerk (PaletteSync). */}
-            <PalettePicker />
+            {/* Two-theme toggle (design_studies_clay) — light/dark replaces
+                the six-swatch picker on marketing surfaces. */}
+            <ThemeToggle />
             {showSignedIn ? (
               <>
                 <Link

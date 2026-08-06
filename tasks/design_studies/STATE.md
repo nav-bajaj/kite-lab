@@ -1,5 +1,12 @@
 # design_studies — state of the study (2026-08-06)
 
+> Loop 19 lives on branch **design_studies_clay** (off design_studies):
+> clay.com decoded (CLAY_STUDY.md) and the six-palette picker collapsed
+> to a two-theme system on the marketing surfaces — Clay-formula light
+> (warm paper ground, Ocean primary, six vivid accent triads) + ink-navy
+> dark; sun/moon ThemeToggle replaces the picker in FloatingNav.
+> Sections below describe the parent branch through loop 18.
+
 The living summary of where the redesign stands. The loop-by-loop
 narrative (every reference decoded, every founder reaction) lives in
 PREFERENCES.md; the original audit in AUDIT.md; the anti-slop contract
@@ -90,9 +97,10 @@ REJECTED / let go (code removed; history has it all):
 - **Other marketing surfaces** (`/portfolios`, `/library`, sign-in/up,
   legal) still run the OLD design language (mist panels, Fraunces,
   FlowGrid) — the new language stops at the homepage + gallery.
-- **Palette endgame**: extend the vibrance treatment to remaining
-  palettes, or collapse to fewer? Dashboard navbar still has the
-  six-swatch picker.
+- **Palette endgame**: ANSWERED in loop 19 (design_studies_clay) —
+  collapse to light + dark, Ocean-based, per the Clay study. Marketing
+  nav done; dashboard navbar still has the six-swatch picker and the
+  five non-Ocean palettes still exist (removal is a merge decision).
 - **Typography endgame**: Stack Sans Text is CDN-loaded (self-host via
   next/font after a Next upgrade); Fraunces' site-wide fate undecided.
 - **Critique re-run**: baseline is 24/32 (loop 1); re-score the new
