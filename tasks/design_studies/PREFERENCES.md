@@ -358,3 +358,17 @@ and Horizon skies stay in CSS for instant revert.
 Note for next loops: Stack Sans Notch is strongly characterful
 (notched cuts) — currently headings-only, which is the right dosage;
 resist letting it leak into body/UI sizes.
+
+## Loop 9 (2026-08-06) — grain up, Stack Sans Text, palettes cycling
+
+Founder: grain too subtle (0.16 -> 0.34); Stack Sans NOTCH too
+characterful — swapped to its simpler cousin STACK SANS TEXT (verified
+on Google Fonts, weights 500-700); and the palette SYSTEM is back —
+picker restored to the marketing nav, and the new design re-themes:
+the grain hero's blobs/base now derive from var(--primary)/
+var(--secondary) via color-mix (each palette gets its own field; a
+dark composition handles Midnight), and the Mint v2 vibrance override
+is scoped to the mint palette only so Ocean/Amber/Coral/Charcoal/
+Midnight render their own token sheets. Verified live: Mint (emerald
+field), Ocean (blue field + sun blob), Midnight (dark field, signal
+blue). Secondary hero pill made theme-aware (bg-background/60).

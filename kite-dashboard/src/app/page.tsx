@@ -99,7 +99,7 @@ export default async function LandingPage() {
               </Link>
               <Link
                 href="/library"
-                className="rounded-full border border-border bg-white/60 px-6 py-3 text-base font-semibold text-foreground transition-colors duration-150 hover:border-primary"
+                className="rounded-full border border-border bg-background/60 px-6 py-3 text-base font-semibold text-foreground transition-colors duration-150 hover:border-primary"
               >
                 Read the library
               </Link>

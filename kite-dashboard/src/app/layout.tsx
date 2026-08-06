@@ -62,7 +62,7 @@ export default function RootLayout({
       signUpFallbackRedirectUrl="/"
     >
       <html lang="en" suppressHydrationWarning>
-        {/* Stack Sans Notch (design_studies heading trial) predates this Next
+        {/* Stack Sans Text (design_studies heading trial) predates this Next
             version's next/font data, so it loads via the Google Fonts
             stylesheet (CSP already allows these origins; React hoists the
             links). Self-host via next/font after the next Next.js upgrade. */}
@@ -78,7 +78,7 @@ export default function RootLayout({
         <link
           rel="stylesheet"
           precedence="default"
-          href="https://fonts.googleapis.com/css2?family=Stack+Sans+Notch:wght@400..700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Stack+Sans+Text:wght@500;600;700&display=swap"
         />
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${outfit.variable} ${schibsted.variable} antialiased`}

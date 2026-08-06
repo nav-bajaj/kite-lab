@@ -383,11 +383,17 @@ html:not(.dark) .mw-horizon {
  * vibrance band, so the chroma push is modest (#00875F, 4.53:1, WHITE
  * foreground — mist fails on it) and the brightness comes from the hero sky,
  * a cleaner near-white ground, and white cards. */
-.mw-mint2 {
+/* Scoped to the Mint palette only (attribute absent = default mint), so the
+ * restored palette picker cycles the new design through every palette; the
+ * vibrance override applies just where it belongs. */
+:is(html[data-palette="mint"], html:not([data-palette])):not(.dark)
+  .mw-mint2 {
   --primary: #00875F;
   --primary-foreground: #FFFFFF;
   --ring: #00875F;
   --surface-base: #FAFDFB;
+}
+.mw-mint2 {
   background-color: var(--surface-base);
 }
 
@@ -408,7 +414,7 @@ html:not(.dark) .mw-horizon {
  * editing components. Remove the class to fall back to each component's own
  * heading font. */
 .mw-sans-headings :is(h1, h2, h3, h4) {
-  font-family: "Stack Sans Notch", var(--font-schibsted), var(--font-outfit),
+  font-family: "Stack Sans Text", var(--font-schibsted), var(--font-outfit),
     ui-sans-serif, system-ui, sans-serif;
   letter-spacing: -0.015em;
 }
@@ -419,10 +425,46 @@ html:not(.dark) .mw-horizon {
  * ground, unlike the dark mint sky it replaces (kept above for revert). */
 .mw-hero-grain {
   background:
-    radial-gradient(ellipse 55% 65% at 18% 22%, #cdeadd 0%, transparent 70%),
-    radial-gradient(ellipse 50% 60% at 82% 18%, #c9e4ef 0%, transparent 72%),
-    radial-gradient(ellipse 70% 55% at 55% 90%, #ddf2e7 0%, transparent 75%),
-    linear-gradient(180deg, #eef7f2 0%, #f4faf7 60%, #fafdfb 100%);
+    radial-gradient(
+      ellipse 55% 65% at 18% 22%,
+      color-mix(in oklab, var(--primary) 17%, #ffffff) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 50% 60% at 82% 18%,
+      color-mix(in oklab, var(--secondary) 22%, #ffffff) 0%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 70% 55% at 55% 90%,
+      color-mix(in oklab, var(--primary) 10%, #ffffff) 0%,
+      transparent 75%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--primary) 7%, #ffffff) 0%,
+      color-mix(in oklab, var(--primary) 4%, #ffffff) 60%,
+      var(--surface-base, #ffffff) 100%
+    );
+}
+/* Midnight: same composition on the dark ground, blobs from the palette. */
+.dark .mw-hero-grain {
+  background:
+    radial-gradient(
+      ellipse 55% 65% at 18% 22%,
+      color-mix(in oklab, var(--primary) 22%, var(--background)) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 50% 60% at 82% 18%,
+      color-mix(in oklab, var(--accent) 18%, var(--background)) 0%,
+      transparent 72%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--primary) 9%, var(--background)) 0%,
+      var(--background) 100%
+    );
 }
 .mw-hero-grain::after {
   content: "";
@@ -430,7 +472,7 @@ html:not(.dark) .mw-horizon {
   inset: 0;
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.16;
+  opacity: 0.34;
   mix-blend-mode: soft-light;
 }
 
