@@ -1,0 +1,56 @@
+[
+  {
+    "antipattern": "single-font",
+    "name": "Single font for everything",
+    "description": "Only one font family is used for the entire page. Pair a distinctive display font with a refined body font to create typographic hierarchy.",
+    "severity": "warning",
+    "file": "/private/tmp/claude-501/-Users-navdeep-kite-lab/be549944-a5a5-420a-a5cf-d2bdd36ca501/scratchpad/beta_src/kite-dashboard/src/app/globals.css",
+    "line": 167,
+    "snippet": "only font used is var(--font-outfit)"
+  },
+  {
+    "antipattern": "em-dash-overuse",
+    "name": "Em-dash overuse",
+    "description": "More than two em-dashes (— or --) in body copy is an AI cadence tell. Use commas, colons, periods, or parentheses instead.",
+    "severity": "warning",
+    "file": "/private/tmp/claude-501/-Users-navdeep-kite-lab/be549944-a5a5-420a-a5cf-d2bdd36ca501/scratchpad/beta_src/kite-dashboard/src/app/globals.css",
+    "line": 0,
+    "snippet": "433 em-dashes in body text"
+  },
+  {
+    "antipattern": "em-dash-overuse",
+    "name": "Em-dash overuse",
+    "description": "More than two em-dashes (— or --) in body copy is an AI cadence tell. Use commas, colons, periods, or parentheses instead.",
+    "severity": "warning",
+    "file": "/private/tmp/claude-501/-Users-navdeep-kite-lab/be549944-a5a5-420a-a5cf-d2bdd36ca501/scratchpad/beta_src/kite-dashboard/src/app/layout.tsx",
+    "line": 0,
+    "snippet": "5 em-dashes in body text"
+  },
+  {
+    "antipattern": "em-dash-overuse",
+    "name": "Em-dash overuse",
+    "description": "More than two em-dashes (— or --) in body copy is an AI cadence tell. Use commas, colons, periods, or parentheses instead.",
+    "severity": "warning",
+    "file": "/private/tmp/claude-501/-Users-navdeep-kite-lab/be549944-a5a5-420a-a5cf-d2bdd36ca501/scratchpad/beta_src/kite-dashboard/src/components/marketing/hero-flow.tsx",
+    "line": 0,
+    "snippet": "20 em-dashes in body text"
+  },
+  {
+    "antipattern": "numbered-section-markers",
+    "name": "Numbered section markers (01 / 02 / 03)",
+    "description": "Numbered display markers as section labels (01, 02, 03) are the AI editorial scaffold one tier deeper than tracked eyebrow chips. If you find yourself reaching for them, choose a different section cadence.",
+    "severity": "advisory",
+    "file": "/private/tmp/claude-501/-Users-navdeep-kite-lab/be549944-a5a5-420a-a5cf-d2bdd36ca501/scratchpad/beta_src/kite-dashboard/src/components/marketing/hero-flow.tsx",
+    "line": 0,
+    "snippet": "Sequence: 02, 05, 06, 07, 08, 11"
+  },
+  {
+    "antipattern": "em-dash-overuse",
+    "name": "Em-dash overuse",
+    "description": "More than two em-dashes (— or --) in body copy is an AI cadence tell. Use commas, colons, periods, or parentheses instead.",
+    "severity": "warning",
+    "file": "/private/tmp/claude-501/-Users-navdeep-kite-lab/be549944-a5a5-420a-a5cf-d2bdd36ca501/scratchpad/beta_src/kite-dashboard/src/lib/palettes.ts",
+    "line": 0,
+    "snippet": "5 em-dashes in body text"
+  }
+]

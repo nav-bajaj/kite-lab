@@ -1,0 +1,15 @@
+name: design_studies
+status: in-progress
+opened: 2026-08-06
+closed: null
+related_commits: []
+supersedes:
+  - beta_gtm_mvp_redesign (branch, fully merged 2026-08)
+depends_on: []
+register_rows: []
+notes: >
+  AI-slop audit + elimination guide + modular primitive kit for web,
+  social, and research reports. Branch design_studies off beta_gtm_mvp,
+  worktree .worktrees/design_studies. Audit baseline 13/20; CSP
+  connect-src gap (accounts.marketworks.in) needs a register row before
+  fixing.
