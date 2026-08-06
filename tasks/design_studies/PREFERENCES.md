@@ -541,3 +541,23 @@ Five founder calls, all applied for the next critique pass:
 
 Verified both themes (evidence/loop20_*). tsc clean. Phased format
 agreed: founder critiques each round, then we move ahead.
+
+## Loop 21 (2026-08-06) — founder round 2: later fade + the research lens
+
+Two founder calls on the loop-20 build:
+1. Hero CTAs were sitting on the pale zone. Chose "fade later" over
+   smaller text: the luminous crest now holds through ~75% of the
+   section (crest stop 62% -> 72%, ground ramp compressed into the
+   last quarter; grain mask follows, 68% -> 78%). Both CTA pills sit
+   on saturated blue; the exit into white stays seamless.
+2. Section 03 gets a motion graphic: `ResearchLens`
+   (components/marketing/research-lens.tsx) replaces the "m" glyph in
+   the GrainCard right zone (new `visual` prop; glyph+guides remain
+   the default). A magnifying glass drifts (lissajous) over a
+   Bayer-dithered field of small cubes; inside the glass the field is
+   magnified 1.75x and grid cells light up as data points (primary
+   blue / sun gold, ease in-hold-out) — research as looking closely.
+   HeroFlow idiom: token-exact colors re-resolved on theme change,
+   DPR-aware, static frame under reduced-motion, pauses on hidden tab.
+
+Verified both themes (evidence/loop21_*). tsc clean.

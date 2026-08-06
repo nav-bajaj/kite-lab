@@ -6,6 +6,7 @@ import { UNIVERSES } from "@/lib/universes";
 import { FloatingNav } from "@/components/marketing/floating-nav";
 import { FooterPanel } from "@/components/marketing/footer-panel";
 import { HeroFlow } from "@/components/marketing/hero-flow";
+import { ResearchLens } from "@/components/marketing/research-lens";
 import {
   FactTile,
   SelectorPanel,
@@ -185,7 +186,7 @@ export default async function LandingPage() {
           {/* 03 — the research: grain card carries the process story */}
           <section className="pt-20 sm:pt-28">
             <SectionIndex className="text-acc2-fg">03 · the research</SectionIndex>
-            <GrainCard glyph="m">
+            <GrainCard visual={<ResearchLens />}>
               <h2 className="text-2xl font-semibold tracking-[-0.01em] text-foreground sm:text-3xl">
                 Process over prediction
               </h2>

@@ -20,10 +20,13 @@ import { cn } from "@/lib/utils";
 
 export function GrainCard({
   glyph = "m",
+  visual,
   className,
   children,
 }: {
   glyph?: string;
+  /** replaces the glyph + guide lines in the right zone (e.g. ResearchLens) */
+  visual?: ReactNode;
   className?: string;
   children: ReactNode;
 }) {
@@ -40,20 +43,31 @@ export function GrainCard({
           "linear-gradient(120deg, color-mix(in oklab, var(--primary) 6%, var(--card)), color-mix(in oklab, var(--foreground) 3%, var(--card)) 70%)",
       }}
     >
-      {/* abstract oversized glyph, cropped at the right edge */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute -right-8 top-1/2 -translate-y-[38%] select-none font-semibold leading-none text-primary/[0.16]"
-        style={{ fontSize: "22rem", fontFamily: "var(--font-fraunces), serif" }}
-      >
-        {glyph}
-      </span>
-      {/* typographic guide lines around the glyph zone */}
-      <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-[46%]">
-        <div className="absolute left-0 right-6 top-[18%] border-t border-dashed border-foreground/25" />
-        <div className="absolute left-0 right-6 top-[58%] border-t border-foreground/15" />
-        <div className="absolute left-0 right-6 top-[82%] border-t border-foreground/15" />
-      </div>
+      {visual ? (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 right-0 w-[46%]"
+        >
+          {visual}
+        </div>
+      ) : (
+        <>
+          {/* abstract oversized glyph, cropped at the right edge */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute -right-8 top-1/2 -translate-y-[38%] select-none font-semibold leading-none text-primary/[0.16]"
+            style={{ fontSize: "22rem", fontFamily: "var(--font-fraunces), serif" }}
+          >
+            {glyph}
+          </span>
+          {/* typographic guide lines around the glyph zone */}
+          <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-[46%]">
+            <div className="absolute left-0 right-6 top-[18%] border-t border-dashed border-foreground/25" />
+            <div className="absolute left-0 right-6 top-[58%] border-t border-foreground/15" />
+            <div className="absolute left-0 right-6 top-[82%] border-t border-foreground/15" />
+          </div>
+        </>
+      )}
       <div className="relative max-w-[58%] p-8 sm:p-10">{children}</div>
     </div>
   );

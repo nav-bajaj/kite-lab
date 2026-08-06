@@ -429,16 +429,18 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
  * mid, pale exit into the page ground. Token-derived, so Ocean(Horizon) gives
  * the actual sui.io navy->vivid-blue->pale sky and every other palette gets
  * its own dark drama. White text sits on the upper two-thirds. */
-/* Loop 20: longer exit ramp — the sky reaches the page ground well before
- * the section edge and holds it, so hero and page read as one surface. */
+/* Loop 20: seamless exit — the sky reaches the page ground before the
+ * section edge. Loop 21 (founder): fade LATER — the luminous crest holds
+ * through the CTA row (~75% of the section) so white text never sits on
+ * the pale zone; the whole ramp to ground happens in the last quarter. */
 .mw-hero-drama {
   background: linear-gradient(
     180deg,
     color-mix(in oklab, var(--primary) 22%, #010714) 0%,
-    color-mix(in oklab, var(--primary) 62%, #02102e) 38%,
-    color-mix(in oklab, var(--primary) 88%, #ffffff) 62%,
-    color-mix(in oklab, var(--primary) 26%, var(--surface-base, #ffffff)) 82%,
-    color-mix(in oklab, var(--primary) 7%, var(--surface-base, #ffffff)) 92%,
+    color-mix(in oklab, var(--primary) 62%, #02102e) 40%,
+    color-mix(in oklab, var(--primary) 88%, #ffffff) 72%,
+    color-mix(in oklab, var(--primary) 30%, var(--surface-base, #ffffff)) 90%,
+    color-mix(in oklab, var(--primary) 8%, var(--surface-base, #ffffff)) 97%,
     var(--surface-base, #ffffff) 100%
   );
 }
@@ -449,10 +451,10 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
   background: linear-gradient(
     180deg,
     color-mix(in oklab, var(--primary) 16%, #01040c) 0%,
-    color-mix(in oklab, var(--primary) 52%, #030b20) 42%,
-    color-mix(in oklab, var(--primary) 74%, #0a1a3a) 64%,
-    color-mix(in oklab, var(--primary) 28%, var(--surface-base)) 82%,
-    color-mix(in oklab, var(--primary) 8%, var(--surface-base)) 92%,
+    color-mix(in oklab, var(--primary) 52%, #030b20) 44%,
+    color-mix(in oklab, var(--primary) 74%, #0a1a3a) 72%,
+    color-mix(in oklab, var(--primary) 26%, var(--surface-base)) 90%,
+    color-mix(in oklab, var(--primary) 8%, var(--surface-base)) 97%,
     var(--surface-base) 100%
   );
 }
@@ -460,8 +462,8 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
  * hand-off (hero only — .mw-grainy cards keep full-bleed texture). */
 .mw-hero-drama::after,
 .mw-hero-drama::before {
-  -webkit-mask-image: linear-gradient(180deg, #000 68%, transparent 96%);
-  mask-image: linear-gradient(180deg, #000 68%, transparent 96%);
+  -webkit-mask-image: linear-gradient(180deg, #000 78%, transparent 98%);
+  mask-image: linear-gradient(180deg, #000 78%, transparent 98%);
 }
 
 /* Stylistic riso grain (loop 12, Noto-banner reference): coarser clumpy
