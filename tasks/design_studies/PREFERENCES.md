@@ -520,3 +520,24 @@ Verified both themes desktop full-page (evidence/loop19_*). tsc
 clean. Open: dashboard picker still six-swatch (merge-checklist);
 remaining palettes (mint2 etc.) untouched pending founder verdict on
 this pair.
+
+## Loop 20 (2026-08-06) — founder critique round 1 on the two-theme build
+
+Five founder calls, all applied for the next critique pass:
+1. Hero fades seamlessly into the page ground — longer exit ramp in
+   both hero-sky gradients (ground reached before the section edge and
+   held) + the grain now dissolves via mask before the boundary.
+2. `.mw-dots-edge`: faint dot field over the whole mid-page, visible
+   at the left/right page edges, masked away across the center where
+   the content column sits (successor to the grid lines).
+3. Fraunces + Outfit back for another look: `.mw-serif-headings`
+   replaces `.mw-sans-headings` on the homepage (Stack Sans class kept
+   in CSS); serif-friendly tracking -0.012em, hero leading 1.04.
+4. Section 02 re-follows the primitives-gallery 04 recipe verbatim:
+   soft card container, centered opener WITH the dark pill CTA,
+   NEUTRAL tiles — the loop-19 triad tiles are out.
+5. Ground is pure white (#FFFFFF, was warm paper #FBFAF7) — founder
+   expects white to make the colors pop hardest.
+
+Verified both themes (evidence/loop20_*). tsc clean. Phased format
+agreed: founder critiques each round, then we move ahead.

@@ -265,6 +265,31 @@
   background-size: 22px 22px;
 }
 
+/* Loop 20: faint dot field for the mid-page ground — visible at the left
+ * and right edges, dissolved across the center where the content column
+ * sits (founder request; successor to the earlier grid lines). */
+.mw-dots-edge {
+  background-image: radial-gradient(
+    color-mix(in oklab, var(--primary) 14%, transparent) 1px,
+    transparent 1.6px
+  );
+  background-size: 22px 22px;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    #000 0%,
+    transparent 24%,
+    transparent 76%,
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    #000 0%,
+    transparent 24%,
+    transparent 76%,
+    #000 100%
+  );
+}
+
 
 /* Horizon study palette (design_studies loop 2): Ocean-rooted primary pushed
  * brighter and more saturated (#0A5CFF, 5.3:1 on white — vibrance band), with
@@ -286,7 +311,9 @@
  * where used at display sizes; every accN-fg is >= 4.5:1 on its accN-bg
  * AND on white. The dark companion is the .dark .mw-brand block below. */
 html[data-palette="ocean"]:not(.dark) .mw-brand {
-  --background: #FBFAF7;
+  /* Loop 20 founder call: pure white ground (was warm paper #FBFAF7) —
+   * "white will make the colors pop the most". */
+  --background: #FFFFFF;
   --foreground: #1B1A17;
   --muted-foreground: #615E56;
   --border: #E6E3DB;
@@ -314,7 +341,7 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
    * blue-tinted — color below the hero comes from ELEMENTS, not fields. */
   --surface-panel-mist: #F4F2EC;
   --surface-panel-tint: #F8F7F2;
-  --surface-base: #FBFAF7;
+  --surface-base: #FFFFFF;
 }
 
 /* Marketworks Dark — the dark half of the two-theme system (fires for the
@@ -388,17 +415,30 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
   letter-spacing: -0.015em;
 }
 
+/* Heading serif layer (loop 20): the founder wants another look at the
+ * original Fraunces + Outfit pairing on the new composition. Same
+ * mechanism as .mw-sans-headings; gentler tracking than the sans — a
+ * display serif cramps below about -0.02em. Being unlayered, this
+ * letter-spacing intentionally beats per-element tracking utilities. */
+.mw-serif-headings :is(h1, h2, h3, h4) {
+  font-family: var(--font-fraunces), Georgia, serif;
+  letter-spacing: -0.012em;
+}
+
 /* Loop 11: the dramatic Sui-anatomy hero — near-black top, luminous primary
  * mid, pale exit into the page ground. Token-derived, so Ocean(Horizon) gives
  * the actual sui.io navy->vivid-blue->pale sky and every other palette gets
  * its own dark drama. White text sits on the upper two-thirds. */
+/* Loop 20: longer exit ramp — the sky reaches the page ground well before
+ * the section edge and holds it, so hero and page read as one surface. */
 .mw-hero-drama {
   background: linear-gradient(
     180deg,
     color-mix(in oklab, var(--primary) 22%, #010714) 0%,
-    color-mix(in oklab, var(--primary) 62%, #02102e) 40%,
-    color-mix(in oklab, var(--primary) 88%, #ffffff) 66%,
-    color-mix(in oklab, var(--primary) 24%, #ffffff) 90%,
+    color-mix(in oklab, var(--primary) 62%, #02102e) 38%,
+    color-mix(in oklab, var(--primary) 88%, #ffffff) 62%,
+    color-mix(in oklab, var(--primary) 26%, var(--surface-base, #ffffff)) 82%,
+    color-mix(in oklab, var(--primary) 7%, var(--surface-base, #ffffff)) 92%,
     var(--surface-base, #ffffff) 100%
   );
 }
@@ -409,11 +449,19 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
   background: linear-gradient(
     180deg,
     color-mix(in oklab, var(--primary) 16%, #01040c) 0%,
-    color-mix(in oklab, var(--primary) 52%, #030b20) 45%,
-    color-mix(in oklab, var(--primary) 74%, #0a1a3a) 68%,
-    color-mix(in oklab, var(--primary) 30%, var(--surface-base)) 90%,
+    color-mix(in oklab, var(--primary) 52%, #030b20) 42%,
+    color-mix(in oklab, var(--primary) 74%, #0a1a3a) 64%,
+    color-mix(in oklab, var(--primary) 28%, var(--surface-base)) 82%,
+    color-mix(in oklab, var(--primary) 8%, var(--surface-base)) 92%,
     var(--surface-base) 100%
   );
+}
+/* The grain dissolves before the section edge for the same seamless
+ * hand-off (hero only — .mw-grainy cards keep full-bleed texture). */
+.mw-hero-drama::after,
+.mw-hero-drama::before {
+  -webkit-mask-image: linear-gradient(180deg, #000 68%, transparent 96%);
+  mask-image: linear-gradient(180deg, #000 68%, transparent 96%);
 }
 
 /* Stylistic riso grain (loop 12, Noto-banner reference): coarser clumpy

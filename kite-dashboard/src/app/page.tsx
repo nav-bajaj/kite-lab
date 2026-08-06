@@ -34,29 +34,21 @@ export const metadata = {
  * Hero (drama sky + tuned grain), drench CTA, and flat footer unchanged.
  * Ocean is the study's base palette. */
 
-/* Each tile takes one hue of the Clay triad: tint surface + vivid icon
- * (CLAY_STUDY.md §2, "per-section monochrome triad"). */
 const STEPS = [
   {
     title: "We rank the market",
     body: "Every week our system scores stocks by momentum: the simple idea that names already trending up tend to keep leading for a while.",
     Icon: TrendingUp,
-    tile: "bg-acc1",
-    icon: "text-acc1-line",
   },
   {
     title: "We build the portfolios",
     body: "The strongest names go into ready-made lists you can follow. When the leaders change, the list updates. No guessing, no headlines.",
     Icon: ListChecks,
-    tile: "bg-acc2",
-    icon: "text-acc2-fg",
   },
   {
     title: "You follow along",
     body: "See exactly what each portfolio holds, what changed at the last rebalance, and why, all in plain language.",
     Icon: Eye,
-    tile: "bg-acc3",
-    icon: "text-acc3-line",
   },
 ];
 
@@ -88,7 +80,7 @@ export default async function LandingPage() {
   const betaLabel = userId ? "View dashboard" : "Get beta access";
 
   return (
-    <div className="mw-brand mw-mint2 mw-sans-headings relative min-h-screen bg-surface-base">
+    <div className="mw-brand mw-mint2 mw-serif-headings relative min-h-screen bg-surface-base">
       <FloatingNav />
 
       <main className="relative">
@@ -96,7 +88,7 @@ export default async function LandingPage() {
         <section className="mw-hero-drama relative flex min-h-[88vh] w-full flex-col justify-center overflow-hidden">
           <div className="relative mx-auto w-full max-w-[1240px] px-6 pb-28 pt-40 text-center lg:pb-24 lg:pt-28">
             <p className="font-mono text-sm text-white/70">private beta</p>
-            <h1 className="mx-auto mt-6 max-w-[12ch] text-[3.4rem] font-medium leading-[1.0] tracking-[-0.035em] text-balance text-white sm:text-[6rem]">
+            <h1 className="mx-auto mt-6 max-w-[12ch] text-[3.4rem] font-medium leading-[1.04] text-balance text-white sm:text-[6rem]">
               Indian markets, the calm way.
             </h1>
             <p className="mx-auto mt-7 max-w-[38em] text-lg leading-[1.6] text-white/85 sm:text-xl">
@@ -122,8 +114,12 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* Mid-page: the gallery recipe — centered column, indexed sections */}
-        <div className="mx-auto max-w-[1140px] px-6">
+        {/* Mid-page: the gallery recipe — centered column, indexed sections.
+            The dot field sits on the full-bleed layer behind the column:
+            visible at the page edges, dissolved under the content. */}
+        <div className="relative">
+          <div aria-hidden className="mw-dots-edge absolute inset-0" />
+          <div className="relative mx-auto max-w-[1140px] px-6">
           {/* 01 — the idea: stack card with the flow-field motion */}
           <section className="pt-20 sm:pt-24">
             <SectionIndex className="text-acc1-fg">01 · the idea</SectionIndex>
@@ -163,22 +159,26 @@ export default async function LandingPage() {
           {/* 02 — how it works: centered opener + soft tiles */}
           <section className="pt-20 sm:pt-28">
             <SectionIndex className="text-acc3-fg">02 · how it works</SectionIndex>
-            <SectionHeader
-              title="Momentum, done properly"
-              sub="The system scores the whole market every week and keeps the portfolios with the leaders. No headlines, no hunches, no manual stock-picking."
-            />
-            <div className="mt-12 grid gap-5 sm:grid-cols-3">
-              {STEPS.map((step) => (
-                <FeatureTile
-                  key={step.title}
-                  icon={<step.Icon size={26} strokeWidth={1.75} aria-hidden />}
-                  iconClassName={step.icon}
-                  title={step.title}
-                  className={step.tile}
-                >
-                  {step.body}
-                </FeatureTile>
-              ))}
+            {/* The primitives-gallery 04 recipe verbatim: soft card
+                container, centered opener with the pill CTA, neutral
+                tiles (clay.com end-to-end reference). */}
+            <div className="rounded-[24px] border border-border/60 bg-card px-6 py-14 sm:px-10">
+              <SectionHeader
+                title="Momentum, done properly"
+                sub="The system scores the whole market every week and keeps the portfolios with the leaders. No headlines, no hunches, no manual stock-picking."
+                cta={{ href: betaHref, label: betaLabel }}
+              />
+              <div className="mt-12 grid gap-5 sm:grid-cols-3">
+                {STEPS.map((step) => (
+                  <FeatureTile
+                    key={step.title}
+                    icon={<step.Icon size={26} strokeWidth={1.75} aria-hidden />}
+                    title={step.title}
+                  >
+                    {step.body}
+                  </FeatureTile>
+                ))}
+              </div>
             </div>
           </section>
 
@@ -305,6 +305,7 @@ export default async function LandingPage() {
               </GuideCard>
             </div>
           </section>
+          </div>
         </div>
 
         {/* Drench CTA band (unchanged keeper) */}
