@@ -417,3 +417,28 @@ hero sections isolate their stacking context and both grain
 pseudo-layers sit at z-index -1, so text/buttons above are ungrained
 (founder request). GrainTuner unmounted from the page; the component
 stays in the repo for future texture-tuning sessions.
+
+## Loop 15 (2026-08-06) — card primitives (side exercise)
+
+References: Google Fonts Knowledge banner (grain + abstract glyph +
+guide lines), clay.com (pastel stack cards; UI-collage media fields),
+teak.io (grid background fading in/out with scroll — decoded as an
+SVG pattern layer; reimplemented with CSS mask + scroll-driven
+animation where supported).
+
+Built in `components/marketing/study-cards.tsx`, showcased at
+`/primitives` (public + noindex ON THIS BRANCH ONLY via a marked
+middleware entry — REMOVE before any merge):
+- **GrainCard** — corner wash (token-derived), the tuned grain via the
+  generalized `.mw-grainy` class, oversized cropped glyph, dashed/solid
+  typographic guide lines.
+- **StackCard** — clay pastel stack: wash layers peeking behind, pill
+  label, two-tone heading slot, actions, optional media panel.
+- **CollageCard + FloatPanel + GhostRows** — blob field with
+  overlapping floating panels; slots intended for REAL product UI
+  screenshots later, placeholder rows are deliberately data-free.
+- **GridFadeSection pattern** (`.mw-grid-fade`) — teak-style grid that
+  breathes in/out with scroll (`animation-timeline: view()` +
+  static mask fade fallback; disabled under reduced-motion).
+
+All token-derived — the palette picker re-themes the whole gallery.

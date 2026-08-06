@@ -496,10 +496,13 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
  * fine layer 0.10. The vars stay so the panel can be re-rendered for any
  * future tuning session. isolation + negative z-index keep the grain ON THE
  * BACKGROUND only — text and buttons sit above it, ungrained. */
+/* .mw-grainy generalizes the tuned grain to any container (cards, panels). */
+.mw-grainy,
 .mw-hero-grain,
 .mw-hero-drama {
   isolation: isolate;
 }
+.mw-grainy::after,
 .mw-hero-grain::after,
 .mw-hero-drama::after {
   content: "";
@@ -514,6 +517,7 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
   opacity: var(--grain-opacity, 0.45);
   mix-blend-mode: var(--grain-blend, soft-light);
 }
+.mw-grainy::before,
 .mw-hero-grain::before,
 .mw-hero-drama::before {
   content: "";
@@ -524,6 +528,33 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   opacity: var(--grain-fine-opacity, 0.1);
   mix-blend-mode: normal;
+}
+
+/* Grid layer that fades in and out with scroll (teak.io reference, loop 15):
+ * static edge fade via mask everywhere; where scroll-driven animations are
+ * supported the whole layer also fades in as the section enters the viewport
+ * and out as it leaves. Token-derived lines re-theme per palette. */
+.mw-grid-fade {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--primary) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--primary) 8%, transparent) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+}
+@supports (animation-timeline: view()) {
+  .mw-grid-fade {
+    animation: mw-grid-fade-inout linear both;
+    animation-timeline: view();
+  }
+  @keyframes mw-grid-fade-inout {
+    0% { opacity: 0; }
+    22% { opacity: 1; }
+    78% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mw-grid-fade { animation: none; }
 }
 
 /* Quant grid re-tinted for the primary drench band: hairlines in the

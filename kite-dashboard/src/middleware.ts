@@ -18,6 +18,9 @@ const isPublicRoute = createRouteMatcher([
   "/disclaimer",
   "/library(.*)",
   "/portfolios",
+  // design_studies ONLY: primitives gallery for the card experiments.
+  // REMOVE before this branch merges anywhere near production.
+  "/primitives",
 ]);
 
 // Insight engine pages: behind Clerk login but available to ALL signed-in
