@@ -5,8 +5,8 @@ import { auth } from "@clerk/nextjs/server";
 import { UNIVERSES } from "@/lib/universes";
 import { FloatingNav } from "@/components/marketing/floating-nav";
 import { FooterPanel } from "@/components/marketing/footer-panel";
+import { FlowGrid } from "@/components/marketing/flow-grid";
 import { HeroFlow } from "@/components/marketing/hero-flow";
-import { RhythmStrip } from "@/components/marketing/rhythm-strip";
 import { MarketingCard } from "@/components/marketing/marketing-card";
 import { FeatureCard } from "@/components/marketing/feature-card";
 import { SectionPanel } from "@/components/marketing/section-panel";
@@ -65,11 +65,12 @@ export default async function LandingPage() {
 
   return (
     <div className="mw-brand relative min-h-screen overflow-hidden bg-surface-base">
+      {/* Quant grid texture — fixed to the viewport, focus-masked, follows the scroll. */}
+      <FlowGrid />
+
       <FloatingNav />
 
-      {/* Structural grid (PREFERENCES.md R1): the rails frame replaces the
-          decorative viewport grid; texture lives only in the rhythm strips. */}
-      <main className="mw-rails relative z-10 mx-auto max-w-[1240px]">
+      <main className="relative z-10">
         {/* Hero — centered copy; the flow graph lives in a band below (desktop). */}
         <section className="relative flex flex-col overflow-hidden pb-12 pt-32 sm:pt-36">
           <div className="mx-auto max-w-[860px] px-6 text-center">
@@ -127,8 +128,6 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        <RhythmStrip texture="ticks" />
-
         {/* Welcome — inset mist panel */}
         <Reveal>
           <SectionPanel variant="mist">
@@ -178,8 +177,6 @@ export default async function LandingPage() {
             ))}
           </div>
         </section>
-
-        <RhythmStrip texture="hatch" />
 
         {/* Research — inset deep panel (the dark contrast moment), 2-col with art */}
         <Reveal>
@@ -287,8 +284,6 @@ export default async function LandingPage() {
             ))}
           </div>
         </section>
-
-        <RhythmStrip texture="grid" />
 
         {/* CTA — inset lichen panel */}
         <Reveal>
