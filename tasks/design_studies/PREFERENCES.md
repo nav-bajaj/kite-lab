@@ -138,6 +138,34 @@ of the drench band, masked away from the copy. New principle:
   (hero canvas band, drench field, future chart frames), always masked
   or contained, never behind body copy.
 
+### R2 addendum — Base typography census (2026-08-06, live DOM)
+
+Base is a single-family SYSTEM, not a single font file: `baseSans`
+(display + UI, 72px→14px), `baseSansText` (body-optimized cut),
+`baseSansMono` (stat labels, Geist Mono fallback), plus `doto` — an
+actual dot-matrix font — for the pixel wordmark brand moment only.
+(googleSansFlex/CoinbaseSans hits are third-party chrome.) Lesson for
+Marketworks: one sans family in functional cuts + a true mono for
+numbers covers everything; a single decorative accent font is
+permitted if it IS the brand gesture, not garnish.
+
+## Horizon study palette (2026-08-06) — loop 2
+
+Founder brief: more saturation and brightness; root it in Ocean but
+polychrome, pulling the liked colors from the existing six palettes;
+endgame is likely a plain light+dark pair replacing the palette picker.
+Shipped as `html:not(.dark) .mw-horizon` (homepage-scoped study,
+Midnight untouched), all bars WCAG-verified by script:
+
+| Token | Value | Note |
+|---|---|---|
+| primary | `#0A5CFF` | 5.3:1 on white — vibrance band |
+| display-accent | `#E0604D` coral | large type only (3.5:1) |
+| secondary | `#E8A33D` sun | warms the hero canvas; keyline only |
+| acc rotation | blue/sun/green/coral/purple/teal | fg ≥4.5 on wash AND white |
+| chart series | `#0A5CFF` / `#C77E14` / `#64748B` | marks ≥3; sun too light for marks |
+| deep panel | `#0A2C66` ink-navy | footer coheres with the drench |
+
 ## Typography (2026-08-06, in chat)
 
 - **Keep Outfit.** Non-negotiable baseline.
