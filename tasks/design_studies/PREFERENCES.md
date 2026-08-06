@@ -442,3 +442,26 @@ middleware entry — REMOVE before any merge):
   static mask fade fallback; disabled under reduced-motion).
 
 All token-derived — the palette picker re-themes the whole gallery.
+
+## Loop 16 (2026-08-06) — the gallery IS the direction; library batch 2
+
+Founder on the /primitives page itself: "looks beautiful... the right
+balance of everything... engaging" — and wants the HOMEPAGE after the
+hero to feel like it: centered content in dynamic sections, different
+card layouts, primitives chosen per the content's needs. That page's
+recipe, named for reuse: one centered column, mono index captions,
+varied card families in sequence, generous vertical air, everything
+token-derived.
+
+Batch 2 primitives (clay.com references):
+- **SectionHeader** — centered heading/sub + one dark pill CTA.
+- **FeatureTile** — soft neutral tile: icon, air, heading, body.
+- **FrameCard / GuideCard** — colored frame wrapping cropped media +
+  tag pill + title + footer meta; frames rotate accent colors. Media
+  slots await REAL product screenshots; ghost rows until then.
+- **SelectorPanel / FactTile** (client) — clay signal-picker: pill
+  list left, detail surface right, footnote; gallery demo runs on real
+  UNIVERSES data (no invented figures).
+
+Next natural step (not yet done): compose the homepage mid-page from
+these primitives, section by section, per the founder's direction.

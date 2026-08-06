@@ -1,11 +1,20 @@
 import Link from "next/link";
+import { Eye, ListChecks, TrendingUp } from "lucide-react";
 
+import { UNIVERSES } from "@/lib/universes";
 import { FloatingNav } from "@/components/marketing/floating-nav";
 import {
+  FactTile,
+  SelectorPanel,
+} from "@/components/marketing/selector-panel";
+import {
   CollageCard,
+  FeatureTile,
   FloatPanel,
   GhostRows,
   GrainCard,
+  GuideCard,
+  SectionHeader,
   StackCard,
 } from "@/components/marketing/study-cards";
 
@@ -127,7 +136,128 @@ export default function PrimitivesPage() {
         </CollageCard>
 
         <Caption>
-          04 · GridFadeSection — the teak.io grid that fades in and out with
+          04 · SectionHeader + FeatureTile row — centered opener, soft tiles
+          (clay.com end-to-end reference)
+        </Caption>
+        <div className="rounded-[24px] border border-border/60 bg-card px-6 py-14 sm:px-10">
+          <SectionHeader
+            title="Momentum, done properly"
+            sub="The system scores the whole market every week and keeps the portfolios with the leaders. No headlines, no hunches, no manual stock-picking."
+            cta={{ href: "/sign-up", label: "Get beta access" }}
+          />
+          <div className="mt-12 grid gap-5 sm:grid-cols-3">
+            <FeatureTile
+              icon={<TrendingUp size={26} strokeWidth={1.75} aria-hidden />}
+              title="We rank the market"
+            >
+              Every week our system scores stocks by momentum: the simple idea
+              that names already trending up tend to keep leading for a while.
+            </FeatureTile>
+            <FeatureTile
+              icon={<ListChecks size={26} strokeWidth={1.75} aria-hidden />}
+              title="We build the portfolios"
+            >
+              The strongest names go into ready-made lists you can follow. When
+              the leaders change, the list updates.
+            </FeatureTile>
+            <FeatureTile
+              icon={<Eye size={26} strokeWidth={1.75} aria-hidden />}
+              title="You follow along"
+            >
+              See exactly what each portfolio holds, what changed at the last
+              rebalance, and why, all in plain language.
+            </FeatureTile>
+          </div>
+        </div>
+
+        <Caption>
+          05 · GuideCard — framed media, tag pill, footer meta (clay.com
+          guides reference); frames rotate accent colors
+        </Caption>
+        <div className="grid gap-8 sm:grid-cols-2">
+          <GuideCard
+            href="/library"
+            frameClassName="bg-acc1-line"
+            tag="guide"
+            tagClassName="bg-acc1 text-acc1-fg"
+            title="What Marketworks is, and how to use it"
+            meta={
+              <>
+                <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground">
+                  Complete guide
+                </span>
+                <span>
+                  /library <span aria-hidden>↗</span>
+                </span>
+              </>
+            }
+            media={<GhostRows rows={4} />}
+          >
+            Welcome to the beta: how the portfolios, the weekly rebalance, and
+            the daily market read fit together.
+          </GuideCard>
+          <GuideCard
+            href="/library"
+            frameClassName="bg-acc2-line"
+            tag="weekly roundup"
+            tagClassName="bg-acc2 text-acc2-fg"
+            title="A weak rupee is a slow tax on everything India imports"
+            meta={
+              <>
+                <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground">
+                  Weekly read
+                </span>
+                <span>
+                  /library <span aria-hidden>↗</span>
+                </span>
+              </>
+            }
+            media={<GhostRows rows={4} />}
+          >
+            The headline this week was not the rupee, but the rupee is quietly
+            making everything imported a little more expensive.
+          </GuideCard>
+        </div>
+
+        <Caption>
+          06 · SelectorPanel + FactTile — interactive pills with a detail
+          surface (clay.com signal-picker reference); real portfolio data
+        </Caption>
+        <SelectorPanel
+          lead="Pick a portfolio to see what it follows and who it suits"
+          footnote="Each portfolio is a rules-based list, rebuilt on schedule. Model portfolios for research and education, not personalised advice."
+          items={Object.values(UNIVERSES)
+            .filter((u) => u.clientVisible)
+            .map((u) => ({
+              key: u.id,
+              label: u.name,
+              detail: (
+                <div>
+                  <p className="font-mono text-xs uppercase tracking-[0.14em] text-acc1-fg">
+                    Risk profile
+                  </p>
+                  <p className="mt-2 text-lg leading-[1.5] text-foreground">
+                    {u.riskProfile}
+                  </p>
+                  <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                    <FactTile
+                      label="Holdings"
+                      value={`${u.stocks} stocks`}
+                      note={u.description}
+                    />
+                    <FactTile
+                      label="Rebuilt"
+                      value="On schedule"
+                      note="Rebalanced on a fixed cadence around the current market leaders."
+                    />
+                  </div>
+                </div>
+              ),
+            }))}
+        />
+
+        <Caption>
+          07 · GridFadeSection — the teak.io grid that fades in and out with
           scroll (scroll-driven where supported; static edge fade otherwise)
         </Caption>
         <section className="relative overflow-hidden rounded-[24px] border border-border/60 bg-card">

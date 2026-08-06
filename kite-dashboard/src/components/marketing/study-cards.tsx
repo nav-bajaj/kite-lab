@@ -168,3 +168,143 @@ export function GhostRows({ rows = 4 }: { rows?: number }) {
     </div>
   );
 }
+
+/* ---- Loop 16 additions (clay.com references, batch 2) ---- */
+
+/** Centered section opener: heading, subcopy, one dark pill CTA. */
+export function SectionHeader({
+  title,
+  sub,
+  cta,
+}: {
+  title: ReactNode;
+  sub?: ReactNode;
+  cta?: { href: string; label: string };
+}) {
+  return (
+    <div className="mx-auto max-w-[760px] text-center">
+      <h2 className="text-[1.9rem] font-semibold leading-[1.1] tracking-[-0.02em] text-foreground sm:text-[2.5rem]">
+        {title}
+      </h2>
+      {sub ? (
+        <p className="mx-auto mt-4 max-w-[58ch] text-base leading-[1.65] text-muted-foreground sm:text-lg">
+          {sub}
+        </p>
+      ) : null}
+      {cta ? (
+        <a
+          href={cta.href}
+          className="mt-7 inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background transition-transform duration-150 hover:-translate-y-px"
+        >
+          {cta.label} <span aria-hidden>→</span>
+        </a>
+      ) : null}
+    </div>
+  );
+}
+
+/** Soft feature tile: icon, generous air, heading, body (clay 3-up row). */
+export function FeatureTile({
+  icon,
+  title,
+  children,
+  className,
+}: {
+  icon?: ReactNode;
+  title: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "rounded-[20px] bg-[color-mix(in_oklab,var(--foreground)_3.5%,var(--card))] p-7 sm:p-8",
+        className,
+      )}
+    >
+      {icon ? <div className="mb-10 text-primary">{icon}</div> : null}
+      <h3 className="text-xl font-semibold leading-[1.25] tracking-[-0.01em] text-foreground">
+        {title}
+      </h3>
+      <p className="mt-3 text-[15px] leading-[1.65] text-muted-foreground">
+        {children}
+      </p>
+    </div>
+  );
+}
+
+/** Colored frame wrapping a cropped white media panel (clay guide cards). */
+export function FrameCard({
+  frameClassName,
+  className,
+  children,
+}: {
+  /** background utility for the frame, e.g. "bg-acc1-line" */
+  frameClassName?: string;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      className={cn(
+        "overflow-hidden rounded-[22px] pl-4 pt-4",
+        frameClassName ?? "bg-acc1-line",
+        className,
+      )}
+    >
+      <div className="h-full min-h-[180px] overflow-hidden rounded-tl-[16px] bg-card p-5">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/** Guide/library card: framed media, tag pill, title, footer meta. */
+export function GuideCard({
+  href,
+  media,
+  frameClassName,
+  tag,
+  tagClassName,
+  title,
+  meta,
+  children,
+}: {
+  href: string;
+  media: ReactNode;
+  frameClassName?: string;
+  tag?: string;
+  tagClassName?: string;
+  title: string;
+  meta?: ReactNode;
+  children?: ReactNode;
+}) {
+  return (
+    <a href={href} className="group flex h-full flex-col">
+      <FrameCard frameClassName={frameClassName}>{media}</FrameCard>
+      {tag ? (
+        <span
+          className={cn(
+            "mt-5 w-fit rounded-full px-3 py-1 text-xs font-semibold",
+            tagClassName ?? "bg-acc1 text-acc1-fg",
+          )}
+        >
+          {tag}
+        </span>
+      ) : null}
+      <h3 className="mt-3 text-xl font-semibold leading-[1.25] tracking-[-0.01em] text-foreground group-hover:text-primary">
+        {title}
+      </h3>
+      {children ? (
+        <p className="mt-2 text-[15px] leading-[1.6] text-muted-foreground">
+          {children}
+        </p>
+      ) : null}
+      {meta ? (
+        <div className="mt-auto flex items-center justify-between pt-5 text-sm text-muted-foreground">
+          {meta}
+        </div>
+      ) : null}
+    </a>
+  );
+}
