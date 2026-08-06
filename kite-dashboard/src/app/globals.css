@@ -310,6 +310,43 @@ html:not(.dark) .mw-horizon {
   --surface-panel-deep-foreground: #EAF1FF;
 }
 
+/* Horizon DARK (design_studies loop 3) — the Midnight counterpart, designed
+ * not inverted: navy-black ground, luminous saturated blue with INK button
+ * text (white fails 4.5 on the bright primary; dark ink passes 5.8), brighter
+ * coral/sun, solid dark accent washes. All 27 bars script-verified (fg >= 4.5
+ * on wash and card; marks >= 3 on ground). Declared after .mw-bright so its
+ * ground override wins in dark. Candidate `dark` half of the two-theme
+ * endgame that retires the palette picker. */
+.dark .mw-horizon {
+  --surface-base: #0B1120;
+  background-color: var(--surface-base);
+  --background: #0B1120;
+  --card: #121A2A;
+  --card-foreground: #E8EDF6;
+  --foreground: #E8EDF6;
+  --muted-foreground: #9AA7BC;
+  --border: #263349;
+  --input: #263349;
+  --primary: #4D8DFF;
+  --primary-foreground: #06122B;
+  --secondary: #F0B254;
+  --secondary-foreground: #06122B;
+  --ring: #4D8DFF;
+  --display-accent: #F27E6C;
+  --acc1-bg: #10233F; --acc1-line: #4D8DFF; --acc1-fg: #A8C8FF;
+  --acc2-bg: #2A2113; --acc2-line: #F0B254; --acc2-fg: #F5CF8E;
+  --acc3-bg: #10291C; --acc3-line: #3FBF77; --acc3-fg: #8FE0B2;
+  --acc4-bg: #2E1712; --acc4-line: #F27E6C; --acc4-fg: #F5AC9E;
+  --acc5-bg: #211537; --acc5-line: #B685FF; --acc5-fg: #D3B8FF;
+  --acc6-bg: #0D2723; --acc6-line: #2FB89E; --acc6-fg: #8ADCC9;
+  --wash1: #101B2E; --wash2: #241E12; --wash3: #291613;
+  --chart-series-1: #4D8DFF;
+  --chart-series-2: #F0B254;
+  --chart-series-3: #8B99AD;
+  --surface-panel-deep: #0A1B3D;
+  --surface-panel-deep-foreground: #EAF1FF;
+}
+
 /* Quant grid re-tinted for the primary drench band: hairlines in the
  * band's own foreground so the texture self-themes on every palette. */
 .mw-grid-inverse {
