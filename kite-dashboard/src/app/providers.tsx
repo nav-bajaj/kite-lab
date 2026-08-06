@@ -17,13 +17,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
       {/* Palette system (DESIGN.md §2.6): next-themes stamps BOTH the class
           and data-palette attributes. Palette sheets select on
           [data-palette]; `midnight` maps to the `dark` class so the legacy
-          dark variant + Midnight tokens fire together. `system` resolves
-          OS-dark to Midnight and OS-light to Mint. */}
+          dark variant + Midnight tokens fire together.
+          design_studies loop 17: defaultTheme was "system" — Ocean is the
+          study's base palette (founder call); revisit before any merge. */}
       <ThemeProvider
         attribute={["class", "data-palette"]}
         themes={THEME_VALUES}
         value={THEME_VALUE_MAP}
-        defaultTheme="system"
+        defaultTheme="ocean"
         enableSystem
         disableTransitionOnChange
       >

@@ -465,3 +465,23 @@ Batch 2 primitives (clay.com references):
 
 Next natural step (not yet done): compose the homepage mid-page from
 these primitives, section by section, per the founder's direction.
+
+## Loop 17 (2026-08-06) — homepage full pass from the primitive library
+
+Founder go-ahead: compose the homepage with the primitives; OCEAN is
+the study's base palette (providers defaultTheme "system" -> "ocean";
+marked revisit-before-merge). Mid-page now follows the gallery recipe
+verbatim — centered 1140px column, mono index captions (01-05, a
+deliberate named system), one primitive family per section:
+
+01 the idea = StackCard + HeroFlow media on grid-fade ·
+02 how it works = SectionHeader + FeatureTile x3 ·
+03 the research = GrainCard ("m" glyph) ·
+04 the portfolios = SectionHeader + SelectorPanel on real UNIVERSES
+data with View-portfolio links ·
+05 from the library = GuideCard x2 (accent frames).
+
+Hero (drama sky + tuned grain), drench CTA, and flat footer unchanged.
+Verified desktop full-page and mobile (no horizontal overflow; panels
+stack). Open: GuideCard/StackCard media slots await real product
+screenshots; palette endgame + light/dark question still parked.
