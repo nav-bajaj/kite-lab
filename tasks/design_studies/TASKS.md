@@ -10,18 +10,18 @@
 
 ## Phase 1 — quick fixes (independent of design direction) [low risk]
 
-- [ ] 🤖 File risk-register row + add `accounts.marketworks.in` to
-      connect-src (AUDIT P0)
-- [ ] 🤖 Fix empty reveal panel on desktop homepage (AUDIT P0)
-- [ ] 🤖 Kill `getPnLClass()` raw greens → semantic tokens (~35 sites)
-- [ ] 🤖 `allocation-chart.tsx` → `--chart-series-*` tokens
-- [ ] 🤖 `bg-amber-*` → `--warning`; Clerk appearance → tokens
-- [ ] 🤖 Copy pass: em dashes + aphorism cadence on marketing/library
+- [x] 🤖 File risk-register row (R-023) + add `accounts.marketworks.in`
+      to connect-src (close row after live verification)
+- [x] 🤖 ~~Empty reveal panel~~ retracted: lazy-load screenshot artifact
+- [x] 🤖 Kill `getPnLClass()` raw greens → semantic tokens (9 files)
+- [x] 🤖 `allocation-chart.tsx` → accent-rotation tokens + color-mix tints
+- [x] 🤖 `bg-amber-*` → `--warning` (Clerk appearance stays literal-hex by design)
+- [x] 🤖 Copy pass: em dashes + aphorism cadence (marketing/library/legal/universes)
 
 ## Phase 2 — study loops (iterative, founder in the loop) [direction risk]
 
-- [ ] 👤 Seed references: Mobbin screenshots / app names → `references/`
-- [ ] 🤖 PREFERENCES.md from extracted principles
+- [~] 👤 Seed references: R1 cartesia.ai captured; more screenshots incoming
+- [x] 🤖 PREFERENCES.md opened (R1 structural grid + typography shortlist)
 - [ ] 🤖 Study loop 1: homepage section grammar (2-3 rendered variants)
 - [ ] 👤 Direction sign-off per surface
 - [ ] 🤖 Settle study items: Fraunces/Outfit keep-or-evolve;
