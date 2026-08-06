@@ -396,3 +396,13 @@ navy->vivid-blue->pale gradient and every palette gets its own dark
 drama (Mint = deep forest). White headline/sub/CTAs return; grain
 overlay rides the dark field (shared ::after). The light grain-pastel
 hero (.mw-hero-grain) stays in CSS as the alternate.
+
+## Loop 12 (2026-08-06) — stylistic riso grain (Noto reference, take 2)
+
+The Noto card's grain is coarse and clumpy (riso/print), not uniform
+film noise. Rebuilt: turbulence frequency 0.82 -> 0.34 with 3 octaves
+and a steep contrast table (chunky speckle), blended OVERLAY at 0.5 so
+grains dye in the field's own color — blue grain in blue zones like
+the reference — plus a faint fine pass underneath for micro-texture.
+Verified on the Ocean drama sky at device scale: clearly stylistic.
+Knobs: coarseness = baseFrequency, punch = opacity/table.

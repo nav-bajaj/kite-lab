@@ -486,17 +486,29 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
   );
 }
 
+/* Stylistic riso grain (loop 12, Noto-banner reference): coarser clumpy
+ * speckle, not uniform film noise — lower turbulence frequency + more
+ * octaves + a steep contrast table make chunky grains, and OVERLAY blending
+ * dyes them in the field's own color (blue grain in blue zones, the way the
+ * Noto card reads). A faint fine pass (::before) keeps micro-texture. */
 .mw-hero-grain::after,
 .mw-hero-drama::after {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.34' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='table' tableValues='0 0.1 0.9 1'/%3E%3CfeFuncG type='table' tableValues='0 0.1 0.9 1'/%3E%3CfeFuncB type='table' tableValues='0 0.1 0.9 1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+}
+.mw-hero-grain::before,
+.mw-hero-drama::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  /* Normal blend, not soft-light: soft-light nearly vanishes on near-white
-   * grounds, which is why the grain kept reading too subtle. Mid-grey noise
-   * at normal blend speckles both light and dark fields. */
-  opacity: 0.18;
+  opacity: 0.1;
   mix-blend-mode: normal;
 }
 
