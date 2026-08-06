@@ -3,8 +3,8 @@
 Live-DOM study (Playwright, 1440px viewport) of clay.com's homepage:
 computed styles harvested element-by-element, plus their entire token
 sheet, which Webflow ships un-minified as CSS custom properties.
-Screenshots: `references/clay_home_hero.png`,
-`clay_home_yellow_card.png`, `clay_home_stacked_cards.png`.
+Screenshots: `references/clay_home_hero.jpg`,
+`clay_home_yellow_card.jpg`, `clay_home_stacked_cards.jpg`.
 
 ## 1. Typography
 

@@ -495,7 +495,7 @@ almost white with the color carried by elements on top.
 
 Study ran on the live site (Playwright) — full findings in
 CLAY_STUDY.md; references saved (clay_home_hero / _yellow_card /
-_stacked_cards.png). Headlines: ONE variable sans (Roobert VF) does
+_stacked_cards.jpg). Headlines: ONE variable sans (Roobert VF) does
 everything — hierarchy is size/weight/tracking, lh 1.0 + tracking to
 -4% at display sizes, eyebrows the inverse (12px semibold uppercase
 +9%); warm-paper near-whites (their "oat" ramp) make the cool vivids
