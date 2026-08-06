@@ -372,3 +372,16 @@ is scoped to the mint palette only so Ocean/Amber/Coral/Charcoal/
 Midnight render their own token sheets. Verified live: Mint (emerald
 field), Ocean (blue field + sun blob), Midnight (dark field, signal
 blue). Secondary hero pill made theme-aware (bg-background/60).
+
+## Loop 10 (2026-08-06) — stronger grain; Horizon rides Ocean
+
+Grain fixed for real: the problem was the blend mode, not opacity —
+soft-light nearly vanishes on near-white grounds. Now normal blend at
+0.18 (mid-grey speckle, visible on light AND dark fields). The
+sui-vibrant Horizon system (#0A5CFF + sun + coral, incl. panel
+surfaces and washes) now rides the OCEAN palette slot via
+html[data-palette=ocean] .mw-brand — picking Ocean in the picker
+shows the whole marketing surface in the vivid system. Verified:
+hero field renders blue+sun-gold, cards wash blue/sun/coral, research
+panel ink-navy. Pending founder verdict before extending the vibrance
+treatment to the remaining palettes.

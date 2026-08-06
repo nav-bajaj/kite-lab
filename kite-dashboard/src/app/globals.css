@@ -288,7 +288,12 @@
  * chart seat is the darker #C77E14). Light only — Midnight untouched.
  * If the direction wins, this graduates to the design repo as the light half
  * of a two-theme system replacing the six-palette picker. */
-html:not(.dark) .mw-horizon {
+/* Loop 10 trial: the sui-vibrant Horizon values ride the OCEAN palette slot —
+ * picking Ocean in the picker renders the marketing surface in the vivid
+ * blue/sun/coral system. Extend to other palettes only if the founder
+ * approves the Ocean trial. */
+html:not(.dark) .mw-horizon,
+html[data-palette="ocean"]:not(.dark) .mw-brand {
   --primary: #0A5CFF;
   --primary-foreground: #FFFFFF;
   --secondary: #E8A33D;
@@ -472,8 +477,11 @@ html:not(.dark) .mw-horizon {
   inset: 0;
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.34;
-  mix-blend-mode: soft-light;
+  /* Normal blend, not soft-light: soft-light nearly vanishes on near-white
+   * grounds, which is why the grain kept reading too subtle. Mid-grey noise
+   * at normal blend speckles both light and dark fields. */
+  opacity: 0.18;
+  mix-blend-mode: normal;
 }
 
 /* Quant grid re-tinted for the primary drench band: hairlines in the
