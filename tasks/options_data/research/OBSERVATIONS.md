@@ -268,6 +268,113 @@ confused). Re-labeled findings:
       new timings (2/2 days, +150 and +200). Anything marked or
       triggered off the 15:20-15:30 tape inherits this risk daily.
 
+## 2026-08-05 (day 7) — new-cycle open: the V-day that never paid; first NON-expiry loss; ledger goes negative
+
+(Entry written 2026-08-07 from the stored bars/snapshots/ledger — the
+journal missed two days; the engine did not.)
+
+- Tape: +16 gap open 24,631, early high 24,662.6, midday slide to
+  24,498.2 (~13:44), full V-recovery to an official close of 24,624.7
+  (+0.04%). A flat close hiding a 164-pt round trip.
+- Regime: DIFFUSE all day (concentration 18% -> 15%), max-gamma STATIC
+  at 24600 through all three snapshots — it did not chase the sell-off
+  (contrast 08-04, where it migrated with the move). OI: near-flat CEs,
+  heavy PE drain at-and-above spot (24600 -33%, 24700 -48%, 24800
+  -46%) — put-writer de-grossing into the new cycle, NOT the
+  call-covering signature of the drift week. New pattern, unresolved
+  direction on the day it appeared.
+- Vol: the new regime held. ATM IV 10.16% (09:20) -> 11.68% into the
+  midday sell (12:30) -> 10.60% (15:15) — IV rose while spot fell,
+  proper two-sided vol behavior; last week's one-way slide is over.
+  EOD straddle 274.4 pts = 1.11% to the 08-11 expiry.
+- Paper straddle: FIRST NON-EXPIRY LOSS. -19.6 (credit 264.0 @ 24650)
+  | MAE -72.3 at 13:44 — second-worst in the ledger, on a full credit
+  | underwater 355/356 min, i.e. the ENTIRE hold. The V clawed marks
+  back from -72 to -14.8 by the 15:15 exit; costs finished it -19.6.
+  A flat-close day that still lost: entry 26 pts under what proved the
+  high, then IV markup + path did the damage.
+- **CUMULATIVE LEDGER TURNED NEGATIVE**: 8 sessions = six wins +70.2,
+  two losses -74.8, net **-4.6**. It was +11.2 after six. Two adjacent
+  red days erased five weeks of wins — the short-vol distribution,
+  now measured on our own book.
+- Divergence (retro-computed): the monitor's first flag. Close-window
+  dislocation +69.0 pts vs the day's carry baseline at 15:39 (official
+  close 24,624.7 vs parity forward 24,590.8). Spot printed ~100 above
+  its 15:15 level into the close while the forward moved ~30 — the
+  "melt-up" is largely the close print itself standing rich to where
+  derivatives traded. Hyp. 16 series: ~200 -> 150 -> 69.
+- Depth/friction: normal-day baseline (0.24-0.25% of premium, flat;
+  imbalance +0.25).
+- Engine: 2.11M ticks, 34,954 bars, 0 db errors, 1 widen (down-side —
+  spot broke >=2 strikes below the 24650 anchor). Divergence monitor +
+  day-plan generator MERGED this evening (19:49, post-close): today's
+  divergence/day-plan numbers are faithful retro-computation from
+  stored data, live in prod from tomorrow. The retro day-plan said
+  DIRECTIONAL_DEBIT_SPREAD — its "no naked straddle" half was right
+  (straddle lost), its drift half was not (day closed flat). Counts as
+  backtest, not track record.
+- Observations:
+  20. Flat-close days can still lose a short straddle: V-shape = IV
+      markup + all-day-underwater path. Final-print P&L is not the
+      day's experience; the ledger's underwater column is. (n=1)
+  21. PE-side de-grossing (put drain at/above spot, calls flat) is a
+      distinct third OI signature after pin-build and call-covering;
+      it resolved to neither trend nor pin on day one. (n=1)
+  22. MAE -72.3 on a NON-expiry day breaks the "thin-credit expiry
+      days are the danger" shortcut (hyp. 17): fat credit did not
+      prevent a near-ledger-worst drawdown. Risk conditioning needs
+      the regime, not the calendar or the credit alone. (n=8)
+
+## 2026-08-06 (day 8) — tightest day on record; two-sided de-grossing; analytics chain fully live
+
+- Tape: -17 gap open 24,607.8, high 24,676.8, low 24,606.0, close
+  24,636.0 (+0.05%). Range 70.8 pts (0.29%) — the narrowest of all 8
+  sessions; an inside drift day.
+- Regime: DIFFUSE (16% -> 15%), max-gamma parked at 24600 again. OI:
+  BOTH sides drained at the near strikes (24550 CE -42% / PE -23%;
+  24450 CE -26% / PE -18%) while the wings BUILT (24750 CE +13%,
+  24850 PE +17%) — writers stepping out of the middle ahead of the
+  08-11 expiry. Two-sided near-strike drain + wing build on the
+  tightest day yet: compression signature or routine pre-expiry
+  re-positioning? Unresolved. (n=1)
+- Vol: IV refused to fade with the quiet tape — 10.94% -> 11.75% ->
+  10.86%; straddle 249.9 pts = 1.01% to expiry with a weekend inside.
+  Day-plan IV percentile 75% (n=4 prior days): premium rich by this
+  short history, on the quietest tape we've recorded.
+- Paper straddle: +3.8 (credit 258.1 @ 24650) | MAE -28.2 at 11:30 |
+  underwater 339 min, last at 15:02 — a winning day spent ~94% of the
+  session underwater. On a 71-pt-range day this credit SHOULD have
+  paid fat; it paid 3.8, because IV stayed bid all day. Theta barely
+  outran the marks.
+- Divergence: NO flag — the first new-timings session without a close
+  dislocation (max -35.3 vs baseline at 15:23, -17.7 at the close).
+  Series: ~200 -> 150 -> 69 -> none (3/4 flagged, magnitude decaying
+  monotonically).
+- Depth/friction: baseline (0.23-0.26%; imbalance +0.22).
+- Engine: 2.12M ticks, 35,584 bars, 0 db errors, 0 reconnects, 1
+  widen; FIRST fully-live run of the merged analytics chain — the EOD
+  report now carries the divergence + morning day-plan sections in
+  production. Advisory call #1 on the record: DEFINED_RISK_SHORT at
+  24600 (diffuse + IV pctile 75 -> wings on). On the day, short
+  premium was right and wings would have cost little — a sensible
+  first call. (track record n=1)
+- Observations:
+  23. IV holding ~11% through a 0.29%-range day means the market is
+      pricing gap/event risk, not intraday realized. Implied-vs-
+      realized verdict #2 arrives at the 08-11 expiry (implied 1.01%
+      with the weekend inside). (n=1)
+  24. The close-print dislocation is NOT a structural constant: 3/4
+      days, decaying 200 -> 150 -> 69 -> 0. Hypothesis: the market is
+      adapting to the new close mechanics. The monitor stays either
+      way — treat each close on its own evidence. (n=4)
+  25. Underwater-minutes is becoming the honest risk metric: the last
+      two sessions logged 355 and 339 underwater minutes for -19.6 and
+      +3.8 final — vs a ledger median of 86. MAE alone misses the
+      grind; any live-size rule must survive being wrong for six
+      hours. (n=8)
+
 ---
 
-*Next entry: 2026-08-05 (Wed) — first session of the new expiry cycle (08-11) in the new vol regime; divergence monitor build queued.*
+*Next entry: 2026-08-07 (Fri) — last session before the weekend inside
+the 08-11 straddle; watch whether the wing-build/near-drain pattern
+extends and whether IV finally pays the quiet tape.*
