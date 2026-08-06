@@ -406,3 +406,14 @@ grains dye in the field's own color — blue grain in blue zones like
 the reference — plus a faint fine pass underneath for micro-texture.
 Verified on the Ocean drama sky at device scale: clearly stylistic.
 Knobs: coarseness = baseFrequency, punch = opacity/table.
+
+## Loop 14 (2026-08-06) — grain settled (founder-tuned) + background-only
+
+Founder tuned via the panel and locked: baseFrequency 0.80, contrast
+table [0 0.45 0.55 1], opacity 0.45, blend soft-light, fine layer
+0.10 — i.e. fine film grain at moderate strength, not the chunky riso.
+Baked as the CSS defaults. Grain now paints on the BACKGROUND only:
+hero sections isolate their stacking context and both grain
+pseudo-layers sit at z-index -1, so text/buttons above are ungrained
+(founder request). GrainTuner unmounted from the page; the component
+stays in the repo for future texture-tuning sessions.

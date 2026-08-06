@@ -5,7 +5,6 @@ import { auth } from "@clerk/nextjs/server";
 import { UNIVERSES } from "@/lib/universes";
 import { FloatingNav } from "@/components/marketing/floating-nav";
 import { FooterPanel } from "@/components/marketing/footer-panel";
-import { GrainTuner } from "@/components/marketing/grain-tuner";
 import { MarketingCard } from "@/components/marketing/marketing-card";
 import { FeatureCard } from "@/components/marketing/feature-card";
 import { SectionPanel } from "@/components/marketing/section-panel";
@@ -71,8 +70,6 @@ export default async function LandingPage() {
   return (
     <div className="mw-brand mw-mint2 mw-sans-headings relative min-h-screen overflow-hidden bg-surface-base">
       <FloatingNav />
-      {/* Study tool — remove when the grain settles */}
-      <GrainTuner />
 
       <main className="relative">
         {/* Hero — loop 8 experiment: grain + pastel gradient (Noto-banner
