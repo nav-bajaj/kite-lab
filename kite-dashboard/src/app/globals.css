@@ -265,20 +265,6 @@
   background-size: 22px 22px;
 }
 
-/* Variant B study (design_studies R2): brighter, sharper ground — almost
- * white with a 2% whisper of the palette primary so it never reads as pure
- * #FFFFFF (DESIGN.md §9). Light palettes only; Midnight keeps its ground. */
-.mw-bright {
-  --surface-base: color-mix(in oklab, #ffffff 98%, var(--primary));
-  /* .mw-brand sets background-color: var(--background) in this same unlayered
-   * scope, which outranks the layered bg-surface-base utility — the ground was
-   * silently rendering mist (found during critique). Declared after .mw-brand,
-   * so this wins and the almost-white ground actually applies. */
-  background-color: var(--surface-base);
-}
-.dark .mw-bright {
-  --surface-base: #0C1219;
-}
 
 /* Horizon study palette (design_studies loop 2): Ocean-rooted primary pushed
  * brighter and more saturated (#0A5CFF, 5.3:1 on white — vibrance band), with
@@ -292,7 +278,6 @@
  * picking Ocean in the picker renders the marketing surface in the vivid
  * blue/sun/coral system. Extend to other palettes only if the founder
  * approves the Ocean trial. */
-html:not(.dark) .mw-horizon,
 html[data-palette="ocean"]:not(.dark) .mw-brand {
   --primary: #0A5CFF;
   --primary-foreground: #FFFFFF;
@@ -320,68 +305,7 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
   --surface-base: #FAFCFF;
 }
 
-/* Horizon DARK (design_studies loop 3) — the Midnight counterpart, designed
- * not inverted: navy-black ground, luminous saturated blue with INK button
- * text (white fails 4.5 on the bright primary; dark ink passes 5.8), brighter
- * coral/sun, solid dark accent washes. All 27 bars script-verified (fg >= 4.5
- * on wash and card; marks >= 3 on ground). Declared after .mw-bright so its
- * ground override wins in dark. Candidate `dark` half of the two-theme
- * endgame that retires the palette picker. */
-.dark .mw-horizon {
-  --surface-base: #0B1120;
-  background-color: var(--surface-base);
-  --background: #0B1120;
-  --card: #121A2A;
-  --card-foreground: #E8EDF6;
-  --foreground: #E8EDF6;
-  --muted-foreground: #9AA7BC;
-  --border: #263349;
-  --input: #263349;
-  --primary: #4D8DFF;
-  --primary-foreground: #06122B;
-  --secondary: #F0B254;
-  --secondary-foreground: #06122B;
-  --ring: #4D8DFF;
-  --display-accent: #F27E6C;
-  --acc1-bg: #10233F; --acc1-line: #4D8DFF; --acc1-fg: #A8C8FF;
-  --acc2-bg: #2A2113; --acc2-line: #F0B254; --acc2-fg: #F5CF8E;
-  --acc3-bg: #10291C; --acc3-line: #3FBF77; --acc3-fg: #8FE0B2;
-  --acc4-bg: #2E1712; --acc4-line: #F27E6C; --acc4-fg: #F5AC9E;
-  --acc5-bg: #211537; --acc5-line: #B685FF; --acc5-fg: #D3B8FF;
-  --acc6-bg: #0D2723; --acc6-line: #2FB89E; --acc6-fg: #8ADCC9;
-  --wash1: #101B2E; --wash2: #241E12; --wash3: #291613;
-  --chart-series-1: #4D8DFF;
-  --chart-series-2: #F0B254;
-  --chart-series-3: #8B99AD;
-  --surface-panel-deep: #0A1B3D;
-  --surface-panel-deep-foreground: #EAF1FF;
-}
 
-/* Variant C (design_studies loop 4): banded-section kit. The hero sky is an
- * atmospheric vertical gradient from the Horizon family (R4/P13: artistic
- * gradient, no blur, no gradient text); dots-light is the loved footer dot
- * texture generalized for dark bands. White ground is a recorded study
- * exception to the near-white rule. */
-.mw-hero-sky {
-  background: linear-gradient(
-    180deg,
-    #04122b 0%,
-    #0a3bbf 42%,
-    #2f7bff 68%,
-    #a8c8ff 92%,
-    #ffffff 100%
-  );
-}
-.mw-dots-light {
-  background-image: radial-gradient(
-    color-mix(in oklab, #ffffff 45%, transparent) 1px,
-    transparent 1.6px
-  );
-  background-size: 22px 22px;
-}
-
-/* (Snap-to-section scrolling was trialled in loop 5 and removed in loop 6 —
- * founder disliked the stickiness.) */
 
 /* Mint v2 (loop 7): the brand green family with the study's vibrance
  * treatment. The old lichen #0C7A62 already sits at the top of the WCAG
@@ -402,17 +326,6 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
   background-color: var(--surface-base);
 }
 
-/* Green counterpart of the hero sky (R4/P13 composition, brand family). */
-.mw-hero-sky-mint {
-  background: linear-gradient(
-    180deg,
-    #03231a 0%,
-    #026b4c 40%,
-    #12a57b 68%,
-    #bfebd9 92%,
-    #fafdfb 100%
-  );
-}
 
 /* Heading sans layer (loop 7): flips every heading — including the ones
  * inside shared production components — to the trial heading face without
@@ -424,53 +337,6 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
   letter-spacing: -0.015em;
 }
 
-/* Grain + gradient hero (loop 8, Noto-banner reference): soft pastel field
- * in the brand family with a whisper of cool blue, plus an SVG fractal-noise
- * grain overlay (data URI — CSP-clean, no assets). Dark ink text on light
- * ground, unlike the dark mint sky it replaces (kept above for revert). */
-.mw-hero-grain {
-  background:
-    radial-gradient(
-      ellipse 55% 65% at 18% 22%,
-      color-mix(in oklab, var(--primary) 17%, #ffffff) 0%,
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 50% 60% at 82% 18%,
-      color-mix(in oklab, var(--secondary) 22%, #ffffff) 0%,
-      transparent 72%
-    ),
-    radial-gradient(
-      ellipse 70% 55% at 55% 90%,
-      color-mix(in oklab, var(--primary) 10%, #ffffff) 0%,
-      transparent 75%
-    ),
-    linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--primary) 7%, #ffffff) 0%,
-      color-mix(in oklab, var(--primary) 4%, #ffffff) 60%,
-      var(--surface-base, #ffffff) 100%
-    );
-}
-/* Midnight: same composition on the dark ground, blobs from the palette. */
-.dark .mw-hero-grain {
-  background:
-    radial-gradient(
-      ellipse 55% 65% at 18% 22%,
-      color-mix(in oklab, var(--primary) 22%, var(--background)) 0%,
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 50% 60% at 82% 18%,
-      color-mix(in oklab, var(--accent) 18%, var(--background)) 0%,
-      transparent 72%
-    ),
-    linear-gradient(
-      180deg,
-      color-mix(in oklab, var(--primary) 9%, var(--background)) 0%,
-      var(--background) 100%
-    );
-}
 /* Loop 11: the dramatic Sui-anatomy hero — near-black top, luminous primary
  * mid, pale exit into the page ground. Token-derived, so Ocean(Horizon) gives
  * the actual sui.io navy->vivid-blue->pale sky and every other palette gets
@@ -498,12 +364,10 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
  * BACKGROUND only — text and buttons sit above it, ungrained. */
 /* .mw-grainy generalizes the tuned grain to any container (cards, panels). */
 .mw-grainy,
-.mw-hero-grain,
 .mw-hero-drama {
   isolation: isolate;
 }
 .mw-grainy::after,
-.mw-hero-grain::after,
 .mw-hero-drama::after {
   content: "";
   position: absolute;
@@ -518,7 +382,6 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
   mix-blend-mode: var(--grain-blend, soft-light);
 }
 .mw-grainy::before,
-.mw-hero-grain::before,
 .mw-hero-drama::before {
   content: "";
   position: absolute;

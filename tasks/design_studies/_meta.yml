@@ -8,6 +8,10 @@ supersedes:
 depends_on: []
 register_rows: []
 notes: >
+  2026-08-06: 17 study loops complete; homepage composed from the new
+  primitive library (STATE.md is the summary; PREFERENCES.md the log).
+  Dead experiments pruned in loop 18. Revisit-before-merge checklist
+  in STATE.md.
   AI-slop audit + elimination guide + modular primitive kit for web,
   social, and research reports. Branch design_studies off beta_gtm_mvp,
   worktree .worktrees/design_studies. Audit baseline 13/20; CSP

@@ -20,12 +20,15 @@
 
 ## Phase 2 — study loops (iterative, founder in the loop) [direction risk]
 
-- [~] 👤 Seed references: R1 cartesia.ai captured; more screenshots incoming
-- [x] 🤖 PREFERENCES.md opened (R1 structural grid + typography shortlist)
-- [ ] 🤖 Study loop 1: homepage section grammar (2-3 rendered variants)
-- [ ] 👤 Direction sign-off per surface
-- [ ] 🤖 Settle study items: Fraunces/Outfit keep-or-evolve;
-      illustration replacement; section cadence
+- [x] 17 loops run 2026-08-06 (R1 cartesia REJECTED; R2 base.org; R3
+      phantom; R4 sui.io; Noto grain; clay.com + teak.io primitives).
+      Full narrative in PREFERENCES.md; current state in STATE.md.
+- [x] 🤖 Homepage composed from the primitive library (loop 17);
+      Ocean base; hero/CTA/footer keepers locked
+- [x] 🤖 Typography: Stack Sans Text + Outfit (+ mono); Fraunces off
+      the homepage
+- [ ] 👤 Continue loops: media slots (real screenshots), remaining
+      surfaces, palette + typography endgames
 
 ## Phase 3 — primitive kit [integration risk]
 
