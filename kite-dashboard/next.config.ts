@@ -47,8 +47,12 @@ const devApiOrigin =
 // allowlisted or ClerkJS fails to load and sign-in silently breaks. The
 // `*.accounts.dev` / `*.clerk.accounts.dev` entries are kept so local/dev
 // (test instance) still works. See docs/security/risk-register.md R-006.
+// `accounts.marketworks.in` is the production Account Portal (the custom-domain
+// counterpart of the bare `*.accounts.dev` entry). Without it the portal
+// prefetch/session-sync connect from the homepage is CSP-blocked (console
+// error on every load). See docs/security/risk-register.md R-023.
 const clerkOrigins =
-  "https://clerk.marketworks.in https://*.clerk.accounts.dev https://*.accounts.dev https://*.clerk.com";
+  "https://clerk.marketworks.in https://accounts.marketworks.in https://*.clerk.accounts.dev https://*.accounts.dev https://*.clerk.com";
 const turnstileOrigin = "https://challenges.cloudflare.com";
 
 const cspDirectives = [
