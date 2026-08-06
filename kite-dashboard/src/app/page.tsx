@@ -39,6 +39,10 @@ const STEPS = [
 const sectionHeading =
   "text-[1.75rem] font-semibold leading-[1.1] tracking-[-0.02em] text-foreground sm:text-[2.25rem]";
 
+// Polychrome moment (Horizon palette): sibling mono labels rotate through the
+// accent fgs — rotation encodes sibling identity, data surfaces stay clean.
+const LABEL_ACCENTS = ["text-acc1-fg", "text-acc2-fg", "text-acc4-fg"] as const;
+
 export default async function LandingPage() {
   const portfolios = Object.values(UNIVERSES).filter((u) => u.clientVisible);
   // Signed-in visitors already have access, so send them straight to the app.
@@ -47,7 +51,7 @@ export default async function LandingPage() {
   const betaLabel = userId ? "View dashboard" : "Get beta access";
 
   return (
-    <div className="mw-brand mw-bright relative min-h-screen overflow-hidden bg-surface-base">
+    <div className="mw-brand mw-bright mw-horizon relative min-h-screen overflow-hidden bg-surface-base">
       <FloatingNav />
 
       <main className="relative z-10">
@@ -128,7 +132,9 @@ export default async function LandingPage() {
                 key={step.title}
                 className="rounded-lg border border-border bg-card p-7 transition-colors duration-150 hover:border-primary"
               >
-                <span className="font-mono text-sm text-muted-foreground">
+                <span
+                  className={`font-mono text-sm ${LABEL_ACCENTS[i % LABEL_ACCENTS.length]}`}
+                >
                   0{i + 1}
                 </span>
                 <h3 className="mt-3 text-xl font-semibold leading-[1.2] tracking-[-0.01em] text-foreground">
@@ -183,14 +189,16 @@ export default async function LandingPage() {
             </p>
           </div>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {portfolios.map((universe) => (
+            {portfolios.map((universe, i) => (
               <Link
                 key={universe.id}
                 href="/portfolios"
                 className="group flex h-full flex-col rounded-lg border border-border bg-card p-7 transition-colors duration-150 hover:border-primary"
               >
                 <div className="flex items-baseline justify-between gap-3">
-                  <span className="font-mono text-sm lowercase text-muted-foreground">
+                  <span
+                    className={`font-mono text-sm lowercase ${LABEL_ACCENTS[i % LABEL_ACCENTS.length]}`}
+                  >
                     {universe.riskProfile}
                   </span>
                   <span className="font-mono text-sm text-muted-foreground">

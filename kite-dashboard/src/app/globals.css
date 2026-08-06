@@ -275,6 +275,36 @@
   --surface-base: #0C1219;
 }
 
+/* Horizon study palette (design_studies loop 2): Ocean-rooted primary pushed
+ * brighter and more saturated (#0A5CFF, 5.3:1 on white — vibrance band), with
+ * a polychrome accent rotation drawn from the palettes the founder likes:
+ * sun, signal-green, coral, purple, teal. All bars verified (fg >= 4.5 on
+ * wash AND white; chart marks >= 3; sun keyline is decorative-only, its
+ * chart seat is the darker #C77E14). Light only — Midnight untouched.
+ * If the direction wins, this graduates to the design repo as the light half
+ * of a two-theme system replacing the six-palette picker. */
+html:not(.dark) .mw-horizon {
+  --primary: #0A5CFF;
+  --primary-foreground: #FFFFFF;
+  --secondary: #E8A33D;
+  --secondary-foreground: #1A1A1A;
+  --ring: #0A5CFF;
+  --display-accent: #E0604D;
+  --acc1-bg: #E8F0FF; --acc1-line: #0A5CFF; --acc1-fg: #0847C8;
+  --acc2-bg: #FDF1DC; --acc2-line: #E8A33D; --acc2-fg: #86590E;
+  --acc3-bg: #E3F6EA; --acc3-line: #2EA860; --acc3-fg: #17693A;
+  --acc4-bg: #FDEBE6; --acc4-line: #E0604D; --acc4-fg: #A63825;
+  --acc5-bg: #F2EAFE; --acc5-line: #9750F8; --acc5-fg: #6B2BD8;
+  --acc6-bg: #E0F4F0; --acc6-line: #0C9C82; --acc6-fg: #08604F;
+  --wash1: #F4F8FF; --wash2: #FEF8EC; --wash3: #FDF0EC;
+  --chart-series-1: #0A5CFF;
+  --chart-series-2: #C77E14;
+  --chart-series-3: #64748B;
+  /* Deep panel (footer) follows the palette: ink-navy, not lichen green. */
+  --surface-panel-deep: #0A2C66;
+  --surface-panel-deep-foreground: #EAF1FF;
+}
+
 /* Quant grid re-tinted for the primary drench band: hairlines in the
  * band's own foreground so the texture self-themes on every palette. */
 .mw-grid-inverse {
