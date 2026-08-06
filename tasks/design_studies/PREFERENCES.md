@@ -320,3 +320,20 @@ founder rather than silently changed. Horizon palette carried the
 page; mist/tint panel surfaces re-derived toward the Horizon hue so
 the panels cohere (was green mist). Palette question (blue Horizon vs
 re-vibranced brand Mint) put to the founder explicitly.
+
+## Loop 7 (2026-08-06) — Mint v2 + two-sans typography
+
+Founder picks: the page runs on re-vibranced brand GREENS (Mint v2),
+not Horizon blue; headings go sans everywhere, with TWO sans faces —
+Outfit for content plus a slightly stylized heading face.
+
+Applied: `.mw-mint2` (primary #00875F — purer emerald at 4.53:1 with
+WHITE foreground; the old lichen was already at the top of the WCAG
+vibrance band, so chroma push is modest and brightness comes from the
+green hero sky, #FAFDFB ground, white cards); `.mw-hero-sky-mint`
+(deep forest -> emerald -> pale mint -> white); heading layer
+`.mw-sans-headings` flips all h1-h4 (including inside shared
+components) to Schibsted Grotesk (--font-schibsted via next/font) —
+swap the face in layout.tsx to trial Cabinet Grotesk / General Sans
+later. Fraunces is now fully off the homepage. Horizon light/dark
+blocks remain in CSS as parked references.

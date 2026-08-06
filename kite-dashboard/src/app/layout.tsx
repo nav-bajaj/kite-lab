@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Fraunces, Outfit } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Fraunces,
+  Outfit,
+  Schibsted_Grotesk,
+} from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
@@ -31,6 +37,15 @@ const outfit = Outfit({
   weight: ["400", "500", "600"],
 });
 
+// design_studies loop 7: heading sans under study (founder: two sans faces —
+// Outfit for content, a slightly stylized one for headings). Schibsted
+// Grotesk is the shortlist pick; swap here to trial alternatives.
+const schibsted = Schibsted_Grotesk({
+  variable: "--font-schibsted",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   title: "Marketworks Dashboard",
   description: "Momentum Portfolio Management Dashboard",
@@ -48,7 +63,7 @@ export default function RootLayout({
     >
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${outfit.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${outfit.variable} ${schibsted.variable} antialiased`}
         >
           <Providers>{children}</Providers>
           <SpeedInsights />

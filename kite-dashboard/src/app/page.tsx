@@ -68,12 +68,12 @@ export default async function LandingPage() {
   const betaLabel = userId ? "View dashboard" : "Get beta access";
 
   return (
-    <div className="mw-brand mw-horizon relative min-h-screen overflow-hidden bg-surface-base">
+    <div className="mw-brand mw-mint2 mw-sans-headings relative min-h-screen overflow-hidden bg-surface-base">
       <FloatingNav />
 
       <main className="relative">
         {/* KEEP — atmospheric gradient hero (R4/P13) */}
-        <section className="mw-hero-sky relative flex min-h-[88vh] w-full flex-col justify-center overflow-hidden">
+        <section className="mw-hero-sky-mint relative flex min-h-[88vh] w-full flex-col justify-center overflow-hidden">
           <div
             aria-hidden
             className="mw-dots-light absolute inset-x-0 top-0 h-1/2 opacity-40 [mask-image:linear-gradient(to_bottom,#000,transparent)]"
@@ -92,7 +92,7 @@ export default async function LandingPage() {
             <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
               <Link
                 href={betaHref}
-                className="rounded-full bg-white px-6 py-3 text-base font-semibold text-[#0A47D8] transition-transform duration-150 hover:-translate-y-px"
+                className="rounded-full bg-white px-6 py-3 text-base font-semibold text-primary transition-transform duration-150 hover:-translate-y-px"
               >
                 {betaLabel}
               </Link>

@@ -378,6 +378,41 @@ html:not(.dark) .mw-horizon {
 /* (Snap-to-section scrolling was trialled in loop 5 and removed in loop 6 —
  * founder disliked the stickiness.) */
 
+/* Mint v2 (loop 7): the brand green family with the study's vibrance
+ * treatment. The old lichen #0C7A62 already sits at the top of the WCAG
+ * vibrance band, so the chroma push is modest (#00875F, 4.53:1, WHITE
+ * foreground — mist fails on it) and the brightness comes from the hero sky,
+ * a cleaner near-white ground, and white cards. */
+.mw-mint2 {
+  --primary: #00875F;
+  --primary-foreground: #FFFFFF;
+  --ring: #00875F;
+  --surface-base: #FAFDFB;
+  background-color: var(--surface-base);
+}
+
+/* Green counterpart of the hero sky (R4/P13 composition, brand family). */
+.mw-hero-sky-mint {
+  background: linear-gradient(
+    180deg,
+    #03231a 0%,
+    #026b4c 40%,
+    #12a57b 68%,
+    #bfebd9 92%,
+    #fafdfb 100%
+  );
+}
+
+/* Heading sans layer (loop 7): flips every heading — including the ones
+ * inside shared production components — to the trial heading face without
+ * editing components. Remove the class to fall back to each component's own
+ * heading font. */
+.mw-sans-headings :is(h1, h2, h3, h4) {
+  font-family: var(--font-schibsted), var(--font-outfit), ui-sans-serif,
+    system-ui, sans-serif;
+  letter-spacing: -0.015em;
+}
+
 /* Quant grid re-tinted for the primary drench band: hairlines in the
  * band's own foreground so the texture self-themes on every palette. */
 .mw-grid-inverse {
