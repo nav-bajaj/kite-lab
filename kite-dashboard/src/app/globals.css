@@ -471,7 +471,23 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
       var(--background) 100%
     );
 }
-.mw-hero-grain::after {
+/* Loop 11: the dramatic Sui-anatomy hero — near-black top, luminous primary
+ * mid, pale exit into the page ground. Token-derived, so Ocean(Horizon) gives
+ * the actual sui.io navy->vivid-blue->pale sky and every other palette gets
+ * its own dark drama. White text sits on the upper two-thirds. */
+.mw-hero-drama {
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--primary) 22%, #010714) 0%,
+    color-mix(in oklab, var(--primary) 62%, #02102e) 40%,
+    color-mix(in oklab, var(--primary) 88%, #ffffff) 66%,
+    color-mix(in oklab, var(--primary) 24%, #ffffff) 90%,
+    var(--surface-base, #ffffff) 100%
+  );
+}
+
+.mw-hero-grain::after,
+.mw-hero-drama::after {
   content: "";
   position: absolute;
   inset: 0;

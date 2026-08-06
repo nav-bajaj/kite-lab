@@ -385,3 +385,14 @@ shows the whole marketing surface in the vivid system. Verified:
 hero field renders blue+sun-gold, cards wash blue/sun/coral, research
 panel ink-navy. Pending founder verdict before extending the vibrance
 treatment to the remaining palettes.
+
+## Loop 11 (2026-08-06) — dramatic dark hero (Sui anatomy)
+
+Light pastel hero judged too light; founder wants dark and dramatic
+per sui.io. New `.mw-hero-drama`: token-derived vertical sky —
+near-black-mixed primary at the crown, luminous primary mid, pale
+exit into the ground — so Ocean(Horizon) reproduces the actual Sui
+navy->vivid-blue->pale gradient and every palette gets its own dark
+drama (Mint = deep forest). White headline/sub/CTAs return; grain
+overlay rides the dark field (shared ::after). The light grain-pastel
+hero (.mw-hero-grain) stays in CSS as the alternate.
