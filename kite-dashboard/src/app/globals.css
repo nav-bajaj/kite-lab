@@ -408,9 +408,30 @@ html:not(.dark) .mw-horizon {
  * editing components. Remove the class to fall back to each component's own
  * heading font. */
 .mw-sans-headings :is(h1, h2, h3, h4) {
-  font-family: var(--font-schibsted), var(--font-outfit), ui-sans-serif,
-    system-ui, sans-serif;
+  font-family: "Stack Sans Notch", var(--font-schibsted), var(--font-outfit),
+    ui-sans-serif, system-ui, sans-serif;
   letter-spacing: -0.015em;
+}
+
+/* Grain + gradient hero (loop 8, Noto-banner reference): soft pastel field
+ * in the brand family with a whisper of cool blue, plus an SVG fractal-noise
+ * grain overlay (data URI — CSP-clean, no assets). Dark ink text on light
+ * ground, unlike the dark mint sky it replaces (kept above for revert). */
+.mw-hero-grain {
+  background:
+    radial-gradient(ellipse 55% 65% at 18% 22%, #cdeadd 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 82% 18%, #c9e4ef 0%, transparent 72%),
+    radial-gradient(ellipse 70% 55% at 55% 90%, #ddf2e7 0%, transparent 75%),
+    linear-gradient(180deg, #eef7f2 0%, #f4faf7 60%, #fafdfb 100%);
+}
+.mw-hero-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.16;
+  mix-blend-mode: soft-light;
 }
 
 /* Quant grid re-tinted for the primary drench band: hairlines in the

@@ -62,6 +62,24 @@ export default function RootLayout({
       signUpFallbackRedirectUrl="/"
     >
       <html lang="en" suppressHydrationWarning>
+        {/* Stack Sans Notch (design_studies heading trial) predates this Next
+            version's next/font data, so it loads via the Google Fonts
+            stylesheet (CSP already allows these origins; React hoists the
+            links). Self-host via next/font after the next Next.js upgrade. */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font -- rule
+            targets the pages router; this is the App Router ROOT layout, so
+            the stylesheet applies to every route */}
+        <link
+          rel="stylesheet"
+          precedence="default"
+          href="https://fonts.googleapis.com/css2?family=Stack+Sans+Notch:wght@400..700&display=swap"
+        />
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${outfit.variable} ${schibsted.variable} antialiased`}
         >

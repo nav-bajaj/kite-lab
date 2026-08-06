@@ -337,3 +337,24 @@ components) to Schibsted Grotesk (--font-schibsted via next/font) —
 swap the face in layout.tsx to trial Cabinet Grotesk / General Sans
 later. Fraunces is now fully off the homepage. Horizon light/dark
 blocks remain in CSS as parked references.
+
+## Loop 8 (2026-08-06) — Stack Sans Notch + grain hero
+
+Founder supplied both: Stack Sans Notch (spotted on Google Fonts) as
+the stylized heading sans, and the Google Fonts Noto banner as the
+hero reference (grain + soft pastel gradient, dark text).
+
+Applied: Stack Sans Notch heads the heading stack (too new for this
+Next version's next/font data — loads via the Google Fonts stylesheet,
+which our CSP already allows; self-host after the next Next upgrade;
+Schibsted Grotesk remains the loaded fallback). Hero swapped to
+`.mw-hero-grain`: layered pastel radials (brand mint + one cool-blue
+corner echoing the reference) over near-white, with an SVG
+fractal-noise grain overlay (data URI, soft-light blend — no image
+assets, CSP-clean). Ink headline on light ground, primary back on the
+word "calm", emerald CTA pill. The dark mint sky (.mw-hero-sky-mint)
+and Horizon skies stay in CSS for instant revert.
+
+Note for next loops: Stack Sans Notch is strongly characterful
+(notched cuts) — currently headings-only, which is the right dosage;
+resist letting it leak into body/UI sizes.

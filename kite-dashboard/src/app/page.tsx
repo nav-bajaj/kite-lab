@@ -72,18 +72,19 @@ export default async function LandingPage() {
       <FloatingNav />
 
       <main className="relative">
-        {/* KEEP — atmospheric gradient hero (R4/P13) */}
-        <section className="mw-hero-sky-mint relative flex min-h-[88vh] w-full flex-col justify-center overflow-hidden">
-          <div
-            aria-hidden
-            className="mw-dots-light absolute inset-x-0 top-0 h-1/2 opacity-40 [mask-image:linear-gradient(to_bottom,#000,transparent)]"
-          />
+        {/* Hero — loop 8 experiment: grain + pastel gradient (Noto-banner
+            reference), ink text on light ground. The dark mint sky variant
+            stays in CSS (.mw-hero-sky-mint) for quick revert. */}
+        <section className="mw-hero-grain relative flex min-h-[88vh] w-full flex-col justify-center overflow-hidden">
           <div className="relative mx-auto w-full max-w-[1240px] px-6 pb-24 pt-40 text-center lg:pb-16 lg:pt-28">
-            <p className="font-mono text-sm text-white/70">private beta</p>
-            <h1 className="mx-auto mt-6 max-w-[12ch] text-[3.4rem] font-medium leading-[1.02] tracking-[-0.035em] text-balance text-white sm:text-[6rem]">
-              Indian markets, the calm way.
+            <p className="font-mono text-sm text-muted-foreground">
+              private beta
+            </p>
+            <h1 className="mx-auto mt-6 max-w-[12ch] text-[3.4rem] font-medium leading-[1.02] tracking-[-0.025em] text-balance text-foreground sm:text-[6rem]">
+              Indian markets, the <span className="text-primary">calm</span>{" "}
+              way.
             </h1>
-            <p className="mx-auto mt-7 max-w-[38em] text-lg leading-[1.6] text-white/85 sm:text-xl">
+            <p className="mx-auto mt-7 max-w-[38em] text-lg leading-[1.6] text-muted-foreground sm:text-xl">
               Marketworks helps you follow the strongest stocks in the Indian
               market without watching it all day. You get three ready-made
               portfolios and a daily market read, built on live data instead of
@@ -92,13 +93,13 @@ export default async function LandingPage() {
             <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
               <Link
                 href={betaHref}
-                className="rounded-full bg-white px-6 py-3 text-base font-semibold text-primary transition-transform duration-150 hover:-translate-y-px"
+                className="rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground transition-transform duration-150 hover:-translate-y-px"
               >
                 {betaLabel}
               </Link>
               <Link
                 href="/library"
-                className="rounded-full border border-white/50 px-6 py-3 text-base font-semibold text-white transition-colors duration-150 hover:border-white"
+                className="rounded-full border border-border bg-white/60 px-6 py-3 text-base font-semibold text-foreground transition-colors duration-150 hover:border-primary"
               >
                 Read the library
               </Link>
