@@ -29,17 +29,17 @@ export default function PrivacyPage() {
       <h2>Third parties</h2>
       <ul>
         <li>
-          <strong>Clerk</strong> — authentication, session management, account
+          <strong>Clerk</strong>: authentication, session management, account
           profile storage.
         </li>
         <li>
-          <strong>Vercel</strong> — frontend hosting.
+          <strong>Vercel</strong>: frontend hosting.
         </li>
         <li>
-          <strong>Railway</strong> — backend hosting and database.
+          <strong>Railway</strong>: backend hosting and database.
         </li>
         <li>
-          <strong>Google</strong> — OAuth provider when you sign in with
+          <strong>Google</strong>: OAuth provider when you sign in with
           Google.
         </li>
       </ul>

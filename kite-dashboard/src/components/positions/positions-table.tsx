@@ -76,7 +76,7 @@ function MobilePositionRow({
         <span
           className={`rounded-full px-2 py-px text-xs font-semibold tabular-nums ${getPnLClass(
             position.total_pnl_pct,
-          )} ${position.total_pnl_pct >= 0 ? "bg-green-600/10" : "bg-red-600/10"}`}
+          )} ${position.total_pnl_pct >= 0 ? "bg-positive/10" : "bg-negative/10"}`}
         >
           {formatPercentValue(position.total_pnl_pct)}
         </span>
@@ -305,9 +305,9 @@ export function PositionsTable({ positions, isLoading }: PositionsTableProps) {
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
                       {position.total_pnl >= 0 ? (
-                        <TrendingUp className="h-4 w-4 text-green-500" />
+                        <TrendingUp className="h-4 w-4 text-positive" />
                       ) : (
-                        <TrendingDown className="h-4 w-4 text-red-500" />
+                        <TrendingDown className="h-4 w-4 text-negative" />
                       )}
                       {position.symbol}
                     </div>

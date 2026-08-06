@@ -120,7 +120,7 @@ export function ActionableTrades() {
         {hasMoves && data.sells.length > 0 && (
           <section className="space-y-2">
             <SectionTitle
-              icon={<ArrowDownCircle className="h-4 w-4 text-red-500" />}
+              icon={<ArrowDownCircle className="h-4 w-4 text-negative" />}
               label="Selling out"
               count={data.sells.length}
               hint="These names leave the portfolio entirely."
@@ -130,7 +130,7 @@ export function ActionableTrades() {
                 <Badge
                   key={`sell-${s}`}
                   variant="outline"
-                  className="border-red-500 text-red-700 dark:text-red-400"
+                  className="border-negative text-negative"
                 >
                   − {s}
                 </Badge>
@@ -143,7 +143,7 @@ export function ActionableTrades() {
         {hasMoves && data.buys.length > 0 && (
           <section className="space-y-2">
             <SectionTitle
-              icon={<ArrowUpCircle className="h-4 w-4 text-green-500" />}
+              icon={<ArrowUpCircle className="h-4 w-4 text-positive" />}
               label="Buying in"
               count={data.buys.length}
               hint="New names entering the portfolio."
@@ -248,7 +248,7 @@ function Countdown({ next }: { next: RebalanceNextInfo | null }) {
 function RegimeNote({ data }: { data: RebalanceUpcoming }) {
   if (data.regime !== "bear") return null;
   return (
-    <div className="flex items-start gap-2 rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
+    <div className="flex items-start gap-2 rounded-md bg-warning/10 px-3 py-2 text-xs text-warning">
       <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
       <span>
         Defensive mode: the broad market is weak, so the strategy is holding more

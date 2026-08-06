@@ -145,11 +145,11 @@ export function PositionsSummary({
           <span>Positions</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-green-600 font-medium">{summary.winners}</span>
+          <span className="text-positive font-medium">{summary.winners}</span>
           <span>Winners</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-red-600 font-medium">{summary.losers}</span>
+          <span className="text-negative font-medium">{summary.losers}</span>
           <span>Losers</span>
         </div>
         {holdingsDate && (

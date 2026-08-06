@@ -5,22 +5,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useHoldings } from "@/lib/hooks";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
-// Sector-pie palette from the brand chart hues (DESIGN.md chart-1..5) plus
-// tints, ordered for adjacent-slice contrast. Mid-tones only, so each slice
-// reads against both the light and dark card.
+// Sector-pie palette from the accent-rotation tokens so the pie re-themes
+// with the six-palette system (SVG presentation attributes resolve CSS
+// variables). Slices 7-12 reuse the rotation softened toward the surface,
+// keeping adjacent-slice contrast without hardcoding per-palette hexes.
+const ACCENTS = [1, 2, 3, 4, 5, 6].map((n) => `var(--acc${n}-line)`);
 const COLORS = [
-  "#14715F", // lichen
-  "#9750F8", // violet
-  "#C39B5A", // ochre (light)
-  "#42608E", // slate-blue
-  "#55C374", // signal-green
-  "#2E9B7E", // teal (lichen tint)
-  "#B08CF0", // violet (light)
-  "#9E6A35", // ochre
-  "#6B8FC9", // slate-blue (light)
-  "#86D89E", // signal-green (light)
-  "#7A3FC9", // violet (deep)
-  "#3E8E78", // lichen (mid)
+  ...ACCENTS,
+  ...ACCENTS.map((c) => `color-mix(in srgb, ${c} 55%, var(--background))`),
 ];
 
 type SectorSlice = { name: string; value: number; count: number };

@@ -58,8 +58,8 @@ export function TradeSummary() {
       color:
         data.realized_pnl_total != null
           ? data.realized_pnl_total >= 0
-            ? "text-green-600"
-            : "text-red-600"
+            ? "text-positive"
+            : "text-negative"
           : "",
     },
     {
@@ -82,7 +82,7 @@ export function TradeSummary() {
       value: fmtPct(data.best_trade_pct),
       icon: ArrowUpRight,
       hint: "The single most profitable matched trade. Click to see it.",
-      color: data.best_trade_pct != null && data.best_trade_pct > 0 ? "text-green-600" : "",
+      color: data.best_trade_pct != null && data.best_trade_pct > 0 ? "text-positive" : "",
       trade: data.best_trade ?? null,
     },
     {
@@ -90,7 +90,7 @@ export function TradeSummary() {
       value: fmtPct(data.worst_trade_pct),
       icon: ArrowDownRight,
       hint: "The single biggest loss on a matched trade. Click to see it.",
-      color: data.worst_trade_pct != null && data.worst_trade_pct < 0 ? "text-red-600" : "",
+      color: data.worst_trade_pct != null && data.worst_trade_pct < 0 ? "text-negative" : "",
       trade: data.worst_trade ?? null,
     },
     {
@@ -98,14 +98,14 @@ export function TradeSummary() {
       value: fmtPct(data.avg_winner_pct),
       icon: TrendingUp,
       hint: "Average gain across the trades that made money.",
-      color: data.avg_winner_pct != null ? "text-green-600" : "",
+      color: data.avg_winner_pct != null ? "text-positive" : "",
     },
     {
       title: "Avg Loser",
       value: fmtPct(data.avg_loser_pct),
       icon: TrendingDown,
       hint: "Average loss across the trades that lost money.",
-      color: data.avg_loser_pct != null ? "text-red-600" : "",
+      color: data.avg_loser_pct != null ? "text-negative" : "",
     },
   ];
 

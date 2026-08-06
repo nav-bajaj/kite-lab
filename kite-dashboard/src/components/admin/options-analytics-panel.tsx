@@ -105,7 +105,7 @@ export function OptionsAnalyticsPanel() {
                     (() => {
                       const pnl = !stale && ps.live_pnl != null ? ps.live_pnl : ps.final_pnl;
                       return (
-                        <span className={cn(pnl >= 0 ? "text-green-600 dark:text-green-500" : "text-destructive")}>
+                        <span className={cn(pnl >= 0 ? "text-positive" : "text-negative")}>
                           {pnl >= 0 ? "+" : ""}
                           {pnl.toFixed(1)} pts
                           <span className="text-muted-foreground font-normal"> (MAE {ps.mae.toFixed(1)})</span>

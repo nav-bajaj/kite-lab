@@ -16,33 +16,33 @@ export const metadata = {
   title: "Marketworks — Indian markets, the calm way",
   description:
     "Three ready-made momentum portfolios and a daily market read for Indian " +
-    "stocks — built on years of quantitative research, not hunches. Process " +
-    "over prediction. Currently in private beta.",
+    "stocks, built on years of quantitative research. Process over " +
+    "prediction. Currently in private beta.",
 };
 
 const STEPS = [
   {
     title: "We rank the market",
-    body: "Every week our system scores stocks by momentum — the simple idea that names already trending up tend to keep leading for a while.",
+    body: "Every week our system scores stocks by momentum: the simple idea that names already trending up tend to keep leading for a while.",
     image: {
       src: "/illustrations/fin-rank.webp",
-      alt: "Hot-air balloons rising to different heights over misty hills — the ones with the most lift rise to the top",
+      alt: "Hot-air balloons rising to different heights over misty hills; the ones with the most lift rise to the top",
     },
   },
   {
     title: "We build the portfolios",
-    body: "The strongest names go into ready-made lists you can follow. When the leaders change, the list updates — no guessing, no headlines.",
+    body: "The strongest names go into ready-made lists you can follow. When the leaders change, the list updates. No guessing, no headlines.",
     image: {
       src: "/illustrations/fin-build.webp",
-      alt: "Hands picking only the ripest fruit from a branch into a basket — selecting the strongest names",
+      alt: "Hands picking only the ripest fruit from a branch into a basket, selecting the strongest names",
     },
   },
   {
     title: "You follow along",
-    body: "See exactly what each portfolio holds, what changed at the last rebalance, and why — all in plain language.",
+    body: "See exactly what each portfolio holds, what changed at the last rebalance, and why, all in plain language.",
     image: {
       src: "/illustrations/fin-follow.webp",
-      alt: "A figure walking a lantern-lit path over misty hills — a clear route to follow",
+      alt: "A figure walking a lantern-lit path over misty hills, a clear route to follow",
     },
   },
 ];
@@ -101,7 +101,7 @@ export default async function LandingPage() {
               </h1>
               <p className="mx-auto mt-6 max-w-[40em] text-lg leading-[1.6] text-muted-foreground sm:text-xl">
                 Marketworks helps you follow the strongest stocks in the Indian
-                market — without watching it all day. You get three ready-made
+                market without watching it all day. You get three ready-made
                 portfolios and a daily market read, built on live data instead of
                 news and noise.
               </p>
@@ -142,7 +142,7 @@ export default async function LandingPage() {
                 Thanks for being one of our first testers. Marketworks is a
                 simpler way to invest in Indian stocks. Instead of picking names
                 yourself or reacting to the news, you follow ready-made portfolios
-                that are rebuilt on a fixed schedule — a &ldquo;rebalance&rdquo; —
+                that are rebuilt on a fixed schedule (a &ldquo;rebalance&rdquo;)
                 around the stocks that are currently leading the market.
               </p>
               <p className="mt-4 text-lg leading-[1.65] text-muted-foreground">
@@ -190,11 +190,10 @@ export default async function LandingPage() {
                   Process over prediction.
                 </h2>
                 <p className="mt-5 text-lg leading-[1.65] text-surface-panel-deep-foreground/80">
-                  Momentum isn&apos;t a hunch. It&apos;s a{" "}
-                  <span className="text-surface-panel-deep-foreground">factor</span> — one of
+                  Momentum is a{" "}
+                  <span className="text-surface-panel-deep-foreground">factor</span>: one of
                   a small handful of forces that decades of research have shown
-                  drive stock returns over time, alongside things like value and
-                  quality.
+                  drive stock returns over time, alongside value and quality.
                 </p>
                 <p className="mt-4 text-lg leading-[1.65] text-surface-panel-deep-foreground/80">
                   We&apos;ve spent years studying how it actually behaves in
@@ -214,7 +213,7 @@ export default async function LandingPage() {
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl">
                 <Image
                   src="/illustrations/fin-research.webp"
-                  alt="A magnifying glass over a tree stump's growth rings — reading decades of market history"
+                  alt="A magnifying glass over a tree stump's growth rings, reading decades of market history"
                   fill
                   sizes="(max-width: 1024px) 100vw, 40vw"
                   className="object-cover"
@@ -246,7 +245,7 @@ export default async function LandingPage() {
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-card shadow-card">
                 <Image
                   src="/illustrations/fin-portfolios.webp"
-                  alt="Three potted plants of different character on a windowsill — three ways to follow momentum"
+                  alt="Three potted plants of different character on a windowsill, three ways to follow momentum"
                   fill
                   sizes="(max-width: 1024px) 100vw, 48vw"
                   className="object-cover"

@@ -6,7 +6,7 @@ export const metadata = {
   description:
     "Marketworks writing on momentum investing, portfolio construction, " +
     "and Indian equity markets. Each piece is grounded in our own portfolios " +
-    "and live insight engine — not opinions about other people's books.",
+    "and live insight engine, not opinions about other people's books.",
 };
 
 // One accent per pillar (six pillars, six accents — DESIGN.md §2.6). The
@@ -49,7 +49,7 @@ export default function LibraryIndex() {
         </h1>
         <p className="max-w-[560px] text-lg leading-[1.6] text-muted-foreground">
           Writing on momentum, portfolio construction, and Indian equity
-          markets — each piece grounded in our own portfolios and live insight
+          markets, each piece grounded in our own portfolios and live insight
           engine, not opinions about other people&apos;s books.
         </p>
       </header>

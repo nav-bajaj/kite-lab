@@ -78,9 +78,9 @@ export function MetricsGrid() {
                 <p
                   className={`text-2xl font-bold ${
                     metric.title === "Max Drawdown"
-                      ? "text-red-600"
+                      ? "text-negative"
                       : metric.positive
-                      ? "text-green-600"
+                      ? "text-positive"
                       : ""
                   }`}
                 >
@@ -93,7 +93,7 @@ export function MetricsGrid() {
               <metric.icon
                 className={`h-8 w-8 ${
                   metric.title === "Max Drawdown"
-                    ? "text-red-200"
+                    ? "text-negative/30"
                     : "text-muted-foreground/30"
                 }`}
               />

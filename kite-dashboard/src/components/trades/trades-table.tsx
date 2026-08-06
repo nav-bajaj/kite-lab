@@ -404,8 +404,8 @@ function TradeRow({
             "text-right font-mono",
             hasMatches
               ? pnlPositive
-                ? "text-green-600"
-                : "text-red-600"
+                ? "text-positive"
+                : "text-negative"
               : "text-muted-foreground"
           )}
         >
@@ -476,7 +476,7 @@ function MatchedBuyPanel({ trade }: { trade: Trade }) {
           <div
             className={cn(
               "font-mono text-lg font-semibold",
-              totalPnl >= 0 ? "text-green-600" : "text-red-600"
+              totalPnl >= 0 ? "text-positive" : "text-negative"
             )}
           >
             {inrSigned(totalPnl)}{" "}
@@ -504,7 +504,7 @@ function MatchedBuyPanel({ trade }: { trade: Trade }) {
                 </span>
                 <span
                   className={cn(
-                    m.realized_pnl >= 0 ? "text-green-600" : "text-red-600"
+                    m.realized_pnl >= 0 ? "text-positive" : "text-negative"
                   )}
                 >
                   {inrSigned(m.realized_pnl)} (

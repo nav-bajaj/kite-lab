@@ -100,10 +100,10 @@ function HistoryRow({ row }: { row: RebalanceHistoryItem }) {
           ) : (
             <span className="flex items-center gap-2">
               {row.additions > 0 && (
-                <span className="text-green-600">+{row.additions}</span>
+                <span className="text-positive">+{row.additions}</span>
               )}
               {row.removals > 0 && (
-                <span className="text-red-600">−{row.removals}</span>
+                <span className="text-negative">−{row.removals}</span>
               )}
             </span>
           )}
@@ -130,7 +130,7 @@ function HistoryRow({ row }: { row: RebalanceHistoryItem }) {
                       <Badge
                         key={`add-${s}`}
                         variant="outline"
-                        className="border-green-600 text-green-700 dark:text-green-400"
+                        className="border-positive text-positive"
                       >
                         + {s}
                       </Badge>
@@ -148,7 +148,7 @@ function HistoryRow({ row }: { row: RebalanceHistoryItem }) {
                       <Badge
                         key={`rem-${s}`}
                         variant="outline"
-                        className="border-red-600 text-red-700 dark:text-red-400"
+                        className="border-negative text-negative"
                       >
                         − {s}
                       </Badge>

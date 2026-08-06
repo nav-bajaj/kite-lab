@@ -148,7 +148,7 @@ export function SourceData({
         Source data
       </summary>
       <p className="mt-3 text-[13px] text-muted-foreground">
-        Grounded in Marketworks&apos; insight engine — the following live
+        Grounded in Marketworks&apos; insight engine: the following live
         readings:
       </p>
       <ul className="mt-3 list-disc space-y-1 pl-5 text-[color:var(--brand-prose)]">

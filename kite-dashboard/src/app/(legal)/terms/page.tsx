@@ -12,7 +12,7 @@ export default function TermsPage() {
           Marketworks is in <strong>Private Beta</strong>. SEBI Research
           Analyst registration is currently applied for. The platform is
           made available for testing, research, and educational purposes
-          only — nothing on this site is investment advice.
+          only; nothing on this site is investment advice.
         </p>
       </div>
 
@@ -66,7 +66,7 @@ export default function TermsPage() {
       <p>
         To the maximum extent permitted by Indian law, Marketworks is not
         liable for indirect, incidental, or consequential damages arising
-        from your use of the platform — including investment losses.
+        from your use of the platform, including investment losses.
       </p>
 
       <h2>Changes</h2>
