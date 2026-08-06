@@ -270,6 +270,11 @@
  * #FFFFFF (DESIGN.md §9). Light palettes only; Midnight keeps its ground. */
 .mw-bright {
   --surface-base: color-mix(in oklab, #ffffff 98%, var(--primary));
+  /* .mw-brand sets background-color: var(--background) in this same unlayered
+   * scope, which outranks the layered bg-surface-base utility — the ground was
+   * silently rendering mist (found during critique). Declared after .mw-brand,
+   * so this wins and the almost-white ground actually applies. */
+  background-color: var(--surface-base);
 }
 .dark .mw-bright {
   --surface-base: #0C1219;
