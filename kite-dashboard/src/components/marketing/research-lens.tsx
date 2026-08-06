@@ -220,7 +220,7 @@ export function ResearchLens({ className }: { className?: string }) {
       ctx.lineCap = "round";
       ctx.beginPath();
       ctx.moveTo(cx + hx * (r + ringW / 2), cy + hy * (r + ringW / 2));
-      ctx.lineTo(cx + hx * (r * 1.52), cy + hy * (r * 1.52));
+      ctx.lineTo(cx + hx * (r * 1.78), cy + hy * (r * 1.78));
       ctx.stroke();
     };
 
