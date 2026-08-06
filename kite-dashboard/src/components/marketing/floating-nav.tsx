@@ -6,7 +6,6 @@ import { useAuth, UserButton } from "@clerk/nextjs";
 import { Menu, X } from "lucide-react";
 
 import { INSIGHTS_ACCESS } from "@/lib/flags";
-import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { cn } from "@/lib/utils";
 
 // Same public link set as the legacy MarketingNav — Insights only advertised on
@@ -77,7 +76,6 @@ export function FloatingNav() {
           <div className="flex items-center justify-end justify-self-end gap-2 sm:gap-3">
             {/* Palette picker — signed-out choices persist per device;
                 signed-in choices roam via Clerk (PaletteSync). */}
-            <ThemeToggle />
             {showSignedIn ? (
               <>
                 <Link

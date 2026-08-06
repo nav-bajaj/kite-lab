@@ -262,3 +262,46 @@ Open: evidence artifact (founder to choose), allowlist copy near CTA,
 mid-page mobile CTA, transform-based nav transitions, "Three ways"
 numeral, dashboard picker retirement + palette-system teardown once
 the two-theme direction is confirmed on real devices.
+
+## Loop 4 pivot (2026-08-06) — B5 rejected, fresh composition
+
+Founder verdict on the B-series result: wrong direction overall; keep
+architectural plans, restart the design. Explicit keeps and rejects:
+
+- KEEP: full-bleed **banded sections** (the drench CTA "looks
+  fantastic" and is the model); the **grid texture** (serious,
+  editorial) returns at section scale; the **dot pattern** from the
+  prod footer panel; the **Horizon palette** (light); textures in play.
+- REJECT: carded overlays as section grammar; the light/dark two-theme
+  exploration (ThemeToggle removed from nav; Horizon Dark parked in
+  CSS); B5's overall look.
+- NEW: **white ground** experiment (founder explicitly ready to try
+  pure white — recorded exception to the DESIGN.md near-white rule for
+  this study); experiment-first mode, no commitment yet.
+
+## R3 · phantom.com (2026-08-06)
+
+Focus: how it scrolls section-to-section ("rational flow"). Decoded
+live: NO animation library, no scroll-snap — tall (~1670px) sections
+with inner content pinned via position: sticky (top ~450px), so each
+band holds while the next slides over it: the sticky-stacking pattern.
+- **P12 — Banded takeover scroll.** Full-bleed bands, each sticky at
+  top on desktop, later bands slide over held earlier ones. CSS-only;
+  mobile keeps normal flow (content must fit a viewport per band on
+  desktop).
+
+## R4 · sui.io (2026-08-06)
+
+Focus: dramatic hero — "the text and the gradient, artistic not
+sloppy"; blur explicitly NOT wanted. Decoded live:
+- Typeface: **TWK Everett** + TWK Everett Mono (Weltkern, licensed).
+  H1 at 176px weight 400, tracking -0.033em, white on gradient. The
+  techy look = modest weight at huge size, tight tracking, mono
+  companions. Free near-matches: General Sans / Cabinet Grotesk
+  (Fontshare), Schibsted Grotesk (Google).
+- Hero: atmospheric vertical gradient (near-black navy top → vivid
+  blue → pale bottom), giant white text, white CTA pair. Flanking-word
+  blur/glow = rejected part.
+- **P13 — Atmospheric gradient hero.** One vertical multi-stop
+  gradient from the palette's own family as the hero sky; giant
+  tight-tracked sans in white; no gradient text, no blur.

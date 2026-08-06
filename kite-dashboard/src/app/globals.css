@@ -347,6 +347,29 @@ html:not(.dark) .mw-horizon {
   --surface-panel-deep-foreground: #EAF1FF;
 }
 
+/* Variant C (design_studies loop 4): banded-section kit. The hero sky is an
+ * atmospheric vertical gradient from the Horizon family (R4/P13: artistic
+ * gradient, no blur, no gradient text); dots-light is the loved footer dot
+ * texture generalized for dark bands. White ground is a recorded study
+ * exception to the near-white rule. */
+.mw-hero-sky {
+  background: linear-gradient(
+    180deg,
+    #04122b 0%,
+    #0a3bbf 42%,
+    #2f7bff 68%,
+    #a8c8ff 92%,
+    #ffffff 100%
+  );
+}
+.mw-dots-light {
+  background-image: radial-gradient(
+    color-mix(in oklab, #ffffff 45%, transparent) 1px,
+    transparent 1.6px
+  );
+  background-size: 22px 22px;
+}
+
 /* Quant grid re-tinted for the primary drench band: hairlines in the
  * band's own foreground so the texture self-themes on every palette. */
 .mw-grid-inverse {
