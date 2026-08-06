@@ -47,7 +47,7 @@ export default async function LandingPage() {
   const betaLabel = userId ? "View dashboard" : "Get beta access";
 
   return (
-    <div className="mw-brand relative min-h-screen overflow-hidden bg-surface-base">
+    <div className="mw-brand mw-bright relative min-h-screen overflow-hidden bg-surface-base">
       <FloatingNav />
 
       <main className="relative z-10">
@@ -84,8 +84,13 @@ export default async function LandingPage() {
           </div>
 
           {/* Motion as identity (P7): the live flow-field canvas is the one
-              hero texture; the page around it stays still. */}
+              hero texture. The quant grid returns HERE as chart paper under
+              the flow line — a measurement surface, not page wallpaper. */}
           <div className="relative mt-10 hidden h-[42vh] min-h-[300px] w-full md:block">
+            <div
+              aria-hidden
+              className="mw-grid absolute inset-0 [mask-image:radial-gradient(ellipse_72%_88%_at_50%_50%,#000_30%,transparent_76%)]"
+            />
             <HeroFlow className="absolute inset-0" />
           </div>
         </section>
@@ -214,8 +219,14 @@ export default async function LandingPage() {
 
         {/* CTA — the one drench (P9): full-bleed primary, deliberately
             breaking the inset-panel rule for this variant */}
-        <section className="bg-primary">
-          <div className="mx-auto max-w-[1140px] px-6 py-24 sm:py-28">
+        <section className="relative overflow-hidden bg-primary">
+          {/* Grid as field texture inside the drench: emerges on the right,
+              masked away from the copy. */}
+          <div
+            aria-hidden
+            className="mw-grid-inverse absolute inset-0 [mask-image:linear-gradient(to_left,#000_15%,transparent_62%)]"
+          />
+          <div className="relative mx-auto max-w-[1140px] px-6 py-24 sm:py-28">
             <h2 className="max-w-[640px] text-[2rem] font-semibold leading-[1.1] tracking-[-0.02em] text-balance text-primary-foreground sm:text-[3rem]">
               Marketworks is in private beta.
             </h2>

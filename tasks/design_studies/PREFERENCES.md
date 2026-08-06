@@ -120,6 +120,24 @@ Marketworks translation notes: our bespoke canvas already exists
 P6 aligns with the founder's all-sans openness and kills the eyebrow
 scaffold at the same time.
 
+### Loop-1 feedback on Variant B (2026-08-06) — LANE CONFIRMED
+
+Founder: full-bleed drench CTA is a keeper; total grid removal made
+the page "very plain" — the grid should return *creatively in certain
+fields/sections*, not as page wallpaper; try an almost-white ground
+("brighter and sharper"); stay in this lane and refine.
+
+Variant B2 applied: `.mw-bright` ground (98% white + 2% palette
+primary, Midnight untouched); grid back in exactly two contained
+zones — chart-paper under the hero flow line (a real measurement
+surface) and a foreground-tinted grid field emerging from the right
+of the drench band, masked away from the copy. New principle:
+
+- **P10 — Grid as field, not wallpaper.** The quant grid appears only
+  inside bounded zones where it reads as instrument/chart texture
+  (hero canvas band, drench field, future chart frames), always masked
+  or contained, never behind body copy.
+
 ## Typography (2026-08-06, in chat)
 
 - **Keep Outfit.** Non-negotiable baseline.

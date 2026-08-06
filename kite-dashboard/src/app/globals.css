@@ -265,6 +265,25 @@
   background-size: 22px 22px;
 }
 
+/* Variant B study (design_studies R2): brighter, sharper ground — almost
+ * white with a 2% whisper of the palette primary so it never reads as pure
+ * #FFFFFF (DESIGN.md §9). Light palettes only; Midnight keeps its ground. */
+.mw-bright {
+  --surface-base: color-mix(in oklab, #ffffff 98%, var(--primary));
+}
+.dark .mw-bright {
+  --surface-base: #0C1219;
+}
+
+/* Quant grid re-tinted for the primary drench band: hairlines in the
+ * band's own foreground so the texture self-themes on every palette. */
+.mw-grid-inverse {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--primary-foreground) 13%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--primary-foreground) 13%, transparent) 1px, transparent 1px);
+  background-size: 46px 46px;
+}
+
 /* Fixed-viewport quant grid for the marketing base (homepage_visual_refresh):
  * graph-paper lines, radially masked so the pattern
  * stays in the viewport focus and dissolves toward the edges — "viewport
