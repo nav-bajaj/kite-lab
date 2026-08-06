@@ -236,3 +236,29 @@ prediction" (founder to pick the artifact); allowlist expectation-
 setting near the CTA; mid-page mobile CTA (folds into hero-motion-v2
 round); PalettePicker on public nav (endgame is light/dark anyway);
 transform-based nav transitions; "Three ways" hardcoded numeral.
+
+## Loop 3 shipped (2026-08-06)
+
+- **P11 hero motion v2 LIVE** (`hero-quant.tsx`): dither field (value
+  noise, breathing alpha, sun sparks) + candlestick clusters that fade
+  in / breathe / dissolve. Up = filled primary, down = outlined — no
+  red/green on marketing (identity vs meaning). Runtime token
+  resolution + MutationObserver re-theme; reduced-motion static frame;
+  mobile renders a 200px light-density band (identity element finally
+  on mobile). HeroFlow retired from the homepage only.
+- **Horizon Dark**: navy-black #0B1120 ground, luminous #4D8DFF primary
+  with INK button text (white fails the bar on bright primary), coral
+  #F27E6C display, solid dark washes; 27 bars script-verified.
+- **ThemeToggle** (sun/moon) replaces PalettePicker on marketing nav;
+  light=mint / dark=midnight so Clerk roaming + PaletteSync unchanged.
+  Dashboard navbar still carries the picker until formal retirement.
+- **Middle-section lift**: welcome = rank-strip frame on chart paper
+  (true claims only in captions); research = abstract validation curve
+  with shaded unseen-period region (no fabricated numbers); step cards
+  = stroked icon tiles + mono numbers; portfolio cards = semantic
+  icons (sparkles/trend/shield) in mapped accents.
+
+Open: evidence artifact (founder to choose), allowlist copy near CTA,
+mid-page mobile CTA, transform-based nav transitions, "Three ways"
+numeral, dashboard picker retirement + palette-system teardown once
+the two-theme direction is confirmed on real devices.
