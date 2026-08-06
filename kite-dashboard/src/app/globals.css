@@ -265,6 +265,47 @@
   background-size: 22px 22px;
 }
 
+/* Structural grid layer (design_studies R1 — the Cartesia reference): the
+ * page grid is visible architecture. `.mw-rails` frames the content column
+ * with continuous vertical hairlines; `.mw-strip` bands carry texture in the
+ * gutters BETWEEN sections, never behind content (unlike the decorative
+ * `.mw-grid`/`.mw-flow-grid` field this layer replaces on the homepage).
+ * Every line derives from --border, so the layer re-themes per palette. */
+.mw-rails {
+  border-inline: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+}
+.mw-strip {
+  height: 2.5rem;
+  border-block: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+}
+.mw-strip-ticks {
+  background-image: repeating-linear-gradient(
+    to right,
+    color-mix(in oklab, var(--border) 70%, transparent) 0 1px,
+    transparent 1px 10px
+  );
+}
+.mw-strip-hatch {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    color-mix(in oklab, var(--border) 70%, transparent) 0 1px,
+    transparent 1px 10px
+  );
+}
+.mw-strip-grid {
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      color-mix(in oklab, var(--border) 70%, transparent) 0 1px,
+      transparent 1px 20px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--border) 70%, transparent) 0 1px,
+      transparent 1px 20px
+    );
+}
+
 /* Fixed-viewport quant grid for the marketing base (homepage_visual_refresh):
  * graph-paper lines, radially masked so the pattern
  * stays in the viewport focus and dissolves toward the edges — "viewport
