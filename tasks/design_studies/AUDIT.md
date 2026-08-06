@@ -39,11 +39,13 @@ genuine escapes — the bones are good, the section grammar is the tell.
   captured 2026-08-06). Functional risk for the sign-in flow.
   *Constraint: widening CSP requires a risk-register row first
   (R-006/R-007 closure). File the row, then add the origin.*
-- **Empty white panel on desktop homepage** beside "Three ways to
-  follow momentum." Likely a scroll-gated reveal whose default state is
-  invisible — the exact anti-pattern Impeccable bans (content visibility
-  gated on a class-triggered transition). Verify on a real device; make
-  the default state visible, let motion enhance it.
+- ~~Empty white panel on desktop homepage~~ **Retracted 2026-08-06:
+  false positive.** The panel is `fin-portfolios.webp` (`loading="lazy"`);
+  it loads normally on scroll (verified live: all illustration images
+  `complete` with nonzero naturalWidth after scroll-into-view). The blank
+  was an artifact of the full-page headless screenshot outrunning lazy
+  loading. The `Reveal` component was checked and is correctly built
+  (visible default, safety timeout, reduced-motion respected). No action.
 
 ### P1 — fix before the redesign ships
 
