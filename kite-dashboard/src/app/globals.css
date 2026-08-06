@@ -308,6 +308,11 @@ html:not(.dark) .mw-horizon {
   /* Deep panel (footer) follows the palette: ink-navy, not lichen green. */
   --surface-panel-deep: #0A2C66;
   --surface-panel-deep-foreground: #EAF1FF;
+  /* Panel surfaces re-derived toward the Horizon hue so the production
+   * SectionPanel/card system coheres under this palette (loop 6). */
+  --surface-panel-mist: #EEF4FD;
+  --surface-panel-tint: #F6F9FE;
+  --surface-base: #FAFCFF;
 }
 
 /* Horizon DARK (design_studies loop 3) — the Midnight counterpart, designed
@@ -370,17 +375,8 @@ html:not(.dark) .mw-horizon {
   background-size: 22px 22px;
 }
 
-/* Snap-to-section scrolling (founder request, loop 5): the viewport settles
- * on the band being viewed. Proximity, not mandatory, so long bands and
- * mid-band reading are never trapped; applies only on pages that opt in. */
-html:has(.mw-snap) {
-  scroll-snap-type: y proximity;
-}
-@media (prefers-reduced-motion: reduce) {
-  html:has(.mw-snap) {
-    scroll-snap-type: none;
-  }
-}
+/* (Snap-to-section scrolling was trialled in loop 5 and removed in loop 6 —
+ * founder disliked the stickiness.) */
 
 /* Quant grid re-tinted for the primary drench band: hairlines in the
  * band's own foreground so the texture self-themes on every palette. */

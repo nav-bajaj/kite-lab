@@ -305,3 +305,18 @@ sloppy"; blur explicitly NOT wanted. Decoded live:
 - **P13 — Atmospheric gradient hero.** One vertical multi-stop
   gradient from the palette's own family as the hero sky; giant
   tight-tracked sans in white; no gradient text, no blur.
+
+## Loop 6 (2026-08-06) — iterative mode; hybrid composition
+
+Founder reset of process AND structure: snap scrolling removed
+(disliked); iterate in small scoped steps from here, no sweeping
+rewrites. KEEP: gradient hero, drench CTA band, flat navy footer.
+Middle sections RETURN to the production design system (SectionPanel
+mist/deep, illustrated FeatureCards, MarketingCards with accent chips,
+Reveal) — the founder finds the card system's hierarchy stronger than
+the flat banded middle. Note: the production components bring the
+Fraunces serif headings back to the middle sections; surfaced to the
+founder rather than silently changed. Horizon palette carried the
+page; mist/tint panel surfaces re-derived toward the Horizon hue so
+the panels cohere (was green mist). Palette question (blue Horizon vs
+re-vibranced brand Mint) put to the founder explicitly.
