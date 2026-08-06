@@ -39,9 +39,14 @@ const STEPS = [
 const sectionHeading =
   "text-[1.75rem] font-semibold leading-[1.1] tracking-[-0.02em] text-foreground sm:text-[2.25rem]";
 
-// Polychrome moment (Horizon palette): sibling mono labels rotate through the
-// accent fgs — rotation encodes sibling identity, data surfaces stay clean.
-const LABEL_ACCENTS = ["text-acc1-fg", "text-acc2-fg", "text-acc4-fg"] as const;
+// Polychrome with semantics (critique follow-up): color is mapped to what the
+// portfolio IS, not to sibling order — defensive never wears the loss color.
+function riskAccent(riskProfile: string): string {
+  const p = riskProfile.toLowerCase();
+  if (p.includes("drawdown") || p.includes("defensive")) return "text-acc6-fg";
+  if (p.includes("growth")) return "text-acc2-fg";
+  return "text-acc1-fg";
+}
 
 export default async function LandingPage() {
   const portfolios = Object.values(UNIVERSES).filter((u) => u.clientVisible);
@@ -132,9 +137,7 @@ export default async function LandingPage() {
                 key={step.title}
                 className="rounded-lg border border-border bg-card p-7 transition-colors duration-150 hover:border-primary"
               >
-                <span
-                  className={`font-mono text-sm ${LABEL_ACCENTS[i % LABEL_ACCENTS.length]}`}
-                >
+                <span className="font-mono text-sm text-primary">
                   0{i + 1}
                 </span>
                 <h3 className="mt-3 text-xl font-semibold leading-[1.2] tracking-[-0.01em] text-foreground">
@@ -189,15 +192,15 @@ export default async function LandingPage() {
             </p>
           </div>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {portfolios.map((universe, i) => (
+            {portfolios.map((universe) => (
               <Link
                 key={universe.id}
                 href="/portfolios"
                 className="group flex h-full flex-col rounded-lg border border-border bg-card p-7 transition-colors duration-150 hover:border-primary"
               >
-                <div className="flex items-baseline justify-between gap-3">
+                <div className="flex min-h-10 items-baseline justify-between gap-3">
                   <span
-                    className={`font-mono text-sm lowercase ${LABEL_ACCENTS[i % LABEL_ACCENTS.length]}`}
+                    className={`font-mono text-sm lowercase ${riskAccent(universe.riskProfile)}`}
                   >
                     {universe.riskProfile}
                   </span>
@@ -251,9 +254,7 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        <div className="relative z-10 pb-6">
-          <FooterPanel />
-        </div>
+        <FooterPanel flat />
       </main>
     </div>
   );

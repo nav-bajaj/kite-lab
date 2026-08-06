@@ -209,3 +209,30 @@ is on the saturated list, but it's the shipped brand and the display
 face is where distinctiveness is won). Loop-1 study renders each
 candidate on: homepage hero, a /library article page, and a dashboard
 data table with tabular figures.
+
+## Critique loop 1 outcomes (2026-08-06)
+
+Dual-agent Impeccable critique: 24/32 (Good). Snapshot at
+`.impeccable/critique/2026-08-06T09-51-33Z__kite-dashboard-src-app-page-tsx.md`.
+Found + fixed same session: the mist-ground bug (unlayered .mw-brand
+background beat the utility layer — the layered near-white base had
+never actually rendered; also cleared 7 contrast near-misses).
+
+Founder decisions on the critique's questions:
+- **Frame:** keep the pill nav (distinctive), flatten the footer —
+  done (`FooterPanel flat`, full-bleed ink-navy).
+- **Polychrome:** semantic mapping, not sibling order — defensive
+  wears teal, growth sun, quality blue (`riskAccent()`); step numbers
+  went single-color primary. Defensive never wears the loss color.
+- **P11 — Hero motion v2 brief (IMPORTANT, next build):** founder
+  wants the flow-field replaced with a Base-adjacent quant texture:
+  dither / data-point fields, breathing candlesticks or charts that
+  come and go — something abstractly representing data and
+  quantitative analysis. Simpler variant must run on mobile (mobile
+  currently gets no identity element at all).
+
+Open from critique, not yet done: evidence artifact in "Process over
+prediction" (founder to pick the artifact); allowlist expectation-
+setting near the CTA; mid-page mobile CTA (folds into hero-motion-v2
+round); PalettePicker on public nav (endgame is light/dark anyway);
+transform-based nav transitions; "Three ways" hardcoded numeral.

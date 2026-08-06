@@ -17,11 +17,31 @@ const FOOTER_LINKS = [
  * floating-panel language as the CTA/research sections, so the page closes on
  * a card rather than a plain full-bleed footer. Other marketing surfaces still
  * use the shared MarketingFooter until they migrate onto this layout.
+ *
+ * `flat` (design_studies B3): full-bleed deep band with no radius or inset,
+ * matching the flat lane's drench CTA; the founder kept the pill nav but
+ * flattened the footer.
  */
-export function FooterPanel() {
+export function FooterPanel({ flat = false }: { flat?: boolean }) {
+  if (flat) {
+    return (
+      <section className="bg-surface-panel-deep text-surface-panel-deep-foreground">
+        <div className="mx-auto max-w-[1140px] px-6 py-12 sm:py-14">
+          <FooterInner />
+        </div>
+      </section>
+    );
+  }
   return (
     <SectionPanel variant="deep" className="py-10 sm:py-12">
-      <div className="flex flex-col gap-8">
+      <FooterInner />
+    </SectionPanel>
+  );
+}
+
+function FooterInner() {
+  return (
+    <div className="flex flex-col gap-8">
         <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-start">
           <div className="max-w-[440px]">
             <Link
@@ -54,7 +74,6 @@ export function FooterPanel() {
           &copy; 2026 Marketworks Research &middot; SEBI Registered Research
           Analyst
         </div>
-      </div>
-    </SectionPanel>
+    </div>
   );
 }
