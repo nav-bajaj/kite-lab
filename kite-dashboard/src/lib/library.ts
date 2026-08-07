@@ -13,6 +13,29 @@ export type LibraryHookVariant = {
   style: string;
 };
 
+/** Article-shape body section — heading + text (publish.py `sections[]`).
+ *  Present on pieces published from a derived article.json; absent on
+ *  script-shaped pieces, whose body is flat paragraphs. */
+export type LibrarySection = {
+  heading: string;
+  text: string;
+};
+
+/** Derivation edge from the content repo's pack-family scan
+ *  (finance-content-os registry/lineage.py). */
+export type LibraryLineageEdge = {
+  format: string;
+  file: string;
+  derived_from_format: string;
+  direction: string;
+  derived_at: string;
+};
+
+export type LibraryLineage = {
+  source: { format: string; file: string } | null;
+  derivatives: LibraryLineageEdge[];
+};
+
 export type LibraryPiece = {
   slug: string;
   title: string;
@@ -23,6 +46,11 @@ export type LibraryPiece = {
   hook: string;
   alternate_hooks: LibraryHookVariant[];
   body: string[];
+  /** Optional — pieces published before the 2026-08 lineage contract
+   *  (finance-content-os TASKS 2.4) don't carry these three. */
+  sections?: LibrarySection[];
+  formats?: string[];
+  lineage?: LibraryLineage;
   key_takeaway: string;
   contrarian_angle: string;
   cta: string;
@@ -34,6 +62,7 @@ export type LibraryPiece = {
     data_points?: string[];
     confidence?: string;
     compliance_summary?: string;
+    target_persona?: string;
   };
 };
 
@@ -42,6 +71,8 @@ export type LibraryManifestEntry = {
   title: string;
   pillar: string;
   format: string;
+  formats?: string[];
+  target_persona?: string;
   published_at: string;
   thumbnail: string | null;
   hook: string;

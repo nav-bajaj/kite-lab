@@ -53,6 +53,15 @@ export function Lead({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** Section subhead for article-shaped pieces (heading-per-section body). */
+export function SectionHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="mt-3 font-serif text-[1.7rem] font-medium leading-[1.2] tracking-[-0.015em] text-foreground">
+      {children}
+    </h2>
+  );
+}
+
 export function BodyParagraph({ children }: { children: React.ReactNode }) {
   return (
     <p className="text-[17px] leading-[1.62] text-[color:var(--brand-prose)]">

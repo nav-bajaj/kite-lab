@@ -4,11 +4,15 @@ import { notFound } from "next/navigation";
 
 import { getAllSlugs, getPiece } from "@/lib/library";
 import { byline, humanizeFormat } from "@/lib/library-format";
+import { Fragment } from "react";
+
 import {
   Article,
   PieceHeader,
   Lead,
   BodyParagraph,
+  SectionHeading,
+  PullQuote,
   Figure,
   TakeawayCard,
   CtaCard,
@@ -54,6 +58,14 @@ export default async function LibraryPiece({
 
   const thumbnail = piece.assets.find((a) => a.type === "thumbnail");
 
+  // Article-shaped pieces (published from a derived article.json) carry
+  // sections with headings; their key_takeaway is the article's pull-quote,
+  // rendered mid-read rather than as a closing takeaway card. Script-shaped
+  // pieces keep the flat-paragraph body + takeaway card.
+  const sections = piece.sections ?? [];
+  const hasSections = sections.length > 0;
+  const pullQuoteAfter = Math.ceil(sections.length / 2) - 1;
+
   return (
     <Article>
       <Link
@@ -66,7 +78,7 @@ export default async function LibraryPiece({
       <PieceHeader
         eyebrow={`${piece.pillar} · ${humanizeFormat(piece.format)}`}
         title={piece.title}
-        byline={byline(piece.format, piece.published_at)}
+        byline={byline(piece.format, piece.published_at, piece.duration)}
       />
 
       {thumbnail && (
@@ -75,11 +87,25 @@ export default async function LibraryPiece({
 
       {piece.hook && <Lead>{piece.hook}</Lead>}
 
-      {piece.body.map((section, i) => (
-        <BodyParagraph key={i}>{section}</BodyParagraph>
-      ))}
+      {hasSections
+        ? sections.map((section, i) => (
+            <Fragment key={i}>
+              {section.heading && (
+                <SectionHeading>{section.heading}</SectionHeading>
+              )}
+              <BodyParagraph>{section.text}</BodyParagraph>
+              {i === pullQuoteAfter && piece.key_takeaway && (
+                <PullQuote>{piece.key_takeaway}</PullQuote>
+              )}
+            </Fragment>
+          ))
+        : piece.body.map((section, i) => (
+            <BodyParagraph key={i}>{section}</BodyParagraph>
+          ))}
 
-      {piece.key_takeaway && <TakeawayCard>{piece.key_takeaway}</TakeawayCard>}
+      {!hasSections && piece.key_takeaway && (
+        <TakeawayCard>{piece.key_takeaway}</TakeawayCard>
+      )}
 
       {piece.cta && <CtaCard>{piece.cta}</CtaCard>}
 

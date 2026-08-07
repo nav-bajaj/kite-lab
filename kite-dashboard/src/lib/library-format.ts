@@ -25,7 +25,15 @@ export function formatPieceDate(iso: string): string {
   }
 }
 
-/** Byline for a reading page, e.g. "By Marketworks · Weekly roundup · 2 June 2026". */
-export function byline(format: string, publishedAt: string): string {
-  return `By Marketworks · ${humanizeFormat(format)} · ${formatPieceDate(publishedAt)}`;
+/** Byline for a reading page, e.g.
+ *  "By Marketworks · Short article · 7 August 2026 · ~2 min read".
+ *  `readingTime` is the piece's `duration` — set for article-shaped pieces
+ *  ("~2 min"), empty for legacy pieces; only appended when present. */
+export function byline(
+  format: string,
+  publishedAt: string,
+  readingTime?: string
+): string {
+  const base = `By Marketworks · ${humanizeFormat(format)} · ${formatPieceDate(publishedAt)}`;
+  return readingTime ? `${base} · ${readingTime} read` : base;
 }
