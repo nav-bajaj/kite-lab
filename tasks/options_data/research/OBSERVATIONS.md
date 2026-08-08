@@ -373,8 +373,74 @@ journal missed two days; the engine did not.)
       grind; any live-size rule must survive being wrong for six
       hours. (n=8)
 
+## 2026-08-07 (day 9) — IV finally pays: best ledger day, back in the green
+
+- Tape: -89 gap open 24,546.7 (the biggest gap of the program), fast
+  bounce to a 24,629.8 high by mid-morning, low 24,522.9, close
+  24,570.7 (-0.27%). Range 106.9 pts (0.44%) — the gap did the moving;
+  the session after it was orbit.
+- Regime: DIFFUSE (21% -> 21% -> 20%), max-gamma parked at 24600 for
+  the THIRD straight session. Total gamma ₹110k -> 130k -> 120k cr/1%.
+- OI: the PE drain went program-wide — puts down at every reported
+  strike (24550 -52%, 24650 -66%, 24750 -69%) on a gap-DOWN day, while
+  24550 CE built +36% and other CEs sat mixed. Put writers who
+  de-grossed into the new cycle (day 7) kept leaving through the
+  weekend; the one big build is calls just under spot — overhead
+  writing into weakness. Third variation of the de-grossing signature
+  in three sessions; still unresolved as a directional tell.
+- Vol: gap fear priced then crushed. ATM IV 12.10% (09:20, the richest
+  morning of the program) -> 12.04% (12:30) -> 10.59% (15:15) — a
+  1.5-vol EOD crush into the weekend. EOD straddle 219.2 pts = 0.89%
+  to the 08-11 (Monday) expiry, compressed from 1.01% with the weekend
+  now inside it.
+- Paper straddle: **+38.0 — BEST DAY IN THE LEDGER** (prior best
+  +18.4). Credit 256.1 @ 24600 | MAE only -12.2 at 09:55 | underwater
+  110 min, last at 11:23. Sold the richest morning IV of the program
+  and realized 0.44%: the whole short-vol thesis in one row.
+- **CUMULATIVE LEDGER BACK IN THE GREEN**: 9 sessions = seven wins
+  +108.1, two losses -74.8, net **+33.4**. The -4.6 trough lasted
+  exactly two sessions; one rich-premium quiet day repaired it.
+- Divergence: second consecutive clean close — and the sign FLIPPED.
+  Max dislocation -36.5 pts at 15:16 (spot 24,557.0 under forward
+  24,615.2), close window -12.3 vs baseline; nothing near the 40-pt
+  band. Series: ~200 -> 150 -> 69 -> 0 -> 0.
+- Day-plan advisory #2 on the record: DEFINED_RISK_SHORT at 24600
+  (diffuse, conc 21%, IV pctile 80% n=5, credit 267). Short premium
+  was right — the naked version made +38 and wings would have cost a
+  few points of it. Two calls, two sensible. (track record n=2)
+- Depth/friction: baseline (0.23-0.24% of premium, flat; imbalance
+  +0.13, the softest bid-skew yet — worth one eye).
+- Engine: 2.23M ticks, 36,670 bars, 0 db errors, 1 widen. Second
+  fully-live day of the analytics chain; report generated clean.
+- Observations:
+  26. The short-vol payoff finally showed its shape: sell the richest
+      IV print (80th pctile) into a tape that realizes 0.44% and the
+      ledger's best day appears — +38 on a day the plan flagged
+      premium as rich. Hyp. 23's "pricing gap risk" resolved: the gap
+      CAME (-89 overnight) and the straddle, entered post-gap at
+      09:20, still won fat. The priced risk expired at the open.
+      (n=1)
+  27. PE de-grossing (hyp. 21) survived a gap-down test: puts drained
+      at every strike on the one day put protection should have been
+      bid. Whoever is leaving the put side is leaving regardless of
+      tape direction — positioning unwind, not view. CE build at
+      24550 is the first overhead-write signature since the drift
+      week. (n=2)
+  28. Two clean closes in a row, and the dislocation's sign flipped
+      negative at 15:16 before normalizing by 15:40. Supports hyp. 24
+      (market adapting to the new close mechanics) — the monitor's
+      baseline-relative design is doing its job either way. (n=5)
+  29. Max-gamma has now sat at 24600 for three sessions (conc ~20%,
+      below pin threshold) while spot closed 24,625 / 24,636 /
+      24,571 — orbiting the strike without the concentration a pin
+      regime requires. If Monday's expiry settles near 24600 anyway,
+      the pin thesis needs a "weak attractor" variant that doesn't
+      key off concentration alone. (n=3, resolves at the 08-11
+      expiry)
+
 ---
 
-*Next entry: 2026-08-07 (Fri) — last session before the weekend inside
-the 08-11 straddle; watch whether the wing-build/near-drain pattern
-extends and whether IV finally pays the quiet tape.*
+*Next entry: 2026-08-11 (Mon) — EXPIRY 3, with the weekend inside the
+0.89% implied. Implied-vs-realized verdict #3; the 24600 weak-attractor
+question (obs. 29) resolves; day-plan call #3 lands on an expiry
+morning for the first time.*
