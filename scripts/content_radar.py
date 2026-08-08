@@ -49,6 +49,7 @@ import analyse_topic  # noqa: E402  (sibling module; sets up kite-api imports)
 FCOS_ROOT = Path.home() / "finance-content-os"
 INBOX_DIR = FCOS_ROOT / "data" / "content_ideas"
 TOPIC_INDEX = FCOS_ROOT / "data" / "memory" / "topic_index.md"
+IDEA_SCHEMA = FCOS_ROOT / "schemas" / "idea.schema.json"
 
 WEIGHTS = {"signal": 0.50, "freshness": 0.20, "format_fit": 0.15, "brand_fit": 0.15}
 DEDUPE_PENALTY = 0.5
@@ -214,6 +215,42 @@ def scan(asof: str) -> list[dict[str, Any]]:
     return ideas
 
 
+def validate_contract(ideas: list[dict[str, Any]]) -> None:
+    """Validate emitted Ideas against the contract FILE (content-os X.1).
+
+    The schema is read from finance-content-os every run — never a copy kept
+    here — so a contract change on the consumer side fails this producer
+    loudly instead of drifting silently. Unlike a dead surface (which
+    degrades gracefully), a contract violation kills the write: a malformed
+    inbox is worse than no inbox.
+    """
+    if not IDEA_SCHEMA.exists():
+        raise SystemExit(f"Idea contract not found: {IDEA_SCHEMA}")
+    schema = json.loads(IDEA_SCHEMA.read_text())
+    try:
+        from jsonschema import Draft7Validator
+
+        validator = Draft7Validator(schema)
+        errors = [
+            f"{idea.get('id', f'idea[{n}]')}: {err.message}"
+            for n, idea in enumerate(ideas)
+            for err in validator.iter_errors(idea)
+        ]
+    except ImportError:
+        required = schema.get("required", [])
+        errors = [
+            f"{idea.get('id', f'idea[{n}]')}: missing required '{key}'"
+            for n, idea in enumerate(ideas)
+            for key in required
+            if key not in idea
+        ]
+    if errors:
+        raise SystemExit(
+            "radar ideas violate idea.schema.json — inbox NOT written:\n  "
+            + "\n  ".join(errors[:10])
+        )
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--asof", default=None, help="YYYY-MM-DD (default today)")
@@ -223,6 +260,7 @@ def main(argv: list[str] | None = None) -> int:
     ideas = scan(asof)
     if not ideas:
         raise SystemExit("radar produced no ideas — every surface scan failed?")
+    validate_contract(ideas)
 
     INBOX_DIR.mkdir(parents=True, exist_ok=True)
     out = INBOX_DIR / f"{asof}.json"
