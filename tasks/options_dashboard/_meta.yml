@@ -1,0 +1,8 @@
+name: options_dashboard
+status: planned
+opened: 2026-08-08
+closed: null
+related_commits: []
+supersedes: []
+depends_on: [options_data]
+register_rows: []  # new read endpoints will extend R-026; entitlement row TBD at Phase B
