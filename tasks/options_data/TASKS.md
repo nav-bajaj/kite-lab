@@ -121,14 +121,23 @@ consumes bars only) · proprietary dataset compounding daily.
       minute, absorbs carry via the day's own median gap, flags dislocation
       beyond DIVERGENCE_FLAG_PTS (40); live compute field (`divergence` +
       `divergence_flag`) added to gamma_profile.compute_from_snapshot. Tests
-      in test_paper_straddle_gamma.py (report + live). REMAINING: surface the
-      field on the /admin Options Analytics CARD (options_worker.py + UI live
-      on beta_gtm_mvp — cross-branch follow-up).
+      in test_paper_straddle_gamma.py (report + live). REMAINING (moved):
+      surfacing the field on the /admin card is absorbed into
+      tasks/options_dashboard Phase 1 (the card becomes a link into the
+      real-time /options analytics page).
 - [ ] Threshold calibration once day-type library >= 15-20 sessions
 - [ ] Housekeeping: merge options_data_v1 -> main (closes R-025/R-026
       Alembic condition); prune old branches/stash
-- [ ] **Stage 3 — signed dealer gamma (GEX sign)** — DEFERRED TO END of
-      the analytics/strategy track. Sign the dealer/writer book from our
+- [~] **Stage 3 — signed dealer gamma (GEX sign)** — STARTED 2026-08-08
+      (founder pulled it forward): research/signed_gex_probe.py implements
+      steps 1-3 (Lee-Ready aggressor classifier vs recorded book,
+      passive-side writer attribution with dOI opened/closed split,
+      per-strike signed gamma FLOW), 18 unit tests green, schema-verified
+      on recorded ticks. REMAINING: run the sweep over all recorded
+      sessions on the worker volume (needs `railway ssh` permission or
+      GDrive offload) + write RESULTS with the out-of-sample sign test
+      (step 4, the pass/fail gate). Original deferred spec below still
+      governs the method. Sign the dealer/writer book from our
       own tick data (aggressor classification -> signed dOI ->
       signed gamma), NOT the US CE-long/PE-short assumption (NIFTY writers
       are structurally net short gamma). Out-of-sample test: does the
