@@ -7,6 +7,7 @@ import { FloatingNav } from "@/components/marketing/floating-nav";
 import { FooterPanel } from "@/components/marketing/footer-panel";
 import { HeroFlow } from "@/components/marketing/hero-flow";
 import { ResearchLens } from "@/components/marketing/research-lens";
+import { SmoothScroll } from "@/components/marketing/smooth-scroll";
 import {
   FactTile,
   SelectorPanel,
@@ -82,6 +83,7 @@ export default async function LandingPage() {
 
   return (
     <div className="mw-brand mw-mint2 mw-serif-headings relative min-h-screen bg-surface-base">
+      <SmoothScroll />
       <FloatingNav />
 
       <main className="relative">

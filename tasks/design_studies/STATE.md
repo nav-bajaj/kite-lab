@@ -1,4 +1,4 @@
-# design_studies — state of the study (2026-08-06)
+# design_studies — state of the study (2026-08-09)
 
 > Loop 19 lives on branch **design_studies_clay** (off design_studies):
 > clay.com decoded (CLAY_STUDY.md) and the six-palette picker collapsed
@@ -74,6 +74,9 @@ KEPT (and why):
 - Ocean-slot Horizon palette as base; palette picker retained.
 - Interactive SelectorPanel with real data only — no fabricated
   numbers anywhere in the study (hard rule).
+- Lenis smooth scroll (loop 22), homepage-only via `SmoothScroll` in
+  page.tsx — inertia easing on the real scroll position, not the
+  rejected snap/takeover scroll-jacking; reduced-motion skips it.
 
 REJECTED / let go (code removed; history has it all):
 - Cartesia structural grid (rails + rhythm strips) — loop 4 revert.
@@ -88,6 +91,9 @@ REJECTED / let go (code removed; history has it all):
   only now), Fraunces on the homepage (still used on other pages).
 - `.mw-bright`, mint/blue hero skies, `.mw-dots-light` — dead CSS
   removed in the loop-18 cleanup.
+- Instrument Serif + Inter pairing (loop 22) — rejected on sight; the
+  400-only display face reads light at card-heading sizes. Fraunces +
+  Outfit confirmed again.
 
 ## Open threads (the long way still to go)
 
@@ -120,3 +126,6 @@ REJECTED / let go (code removed; history has it all):
 5. Reconcile the homepage's new language with the other marketing
    pages before shipping any of it.
 6. Re-run `/impeccable critique` + the detector; update AUDIT.md.
+7. Lenis is homepage-only ("keep for now", loop 22): decide site-wide
+   vs homepage vs drop before merge; anchor links would need
+   lenis.scrollTo if it spreads to pages that use them.

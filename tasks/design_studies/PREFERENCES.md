@@ -561,3 +561,23 @@ Two founder calls on the loop-20 build:
    DPR-aware, static frame under reduced-motion, pauses on hidden tab.
 
 Verified both themes (evidence/loop21_*). tsc clean.
+
+## Loop 22 (2026-08-09) — font trial rejected; Lenis scroll kept
+
+1. Instrument Serif + Inter trial — REJECTED on sight ("this isn't
+   looking good"). Wired via a `.mw-instrument` layer (Inter body,
+   Instrument Serif 400-pinned headings — the face ships no bolder
+   weight, so smaller headings read light and unstructured); founder
+   reverted same session. Fraunces + Outfit stays. Code removed.
+2. Lenis smooth scroll (lenis.dev, v1.3.26) — KEPT ("I like the
+   smoothness"). `SmoothScroll` client component
+   (components/marketing/smooth-scroll.tsx), homepage mount only,
+   default settings (lerp 0.1, autoRaf). Skips init under
+   prefers-reduced-motion; touch stays native (Lenis default). Drives
+   the real scroll position, so grid fade / ResearchLens / FloatingNav
+   needed no changes. Distinct from the rejected snap/takeover
+   patterns: inertia easing only, user keeps control.
+
+Toolchain note: Turbopack's persistent cache served stale compiled
+globals.css across a dev-server restart — `rm -rf .next` is the fix
+when style edits refuse to land.
