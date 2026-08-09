@@ -56,6 +56,7 @@ def _load(signature) -> dict[str, dict[str, str]]:
             out[sym] = {
                 "sector": sector,
                 "slug": (r.get("zerodha_sector_slug") or "").strip(),
+                "super": (r.get("super_sector") or "").strip(),
             }
     return out
 
@@ -77,6 +78,28 @@ def get_sector_to_symbols() -> dict[str, tuple[str, ...]]:
     for sym, rec in _load(_signature()).items():
         out.setdefault(rec["sector"], []).append(sym)
     return {sector: tuple(sorted(syms)) for sector, syms in out.items()}
+
+
+def get_symbol_to_super_sector() -> dict[str, str]:
+    """{canonical symbol -> study super-sector (coarser 15-bucket rollup)}."""
+    return {sym: rec["super"] for sym, rec in _load(_signature()).items() if rec["super"]}
+
+
+def get_super_sector_for(symbol: str) -> str | None:
+    """Study super-sector for `symbol`, or None if not mapped."""
+    rec = _load(_signature()).get(symbol)
+    return (rec["super"] or None) if rec else None
+
+
+def get_super_sector_to_symbols() -> dict[str, tuple[str, ...]]:
+    """Reverse index: {super-sector -> sorted tuple of member symbols}. The
+    coarse level for sector-performance studies where the fine sectors are too
+    thin (e.g. Aviation=2, Media=4) to compare reliably."""
+    out: dict[str, list[str]] = {}
+    for sym, rec in _load(_signature()).items():
+        if rec["super"]:
+            out.setdefault(rec["super"], []).append(sym)
+    return {sup: tuple(sorted(syms)) for sup, syms in out.items()}
 
 
 def clear_cache() -> None:

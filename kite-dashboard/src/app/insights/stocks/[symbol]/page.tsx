@@ -75,6 +75,7 @@ export default async function StockDetailPage({ params, searchParams }: PageProp
               ) : (
                 "Sector not classified"
               )}
+              {r.super_sector && r.super_sector !== r.zerodha_sector ? ` · ${r.super_sector}` : ""}
               {r.zerodha_sector && r.sectors.length ? ` · ${r.sectors.map(sectorLabel).join(" · ")}` : ""}
               {detail.asof && ` · as of ${new Date(detail.asof).toLocaleDateString("en-IN")}`}
             </p>

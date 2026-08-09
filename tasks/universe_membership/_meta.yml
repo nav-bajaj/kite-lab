@@ -1,8 +1,13 @@
 name: universe_membership
-status: in-progress
+status: shipped
 opened: 2026-07-14
-closed: null
-related_commits: []
+closed: 2026-07-21
+related_commits:
+  - e7d95b7   # Phase 1 merge — membership + grandfather rule + L6
+  - 3fcb820   # Phase 2 merge — all engines, EOD adapter, universe views
+  - 97c2af5   # COMBO component-slot candidate mask
+  - e8d4cd6   # merged-panel seeding for new members
+  - 04ceaee   # admin job-timestamp fix (found during verification)
 supersedes: []
 depends_on:
   - momentum_experiment

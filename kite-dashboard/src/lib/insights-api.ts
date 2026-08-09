@@ -329,6 +329,7 @@ export interface StockRow {
   tags: string[];
   sectors: string[];
   zerodha_sector?: string | null;
+  super_sector?: string | null;
   // detail-only (present on /stocks/{symbol}.row, absent on screener rows)
   date?: string;
   above_20dma?: boolean | null;

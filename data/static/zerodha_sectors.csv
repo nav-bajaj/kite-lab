@@ -1,505 +1,505 @@
-symbol,company,zerodha_sector,zerodha_sector_slug,source_exchange
-360ONE,360 ONE WAM Ltd.,Financial Services,financial-services,NSE
-3MINDIA,3M India Ltd.,Diversified,diversified,NSE
-AADHARHFC,Aadhar Housing Finance Ltd.,Financial Services,financial-services,NSE
-AARTIIND,Aarti Industries Ltd.,Chemicals,chemicals,NSE
-AAVAS,Aavas Financiers Ltd.,Financial Services,financial-services,NSE
-ABB,ABB India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-ABBOTINDIA,Abbott India Ltd.,Healthcare,healthcare,NSE
-ABCAPITAL,Aditya Birla Capital Ltd.,Financial Services,financial-services,NSE
-ABDL,Allied Blenders and Distillers Ltd.,FMCG,fmcg,NSE
-ABFRL,Aditya Birla Fashion and Retail Ltd.,Retail,retail,NSE
-ABLBL,Aditya Birla Lifestyle Brands Ltd.,Retail,retail,NSE
-ABREL,Aditya Birla Real Estate Ltd.,Diversified,diversified,NSE
-ABSLAMC,Aditya Birla Sun Life AMC Ltd.,Financial Services,financial-services,NSE
-ACC,ACC Ltd.,Building Materials,building-materials,NSE
-ACE,Action Construction Equipment Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-ACMESOLAR,ACME Solar Holdings Ltd.,Energy,energy,NSE
-ACUTAAS,Acutaas Chemicals Ltd.,Healthcare,healthcare,NSE
-ADANIENSOL,Adani Energy Solutions Ltd.,Energy,energy,NSE
-ADANIENT,Adani Enterprises Ltd.,Trading,trading,NSE
-ADANIGREEN,Adani Green Energy Ltd.,Energy,energy,NSE
-ADANIPORTS,Adani Ports and Special Economic Zone Ltd.,Logistics,logistics,NSE
-ADANIPOWER,Adani Power Ltd.,Energy,energy,NSE
-AEGISLOG,Aegis Logistics Ltd.,Logistics,logistics,NSE
-AEGISVOPAK,Aegis Vopak Terminals Ltd.,Logistics,logistics,NSE
-AFCONS,Afcons Infrastructure Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-AFFLE,Affle 3i Ltd.,Software Services,software-services,NSE
-AIAENG,AIA Engineering Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-AIIL,Authum Investment & Infrastructure Ltd.,Financial Services,financial-services,NSE
-AJANTPHARM,Ajanta Pharmaceuticals Ltd.,Healthcare,healthcare,NSE
-AKZOINDIA,JSW Dulux Ltd.,Building Materials,building-materials,NSE
-ALKEM,Alkem Laboratories Ltd.,Healthcare,healthcare,NSE
-AMBER,Amber Enterprises India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-AMBUJACEM,Ambuja Cements Ltd.,Building Materials,building-materials,NSE
-ANANDRATHI,Anand Rathi Wealth Ltd.,Financial Services,financial-services,NSE
-ANANTRAJ,Anant Raj Ltd.,Real Estate,real-estate,NSE
-ANGELONE,Angel One Ltd.,Financial Services,financial-services,NSE
-ANTHEM,Anthem Biosciences Ltd.,Healthcare,healthcare,NSE
-ANURAS,Anupam Rasayan India Ltd.,Chemicals,chemicals,NSE
-APARINDS,Apar Industries Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-APLAPOLLO,APL Apollo Tubes Ltd.,Building Materials,building-materials,NSE
-APOLLOHOSP,Apollo Hospitals Enterprise Ltd.,Healthcare,healthcare,NSE
-APOLLOTYRE,Apollo Tyres Ltd.,Auto Ancillary,auto-ancillary,NSE
-APTUS,Aptus Value Housing Finance India Ltd.,Financial Services,financial-services,NSE
-ARE&M,Amara Raja Energy & Mobility Ltd.,Auto Ancillary,auto-ancillary,NSE
-ASAHIINDIA,Asahi India Glass Ltd.,Building Materials,building-materials,NSE
-ASHOKLEY,Ashok Leyland Ltd.,Automobile,automobile,NSE
-ASIANPAINT,Asian Paints Ltd.,Building Materials,building-materials,NSE
-ASTERDM,Aster DM Healthcare Ltd.,Healthcare,healthcare,NSE
-ASTRAL,Astral Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-ATGL,Adani Total Gas Ltd.,Energy,energy,NSE
-ATHERENERG,Ather Energy Ltd.,Automobile,automobile,NSE
-ATUL,Atul Ltd.,Chemicals,chemicals,NSE
-AUBANK,AU Small Finance Bank Ltd.,Financial Services,financial-services,NSE
-AUROPHARMA,Aurobindo Pharma Ltd.,Healthcare,healthcare,NSE
-AWL,AWL Agri Business Ltd.,FMCG,fmcg,NSE
-AXISBANK,Axis Bank Ltd.,Financial Services,financial-services,NSE
-BAJAJ-AUTO,Bajaj Auto Ltd.,Automobile,automobile,NSE
-BAJAJFINSV,Bajaj Finserv Ltd.,Financial Services,financial-services,NSE
-BAJAJHFL,Bajaj Housing Finance Ltd.,Financial Services,financial-services,NSE
-BAJAJHLDNG,Bajaj Holdings & Investment Ltd.,Financial Services,financial-services,NSE
-BAJFINANCE,Bajaj Finance Ltd.,Financial Services,financial-services,NSE
-BALKRISIND,Balkrishna Industries Ltd.,Auto Ancillary,auto-ancillary,NSE
-BALRAMCHIN,Balrampur Chini Mills Ltd.,FMCG,fmcg,NSE
-BANDHANBNK,Bandhan Bank Ltd.,Financial Services,financial-services,NSE
-BANKBARODA,Bank of Baroda,Financial Services,financial-services,NSE
-BANKINDIA,Bank of India,Financial Services,financial-services,NSE
-BATAINDIA,Bata India Ltd.,Retail,retail,NSE
-BAYERCROP,Bayer Cropscience Ltd.,Chemicals,chemicals,NSE
-BBTC,Bombay Burmah Trading Corporation Ltd.,Agriculture,agriculture,NSE
-BDL,Bharat Dynamics Ltd.,Defence,defence,NSE
-BEL,Bharat Electronics Ltd.,Defence,defence,NSE
-BELRISE,Belrise Industries Ltd.,Auto Ancillary,auto-ancillary,NSE
-BEML,BEML Ltd.,Defence,defence,NSE
-BERGEPAINT,Berger Paints India Ltd.,Building Materials,building-materials,NSE
-BHARATFORG,Bharat Forge Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-BHARTIARTL,Bharti Airtel Ltd.,Telecom,telecom,NSE
-BHARTIHEXA,Bharti Hexacom Ltd.,Telecom,telecom,NSE
-BHEL,Bharat Heavy Electricals Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-BIKAJI,Bikaji Foods International Ltd.,FMCG,fmcg,NSE
-BIOCON,Biocon Ltd.,Healthcare,healthcare,NSE
-BLS,BLS International Services Ltd.,Services,services,NSE
-BLUEDART,Blue Dart Express Ltd.,Logistics,logistics,NSE
-BLUEJET,Blue Jet Healthcare Ltd.,Healthcare,healthcare,NSE
-BLUESTARCO,Blue Star Ltd.,Consumer Durables,consumer-durables,NSE
-BOSCHLTD,Bosch Ltd.,Auto Ancillary,auto-ancillary,NSE
-BPCL,Bharat Petroleum Corporation Ltd.,Energy,energy,NSE
-BRIGADE,Brigade Enterprises Ltd.,Real Estate,real-estate,NSE
-BRITANNIA,Britannia Industries Ltd.,FMCG,fmcg,NSE
-BSE,BSE Ltd.,Financial Services,financial-services,NSE
-BSOFT,Birlasoft Ltd.,Software Services,software-services,NSE
-CAMS,Computer Age Management Services Ltd.,Financial Services,financial-services,NSE
-CANBK,Canara Bank,Financial Services,financial-services,NSE
-CANFINHOME,Can Fin Homes Ltd.,Financial Services,financial-services,NSE
-CANHLIFE,Canara HSBC Life Insurance Company Ltd.,Financial Services,financial-services,NSE
-CAPLIPOINT,Caplin Point Laboratories Ltd.,Healthcare,healthcare,NSE
-CARBORUNIV,Carborundum Universal Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-CARTRADE,Cartrade Tech Ltd.,IT,it,NSE
-CASTROLIND,Castrol India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-CCL,CCL Products (I) Ltd.,FMCG,fmcg,NSE
-CDSL,Central Depository Services (India) Ltd.,Financial Services,financial-services,NSE
-CEATLTD,Ceat Ltd.,Auto Ancillary,auto-ancillary,NSE
-CEMPRO,Cemindia Projects Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-CENTRALBK,Central Bank of India,Financial Services,financial-services,NSE
-CESC,CESC Ltd.,Energy,energy,NSE
-CGCL,Capri Global Capital Ltd.,Financial Services,financial-services,NSE
-CGPOWER,CG Power and Industrial Solutions Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-CHALET,Chalet Hotels Ltd.,Tourism Hospitality,tourism-hospitality,NSE
-CHAMBLFERT,Chambal Fertilizers & Chemicals Ltd.,Fertilizers,fertilizers,NSE
-CHENNPETRO,Chennai Petroleum Corporation Ltd.,Energy,energy,NSE
-CHOICEIN,Choice International Ltd.,Financial Services,financial-services,NSE
-CHOLAFIN,Cholamandalam Investment and Finance Company Ltd.,Financial Services,financial-services,NSE
-CHOLAHLDNG,Cholamandalam Financial Holdings Ltd.,Financial Services,financial-services,NSE
-CIEINDIA,CIE Automotive India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-CIPLA,Cipla Ltd.,Healthcare,healthcare,NSE
-CLEAN,Clean Science and Technology Ltd.,Chemicals,chemicals,NSE
-COALINDIA,Coal India Ltd.,Energy,energy,NSE
-COCHINSHIP,Cochin Shipyard Ltd.,Defence,defence,NSE
-COFORGE,Coforge Ltd.,Software Services,software-services,NSE
-COHANCE,Cohance Lifesciences Ltd.,Healthcare,healthcare,NSE
-COLPAL,Colgate Palmolive (India) Ltd.,FMCG,fmcg,NSE
-CONCOR,Container Corporation of India Ltd.,Logistics,logistics,NSE
-CONCORDBIO,Concord Biotech Ltd.,Healthcare,healthcare,NSE
-COROMANDEL,Coromandel International Ltd.,Fertilizers,fertilizers,NSE
-CPPLUS,Aditya Infotech Ltd.,Consumer Durables,consumer-durables,NSE
-CRAFTSMAN,Craftsman Automation Ltd.,Auto Ancillary,auto-ancillary,NSE
-CREDITACC,CreditAccess Grameen Ltd.,NBFC,nbfc,NSE
-CRISIL,CRISIL Ltd.,Financial Services,financial-services,NSE
-CROMPTON,Crompton Greaves Consumer Electricals Ltd.,Consumer Durables,consumer-durables,NSE
-CUB,City Union Bank Ltd.,Financial Services,financial-services,NSE
-CUMMINSIND,Cummins India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-CYIENT,Cyient Ltd.,Software Services,software-services,NSE
-DABUR,Dabur India Ltd.,FMCG,fmcg,NSE
-DALBHARAT,Dalmia Bharat Ltd.,Building Materials,building-materials,NSE
-DATAPATTNS,Data Patterns (India) Ltd.,Defence,defence,NSE
-DCMSHRIRAM,DCM Shriram Ltd.,Diversified,diversified,NSE
-DEEPAKFERT,Deepak Fertilisers & Petrochemicals Corp. Ltd.,Fertilizers,fertilizers,NSE
-DEEPAKNTR,Deepak Nitrite Ltd.,Chemicals,chemicals,NSE
-DELHIVERY,Delhivery Ltd.,Logistics,logistics,NSE
-DEVYANI,Devyani International Ltd.,FMCG,fmcg,NSE
-DIVISLAB,Divi's Laboratories Ltd.,Healthcare,healthcare,NSE
-DIXON,Dixon Technologies (India) Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-DLF,DLF Ltd.,Real Estate,real-estate,NSE
-DMART,Avenue Supermarts Ltd.,Retail,retail,NSE
-DOMS,DOMS Industries Ltd.,FMCG,fmcg,NSE
-DRREDDY,Dr. Reddy's Laboratories Ltd.,Healthcare,healthcare,NSE
-ECLERX,eClerx Services Ltd.,Software Services,software-services,NSE
-EICHERMOT,Eicher Motors Ltd.,Automobile,automobile,NSE
-EIDPARRY,E.I.D. Parry (India) Ltd.,FMCG,fmcg,NSE
-EIHOTEL,EIH Ltd.,Tourism Hospitality,tourism-hospitality,NSE
-ELECON,Elecon Engineering Co. Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-ELGIEQUIP,Elgi Equipments Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-EMAMILTD,Emami Ltd.,FMCG,fmcg,NSE
-EMCURE,Emcure Pharmaceuticals Ltd.,Healthcare,healthcare,NSE
-EMMVEE,Emmvee Photovoltaic Power Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-ENDURANCE,Endurance Technologies Ltd.,Auto Ancillary,auto-ancillary,NSE
-ENGINERSIN,Engineers India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-ENRIN,Siemens Energy India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-ERIS,Eris Lifesciences Ltd.,Healthcare,healthcare,NSE
-ESCORTS,Escorts Kubota Ltd.,Automobile,automobile,NSE
-ETERNAL,Eternal Ltd.,Services,services,NSE
-EXIDEIND,Exide Industries Ltd.,Auto Ancillary,auto-ancillary,NSE
-FACT,Fertilisers and Chemicals Travancore Ltd.,Fertilizers,fertilizers,NSE
-FEDERALBNK,Federal Bank Ltd.,Financial Services,financial-services,NSE
-FINCABLES,Finolex Cables Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-FIRSTCRY,Brainbees Solutions Ltd.,Retail,retail,NSE
-FIVESTAR,Five-Star Business Finance Ltd.,Financial Services,financial-services,NSE
-FLUOROCHEM,Gujarat Fluorochemicals Ltd.,Chemicals,chemicals,NSE
-FORCEMOT,Force Motors Ltd.,Automobile,automobile,NSE
-FORTIS,Fortis Healthcare Ltd.,Healthcare,healthcare,NSE
-FSL,Firstsource Solutions Ltd.,Software Services,software-services,NSE
-GABRIEL,Gabriel India Ltd.,Auto Ancillary,auto-ancillary,NSE
-GAIL,GAIL (India) Ltd.,Energy,energy,NSE
-GALLANTT,Gallantt Ispat Ltd.,Metals,metals,NSE
-GESHIP,Great Eastern Shipping Co. Ltd.,Logistics,logistics,NSE
-GICRE,General Insurance Corporation of India,Financial Services,financial-services,NSE
-GILLETTE,Gillette India Ltd.,FMCG,fmcg,NSE
-GLAND,Gland Pharma Ltd.,Healthcare,healthcare,NSE
-GLAXO,Glaxosmithkline Pharmaceuticals Ltd.,Healthcare,healthcare,NSE
-GLENMARK,Glenmark Pharmaceuticals Ltd.,Healthcare,healthcare,NSE
-GMDCLTD,Gujarat Mineral Development Corporation Ltd.,Metals,metals,NSE
-GMRAIRPORT,GMR Airports Ltd.,Aviation,aviation,NSE
-GODFRYPHLP,Godfrey Phillips India Ltd.,FMCG,fmcg,NSE
-GODIGIT,Go Digit General Insurance Ltd.,Financial Services,financial-services,NSE
-GODREJCP,Godrej Consumer Products Ltd.,FMCG,fmcg,NSE
-GODREJIND,Godrej Industries Ltd.,Chemicals,chemicals,NSE
-GODREJPROP,Godrej Properties Ltd.,Real Estate,real-estate,NSE
-GPIL,Godawari Power & Ispat Ltd.,Metals,metals,NSE
-GRANULES,Granules India Ltd.,Healthcare,healthcare,NSE
-GRAPHITE,Graphite India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-GRASIM,Grasim Industries Ltd.,Diversified,diversified,NSE
-GRAVITA,Gravita India Ltd.,Services,services,NSE
-GROWW,Billionbrains Garage Ventures Ltd.,Financial Services,financial-services,NSE
-GRSE,Garden Reach Shipbuilders & Engineers Ltd.,Defence,defence,NSE
-GSPL,Gujarat State Petronet Ltd.,Energy,energy,NSE
-GVT&D,GE Vernova T&D India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-HAL,Hindustan Aeronautics Ltd.,Defence,defence,NSE
-HAVELLS,Havells India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-HBLENGINE,HBL Engineering Ltd.,Auto Ancillary,auto-ancillary,NSE
-HCLTECH,HCL Technologies Ltd.,Software Services,software-services,NSE
-HDBFS,HDB Financial Services Ltd.,Financial Services,financial-services,NSE
-HDFCAMC,HDFC Asset Management Company Ltd.,Financial Services,financial-services,NSE
-HDFCBANK,HDFC Bank Ltd.,Financial Services,financial-services,NSE
-HDFCLIFE,HDFC Life Insurance Company Ltd.,Financial Services,financial-services,NSE
-HEG,H.E.G. Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-HEROMOTOCO,Hero MotoCorp Ltd.,Automobile,automobile,NSE
-HEXT,Hexaware Technologies Ltd.,Software Services,software-services,NSE
-HFCL,HFCL Ltd.,Telecom,telecom,NSE
-HINDALCO,Hindalco Industries Ltd.,Metals,metals,NSE
-HINDCOPPER,Hindustan Copper Ltd.,Metals,metals,NSE
-HINDPETRO,Hindustan Petroleum Corporation Ltd.,Energy,energy,NSE
-HINDUNILVR,Hindustan Unilever Ltd.,FMCG,fmcg,NSE
-HINDZINC,Hindustan Zinc Ltd.,Metals,metals,NSE
-HOMEFIRST,Home First Finance Company India Ltd.,Financial Services,financial-services,NSE
-HONASA,Honasa Consumer Ltd.,FMCG,fmcg,NSE
-HONAUT,Honeywell Automation India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-HSCL,Himadri Speciality Chemical Ltd.,Chemicals,chemicals,NSE
-HUDCO,Housing & Urban Development Corporation Ltd.,Financial Services,financial-services,NSE
-HYUNDAI,Hyundai Motor India Ltd.,Automobile,automobile,NSE
-ICICIAMC,ICICI Prudential Asset Management Company Ltd.,Financial Services,financial-services,NSE
-ICICIBANK,ICICI Bank Ltd.,Financial Services,financial-services,NSE
-ICICIGI,ICICI Lombard General Insurance Company Ltd.,Financial Services,financial-services,NSE
-ICICIPRULI,ICICI Prudential Life Insurance Company Ltd.,Financial Services,financial-services,NSE
-IDBI,IDBI Bank Ltd.,Financial Services,financial-services,NSE
-IDEA,Vodafone Idea Ltd.,Telecom,telecom,NSE
-IDFCFIRSTB,IDFC First Bank Ltd.,Financial Services,financial-services,NSE
-IEX,Indian Energy Exchange Ltd.,Financial Services,financial-services,NSE
-IFCI,IFCI Ltd.,Financial Services,financial-services,NSE
-IGIL,International Gemological Institute Ltd.,Software Services,software-services,NSE
-IGL,Indraprastha Gas Ltd.,Energy,energy,NSE
-IIFL,IIFL Finance Ltd.,Financial Services,financial-services,NSE
-IKS,Inventurus Knowledge Solutions Ltd.,Software Services,software-services,NSE
-INDGN,Indegene Ltd.,Healthcare,healthcare,NSE
-INDHOTEL,Indian Hotels Co. Ltd.,Tourism Hospitality,tourism-hospitality,NSE
-INDIACEM,India Cements Ltd.,Building Materials,building-materials,NSE
-INDIAMART,Indiamart Intermesh Ltd.,IT,it,NSE
-INDIANB,Indian Bank,Financial Services,financial-services,NSE
-INDIGO,InterGlobe Aviation Ltd.,Aviation,aviation,NSE
-INDUSINDBK,IndusInd Bank Ltd.,Financial Services,financial-services,NSE
-INDUSTOWER,Indus Towers Ltd.,Telecom,telecom,NSE
-INFY,Infosys Ltd.,Software Services,software-services,NSE
-INOXWIND,Inox Wind Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-INTELLECT,Intellect Design Arena Ltd.,Software Services,software-services,NSE
-IOB,Indian Overseas Bank,Financial Services,financial-services,NSE
-IOC,Indian Oil Corporation Ltd.,Energy,energy,NSE
-IPCALAB,Ipca Laboratories Ltd.,Healthcare,healthcare,NSE
-IRB,IRB Infrastructure Developers Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-IRCON,IRCON International Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-IRCTC,Indian Railway Catering And Tourism Corporation Ltd.,Tourism Hospitality,tourism-hospitality,NSE
-IREDA,Indian Renewable Energy Development Agency Ltd.,Financial Services,financial-services,NSE
-IRFC,Indian Railway Finance Corporation Ltd.,Financial Services,financial-services,NSE
-ITC,ITC Ltd.,FMCG,fmcg,NSE
-ITCHOTELS,ITC Hotels Ltd.,Tourism Hospitality,tourism-hospitality,NSE
-ITI,ITI Ltd.,Telecom,telecom,NSE
-J&KBANK,Jammu & Kashmir Bank Ltd.,Financial Services,financial-services,NSE
-JAINREC,Jain Resource Recycling Ltd.,Services,services,NSE
-JBCHEPHARM,J.B. Chemicals & Pharmaceuticals Ltd.,Healthcare,healthcare,NSE
-JBMA,JBM Auto Ltd.,Auto Ancillary,auto-ancillary,NSE
-JINDALSAW,Jindal Saw Ltd.,Metals,metals,NSE
-JINDALSTEL,Jindal Steel Ltd.,Metals,metals,NSE
-JIOFIN,Jio Financial Services Ltd.,Financial Services,financial-services,NSE
-JKCEMENT,J.K. Cement Ltd.,Building Materials,building-materials,NSE
-JKTYRE,JK Tyre & Industries Ltd.,Auto Ancillary,auto-ancillary,NSE
-JMFINANCIL,JM Financial Ltd.,Financial Services,financial-services,NSE
-JPPOWER,Jaiprakash Power Ventures Ltd.,Energy,energy,NSE
-JSL,Jindal Stainless Ltd.,Metals,metals,NSE
-JSWCEMENT,JSW Cement Ltd.,Building Materials,building-materials,NSE
-JSWDULUX,JSW Dulux Ltd.,Building Materials,building-materials,NSE
-JSWENERGY,JSW Energy Ltd.,Energy,energy,NSE
-JSWINFRA,JSW Infrastructure Ltd.,Logistics,logistics,NSE
-JSWSTEEL,JSW Steel Ltd.,Metals,metals,NSE
-JUBLFOOD,Jubilant Foodworks Ltd.,FMCG,fmcg,NSE
-JUBLINGREA,Jubilant Ingrevia Ltd.,Chemicals,chemicals,NSE
-JUBLPHARMA,Jubilant Pharmova Ltd.,Healthcare,healthcare,NSE
-JWL,Jupiter Wagons Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-JYOTICNC,Jyoti CNC Automation Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-KAJARIACER,Kajaria Ceramics Ltd.,Building Materials,building-materials,NSE
-KALYANKJIL,Kalyan Jewellers India Ltd.,Retail,retail,NSE
-KARURVYSYA,Karur Vysya Bank Ltd.,Financial Services,financial-services,NSE
-KAYNES,Kaynes Technology India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-KEC,Kec International Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-KEI,KEI Industries Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-KFINTECH,Kfin Technologies Ltd.,Financial Services,financial-services,NSE
-KIMS,Krishna Institute of Medical Sciences Ltd.,Healthcare,healthcare,NSE
-KIRLOSENG,Kirloskar Oil Eng Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-KOTAKBANK,Kotak Mahindra Bank Ltd.,Financial Services,financial-services,NSE
-KPIL,Kalpataru Projects International Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-KPITTECH,KPIT Technologies Ltd.,Software Services,software-services,NSE
-KPRMILL,K.P.R. Mill Ltd.,Textiles,textiles,NSE
-LALPATHLAB,Dr. Lal Path Labs Ltd.,Healthcare,healthcare,NSE
-LATENTVIEW,Latent View Analytics Ltd.,Software Services,software-services,NSE
-LAURUSLABS,Laurus Labs Ltd.,Healthcare,healthcare,NSE
-LEMONTREE,Lemon Tree Hotels Ltd.,Tourism Hospitality,tourism-hospitality,NSE
-LENSKART,Lenskart Solutions Ltd.,Retail,retail,NSE
-LGEINDIA,LG Electronics India Ltd.,Consumer Durables,consumer-durables,NSE
-LICHSGFIN,LIC Housing Finance Ltd.,Financial Services,financial-services,NSE
-LICI,Life Insurance Corporation of India,Financial Services,financial-services,NSE
-LINDEINDIA,Linde India Ltd.,Chemicals,chemicals,NSE
-LLOYDSME,Lloyds Metals And Energy Ltd.,Metals,metals,NSE
-LODHA,Lodha Developers Ltd.,Real Estate,real-estate,NSE
-LT,Larsen & Toubro Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-LTF,L&T Finance Ltd.,Financial Services,financial-services,NSE
-LTFOODS,LT Foods Ltd.,FMCG,fmcg,NSE
-LTIM,LTM Ltd.,Software Services,software-services,NSE
-LTTS,L&T Technology Services Ltd.,Software Services,software-services,NSE
-LUPIN,Lupin Ltd.,Healthcare,healthcare,NSE
-M&M,Mahindra & Mahindra Ltd.,Automobile,automobile,NSE
-M&MFIN,Mahindra & Mahindra Financial Services Ltd.,Financial Services,financial-services,NSE
-MAHABANK,Bank of Maharashtra,Financial Services,financial-services,NSE
-MANAPPURAM,Manappuram Finance Ltd.,Financial Services,financial-services,NSE
-MANKIND,Mankind Pharma Ltd.,Healthcare,healthcare,NSE
-MAPMYINDIA,C.E. Info Systems Ltd.,Software Services,software-services,NSE
-MARICO,Marico Ltd.,FMCG,fmcg,NSE
-MARUTI,Maruti Suzuki India Ltd.,Automobile,automobile,NSE
-MAXHEALTH,Max Healthcare Institute Ltd.,Healthcare,healthcare,NSE
-MAZDOCK,Mazagoan Dock Shipbuilders Ltd.,Defence,defence,NSE
-MCX,Multi Commodity Exchange of India Ltd.,Financial Services,financial-services,NSE
-MEDANTA,Global Health Ltd.,Healthcare,healthcare,NSE
-MEESHO,Meesho Ltd.,Retail,retail,NSE
-MFSL,Max Financial Services Ltd.,Financial Services,financial-services,NSE
-MGL,Mahanagar Gas Ltd.,Energy,energy,NSE
-MINDACORP,Minda Corporation Ltd.,Auto Ancillary,auto-ancillary,NSE
-MMTC,MMTC Ltd.,Trading,trading,NSE
-MOTHERSON,Samvardhana Motherson International Ltd.,Auto Ancillary,auto-ancillary,NSE
-MOTILALOFS,Motilal Oswal Financial Services Ltd.,Financial Services,financial-services,NSE
-MPHASIS,MphasiS Ltd.,Software Services,software-services,NSE
-MRF,MRF Ltd.,Auto Ancillary,auto-ancillary,NSE
-MRPL,Mangalore Refinery & Petrochemicals Ltd.,Energy,energy,NSE
-MSUMI,Motherson Sumi Wiring India Ltd.,Metals,metals,NSE
-MUTHOOTFIN,Muthoot Finance Ltd.,Financial Services,financial-services,NSE
-NAM-INDIA,Nippon Life India Asset Management Ltd.,Financial Services,financial-services,NSE
-NATCOPHARM,NATCO Pharma Ltd.,Healthcare,healthcare,NSE
-NATIONALUM,National Aluminium Co. Ltd.,Metals,metals,NSE
-NAUKRI,Info Edge (India) Ltd.,IT,it,NSE
-NAVA,Nava Ltd.,Energy,energy,NSE
-NAVINFLUOR,Navin Fluorine International Ltd.,Chemicals,chemicals,NSE
-NBCC,NBCC (India) Ltd.,Real Estate,real-estate,NSE
-NCC,NCC Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-NESTLEIND,Nestle India Ltd.,FMCG,fmcg,NSE
-NETWEB,Netweb Technologies India Ltd.,Software Services,software-services,NSE
-NEULANDLAB,Neuland Laboratories Ltd.,Healthcare,healthcare,NSE
-NEWGEN,Newgen Software Technologies Ltd.,Software Services,software-services,NSE
-NH,Narayana Hrudayalaya Ltd.,Healthcare,healthcare,NSE
-NHPC,NHPC Ltd.,Energy,energy,NSE
-NIACL,The New India Assurance Company Ltd.,Financial Services,financial-services,NSE
-NIVABUPA,Niva Bupa Health Insurance Company Ltd.,Financial Services,financial-services,NSE
-NLCINDIA,NLC India Ltd.,Energy,energy,NSE
-NMDC,NMDC Ltd.,Metals,metals,NSE
-NSLNISP,NMDC Steel Ltd.,Metals,metals,NSE
-NTPC,NTPC Ltd.,Energy,energy,NSE
-NTPCGREEN,NTPC Green Energy Ltd.,Energy,energy,NSE
-NUVAMA,Nuvama Wealth Management Ltd.,Financial Services,financial-services,NSE
-NUVOCO,Nuvoco Vistas Corporation Ltd.,Building Materials,building-materials,NSE
-NYKAA,FSN E-Commerce Ventures Ltd.,Retail,retail,NSE
-OBEROIRLTY,Oberoi Realty Ltd.,Real Estate,real-estate,NSE
-OFSS,Oracle Financial Services Software Ltd.,Software Services,software-services,NSE
-OIL,Oil India Ltd.,Energy,energy,NSE
-OLAELEC,Ola Electric Mobility Ltd.,Automobile,automobile,NSE
-OLECTRA,Olectra Greentech Ltd.,Automobile,automobile,NSE
-ONESOURCE,Onesource Specialty Pharma Ltd.,Healthcare,healthcare,NSE
-ONGC,Oil & Natural Gas Corporation Ltd.,Energy,energy,NSE
-PAGEIND,Page Industries Ltd.,Textiles,textiles,NSE
-PARADEEP,Paradeep Phosphates Ltd.,Fertilizers,fertilizers,NSE
-PATANJALI,Patanjali Foods Ltd.,FMCG,fmcg,NSE
-PAYTM,One 97 Communications Ltd.,Financial Services,financial-services,NSE
-PCBL,PCBL Chemical Ltd.,Chemicals,chemicals,NSE
-PERSISTENT,Persistent Systems Ltd.,Software Services,software-services,NSE
-PETRONET,Petronet LNG Ltd.,Energy,energy,NSE
-PFC,Power Finance Corporation Ltd.,Financial Services,financial-services,NSE
-PFIZER,Pfizer Ltd.,Healthcare,healthcare,NSE
-PGEL,PG Electroplast Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-PHOENIXLTD,Phoenix Mills Ltd.,Real Estate,real-estate,NSE
-PIDILITIND,Pidilite Industries Ltd.,Chemicals,chemicals,NSE
-PIIND,PI Industries Ltd.,Chemicals,chemicals,NSE
-PINELABS,Pine Labs Ltd.,Financial Services,financial-services,NSE
-PIRAMALFIN,Piramal Finance Ltd.,Financial Services,financial-services,NSE
-PNB,Punjab National Bank,Financial Services,financial-services,NSE
-PNBHOUSING,PNB Housing Finance Ltd.,Financial Services,financial-services,NSE
-POLICYBZR,PB Fintech Ltd.,Financial Services,financial-services,NSE
-POLYCAB,Polycab India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-POLYMED,Poly Medicure Ltd.,Healthcare,healthcare,NSE
-POONAWALLA,Poonawalla Fincorp Ltd.,Financial Services,financial-services,NSE
-POWERGRID,Power Grid Corporation of India Ltd.,Energy,energy,NSE
-POWERINDIA,Hitachi Energy India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-PPLPHARMA,Piramal Pharma Ltd.,Healthcare,healthcare,NSE
-PREMIERENE,Premier Energies Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-PRESTIGE,Prestige Estates Projects Ltd.,Real Estate,real-estate,NSE
-PTCIL,PTC Industries Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-PVRINOX,PVR INOX Ltd.,Media Entertainment,media-entertainment,NSE
-PWL,Physicswallah Ltd.,Education Training,education-training,NSE
-RADICO,Radico Khaitan Ltd,FMCG,fmcg,NSE
-RAILTEL,Railtel Corporation Of India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-RAINBOW,Rainbow Childrens Medicare Ltd.,Healthcare,healthcare,NSE
-RAMCOCEM,The Ramco Cements Ltd.,Building Materials,building-materials,NSE
-RBLBANK,RBL Bank Ltd.,Financial Services,financial-services,NSE
-RECLTD,REC Ltd.,Financial Services,financial-services,NSE
-REDINGTON,Redington Ltd.,Trading,trading,NSE
-RELIANCE,Reliance Industries Ltd.,Energy,energy,NSE
-RHIM,RHI MAGNESITA INDIA LTD.,Engineering Capital Goods,engineering-capital-goods,NSE
-RITES,RITES Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-RKFORGE,Ramkrishna Forgings Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-RPOWER,Reliance Power Ltd.,Energy,energy,NSE
-RRKABEL,R R Kabel Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-RVNL,Rail Vikas Nigam Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-SAGILITY,Sagility Ltd.,Software Services,software-services,NSE
-SAIL,Steel Authority of India Ltd.,Metals,metals,NSE
-SAILIFE,Sai Life Sciences Ltd.,Healthcare,healthcare,NSE
-SAMMAANCAP,Sammaan Capital Ltd.,Financial Services,financial-services,NSE
-SAPPHIRE,Sapphire Foods India Ltd.,FMCG,fmcg,NSE
-SARDAEN,Sarda Energy and Minerals Ltd.,Metals,metals,NSE
-SAREGAMA,Saregama India Ltd,Media Entertainment,media-entertainment,NSE
-SBFC,SBFC Finance Ltd.,Financial Services,financial-services,NSE
-SBICARD,SBI Cards and Payment Services Ltd.,Financial Services,financial-services,NSE
-SBILIFE,SBI Life Insurance Company Ltd.,Financial Services,financial-services,NSE
-SBIN,State Bank of India,Financial Services,financial-services,NSE
-SCHAEFFLER,Schaeffler India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-SCHNEIDER,Schneider Electric Infrastructure Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-SCI,Shipping Corporation of India Ltd.,Logistics,logistics,NSE
-SHREECEM,Shree Cement Ltd.,Building Materials,building-materials,NSE
-SHRIRAMFIN,Shriram Finance Ltd.,Financial Services,financial-services,NSE
-SHYAMMETL,Shyam Metalics and Energy Ltd.,Metals,metals,NSE
-SIEMENS,Siemens Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-SIGNATURE,Signatureglobal (India) Ltd.,Real Estate,real-estate,NSE
-SJVN,SJVN Ltd.,Energy,energy,NSE
-SOBHA,Sobha Ltd.,Real Estate,real-estate,NSE
-SOLARINDS,Solar Industries India Ltd.,Chemicals,chemicals,NSE
-SONACOMS,Sona BLW Precision Forgings Ltd.,Auto Ancillary,auto-ancillary,NSE
-SONATSOFTW,Sonata Software Ltd.,Software Services,software-services,NSE
-SPLPETRO,Supreme Petrochem Ltd.,Chemicals,chemicals,NSE
-SRF,SRF Ltd.,Chemicals,chemicals,NSE
-STARHEALTH,Star Health and Allied Insurance Company Ltd.,Financial Services,financial-services,NSE
-SUMICHEM,Sumitomo Chemical India Ltd.,Chemicals,chemicals,NSE
-SUNDARMFIN,Sundaram Finance Ltd.,Financial Services,financial-services,NSE
-SUNPHARMA,Sun Pharmaceutical Industries Ltd.,Healthcare,healthcare,NSE
-SUNTV,Sun TV Network Ltd.,Media Entertainment,media-entertainment,NSE
-SUPREMEIND,Supreme Industries Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-SUZLON,Suzlon Energy Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-SWANCORP,Swan Corp Ltd.,Textiles,textiles,NSE
-SWIGGY,Swiggy Ltd.,Services,services,NSE
-SYNGENE,Syngene International Ltd.,Healthcare,healthcare,NSE
-SYRMA,Syrma SGS Technology Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-TARIL,Transformers And Rectifiers (India) Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-TATACAP,Tata Capital Ltd.,Financial Services,financial-services,NSE
-TATACHEM,Tata Chemicals Ltd.,Chemicals,chemicals,NSE
-TATACOMM,Tata Communications Ltd.,Telecom,telecom,NSE
-TATACONSUM,Tata Consumer Products Ltd.,FMCG,fmcg,NSE
-TATAELXSI,Tata Elxsi Ltd.,Software Services,software-services,NSE
-TATAINVEST,Tata Investment Corporation Ltd.,Financial Services,financial-services,NSE
-TATAPOWER,Tata Power Co. Ltd.,Energy,energy,NSE
-TATASTEEL,Tata Steel Ltd.,Metals,metals,NSE
-TATATECH,Tata Technologies Ltd.,Software Services,software-services,NSE
-TBOTEK,TBO Tek Ltd.,Tourism Hospitality,tourism-hospitality,NSE
-TCS,Tata Consultancy Services Ltd.,Software Services,software-services,NSE
-TECHM,Tech Mahindra Ltd.,Software Services,software-services,NSE
-TECHNOE,Techno Electric & Engineering Company Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-TEGA,Tega Industries Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-TEJASNET,Tejas Networks Ltd.,Telecom,telecom,NSE
-TENNIND,Tenneco Clean Air India Ltd.,Auto Ancillary,auto-ancillary,NSE
-THELEELA,Leela Palaces Hotels & Resorts Ltd.,Tourism Hospitality,tourism-hospitality,NSE
-THERMAX,Thermax Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-TIINDIA,Tube Investments of India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-TIMKEN,Timken India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-TITAGARH,Titagarh Rail Systems Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-TITAN,Titan Company Ltd.,Retail,retail,NSE
-TMCV,Tata Motors Ltd.,Automobile,automobile,NSE
-TMPV,Tata Motors Passenger Vehicles Ltd.,Automobile,automobile,NSE
-TORNTPHARM,Torrent Pharmaceuticals Ltd.,Healthcare,healthcare,NSE
-TORNTPOWER,Torrent Power Ltd.,Energy,energy,NSE
-TRAVELFOOD,Travel Food Services Ltd.,FMCG,fmcg,NSE
-TRENT,Trent Ltd.,Retail,retail,NSE
-TRIDENT,Trident Ltd.,Textiles,textiles,NSE
-TRITURBINE,Triveni Turbine Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-TTML,Tata Teleservices (Maharashtra) Ltd.,Telecom,telecom,NSE
-TVSMOTOR,TVS Motor Company Ltd.,Automobile,automobile,NSE
-UBL,United Breweries Ltd.,FMCG,fmcg,NSE
-UCOBANK,UCO Bank,Financial Services,financial-services,NSE
-ULTRACEMCO,UltraTech Cement Ltd.,Building Materials,building-materials,NSE
-UNIONBANK,Union Bank of India,Financial Services,financial-services,NSE
-UNITDSPR,United Spirits Ltd.,FMCG,fmcg,NSE
-UNOMINDA,UNO Minda Ltd.,Auto Ancillary,auto-ancillary,NSE
-UPL,UPL Ltd.,Chemicals,chemicals,NSE
-URBANCO,Urban Company Ltd.,Services,services,NSE
-USHAMART,Usha Martin Ltd.,Metals,metals,NSE
-UTIAMC,UTI Asset Management Company Ltd.,Financial Services,financial-services,NSE
-VBL,Varun Beverages Ltd.,FMCG,fmcg,NSE
-VEDL,Vedanta Ltd.,Metals,metals,NSE
-VIJAYA,Vijaya Diagnostic Centre Ltd.,Healthcare,healthcare,NSE
-VMM,Vishal Mega Mart Ltd.,Retail,retail,NSE
-VOLTAS,Voltas Ltd.,Consumer Durables,consumer-durables,NSE
-VTL,Vardhman Textiles Ltd.,Textiles,textiles,NSE
-WAAREEENER,Waaree Energies Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-WELCORP,Welspun Corp Ltd.,Building Materials,building-materials,NSE
-WELSPUNLIV,Welspun Living Ltd.,Textiles,textiles,NSE
-WHIRLPOOL,Whirlpool of India Ltd.,Consumer Durables,consumer-durables,NSE
-WIPRO,Wipro Ltd.,Software Services,software-services,NSE
-WOCKPHARMA,Wockhardt Ltd.,Healthcare,healthcare,NSE
-YESBANK,Yes Bank Ltd.,Financial Services,financial-services,NSE
-ZEEL,Zee Entertainment Enterprises Ltd.,Media Entertainment,media-entertainment,NSE
-ZENSARTECH,Zensar Technolgies Ltd.,Software Services,software-services,NSE
-ZENTEC,Zen Technologies Ltd.,Defence,defence,NSE
-ZFCVINDIA,ZF Commercial Vehicle Control Systems India Ltd.,Auto Ancillary,auto-ancillary,NSE
-ZYDUSLIFE,Zydus Lifesciences Ltd.,Healthcare,healthcare,NSE
-ZYDUSWELL,Zydus Wellness Ltd.,FMCG,fmcg,NSE
-INOXINDIA,Inox India Ltd.,Engineering Capital Goods,engineering-capital-goods,NSE
-AKUMS,Akums Drugs and Pharmaceuticals Ltd.,Healthcare,healthcare,NSE
+symbol,company,zerodha_sector,zerodha_sector_slug,super_sector,source_exchange
+360ONE,360 ONE WAM Ltd.,Financial Services,financial-services,Financials,NSE
+3MINDIA,3M India Ltd.,Diversified,diversified,Diversified / Other,NSE
+AADHARHFC,Aadhar Housing Finance Ltd.,Financial Services,financial-services,Financials,NSE
+AARTIIND,Aarti Industries Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+AAVAS,Aavas Financiers Ltd.,Financial Services,financial-services,Financials,NSE
+ABB,ABB India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+ABBOTINDIA,Abbott India Ltd.,Healthcare,healthcare,Healthcare,NSE
+ABCAPITAL,Aditya Birla Capital Ltd.,Financial Services,financial-services,Financials,NSE
+ABDL,Allied Blenders and Distillers Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+ABFRL,Aditya Birla Fashion and Retail Ltd.,Retail,retail,Consumer Discretionary,NSE
+ABLBL,Aditya Birla Lifestyle Brands Ltd.,Retail,retail,Consumer Discretionary,NSE
+ABREL,Aditya Birla Real Estate Ltd.,Diversified,diversified,Diversified / Other,NSE
+ABSLAMC,Aditya Birla Sun Life AMC Ltd.,Financial Services,financial-services,Financials,NSE
+ACC,ACC Ltd.,Building Materials,building-materials,Real Estate & Building,NSE
+ACE,Action Construction Equipment Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+ACMESOLAR,ACME Solar Holdings Ltd.,Energy,energy,Energy,NSE
+ACUTAAS,Acutaas Chemicals Ltd.,Healthcare,healthcare,Healthcare,NSE
+ADANIENSOL,Adani Energy Solutions Ltd.,Energy,energy,Energy,NSE
+ADANIENT,Adani Enterprises Ltd.,Trading,trading,Diversified / Other,NSE
+ADANIGREEN,Adani Green Energy Ltd.,Energy,energy,Energy,NSE
+ADANIPORTS,Adani Ports and Special Economic Zone Ltd.,Logistics,logistics,Transport & Logistics,NSE
+ADANIPOWER,Adani Power Ltd.,Energy,energy,Energy,NSE
+AEGISLOG,Aegis Logistics Ltd.,Logistics,logistics,Transport & Logistics,NSE
+AEGISVOPAK,Aegis Vopak Terminals Ltd.,Logistics,logistics,Transport & Logistics,NSE
+AFCONS,Afcons Infrastructure Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+AFFLE,Affle 3i Ltd.,Software Services,software-services,IT & Internet,NSE
+AIAENG,AIA Engineering Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+AIIL,Authum Investment & Infrastructure Ltd.,Financial Services,financial-services,Financials,NSE
+AJANTPHARM,Ajanta Pharmaceuticals Ltd.,Healthcare,healthcare,Healthcare,NSE
+AKUMS,Akums Drugs and Pharmaceuticals Ltd.,Healthcare,healthcare,Healthcare,NSE
+AKZOINDIA,JSW Dulux Ltd.,Building Materials,building-materials,Real Estate & Building,NSE
+ALKEM,Alkem Laboratories Ltd.,Healthcare,healthcare,Healthcare,NSE
+AMBER,Amber Enterprises India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+AMBUJACEM,Ambuja Cements Ltd.,Building Materials,building-materials,Real Estate & Building,NSE
+ANANDRATHI,Anand Rathi Wealth Ltd.,Financial Services,financial-services,Financials,NSE
+ANANTRAJ,Anant Raj Ltd.,Real Estate,real-estate,Real Estate & Building,NSE
+ANGELONE,Angel One Ltd.,Financial Services,financial-services,Financials,NSE
+ANTHEM,Anthem Biosciences Ltd.,Healthcare,healthcare,Healthcare,NSE
+ANURAS,Anupam Rasayan India Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+APARINDS,Apar Industries Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+APLAPOLLO,APL Apollo Tubes Ltd.,Building Materials,building-materials,Real Estate & Building,NSE
+APOLLOHOSP,Apollo Hospitals Enterprise Ltd.,Healthcare,healthcare,Healthcare,NSE
+APOLLOTYRE,Apollo Tyres Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+APTUS,Aptus Value Housing Finance India Ltd.,Financial Services,financial-services,Financials,NSE
+ARE&M,Amara Raja Energy & Mobility Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+ASAHIINDIA,Asahi India Glass Ltd.,Building Materials,building-materials,Real Estate & Building,NSE
+ASHOKLEY,Ashok Leyland Ltd.,Automobile,automobile,Automobile & Ancillaries,NSE
+ASIANPAINT,Asian Paints Ltd.,Building Materials,building-materials,Real Estate & Building,NSE
+ASTERDM,Aster DM Healthcare Ltd.,Healthcare,healthcare,Healthcare,NSE
+ASTRAL,Astral Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+ATGL,Adani Total Gas Ltd.,Energy,energy,Energy,NSE
+ATHERENERG,Ather Energy Ltd.,Automobile,automobile,Automobile & Ancillaries,NSE
+ATUL,Atul Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+AUBANK,AU Small Finance Bank Ltd.,Financial Services,financial-services,Financials,NSE
+AUROPHARMA,Aurobindo Pharma Ltd.,Healthcare,healthcare,Healthcare,NSE
+AWL,AWL Agri Business Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+AXISBANK,Axis Bank Ltd.,Financial Services,financial-services,Financials,NSE
+BAJAJ-AUTO,Bajaj Auto Ltd.,Automobile,automobile,Automobile & Ancillaries,NSE
+BAJAJFINSV,Bajaj Finserv Ltd.,Financial Services,financial-services,Financials,NSE
+BAJAJHFL,Bajaj Housing Finance Ltd.,Financial Services,financial-services,Financials,NSE
+BAJAJHLDNG,Bajaj Holdings & Investment Ltd.,Financial Services,financial-services,Financials,NSE
+BAJFINANCE,Bajaj Finance Ltd.,Financial Services,financial-services,Financials,NSE
+BALKRISIND,Balkrishna Industries Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+BALRAMCHIN,Balrampur Chini Mills Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+BANDHANBNK,Bandhan Bank Ltd.,Financial Services,financial-services,Financials,NSE
+BANKBARODA,Bank of Baroda,Financial Services,financial-services,Financials,NSE
+BANKINDIA,Bank of India,Financial Services,financial-services,Financials,NSE
+BATAINDIA,Bata India Ltd.,Retail,retail,Consumer Discretionary,NSE
+BAYERCROP,Bayer Cropscience Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+BBTC,Bombay Burmah Trading Corporation Ltd.,Agriculture,agriculture,FMCG / Staples,NSE
+BDL,Bharat Dynamics Ltd.,Defence,defence,Industrials & Capital Goods,NSE
+BEL,Bharat Electronics Ltd.,Defence,defence,Industrials & Capital Goods,NSE
+BELRISE,Belrise Industries Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+BEML,BEML Ltd.,Defence,defence,Industrials & Capital Goods,NSE
+BERGEPAINT,Berger Paints India Ltd.,Building Materials,building-materials,Real Estate & Building,NSE
+BHARATFORG,Bharat Forge Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+BHARTIARTL,Bharti Airtel Ltd.,Telecom,telecom,Telecom,NSE
+BHARTIHEXA,Bharti Hexacom Ltd.,Telecom,telecom,Telecom,NSE
+BHEL,Bharat Heavy Electricals Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+BIKAJI,Bikaji Foods International Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+BIOCON,Biocon Ltd.,Healthcare,healthcare,Healthcare,NSE
+BLS,BLS International Services Ltd.,Services,services,IT & Internet,NSE
+BLUEDART,Blue Dart Express Ltd.,Logistics,logistics,Transport & Logistics,NSE
+BLUEJET,Blue Jet Healthcare Ltd.,Healthcare,healthcare,Healthcare,NSE
+BLUESTARCO,Blue Star Ltd.,Consumer Durables,consumer-durables,Consumer Discretionary,NSE
+BOSCHLTD,Bosch Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+BPCL,Bharat Petroleum Corporation Ltd.,Energy,energy,Energy,NSE
+BRIGADE,Brigade Enterprises Ltd.,Real Estate,real-estate,Real Estate & Building,NSE
+BRITANNIA,Britannia Industries Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+BSE,BSE Ltd.,Financial Services,financial-services,Financials,NSE
+BSOFT,Birlasoft Ltd.,Software Services,software-services,IT & Internet,NSE
+CAMS,Computer Age Management Services Ltd.,Financial Services,financial-services,Financials,NSE
+CANBK,Canara Bank,Financial Services,financial-services,Financials,NSE
+CANFINHOME,Can Fin Homes Ltd.,Financial Services,financial-services,Financials,NSE
+CANHLIFE,Canara HSBC Life Insurance Company Ltd.,Financial Services,financial-services,Financials,NSE
+CAPLIPOINT,Caplin Point Laboratories Ltd.,Healthcare,healthcare,Healthcare,NSE
+CARBORUNIV,Carborundum Universal Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+CARTRADE,Cartrade Tech Ltd.,IT,it,IT & Internet,NSE
+CASTROLIND,Castrol India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+CCL,CCL Products (I) Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+CDSL,Central Depository Services (India) Ltd.,Financial Services,financial-services,Financials,NSE
+CEATLTD,Ceat Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+CEMPRO,Cemindia Projects Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+CENTRALBK,Central Bank of India,Financial Services,financial-services,Financials,NSE
+CESC,CESC Ltd.,Energy,energy,Energy,NSE
+CGCL,Capri Global Capital Ltd.,Financial Services,financial-services,Financials,NSE
+CGPOWER,CG Power and Industrial Solutions Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+CHALET,Chalet Hotels Ltd.,Tourism Hospitality,tourism-hospitality,Tourism & Hospitality,NSE
+CHAMBLFERT,Chambal Fertilizers & Chemicals Ltd.,Fertilizers,fertilizers,Materials & Chemicals,NSE
+CHENNPETRO,Chennai Petroleum Corporation Ltd.,Energy,energy,Energy,NSE
+CHOICEIN,Choice International Ltd.,Financial Services,financial-services,Financials,NSE
+CHOLAFIN,Cholamandalam Investment and Finance Company Ltd.,Financial Services,financial-services,Financials,NSE
+CHOLAHLDNG,Cholamandalam Financial Holdings Ltd.,Financial Services,financial-services,Financials,NSE
+CIEINDIA,CIE Automotive India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+CIPLA,Cipla Ltd.,Healthcare,healthcare,Healthcare,NSE
+CLEAN,Clean Science and Technology Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+COALINDIA,Coal India Ltd.,Energy,energy,Energy,NSE
+COCHINSHIP,Cochin Shipyard Ltd.,Defence,defence,Industrials & Capital Goods,NSE
+COFORGE,Coforge Ltd.,Software Services,software-services,IT & Internet,NSE
+COHANCE,Cohance Lifesciences Ltd.,Healthcare,healthcare,Healthcare,NSE
+COLPAL,Colgate Palmolive (India) Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+CONCOR,Container Corporation of India Ltd.,Logistics,logistics,Transport & Logistics,NSE
+CONCORDBIO,Concord Biotech Ltd.,Healthcare,healthcare,Healthcare,NSE
+COROMANDEL,Coromandel International Ltd.,Fertilizers,fertilizers,Materials & Chemicals,NSE
+CPPLUS,Aditya Infotech Ltd.,Consumer Durables,consumer-durables,Consumer Discretionary,NSE
+CRAFTSMAN,Craftsman Automation Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+CREDITACC,CreditAccess Grameen Ltd.,NBFC,nbfc,Financials,NSE
+CRISIL,CRISIL Ltd.,Financial Services,financial-services,Financials,NSE
+CROMPTON,Crompton Greaves Consumer Electricals Ltd.,Consumer Durables,consumer-durables,Consumer Discretionary,NSE
+CUB,City Union Bank Ltd.,Financial Services,financial-services,Financials,NSE
+CUMMINSIND,Cummins India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+CYIENT,Cyient Ltd.,Software Services,software-services,IT & Internet,NSE
+DABUR,Dabur India Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+DALBHARAT,Dalmia Bharat Ltd.,Building Materials,building-materials,Real Estate & Building,NSE
+DATAPATTNS,Data Patterns (India) Ltd.,Defence,defence,Industrials & Capital Goods,NSE
+DCMSHRIRAM,DCM Shriram Ltd.,Diversified,diversified,Diversified / Other,NSE
+DEEPAKFERT,Deepak Fertilisers & Petrochemicals Corp. Ltd.,Fertilizers,fertilizers,Materials & Chemicals,NSE
+DEEPAKNTR,Deepak Nitrite Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+DELHIVERY,Delhivery Ltd.,Logistics,logistics,Transport & Logistics,NSE
+DEVYANI,Devyani International Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+DIVISLAB,Divi's Laboratories Ltd.,Healthcare,healthcare,Healthcare,NSE
+DIXON,Dixon Technologies (India) Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+DLF,DLF Ltd.,Real Estate,real-estate,Real Estate & Building,NSE
+DMART,Avenue Supermarts Ltd.,Retail,retail,Consumer Discretionary,NSE
+DOMS,DOMS Industries Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+DRREDDY,Dr. Reddy's Laboratories Ltd.,Healthcare,healthcare,Healthcare,NSE
+ECLERX,eClerx Services Ltd.,Software Services,software-services,IT & Internet,NSE
+EICHERMOT,Eicher Motors Ltd.,Automobile,automobile,Automobile & Ancillaries,NSE
+EIDPARRY,E.I.D. Parry (India) Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+EIHOTEL,EIH Ltd.,Tourism Hospitality,tourism-hospitality,Tourism & Hospitality,NSE
+ELECON,Elecon Engineering Co. Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+ELGIEQUIP,Elgi Equipments Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+EMAMILTD,Emami Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+EMCURE,Emcure Pharmaceuticals Ltd.,Healthcare,healthcare,Healthcare,NSE
+EMMVEE,Emmvee Photovoltaic Power Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+ENDURANCE,Endurance Technologies Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+ENGINERSIN,Engineers India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+ENRIN,Siemens Energy India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+ERIS,Eris Lifesciences Ltd.,Healthcare,healthcare,Healthcare,NSE
+ESCORTS,Escorts Kubota Ltd.,Automobile,automobile,Automobile & Ancillaries,NSE
+ETERNAL,Eternal Ltd.,Services,services,IT & Internet,NSE
+EXIDEIND,Exide Industries Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+FACT,Fertilisers and Chemicals Travancore Ltd.,Fertilizers,fertilizers,Materials & Chemicals,NSE
+FEDERALBNK,Federal Bank Ltd.,Financial Services,financial-services,Financials,NSE
+FINCABLES,Finolex Cables Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+FIRSTCRY,Brainbees Solutions Ltd.,Retail,retail,Consumer Discretionary,NSE
+FIVESTAR,Five-Star Business Finance Ltd.,Financial Services,financial-services,Financials,NSE
+FLUOROCHEM,Gujarat Fluorochemicals Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+FORCEMOT,Force Motors Ltd.,Automobile,automobile,Automobile & Ancillaries,NSE
+FORTIS,Fortis Healthcare Ltd.,Healthcare,healthcare,Healthcare,NSE
+FSL,Firstsource Solutions Ltd.,Software Services,software-services,IT & Internet,NSE
+GABRIEL,Gabriel India Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+GAIL,GAIL (India) Ltd.,Energy,energy,Energy,NSE
+GALLANTT,Gallantt Ispat Ltd.,Metals,metals,Metals & Mining,NSE
+GESHIP,Great Eastern Shipping Co. Ltd.,Logistics,logistics,Transport & Logistics,NSE
+GICRE,General Insurance Corporation of India,Financial Services,financial-services,Financials,NSE
+GILLETTE,Gillette India Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+GLAND,Gland Pharma Ltd.,Healthcare,healthcare,Healthcare,NSE
+GLAXO,Glaxosmithkline Pharmaceuticals Ltd.,Healthcare,healthcare,Healthcare,NSE
+GLENMARK,Glenmark Pharmaceuticals Ltd.,Healthcare,healthcare,Healthcare,NSE
+GMDCLTD,Gujarat Mineral Development Corporation Ltd.,Metals,metals,Metals & Mining,NSE
+GMRAIRPORT,GMR Airports Ltd.,Aviation,aviation,Transport & Logistics,NSE
+GODFRYPHLP,Godfrey Phillips India Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+GODIGIT,Go Digit General Insurance Ltd.,Financial Services,financial-services,Financials,NSE
+GODREJCP,Godrej Consumer Products Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+GODREJIND,Godrej Industries Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+GODREJPROP,Godrej Properties Ltd.,Real Estate,real-estate,Real Estate & Building,NSE
+GPIL,Godawari Power & Ispat Ltd.,Metals,metals,Metals & Mining,NSE
+GRANULES,Granules India Ltd.,Healthcare,healthcare,Healthcare,NSE
+GRAPHITE,Graphite India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+GRASIM,Grasim Industries Ltd.,Diversified,diversified,Diversified / Other,NSE
+GRAVITA,Gravita India Ltd.,Services,services,IT & Internet,NSE
+GROWW,Billionbrains Garage Ventures Ltd.,Financial Services,financial-services,Financials,NSE
+GRSE,Garden Reach Shipbuilders & Engineers Ltd.,Defence,defence,Industrials & Capital Goods,NSE
+GSPL,Gujarat State Petronet Ltd.,Energy,energy,Energy,NSE
+GVT&D,GE Vernova T&D India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+HAL,Hindustan Aeronautics Ltd.,Defence,defence,Industrials & Capital Goods,NSE
+HAVELLS,Havells India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+HBLENGINE,HBL Engineering Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+HCLTECH,HCL Technologies Ltd.,Software Services,software-services,IT & Internet,NSE
+HDBFS,HDB Financial Services Ltd.,Financial Services,financial-services,Financials,NSE
+HDFCAMC,HDFC Asset Management Company Ltd.,Financial Services,financial-services,Financials,NSE
+HDFCBANK,HDFC Bank Ltd.,Financial Services,financial-services,Financials,NSE
+HDFCLIFE,HDFC Life Insurance Company Ltd.,Financial Services,financial-services,Financials,NSE
+HEG,H.E.G. Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+HEROMOTOCO,Hero MotoCorp Ltd.,Automobile,automobile,Automobile & Ancillaries,NSE
+HEXT,Hexaware Technologies Ltd.,Software Services,software-services,IT & Internet,NSE
+HFCL,HFCL Ltd.,Telecom,telecom,Telecom,NSE
+HINDALCO,Hindalco Industries Ltd.,Metals,metals,Metals & Mining,NSE
+HINDCOPPER,Hindustan Copper Ltd.,Metals,metals,Metals & Mining,NSE
+HINDPETRO,Hindustan Petroleum Corporation Ltd.,Energy,energy,Energy,NSE
+HINDUNILVR,Hindustan Unilever Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+HINDZINC,Hindustan Zinc Ltd.,Metals,metals,Metals & Mining,NSE
+HOMEFIRST,Home First Finance Company India Ltd.,Financial Services,financial-services,Financials,NSE
+HONASA,Honasa Consumer Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+HONAUT,Honeywell Automation India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+HSCL,Himadri Speciality Chemical Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+HUDCO,Housing & Urban Development Corporation Ltd.,Financial Services,financial-services,Financials,NSE
+HYUNDAI,Hyundai Motor India Ltd.,Automobile,automobile,Automobile & Ancillaries,NSE
+ICICIAMC,ICICI Prudential Asset Management Company Ltd.,Financial Services,financial-services,Financials,NSE
+ICICIBANK,ICICI Bank Ltd.,Financial Services,financial-services,Financials,NSE
+ICICIGI,ICICI Lombard General Insurance Company Ltd.,Financial Services,financial-services,Financials,NSE
+ICICIPRULI,ICICI Prudential Life Insurance Company Ltd.,Financial Services,financial-services,Financials,NSE
+IDBI,IDBI Bank Ltd.,Financial Services,financial-services,Financials,NSE
+IDEA,Vodafone Idea Ltd.,Telecom,telecom,Telecom,NSE
+IDFCFIRSTB,IDFC First Bank Ltd.,Financial Services,financial-services,Financials,NSE
+IEX,Indian Energy Exchange Ltd.,Financial Services,financial-services,Financials,NSE
+IFCI,IFCI Ltd.,Financial Services,financial-services,Financials,NSE
+IGIL,International Gemological Institute Ltd.,Software Services,software-services,IT & Internet,NSE
+IGL,Indraprastha Gas Ltd.,Energy,energy,Energy,NSE
+IIFL,IIFL Finance Ltd.,Financial Services,financial-services,Financials,NSE
+IKS,Inventurus Knowledge Solutions Ltd.,Software Services,software-services,IT & Internet,NSE
+INDGN,Indegene Ltd.,Healthcare,healthcare,Healthcare,NSE
+INDHOTEL,Indian Hotels Co. Ltd.,Tourism Hospitality,tourism-hospitality,Tourism & Hospitality,NSE
+INDIACEM,India Cements Ltd.,Building Materials,building-materials,Real Estate & Building,NSE
+INDIAMART,Indiamart Intermesh Ltd.,IT,it,IT & Internet,NSE
+INDIANB,Indian Bank,Financial Services,financial-services,Financials,NSE
+INDIGO,InterGlobe Aviation Ltd.,Aviation,aviation,Transport & Logistics,NSE
+INDUSINDBK,IndusInd Bank Ltd.,Financial Services,financial-services,Financials,NSE
+INDUSTOWER,Indus Towers Ltd.,Telecom,telecom,Telecom,NSE
+INFY,Infosys Ltd.,Software Services,software-services,IT & Internet,NSE
+INOXINDIA,Inox India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+INOXWIND,Inox Wind Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+INTELLECT,Intellect Design Arena Ltd.,Software Services,software-services,IT & Internet,NSE
+IOB,Indian Overseas Bank,Financial Services,financial-services,Financials,NSE
+IOC,Indian Oil Corporation Ltd.,Energy,energy,Energy,NSE
+IPCALAB,Ipca Laboratories Ltd.,Healthcare,healthcare,Healthcare,NSE
+IRB,IRB Infrastructure Developers Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+IRCON,IRCON International Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+IRCTC,Indian Railway Catering And Tourism Corporation Ltd.,Tourism Hospitality,tourism-hospitality,Tourism & Hospitality,NSE
+IREDA,Indian Renewable Energy Development Agency Ltd.,Financial Services,financial-services,Financials,NSE
+IRFC,Indian Railway Finance Corporation Ltd.,Financial Services,financial-services,Financials,NSE
+ITC,ITC Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+ITCHOTELS,ITC Hotels Ltd.,Tourism Hospitality,tourism-hospitality,Tourism & Hospitality,NSE
+ITI,ITI Ltd.,Telecom,telecom,Telecom,NSE
+J&KBANK,Jammu & Kashmir Bank Ltd.,Financial Services,financial-services,Financials,NSE
+JAINREC,Jain Resource Recycling Ltd.,Services,services,IT & Internet,NSE
+JBCHEPHARM,J.B. Chemicals & Pharmaceuticals Ltd.,Healthcare,healthcare,Healthcare,NSE
+JBMA,JBM Auto Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+JINDALSAW,Jindal Saw Ltd.,Metals,metals,Metals & Mining,NSE
+JINDALSTEL,Jindal Steel Ltd.,Metals,metals,Metals & Mining,NSE
+JIOFIN,Jio Financial Services Ltd.,Financial Services,financial-services,Financials,NSE
+JKCEMENT,J.K. Cement Ltd.,Building Materials,building-materials,Real Estate & Building,NSE
+JKTYRE,JK Tyre & Industries Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+JMFINANCIL,JM Financial Ltd.,Financial Services,financial-services,Financials,NSE
+JPPOWER,Jaiprakash Power Ventures Ltd.,Energy,energy,Energy,NSE
+JSL,Jindal Stainless Ltd.,Metals,metals,Metals & Mining,NSE
+JSWCEMENT,JSW Cement Ltd.,Building Materials,building-materials,Real Estate & Building,NSE
+JSWDULUX,JSW Dulux Ltd.,Building Materials,building-materials,Real Estate & Building,NSE
+JSWENERGY,JSW Energy Ltd.,Energy,energy,Energy,NSE
+JSWINFRA,JSW Infrastructure Ltd.,Logistics,logistics,Transport & Logistics,NSE
+JSWSTEEL,JSW Steel Ltd.,Metals,metals,Metals & Mining,NSE
+JUBLFOOD,Jubilant Foodworks Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+JUBLINGREA,Jubilant Ingrevia Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+JUBLPHARMA,Jubilant Pharmova Ltd.,Healthcare,healthcare,Healthcare,NSE
+JWL,Jupiter Wagons Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+JYOTICNC,Jyoti CNC Automation Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+KAJARIACER,Kajaria Ceramics Ltd.,Building Materials,building-materials,Real Estate & Building,NSE
+KALYANKJIL,Kalyan Jewellers India Ltd.,Retail,retail,Consumer Discretionary,NSE
+KARURVYSYA,Karur Vysya Bank Ltd.,Financial Services,financial-services,Financials,NSE
+KAYNES,Kaynes Technology India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+KEC,Kec International Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+KEI,KEI Industries Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+KFINTECH,Kfin Technologies Ltd.,Financial Services,financial-services,Financials,NSE
+KIMS,Krishna Institute of Medical Sciences Ltd.,Healthcare,healthcare,Healthcare,NSE
+KIRLOSENG,Kirloskar Oil Eng Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+KOTAKBANK,Kotak Mahindra Bank Ltd.,Financial Services,financial-services,Financials,NSE
+KPIL,Kalpataru Projects International Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+KPITTECH,KPIT Technologies Ltd.,Software Services,software-services,IT & Internet,NSE
+KPRMILL,K.P.R. Mill Ltd.,Textiles,textiles,Consumer Discretionary,NSE
+LALPATHLAB,Dr. Lal Path Labs Ltd.,Healthcare,healthcare,Healthcare,NSE
+LATENTVIEW,Latent View Analytics Ltd.,Software Services,software-services,IT & Internet,NSE
+LAURUSLABS,Laurus Labs Ltd.,Healthcare,healthcare,Healthcare,NSE
+LEMONTREE,Lemon Tree Hotels Ltd.,Tourism Hospitality,tourism-hospitality,Tourism & Hospitality,NSE
+LENSKART,Lenskart Solutions Ltd.,Retail,retail,Consumer Discretionary,NSE
+LGEINDIA,LG Electronics India Ltd.,Consumer Durables,consumer-durables,Consumer Discretionary,NSE
+LICHSGFIN,LIC Housing Finance Ltd.,Financial Services,financial-services,Financials,NSE
+LICI,Life Insurance Corporation of India,Financial Services,financial-services,Financials,NSE
+LINDEINDIA,Linde India Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+LLOYDSME,Lloyds Metals And Energy Ltd.,Metals,metals,Metals & Mining,NSE
+LODHA,Lodha Developers Ltd.,Real Estate,real-estate,Real Estate & Building,NSE
+LT,Larsen & Toubro Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+LTF,L&T Finance Ltd.,Financial Services,financial-services,Financials,NSE
+LTFOODS,LT Foods Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+LTIM,LTM Ltd.,Software Services,software-services,IT & Internet,NSE
+LTTS,L&T Technology Services Ltd.,Software Services,software-services,IT & Internet,NSE
+LUPIN,Lupin Ltd.,Healthcare,healthcare,Healthcare,NSE
+M&M,Mahindra & Mahindra Ltd.,Automobile,automobile,Automobile & Ancillaries,NSE
+M&MFIN,Mahindra & Mahindra Financial Services Ltd.,Financial Services,financial-services,Financials,NSE
+MAHABANK,Bank of Maharashtra,Financial Services,financial-services,Financials,NSE
+MANAPPURAM,Manappuram Finance Ltd.,Financial Services,financial-services,Financials,NSE
+MANKIND,Mankind Pharma Ltd.,Healthcare,healthcare,Healthcare,NSE
+MAPMYINDIA,C.E. Info Systems Ltd.,Software Services,software-services,IT & Internet,NSE
+MARICO,Marico Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+MARUTI,Maruti Suzuki India Ltd.,Automobile,automobile,Automobile & Ancillaries,NSE
+MAXHEALTH,Max Healthcare Institute Ltd.,Healthcare,healthcare,Healthcare,NSE
+MAZDOCK,Mazagoan Dock Shipbuilders Ltd.,Defence,defence,Industrials & Capital Goods,NSE
+MCX,Multi Commodity Exchange of India Ltd.,Financial Services,financial-services,Financials,NSE
+MEDANTA,Global Health Ltd.,Healthcare,healthcare,Healthcare,NSE
+MEESHO,Meesho Ltd.,Retail,retail,Consumer Discretionary,NSE
+MFSL,Max Financial Services Ltd.,Financial Services,financial-services,Financials,NSE
+MGL,Mahanagar Gas Ltd.,Energy,energy,Energy,NSE
+MINDACORP,Minda Corporation Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+MMTC,MMTC Ltd.,Trading,trading,Diversified / Other,NSE
+MOTHERSON,Samvardhana Motherson International Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+MOTILALOFS,Motilal Oswal Financial Services Ltd.,Financial Services,financial-services,Financials,NSE
+MPHASIS,MphasiS Ltd.,Software Services,software-services,IT & Internet,NSE
+MRF,MRF Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+MRPL,Mangalore Refinery & Petrochemicals Ltd.,Energy,energy,Energy,NSE
+MSUMI,Motherson Sumi Wiring India Ltd.,Metals,metals,Metals & Mining,NSE
+MUTHOOTFIN,Muthoot Finance Ltd.,Financial Services,financial-services,Financials,NSE
+NAM-INDIA,Nippon Life India Asset Management Ltd.,Financial Services,financial-services,Financials,NSE
+NATCOPHARM,NATCO Pharma Ltd.,Healthcare,healthcare,Healthcare,NSE
+NATIONALUM,National Aluminium Co. Ltd.,Metals,metals,Metals & Mining,NSE
+NAUKRI,Info Edge (India) Ltd.,IT,it,IT & Internet,NSE
+NAVA,Nava Ltd.,Energy,energy,Energy,NSE
+NAVINFLUOR,Navin Fluorine International Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+NBCC,NBCC (India) Ltd.,Real Estate,real-estate,Real Estate & Building,NSE
+NCC,NCC Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+NESTLEIND,Nestle India Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+NETWEB,Netweb Technologies India Ltd.,Software Services,software-services,IT & Internet,NSE
+NEULANDLAB,Neuland Laboratories Ltd.,Healthcare,healthcare,Healthcare,NSE
+NEWGEN,Newgen Software Technologies Ltd.,Software Services,software-services,IT & Internet,NSE
+NH,Narayana Hrudayalaya Ltd.,Healthcare,healthcare,Healthcare,NSE
+NHPC,NHPC Ltd.,Energy,energy,Energy,NSE
+NIACL,The New India Assurance Company Ltd.,Financial Services,financial-services,Financials,NSE
+NIVABUPA,Niva Bupa Health Insurance Company Ltd.,Financial Services,financial-services,Financials,NSE
+NLCINDIA,NLC India Ltd.,Energy,energy,Energy,NSE
+NMDC,NMDC Ltd.,Metals,metals,Metals & Mining,NSE
+NSLNISP,NMDC Steel Ltd.,Metals,metals,Metals & Mining,NSE
+NTPC,NTPC Ltd.,Energy,energy,Energy,NSE
+NTPCGREEN,NTPC Green Energy Ltd.,Energy,energy,Energy,NSE
+NUVAMA,Nuvama Wealth Management Ltd.,Financial Services,financial-services,Financials,NSE
+NUVOCO,Nuvoco Vistas Corporation Ltd.,Building Materials,building-materials,Real Estate & Building,NSE
+NYKAA,FSN E-Commerce Ventures Ltd.,Retail,retail,Consumer Discretionary,NSE
+OBEROIRLTY,Oberoi Realty Ltd.,Real Estate,real-estate,Real Estate & Building,NSE
+OFSS,Oracle Financial Services Software Ltd.,Software Services,software-services,IT & Internet,NSE
+OIL,Oil India Ltd.,Energy,energy,Energy,NSE
+OLAELEC,Ola Electric Mobility Ltd.,Automobile,automobile,Automobile & Ancillaries,NSE
+OLECTRA,Olectra Greentech Ltd.,Automobile,automobile,Automobile & Ancillaries,NSE
+ONESOURCE,Onesource Specialty Pharma Ltd.,Healthcare,healthcare,Healthcare,NSE
+ONGC,Oil & Natural Gas Corporation Ltd.,Energy,energy,Energy,NSE
+PAGEIND,Page Industries Ltd.,Textiles,textiles,Consumer Discretionary,NSE
+PARADEEP,Paradeep Phosphates Ltd.,Fertilizers,fertilizers,Materials & Chemicals,NSE
+PATANJALI,Patanjali Foods Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+PAYTM,One 97 Communications Ltd.,Financial Services,financial-services,Financials,NSE
+PCBL,PCBL Chemical Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+PERSISTENT,Persistent Systems Ltd.,Software Services,software-services,IT & Internet,NSE
+PETRONET,Petronet LNG Ltd.,Energy,energy,Energy,NSE
+PFC,Power Finance Corporation Ltd.,Financial Services,financial-services,Financials,NSE
+PFIZER,Pfizer Ltd.,Healthcare,healthcare,Healthcare,NSE
+PGEL,PG Electroplast Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+PHOENIXLTD,Phoenix Mills Ltd.,Real Estate,real-estate,Real Estate & Building,NSE
+PIDILITIND,Pidilite Industries Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+PIIND,PI Industries Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+PINELABS,Pine Labs Ltd.,Financial Services,financial-services,Financials,NSE
+PIRAMALFIN,Piramal Finance Ltd.,Financial Services,financial-services,Financials,NSE
+PNB,Punjab National Bank,Financial Services,financial-services,Financials,NSE
+PNBHOUSING,PNB Housing Finance Ltd.,Financial Services,financial-services,Financials,NSE
+POLICYBZR,PB Fintech Ltd.,Financial Services,financial-services,Financials,NSE
+POLYCAB,Polycab India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+POLYMED,Poly Medicure Ltd.,Healthcare,healthcare,Healthcare,NSE
+POONAWALLA,Poonawalla Fincorp Ltd.,Financial Services,financial-services,Financials,NSE
+POWERGRID,Power Grid Corporation of India Ltd.,Energy,energy,Energy,NSE
+POWERINDIA,Hitachi Energy India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+PPLPHARMA,Piramal Pharma Ltd.,Healthcare,healthcare,Healthcare,NSE
+PREMIERENE,Premier Energies Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+PRESTIGE,Prestige Estates Projects Ltd.,Real Estate,real-estate,Real Estate & Building,NSE
+PTCIL,PTC Industries Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+PVRINOX,PVR INOX Ltd.,Media Entertainment,media-entertainment,IT & Internet,NSE
+PWL,Physicswallah Ltd.,Education Training,education-training,Diversified / Other,NSE
+RADICO,Radico Khaitan Ltd,FMCG,fmcg,FMCG / Staples,NSE
+RAILTEL,Railtel Corporation Of India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+RAINBOW,Rainbow Childrens Medicare Ltd.,Healthcare,healthcare,Healthcare,NSE
+RAMCOCEM,The Ramco Cements Ltd.,Building Materials,building-materials,Real Estate & Building,NSE
+RBLBANK,RBL Bank Ltd.,Financial Services,financial-services,Financials,NSE
+RECLTD,REC Ltd.,Financial Services,financial-services,Financials,NSE
+REDINGTON,Redington Ltd.,Trading,trading,Diversified / Other,NSE
+RELIANCE,Reliance Industries Ltd.,Energy,energy,Energy,NSE
+RHIM,RHI MAGNESITA INDIA LTD.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+RITES,RITES Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+RKFORGE,Ramkrishna Forgings Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+RPOWER,Reliance Power Ltd.,Energy,energy,Energy,NSE
+RRKABEL,R R Kabel Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+RVNL,Rail Vikas Nigam Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+SAGILITY,Sagility Ltd.,Software Services,software-services,IT & Internet,NSE
+SAIL,Steel Authority of India Ltd.,Metals,metals,Metals & Mining,NSE
+SAILIFE,Sai Life Sciences Ltd.,Healthcare,healthcare,Healthcare,NSE
+SAMMAANCAP,Sammaan Capital Ltd.,Financial Services,financial-services,Financials,NSE
+SAPPHIRE,Sapphire Foods India Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+SARDAEN,Sarda Energy and Minerals Ltd.,Metals,metals,Metals & Mining,NSE
+SAREGAMA,Saregama India Ltd,Media Entertainment,media-entertainment,IT & Internet,NSE
+SBFC,SBFC Finance Ltd.,Financial Services,financial-services,Financials,NSE
+SBICARD,SBI Cards and Payment Services Ltd.,Financial Services,financial-services,Financials,NSE
+SBILIFE,SBI Life Insurance Company Ltd.,Financial Services,financial-services,Financials,NSE
+SBIN,State Bank of India,Financial Services,financial-services,Financials,NSE
+SCHAEFFLER,Schaeffler India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+SCHNEIDER,Schneider Electric Infrastructure Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+SCI,Shipping Corporation of India Ltd.,Logistics,logistics,Transport & Logistics,NSE
+SHREECEM,Shree Cement Ltd.,Building Materials,building-materials,Real Estate & Building,NSE
+SHRIRAMFIN,Shriram Finance Ltd.,Financial Services,financial-services,Financials,NSE
+SHYAMMETL,Shyam Metalics and Energy Ltd.,Metals,metals,Metals & Mining,NSE
+SIEMENS,Siemens Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+SIGNATURE,Signatureglobal (India) Ltd.,Real Estate,real-estate,Real Estate & Building,NSE
+SJVN,SJVN Ltd.,Energy,energy,Energy,NSE
+SOBHA,Sobha Ltd.,Real Estate,real-estate,Real Estate & Building,NSE
+SOLARINDS,Solar Industries India Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+SONACOMS,Sona BLW Precision Forgings Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+SONATSOFTW,Sonata Software Ltd.,Software Services,software-services,IT & Internet,NSE
+SPLPETRO,Supreme Petrochem Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+SRF,SRF Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+STARHEALTH,Star Health and Allied Insurance Company Ltd.,Financial Services,financial-services,Financials,NSE
+SUMICHEM,Sumitomo Chemical India Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+SUNDARMFIN,Sundaram Finance Ltd.,Financial Services,financial-services,Financials,NSE
+SUNPHARMA,Sun Pharmaceutical Industries Ltd.,Healthcare,healthcare,Healthcare,NSE
+SUNTV,Sun TV Network Ltd.,Media Entertainment,media-entertainment,IT & Internet,NSE
+SUPREMEIND,Supreme Industries Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+SUZLON,Suzlon Energy Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+SWANCORP,Swan Corp Ltd.,Textiles,textiles,Consumer Discretionary,NSE
+SWIGGY,Swiggy Ltd.,Services,services,IT & Internet,NSE
+SYNGENE,Syngene International Ltd.,Healthcare,healthcare,Healthcare,NSE
+SYRMA,Syrma SGS Technology Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+TARIL,Transformers And Rectifiers (India) Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+TATACAP,Tata Capital Ltd.,Financial Services,financial-services,Financials,NSE
+TATACHEM,Tata Chemicals Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+TATACOMM,Tata Communications Ltd.,Telecom,telecom,Telecom,NSE
+TATACONSUM,Tata Consumer Products Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+TATAELXSI,Tata Elxsi Ltd.,Software Services,software-services,IT & Internet,NSE
+TATAINVEST,Tata Investment Corporation Ltd.,Financial Services,financial-services,Financials,NSE
+TATAPOWER,Tata Power Co. Ltd.,Energy,energy,Energy,NSE
+TATASTEEL,Tata Steel Ltd.,Metals,metals,Metals & Mining,NSE
+TATATECH,Tata Technologies Ltd.,Software Services,software-services,IT & Internet,NSE
+TBOTEK,TBO Tek Ltd.,Tourism Hospitality,tourism-hospitality,Tourism & Hospitality,NSE
+TCS,Tata Consultancy Services Ltd.,Software Services,software-services,IT & Internet,NSE
+TECHM,Tech Mahindra Ltd.,Software Services,software-services,IT & Internet,NSE
+TECHNOE,Techno Electric & Engineering Company Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+TEGA,Tega Industries Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+TEJASNET,Tejas Networks Ltd.,Telecom,telecom,Telecom,NSE
+TENNIND,Tenneco Clean Air India Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+THELEELA,Leela Palaces Hotels & Resorts Ltd.,Tourism Hospitality,tourism-hospitality,Tourism & Hospitality,NSE
+THERMAX,Thermax Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+TIINDIA,Tube Investments of India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+TIMKEN,Timken India Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+TITAGARH,Titagarh Rail Systems Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+TITAN,Titan Company Ltd.,Retail,retail,Consumer Discretionary,NSE
+TMCV,Tata Motors Ltd.,Automobile,automobile,Automobile & Ancillaries,NSE
+TMPV,Tata Motors Passenger Vehicles Ltd.,Automobile,automobile,Automobile & Ancillaries,NSE
+TORNTPHARM,Torrent Pharmaceuticals Ltd.,Healthcare,healthcare,Healthcare,NSE
+TORNTPOWER,Torrent Power Ltd.,Energy,energy,Energy,NSE
+TRAVELFOOD,Travel Food Services Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+TRENT,Trent Ltd.,Retail,retail,Consumer Discretionary,NSE
+TRIDENT,Trident Ltd.,Textiles,textiles,Consumer Discretionary,NSE
+TRITURBINE,Triveni Turbine Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+TTML,Tata Teleservices (Maharashtra) Ltd.,Telecom,telecom,Telecom,NSE
+TVSMOTOR,TVS Motor Company Ltd.,Automobile,automobile,Automobile & Ancillaries,NSE
+UBL,United Breweries Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+UCOBANK,UCO Bank,Financial Services,financial-services,Financials,NSE
+ULTRACEMCO,UltraTech Cement Ltd.,Building Materials,building-materials,Real Estate & Building,NSE
+UNIONBANK,Union Bank of India,Financial Services,financial-services,Financials,NSE
+UNITDSPR,United Spirits Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+UNOMINDA,UNO Minda Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+UPL,UPL Ltd.,Chemicals,chemicals,Materials & Chemicals,NSE
+URBANCO,Urban Company Ltd.,Services,services,IT & Internet,NSE
+USHAMART,Usha Martin Ltd.,Metals,metals,Metals & Mining,NSE
+UTIAMC,UTI Asset Management Company Ltd.,Financial Services,financial-services,Financials,NSE
+VBL,Varun Beverages Ltd.,FMCG,fmcg,FMCG / Staples,NSE
+VEDL,Vedanta Ltd.,Metals,metals,Metals & Mining,NSE
+VIJAYA,Vijaya Diagnostic Centre Ltd.,Healthcare,healthcare,Healthcare,NSE
+VMM,Vishal Mega Mart Ltd.,Retail,retail,Consumer Discretionary,NSE
+VOLTAS,Voltas Ltd.,Consumer Durables,consumer-durables,Consumer Discretionary,NSE
+VTL,Vardhman Textiles Ltd.,Textiles,textiles,Consumer Discretionary,NSE
+WAAREEENER,Waaree Energies Ltd.,Engineering Capital Goods,engineering-capital-goods,Industrials & Capital Goods,NSE
+WELCORP,Welspun Corp Ltd.,Building Materials,building-materials,Real Estate & Building,NSE
+WELSPUNLIV,Welspun Living Ltd.,Textiles,textiles,Consumer Discretionary,NSE
+WHIRLPOOL,Whirlpool of India Ltd.,Consumer Durables,consumer-durables,Consumer Discretionary,NSE
+WIPRO,Wipro Ltd.,Software Services,software-services,IT & Internet,NSE
+WOCKPHARMA,Wockhardt Ltd.,Healthcare,healthcare,Healthcare,NSE
+YESBANK,Yes Bank Ltd.,Financial Services,financial-services,Financials,NSE
+ZEEL,Zee Entertainment Enterprises Ltd.,Media Entertainment,media-entertainment,IT & Internet,NSE
+ZENSARTECH,Zensar Technolgies Ltd.,Software Services,software-services,IT & Internet,NSE
+ZENTEC,Zen Technologies Ltd.,Defence,defence,Industrials & Capital Goods,NSE
+ZFCVINDIA,ZF Commercial Vehicle Control Systems India Ltd.,Auto Ancillary,auto-ancillary,Automobile & Ancillaries,NSE
+ZYDUSLIFE,Zydus Lifesciences Ltd.,Healthcare,healthcare,Healthcare,NSE
+ZYDUSWELL,Zydus Wellness Ltd.,FMCG,fmcg,FMCG / Staples,NSE
