@@ -1,0 +1,12 @@
+name: auth_stack_v2
+status: planned
+opened: 2026-08-10
+closed: null
+related_commits: []
+supersedes: []
+depends_on:
+  - client_portal
+register_rows: []
+# register rows expected during execution: CSP widening (Supabase origin),
+# open sign-up posture (allowlist retirement), CSP narrowing (Clerk removal),
+# MSG91 egress (Phase 5)
