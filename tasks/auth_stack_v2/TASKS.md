@@ -33,19 +33,22 @@ SI-2/SI-3 spec tests green.
       positive path exists, SI-10 bypass gate green. Red witnessed;
       existing Clerk harness still 291 green alongside.
       [SEC:SI-1,SI-2,SI-3,SI-10]
-- [ ] 🤖 S0.4 Role claim design: Supabase tokens natively carry
-      `app_metadata` as a claim, so the spec reads
-      `app_metadata.role` directly — a Custom Access Token Hook is
-      likely UNNECESSARY. Verify against a real token in S0.6; add the
-      hook only if the claim turns out absent. [SEC:SI-1]
-- [ ] 🤖 S0.5 Minimal verifier module against the scratch JWKS -> S0.3
-      suite green.
-- [ ] 🤖 S0.6 Frontend spike page (throwaway, not shipped): email-OTP
-      two-step sign-in + Google SSO via supabase-js; captured
-      `access_token` accepted by the S0.5 verifier over HTTP.
-- [ ] 🤖 S0.7 Record spike findings + any surprises in RESULTS.md as a
-      running log; decide signing alg observed (ES256 vs RS256) and pin
-      it in the spec suite. [SEC:SI-2]
+- [x] 🤖 S0.4 RESOLVED 2026-08-10: real tokens carry `app_metadata`
+      natively — Custom Access Token Hook NOT needed. Role read from
+      `app_metadata.role`; admin path proven (admin API set ->
+      refreshed token carries the claim -> extracted as admin).
+      [SEC:SI-1]
+- [x] 🤖 S0.5 Spike verifier (`spike/verify_spike_token.py`) verifies
+      real tokens against the LIVE JWKS with the pinned rules; the
+      production implementation lands at B1.3 (spec suite stays red
+      until then, by design).
+- [x] 🤖 S0.6 Google-SSO leg done via `spike/serve_spike.py` (real
+      OAuth round-trip -> token captured -> verified, client AND admin
+      roles). Email-OTP leg deferred to S0.2 completion (SMTP +
+      template + re-enable email provider, which flipped off during
+      dashboard work).
+- [x] 🤖 S0.7 Running log live in RESULTS.md. Signing alg observed and
+      pinned: ES256, kid `ec789fc4-...`. [SEC:SI-2]
 
 ## Phase 1 — Backend migration (TDD)
 

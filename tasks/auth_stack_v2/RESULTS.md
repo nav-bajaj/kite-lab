@@ -35,5 +35,32 @@ running spike/findings log the plan asks for (S0.7).
   tokens) and become meaningful post-B1.3; SI-10 double-gate test
   green. Clerk harness unaffected: 291 passed alone and alongside.
 
-Pending founder actions for spike exit: signing-key migration (ES256),
-Google provider creds, SMTP + `{{ .Token }}` template (S0.2).
+- **Signing-key migration done** (founder, same day): JWKS now serves
+  one ES256 P-256 key, kid `ec789fc4-0843-494f-a059-31438dab1549`.
+  S0.7 alg decision settled: ES256 pinned, matching the spec suite.
+
+- **Google SSO round-trip proven** (founder enabled provider + scratch
+  OAuth client; spike page at `spike/serve_spike.py` on port 3000 to
+  match the redirect allowlist): real access token captured and
+  verified against the live JWKS — ES256, kid resolved, issuer +
+  aud=authenticated enforced.
+- **Hook question settled**: real tokens DO carry `app_metadata` /
+  `user_metadata` claims. No Custom Access Token Hook needed. Google
+  profile data lands in user_metadata (client-editable — exactly why
+  SI-1 refuses to read the role from there).
+- **Admin path proven** (the C4.2 mechanism): admin API
+  `PUT /auth/v1/admin/users/{id}` with `app_metadata.role=admin` ->
+  `refreshSession()` -> fresh token carries the claim -> spike
+  verifier extracts app role `admin`. Client-role default (absent key
+  -> `client`) observed on the pre-update token.
+- Spike server stopped; `.captured_token` deleted after use (gitignored
+  and mode 0600 while it existed).
+- **Gotcha**: the email provider flipped to `false` in
+  `/auth/v1/settings` at some point during dashboard work — re-enable
+  alongside S0.2 SMTP setup.
+
+Phase 0 exit state: architecture fully de-risked (JWKS/ES256/claims/
+roles all proven against the real project). Remaining before Phase 0
+closes: S0.2 — SMTP + `{{ .Token }}` template + re-enable email
+provider, then the email-OTP leg of the spike. Backend Phase 1 (B1.x)
+is unblocked regardless: the spec suite defines the verifier contract.
