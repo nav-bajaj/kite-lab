@@ -23,6 +23,25 @@ from sqlalchemy.sql import func
 from app.models.database import Base
 
 
+class User(Base):
+    """App-side user row, lazily provisioned on first authenticated
+    request (auth_stack_v2 B1.7, SI-9). Keyed by the auth provider's
+    ``sub``; minimal fields only — roles stay in the token, entitlements
+    (follow-on initiative) will reference this table."""
+
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    sub = Column(String(64), unique=True, nullable=False, index=True)
+    email = Column(String(255))
+    provider = Column(String(30), nullable=False, default="supabase")
+    first_seen_at = Column(DateTime, default=func.now(), nullable=False)
+    last_seen_at = Column(DateTime, default=func.now(), nullable=False)
+
+    def __repr__(self):
+        return f"<User(sub='{self.sub}', email='{self.email}')>"
+
+
 class AllowedUser(Base):
     """Whitelist of users allowed to access the dashboard."""
 

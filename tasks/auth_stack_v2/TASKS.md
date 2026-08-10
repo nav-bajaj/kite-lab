@@ -81,13 +81,20 @@ SI-2/SI-3 spec tests green.
       (all decode cases + `supabase_query_param` source label).
       [SEC:SI-8]
 - [x] 🤖 B1.6 [TDD] Dev-bypass double-gate spec green. [SEC:SI-10]
-- [ ] 🤖 B1.7 [TDD] Lazy user provisioning: `users` table in Railway PG
-      (follow the existing kite-api schema-management pattern — confirm
-      how migrations are done first), idempotent upsert keyed by `sub`
-      on first authenticated request; spec tests: created once, updated
-      not duplicated on repeat, minimal fields only. [SEC:SI-9]
-- [ ] 🤖 B1.8 Full `pytest tests/` green; assertion count of the new
-      harness >= 277 baseline; note the count in RESULTS.md. [SEC:SI-4]
+- [x] 🤖 B1.7 [TDD] Lazy provisioning done: `User` model (sub unique,
+      email, provider, first/last_seen — minimal per SI-9),
+      `services/user_service.py` upsert hooked into get_current_user +
+      validate_token_string. FAIL-OPEN (DB trouble never 401s; the
+      future entitlements dependency is the fail-closed reader), 15-min
+      seen-cache keeps the hot path write-free, IntegrityError race
+      resolved to the surviving row, dev-bypass skipped. 8 spec tests,
+      red witnessed (ImportError) first. NOTE for C4.3: schema is
+      create_all-managed and NOT run at app startup — create the
+      `users` table on Railway PG during cutover (init_db is
+      idempotent). [SEC:SI-9]
+- [x] 🤖 B1.8 Full `pytest tests/`: 1173 passed, 1 skipped. New auth
+      coverage: 294 (harness) + 17 (JWT spec) + 8 (provisioning) = 319
+      tests vs 291 baseline; Clerk harness intact alongside. [SEC:SI-4]
 
 ## Phase 2 — Frontend migration
 

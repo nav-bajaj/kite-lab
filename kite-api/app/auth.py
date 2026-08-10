@@ -222,6 +222,14 @@ def _user_dict(payload: dict, provider: str, source: str) -> dict:
     }
 
 
+def _provision(user: dict) -> None:
+    """Lazy user-row upsert (B1.7). Fail-open inside the service — a DB
+    problem must never turn into a 401/403."""
+    from app.services.user_service import provision_user
+
+    provision_user(user)
+
+
 # ---------------------------------------------------------------------------
 # FastAPI dependencies
 # ---------------------------------------------------------------------------
@@ -252,7 +260,9 @@ def get_current_user(
         raise AuthError("Missing authentication token")
 
     payload, provider = decode_token(credentials.credentials)
-    return _user_dict(payload, provider, source=provider)
+    user = _user_dict(payload, provider, source=provider)
+    _provision(user)
+    return user
 
 
 def get_optional_user(
@@ -339,4 +349,6 @@ def validate_token_string(token: str) -> dict:
     if not token:
         raise AuthError("Missing authentication token")
     payload, provider = decode_token(token)
-    return _user_dict(payload, provider, source=f"{provider}_query_param")
+    user = _user_dict(payload, provider, source=f"{provider}_query_param")
+    _provision(user)
+    return user

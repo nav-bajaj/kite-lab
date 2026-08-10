@@ -116,3 +116,37 @@ forward: SES production-access review (PENDING), MAIL FROM re-check
 (PENDING, non-blocking), Turnstile captcha + auth rate limits (Phase 3
 by design). Next: Phase 1 backend migration, starting with B1.1
 branch re-verification and the B1.2 harness port (red first).
+
+Founder decision: NO Clerk-user port — the 10 beta users sign up fresh
+at cutover (C4.4 stays notify-only; no migration script).
+
+## 2026-08-10 (night) — Phase 1 backend migration COMPLETE
+
+- B1.2: `test_supabase_authz.py` (294 tests) ports the full gate:
+  same endpoint inventories (incl. the two options_worker admin routes
+  this branch added), ES256 Supabase tokens, cross-issuer confusion
+  cases, endpoint-level SI-1 spoof test. Red witnessed: 241 failures
+  against the unmodified Clerk-only verifier.
+- B1.3: `auth.py` rewritten as an issuer-routed dual verifier (design
+  delta from the plan, so prod Clerk keeps working until C4.5): the
+  token's unverified `iss` only ROUTES to a fully-pinned per-provider
+  path; the path then verifies everything. Supabase = ES256 +
+  require_aud("authenticated") + `app_metadata.role`; Clerk = RS256 +
+  `metadata.role`; unknown issuer 401. Per-URL JWKS caches keep the
+  stale-on-failure + kid-miss-refresh behavior.
+- **TDD catch worth remembering**: python-jose does NOT validate `aud`
+  when the claim is absent from the token — the spec suite's
+  missing-aud test failed live and forced `options={"require_aud":
+  True}`. Without TDD this would have shipped as a silent gap.
+- B1.7: lazy provisioning — `User` model + `user_service.provision_user`
+  (idempotent by sub, 15-min seen-cache, IntegrityError race-safe,
+  fail-open by design since authz never reads this table) hooked into
+  both auth entry points. Red witnessed (ImportError), 8 spec tests
+  green. C4.3 must create the table on Railway PG (create_all, not
+  auto-run at startup).
+- B1.8: full suite 1173 passed / 1 skipped. Auth coverage 319 tests vs
+  291 baseline; Clerk harness untouched semantically (fixture plumbing
+  only: per-URL cache patch).
+
+Next: Phase 2 frontend migration (@supabase/ssr middleware, sign-in UI
+with Google + email OTP, token plumbing rewire, CSP + register row).
