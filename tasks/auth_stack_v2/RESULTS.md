@@ -101,3 +101,18 @@ Debug trail worth remembering for the PROD project setup (C4.1):
 
 Open S0.2 tail: template edit (`{{ .Token }}`), then the email-OTP
 verify leg (`/auth/v1/verify` with a real code) closes Phase 0.
+
+## 2026-08-10 (evening) — Phase 0 CLOSED
+
+Template edited to `{{ .Token }}`; full passwordless email flow proven:
+OTP requested -> 6-digit code delivered via SES -> `/auth/v1/verify`
+-> session minted -> access token passes the spike verifier (ES256,
+kid, issuer, aud; `app_metadata` present; app role defaults `client`
+for the email-provider user, distinct from the Google admin user).
+
+All Phase 0 exit criteria met. Both launch login methods (Google SSO,
+email OTP) verified end-to-end against real infrastructure. Carried
+forward: SES production-access review (PENDING), MAIL FROM re-check
+(PENDING, non-blocking), Turnstile captcha + auth rate limits (Phase 3
+by design). Next: Phase 1 backend migration, starting with B1.1
+branch re-verification and the B1.2 harness port (red first).

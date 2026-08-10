@@ -26,9 +26,11 @@ SI-2/SI-3 spec tests green.
 - [x] 👤 S0.2 Custom SMTP done 2026-08-10 via **AWS SES eu-north-1**
       (not Resend): domain DKIM verified, Supabase SMTP wired and
       proven end-to-end (POST /auth/v1/otp -> 200 -> mail delivered).
-      OPEN sub-item: email template edit to `{{ .Token }}` (founder
-      deferred; do before the email-OTP verify leg). SES production
-      access request submitted, review PENDING. [SEC]
+      Template edited to `{{ .Token }}` and the email-OTP verify leg
+      completed same day: code -> /auth/v1/verify -> session -> token
+      passes the spike verifier (client role default). SES production
+      access request submitted, review PENDING — must be granted
+      before public beta. [SEC]
 - [x] 🤖 S0.3 [TDD] Failing spec suite
       `kite-api/tests/test_supabase_jwt_spec.py` written 2026-08-10:
       17 tests; 6 red as intended (positive path + SI-1 role
