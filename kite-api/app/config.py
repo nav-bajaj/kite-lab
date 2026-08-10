@@ -16,10 +16,16 @@ class Settings(BaseSettings):
     # CORS
     allowed_origins: str = "http://localhost:3000"
 
-    # Authentication — Clerk (session-token verification via JWKS)
+    # Authentication — Supabase Auth (primary; session-token verification
+    # via the project JWKS, issuer https://<ref>.supabase.co/auth/v1)
+    supabase_jwks_url: str = ""
+    supabase_issuer: str = ""
+
+    # Authentication — Clerk (retired at auth_stack_v2 Phase 4 cutover;
+    # verification path kept alongside Supabase until then)
     clerk_jwks_url: str = ""
     clerk_issuer: str = ""
-    clerk_secret_key: str = ""  # For Clerk Backend API calls (future)
+    clerk_secret_key: str = ""  # For Clerk Backend API calls (unused)
 
     # Legacy authentication settings (kept during transition; the NextAuth
     # HS256 path was retired in the Clerk migration. Safe to remove once

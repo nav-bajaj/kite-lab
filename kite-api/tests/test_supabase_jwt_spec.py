@@ -1,8 +1,8 @@
 """
 Spec suite for Supabase JWT verification (auth_stack_v2, Phase 0/S0.3).
 
-Written BEFORE the ``app/auth.py`` rewrite per the TDD policy — the
-positive-path tests must fail (red) until B1.3 lands. Pins the security
+Written BEFORE the ``app/auth.py`` rewrite per the TDD policy (red
+witnessed 2026-08-10: 6 failures; green after B1.3). Pins the security
 invariants from ``tasks/auth_stack_v2/PLAN.md``:
 
   SI-1  Authz role comes exclusively from ``app_metadata.role``
@@ -99,8 +99,10 @@ def fresh_settings(monkeypatch):
 
 @pytest.fixture(autouse=True)
 def patch_jwks(jwks_dict, monkeypatch):
-    auth_module._JWKS_CACHE["keys"] = jwks_dict
-    auth_module._JWKS_CACHE["fetched_at"] = time.time()
+    auth_module._JWKS_CACHES[os.environ["SUPABASE_JWKS_URL"]] = {
+        "keys": jwks_dict,
+        "fetched_at": time.time(),
+    }
 
     def _no_network(*_args, **_kwargs):
         raise AssertionError(
@@ -109,8 +111,7 @@ def patch_jwks(jwks_dict, monkeypatch):
 
     monkeypatch.setattr("httpx.get", _no_network)
     yield
-    auth_module._JWKS_CACHE["keys"] = None
-    auth_module._JWKS_CACHE["fetched_at"] = 0.0
+    auth_module._JWKS_CACHES.clear()
 
 
 def _private_pem(ec_keypair) -> str:

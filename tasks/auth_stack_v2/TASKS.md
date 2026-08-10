@@ -57,28 +57,30 @@ SI-2/SI-3 spec tests green.
 
 ## Phase 1 — Backend migration (TDD)
 
-- [ ] 🤖 B1.1 Re-verify the 08-09 code map against THIS branch (auth.py,
-      middleware, api-auth-context, CSP block) — the map was read from
-      `options_data_v1`; adjust plan details if beta_gtm_mvp diverges.
-- [ ] 🤖 B1.2 [TDD] Port `test_clerk_authz.py` ->
-      `test_supabase_authz.py` preserving every assertion's semantics
-      (RSA-keypair fixture -> project-key fixture, issuer/JWKS
-      monkeypatch, parametrized ADMIN_ENDPOINTS + universe inventories),
-      plus the S0.3 cases and SI-10 prod-config case. Witness red
-      against unmodified auth.py. [SEC:SI-4]
-- [ ] 🤖 B1.3 Rewrite `kite-api/app/auth.py`: Supabase JWKS URL +
-      pinned issuer from config; `aud="authenticated"` enforced; role
-      from hook claim (default `client`); keep the
-      `{sub, role, metadata, claims, source}` return shape so all 37
-      route gates are untouched; JWKS cache + stale-on-failure + forced
-      refresh on kid miss preserved. [SEC:SI-2,SI-3]
-- [ ] 🤖 B1.4 `config.py`: add `supabase_jwks_url`, `supabase_issuer`;
-      mark `clerk_*` deprecated (removed in Phase 4); update
-      `kite-api/.env` locally.
-- [ ] 🤖 B1.5 [TDD] `validate_token_string` (SSE `?token=`) under the
-      new verifier — same spec cases as Bearer path. [SEC:SI-8]
-- [ ] 🤖 B1.6 [TDD] Dev bypass: spec test proving prod-shaped config
-      (DEBUG=false) returns 401 regardless of DISABLE_AUTH. [SEC:SI-10]
+- [x] 🤖 B1.1 Map re-verified on this branch 2026-08-10: matches, plus
+      two `options_worker.py` admin endpoints (merged via options
+      program) now in the inventories.
+- [x] 🤖 B1.2 [TDD] Harness ported (`test_supabase_authz.py`, 294
+      tests): same inventories/semantics, ES256 Supabase-shaped tokens,
+      plus cross-issuer confusion cases and endpoint-level SI-1
+      user_metadata spoof. Red witnessed: 241 failed pre-rewrite.
+      [SEC:SI-4]
+- [x] 🤖 B1.3 `auth.py` rewritten as an ISSUER-ROUTED dual verifier
+      (design delta from plan, so Clerk stays green until C4.5):
+      unverified `iss` routes to Supabase path (ES256,
+      aud=authenticated required, `app_metadata.role`) or Clerk path
+      (RS256, no aud, `metadata.role`); unknown issuer 401; per-URL
+      JWKS caches with stale-on-failure + kid-miss refresh; return
+      shape `{sub, role, metadata, claims, source}` preserved — zero
+      route-layer changes. TDD catch: python-jose skips aud validation
+      when the claim is absent -> `require_aud` enforced (the spec
+      suite's missing-aud test caught it live). [SEC:SI-2,SI-3]
+- [x] 🤖 B1.4 `config.py` + local `kite-api/.env` updated (scratch
+      project JWKS/issuer; swap at C4.3).
+- [x] 🤖 B1.5 [TDD] `validate_token_string` covered by the spec suite
+      (all decode cases + `supabase_query_param` source label).
+      [SEC:SI-8]
+- [x] 🤖 B1.6 [TDD] Dev-bypass double-gate spec green. [SEC:SI-10]
 - [ ] 🤖 B1.7 [TDD] Lazy user provisioning: `users` table in Railway PG
       (follow the existing kite-api schema-management pattern — confirm
       how migrations are done first), idempotent upsert keyed by `sub`
