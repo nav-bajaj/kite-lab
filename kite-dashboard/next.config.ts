@@ -51,13 +51,28 @@ const clerkOrigins =
   "https://clerk.marketworks.in https://*.clerk.accounts.dev https://*.accounts.dev https://*.clerk.com";
 const turnstileOrigin = "https://challenges.cloudflare.com";
 
+// Supabase Auth (auth_stack_v2, register row R-027): the project origin
+// serves /auth/v1/* (token, otp, authorize, user). Exact single origin
+// derived from the env var — no wildcard. connect-src only: supabase-js
+// is bundled (no CDN script), OAuth is a top-level redirect (not a frame
+// or form POST), so no other directive needs it. Clerk origins remain
+// until the Phase 4 cutover removes the Clerk verification path (C4.5
+// narrows this CSP again).
+const supabaseOrigin = (() => {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").origin;
+  } catch {
+    return "";
+  }
+})();
+
 const cspDirectives = [
   `default-src 'self'`,
   `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${clerkOrigins} ${turnstileOrigin} https://accounts.google.com https://*.gstatic.com`,
   `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
   `img-src 'self' data: blob: https:`,
   `font-src 'self' data: https://fonts.gstatic.com`,
-  `connect-src 'self' ${apiUrl} ${devApiOrigin} ${clerkOrigins} ${turnstileOrigin} https://accounts.google.com https://oauth2.googleapis.com https://*.googleapis.com`,
+  `connect-src 'self' ${apiUrl} ${devApiOrigin} ${supabaseOrigin} ${clerkOrigins} ${turnstileOrigin} https://accounts.google.com https://oauth2.googleapis.com https://*.googleapis.com`,
   `frame-src 'self' ${clerkOrigins} ${turnstileOrigin} https://accounts.google.com`,
   `worker-src 'self' blob:`,
   `frame-ancestors 'none'`,

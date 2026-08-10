@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
+import { useSupabaseAuth } from "@/contexts/supabase-auth-context";
 import { cn } from "@/lib/utils";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,8 +14,8 @@ import { getNavigation } from "@/lib/nav";
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { user } = useUser();
-  const role = (user?.publicMetadata as { role?: string } | undefined)?.role;
+  // Role from the JWT's app_metadata — cosmetic nav gating only.
+  const { role } = useSupabaseAuth();
   const isAdmin = role === "admin";
   const visibleNav = getNavigation(isAdmin);
   const { collapsed, toggle } = useSidebar();

@@ -8,24 +8,27 @@ import {
   ReactNode,
   useCallback,
 } from "react";
-import { useAuth } from "@clerk/nextjs";
+import { useSupabaseAuth } from "@/contexts/supabase-auth-context";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { setGlobalAuthToken, setTokenProvider } from "@/lib/api-client";
 
-// Bridges Clerk's session token into the existing global-token slot that
-// `api-client.ts` reads. Clerk default tokens have ~60s TTL, so we
-// refresh on a ~50s interval to keep the cached value fresh.
+// Bridges the Supabase session token into the existing global-token slot
+// that `api-client.ts` reads. supabase-js refreshes the session itself
+// (autoRefreshToken) and every refresh flows through onAuthStateChange →
+// SupabaseAuthProvider → the session prop here, so no polling interval is
+// needed (Clerk's ~60s TTL forced a 50s poll; Supabase tokens live 1h).
 //
 // The global-token pattern is kept (rather than rewriting api-client.ts
-// to use a React hook) so server-side fetch callsites and any non-React
-// consumers keep working unchanged.
-
-const REFRESH_INTERVAL_MS = 50_000;
+// to use a React hook) because the SSE URL builders
+// (getJobLogsStreamUrl / getPositionsStreamUrl) are synchronous and read
+// the global directly — it MUST be eagerly repopulated on every session
+// change or streams open with a stale token.
 
 interface ApiAuthContextType {
   token: string | null;
   isLoading: boolean;
-  // True once Clerk has loaded and we have a usable token (signed in).
-  // SWR hooks gate their fetches on this so they never fire before a
+  // True once the session has loaded and we have a usable token (signed
+  // in). SWR hooks gate their fetches on this so they never fire before a
   // token can be attached — which is what produced the spurious 401
   // "session expired" toast on login.
   authReady: boolean;
@@ -42,57 +45,58 @@ const ApiAuthContext = createContext<ApiAuthContextType>({
 });
 
 export function ApiAuthProvider({ children }: { children: ReactNode }) {
-  const { getToken, isSignedIn, isLoaded } = useAuth();
+  const { session, isSignedIn, isLoaded } = useSupabaseAuth();
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const refreshToken = useCallback(async () => {
+  // Session → token slots. Runs on initial resolution, sign-in, sign-out,
+  // and every TOKEN_REFRESHED event (supabase-js refreshes ~5 min before
+  // expiry). Deliberately does NOT flip isLoading back to true on refresh
+  // — that would re-trigger loading states and flicker the UI.
+  useEffect(() => {
     if (!isLoaded) return;
-    if (!isSignedIn) {
-      setToken(null);
-      setGlobalAuthToken(null);
-      setIsLoading(false);
-      return;
-    }
-
-    // Note: we deliberately do NOT flip isLoading back to true here. The
-    // periodic 50s refresh would otherwise re-trigger loading states and
-    // make the UI flicker even though valid data is already on screen.
+    const fresh = session?.access_token ?? null;
+    setToken(fresh);
+    setGlobalAuthToken(fresh);
+    setIsLoading(false);
     setError(null);
+  }, [session, isLoaded]);
 
+  // Register an async token resolver so api-client can pull a
+  // guaranteed-current token at fetch time (getSession returns the
+  // refreshed session if supabase-js has rotated it since our render).
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      setTokenProvider(async () => {
+        const { data } = await getSupabaseBrowserClient().auth.getSession();
+        return data.session?.access_token ?? null;
+      });
+    } else {
+      setTokenProvider(null);
+    }
+    return () => setTokenProvider(null);
+  }, [isLoaded, isSignedIn]);
+
+  // Manual refresh escape hatch (kept for interface compatibility).
+  const refreshToken = useCallback(async () => {
+    if (!isLoaded || !isSignedIn) return;
     try {
-      const fresh = await getToken();
+      const { data, error: refreshError } =
+        await getSupabaseBrowserClient().auth.refreshSession();
+      if (refreshError) throw refreshError;
+      const fresh = data.session?.access_token ?? null;
       setToken(fresh);
       setGlobalAuthToken(fresh);
+      setError(null);
     } catch (err) {
-      console.error("Failed to fetch Clerk session token:", err);
+      console.error("Failed to refresh Supabase session:", err);
       setError(err instanceof Error ? err.message : "Failed to get token");
-      setToken(null);
-      setGlobalAuthToken(null);
-    } finally {
-      setIsLoading(false);
     }
-  }, [getToken, isLoaded, isSignedIn]);
+  }, [isLoaded, isSignedIn]);
 
-  // Register an async token resolver so api-client can pull a fresh token
-  // at fetch time instead of relying on the global being populated yet.
-  useEffect(() => {
-    setTokenProvider(isLoaded && isSignedIn ? () => getToken() : null);
-    return () => setTokenProvider(null);
-  }, [isLoaded, isSignedIn, getToken]);
-
-  // Initial fetch + periodic refresh while signed in
-  useEffect(() => {
-    refreshToken();
-    if (!isSignedIn) return;
-    const id = setInterval(refreshToken, REFRESH_INTERVAL_MS);
-    return () => clearInterval(id);
-  }, [refreshToken, isSignedIn]);
-
-  // Ready to make authed requests once Clerk has loaded and either we have
-  // a token (signed in) or we know the user is signed out. Authed SWR keys
-  // stay null until this is true.
+  // Ready to make authed requests once the session has loaded and we have
+  // a token. Authed SWR keys stay null until this is true.
   const authReady = isLoaded && isSignedIn === true && token !== null;
 
   return (

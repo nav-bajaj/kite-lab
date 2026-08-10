@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useAuth, UserButton } from "@clerk/nextjs";
+import { useSupabaseAuth } from "@/contexts/supabase-auth-context";
+import { UserMenu } from "@/components/shared/user-menu";
 import { Menu, X } from "lucide-react";
 
 import { INSIGHTS_ACCESS } from "@/lib/flags";
@@ -28,7 +29,7 @@ const LINKS = [
  * marketing pages migrate to it in Phase E.
  */
 export function FloatingNav() {
-  const { isLoaded, isSignedIn } = useAuth();
+  const { isLoaded, isSignedIn } = useSupabaseAuth();
   const showSignedIn = isLoaded && isSignedIn;
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -76,7 +77,7 @@ export function FloatingNav() {
               justify-end pins the children to the right edge. */}
           <div className="flex items-center justify-end justify-self-end gap-2 sm:gap-3">
             {/* Palette picker — signed-out choices persist per device;
-                signed-in choices roam via Clerk (PaletteSync). */}
+                signed-in choices roam via user_metadata (PaletteSync). */}
             <PalettePicker />
             {showSignedIn ? (
               <>
@@ -86,7 +87,7 @@ export function FloatingNav() {
                 >
                   Dashboard
                 </Link>
-                <UserButton />
+                <UserMenu />
               </>
             ) : (
               <>

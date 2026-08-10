@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { auth } from "@clerk/nextjs/server";
+import { getSupabaseServerClient } from "@/lib/supabase/server";
 
 import { UNIVERSES } from "@/lib/universes";
 import { FloatingNav } from "@/components/marketing/floating-nav";
@@ -58,10 +58,14 @@ const CARD_ACCENTS = [
 
 export default async function LandingPage() {
   const portfolios = Object.values(UNIVERSES).filter((u) => u.clientVisible);
-  // Signed-in visitors already have access, so send them straight to the app.
-  const { userId } = await auth();
-  const betaHref = userId ? "/dashboard" : "/sign-up";
-  const betaLabel = userId ? "View dashboard" : "Get beta access";
+  // Signed-in visitors already have access, so send them straight to the
+  // app. getClaims verifies the session JWT locally against the project
+  // JWKS — no auth-server round-trip on the marketing page.
+  const supabase = await getSupabaseServerClient();
+  const { data } = await supabase.auth.getClaims();
+  const isSignedIn = data?.claims != null;
+  const betaHref = isSignedIn ? "/dashboard" : "/sign-up";
+  const betaLabel = isSignedIn ? "View dashboard" : "Get beta access";
 
   return (
     <div className="mw-brand relative min-h-screen overflow-hidden bg-surface-base">

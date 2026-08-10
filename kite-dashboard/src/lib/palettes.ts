@@ -8,7 +8,7 @@
  * the Midnight token block fire together. `mint` is the :root default.
  *
  * The chosen palette persists per-device via next-themes (localStorage)
- * and across devices via Clerk `unsafeMetadata.palette` (a user-writable
+ * and across devices via Supabase `user_metadata.palette` (a user-writable
  * UI preference — never trusted server-side; validated here on read).
  */
 

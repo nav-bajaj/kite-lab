@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
-import { UserButton } from "@clerk/nextjs";
+import { useSupabaseAuth } from "@/contexts/supabase-auth-context";
+import { UserMenu } from "./user-menu";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { BookOpen, Layers, Home as HomeIcon, LineChart, Menu, Settings, User as UserIcon } from "lucide-react";
@@ -25,8 +25,9 @@ const pathNames: Record<string, string> = {
 
 export function Navbar() {
   const pathname = usePathname();
-  const { user } = useUser();
-  const role = (user?.publicMetadata as { role?: string } | undefined)?.role;
+  // Role from the JWT's app_metadata — cosmetic nav gating only; the
+  // backend enforces the real admin gates.
+  const { role } = useSupabaseAuth();
   const isAdmin = role === "admin";
   const insightsItem = getInsightsNavItem(isAdmin);
   const insightsActive = pathname.startsWith("/insights");
@@ -144,9 +145,9 @@ export function Navbar() {
           </Button>
         </div>
 
-        {/* User menu — Clerk-managed avatar, profile, sign-out. On sign-out
-            the middleware redirects unauthed users to /sign-in automatically. */}
-        <UserButton appearance={{ elements: { avatarBox: "h-9 w-9" } }} />
+        {/* User menu — avatar, account link, sign-out. Sign-out routes to
+            the marketing page; middleware guards protected routes. */}
+        <UserMenu />
       </div>
     </header>
   );

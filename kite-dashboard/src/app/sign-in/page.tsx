@@ -1,8 +1,12 @@
+import { Suspense } from "react";
 import Link from "next/link";
-import { SignIn } from "@clerk/nextjs";
 
-import { clerkAppearance } from "@/lib/clerk-appearance";
+import { SignInCard } from "@/components/auth/sign-in-card";
 import { FlowGrid } from "@/components/marketing/flow-grid";
+
+export const metadata = {
+  title: "Sign in — Marketworks",
+};
 
 export default function SignInPage() {
   return (
@@ -20,7 +24,10 @@ export default function SignInPage() {
         <h1 className="font-serif text-3xl font-medium text-foreground">
           Welcome back
         </h1>
-        <SignIn appearance={clerkAppearance} signUpUrl="/sign-up" />
+        {/* Suspense: SignInCard reads useSearchParams (oauth error echo). */}
+        <Suspense fallback={null}>
+          <SignInCard />
+        </Suspense>
       </div>
     </div>
   );

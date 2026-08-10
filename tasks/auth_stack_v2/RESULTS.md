@@ -150,3 +150,38 @@ at cutover (C4.4 stays notify-only; no migration script).
 
 Next: Phase 2 frontend migration (@supabase/ssr middleware, sign-in UI
 with Google + email OTP, token plumbing rewire, CSP + register row).
+
+## 2026-08-10 (late night) — Phase 2 frontend migration built
+
+Both mapping agents ran first (brand identity from marketworks-design;
+file-level auth map of the dashboard). Brand decision: sanctioned
+Mint/six-palette role tokens (Clay study is unmerged + homepage-scoped
+per its own STATE.md); tokens-only styling so the sign-in re-skins per
+palette for free. All F2 items done, `npm run build` clean, zero @clerk
+references left in src/ (dependency kept for revertibility until C4.5).
+
+Shape notes worth remembering:
+- NEW `SupabaseAuthProvider` is the single session subscription; every
+  former Clerk hook consumer reads it. Outermost provider.
+- Middleware uses `getClaims()` — local ES256 JWKS verification at the
+  edge, no per-request auth-server call; refreshed cookies are carried
+  onto redirect responses. azp pinning has no Supabase equivalent —
+  compensated by backend require_aud + issuer pin (R-027).
+- `globalAuthToken` must stay eagerly populated on session change: the
+  SSE URL builders (`getJobLogsStreamUrl`/`getPositionsStreamUrl`) are
+  synchronous and read it directly.
+- SWR cache prefix v1->v2 retires Clerk-keyed localStorage blobs.
+- Palette preference roams via `user_metadata` (validated on read,
+  never trusted server-side) — the one sanctioned user_metadata use.
+- `/sign-up` kept as a page with beta copy (plan said redirect) —
+  preserves the marketing CTA; same passwordless flow.
+- Pre-existing, unrelated: Vercel Speed Insights debug script is
+  CSP-blocked in dev (was never allowlisted; prod path is first-party).
+
+Verified live against the scratch project: sign-in page rendered in
+Ocean/Mint/Midnight (evidence/signin-*.png), real OTP sent from the new
+UI (send -> code step -> resend cooldown). Full E2E (verify -> session
+-> dashboard) lands with the Playwright smoke in H3.7.
+
+Open: founder visual sign-off on the sign-in screen; F2.10 privacy-page
+subprocessor update (fold into H3.4).

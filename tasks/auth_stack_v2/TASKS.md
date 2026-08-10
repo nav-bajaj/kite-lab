@@ -98,35 +98,55 @@ SI-2/SI-3 spec tests green.
 
 ## Phase 2 — Frontend migration
 
-- [ ] 🤖 F2.1 Add `@supabase/supabase-js` + `@supabase/ssr`; client
-      factories (browser/server); env `NEXT_PUBLIC_SUPABASE_URL`,
-      `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
-- [ ] 🤖 F2.2 Replace `clerkMiddleware` in `src/middleware.ts`:
-      cookie/session refresh per @supabase/ssr, same public-route list,
-      admin gate + insights tri-state read from VERIFIED claims (no
-      unverified session reads server-side). [SEC]
-- [ ] 🤖 F2.3 Rebuild `/sign-in`: brand shell retained; Google SSO
-      button + email-OTP two-step (send code -> enter code). Sign-up
-      collapses into the same passwordless flow; delete `/sign-up` route
-      (redirect to `/sign-in`).
-- [ ] 🤖 F2.4 Rebuild `/account`: minimal panel (email, linked Google,
-      sign out) replacing `<UserProfile/>`.
-- [ ] 🤖 F2.5 Rewire `api-auth-context.tsx`: token provider returns
-      `session.access_token`; refresh via `onAuthStateChange` +
-      `autoRefreshToken` instead of the 50s Clerk poll; `authReady`
-      semantics preserved so `useAuthedSWR` still blocks pre-token
-      fetches.
-- [ ] 🤖 F2.6 Replace `UserButton`/`useUser` surfaces (navbar, sidebar,
-      mobile-sidebar, universe-context): role from session claims, same
-      cosmetic-only gating (backend remains the real gate).
-- [ ] 🤖 F2.7 SWR localStorage cache namespaced by new user id; purge on
-      sign-out unchanged.
-- [ ] 🤖 F2.8 CSP in `next.config.ts`: add `https://<ref>.supabase.co`
-      to connect-src (Clerk origins stay until Phase 4). Draft the
-      risk-register row BEFORE the config change lands. [SEC:SI-6]
-- [ ] 🤖 F2.9 `npm run build` clean with `@clerk/nextjs` still installed
-      but unreferenced (dependency removal happens at Phase 4 cutover so
-      the branch stays revertible).
+- [x] 🤖 F2.1 Done 2026-08-10: `@supabase/supabase-js` 2.112 +
+      `@supabase/ssr` 0.12; browser/server client factories
+      (`src/lib/supabase/`); NEW `SupabaseAuthProvider`
+      (`contexts/supabase-auth-context.tsx`) — single onAuthStateChange
+      subscription, exposes {session,user,isLoaded,isSignedIn,userId,
+      role,signOut}, sits OUTERMOST in providers.tsx; env in .env.local.
+- [x] 🤖 F2.2 Middleware replaced: @supabase/ssr cookie refresh,
+      `getClaims()` (LOCAL ES256 JWKS verification, no per-request
+      network), same public routes + `/auth/callback`, insights
+      tri-state + admin gate semantics preserved, refreshed cookies
+      carried onto redirects. azp/authorizedParties has no Supabase
+      equivalent — replaced by backend require_aud + issuer pin
+      (noted in R-027). [SEC]
+- [x] 🤖 F2.3 `/sign-in` rebuilt: brand shell + FlowGrid retained,
+      `SignInCard` (Google SSO via PKCE -> /auth/callback route
+      handler; email-OTP two-step with single one-time-code-autofill
+      input, resend cooldown, error states), tokens-only styling so all
+      six palettes work. DEVIATION from plan: `/sign-up` kept as a page
+      (same card, beta copy) instead of a redirect — preserves the
+      marketing "Get beta access" CTA; same flow either way.
+- [x] 🤖 F2.4 `/account` rebuilt: identity summary, provider badges,
+      admin badge, sign out.
+- [x] 🤖 F2.5 `api-auth-context` rewired: session-driven token slots
+      (no 50s poll; onAuthStateChange covers TOKEN_REFRESHED), async
+      provider does getSession() at fetch time, `globalAuthToken`
+      eagerly repopulated on every session change (the synchronous SSE
+      URL builders read it), `authReady` tri-condition preserved.
+- [x] 🤖 F2.6 All Clerk hook surfaces replaced: navbar + sidebar role
+      reads, NEW `UserMenu` (avatar dropdown: account/sign-out —
+      replaces UserButton in navbar + floating-nav), universe-context,
+      palette-sync/picker (palette roams via `user_metadata` — the one
+      legitimate user_metadata use, validated on read), landing page
+      server-side read via getClaims. bottom-nav had no auth usage.
+- [x] 🤖 F2.7 SWR cache prefix bumped v1->v2 (retires Clerk-keyed
+      blobs); userId/isLoaded now from SupabaseAuthProvider; purge
+      still gated on isLoaded.
+- [x] 🤖 F2.8 CSP: `supabaseOrigin` (exact origin from
+      NEXT_PUBLIC_SUPABASE_URL) added to connect-src only; register row
+      R-027 added in the same commit (Clerk origins stay until C4.5,
+      which then NARROWS the CSP). [SEC:SI-6]
+- [x] 🤖 F2.9 `npm run build` clean; zero `@clerk` references left in
+      src/ (grep-verified); `@clerk/nextjs` dependency retained for
+      revertibility until C4.5. `clerk-appearance.ts` deleted. Visual
+      evidence: `evidence/signin-{mint,ocean,midnight,code-step}.png`
+      — sign-in card verified across palettes; real OTP sent through
+      the new UI. Pending founder sign-off on the visual direction.
+- [ ] 🤖 F2.10 (new) Privacy page (`(legal)/privacy/page.tsx`) still
+      names Clerk as the auth subprocessor — legally must be updated to
+      Supabase + AWS SES. Fold into H3.4 docs pass.
 
 ## Phase 3 — Public-beta hardening + review
 
