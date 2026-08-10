@@ -15,23 +15,29 @@ role claim from `app_metadata`, delivered via email OTP through custom
 SMTP, and a minimal FastAPI verifier accepts it via JWKS with the SI-1/
 SI-2/SI-3 spec tests green.
 
-- [ ] 👤 S0.1 Create scratch Supabase project (free tier). Enable Google
-      provider (reuse existing Google OAuth client) + email provider.
-      Hand over: project ref, anon key; `service_role` key goes only
-      into local `.env`, never committed. [SEC:SI-5]
+- [x] 👤 S0.1 Create scratch Supabase project (free tier) — done
+      2026-08-10, ref `jhvkfokskanbaiipvcqu`, CLI linked, anon key
+      readable via `supabase projects api-keys`. OPEN sub-items:
+      (a) enable Google provider (needs Google OAuth client creds);
+      (b) migrate to asymmetric JWT signing keys — dashboard: Project
+      Settings -> JWT Keys -> migrate, create ES256 key, promote
+      (JWKS endpoint is currently EMPTY = legacy HS256 signing, which
+      SI-2 forbids us to accept). [SEC:SI-2,SI-5]
 - [ ] 👤 S0.2 Wire custom SMTP (Resend free tier is fine for the spike)
       and edit the OTP email template to send a 6-digit `{{ .Token }}`
       code instead of a magic link.
-- [ ] 🤖 S0.3 [TDD] Write the failing spec suite
-      `kite-api/tests/test_supabase_jwt_spec.py`: valid token accepted;
-      wrong issuer 401; HS256/legacy-secret token 401 (alg confusion);
-      bad `aud` 401; unknown `kid` 401; role read from token claim
-      populated by the hook; `role: admin` present only in
-      `user_metadata` -> treated as client. Witness red.
-      [SEC:SI-1,SI-2,SI-3]
-- [ ] 🤖 S0.4 Implement the Custom Access Token Hook (role claim from
-      `app_metadata.role`, default `client`). Verify the claim appears
-      in real tokens from the scratch project. [SEC:SI-1]
+- [x] 🤖 S0.3 [TDD] Failing spec suite
+      `kite-api/tests/test_supabase_jwt_spec.py` written 2026-08-10:
+      17 tests; 6 red as intended (positive path + SI-1 role
+      provenance), 10 rejection guards trivially green until the
+      positive path exists, SI-10 bypass gate green. Red witnessed;
+      existing Clerk harness still 291 green alongside.
+      [SEC:SI-1,SI-2,SI-3,SI-10]
+- [ ] 🤖 S0.4 Role claim design: Supabase tokens natively carry
+      `app_metadata` as a claim, so the spec reads
+      `app_metadata.role` directly — a Custom Access Token Hook is
+      likely UNNECESSARY. Verify against a real token in S0.6; add the
+      hook only if the claim turns out absent. [SEC:SI-1]
 - [ ] 🤖 S0.5 Minimal verifier module against the scratch JWKS -> S0.3
       suite green.
 - [ ] 🤖 S0.6 Frontend spike page (throwaway, not shipped): email-OTP
