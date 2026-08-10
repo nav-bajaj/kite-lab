@@ -64,3 +64,40 @@ roles all proven against the real project). Remaining before Phase 0
 closes: S0.2 — SMTP + `{{ .Token }}` template + re-enable email
 provider, then the email-OTP leg of the spike. Backend Phase 1 (B1.x)
 is unblocked regardless: the spec suite defines the verifier contract.
+
+## 2026-08-10 (later) — S0.2: SES SMTP working end-to-end
+
+Provider decision: **AWS SES, region eu-north-1** (founder's choice over
+Resend; region is where the account was set up — kept, latency
+immaterial for OTP mail). Chain proven: `POST /auth/v1/otp` -> 200 ->
+mail delivered to the sandbox-verified recipient.
+
+Debug trail worth remembering for the PROD project setup (C4.1):
+
+1. **Namecheap doubled-domain gotcha** (predicted, confirmed): all 3
+   DKIM CNAMEs + MAIL FROM MX/TXT were published under
+   `<name>.marketworks.in.marketworks.in` because the full hostname was
+   pasted into the Host field. Fix: Host field takes only the prefix
+   (`<token>._domainkey`, `mail`). DKIM flipped SUCCESS ~40 min after
+   the fix; MAIL FROM re-check still pending (non-blocking — affects
+   bounce-domain alignment only).
+2. **SMTP credential shape check**: SES SMTP username is an
+   AKIA-prefixed 20-char access-key ID, password ~44 chars, minted
+   region-specific by the console's "Create SMTP credentials" flow.
+   First attempt had a non-SES credential pair (`inp-...`, 28/32
+   chars) — direct STARTTLS probe (`spike/test_smtp.py`) returned 535
+   and pinpointed it; second pair authed + sent clean.
+3. Supabase Auth's 500 ("Error sending confirmation email") hides the
+   SMTP error string; isolate with (a) direct SES API send — proves
+   identity/sandbox side, (b) `spike/test_smtp.py` — proves the
+   credential hop, (c) dashboard Logs -> Auth for the verbatim error.
+4. **SES sandbox**: ProductionAccessEnabled=false, 200/day, verified
+   recipients only. Production-access request submitted via
+   `put-account-details` (transactional/OTP use case) — review PENDING,
+   ~24h typical. Must be GRANTED before public beta.
+5. Email provider had silently flipped off in the dashboard earlier —
+   re-enabled by founder. Check `/auth/v1/settings` when auth flows
+   misbehave.
+
+Open S0.2 tail: template edit (`{{ .Token }}`), then the email-OTP
+verify leg (`/auth/v1/verify` with a real code) closes Phase 0.
