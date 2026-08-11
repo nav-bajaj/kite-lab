@@ -52,8 +52,8 @@ export async function middleware(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      // R-029 containment — see src/lib/supabase/client.ts.
-      cookieOptions: { maxAge: 7 * 24 * 60 * 60 },
+      // R-029 rolling inactivity window — see src/lib/supabase/client.ts.
+      cookieOptions: { maxAge: 30 * 24 * 60 * 60 },
       cookies: {
         getAll() {
           return request.cookies.getAll();

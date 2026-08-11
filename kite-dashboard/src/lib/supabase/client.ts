@@ -11,9 +11,12 @@ export function getSupabaseBrowserClient(): SupabaseClient {
     client = createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      // Session cookies are JS-readable by design (R-029). Cap their
-      // lifetime to 7 days (library default: 400) as containment.
-      { cookieOptions: { maxAge: 7 * 24 * 60 * 60 } },
+      // Session cookies are JS-readable by design (R-029). Rolling
+      // 30-day inactivity window (library default: 400 days): every
+      // visit re-stamps the cookie, so active users never re-login;
+      // dormant sessions die within a month. Founder decision
+      // 2026-08-11 (ease-of-use vs the R-029 containment default of 7d).
+      { cookieOptions: { maxAge: 30 * 24 * 60 * 60 } },
     );
   }
   return client;
