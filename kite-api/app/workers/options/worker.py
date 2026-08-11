@@ -27,6 +27,10 @@ from app.workers.options.subscriptions import SubscriptionManager
 
 log = logging.getLogger("options_worker")
 
+# Non-zero so railway.worker.toml's on_failure policy restarts us; distinct
+# from 1 so a recycle is tellable from a crash in the deploy logs.
+RECYCLE_EXIT_CODE = 43
+
 
 def _read_credentials() -> "tuple[str, str]":
     """(api_key, access_token) — kite_session (Postgres) first,
@@ -86,6 +90,7 @@ class OptionsWorker:
         self.started_at: datetime = now_ist()
         self.last_error: Optional[str] = None
         self._stop = False
+        self._recycle = False
         # capture stack, live only during CAPTURE
         self.chain: Optional[ChainState] = None
         self.subs: Optional[SubscriptionManager] = None
@@ -116,13 +121,18 @@ class OptionsWorker:
         start_health_server(self, self.settings.health_port, self.settings.health_host)
         log.info("options worker up — health on :%d", self.settings.health_port)
 
-        while not self._stop:
+        while not self._stop and not self._recycle:
             try:
                 self.tick(now_ist())
             except Exception:
                 self.last_error = f"{now_ist().isoformat()} loop error"
                 log.exception("worker loop error — continuing")
             time.sleep(self.settings.poll_seconds)
+        if self._recycle and not self._stop:
+            # Deliberate non-zero exit: railway.worker.toml restarts
+            # on_failure, giving tomorrow's session a fresh process.
+            log.info("daily recycle: exiting for a fresh reactor (2026-08-11 incident)")
+            raise SystemExit(RECYCLE_EXIT_CODE)
         log.info("options worker stopped")
 
     def tick(self, now: datetime) -> None:
@@ -180,6 +190,9 @@ class OptionsWorker:
             # never started — by rebuilding with a freshly-read token.
             dead = self.ticker is None or (not self.ticker.connected and self._ticker_dead_for(now) > 60)
             if dead:
+                # Stamp last_error so /admin goes red while this loops —
+                # the 08-11 outage rebuilt silently for 2h18m.
+                self.last_error = f"{now_ist().isoformat()} ticker dead — rebuilding"
                 log.warning("ticker dead — rebuilding client with fresh token")
                 if self.ticker is not None:
                     self.ticker.stop()
@@ -196,6 +209,13 @@ class OptionsWorker:
             self._exit_capture(now)
         if new == Phase.EOD_FLUSH:
             self._enter_eod_flush(now)
+        if old == Phase.EOD_FLUSH and new != Phase.EOD_FLUSH:
+            # KiteTicker's module-global twisted reactor cannot arm a second
+            # session in one process (connect() only boots a not-yet-running
+            # reactor; anything later dies silently — 2026-08-11 outage).
+            # Recycling AFTER the flush completes means a restarted process
+            # lands in IDLE and never double-runs the EOD path.
+            self._recycle = True
 
     # -- daily selection ---------------------------------------------------
 

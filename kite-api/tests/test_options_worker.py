@@ -236,3 +236,52 @@ class TestWorkerLifecycle:
         snap = worker.health_snapshot()
         assert snap["contracts"] == 87
         assert snap["selection_date"] == d.isoformat()
+
+    def test_daily_recycle_flags_after_eod_flush_exits(self, monkeypatch, dump):
+        """2026-08-11 outage: twisted's global reactor cannot arm a second
+        session in one process, so the worker must recycle once the EOD
+        flush window closes — and only then."""
+        from app.workers.options.worker import RECYCLE_EXIT_CODE, OptionsWorker
+
+        worker = OptionsWorker()
+
+        def fake_selection(now):
+            worker.selection = il.select_contracts(dump, 25012.4, now.date())
+            worker.selection_date = now.date()
+
+        monkeypatch.setattr(worker, "_run_daily_selection", fake_selection)
+
+        d = TODAY
+        at = lambda h, m: IST.localize(datetime(d.year, d.month, d.day, h, m))
+        worker.tick(at(8, 50))
+        worker.tick(at(9, 20))
+        assert worker.phase == Phase.CAPTURE and not worker._recycle
+        worker.tick(at(15, 45))
+        assert worker.phase == Phase.EOD_FLUSH
+        assert not worker._recycle  # never mid-flush: a restart here would double-run EOD
+        worker.tick(at(16, 30))
+        assert worker.phase == Phase.IDLE
+        assert worker._recycle
+        assert RECYCLE_EXIT_CODE != 0
+
+    def test_fresh_process_landing_in_idle_does_not_recycle(self, monkeypatch, dump):
+        from app.workers.options.worker import OptionsWorker
+
+        worker = OptionsWorker()
+        monkeypatch.setattr(worker, "_run_daily_selection", lambda now: None)
+        d = TODAY
+        at = lambda h, m: IST.localize(datetime(d.year, d.month, d.day, h, m))
+        worker.tick(at(16, 30))
+        worker.tick(at(17, 0))
+        assert worker.phase == Phase.IDLE and not worker._recycle
+
+    def test_run_loop_exits_nonzero_on_recycle(self, monkeypatch):
+        from app.workers.options import worker as worker_mod
+        from app.workers.options.worker import RECYCLE_EXIT_CODE, OptionsWorker
+
+        worker = OptionsWorker()
+        worker._recycle = True
+        monkeypatch.setattr(worker_mod, "start_health_server", lambda *a, **k: None)
+        with pytest.raises(SystemExit) as exc:
+            worker.run()
+        assert exc.value.code == RECYCLE_EXIT_CODE
