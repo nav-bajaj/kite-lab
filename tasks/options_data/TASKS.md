@@ -68,7 +68,20 @@ Phases per PLAN.md. Local-first: 1-3 run on the laptop; Railway is Phase 4.
       packets, staleness, bars counters, widen events, error strip
 - [x] Error lifecycle 2026-07-30: 08:30 login race gets a 2-min grace
       window; success clears last_error; dot prefers live capture state
-- [ ] Push alerting (beyond panel red-dot) — optional, not scheduled
+- [ ] Push alerting (beyond panel red-dot) — PRIORITY RAISED by the
+      2026-08-11 incident: capture was dead 09:15-11:33 on expiry morning
+      with a green panel (heartbeat fine, last_error None) and the founder
+      noticed before the system did. Minimum bar: alert when phase=capture
+      and packets stay 0 for N minutes.
+- [x] 2026-08-11 INCIDENT + fix: silent ticker death on the process's
+      SECOND session (twisted global reactor cannot re-arm; every prior
+      day accidentally got a fresh container from evening pushes; the
+      first push-free weekend exposed it). Restored 11:33 by redeploy;
+      permanent fix = deliberate post-EOD process recycle (exit 43,
+      on_failure restart) + last_error stamped in the dead-ticker loop.
+      Data gap 09:15-11:33 on the 08-11 expiry — journal day 10 must
+      carry the caveat (morning gamma/OI/IV snapshots at 10:00 missing;
+      paper-straddle 09:20 entry not computable from live bars).
 
 ## Phase 6 — Optimization + retention (archival DONE 2026-07-30)
 
