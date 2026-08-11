@@ -150,10 +150,14 @@ SI-2/SI-3 spec tests green.
 
 ## Phase 3 — Public-beta hardening + review
 
-- [ ] 👤 H3.1 Turnstile site/secret keys for Supabase captcha. R-028
-      stays `Open` (and C4.3 stays blocked) until H3.1+H3.3 exist —
-      the widget alone is client-side and bypassable via direct POST
-      to /auth/v1/otp. [SEC:SI-7]
+- [x] 👤 H3.1 DONE 2026-08-11: Turnstile site created, captcha enabled
+      in Supabase (provider turnstile). ENFORCEMENT VERIFIED: raw POST
+      to /auth/v1/otp without a token -> 400 `captcha_failed`; /verify
+      leg unaffected (E2E still 4/4); widget renders + auto-solves in
+      managed mode (site key in .env.local; add to Vercel at C4.3).
+      Polish note: widget theme follows OS scheme, not our palette —
+      pass isDarkTheme to the theme prop in the copy/visual round.
+      [SEC:SI-7]
 - [x] 🤖 H3.2 Widget wired 2026-08-11 (`components/auth/turnstile.tsx`,
       env-gated on NEXT_PUBLIC_TURNSTILE_SITE_KEY; captchaToken passed
       to signInWithOtp). ENFORCEMENT lands only when 👤 enables captcha
