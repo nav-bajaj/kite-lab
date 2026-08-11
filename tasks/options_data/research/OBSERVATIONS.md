@@ -438,9 +438,130 @@ journal missed two days; the engine did not.)
       key off concentration alone. (n=3, resolves at the 08-11
       expiry)
 
+## 2026-08-10 (day 10) — expiry-eve IV markup sold: new best day, one minute underwater
+
+(The 08-11 expiry fell on Tuesday, not Monday as the previous footer
+assumed; Monday was this session.)
+
+- Tape: +14 gap open 24,585, high 24,620, low 24,511.4, close 24,583.8
+  (+0.05%). Range 108.5 pts (0.44%) — third quiet drift day in a row.
+- Regime: DIFFUSE (22% -> 25%), max-gamma at 24600 for a FOURTH
+  straight session (obs. 29 series extends). Total gamma swelling into
+  expiry-eve: ₹189k -> 239k -> 191k cr/1%.
+- OI: mass CE-side drain at every strike (24400 -65%, 24500 -66%,
+  24600 -44%, 24700 -31%) against modest PE bleed — the call-covering
+  signature from the drift week, now as expiry-eve de-grossing on a
+  flat tape. Writers left the call side wholesale a day before expiry.
+- Vol: the overnight markup was the story — ATM IV 10.59% Friday close
+  -> 16.99% Monday 09:20 (+6 vols over a weekend that delivered
+  nothing), sliding all day to 14.54%. Day-plan IV percentile 83%
+  (n=6); EOD straddle 148.7 pts = 0.60% to Tuesday's expiry.
+- Paper straddle: **+45.7 — NEW BEST** (beats +38.0 set Friday).
+  Credit 196.0 @ 24600 | MAE -0.5 at 09:21 | underwater ONE minute.
+  The cleanest short-vol session on record.
+- **CUMULATIVE LEDGER: +79.1** (10 sessions, 8W +153.8 / 2L -74.8).
+- Day-plan advisory #3: DEFINED_RISK_SHORT at 24600 (diffuse, IV
+  pctile 83, credit 186). Right call again — wings would have cost a
+  few points of a fat winner. (track record n=3)
+- Divergence: clean (max -29.7 at 15:10, close +9.6 vs baseline).
+- Depth/friction: baseline; imbalance +0.03, softest yet (second soft
+  print in a row — obs. from day 9 stands).
+- Engine: 2.15M ticks, 33,535 bars, 0 db errors, 0 widens. (In
+  hindsight: the first session of the Saturday-deployed container —
+  the process whose SECOND session died next morning.)
+- Observations:
+  30. Back-to-back best days (+38.0, +45.7) share one shape: an IV
+      markup sold into a tape that realizes ~0.44% — and both were
+      flagged >=80th IV percentile by the day-plan that morning. The
+      measured edge so far is premium LEVEL vs realizing, not
+      calendar position. (n=2)
+  31. Expiry-eve did not build a pin: calls were drained wholesale
+      while concentration stayed diffuse (25%) and the wall sat
+      unmoved at 24600. Whatever pins, it wasn't forming the evening
+      before. (n=1, resolves next entry)
+
+## 2026-08-11 (day 11) — EXPIRY 3 + the outage: reactor bug takes the morning; the wall finally moves
+
+- **ENGINE INCIDENT — the program's first data loss.** Ticker dead
+  from the 09:15 open: KiteTicker's twisted reactor cannot arm a
+  second session in one process; every prior day had accidentally
+  gotten a fresh container from evening pushes, and the first
+  push-free weekend exposed it on expiry morning. The /admin panel
+  stayed GREEN throughout (heartbeat fine, last_error None) — the
+  founder noticed before the system did. Restored 11:33:41 by manual
+  redeploy (2h18m lost). Same-day heal: 09:15-11:35 backfilled from
+  Kite minute candles (13,844 hist rows, validated exact against live
+  bars on an overlap window) BEFORE the EOD hook, so tonight's
+  analytics computed on the full day. Permanently lost: book depth /
+  spreads / 10s chain snapshots for the window. Fixes deployed
+  post-close: deliberate daily process recycle after EOD (exit 43,
+  on_failure restart) + last_error stamped in the dead-ticker loop;
+  push-alerting priority raised. Morning numbers below marked (hist)
+  where they rest on backfilled bars.
+- Tape: open 24,575.1 (-8.7, and within 2 pts of the day's HIGH),
+  steady sell to 24,429.2, settle-area close 24,471.7 (-0.46%). Range
+  147.6 pts (0.60%) — the biggest range of the three expiries.
+- Regime: **the max-gamma wall MIGRATED for the first time in five
+  sessions** — 24600 -> 24500 (hist 10:00 read 25%, 13:00 26%, 15:15
+  37% = PIN-GRAVITY only in the last hour). Spot settled 24,471.7,
+  28 pts under the wall. Obs. 29/31 resolve: the static 24600 magnet
+  never held spot — on expiry day the wall CHASED spot down, and
+  concentration arrived late where price already was.
+- OI: the whole chain drained except 24450 — CE +60% / PE +86% AT the
+  settle strike, the sharpest single-strike build recorded. Expiry
+  concentration formed at the destination, not the origin.
+- Vol: 26.02% (hist) at 09:20 — double any prior morning; 24.26% at
+  12:30; the 15:15 48% print is the usual tiny-premium expiry
+  artifact. Day-plan (retro-computed on healed data, like day 7 —
+  backtest, not track record): REDUCED_SIZE at 24500, MIXED read,
+  IV pctile 100%, credit 122. On the day: reduced-size short premium
+  centered 24500 would have paid; the 122 credit was NOT the Aug-04
+  thin-credit trap (93 pts at ~11 vols) — high-IV expiries are a
+  different animal from low-IV ones. (n=2 expiry credit regimes)
+- Paper straddle: **NOT COMPUTABLE — the ledger's first hole.** The
+  09:20 entry marks at effective prices need the book, and the book
+  is in the lost window; a close-based estimate would blend fabricated
+  fills into a measured ledger, so the row stays empty by design.
+  Ledger holds at +79.1 (10 rows, 8W/2L). MAE/underwater for this
+  session are unmeasurable forever.
+- Implied-vs-realized verdict #3 (both windows): Friday-EOD implied
+  0.89% with the weekend inside vs realized -0.40% Fri-close ->
+  settlement — implied more than 2x realized. Final-day implied 0.60%
+  vs realized -0.46% — implied still won, but by the thinnest margin
+  yet (a 24600 settle-held straddle collected ~20 of 148.7 pre-cost).
+  Verdicts now 3/3 for implied-rich, margins 0.69-vs-1.02, then wide,
+  now thin. (n=3)
+- Divergence: clean close — spot 24,471.7 vs parity forward 24,471.8
+  at 15:40, +12.1 vs baseline. Fifth clean close in a row; the
+  new-timings dislocation (hyp. 24) looks fully adapted-out at n=7.
+- Engine (post-restore): 1.59M ticks, 24,548 live bars, 0 db errors,
+  1 widen (down-side, spot broke below the 24600-anchored window).
+- Observations:
+  32. Pin, when it finally reappeared (n=2 of 3 expiries), was a
+      CHASE: wall migration down to spot + late concentration + a
+      violent both-sides build at the settle strike. The 07-28
+      "gravity" archetype (spot magnetized to a pre-existing wall) did
+      not repeat; expiry structure formed around where price already
+      was. Two pin mechanisms now hypothesized — gravitational
+      (07-28) vs chased (08-11) — and only the first is tradeable in
+      advance. (n=2 pins / 3 expiries)
+  33. The short-vol margin compresses as IV rises to meet realized:
+      verdict margins went fat -> fat -> thin while morning IV went
+      ~11% -> ~12% -> 26%. Selling the markup pays until the markup
+      is finally justified — position sizing must scale DOWN as the
+      percentile rises, exactly opposite the naive
+      "richer-premium-sell-more" instinct. (n=3 expiries, weak)
+  34. Ops: the monitoring gap was the real failure — 2h18m of green
+      panel over a dead feed. A capture-quality alert (phase=capture,
+      packets=0, N minutes) is now the cheapest insurance in the
+      program. Data-wise the bar layer healed same-day at candle
+      resolution; the microstructure layer (book, snapshots) is the
+      only thing an outage truly destroys. (n=1, intended to stay
+      n=1)
+
 ---
 
-*Next entry: 2026-08-11 (Mon) — EXPIRY 3, with the weekend inside the
-0.89% implied. Implied-vs-realized verdict #3; the 24600 weak-attractor
-question (obs. 29) resolves; day-plan call #3 lands on an expiry
-morning for the first time.*
+*Next entry: 2026-08-12 (Wed) — first session of the 08-18 weekly with
+IV coming off a 26-vol expiry; does the recycle fix hold through its
+first unattended morning, and does the post-expiry chain rebuild put
+the wall back at a strike or leave the field diffuse?*
