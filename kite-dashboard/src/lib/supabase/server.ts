@@ -12,6 +12,8 @@ export async function getSupabaseServerClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      // R-029 containment — see src/lib/supabase/client.ts.
+      cookieOptions: { maxAge: 7 * 24 * 60 * 60 },
       cookies: {
         getAll() {
           return cookieStore.getAll();

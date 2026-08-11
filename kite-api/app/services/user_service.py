@@ -80,4 +80,8 @@ def provision_user(user: dict) -> None:
         _SEEN_CACHE[sub] = now
     except Exception as exc:
         # Fail-open: provisioning must never break auth (see docstring).
-        logger.warning("user provisioning skipped for %s: %s", sub, exc)
+        # Log the exception TYPE only — SQLAlchemy error text embeds the
+        # statement and bound params (user email = PII, R-012).
+        logger.warning(
+            "user provisioning skipped for %s: %s", sub, type(exc).__name__
+        )

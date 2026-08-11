@@ -10,7 +10,6 @@
     "test:e2e": "bash scripts/e2e-smoke.sh"
   },
   "dependencies": {
-    "@clerk/nextjs": "^7.3.7",
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.2",
     "@vercel/speed-insights": "^2.0.0",

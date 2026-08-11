@@ -7,9 +7,8 @@ import { INSIGHTS_ACCESS } from "@/lib/flags";
 //
 // `/` is the public marketing landing page (the authenticated dashboard
 // lives at `/dashboard`). `/auth/callback` must stay public — it is the
-// OAuth code-exchange hop, hit before a session exists. `/sign-up` stays
-// listed: the route 308-redirects to /sign-in but must not bounce through
-// the auth gate first.
+// OAuth code-exchange hop, hit before a session exists. `/sign-up` is a
+// real page (same SignInCard, beta CTA copy).
 const PUBLIC_EXACT = new Set([
   "/",
   "/auth/callback",
@@ -53,6 +52,8 @@ export async function middleware(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      // R-029 containment — see src/lib/supabase/client.ts.
+      cookieOptions: { maxAge: 7 * 24 * 60 * 60 },
       cookies: {
         getAll() {
           return request.cookies.getAll();

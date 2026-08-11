@@ -257,6 +257,59 @@ def test_unknown_kid_rejected(ec_keypair):
         auth_module.validate_token_string(token)
 
 
+def test_alg_none_rejected():
+    """Unsigned token with alg=none and a colliding kid must be rejected
+    (security-reviewer 2026-08-11 #10)."""
+    import json as _json
+
+    def b64url_json(obj: dict) -> str:
+        raw = _json.dumps(obj, separators=(",", ":")).encode()
+        return base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
+
+    now = datetime.now(tz=timezone.utc)
+    header = {"alg": "none", "typ": "JWT", "kid": TEST_KID}
+    claims = {
+        "sub": "8f7d9a2e-0000-4000-8000-00000algnone",
+        "iss": TEST_SUPABASE_ISSUER,
+        "aud": "authenticated",
+        "iat": int(now.timestamp()),
+        "exp": int((now + timedelta(hours=1)).timestamp()),
+        "app_metadata": {"role": "admin"},
+    }
+    token = f"{b64url_json(header)}.{b64url_json(claims)}."
+    with pytest.raises(AuthError):
+        auth_module.validate_token_string(token)
+
+
+def test_rs256_signed_supabase_issuer_rejected():
+    """A token claiming the Supabase issuer but signed RS256 (e.g. with
+    a Clerk-style RSA key) must fail on the Supabase path — ES256 only
+    (security-reviewer 2026-08-11 #10)."""
+    from cryptography.hazmat.primitives.asymmetric import rsa
+
+    rsa_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    rsa_pem = rsa_key.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=serialization.NoEncryption(),
+    ).decode()
+    now = datetime.now(tz=timezone.utc)
+    claims = {
+        "sub": "8f7d9a2e-0000-4000-8000-000000rs2561",
+        "iss": TEST_SUPABASE_ISSUER,
+        "aud": "authenticated",
+        "iat": int(now.timestamp()),
+        "exp": int((now + timedelta(hours=1)).timestamp()),
+        "app_metadata": {"role": "admin"},
+        "user_metadata": {},
+    }
+    token = jose_jwt.encode(
+        claims, rsa_pem, algorithm="RS256", headers={"kid": TEST_KID}
+    )
+    with pytest.raises(AuthError):
+        auth_module.validate_token_string(token)
+
+
 def test_missing_kid_rejected(ec_keypair):
     now = datetime.now(tz=timezone.utc)
     claims = {

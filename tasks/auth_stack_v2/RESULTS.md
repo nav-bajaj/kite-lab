@@ -185,3 +185,52 @@ UI (send -> code step -> resend cooldown). Full E2E (verify -> session
 
 Open: founder visual sign-off on the sign-in screen; F2.10 privacy-page
 subprocessor update (fold into H3.4).
+
+## 2026-08-11 — Phase 3 hardening + security review cycle
+
+Founder deferred copy/visual amendments; direction approved to continue.
+
+- Turnstile widget wired (env-gated); Playwright E2E smoke landed (4/4;
+  admin-minted OTP -> real UI verify -> /dashboard; client off /admin).
+  Send-click automation waits on SES production access + a real inbox.
+- Docs debt cleared: auth-flows.md §1, threat-model (A3/A4/A6, TB2/TB3),
+  .env.example, privacy page (subprocessors + truthful delete-account
+  copy), attack-surface insights row.
+- **security-reviewer verdict: REQUEST-CHANGES.** Headline finding
+  (HIGH, genuinely caught): @supabase/ssr session cookies are
+  JS-readable BY DESIGN (httpOnly:false — the browser client reads
+  document.cookie); our threat model claimed HttpOnly. Net posture
+  change vs Clerk: XSS now yields the rotating refresh token, not a
+  ~60s access token. Response: doc corrected, R-029 opened (Accepted,
+  with rationale), cookie maxAge capped 400d->7d in all three client
+  factories, R-021 (CSP unsafe-inline/eval) re-rated as the
+  highest-leverage XSS control. Other fixes same day: R-005 re-accepted
+  at the honest 3600s SSE-token TTL; users-table Alembic migration 0006
+  (idempotent — deploy runs `alembic upgrade head`, init_db is never
+  called; without this, fail-open provisioning would silently no-op in
+  prod); provisioning log now emits exception TYPE only (SQLAlchemy
+  error text embeds emails); R-028 held at Open until Supabase-side
+  captcha/limits exist (widget alone is bypassable via direct
+  /auth/v1/otp POST); stock supabase/config.toml deleted (config-push
+  clobber hazard vs dashboard-held secrets); @clerk/nextjs dropped from
+  package.json (dead dep with a high js-cookie advisory); /auth/callback
+  origin now prefers NEXT_PUBLIC_SITE_URL over the Host header; spec
+  suite +2 adversarial cases (alg=none, RS256-signed supabase-issuer)
+  -> 18; e2e dev-server child no longer inherits the service-role key.
+  Deferred to pre-cutover: Next.js bump (R-019, 10 weeks overdue).
+- Verification after fixes: backend 1175/1 skipped, build clean, E2E
+  4/4. Reviewer also independently confirmed: SI-1 airtight on all
+  three surfaces, issuer-routing sound, /auth/callback open-redirect
+  check sound, Clerk harness semantically unweakened, no secrets in
+  the diff.
+
+AWS status: MAIL FROM verified (domain fully green). SES production
+access DENIED on first review — founder to reply to the AWS support
+case with the expanded use-case text (drafted in chat 2026-08-11);
+production access remains a HARD BLOCKER for public beta.
+
+Remaining founder items (Phase 3): H3.1 Turnstile keys + Supabase
+captcha enable, H3.3 OTP expiry 600s + cooldown + rate limits ->
+then R-028 flips to Mitigating. Remaining agent items: /security-review
+skill pass, Next.js bump + re-smoke (pre-cutover), sign-in copy/visual
+amendments when founder provides direction.

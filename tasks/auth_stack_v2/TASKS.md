@@ -93,7 +93,7 @@ SI-2/SI-3 spec tests green.
       `users` table on Railway PG during cutover (init_db is
       idempotent). [SEC:SI-9]
 - [x] 🤖 B1.8 Full `pytest tests/`: 1173 passed, 1 skipped. New auth
-      coverage: 294 (harness) + 17 (JWT spec) + 8 (provisioning) = 319
+      coverage: 294 (harness) + 18 (JWT spec) + 8 (provisioning) = 320
       tests vs 291 baseline; Clerk harness intact alongside. [SEC:SI-4]
 
 ## Phase 2 — Frontend migration
@@ -150,26 +150,58 @@ SI-2/SI-3 spec tests green.
 
 ## Phase 3 — Public-beta hardening + review
 
-- [ ] 👤 H3.1 Turnstile site/secret keys for Supabase captcha.
-- [ ] 🤖 H3.2 Enable captcha on auth endpoints + wire the widget into
-      the sign-in UI (challenges.cloudflare.com already in CSP).
-      [SEC:SI-7]
-- [ ] 👤 H3.3 Configure Supabase auth rate limits + OTP expiry (<=10
-      min) + sends-per-hour caps in the dashboard; 🤖 record chosen
-      values in RESULTS.md. [SEC:SI-7]
-- [ ] 🤖 H3.4 Rewrite `docs/security/auth-flows.md` +
-      `docs/security/threat-model.md` for the Supabase flow (both still
-      describe retired NextAuth); fix `kite-dashboard/.env.example`.
-- [ ] 🤖 H3.5 Risk-register rows: CSP widening, open sign-up posture
-      change (allowlist retirement), SSE residual re-noted. [SEC:SI-6]
-- [ ] 🤖 H3.6 Run `security-reviewer` subagent on the full branch diff;
-      then `/security-review`. Address findings before Phase 4.
-- [ ] 🤖 H3.7 Playwright E2E smoke: email-OTP login end-to-end (scratch
-      project + SMTP test inbox), Google login, admin route granted for
-      admin / redirected for client, client denied an admin-only
-      universe via API. Must pass before cutover.
-- [ ] 🤖 H3.8 Full verification pass: `pytest tests/` + `npm run build`
-      + harness-count check. Log in RESULTS.md.
+- [ ] 👤 H3.1 Turnstile site/secret keys for Supabase captcha. R-028
+      stays `Open` (and C4.3 stays blocked) until H3.1+H3.3 exist —
+      the widget alone is client-side and bypassable via direct POST
+      to /auth/v1/otp. [SEC:SI-7]
+- [x] 🤖 H3.2 Widget wired 2026-08-11 (`components/auth/turnstile.tsx`,
+      env-gated on NEXT_PUBLIC_TURNSTILE_SITE_KEY; captchaToken passed
+      to signInWithOtp). ENFORCEMENT lands only when 👤 enables captcha
+      in Supabase Auth settings (provider turnstile + secret).
+      Verification once enabled: unauthenticated curl to /auth/v1/otp
+      must return captcha-required, not 200. [SEC:SI-7]
+- [ ] 👤 H3.3 Configure Supabase auth settings in the dashboard: OTP
+      expiry 600s (Auth -> Providers -> Email), per-address send
+      cooldown >=60s, review rate limits (email/hr, sign-in+sign-up
+      per-IP, verifications per-IP). 🤖 record chosen values in
+      RESULTS.md, then flip R-028 to Mitigating. NOTE: config-as-code
+      via `supabase config push` was evaluated and REJECTED (would
+      clobber dashboard-held SMTP/Google secrets; stock config.toml
+      deleted from repo per security-reviewer #5 — dashboard is the
+      source of truth; CLI ops use --project-ref). [SEC:SI-7]
+- [x] 🤖 H3.4 Done 2026-08-11: auth-flows.md §1 rewritten (Supabase
+      flow + SI invariants + enforcement list), threat-model assets
+      A3/A4/A6 + TB2/TB3 updated, .env.example rewritten, privacy page
+      subprocessors Clerk->Supabase+SES+Cloudflare and delete-account
+      copy made truthful (email request — F2.10 closed),
+      attack-surface.md insights row updated.
+- [x] 🤖 H3.5 Register rows: R-027 (CSP), R-028 (open sign-up, held at
+      Open), R-029 (JS-readable session cookies — from review finding
+      #1), R-005 amended + re-accepted at the 3600s TTL. [SEC:SI-6]
+- [x] 🤖 H3.6 security-reviewer verdict 2026-08-11: REQUEST-CHANGES —
+      1 HIGH (threat model claimed HttpOnly cookies; @supabase/ssr is
+      structurally httpOnly:false), 4 MED, 2 LOW, 5 INFO; architecture
+      explicitly endorsed (SI-1 "airtight", routing correct, harness
+      unweakened, public routes tightened). ALL merge-blocking findings
+      fixed same day: threat-model corrected + R-029 opened + 7-day
+      cookie maxAge cap (#1); R-005/R-027 TTL honesty (#2); users-table
+      Alembic migration 0006 + PII-safe provisioning log (#3); R-028 ->
+      Open (#4); config.toml deleted (#5); @clerk/nextjs dependency
+      dropped now — carried a high js-cookie advisory, git provides
+      revertibility (#6); callback origin from NEXT_PUBLIC_SITE_URL not
+      Host header (#8); alg=none + RS256-on-supabase-issuer spec tests
+      added (#10); e2e webServer env scoped + scratch-only ref comment
+      (#11); doc drift fixed (#12). Deferred to pre-cutover: Next.js
+      patch for R-019 (#7). /security-review skill pass still pending.
+- [x] 🤖 H3.7 Playwright smoke landed (`tests/e2e/auth-smoke.spec.ts`,
+      `npm run test:e2e`): route protection (dashboard+admin), sign-in
+      render, REAL email-OTP login via admin-minted code (no inbox —
+      SES sandbox/bounce constraint) -> /dashboard, session survives
+      navigation, client bounced off /admin. 4/4 green. Send-click
+      path stays manual until SES production access + a real inbox.
+- [x] 🤖 H3.8 Verification 2026-08-11 post-review-fixes: backend 1175
+      passed/1 skipped (auth coverage 294+18+8=320 vs 291 baseline);
+      `npm run build` clean; E2E 4/4. [SEC:SI-4]
 
 ## Phase 4 — Cutover [PROD] (user-driven, outside market hours)
 

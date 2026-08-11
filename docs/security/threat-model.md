@@ -84,7 +84,7 @@ unlocked dev machines.
 
 ### TB2 — browser ↔ Vercel SSR/edge
 
-- **Spoofing:** Supabase session cookies (HttpOnly via @supabase/ssr; middleware refreshes + verifies claims LOCALLY against the project JWKS — `getClaims`, no unverified session reads server-side).
+- **Spoofing:** Supabase session cookies, SameSite=Lax and **JS-readable by design** (`httpOnly:false` — @supabase/ssr's browser client reads the session from `document.cookie`; R-029). Middleware refreshes + verifies claims LOCALLY against the project JWKS (`getClaims`, no unverified session reads server-side). Consequence: XSS yields the refresh token, not just a short-lived access token — R-021's accepted `'unsafe-inline'`/`'unsafe-eval'` residual carries more impact than under Clerk. Cookie lifetime capped to 7 days (default was 400) as containment.
 - **Tampering:** CSP enforces script provenance (R-006 active; Supabase origin scoped to connect-src only, R-027).
 - **Information disclosure:** No secrets in `NEXT_PUBLIC_*` (anon key is public by design; `service_role` never leaves the dashboard). Access token also mirrored in-memory in a React module-level var (`api-client.ts`) for the Authorization header + SSE URLs.
 - **DoS:** Vercel rate limiting + slowapi downstream.

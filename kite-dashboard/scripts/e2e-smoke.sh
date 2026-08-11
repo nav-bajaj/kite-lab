@@ -5,6 +5,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+# Scratch project ONLY — the suite creates/links users via the admin
+# API. Never point this at the production project ref.
 PROJECT_REF="${SUPABASE_PROJECT_REF:-jhvkfokskanbaiipvcqu}"
 
 # The spec runs outside Next, so .env.local isn't loaded — provide the

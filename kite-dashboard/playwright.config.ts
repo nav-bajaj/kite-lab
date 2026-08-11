@@ -19,5 +19,8 @@ export default defineConfig({
     url: "http://localhost:3000",
     reuseExistingServer: true,
     timeout: 60_000,
+    // The dev server never needs the admin key the spec's Node side
+    // holds — blank it in the child process (security-reviewer #11).
+    env: { SUPABASE_SERVICE_ROLE_KEY: "" },
   },
 });

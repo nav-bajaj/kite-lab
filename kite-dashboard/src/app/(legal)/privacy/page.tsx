@@ -47,6 +47,10 @@ export default function PrivacyPage() {
           <strong>Google</strong> — OAuth provider when you sign in with
           Google.
         </li>
+        <li>
+          <strong>Cloudflare (Turnstile)</strong> — bot protection on the
+          sign-in form.
+        </li>
       </ul>
 
       <h2>Cookies</h2>
