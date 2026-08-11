@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleMark } from "./google-mark";
+import { Turnstile, TURNSTILE_SITE_KEY } from "./turnstile";
 
 const RESEND_COOLDOWN_S = 30;
 
@@ -30,8 +31,14 @@ type Step = "methods" | "code";
 
 export function SignInCard() {
   const searchParams = useSearchParams();
-  const [step, setStep] = React.useState<Step>("methods");
-  const [email, setEmail] = React.useState("");
+  // Deep-link support: /sign-in?email=x jumps straight to code entry —
+  // "I already have a code" (also what the E2E smoke drives).
+  // Verification still requires a valid, unexpired code for that email.
+  const presetEmail = searchParams.get("email") ?? "";
+  const [step, setStep] = React.useState<Step>(
+    presetEmail ? "code" : "methods",
+  );
+  const [email, setEmail] = React.useState(presetEmail);
   const [code, setCode] = React.useState("");
   const [busy, setBusy] = React.useState<"google" | "send" | "verify" | null>(
     null,
@@ -42,6 +49,10 @@ export function SignInCard() {
       : null,
   );
   const [cooldown, setCooldown] = React.useState(0);
+  // Captcha token (H3.2) — only gates the email flow when the widget is
+  // configured; null means "not configured" OR "not yet solved".
+  const [captchaToken, setCaptchaToken] = React.useState<string | null>(null);
+  const captchaRequired = TURNSTILE_SITE_KEY !== "";
 
   React.useEffect(() => {
     if (cooldown <= 0) return;
@@ -74,7 +85,10 @@ export function SignInCard() {
     setError(null);
     const { error: err } = await getSupabaseBrowserClient().auth.signInWithOtp({
       email: email.trim(),
-      options: { shouldCreateUser: true },
+      options: {
+        shouldCreateUser: true,
+        ...(captchaToken ? { captchaToken } : {}),
+      },
     });
     setBusy(null);
     if (err) {
@@ -152,11 +166,16 @@ export function SignInCard() {
                 aria-invalid={error !== null && step === "methods"}
               />
             </div>
+            <Turnstile onToken={setCaptchaToken} />
             <Button
               type="submit"
               size="lg"
               className="w-full"
-              disabled={busy !== null || !email.trim()}
+              disabled={
+                busy !== null ||
+                !email.trim() ||
+                (captchaRequired && !captchaToken)
+              }
             >
               {busy === "send" ? <Loader2 className="animate-spin" /> : null}
               Send sign-in code

@@ -8,15 +8,16 @@ export default function PrivacyPage() {
       <h1>Privacy Policy</h1>
 
       <p className="text-sm text-muted-foreground">
-        Last updated: <strong>18 July 2026</strong>
+        Last updated: <strong>11 August 2026</strong>
       </p>
 
       <h2>What we collect</h2>
       <p>
         When you sign up we collect your email address and (if you choose to
         sign in via Google) your name and profile picture from your Google
-        account. Authentication is delegated to <a href="https://clerk.com">Clerk</a>;
-        we do not store your password.
+        account. Authentication is delegated to{" "}
+        <a href="https://supabase.com">Supabase</a>; sign-in is passwordless
+        (one-time email codes or Google), so we never store a password.
       </p>
 
       <h2>What we do with it</h2>
@@ -29,8 +30,12 @@ export default function PrivacyPage() {
       <h2>Third parties</h2>
       <ul>
         <li>
-          <strong>Clerk</strong> — authentication, session management, account
-          profile storage.
+          <strong>Supabase</strong> — authentication, session management,
+          account profile storage.
+        </li>
+        <li>
+          <strong>Amazon Web Services (SES)</strong> — delivery of sign-in
+          code emails.
         </li>
         <li>
           <strong>Vercel</strong> — frontend hosting.
@@ -47,14 +52,16 @@ export default function PrivacyPage() {
       <h2>Cookies</h2>
       <p>
         We use only the cookies strictly required to keep you signed in (set
-        by Clerk). No analytics or advertising cookies.
+        by Supabase Auth). No analytics or advertising cookies.
       </p>
 
       <h2>Data retention</h2>
       <p>
-        Your account data is retained while your account is active. When you
-        delete your account from the Account page, the underlying record is
-        removed from Clerk and from our database within 30 days.
+        Your account data is retained while your account is active. To delete
+        your account, email{" "}
+        <a href="mailto:navdeep@marketworks.in">navdeep@marketworks.in</a>{" "}
+        from your registered address; the underlying record is removed from
+        Supabase and from our database within 30 days.
       </p>
 
       <h2>Contact</h2>
