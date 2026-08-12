@@ -164,11 +164,10 @@ SI-2/SI-3 spec tests green.
       in Supabase Auth settings (provider turnstile + secret).
       Verification once enabled: unauthenticated curl to /auth/v1/otp
       must return captcha-required, not 200. [SEC:SI-7]
-- [ ] 👤 H3.3 Configure Supabase auth settings in the dashboard: OTP
-      expiry 600s (Auth -> Providers -> Email), per-address send
-      cooldown >=60s, review rate limits (email/hr, sign-in+sign-up
-      per-IP, verifications per-IP). 🤖 record chosen values in
-      RESULTS.md, then flip R-028 to Mitigating. NOTE: config-as-code
+- [x] 👤 H3.3 DONE 2026-08-12 (founder): OTP expiry 600s, send
+      cooldown, rate limits configured in the dashboard (exact limit
+      values not captured in this log — read them from the dashboard
+      when replicating at C4.1). R-028 flipped to Mitigating. NOTE: config-as-code
       via `supabase config push` was evaluated and REJECTED (would
       clobber dashboard-held SMTP/Google secrets; stock config.toml
       deleted from repo per security-reviewer #5 — dashboard is the
