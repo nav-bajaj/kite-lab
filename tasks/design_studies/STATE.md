@@ -17,6 +17,16 @@
 > The guide page grows into the full visual contract; the /primitives
 > page will be folded into it. Sections below describe loops ≤22.
 
+> **Loop 24 — type DECIDED.** Nine wardrobes at
+> `tasks/design_studies/brand/fonts.html` (6 founder-named references
+> harvested live: public.com, hebbia, tars.pro, zerohash, aeye
+> webflow, clay.com; + 2 hybrids). Verdict: keep **Fraunces +
+> Outfit**, adopt **IBM Plex Mono** as the third voice, used
+> generously — figures, labels, captions, metadata, tickers, chart
+> axes; never body text. Evidence:
+> `evidence/loop24_fonts-{decided,study}.jpg`. Next: the asset study
+> (hero replacement, textures, dither, light motion).
+
 > Loop 19 lives on branch **design_studies_clay** (off design_studies):
 > clay.com decoded (CLAY_STUDY.md) and the six-palette picker collapsed
 > to a two-theme system on the marketing surfaces — Clay-formula light

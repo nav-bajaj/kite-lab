@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketworks — font pairing study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Outfit:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600&family=Inter:wght@400;500;600&family=Alegreya:wght@400;500;700&family=Figtree:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Hauora:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Besley:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* Loop-24 candidate study: the same homepage section in seven type wardrobes.
+   Palette is fixed (loop 23); ONLY the faces change between specimens. */
+:root{
+  --bg:#FFFFFF; --bg-soft:#F4F7F5; --card:#FFFFFF;
+  --line:#E3E8E5; --line-strong:#C9D2CC;
+  --ink:#141A17; --grey:#5C6663;
+  --green:#0B7E52; --green-tint:#DFF4E8; --green-deep:#0A3B28;
+  --down:#C74A32;
+  --shadow:0 10px 30px -12px rgba(20,26,23,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg-soft);color:var(--ink);font-family:"Outfit",system-ui,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.wrap{max-width:1020px;margin:0 auto;padding:0 24px}
+
+.top{position:sticky;top:0;z-index:10;background:rgba(244,247,245,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top-in{display:flex;align-items:center;gap:16px;padding:13px 24px;max-width:1020px;margin:0 auto;flex-wrap:wrap}
+.wordmark{font-weight:600;font-size:17px;color:var(--green)}
+.top .tag{font-size:13px;color:var(--grey)}
+.jump{margin-left:auto;display:flex;gap:12px;flex-wrap:wrap}
+.jump a{font-size:12.5px;color:var(--grey);text-decoration:none;border:1px solid var(--line);border-radius:99px;padding:4px 11px;background:var(--card)}
+.jump a:hover{color:var(--green);border-color:var(--green)}
+
+.intro{padding:40px 0 8px}
+.intro p{color:var(--grey);font-size:14.5px;max-width:76ch}
+
+.spec{margin:28px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.spec-label{display:flex;align-items:baseline;gap:14px;padding:14px 30px;border-bottom:1px solid var(--line);background:var(--bg-soft);flex-wrap:wrap}
+.spec-label .no{font-family:ui-monospace,monospace;font-size:12px;color:var(--green)}
+.spec-label b{font-size:15px}
+.spec-label .stack{font-size:12.5px;color:var(--grey)}
+.spec-label .sub{font-size:12.5px;color:var(--down)}
+.spec-label .read{margin-left:auto;font-size:12.5px;color:var(--grey);font-style:italic}
+
+.spec-body{padding:44px 30px 36px}
+.eyebrowish{font-size:13px;color:var(--grey);margin-bottom:18px}
+.spec h1{font-weight:inherit;letter-spacing:inherit;margin:0;color:var(--ink);text-wrap:balance}
+.spec .lede{margin:20px 0 26px;font-size:17.5px;line-height:1.6;color:var(--grey);max-width:56ch}
+.ctas{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.pill{display:inline-block;background:transparent;border-radius:999px;padding:11px 22px;font-weight:600;font-size:14.5px;text-decoration:none;border:1.5px solid transparent;cursor:pointer}
+.pill-green{background:var(--green);color:#fff}
+.pill-ghost{border-color:var(--line-strong);color:var(--ink)}
+
+.statrow{margin-top:30px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.stat{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--card);box-shadow:var(--shadow)}
+.stat .k{font-size:12.5px;color:var(--grey);display:block;margin-bottom:5px}
+.stat .v{font-size:22px;font-variant-numeric:tabular-nums}
+.stat .v.neg{color:var(--down)}
+
+.secline{margin-top:30px;border-top:1px solid var(--line);padding-top:22px}
+.secline .h2ish{margin-bottom:8px;color:var(--ink)}
+.secline .body{font-size:15px;color:var(--grey);max-width:62ch}
+.secline .cap{margin-top:12px;font-size:12.5px;color:var(--grey)}
+.hl{color:var(--green)}
+
+footer{padding:36px 0 56px;font-size:13px;color:var(--grey)}
+footer .wrap{border-top:1px solid var(--line);padding-top:20px}
+
+/* ————— the seven wardrobes ————— */
+/* 0 · incumbent — Fraunces + Outfit */
+.f-inc h1{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(40px,5vw,58px);line-height:1.05;letter-spacing:-.01em}
+.f-inc .lede,.f-inc .pill,.f-inc .eyebrowish,.f-inc .stat,.f-inc .body{font-family:"Outfit",sans-serif}
+.f-inc .h2ish{font-family:"Fraunces",serif;font-weight:500;font-size:26px;line-height:1.2}
+.f-inc .v{font-family:"Outfit",sans-serif;font-weight:500}
+.f-inc .eyebrowish{font-family:ui-monospace,monospace;font-size:12.5px}
+
+/* 1 · public.com — Denton Light (→ Source Serif 4 Light) + Inter */
+.f-public h1{font-family:"Source Serif 4",serif;font-weight:300;font-size:clamp(44px,5.4vw,66px);line-height:1.0;letter-spacing:0}
+.f-public .lede,.f-public .pill,.f-public .eyebrowish,.f-public .stat,.f-public .body{font-family:"Inter",sans-serif}
+.f-public .lede{font-size:16.5px}
+.f-public .h2ish{font-family:"Source Serif 4",serif;font-weight:300;font-size:30px;line-height:1.12}
+.f-public .v{font-family:"Inter",sans-serif;font-weight:500}
+.f-public .pill{font-weight:600}
+
+/* 2 · hebbia — Edict Display (→ Alegreya) + Selecta (→ Inter) */
+.f-hebbia h1{font-family:"Alegreya",serif;font-weight:400;font-size:clamp(46px,5.8vw,70px);line-height:1.0;letter-spacing:-.005em}
+.f-hebbia .lede,.f-hebbia .pill,.f-hebbia .eyebrowish,.f-hebbia .stat,.f-hebbia .body{font-family:"Inter",sans-serif}
+.f-hebbia .h2ish{font-family:"Alegreya",serif;font-weight:400;font-size:30px;line-height:1.1}
+.f-hebbia .v{font-family:"Inter",sans-serif;font-weight:500}
+
+/* 3 · tars.pro — Roobert Light (→ Figtree Light) + Inter */
+.f-tars h1{font-family:"Figtree",sans-serif;font-weight:300;font-size:clamp(42px,5.2vw,64px);line-height:1.0;letter-spacing:-.01em}
+.f-tars .lede,.f-tars .body{font-family:"Inter",sans-serif}
+.f-tars .pill,.f-tars .eyebrowish,.f-tars .stat{font-family:"Inter",sans-serif}
+.f-tars .h2ish{font-family:"Figtree",sans-serif;font-weight:500;font-size:24px;line-height:1.2;letter-spacing:-.01em}
+.f-tars .v{font-family:"Inter",sans-serif;font-weight:500}
+
+/* 4 · zerohash — Hauora (real) + IBM Plex Mono */
+.f-zh h1{font-family:"Hauora",sans-serif;font-weight:600;font-size:clamp(38px,4.6vw,56px);line-height:1.1;letter-spacing:-.005em}
+.f-zh .lede,.f-zh .pill,.f-zh .body{font-family:"Hauora",sans-serif}
+.f-zh .lede{font-size:16px;font-weight:500}
+.f-zh .h2ish{font-family:"Hauora",sans-serif;font-weight:600;font-size:24px;line-height:1.25}
+.f-zh .eyebrowish,.f-zh .stat .k,.f-zh .cap{font-family:"IBM Plex Mono",monospace}
+.f-zh .v{font-family:"IBM Plex Mono",monospace;font-weight:500}
+
+/* 5 · aeye webflow — Geist + Geist Mono (real), tight */
+.f-aeye h1{font-family:"Geist",sans-serif;font-weight:400;font-size:clamp(42px,5.2vw,64px);line-height:1.1;letter-spacing:-.055em}
+.f-aeye .lede,.f-aeye .pill,.f-aeye .body{font-family:"Geist",sans-serif;letter-spacing:-.02em}
+.f-aeye .h2ish{font-family:"Geist",sans-serif;font-weight:400;font-size:26px;letter-spacing:-.045em;line-height:1.15}
+.f-aeye .eyebrowish,.f-aeye .stat .k,.f-aeye .cap{font-family:"Geist Mono",monospace;letter-spacing:0}
+.f-aeye .v{font-family:"Geist Mono",monospace}
+
+/* 9 · DECIDED — Fraunces + Outfit + IBM Plex Mono as the third voice */
+.f-dec{border:1.5px solid var(--green)}
+.f-dec .spec-label{background:var(--green-tint)}
+.f-dec h1{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(40px,5vw,58px);line-height:1.05;letter-spacing:-.01em}
+.f-dec .lede,.f-dec .pill,.f-dec .body{font-family:"Outfit",sans-serif}
+.f-dec .h2ish{font-family:"Fraunces",serif;font-weight:500;font-size:26px;line-height:1.2}
+.f-dec .eyebrowish,.f-dec .stat .k,.f-dec .cap{font-family:"IBM Plex Mono",monospace}
+.f-dec .v{font-family:"IBM Plex Mono",monospace;font-weight:500}
+
+/* 7 · HYBRID A — ours × zerohash: Fraunces display + Hauora body + Plex Mono figures */
+.f-hyba h1{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(40px,5vw,58px);line-height:1.05;letter-spacing:-.01em}
+.f-hyba .lede,.f-hyba .pill,.f-hyba .body{font-family:"Hauora",sans-serif}
+.f-hyba .lede{font-size:16.5px;font-weight:400}
+.f-hyba .h2ish{font-family:"Fraunces",serif;font-weight:500;font-size:26px;line-height:1.2}
+.f-hyba .eyebrowish,.f-hyba .stat .k,.f-hyba .cap{font-family:"IBM Plex Mono",monospace}
+.f-hyba .v{font-family:"IBM Plex Mono",monospace;font-weight:500}
+.f-hyba .pill{font-weight:600}
+
+/* 8 · HYBRID B — ours with a Clarendon: Besley display + Outfit body */
+.f-hybb h1{font-family:"Besley",serif;font-weight:600;font-size:clamp(38px,4.8vw,56px);line-height:1.06;letter-spacing:-.005em}
+.f-hybb .lede,.f-hybb .pill,.f-hybb .body{font-family:"Outfit",sans-serif}
+.f-hybb .h2ish{font-family:"Besley",serif;font-weight:600;font-size:25px;line-height:1.2}
+.f-hybb .eyebrowish,.f-hybb .stat .k,.f-hybb .cap{font-family:ui-monospace,monospace;font-size:12.5px}
+.f-hybb .v{font-family:"Outfit",sans-serif;font-weight:500}
+
+/* 6 · clay.com — Roobert VF 575 tight (→ Figtree 600) + Space Mono */
+.f-clay h1{font-family:"Figtree",sans-serif;font-weight:600;font-size:clamp(44px,5.6vw,68px);line-height:1.0;letter-spacing:-.04em}
+.f-clay .lede,.f-clay .pill,.f-clay .body{font-family:"Figtree",sans-serif}
+.f-clay .lede{font-size:19px;line-height:1.3}
+.f-clay .h2ish{font-family:"Figtree",sans-serif;font-weight:500;font-size:28px;letter-spacing:-.03em;line-height:1.05}
+.f-clay .eyebrowish,.f-clay .stat .k,.f-clay .cap{font-family:"Space Mono",monospace;font-size:11.5px;text-transform:uppercase;letter-spacing:.09em}
+.f-clay .v{font-family:"Figtree",sans-serif;font-weight:600}
+
+@media (max-width:760px){
+  .statrow{grid-template-columns:1fr}
+  .spec-body{padding:30px 20px 26px}
+  .spec-label{padding:12px 20px}
+  .spec-label .read{margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="top-in">
+    <span class="wordmark">marketworks.</span>
+    <span class="tag">brand guide · font pairing study · the same section, seven wardrobes</span>
+    <nav class="jump" aria-label="Jump to specimen">
+      <a href="#inc">current</a><a href="#public">public</a><a href="#hebbia">hebbia</a>
+      <a href="#tars">tars</a><a href="#zh">zerohash</a><a href="#aeye">aeye</a><a href="#clay">clay</a>
+      <a href="#hyba">hybrid A</a>
+      <a href="#hybb">hybrid B</a>
+      <a href="#decided" style="border-color:var(--green);color:var(--green);font-weight:600">✓ decided</a>
+    </nav>
+  </div>
+</div>
+
+<div class="wrap intro">
+  <p>The identical homepage section — real copy, real figures, the loop-23 palette —
+  set in each reference's type system, using each site's actual weights, sizes and
+  tracking (harvested from their live pages). Commercial faces carry their closest
+  free stand-in, flagged in red on the label. Only the faces change between blocks;
+  judge which wardrobe reads Finance × Technology × Editorial Research.</p>
+</div>
+
+<main class="wrap">
+
+  <!-- template repeated; classes swap the wardrobe -->
+  <section class="spec f-inc" id="inc">
+    <div class="spec-label"><span class="no">00</span><b>Current — Fraunces + Outfit</b>
+      <span class="stack">Fraunces 500 display · Outfit body · mono labels</span>
+      <span class="read">the incumbent to beat: warm editorial serif</span></div>
+    <div class="spec-body">
+      <p class="eyebrowish">private beta</p>
+      <h1>Indian markets, <span class="hl">the calm way.</span></h1>
+      <p class="lede">Marketworks helps you follow the strongest stocks in the Indian market
+      without watching it all day. You get three ready-made portfolios and a daily market
+      read, built on live data instead of news and noise.</p>
+      <div class="ctas"><a class="pill pill-green" href="#">Request beta access</a><a class="pill pill-ghost" href="#">Read the library</a></div>
+      <div class="statrow">
+        <div class="stat"><span class="k">Quality Momentum · CAGR</span><span class="v">44.78%</span></div>
+        <div class="stat"><span class="k">Sharpe</span><span class="v">1.86</span></div>
+        <div class="stat"><span class="k">Max drawdown</span><span class="v neg">−36.6%</span></div>
+      </div>
+      <div class="secline">
+        <p class="h2ish">The system does the watching</p>
+        <p class="body">The system scores the whole market every week and keeps the portfolios
+        with the leaders. No headlines, no hunches, no manual stock-picking.</p>
+        <p class="cap">OOS 2017–2026 · net of 0.2% slippage · NSE 500 / Nifty 250</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="spec f-public" id="public">
+    <div class="spec-label"><span class="no">01</span><b>public.com</b>
+      <span class="stack">Denton Light 300 display · Inter body · 1.0 leading</span>
+      <span class="sub">Denton → Source Serif 4 Light (stand-in)</span>
+      <span class="read">brokerage gravitas, light serif restraint</span></div>
+    <div class="spec-body">
+      <p class="eyebrowish">private beta</p>
+      <h1>Indian markets, <span class="hl">the calm way.</span></h1>
+      <p class="lede">Marketworks helps you follow the strongest stocks in the Indian market
+      without watching it all day. You get three ready-made portfolios and a daily market
+      read, built on live data instead of news and noise.</p>
+      <div class="ctas"><a class="pill pill-green" href="#">Request beta access</a><a class="pill pill-ghost" href="#">Read the library</a></div>
+      <div class="statrow">
+        <div class="stat"><span class="k">Quality Momentum · CAGR</span><span class="v">44.78%</span></div>
+        <div class="stat"><span class="k">Sharpe</span><span class="v">1.86</span></div>
+        <div class="stat"><span class="k">Max drawdown</span><span class="v neg">−36.6%</span></div>
+      </div>
+      <div class="secline">
+        <p class="h2ish">The system does the watching</p>
+        <p class="body">The system scores the whole market every week and keeps the portfolios
+        with the leaders. No headlines, no hunches, no manual stock-picking.</p>
+        <p class="cap">OOS 2017–2026 · net of 0.2% slippage · NSE 500 / Nifty 250</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="spec f-hebbia" id="hebbia">
+    <div class="spec-label"><span class="no">02</span><b>hebbia.com</b>
+      <span class="stack">Edict Display 400 · Selecta body · 1.0 leading</span>
+      <span class="sub">Edict → Alegreya · Selecta → Inter (stand-ins)</span>
+      <span class="read">research-house serif, calligraphic edge</span></div>
+    <div class="spec-body">
+      <p class="eyebrowish">private beta</p>
+      <h1>Indian markets, <span class="hl">the calm way.</span></h1>
+      <p class="lede">Marketworks helps you follow the strongest stocks in the Indian market
+      without watching it all day. You get three ready-made portfolios and a daily market
+      read, built on live data instead of news and noise.</p>
+      <div class="ctas"><a class="pill pill-green" href="#">Request beta access</a><a class="pill pill-ghost" href="#">Read the library</a></div>
+      <div class="statrow">
+        <div class="stat"><span class="k">Quality Momentum · CAGR</span><span class="v">44.78%</span></div>
+        <div class="stat"><span class="k">Sharpe</span><span class="v">1.86</span></div>
+        <div class="stat"><span class="k">Max drawdown</span><span class="v neg">−36.6%</span></div>
+      </div>
+      <div class="secline">
+        <p class="h2ish">The system does the watching</p>
+        <p class="body">The system scores the whole market every week and keeps the portfolios
+        with the leaders. No headlines, no hunches, no manual stock-picking.</p>
+        <p class="cap">OOS 2017–2026 · net of 0.2% slippage · NSE 500 / Nifty 250</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="spec f-tars" id="tars">
+    <div class="spec-label"><span class="no">03</span><b>tars.pro/research</b>
+      <span class="stack">Roobert Light 300 display · Inter body</span>
+      <span class="sub">Roobert → Figtree Light (stand-in)</span>
+      <span class="read">research-lab cool, thin grotesk air</span></div>
+    <div class="spec-body">
+      <p class="eyebrowish">private beta</p>
+      <h1>Indian markets, <span class="hl">the calm way.</span></h1>
+      <p class="lede">Marketworks helps you follow the strongest stocks in the Indian market
+      without watching it all day. You get three ready-made portfolios and a daily market
+      read, built on live data instead of news and noise.</p>
+      <div class="ctas"><a class="pill pill-green" href="#">Request beta access</a><a class="pill pill-ghost" href="#">Read the library</a></div>
+      <div class="statrow">
+        <div class="stat"><span class="k">Quality Momentum · CAGR</span><span class="v">44.78%</span></div>
+        <div class="stat"><span class="k">Sharpe</span><span class="v">1.86</span></div>
+        <div class="stat"><span class="k">Max drawdown</span><span class="v neg">−36.6%</span></div>
+      </div>
+      <div class="secline">
+        <p class="h2ish">The system does the watching</p>
+        <p class="body">The system scores the whole market every week and keeps the portfolios
+        with the leaders. No headlines, no hunches, no manual stock-picking.</p>
+        <p class="cap">OOS 2017–2026 · net of 0.2% slippage · NSE 500 / Nifty 250</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="spec f-zh" id="zh">
+    <div class="spec-label"><span class="no">04</span><b>zerohash.com</b>
+      <span class="stack">Hauora 600 everything · IBM Plex Mono accents (real faces)</span>
+      <span class="read">infrastructure sturdy, one-family system</span></div>
+    <div class="spec-body">
+      <p class="eyebrowish">private beta</p>
+      <h1>Indian markets, <span class="hl">the calm way.</span></h1>
+      <p class="lede">Marketworks helps you follow the strongest stocks in the Indian market
+      without watching it all day. You get three ready-made portfolios and a daily market
+      read, built on live data instead of news and noise.</p>
+      <div class="ctas"><a class="pill pill-green" href="#">Request beta access</a><a class="pill pill-ghost" href="#">Read the library</a></div>
+      <div class="statrow">
+        <div class="stat"><span class="k">Quality Momentum · CAGR</span><span class="v">44.78%</span></div>
+        <div class="stat"><span class="k">Sharpe</span><span class="v">1.86</span></div>
+        <div class="stat"><span class="k">Max drawdown</span><span class="v neg">−36.6%</span></div>
+      </div>
+      <div class="secline">
+        <p class="h2ish">The system does the watching</p>
+        <p class="body">The system scores the whole market every week and keeps the portfolios
+        with the leaders. No headlines, no hunches, no manual stock-picking.</p>
+        <p class="cap">OOS 2017–2026 · net of 0.2% slippage · NSE 500 / Nifty 250</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="spec f-aeye" id="aeye">
+    <div class="spec-label"><span class="no">05</span><b>aeye-saas.webflow.io</b>
+      <span class="stack">Geist 400, −6% tracking · Geist Mono accents (real faces)</span>
+      <span class="read">tool-maker tight, engineering cool</span></div>
+    <div class="spec-body">
+      <p class="eyebrowish">private beta</p>
+      <h1>Indian markets, <span class="hl">the calm way.</span></h1>
+      <p class="lede">Marketworks helps you follow the strongest stocks in the Indian market
+      without watching it all day. You get three ready-made portfolios and a daily market
+      read, built on live data instead of news and noise.</p>
+      <div class="ctas"><a class="pill pill-green" href="#">Request beta access</a><a class="pill pill-ghost" href="#">Read the library</a></div>
+      <div class="statrow">
+        <div class="stat"><span class="k">Quality Momentum · CAGR</span><span class="v">44.78%</span></div>
+        <div class="stat"><span class="k">Sharpe</span><span class="v">1.86</span></div>
+        <div class="stat"><span class="k">Max drawdown</span><span class="v neg">−36.6%</span></div>
+      </div>
+      <div class="secline">
+        <p class="h2ish">The system does the watching</p>
+        <p class="body">The system scores the whole market every week and keeps the portfolios
+        with the leaders. No headlines, no hunches, no manual stock-picking.</p>
+        <p class="cap">OOS 2017–2026 · net of 0.2% slippage · NSE 500 / Nifty 250</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="spec f-clay" id="clay">
+    <div class="spec-label"><span class="no">06</span><b>clay.com</b>
+      <span class="stack">Roobert VF 575, −4% tracking, 1.0 leading · Space Mono labels</span>
+      <span class="sub">Roobert VF → Figtree 600 (stand-in)</span>
+      <span class="read">product-led confidence, tight and warm</span></div>
+    <div class="spec-body">
+      <p class="eyebrowish">private beta</p>
+      <h1>Indian markets, <span class="hl">the calm way.</span></h1>
+      <p class="lede">Marketworks helps you follow the strongest stocks in the Indian market
+      without watching it all day. You get three ready-made portfolios and a daily market
+      read, built on live data instead of news and noise.</p>
+      <div class="ctas"><a class="pill pill-green" href="#">Request beta access</a><a class="pill pill-ghost" href="#">Read the library</a></div>
+      <div class="statrow">
+        <div class="stat"><span class="k">Quality Momentum · CAGR</span><span class="v">44.78%</span></div>
+        <div class="stat"><span class="k">Sharpe</span><span class="v">1.86</span></div>
+        <div class="stat"><span class="k">Max drawdown</span><span class="v neg">−36.6%</span></div>
+      </div>
+      <div class="secline">
+        <p class="h2ish">The system does the watching</p>
+        <p class="body">The system scores the whole market every week and keeps the portfolios
+        with the leaders. No headlines, no hunches, no manual stock-picking.</p>
+        <p class="cap">OOS 2017–2026 · net of 0.2% slippage · NSE 500 / Nifty 250</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="spec f-dec" id="decided">
+    <div class="spec-label"><span class="no">✓</span><b>DECIDED — the Marketworks set</b>
+      <span class="stack">Fraunces 500 display · Outfit body/UI · IBM Plex Mono, used generously: figures, labels, captions, metadata, tickers, chart axes</span>
+      <span class="read">founder verdict, 2026-08-12: keep our voices, upgrade the machine voice</span></div>
+    <div class="spec-body">
+      <p class="eyebrowish">private beta</p>
+      <h1>Indian markets, <span class="hl">the calm way.</span></h1>
+      <p class="lede">Marketworks helps you follow the strongest stocks in the Indian market
+      without watching it all day. You get three ready-made portfolios and a daily market
+      read, built on live data instead of news and noise.</p>
+      <div class="ctas"><a class="pill pill-green" href="#">Request beta access</a><a class="pill pill-ghost" href="#">Read the library</a></div>
+      <div class="statrow">
+        <div class="stat"><span class="k">Quality Momentum · CAGR</span><span class="v">44.78%</span></div>
+        <div class="stat"><span class="k">Sharpe</span><span class="v">1.86</span></div>
+        <div class="stat"><span class="k">Max drawdown</span><span class="v neg">−36.6%</span></div>
+      </div>
+      <div class="secline">
+        <p class="h2ish">The system does the watching</p>
+        <p class="body">The system scores the whole market every week and keeps the portfolios
+        with the leaders. No headlines, no hunches, no manual stock-picking.</p>
+        <p class="cap">OOS 2017–2026 · net of 0.2% slippage · NSE 500 / Nifty 250</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="spec f-hyba" id="hyba">
+    <div class="spec-label"><span class="no">07</span><b>Hybrid A — ours × zerohash</b>
+      <span class="stack">Fraunces 500 display · Hauora body/UI · IBM Plex Mono on every figure</span>
+      <span class="read">editorial voice over an engineering room</span></div>
+    <div class="spec-body">
+      <p class="eyebrowish">private beta</p>
+      <h1>Indian markets, <span class="hl">the calm way.</span></h1>
+      <p class="lede">Marketworks helps you follow the strongest stocks in the Indian market
+      without watching it all day. You get three ready-made portfolios and a daily market
+      read, built on live data instead of news and noise.</p>
+      <div class="ctas"><a class="pill pill-green" href="#">Request beta access</a><a class="pill pill-ghost" href="#">Read the library</a></div>
+      <div class="statrow">
+        <div class="stat"><span class="k">Quality Momentum · CAGR</span><span class="v">44.78%</span></div>
+        <div class="stat"><span class="k">Sharpe</span><span class="v">1.86</span></div>
+        <div class="stat"><span class="k">Max drawdown</span><span class="v neg">−36.6%</span></div>
+      </div>
+      <div class="secline">
+        <p class="h2ish">The system does the watching</p>
+        <p class="body">The system scores the whole market every week and keeps the portfolios
+        with the leaders. No headlines, no hunches, no manual stock-picking.</p>
+        <p class="cap">OOS 2017–2026 · net of 0.2% slippage · NSE 500 / Nifty 250</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="spec f-hybb" id="hybb">
+    <div class="spec-label"><span class="no">08</span><b>Hybrid B — ours, different serif</b>
+      <span class="stack">Besley 600 display (a Clarendon — the serif of financial print) · Outfit body · mono labels</span>
+      <span class="read">sturdier, sharper editorial than Fraunces</span></div>
+    <div class="spec-body">
+      <p class="eyebrowish">private beta</p>
+      <h1>Indian markets, <span class="hl">the calm way.</span></h1>
+      <p class="lede">Marketworks helps you follow the strongest stocks in the Indian market
+      without watching it all day. You get three ready-made portfolios and a daily market
+      read, built on live data instead of news and noise.</p>
+      <div class="ctas"><a class="pill pill-green" href="#">Request beta access</a><a class="pill pill-ghost" href="#">Read the library</a></div>
+      <div class="statrow">
+        <div class="stat"><span class="k">Quality Momentum · CAGR</span><span class="v">44.78%</span></div>
+        <div class="stat"><span class="k">Sharpe</span><span class="v">1.86</span></div>
+        <div class="stat"><span class="k">Max drawdown</span><span class="v neg">−36.6%</span></div>
+      </div>
+      <div class="secline">
+        <p class="h2ish">The system does the watching</p>
+        <p class="body">The system scores the whole market every week and keeps the portfolios
+        with the leaders. No headlines, no hunches, no manual stock-picking.</p>
+        <p class="cap">OOS 2017–2026 · net of 0.2% slippage · NSE 500 / Nifty 250</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Method: each site's h1/body/button/mono computed styles were harvested live
+    (weights, sizes, tracking, leading) and re-applied to our section. Stand-ins,
+    flagged in red, are the closest Google-obtainable faces — judge the register,
+    not the exact letterforms; licensing the real face is a later decision. Copy and
+    figures are the production homepage's own. Palette fixed at loop 23. · font
+    pairing study · 2026-08-12</p>
+  </div>
+</footer>
+
+</body>
+</html>

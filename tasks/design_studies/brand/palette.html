@@ -6,7 +6,7 @@
 <title>Marketworks — colour system (proposal)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Outfit:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ————————————————————————————————————————————
    MARKETWORKS COLOUR SYSTEM — single green thematic
@@ -76,7 +76,7 @@ a{color:inherit}
 :focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:4px}
 h1,h2,h3{font-family:"Fraunces",serif;font-weight:500;letter-spacing:-.01em}
 .wrap{max-width:1060px;margin:0 auto;padding:0 28px}
-.mono{font-family:ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
 
 /* top bar */
 .top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
@@ -108,11 +108,11 @@ h3{font-size:19px;margin:0 0 14px}
 .chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
 .chip{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--card)}
 .chip .well{height:78px;display:flex;align-items:flex-end;padding:10px 12px;position:relative;box-shadow:inset 0 0 0 1px var(--line)}
-.chip .well .cr{font-family:ui-monospace,monospace;font-size:11px;padding:2px 7px;border-radius:99px;background:rgba(255,255,255,.85);color:#141A17}
+.chip .well .cr{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;padding:2px 7px;border-radius:99px;background:rgba(255,255,255,.85);color:#141A17}
 .chip .meta{padding:10px 12px 12px}
 .chip .meta b{display:block;font-size:13.5px}
 .chip .meta span{font-size:11.5px;color:var(--grey);display:block;line-height:1.45}
-.chip .meta .hex{font-family:ui-monospace,monospace;font-size:11px;color:var(--grey)}
+.chip .meta .hex{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;color:var(--grey)}
 
 /* triads */
 .triads{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
@@ -125,7 +125,7 @@ h3{font-size:19px;margin:0 0 14px}
 .triad .steps{display:flex;border-top:1px solid var(--line)}
 .triad .steps i{flex:1;height:26px;display:block}
 .triad .steps .lbl{position:absolute}
-.triad .meta{padding:9px 14px;font-size:11px;color:var(--grey);font-family:ui-monospace,monospace;display:flex;justify-content:space-between}
+.triad .meta{padding:9px 14px;font-size:11px;color:var(--grey);font-family:"IBM Plex Mono",ui-monospace,monospace;display:flex;justify-content:space-between}
 
 /* usage demo */
 .demo-band{border-radius:var(--r);border:1px solid var(--line);overflow:hidden}
@@ -135,7 +135,7 @@ h3{font-size:19px;margin:0 0 14px}
 .demo-band .b2{padding:30px 34px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;background:var(--bg)}
 .dcard{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:20px;box-shadow:var(--shadow)}
 .dcard .k{font-size:12.5px;color:var(--grey);display:block;margin-bottom:6px}
-.dcard .v{font-family:ui-monospace,monospace;font-size:22px}
+.dcard .v{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:22px}
 .dcard .d{font-size:12.5px;margin-top:6px;display:block}
 .demo-band .b3{background:var(--green-deep);color:#EFF8F3;padding:30px 34px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
 [data-theme="dark"] .demo-band .b3{color:#0D1412}
@@ -166,7 +166,7 @@ h3{font-size:19px;margin:0 0 14px}
 .datacell .lbl{font-size:13px;color:var(--grey);margin-bottom:12px;display:block}
 .serieschip{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;margin-right:18px}
 .serieschip i{width:20px;height:3px;border-radius:2px;display:inline-block}
-.updown{display:flex;gap:26px;font-family:ui-monospace,monospace;font-size:18px}
+.updown{display:flex;gap:26px;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:18px}
 .updown .u{color:var(--up)} .updown .d{color:var(--down)}
 .updown span span{display:block;font-family:"Outfit",sans-serif;font-size:12px;color:var(--grey);margin-top:2px}
 
@@ -322,12 +322,15 @@ footer .wrap{border-top:1px solid var(--line);padding-top:24px}
       <p class="cap">Caption grey, 12.5px, above a hairline. The lightest text tone that still passes 4.5:1.</p>
     </div>
     <div class="notebox">
-      <b>The roadmap from here, in order:</b> (1) font pairings — Fraunces +
-      Outfit render this page as the incumbent placeholder; (2) the asset
-      study — hero background to replace the gradient, textured boxes, cards
-      and bands, dither patterns, light motion; (3) the homepage
-      re-composition on all of it. Each study lands on this guide page, so the
-      guide grows into the full visual contract.
+      <b>Type — DECIDED (2026-08-12):</b> Fraunces (display) · Outfit (body/UI)
+      · <b>IBM Plex Mono</b> — the third voice, used generously: figures,
+      labels, captions, metadata, tickers, chart axes. Never body text. Full
+      study at <a href="fonts.html" style="color:var(--green)">fonts.html</a>
+      (9 wardrobes, 6 harvested references).<br><br>
+      <b>Next on the roadmap:</b> the asset study — hero background to replace
+      the gradient, textured boxes, cards and bands, dither patterns, light
+      motion — then the homepage re-composition. Each study lands on this
+      guide, so it grows into the full visual contract.
     </div>
   </div>
 </section>
