@@ -1,4 +1,21 @@
-# design_studies — state of the study (2026-08-09)
+# design_studies — state of the study (2026-08-12)
+
+> **Loop 23 — direction reset (founder-approved): single-green colour
+> system.** The six-palette system AND the loop-19 two-theme Clay
+> mapping are superseded by one green-anchored light + dark system:
+> white ground, ink `#141A17` + one grey `#5C6663`, brand green
+> `#0B7E52` (4-step family), five leashed accent triads (sun / sky /
+> coral / purple / lime), validated data inks, green-black dark
+> companion. Live guide: `tasks/design_studies/brand/palette.html`
+> (serve the folder; light/dark toggle; contrast badges computed
+> live). Evidence: `evidence/loop23_palette-{light,dark}.jpg`.
+> Positioning line (founder, binding): Marketworks lives in the
+> overlap of **Finance × Technology × Editorial Research** — every
+> element is judged against that. Roadmap: font pairings → asset
+> study (hero replacement for the heavy gradient, textures, dither,
+> light motion) → homepage re-composition (banded + carded rhythm).
+> The guide page grows into the full visual contract; the /primitives
+> page will be folded into it. Sections below describe loops ≤22.
 
 > Loop 19 lives on branch **design_studies_clay** (off design_studies):
 > clay.com decoded (CLAY_STUDY.md) and the six-palette picker collapsed

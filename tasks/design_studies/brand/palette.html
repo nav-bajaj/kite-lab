@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketworks — colour system (proposal)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ————————————————————————————————————————————
+   MARKETWORKS COLOUR SYSTEM — single green thematic
+   One light theme, one dark theme. No palette picker.
+   Ground: white / near-white. Text: ink + one grey.
+   Colour arrives through ELEMENTS (clay.com lesson),
+   never through tinted page grounds.
+   ———————————————————————————————————————————— */
+:root{
+  /* ground */
+  --bg:#FFFFFF;            /* the page. white, for readability and pop */
+  --bg-soft:#F4F7F5;       /* banded sections; faint green cast, not cream */
+  --card:#FFFFFF;
+  --line:#E3E8E5;
+  --line-strong:#C9D2CC;
+  /* ink */
+  --ink:#141A17;           /* almost-black, green-cast */
+  --grey:#5C6663;          /* the one working grey (5.9:1) */
+  --grey-soft:#79837F;     /* >=18px or non-text only (3.9:1) */
+  /* the green */
+  --green:#0B7E52;         /* brand anchor: text-safe, CTA, wordmark (5.1:1) */
+  --green-vivid:#14A468;   /* graphics, large marks, lines - not body text */
+  --green-tint:#DFF4E8;    /* washes, chips, hover fields */
+  --green-deep:#0A3B28;    /* headings on tint, drench-band ground */
+  /* supporting accents — triads: tint / vivid / deep */
+  --sun:#F5B73E;      --sun-tint:#FFF1CE;   --sun-deep:#6B4A08;  --sun-text:#8A6206;
+  --sky:#2179E8;      --sky-tint:#E2EEFF;   --sky-deep:#123C77;  --sky-text:#1B66C9;
+  --coral:#E85D45;    --coral-tint:#FDE5DE; --coral-deep:#6E2114;--coral-text:#C74A32;
+  --purple:#8B5CF6;   --purple-tint:#EFE8FD;--purple-deep:#341B70;--purple-text:#7440E8;
+  --lime:#C6E437;     --lime-tint:#F4FBD9;  --lime-deep:#333F06; --lime-text:#5F7008;
+  /* data */
+  --series-1:#0B7E52;      /* primary series = brand green */
+  --series-2:#1B66C9;      /* counter series = sky text-step */
+  --up:#0B7E52;            /* green means up; see data rule */
+  --down:#C74A32;
+  --shadow:0 10px 30px -12px rgba(20,26,23,.14);
+  --r:14px;
+}
+[data-theme="dark"]{
+  --bg:#0D1412;            /* green-black, designed not inverted */
+  --bg-soft:#111916;
+  --card:#141C19;
+  --line:#26302A;
+  --line-strong:#39453E;
+  --ink:#E9EFEB;
+  --grey:#A2ADA7;
+  --grey-soft:#7E8A84;
+  --green:#3FCE95;         /* brightened anchor (9.3:1) */
+  --green-vivid:#2EA274;   /* chart step, dark-band validated */
+  --green-tint:#12271D;    /* tints become deep washes */
+  --green-deep:#BFEBD8;    /* "deep" flips to pale on dark */
+  --sun:#F2C25C;      --sun-tint:#2A2210;   --sun-deep:#F7DDA0;  --sun-text:#F2C25C;
+  --sky:#6AA6F2;      --sky-tint:#101E30;   --sky-deep:#BCD7FA;  --sky-text:#6AA6F2;
+  --coral:#F0876F;    --coral-tint:#2C1610; --coral-deep:#F8C4B6;--coral-text:#F0876F;
+  --purple:#A98BF8;   --purple-tint:#1D1530;--purple-deep:#D8CCFB;--purple-text:#A98BF8;
+  --lime:#C9E45B;     --lime-tint:#232B0E;  --lime-deep:#E6F5B0; --lime-text:#C9E45B;
+  --series-1:#2EA274;
+  --series-2:#4C86C9;
+  --up:#3FCE95;
+  --down:#F0876F;
+  --shadow:0 10px 30px -12px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:"Outfit",system-ui,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .25s ease,color .25s ease}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:4px}
+h1,h2,h3{font-family:"Fraunces",serif;font-weight:500;letter-spacing:-.01em}
+.wrap{max-width:1060px;margin:0 auto;padding:0 28px}
+.mono{font-family:ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top-in{display:flex;align-items:center;gap:18px;padding:14px 28px;max-width:1060px;margin:0 auto}
+.wordmark{font-weight:600;font-size:18px;color:var(--green);letter-spacing:-.01em}
+.top .tag{font-size:13.5px;color:var(--grey)}
+.toggle{margin-left:auto;border:1px solid var(--line-strong);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 16px;font:inherit;font-size:13.5px;font-weight:500;cursor:pointer}
+.toggle:hover{border-color:var(--green)}
+
+/* sections */
+section{padding:64px 0}
+section.band{background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+h2{font-size:30px;margin-bottom:6px}
+.sub{color:var(--grey);font-size:15.5px;max-width:64ch;margin-bottom:34px}
+h3{font-size:19px;margin:0 0 14px}
+
+/* intro */
+.intro{padding:72px 0 56px}
+.intro h1{font-size:clamp(34px,4.6vw,52px);line-height:1.1;max-width:20ch}
+.intro p{margin-top:18px;color:var(--grey);font-size:17px;max-width:58ch}
+.intro .rules{margin-top:30px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.venn{margin-top:26px;border-top:1px solid var(--line);padding-top:18px;font-size:14.5px;color:var(--grey);max-width:72ch}
+.venn b{color:var(--green)}
+.rule{border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;background:var(--card)}
+.rule b{display:block;font-size:14.5px;margin-bottom:4px}
+.rule span{font-size:13.5px;color:var(--grey);line-height:1.5}
+
+/* swatches */
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.chip{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--card)}
+.chip .well{height:78px;display:flex;align-items:flex-end;padding:10px 12px;position:relative;box-shadow:inset 0 0 0 1px var(--line)}
+.chip .well .cr{font-family:ui-monospace,monospace;font-size:11px;padding:2px 7px;border-radius:99px;background:rgba(255,255,255,.85);color:#141A17}
+.chip .meta{padding:10px 12px 12px}
+.chip .meta b{display:block;font-size:13.5px}
+.chip .meta span{font-size:11.5px;color:var(--grey);display:block;line-height:1.45}
+.chip .meta .hex{font-family:ui-monospace,monospace;font-size:11px;color:var(--grey)}
+
+/* triads */
+.triads{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.triad{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--card)}
+.triad .demo{padding:22px;display:flex;flex-direction:column;gap:10px}
+.triad .demo .eyename{font-size:13px;font-weight:600}
+.triad .demo .headline{font-family:"Fraunces",serif;font-size:20px;line-height:1.2}
+.triad .demo .pillrow{display:flex;gap:8px;align-items:center;margin-top:4px}
+.triad .pill{font-size:12px;font-weight:600;border-radius:99px;padding:5px 12px}
+.triad .steps{display:flex;border-top:1px solid var(--line)}
+.triad .steps i{flex:1;height:26px;display:block}
+.triad .steps .lbl{position:absolute}
+.triad .meta{padding:9px 14px;font-size:11px;color:var(--grey);font-family:ui-monospace,monospace;display:flex;justify-content:space-between}
+
+/* usage demo */
+.demo-band{border-radius:var(--r);border:1px solid var(--line);overflow:hidden}
+.demo-band .b1{background:var(--bg-soft);padding:34px 34px;border-bottom:1px solid var(--line)}
+.demo-band .b1 h3{font-size:24px;margin-bottom:6px}
+.demo-band .b1 p{color:var(--grey);font-size:14.5px;max-width:52ch}
+.demo-band .b2{padding:30px 34px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;background:var(--bg)}
+.dcard{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:20px;box-shadow:var(--shadow)}
+.dcard .k{font-size:12.5px;color:var(--grey);display:block;margin-bottom:6px}
+.dcard .v{font-family:ui-monospace,monospace;font-size:22px}
+.dcard .d{font-size:12.5px;margin-top:6px;display:block}
+.demo-band .b3{background:var(--green-deep);color:#EFF8F3;padding:30px 34px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+[data-theme="dark"] .demo-band .b3{color:#0D1412}
+.demo-band .b3 h3{font-size:20px;color:inherit}
+.demo-band .b3 p{font-size:13.5px;opacity:.75;max-width:44ch}
+.btn{display:inline-block;background:transparent;border-radius:999px;padding:11px 22px;font-weight:600;font-size:14px;text-decoration:none;border:1.5px solid transparent;cursor:pointer;font-family:inherit}
+.btn-green{background:var(--green);color:var(--bg)}
+[data-theme="dark"] .btn-green{color:#0D1412}
+.btn-green:hover{filter:brightness(1.08)}
+.btn-ghost{border-color:var(--line-strong);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--green);color:var(--green)}
+.btn-paper{background:var(--bg);color:var(--green-deep)}
+[data-theme="dark"] .btn-paper{background:#0D1412;color:var(--green)}
+
+/* text sample */
+.type-demo{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:40px;align-items:start}
+.type-demo .stack p{margin-top:12px}
+.type-demo .stack .h{font-family:"Fraunces",serif;font-size:30px;line-height:1.15}
+.type-demo .stack .lede{font-size:17px;color:var(--ink)}
+.type-demo .stack .body{font-size:15.5px;color:var(--grey)}
+.type-demo .stack .cap{font-size:12.5px;color:var(--grey);border-top:1px solid var(--line);padding-top:10px;margin-top:18px}
+.notebox{border:1px solid var(--line);border-left:3px solid var(--green);border-radius:0 var(--r) var(--r) 0;background:var(--card);padding:18px 20px;font-size:13.5px;color:var(--grey);line-height:1.6}
+.notebox b{color:var(--ink)}
+
+/* data row */
+.datarow{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.datacell{border:1px solid var(--line);border-radius:var(--r);background:var(--card);padding:22px}
+.datacell .lbl{font-size:13px;color:var(--grey);margin-bottom:12px;display:block}
+.serieschip{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;margin-right:18px}
+.serieschip i{width:20px;height:3px;border-radius:2px;display:inline-block}
+.updown{display:flex;gap:26px;font-family:ui-monospace,monospace;font-size:18px}
+.updown .u{color:var(--up)} .updown .d{color:var(--down)}
+.updown span span{display:block;font-family:"Outfit",sans-serif;font-size:12px;color:var(--grey);margin-top:2px}
+
+/* footnote */
+footer{padding:44px 0 60px;font-size:13px;color:var(--grey);line-height:1.7}
+footer .wrap{border-top:1px solid var(--line);padding-top:24px}
+
+@media (max-width:880px){
+  .intro .rules,.triads,.demo-band .b2{grid-template-columns:1fr}
+  .type-demo,.datarow{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="top-in">
+    <span class="wordmark">marketworks.</span>
+    <span class="tag">brand guide · colour system · proposal 01</span>
+    <button class="toggle" id="toggle" aria-pressed="false">View dark theme</button>
+  </div>
+</div>
+
+<header class="intro wrap">
+  <h1>One green. White ground. Ink first.</h1>
+  <p>The palette picker retires. Marketworks runs a single colour system with one
+  light theme and one dark companion — the brand is the green, the ground stays
+  white for readability and pop, and colour arrives through elements: buttons,
+  chips, lines, washes. Never through tinted page bands.</p>
+  <div class="rules">
+    <div class="rule"><b>Ground is white</b><span>Pure white page; one near-white band tone for section rhythm. No creams, no palette washes.</span></div>
+    <div class="rule"><b>Text is ink + one grey</b><span>Almost-black ink for content, a single grey for secondary. Colour is never body text.</span></div>
+    <div class="rule"><b>Green is the brand</b><span>One anchor green in the saturated-luminous band (~5:1 on white), with a vivid, a tint and a deep step.</span></div>
+  </div>
+  <p class="venn">Marketworks lives in the overlap of <b>Finance</b> × <b>Technology</b> ×
+  <b>Editorial&nbsp;Research</b>. Every element should sit in that overlap: numbers treated
+  with editorial care, engineering treated as a brand surface, writing treated as a product.
+  The system above is judged against this before anything ships.</p>
+</header>
+
+<!-- ————— FOUNDATIONS ————— -->
+<section class="wrap">
+  <h2>Foundations</h2>
+  <p class="sub">Grounds and inks. Contrast badges are computed live against the
+  active theme — they can never go stale.</p>
+  <div class="chips" id="foundchips"></div>
+</section>
+
+<!-- ————— THE GREEN ————— -->
+<section class="band">
+  <div class="wrap">
+    <h2>The green</h2>
+    <p class="sub">Four steps, four jobs. The anchor is text-safe and carries the
+    wordmark and every primary action; the vivid draws lines and large marks; the
+    tint washes hover fields and chips; the deep grounds the one drench moment
+    per page and headlines on tint.</p>
+    <div class="chips" id="greenchips"></div>
+    <div style="margin-top:26px;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+      <span class="wordmark" style="font-size:26px">marketworks.</span>
+      <button class="btn btn-green">Primary action</button>
+      <button class="btn btn-ghost">Secondary</button>
+      <span style="font-size:13.5px;color:var(--grey)">wordmark + button roles, on the live theme</span>
+    </div>
+  </div>
+</section>
+
+<!-- ————— ACCENTS ————— -->
+<section class="wrap">
+  <h2>Supporting accents</h2>
+  <p class="sub">Five hues, kept on a leash. Each works as a clay-style triad —
+  tint surface · vivid mark · deep text — and an element takes ONE hue, all three
+  tones. Accents never colour body copy and never tint a full page band.</p>
+  <div class="triads" id="triads"></div>
+  <p class="sub" style="margin:18px 0 0;font-size:13.5px">Roles: <b style="color:var(--ink)">sun</b> — highlights, education, "new" · <b style="color:var(--ink)">sky</b> — links to externals, info, benchmark data · <b style="color:var(--ink)">coral</b> — warnings, drawdowns, destructive actions · <b style="color:var(--ink)">purple</b> — the editorial voice: pull-quotes, research callouts, /library moments (a brand heirloom) · <b style="color:var(--ink)">lime</b> — the highlighter: annotations, marks, energy; its vivid is never text.</p>
+</section>
+
+<!-- ————— DATA ————— -->
+<section class="band">
+  <div class="wrap">
+    <h2>Data colours</h2>
+    <p class="sub">Charts get two series inks, validated for colour-vision safety
+    on both themes (CVD ΔE 21+, contrast ≥3:1). Direction: green means up — the
+    brand accepts the finance convention — so near charts, green is reserved for
+    meaning and the UI around a chart stays ink and grey.</p>
+    <div class="datarow">
+      <div class="datacell">
+        <span class="lbl">Series inks (max two per chart, direct-labeled)</span>
+        <span class="serieschip"><i style="background:var(--series-1)"></i>Primary series — brand green</span>
+        <span class="serieschip"><i style="background:var(--series-2)"></i>Counter series — sky</span>
+        <svg viewBox="0 0 420 90" style="width:100%;margin-top:14px" aria-label="Sample of the two chart series inks on the active theme">
+          <line x1="0" y1="70" x2="420" y2="70" stroke="var(--line)" stroke-width="1"/>
+          <path d="M0 62 C 60 58, 90 40, 140 44 S 240 20, 300 24 S 380 10, 420 14" fill="none" stroke="var(--series-1)" stroke-width="2.5"/>
+          <path d="M0 66 C 70 64, 110 56, 160 58 S 260 44, 320 46 S 390 38, 420 40" fill="none" stroke="var(--series-2)" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="datacell">
+        <span class="lbl">Direction (always paired with sign and label, never colour alone)</span>
+        <div class="updown">
+          <span class="u">+44.78%<span>gain · brand green</span></span>
+          <span class="d">−36.6%<span>drawdown · coral text-step</span></span>
+        </div>
+        <div class="notebox" style="margin-top:16px">
+          <b>The rule:</b> in data contexts green = direction, so the surrounding
+          UI goes quiet — ink text, grey labels, hairline grid. A green button
+          never sits beside a green chart.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ————— RHYTHM ————— -->
+<section class="wrap">
+  <h2>Rhythm: bands and cards, one grammar</h2>
+  <p class="sub">The homepage alternates full-width bands with carded clusters.
+  White page → near-white band → cards on white → one deep-green drench near the
+  close. The miniature below runs entirely on the role tokens; toggle the theme
+  and it re-derives.</p>
+  <div class="demo-band">
+    <div class="b1">
+      <h3>A banded section</h3>
+      <p>Near-white field, edge-to-edge, hairline top and bottom. Carries quiet
+      content: explanations, process, methodology.</p>
+    </div>
+    <div class="b2">
+      <div class="dcard"><span class="k">Quality Momentum · OOS 2017–26</span><span class="v">44.78%</span><span class="d" style="color:var(--grey)">CAGR, net of slippage</span></div>
+      <div class="dcard"><span class="k">Sharpe</span><span class="v">1.86</span><span class="d" style="color:var(--grey)">same window</span></div>
+      <div class="dcard"><span class="k">Max drawdown</span><span class="v" style="color:var(--down)">−36.6%</span><span class="d" style="color:var(--grey)">printed beside returns</span></div>
+    </div>
+    <div class="b3">
+      <div>
+        <h3>The one drench moment</h3>
+        <p>Deep green, once per page, near the close. It reads as the signature
+        because it is scarce.</p>
+      </div>
+      <button class="btn btn-paper">Request access</button>
+    </div>
+  </div>
+</section>
+
+<!-- ————— TYPE ON THE SYSTEM ————— -->
+<section class="band">
+  <div class="wrap type-demo">
+    <div class="stack">
+      <h2 style="margin-bottom:20px">Text on the system</h2>
+      <p class="h">Momentum, held to in writing.</p>
+      <p class="lede">Ink carries the reading. The lede stays ink; hierarchy comes
+      from size, not from fading everything to grey.</p>
+      <p class="body">Body copy may use the grey when it is genuinely secondary —
+      supporting notes, method lines, captions. One grey, used deliberately,
+      beats four greys used by accident.</p>
+      <p class="cap">Caption grey, 12.5px, above a hairline. The lightest text tone that still passes 4.5:1.</p>
+    </div>
+    <div class="notebox">
+      <b>The roadmap from here, in order:</b> (1) font pairings — Fraunces +
+      Outfit render this page as the incumbent placeholder; (2) the asset
+      study — hero background to replace the gradient, textured boxes, cards
+      and bands, dither patterns, light motion; (3) the homepage
+      re-composition on all of it. Each study lands on this guide page, so the
+      guide grows into the full visual contract.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><b style="color:var(--ink)">Migration note.</b> This proposal retires the six-palette picker on all
+    surfaces: light + dark become the only modes, `data-palette` collapses to role tokens, and the
+    accN rotation reduces to the three leashed accent triads. Dashboard semantics (up/down) already
+    match the data rule. Existing token sockets (`--accN-*`, `--wash*`) map 1:1 onto the triads, so
+    the port is a re-valuing, not a re-plumbing. · design_studies branch · colour proposal 01 · 2026-08-12</p>
+  </div>
+</footer>
+
+<script>
+/* ————— palette definition (single source for chips) ————— */
+const LIGHT = {
+  found: [
+    { n:"White",      v:"#FFFFFF", role:"the page ground",            fg:"#141A17" },
+    { n:"Band",       v:"#F4F7F5", role:"section bands, soft fields", fg:"#141A17" },
+    { n:"Hairline",   v:"#E3E8E5", role:"rules, borders",             fg:null },
+    { n:"Ink",        v:"#141A17", role:"headings, body, figures",    fg:"#FFFFFF", on:"#FFFFFF" },
+    { n:"Grey",       v:"#5C6663", role:"secondary text, captions",   fg:"#FFFFFF", on:"#FFFFFF" },
+    { n:"Grey soft",  v:"#79837F", role:"disabled, non-text, ≥18px",  fg:"#FFFFFF", on:"#FFFFFF" },
+  ],
+  green: [
+    { n:"Green (anchor)", v:"#0B7E52", role:"wordmark, CTAs, links, text-safe", fg:"#FFFFFF", on:"#FFFFFF" },
+    { n:"Green vivid",    v:"#14A468", role:"lines, marks, large graphics",     fg:"#0A3B28" },
+    { n:"Green tint",     v:"#DFF4E8", role:"washes, chips, hover fields",      fg:"#0A3B28" },
+    { n:"Green deep",     v:"#0A3B28", role:"drench band, headings on tint",    fg:"#DFF4E8" },
+  ],
+  dark: false
+};
+const DARK = {
+  found: [
+    { n:"Ground",     v:"#0D1412", role:"green-black page",           fg:"#E9EFEB" },
+    { n:"Band",       v:"#111916", role:"section bands",              fg:"#E9EFEB" },
+    { n:"Card",       v:"#141C19", role:"raised surfaces",            fg:"#E9EFEB" },
+    { n:"Ink",        v:"#E9EFEB", role:"headings, body, figures",    fg:"#0D1412", on:"#0D1412" },
+    { n:"Grey",       v:"#A2ADA7", role:"secondary text",             fg:"#0D1412", on:"#0D1412" },
+    { n:"Hairline",   v:"#26302A", role:"rules, borders",             fg:null },
+  ],
+  green: [
+    { n:"Green (anchor)", v:"#3FCE95", role:"brightened; CTAs, wordmark",   fg:"#0D1412", on:"#0D1412" },
+    { n:"Green chart",    v:"#2EA274", role:"series ink (dark-band safe)",  fg:"#0D1412" },
+    { n:"Green wash",     v:"#12271D", role:"tints become deep washes",     fg:"#BFEBD8" },
+    { n:"Green pale",     v:"#BFEBD8", role:"headings on wash",             fg:"#0D1412" },
+  ],
+  dark: true
+};
+const TRIADS = [
+  { key:"sun",    name:"Sun",    tint:"--sun-tint",    vivid:"--sun",    deep:"--sun-deep",   text:"--sun-text",   line:"Education, highlights, what's new" },
+  { key:"sky",    name:"Sky",    tint:"--sky-tint",    vivid:"--sky",    deep:"--sky-deep",   text:"--sky-text",   line:"Info, external links, benchmarks" },
+  { key:"coral",  name:"Coral",  tint:"--coral-tint",  vivid:"--coral",  deep:"--coral-deep", text:"--coral-text", line:"Warnings, drawdowns, destructive" },
+  { key:"purple", name:"Purple", tint:"--purple-tint", vivid:"--purple", deep:"--purple-deep",text:"--purple-text",line:"Editorial voice: pull-quotes, research" },
+  { key:"lime",   name:"Lime",   tint:"--lime-tint",   vivid:"--lime",   deep:"--lime-deep",  text:"--lime-text",  line:"The highlighter: annotations, energy" },
+];
+
+/* ————— WCAG contrast, computed live ————— */
+function lum(hex){
+  const h = hex.replace("#","");
+  const f = c => { c/=255; return c<=0.04045 ? c/12.92 : ((c+0.055)/1.055)**2.4; };
+  return 0.2126*f(parseInt(h.slice(0,2),16)) + 0.7152*f(parseInt(h.slice(2,4),16)) + 0.0722*f(parseInt(h.slice(4,6),16));
+}
+function cr(a,b){ let x=lum(a),y=lum(b); if(x<y)[x,y]=[y,x]; return (x+0.05)/(y+0.05); }
+const fmt = r => (Math.round(r*10)/10).toFixed(1)+":1";
+
+function chip(c, groundDefault){
+  /* text colours (c.on set): swatch vs its ground. surfaces: their fg ink vs the swatch. */
+  let badge = "";
+  if (c.on) badge = `<span class="cr">${fmt(cr(c.v, c.on))} on ground</span>`;
+  else if (c.fg) badge = `<span class="cr">${fmt(cr(c.fg, c.v))} ink on this</span>`;
+  return `<div class="chip"><div class="well" style="background:${c.v}">${badge}</div>
+    <div class="meta"><b>${c.n}</b><span>${c.role}</span><span class="hex">${c.v}</span></div></div>`;
+}
+function renderChips(){
+  const dark = document.documentElement.dataset.theme === "dark";
+  const P = dark ? DARK : LIGHT;
+  const ground = dark ? "#0D1412" : "#FFFFFF";
+  document.getElementById("foundchips").innerHTML = P.found.map(c=>chip(c,ground)).join("");
+  document.getElementById("greenchips").innerHTML = P.green.map(c=>chip(c,ground)).join("");
+}
+
+/* ————— triads render off live CSS vars ————— */
+function renderTriads(){
+  const cs = getComputedStyle(document.documentElement);
+  const v = name => cs.getPropertyValue(name).trim();
+  document.getElementById("triads").innerHTML = TRIADS.map(t=>{
+    const tint=v(t.tint), vivid=v(t.vivid), deep=v(t.deep), text=v(t.text);
+    return `<div class="triad">
+      <div class="demo" style="background:${tint}">
+        <span class="eyename" style="color:${deep}">${t.name}</span>
+        <span class="headline" style="color:${deep}">Deep text on the tint surface</span>
+        <span class="pillrow">
+          <span class="pill" style="background:${vivid};color:${cr(vivid,"#141A17")>cr(vivid,"#FFFFFF")?"#141A17":"#FFFFFF"}">vivid pill</span>
+          <span class="pill" style="border:1.5px solid ${vivid};color:${deep}">outline</span>
+        </span>
+      </div>
+      <div class="steps"><i style="background:${tint}"></i><i style="background:${vivid}"></i><i style="background:${deep}"></i></div>
+      <div class="meta"><span>${tint} · ${vivid} · ${deep}</span><span>${fmt(cr(deep,tint))}</span></div>
+    </div>`;
+  }).join("");
+}
+
+/* ————— theme toggle ————— */
+const btn = document.getElementById("toggle");
+function setTheme(t){
+  document.documentElement.dataset.theme = t;
+  btn.textContent = t === "dark" ? "View light theme" : "View dark theme";
+  btn.setAttribute("aria-pressed", t === "dark");
+  renderChips(); renderTriads();
+}
+btn.addEventListener("click", () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+setTheme("light");
+</script>
+</body>
+</html>
