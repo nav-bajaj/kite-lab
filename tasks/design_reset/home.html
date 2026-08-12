@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketworks — Momentum, on the record</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F2F4F0;          /* cheque-paper ground, cool */
+  --paper-high:#F9FAF8;     /* raised sheet */
+  --ink:#17211B;            /* engraving ink, green-black */
+  --ink-2:#46554C;          /* secondary ink */
+  --ink-3:#5E6D64;          /* muted ink, still >=4.5:1 on paper */
+  --rule:#C9D2CA;           /* hairline rules */
+  --rule-strong:#17211B;
+  --intaglio:#0E3B2E;       /* deep field green */
+  --intaglio-ink:#1E7A4A;   /* series-1 momentum / brand line ink */
+  --cheque-blue:#3D5FC9;    /* series-2 benchmark ink */
+  --seal-red:#C03A20;       /* franking stamp / primary action */
+  --seal-red-deep:#9E2E18;
+  --on-deep:#EAF1EC;        /* text on intaglio field */
+  --on-deep-2:#A9C4B4;      /* tinted secondary on deep, never gray */
+  --frame:14px;
+  --measure:66ch;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Public Sans",system-ui,sans-serif;
+  font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+/* ————— the document frame ————— */
+.frame{
+  min-height:100vh;
+  margin:var(--frame);
+  border:1.5px solid var(--rule-strong);
+  outline:1px solid var(--rule-strong);
+  outline-offset:3px;
+  background:var(--paper);
+  position:relative;
+}
+::selection{background:#1E7A4A22}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--seal-red);outline-offset:2px;border-radius:1px}
+
+.mono{font-family:"Fragment Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* ————— masthead ————— */
+.masthead{
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:14px 28px;border-bottom:1.5px solid var(--rule-strong);
+}
+.wordmark{font-family:"Rozha One",serif;font-weight:400;letter-spacing:.005em;font-size:19px;text-decoration:none}
+.wordmark .tm{color:var(--intaglio-ink)}
+.mast-nav{display:flex;gap:26px;align-items:center}
+.mast-nav a{font-size:13.5px;font-weight:500;text-decoration:none;color:var(--ink-2)}
+.mast-nav a:hover{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+.btn{
+  display:inline-block;border:1.5px solid var(--seal-red);color:var(--seal-red);
+  font-weight:600;font-size:13.5px;letter-spacing:.02em;
+  padding:9px 18px;text-decoration:none;background:transparent;cursor:pointer;
+  transition:background .12s ease-out,color .12s ease-out;
+}
+.btn:hover{background:var(--seal-red);color:#fff}
+.btn-solid{background:var(--seal-red);color:#fff}
+.btn-solid:hover{background:var(--seal-red-deep);border-color:var(--seal-red-deep)}
+.btn-paper{border-color:var(--paper);color:var(--intaglio);background:var(--paper)}
+.btn-paper:hover{background:#fff;color:var(--intaglio)}
+
+/* ————— guilloche band ————— */
+.g-band{display:block;width:100%;height:26px;border-bottom:1.5px solid var(--rule-strong)}
+
+/* ————— doc ref row ————— */
+.docref{
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:12px 28px;font-size:12.5px;letter-spacing:.04em;color:var(--ink-2);
+  border-bottom:1px solid var(--rule);
+}
+
+/* ————— hero ————— */
+.hero{position:relative;padding:84px 28px 72px;overflow:hidden}
+.hero-inner{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1fr 300px;gap:56px;align-items:center}
+.deedline{font-style:italic;font-size:17px;color:var(--ink-2);display:block;margin-bottom:14px}
+h1 + .rule-under{width:76px;border:0;border-bottom:2px solid var(--intaglio-ink);margin:26px 0 0}
+h1{
+  font-family:"Rozha One",serif;font-weight:400;
+  font-size:clamp(42px,6.2vw,78px);line-height:1.04;letter-spacing:-.005em;
+  text-wrap:balance;
+}
+.hero p.lede{max-width:56ch;margin:26px 0 34px;font-size:18px;line-height:1.6;color:var(--ink-2)}
+.hero .actions{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.btn-lg{padding:14px 26px;font-size:15px}
+.textlink{font-weight:500;font-size:15px;text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:1px}
+.textlink:hover{color:var(--intaglio-ink)}
+.sealwrap{justify-self:center;text-align:center}
+
+/* ————— section scaffolding ————— */
+section{border-top:1.5px solid var(--rule-strong)}
+.sec-head{
+  display:flex;align-items:baseline;gap:20px;
+  padding:20px 28px;border-bottom:1px solid var(--rule);
+}
+.sec-no{font-family:"Fragment Mono",monospace;font-size:13px;color:var(--intaglio-ink);letter-spacing:.06em}
+.sec-title{font-family:"Rozha One",serif;font-weight:400;font-size:clamp(26px,3.2vw,38px);line-height:1.1}
+.sec-note{margin-left:auto;font-size:13px;font-style:italic;color:var(--ink-3)}
+.sec-body{padding:52px 28px 72px}
+.center{max-width:1080px;margin:0 auto}
+
+/* ————— clauses ————— */
+.clauses{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--rule)}
+.clause{padding:30px 28px 34px;border-right:1px solid var(--rule)}
+.clause:last-child{border-right:0}
+.clause .cno{font-family:"Fragment Mono",monospace;font-size:13px;color:var(--intaglio-ink);display:block;margin-bottom:14px}
+.clause h3{font-size:19px;font-weight:600;line-height:1.3;margin-bottom:10px}
+.clause p{font-size:15px;color:var(--ink-2)}
+.clause p .mono{font-size:13.5px}
+
+/* ————— exhibit / chart ————— */
+.exhibit{background:var(--paper-high);border:1px solid var(--rule);padding:34px 34px 26px;position:relative}
+.exhibit-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+.exhibit-title{font-size:17px;font-weight:600}
+.legend{display:flex;gap:22px;font-size:13px;color:var(--ink-2)}
+.legend .key{display:inline-flex;align-items:center;gap:8px}
+.key i{display:inline-block;width:18px;height:0;border-top:2.5px solid}
+.chart-box{position:relative}
+#chart{display:block;width:100%;height:auto}
+.tip{
+  position:absolute;pointer-events:none;background:var(--paper);border:1px solid var(--ink);
+  padding:8px 12px;font-size:12.5px;line-height:1.5;box-shadow:2px 3px 10px rgba(23,33,27,.16);
+  white-space:nowrap;display:none;z-index:3;
+}
+.tip b{font-weight:600}
+.tip .row{display:flex;align-items:center;gap:7px}
+.tip .row i{width:10px;height:0;border-top:2.5px solid;display:inline-block}
+.caption{margin-top:14px;font-size:12.5px;color:var(--ink-3);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+details.tableview{margin-top:10px;font-size:13px}
+details.tableview summary{cursor:pointer;font-weight:500;color:var(--ink-2);list-style:none;display:inline-flex;align-items:center;gap:8px}
+details.tableview summary::-webkit-details-marker{display:none}
+details.tableview summary svg{transition:transform .12s ease-out}
+details.tableview[open] summary svg{transform:rotate(90deg)}
+details.tableview .scroll{max-height:280px;overflow:auto;margin-top:10px;border:1px solid var(--rule);padding:2px 6px 6px}
+details.tableview table{width:100%;border-collapse:collapse}
+details.tableview th,details.tableview td{padding:5px 12px;border-bottom:1px solid var(--rule);text-align:right;font-family:"Fragment Mono",monospace;font-size:12px}
+details.tableview th:first-child,details.tableview td:first-child{text-align:left}
+details.tableview thead th{position:sticky;top:0;background:var(--paper-high)}
+
+/* ————— schedule (ledger table) ————— */
+.ledger{width:100%;border-collapse:collapse;background:var(--paper-high);border:1px solid var(--rule-strong)}
+.ledger caption{text-align:left;padding:0 0 16px;font-size:15px;color:var(--ink-2)}
+.ledger th{
+  font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--ink-2);
+  border-bottom:1.5px solid var(--rule-strong);padding:12px 18px;text-align:right;
+}
+.ledger th:first-child{text-align:left}
+.ledger td{padding:18px;border-bottom:1px solid var(--rule);text-align:right;vertical-align:top}
+.ledger td:first-child{text-align:left}
+.ledger tr:last-child td{border-bottom:0}
+.ledger .pname{font-size:17px;font-weight:600;display:block}
+.ledger .pid{font-family:"Fragment Mono",monospace;font-size:12px;color:var(--ink-3)}
+.ledger .num{font-family:"Fragment Mono",monospace;font-size:15px}
+.ledger .dim{font-size:13.5px;color:var(--ink-2)}
+/* drawdowns print in the same ink as returns — the page's own promise */
+.fnotes{margin-top:16px;font-size:12.5px;color:var(--ink-3);line-height:1.7;max-width:88ch}
+.fnotes sup{font-family:"Fragment Mono",monospace}
+.schedule-note{display:flex;align-items:center;gap:26px;justify-content:space-between;flex-wrap:wrap;margin-bottom:26px}
+.schedule-note p{font-size:18px;max-width:52ch}
+.stamp{
+  font-family:"Fragment Mono",monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--seal-red);border:2px solid var(--seal-red);padding:10px 16px;line-height:1.5;
+  transform:rotate(-4deg);opacity:.85;text-align:center;box-shadow:inset 0 0 0 1.5px var(--paper),inset 0 0 0 2.5px var(--seal-red);
+  white-space:nowrap;
+}
+
+/* ————— rejected ledger ————— */
+.split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:64px;align-items:start}
+.split .lead{font-size:22px;line-height:1.5;max-width:30ch;font-weight:500}
+.split .lead + p{margin-top:18px;font-size:15px;color:var(--ink-2);max-width:44ch}
+.rej{list-style:none;border-top:1.5px solid var(--rule-strong)}
+.rej li{display:grid;grid-template-columns:minmax(180px,38%) 1fr;gap:18px;padding:15px 4px;border-bottom:1px solid var(--rule);font-size:15px}
+.rej .what{font-weight:600}
+.rej .why{color:var(--ink-2)}
+.rej-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.rej-head .mono{font-size:13px;color:var(--ink-3)}
+
+/* ————— risk ————— */
+.risk-grid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--rule);background:var(--paper-high)}
+.risk-cell{padding:26px 24px 30px;border-right:1px solid var(--rule)}
+.risk-cell:last-child{border-right:0}
+.risk-cell .rv{font-family:"Fragment Mono",monospace;font-size:26px;display:block;margin-bottom:8px;color:var(--intaglio)}
+.risk-cell .rk{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+.risk-copy{max-width:var(--measure);margin:0 0 34px;font-size:17px;line-height:1.65}
+.risk-copy strong{font-weight:600}
+
+/* ————— access field ————— */
+.access{background:var(--intaglio);color:var(--on-deep);border-top:1.5px solid var(--rule-strong)}
+.access .sec-body{padding:76px 28px 80px}
+.access-grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,4fr);gap:64px;align-items:center}
+.access h2{font-family:"Rozha One",serif;font-weight:400;font-size:clamp(32px,4.4vw,54px);line-height:1.08;text-wrap:balance}
+.access p{margin-top:20px;font-size:16.5px;color:var(--on-deep-2);max-width:52ch}
+.access .actions{margin-top:34px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.access .textlink:hover{color:#fff}
+.access-meta{font-size:13px;color:var(--on-deep-2);border-left:1px solid #2C5949;padding:8px 0 8px 26px;display:grid;gap:14px}
+.access-meta b{color:var(--on-deep);font-weight:600}
+
+/* ————— disclosures ————— */
+footer{border-top:1.5px solid var(--rule-strong);padding:44px 28px 30px;font-size:12px;color:var(--ink-3);line-height:1.7}
+.disc-grid{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:44px}
+.disc-grid h3{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);margin-bottom:10px}
+.disc-grid a{text-decoration:underline;text-underline-offset:3px}
+.colophon{max-width:1080px;margin:36px auto 0;padding-top:18px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+
+/* ————— responsive ————— */
+@media (max-width:980px){
+  .clauses{grid-template-columns:1fr}
+  .clause{border-right:0;border-bottom:1px solid var(--rule)}
+  .clause:last-child{border-bottom:0}
+  .split{grid-template-columns:1fr;gap:36px}
+  .risk-grid{grid-template-columns:1fr 1fr}
+  .risk-cell:nth-child(2){border-right:0}
+  .risk-cell:nth-child(-n+2){border-bottom:1px solid var(--rule)}
+  .access-grid{grid-template-columns:1fr}
+  .access-meta{border-left:0;padding-left:0;border-top:1px solid #2C5949;padding-top:26px}
+  .disc-grid{grid-template-columns:1fr}
+  .hero-inner{grid-template-columns:1fr}
+  .sealwrap{justify-self:start;margin-top:16px}
+  .sealwrap svg{width:150px;height:150px}
+}
+@media (max-width:720px){
+  :root{--frame:8px}
+  .masthead{padding:12px 18px}
+  .mast-nav a:not(.btn){display:none}
+  .docref{padding:10px 18px;font-size:10.5px}
+  .hero{padding:56px 18px 48px}
+  .sec-head{padding:16px 18px;flex-wrap:wrap}
+  .sec-note{display:none}
+  .sec-body{padding:36px 18px 52px}
+  .exhibit{padding:22px 16px 18px}
+  footer{padding:36px 18px 24px}
+  /* ledger collapses to stacked entries */
+  .ledger thead{display:none}
+  .ledger,.ledger tbody,.ledger tr,.ledger td{display:block;text-align:left}
+  .ledger td{border-bottom:0;padding:4px 18px;text-align:left}
+  .ledger td[data-l]::before{content:attr(data-l) "  ";font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+  .ledger tr{border-bottom:1px solid var(--rule);padding:14px 0}
+  .rej li{grid-template-columns:1fr;gap:4px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+<!--
+THESIS: Momentum investing presented as a document of record — the Indian
+contract-note / share-certificate grammar carries "evidence over persuasion";
+refuses both the dark-terminal glow and the cream-editorial hero the quant
+category defaults to.
+OWN-WORLD: cheque-paper cool ground (#F2F4F0), double-rule engraved document
+frame, generative guilloche seal, intaglio green field (#0E3B2E) and line ink
+(#1E7A4A), cheque-blue benchmark ink, vermillion franking-stamp accent
+(#C03A20); Rozha One masthead, Public Sans text, Fragment Mono serials and
+figures; rule-lined ledger tables, microtype disclosure block.
+STORY: the visitor reads a certificate — mechanism, the premium in the
+exchange's own index data, the schedule of portfolios with drawdowns printed
+in the same ink, the rejected-experiments ledger — and requests beta access.
+FIRST VIEWPORT: masthead row and doc-ref line inside the frame; headline
+"Momentum, on the record." with certifying line above, lede, stamp-red CTA,
+guilloche seal right; Exhibit A rules visible at the fold.
+FORM: contract note / security-print document — candidate 7 of 7 on the
+grounded list (assigned); seed key 74f6a8bb.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the
+finish review, the verdict, and DESIGN.md.
+-->
+<div class="frame">
+
+  <header class="masthead">
+    <a class="wordmark" href="#top">marketworks<span class="tm">.</span></a>
+    <nav class="mast-nav" aria-label="Document contents">
+      <a href="#mechanism">The mechanism</a>
+      <a href="#exhibit-a">Exhibit A</a>
+      <a href="#schedule-a">The portfolios</a>
+      <a href="#rejected">The rejected ledger</a>
+      <a class="btn" href="#access">Request access</a>
+    </nav>
+  </header>
+
+  <svg class="g-band" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 1200 26"><g id="gband"></g></svg>
+
+  <div class="docref mono">
+    <span>Research note &nbsp;Nº MW/HOME/2026-08</span>
+    <span>NSE · Indian equities</span>
+    <span>Issued August 2026 · Private beta</span>
+  </div>
+
+  <main id="top">
+    <!-- ————— HERO ————— -->
+    <section class="hero" style="border-top:0">
+      <div class="hero-inner">
+        <div>
+          <h1>Momentum, on&nbsp;the&nbsp;record.</h1>
+          <hr class="rule-under">
+          <p class="lede">
+            <span class="deedline">This document records a process, not a promise.</span>
+            Marketworks runs rules-based momentum portfolios on Indian equities:
+            validated out of sample, rebalanced on a fixed cadence, and published
+            with drawdowns and slippage included. No calls, no predictions.
+            A written system, executed daily at 16:30 IST.
+          </p>
+          <div class="actions">
+            <a class="btn btn-solid btn-lg" href="#access">Request beta access</a>
+            <a class="textlink" href="#exhibit-a">Read the record</a>
+          </div>
+        </div>
+        <div class="sealwrap">
+          <svg width="240" height="240" viewBox="-120 -120 240 240" role="img" aria-label="Marketworks guilloche seal"><g id="seal"></g></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ————— CLAUSE I · MECHANISM ————— -->
+    <section id="mechanism">
+      <div class="sec-head">
+        <span class="sec-no">CLAUSE I</span>
+        <h2 class="sec-title">The mechanism</h2>
+        <span class="sec-note">Three rules, held to in writing</span>
+      </div>
+      <div class="sec-body"><div class="center">
+        <div class="clauses">
+          <div class="clause">
+            <span class="cno">1.1</span>
+            <h3>Own strength, by rank.</h3>
+            <p>Every portfolio ranks its universe (the NSE&nbsp;500 or the Nifty&nbsp;250)
+            by measured momentum and holds the top of the list, equal-weighted.
+            No stories, no tips: a stock is held because it ranks, and for no other reason.</p>
+          </div>
+          <div class="clause">
+            <span class="cno">1.2</span>
+            <h3>Exit by rule, not by nerve.</h3>
+            <p>Positions leave when they fall out of rank or breach a
+            <span class="mono">20%</span> drawdown stop. The exits are written before
+            the entries are made. Discipline is what remains when conviction runs out.</p>
+          </div>
+          <div class="clause">
+            <span class="cno">1.3</span>
+            <h3>Repeat, on cadence.</h3>
+            <p>Signals rebuild after every close at <span class="mono">16:30 IST</span>;
+            rebalances land weekly or bi-weekly to a fixed calendar. The system runs
+            whether the mood is greed or fear; that is the point of writing it down.</p>
+          </div>
+        </div>
+      </div></div>
+    </section>
+
+    <!-- ————— EXHIBIT A · THE PREMIUM ————— -->
+    <section id="exhibit-a">
+      <div class="sec-head">
+        <span class="sec-no">EXHIBIT A</span>
+        <h2 class="sec-title">The premium is public</h2>
+        <span class="sec-note">Source: NSE index price series</span>
+      </div>
+      <div class="sec-body"><div class="center">
+        <p class="risk-copy" style="margin-bottom:38px">
+          Momentum is not our secret. It is one of the most documented effects in
+          markets, visible in the exchange's own indices. What compounds is not the
+          idea but the discipline of following it. The exhibit below is drawn from
+          NSE data, month-end closes, both series indexed to 100 in January 2020.
+        </p>
+        <figure class="exhibit">
+          <div class="exhibit-head">
+            <figcaption class="exhibit-title">Nifty500 Momentum 50 vs Nifty 500 — growth of 100</figcaption>
+            <div class="legend" aria-hidden="true">
+              <span class="key"><i style="border-color:var(--intaglio-ink)"></i>Nifty500 Momentum 50</span>
+              <span class="key"><i style="border-color:var(--cheque-blue)"></i>Nifty 500</span>
+            </div>
+          </div>
+          <div class="chart-box">
+            <svg id="chart" viewBox="0 0 1060 440" role="img"
+              aria-label="Line chart: Nifty500 Momentum 50 grows from 100 to 325 between January 2020 and July 2026, a 19.9 percent CAGR; the Nifty 500 grows from 100 to 235, a 14.0 percent CAGR."></svg>
+            <div class="tip" id="tip"></div>
+          </div>
+          <div class="caption">
+            <span>NSE index price series (price return, excl. dividends), Jan 2020 – Jul 2026 · month-end closes, indexed to 100.</span>
+            <span class="mono">CAGR: momentum 19.9% · market 14.0%</span>
+          </div>
+          <details class="tableview">
+            <summary><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M3 1.5 L7.5 5 L3 8.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>View the underlying table</summary>
+            <div class="scroll"><table id="datatable">
+              <thead><tr><th scope="col">Month</th><th scope="col">Momentum 50</th><th scope="col">Nifty 500</th></tr></thead>
+              <tbody></tbody>
+            </table></div>
+          </details>
+        </figure>
+      </div></div>
+    </section>
+
+    <!-- ————— SCHEDULE A · PORTFOLIOS ————— -->
+    <section id="schedule-a">
+      <div class="sec-head">
+        <span class="sec-no">SCHEDULE A</span>
+        <h2 class="sec-title">The portfolios</h2>
+        <span class="sec-note">Net of 0.2% slippage per trade</span>
+      </div>
+      <div class="sec-body"><div class="center">
+        <div class="schedule-note">
+          <p>Four systems, one discipline. The drawdowns are printed in the
+          same ink as the returns. Read both before the access request.</p>
+          <div class="stamp">OM25 · TL25 validated<br>out-of-sample 2017 – 2026</div>
+        </div>
+        <table class="ledger">
+          <thead><tr>
+            <th scope="col">Portfolio</th><th scope="col">Universe</th><th scope="col">Cadence</th>
+            <th scope="col">CAGR</th><th scope="col">Sharpe</th><th scope="col">Max drawdown</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="pname">Quality Momentum<sup class="mono">1</sup></span><span class="pid">OM25 v3 · capture asymmetry + regime tilt</span></td>
+              <td class="dim" data-l="Universe">Nifty 250</td>
+              <td class="dim" data-l="Cadence">Bi-weekly</td>
+              <td class="num" data-l="CAGR">44.78%</td>
+              <td class="num" data-l="Sharpe">1.86</td>
+              <td class="num neg" data-l="Max drawdown">−36.6%</td>
+            </tr>
+            <tr>
+              <td><span class="pname">Trend Leaders<sup class="mono">1</sup></span><span class="pid">TL25 v3 · three-component trend quality</span></td>
+              <td class="dim" data-l="Universe">NSE 500</td>
+              <td class="dim" data-l="Cadence">Bi-weekly</td>
+              <td class="num" data-l="CAGR">34.86%</td>
+              <td class="num" data-l="Sharpe">1.53</td>
+              <td class="num neg" data-l="Max drawdown">−39.0%</td>
+            </tr>
+            <tr>
+              <td><span class="pname">Core Momentum<sup class="mono">2</sup></span><span class="pid">L6 v2 · volatility-scaled 6-month momentum</span></td>
+              <td class="dim" data-l="Universe">NSE 500</td>
+              <td class="dim" data-l="Cadence">Weekly</td>
+              <td class="num" data-l="CAGR">59.4%</td>
+              <td class="num" data-l="Sharpe">1.92</td>
+              <td class="num neg" data-l="Max drawdown">−30.0%</td>
+            </tr>
+            <tr>
+              <td><span class="pname">Defensive Blend<sup class="mono">3</sup></span><span class="pid">COMBO · 50/50 composite, regime overlay</span></td>
+              <td class="dim" data-l="Universe">NSE 500</td>
+              <td class="dim" data-l="Cadence">Bi-weekly</td>
+              <td class="dim" data-l="CAGR">Composite</td>
+              <td class="dim" data-l="Sharpe">Composite</td>
+              <td class="dim" data-l="Max drawdown">Reduced by design</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="fnotes">
+          All figures are backtests net of 0.2% per-trade slippage, executed at next-day OHLC/4.
+          <sup>1</sup>&nbsp;Out-of-sample: rules tuned on 2009–2016, validated untouched on 2017–2026 (9.3 years).
+          <sup>2</sup>&nbsp;In-sample tune, Jul 2020 – Feb 2026; highest recent CAGR, no out-of-sample window yet.
+          <sup>3</sup>&nbsp;Blends Core Momentum and Quality Momentum ranks; allocation cut 50% when the NIFTY&nbsp;100
+          trades below its 100-day average for three confirmed days. Backtested performance does not assure future returns.
+        </p>
+      </div></div>
+    </section>
+
+    <!-- ————— CLAUSE II · REJECTED ————— -->
+    <section id="rejected">
+      <div class="sec-head">
+        <span class="sec-no">CLAUSE II</span>
+        <h2 class="sec-title">The rejected ledger</h2>
+        <span class="sec-note">Research is what you refuse</span>
+      </div>
+      <div class="sec-body"><div class="center split">
+        <div>
+          <p class="lead">A system you can trust names what it discarded.</p>
+          <p>Every idea below was built, backtested, and rejected on the evidence.
+          The record of failures is part of the product; it is how you know the
+          survivors earned their place.</p>
+        </div>
+        <div>
+          <div class="rej-head">
+            <span class="mono">Tested & rejected</span>
+            <span class="stamp" style="font-size:11px;padding:6px 12px">Rejected</span>
+          </div>
+          <ul class="rej">
+            <li><span class="what">Volatility targeting</span><span class="why">Dynamic sizing disrupts the momentum signal it means to protect.</span></li>
+            <li><span class="what">Longer lookbacks (9, 12 months)</span><span class="why">Underperform the 6-month window on NSE equities.</span></li>
+            <li><span class="what">Volume-weighted scoring</span><span class="why">Dollar-volume and OBV blends both trail pure momentum.</span></li>
+            <li><span class="what">Profit-hold exit filters</span><span class="why">Freeze the portfolio and kill the rotation that drives returns.</span></li>
+            <li><span class="what">Re-entry confirmation windows</span><span class="why">Delay recovery after corrections; drawdowns explode.</span></li>
+            <li><span class="what">Large-caps only (Nifty 100)</span><span class="why">Safer, but leaves roughly 13 points of CAGR in mid-caps.</span></li>
+          </ul>
+        </div>
+      </div></div>
+    </section>
+
+    <!-- ————— CLAUSE III · RISK ————— -->
+    <section id="risk">
+      <div class="sec-head">
+        <span class="sec-no">CLAUSE III</span>
+        <h2 class="sec-title">Risk, in plain terms</h2>
+        <span class="sec-note">Probabilistic, never predictive</span>
+      </div>
+      <div class="sec-body"><div class="center">
+        <p class="risk-copy">
+          These systems have drawn down <strong>30 to 39 percent</strong> in backtests,
+          and will draw down again. Momentum pays a premium because holding it through
+          those months is hard. We do not predict markets. We control what is
+          controllable and write it into the rules:
+        </p>
+        <div class="risk-grid">
+          <div class="risk-cell"><span class="rv">20%</span><span class="rk">Drawdown stop on every position, checked weekly against its running peak.</span></div>
+          <div class="risk-cell"><span class="rv">7.5%</span><span class="rk">Hard cap per position; equal-weight sizing, no conviction bets.</span></div>
+          <div class="risk-cell"><span class="rv">1/N</span><span class="rk">25-stock portfolios — diversified enough to survive a wrong pick.</span></div>
+          <div class="risk-cell"><span class="rv">−50%</span><span class="rk">Defensive Blend cuts allocation in half when the regime signal turns bearish.</span></div>
+        </div>
+      </div></div>
+    </section>
+
+    <!-- ————— ACCESS ————— -->
+    <section class="access" id="access">
+      <div class="sec-body"><div class="center access-grid">
+        <div>
+          <h2>The record is open.<br>The beta is allowlisted.</h2>
+          <p>Marketworks is in private beta. Request access and we will write back.
+          The portfolios, the daily signals, and the full research record are
+          inside. Bring your own broker; we bring the discipline.</p>
+          <div class="actions">
+            <a class="btn btn-paper btn-lg" href="https://marketworks.in/sign-up">Request beta access</a>
+            <a class="textlink" href="https://marketworks.in/library">Read the library first</a>
+          </div>
+        </div>
+        <div class="access-meta">
+          <span><b>Who it serves.</b> Self-directed investors on Indian brokerages who want a written system, not another opinion feed.</span>
+          <span><b>What it costs you weekly.</b> One rebalance note, a few minutes of orders. The pipeline does the rest, daily at 16:30 IST.</span>
+          <span><b>What it never does.</b> No calls, no targets, no assured returns. Ever.</span>
+        </div>
+      </div></div>
+    </section>
+  </main>
+
+  <!-- ————— DISCLOSURES ————— -->
+  <footer>
+    <div class="disc-grid">
+      <div>
+        <h3>Disclosures</h3>
+        <p>All performance figures on this page are backtested, net of modelled slippage of 0.2% per trade,
+        and are not indicative of future returns. Exhibit A uses NSE index price-return series and excludes
+        dividends. Equity investments are subject to market risks; momentum strategies experience deep
+        drawdowns. Nothing on this page is a recommendation to buy or sell any security.
+        [Regulatory status line — to be supplied by the founder before any public use.]</p>
+      </div>
+      <div>
+        <h3>Contents</h3>
+        <p><a href="#mechanism">Clause I — The mechanism</a><br>
+           <a href="#exhibit-a">Exhibit A — The premium</a><br>
+           <a href="#schedule-a">Schedule A — The portfolios</a><br>
+           <a href="#rejected">Clause II — The rejected ledger</a><br>
+           <a href="#risk">Clause III — Risk</a></p>
+      </div>
+      <div>
+        <h3>Marketworks</h3>
+        <p><a href="https://marketworks.in">marketworks.in</a><br>
+        Momentum research on Indian equities.<br>
+        <span class="mono">Nº MW/HOME/2026-08</span></p>
+      </div>
+    </div>
+    <div class="colophon">
+      <span class="wordmark" style="font-size:14px">marketworks<span class="tm">.</span></span>
+      <span>© 2026 Marketworks. This page is a design prototype; figures trace to the research record.</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+/* ————— guilloche: machine-turned rosettes (two-frequency rose curves) ————— */
+function rosette(base, a1, n1, a2, n2, phase) {
+  let p = "";
+  const N = 720;
+  for (let i = 0; i <= N; i++) {
+    const t = 2 * Math.PI * i / N;
+    const r = base + a1 * Math.sin(n1 * t + (phase || 0)) + a2 * Math.sin(n2 * t);
+    p += (i ? "L" : "M") + (r * Math.cos(t)).toFixed(2) + " " + (r * Math.sin(t)).toFixed(2);
+  }
+  return p + "Z";
+}
+function drawSeal(gid, scale, ink) {
+  const g = document.getElementById(gid);
+  if (!g) return;
+  const rings = [
+    { b: 88, a1: 9,  n1: 24, a2: 3, n2: 8,  ph: 0,   o: .8,  w: .7 },
+    { b: 88, a1: 9,  n1: 24, a2: 3, n2: 8,  ph: Math.PI / 24, o: .45, w: .6 },
+    { b: 64, a1: 12, n1: 12, a2: 4, n2: 36, ph: 0,   o: .7,  w: .65 },
+    { b: 64, a1: 12, n1: 12, a2: 4, n2: 36, ph: Math.PI / 12, o: .4, w: .55 },
+    { b: 34, a1: 8,  n1: 18, a2: 0, n2: 1,  ph: 0,   o: .65, w: .6 },
+    { b: 34, a1: 8,  n1: 18, a2: 0, n2: 1,  ph: Math.PI / 18, o: .35, w: .5 },
+  ];
+  let s = "";
+  for (const k of rings) {
+    s += `<path d="${rosette(k.b * scale, k.a1 * scale, k.n1, k.a2 * scale, k.n2, k.ph)}" fill="none" stroke="${ink}" stroke-width="${k.w}" opacity="${k.o}"/>`;
+  }
+  s += `<circle r="${104 * scale}" fill="none" stroke="${ink}" stroke-width="1.4"/>`;
+  s += `<circle r="${110 * scale}" fill="none" stroke="${ink}" stroke-width=".7"/>`;
+  g.innerHTML = s;
+}
+drawSeal("seal", 1, getComputedStyle(document.documentElement).getPropertyValue("--intaglio").trim() || "#0E3B2E");
+
+/* seal ring text */
+(function () {
+  const g = document.getElementById("seal");
+  if (!g) return;
+  const svg = g.ownerSVGElement;
+  svg.insertAdjacentHTML("afterbegin",
+    `<defs><path id="ringpath" d="M 0 -117 A 117 117 0 1 1 -0.01 -117"/></defs>`);
+  g.insertAdjacentHTML("beforeend",
+    `<text font-family="Fragment Mono,monospace" font-size="10.5" letter-spacing="3.5" fill="#0E3B2E">
+       <textPath href="#ringpath">RULES · EVIDENCE · DISCIPLINE · MARKETWORKS ·</textPath></text>`);
+})();
+
+/* ————— guilloche band under masthead ————— */
+(function () {
+  const g = document.getElementById("gband");
+  if (!g) return;
+  let paths = "";
+  for (let k = 0; k < 3; k++) {
+    let d = "";
+    for (let x = 0; x <= 1200; x += 6) {
+      const y = 13 + Math.sin(x / 24 + k * 2.1) * 7 * Math.cos(x / 96 - k) ;
+      d += (x ? "L" : "M") + x + " " + y.toFixed(2);
+    }
+    paths += `<path d="${d}" fill="none" stroke="#0E3B2E" stroke-width=".7" opacity="${.5 - k * .12}"/>`;
+  }
+  g.innerHTML = paths;
+})();
+
+/* ————— Exhibit A: real NSE month-end series, Jan 2020 = 100 ————— */
+const MONTHS0 = "2020-01"; // 79 month-end points, both series share the axis
+const MOM = [100.0,96.8,74.8,86.7,84.9,90.1,96.8,98.4,101.9,102.6,109.4,116.4,116.9,129.0,136.1,148.0,155.4,162.2,167.9,179.4,187.1,196.7,195.7,207.0,195.4,184.4,197.8,186.7,174.9,161.3,177.6,193.5,190.7,195.0,196.5,189.7,182.5,174.6,177.5,189.8,202.2,213.2,225.6,230.6,238.9,229.3,256.1,278.3,309.7,306.4,307.1,338.2,353.7,373.8,392.3,387.8,392.4,363.5,363.5,351.3,305.4,275.6,293.0,305.6,322.1,339.8,319.0,308.2,310.5,328.4,336.3,323.6,311.8,321.5,282.4,317.8,325.8,331.2,325.3];
+const N500 = [100.0,93.7,71.0,81.3,79.3,85.9,91.6,95.0,94.7,97.2,108.7,116.8,114.6,123.5,124.9,125.4,134.1,136.6,138.6,147.6,152.6,153.0,148.5,152.1,151.3,145.1,151.0,149.9,143.2,135.8,148.7,155.4,150.4,156.4,161.7,156.7,151.5,147.2,147.6,154.3,159.9,166.6,173.0,171.6,175.4,170.4,182.4,197.0,200.8,203.7,205.4,212.9,214.0,228.8,238.6,240.7,245.9,230.1,230.1,226.9,218.8,201.6,216.4,223.4,231.2,239.5,232.4,227.8,230.5,240.4,242.7,242.1,234.0,234.9,208.2,230.0,229.8,233.2,234.8];
+const monthName = i => {
+  const y = 2020 + Math.floor(i / 12), m = i % 12;
+  return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m] + " " + y;
+};
+
+(function chart() {
+  const svg = document.getElementById("chart");
+  const box = svg.parentElement;
+  const n = MOM.length;
+  const ymin = 60, ymax = 400;
+  let G = null;            /* current geometry, set by build() */
+  let drawn = false;       /* draw-on has fired */
+
+  function build() {
+    const narrow = box.clientWidth < 640;
+    const W = narrow ? 440 : 1060, H = narrow ? 470 : 440;
+    const L = narrow ? 38 : 52, R = narrow ? 16 : 236, T = narrow ? 14 : 18, B = narrow ? 34 : 40;
+    const pw = W - L - R, ph = H - T - B;
+    const X = i => L + pw * i / (n - 1);
+    const Y = v => T + ph * (1 - (v - ymin) / (ymax - ymin));
+    G = { W, H, L, R, T, pw, ph, X, Y };
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    const line = a => a.map((v, i) => (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(v).toFixed(1)).join("");
+
+    let s = `<defs><pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+        <line x1="0" y1="0" x2="0" y2="7" stroke="#1E7A4A" stroke-width="1" opacity=".16"/></pattern></defs>`;
+    for (const gv of [100, 200, 300, 400]) {
+      s += `<line x1="${L}" x2="${W - R}" y1="${Y(gv)}" y2="${Y(gv)}" stroke="#C9D2CA" stroke-width="1" ${gv === 100 ? "" : 'stroke-dasharray="1 4"'}/>`;
+      s += `<text x="${L - 10}" y="${Y(gv) + 4}" text-anchor="end" font-family="Fragment Mono,monospace" font-size="${narrow ? 13 : 12}" fill="#5E6D64">${gv}</text>`;
+    }
+    for (let i = 0; i < n; i += narrow ? 24 : 12) {
+      s += `<text x="${X(i)}" y="${H - 10}" text-anchor="middle" font-family="Fragment Mono,monospace" font-size="${narrow ? 13 : 12}" fill="#5E6D64">${2020 + i / 12}</text>`;
+      s += `<line x1="${X(i)}" x2="${X(i)}" y1="${T + ph}" y2="${T + ph + 6}" stroke="#8A968C" stroke-width="1"/>`;
+    }
+    s += `<path d="${line(MOM)}L${X(n - 1)} ${Y(ymin)}L${X(0)} ${Y(ymin)}Z" fill="url(#hatch)" stroke="none"/>`;
+    s += `<path id="ln-n500" d="${line(N500)}" fill="none" stroke="#3D5FC9" stroke-width="${narrow ? 1.6 : 2}"/>`;
+    s += `<path id="ln-mom" d="${line(MOM)}" fill="none" stroke="#1E7A4A" stroke-width="${narrow ? 2 : 2.5}"/>`;
+    const endY1 = Y(MOM[n - 1]), endY2 = Y(N500[n - 1]);
+    s += `<circle cx="${X(n - 1)}" cy="${endY1}" r="3.5" fill="#1E7A4A"/>`;
+    s += `<circle cx="${X(n - 1)}" cy="${endY2}" r="3.5" fill="#3D5FC9"/>`;
+    if (!narrow) {
+      s += `<text x="${X(n - 1) + 12}" y="${endY1 + 4}" font-family="Public Sans,sans-serif" font-size="13" font-weight="600" fill="#17211B">Momentum 50 · <tspan font-family="Fragment Mono,monospace">325</tspan></text>`;
+      s += `<text x="${X(n - 1) + 12}" y="${endY2 + 4}" font-family="Public Sans,sans-serif" font-size="13" fill="#46554C">Nifty 500 · <tspan font-family="Fragment Mono,monospace">235</tspan></text>`;
+    }
+    s += `<line id="xh" y1="${T}" y2="${T + ph}" stroke="#17211B" stroke-width="1" stroke-dasharray="2 3" opacity="0"/>`;
+    s += `<circle id="d1" r="4" fill="#1E7A4A" stroke="#F9FAF8" stroke-width="2" opacity="0"/>`;
+    s += `<circle id="d2" r="4" fill="#3D5FC9" stroke="#F9FAF8" stroke-width="2" opacity="0"/>`;
+    s += `<rect id="hit" x="${L}" y="${T}" width="${pw}" height="${ph}" fill="transparent"/>`;
+    svg.innerHTML = s;
+    if (drawn) return; /* already revealed once; keep lines visible on rebuilds */
+    prepDraw();
+  }
+
+  /* draw-on: one authored motion moment, with a timed fallback */
+  function reveal() {
+    if (drawn) return;
+    drawn = true;
+    for (const id of ["ln-mom", "ln-n500"]) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+      el.style.transition = "stroke-dashoffset 1.6s cubic-bezier(0.22,1,0.36,1)";
+      el.style.strokeDashoffset = 0;
+    }
+  }
+  function prepDraw() {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) { drawn = true; return; }
+    for (const id of ["ln-mom", "ln-n500"]) {
+      const el = document.getElementById(id), len = el.getTotalLength();
+      el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+    }
+    new IntersectionObserver((es, o) => {
+      if (es.some(e => e.isIntersecting)) { reveal(); o.disconnect(); }
+    }, { threshold: .2 }).observe(svg);
+    setTimeout(reveal, 4000); /* never leave the exhibit blank */
+  }
+
+  build();
+  let lastNarrow = box.clientWidth < 640;
+  addEventListener("resize", () => {
+    const nw = box.clientWidth < 640;
+    if (nw !== lastNarrow) { lastNarrow = nw; build(); }
+  });
+
+  /* crosshair + tooltip */
+  const tip = document.getElementById("tip");
+  svg.addEventListener("pointermove", ev => {
+    const { W, H, L, R, T, pw, X, Y } = G;
+    const r = svg.getBoundingClientRect();
+    const sx = (ev.clientX - r.left) * (W / r.width);
+    if (sx < L || sx > W - R) return hide();
+    const i = Math.max(0, Math.min(n - 1, Math.round((sx - L) / pw * (n - 1))));
+    const cx = X(i);
+    const xh = document.getElementById("xh");
+    xh.setAttribute("x1", cx); xh.setAttribute("x2", cx); xh.setAttribute("opacity", ".5");
+    const d1 = document.getElementById("d1"), d2 = document.getElementById("d2");
+    d1.setAttribute("cx", cx); d1.setAttribute("cy", Y(MOM[i])); d1.setAttribute("opacity", "1");
+    d2.setAttribute("cx", cx); d2.setAttribute("cy", Y(N500[i])); d2.setAttribute("opacity", "1");
+    tip.style.display = "block";
+    tip.innerHTML = `<b>${monthName(i)}</b>
+      <span class="row"><i style="border-color:#1E7A4A"></i>Momentum 50&nbsp; <b class="mono">${MOM[i].toFixed(1)}</b></span>
+      <span class="row"><i style="border-color:#3D5FC9"></i>Nifty 500&nbsp; <b class="mono">${N500[i].toFixed(1)}</b></span>`;
+    const bw = box.clientWidth, px = cx / W * bw;
+    tip.style.left = Math.min(bw - tip.offsetWidth - 8, Math.max(8, px + 14)) + "px";
+    tip.style.top = (Y(Math.max(MOM[i], N500[i])) / H * box.clientHeight - tip.offsetHeight - 12) + "px";
+  });
+  svg.addEventListener("pointerleave", hide);
+  function hide() {
+    tip.style.display = "none";
+    for (const id of ["xh", "d1", "d2"]) { const el = document.getElementById(id); if (el) el.setAttribute("opacity", "0"); }
+  }
+
+  /* a11y table view */
+  const tb = document.querySelector("#datatable tbody");
+  let rows = "";
+  for (let i = 0; i < n; i++) rows += `<tr><td>${monthName(i)}</td><td>${MOM[i].toFixed(1)}</td><td>${N500[i].toFixed(1)}</td></tr>`;
+  tb.innerHTML = rows;
+})();
+</script>
+</body>
+</html>
