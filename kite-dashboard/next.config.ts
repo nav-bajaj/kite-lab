@@ -106,6 +106,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Next 16.3 generates AGENTS.md/CLAUDE.md by default — suppressed:
+  // this repo manages its own agent context at the root.
+  agentRules: false,
   async headers() {
     return [
       {

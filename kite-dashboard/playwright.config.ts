@@ -11,13 +11,18 @@ export default defineConfig({
   retries: 0,
   reporter: [["list"]],
   use: {
-    baseURL: "http://localhost:3000",
+    // Dedicated E2E port: 3000 is contested by other dev servers
+    // (e.g. the design-studies worktree session) and a stale server
+    // there silently fails the suite against old code. The email-OTP
+    // flow doesn't touch the OAuth redirect allowlist, so the port is
+    // free to differ from the Supabase-registered localhost:3000.
+    baseURL: "http://localhost:3100",
     trace: "retain-on-failure",
   },
   webServer: {
-    command: "npm run dev",
-    url: "http://localhost:3000",
-    reuseExistingServer: true,
+    command: "npm run dev -- -p 3100",
+    url: "http://localhost:3100",
+    reuseExistingServer: false,
     timeout: 60_000,
     // The dev server never needs the admin key the spec's Node side
     // holds — blank it in the child process (security-reviewer #11).
