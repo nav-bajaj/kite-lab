@@ -234,3 +234,28 @@ captcha enable, H3.3 OTP expiry 600s + cooldown + rate limits ->
 then R-028 flips to Mitigating. Remaining agent items: /security-review
 skill pass, Next.js bump + re-smoke (pre-cutover), sign-in copy/visual
 amendments when founder provides direction.
+
+## 2026-08-12 — Phase 3 closed out (founder items landed)
+
+- H3.1 (2026-08-11): Turnstile keys created, captcha enabled in
+  Supabase. Enforcement VERIFIED: tokenless POST /auth/v1/otp -> 400
+  captcha_failed; verify leg unaffected (E2E green); widget renders +
+  auto-solves in managed mode. Widget-theme-vs-palette mismatch noted
+  for the polish round.
+- H3.3: founder configured OTP expiry 600s + cooldown + rate limits.
+  R-028 flipped Open -> Mitigating. All public-beta abuse controls are
+  now server-side enforced.
+- Next.js 16.1.6 -> 16.3.0 (R-019 -> Mitigating; closes at cutover):
+  prod-dep audit clean, build + E2E green. Gotcha: Next 16.3 generates
+  AGENTS.md/CLAUDE.md — suppressed via agentRules:false.
+- E2E suite isolated to port 3100 with reuseExistingServer:false after
+  a stale dev server from the design_studies worktree (another Claude
+  session) squatted :3000 serving pre-migration Clerk code and
+  silently failed the suite against the wrong build.
+- External waits: AWS production-access case — founder replied,
+  awaiting AWS; MSG91 — founder's business registration applied for,
+  W5.1 remains BLOCKED until it arrives.
+
+Remaining before Phase 4 can start: SES production access GRANTED +
+the generic /security-review pass (run in a fresh session). Then C4.1
+prod-project setup per the recorded checklist.
