@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketworks — design_reset variants</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#FAFAF8;color:#191B19;padding:56px 24px;line-height:1.55}
+.wrap{max-width:880px;margin:0 auto}
+h1{font-size:26px;letter-spacing:-.01em}
+p.sub{color:#5A5F5A;margin:10px 0 36px;font-size:15px}
+.cards{display:grid;gap:18px}
+a.card{display:grid;grid-template-columns:120px 1fr;gap:24px;align-items:center;text-decoration:none;color:inherit;
+  border:1px solid #E0E0DA;border-radius:14px;padding:22px 26px;background:#fff;transition:border-color .12s ease-out,transform .12s ease-out}
+a.card:hover{border-color:#191B19;transform:translateY(-1px)}
+.chip{height:76px;border-radius:9px;position:relative;overflow:hidden}
+.chip.v1{background:#F2F4F0;border:2px solid #17211B}
+.chip.v1::after{content:"";position:absolute;inset:14px;border:1px solid #1E7A4A;border-radius:50%}
+.chip.v2{background:linear-gradient(135deg,#2244EE 0 45%,#D7F03C 45% 62%,#E8501F 62% 80%,#7A3BF5 80%)}
+.chip.v3{background:#161C18}
+.chip.v3::after{content:"";position:absolute;left:12px;right:12px;top:50%;height:3px;background:#D9B858;border-radius:2px;transform:rotate(-6deg)}
+.card h2{font-size:18px;margin-bottom:5px}
+.card p{font-size:14px;color:#5A5F5A}
+.card .no{font-size:12px;color:#8A8F8A;display:block;margin-bottom:2px}
+.note{margin-top:36px;font-size:12.5px;color:#8A8F8A;max-width:70ch}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Marketworks — design_reset variants</h1>
+  <p class="sub">Three from-scratch identities over identical product truth (same real
+  NSE chart, same portfolio record, same copy skeleton). Branch <code>design_reset</code>.</p>
+  <div class="cards">
+    <a class="card" href="home.html">
+      <span class="chip v1" aria-hidden="true"></span>
+      <span><span class="no">Variant 1</span><h2>The Document of Record</h2>
+      <p>Indian security-print instrument: cheque-paper ground, guilloche seal, intaglio green, ledger tables, franking-stamp red. Rozha One · Public Sans · Fragment Mono.</p></span>
+    </a>
+    <a class="card" href="home2.html">
+      <span class="chip v2" aria-hidden="true"></span>
+      <span><span class="no">Variant 2 — founder brief: "ramp.com but with more color"</span><h2>Spectrum Ledger</h2>
+      <p>Finance-grade SaaS grammar recolored into a committed four-hue system: blue, coral, violet, lime on bone; real signal-board UI as hero proof. Hanken Grotesk · Spline Sans Mono.</p></span>
+    </a>
+    <a class="card" href="home3.html">
+      <span class="chip v3" aria-hidden="true"></span>
+      <span><span class="no">Variant 3</span><h2>The Ring</h2>
+      <p>Trading-floor heritage: chalk on slate, brass rail and plaque, torn ticker tape with real signals, chalk-drawn chart. Besley · Archivo · Courier Prime.</p></span>
+    </a>
+  </div>
+  <p class="note">All performance figures trace to the research record; the chart on every
+  variant is real NSE index data. The regulatory footer line on each page is a deliberate
+  placeholder for the founder.</p>
+</div>
+</body>
+</html>

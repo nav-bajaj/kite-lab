@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketworks — Variant 3: The Ring</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Besley:ital,wght@0,500;0,700;0,800;1,500&family=Archivo:wght@400;500;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --slate:#161C18;        /* the board */
+  --slate-2:#1D2420;      /* raised board panel */
+  --chalk:#EDE7D6;        /* chalk ink */
+  --chalk-2:#B5AF9E;      /* rubbed chalk (secondary, >=4.5 on slate) */
+  --chalk-3:#8E8878;      /* dust (large text/labels only) */
+  --rule:#39423B;         /* board hairlines */
+  --brass:#C9A24B;        /* the plaque */
+  --brass-hi:#E3C376;
+  --brass-ink:#241A05;    /* text on brass */
+  --tape:#F2E9D2;         /* ticker paper */
+  --tape-ink:#1B1812;
+  --chalk-y:#AD861F;      /* yellow chalk — momentum series (validated) */
+  --chalk-y-bright:#D9B858; /* yellow chalk for large accents/labels */
+  --chalk-b:#4C86C9;      /* blue chalk — benchmark series (validated) */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--slate);color:var(--chalk);font-family:"Archivo",system-ui,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.mono{font-family:"Courier Prime",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+
+/* board texture: faint chalk dust wash, generated gradient only */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(90% 60% at 50% 0%,rgba(237,231,214,.045),transparent 60%),
+             radial-gradient(70% 50% at 85% 90%,rgba(237,231,214,.03),transparent 60%)}
+main,nav,footer{position:relative;z-index:1}
+
+/* ————— rail ————— */
+.rail{border-bottom:1px solid var(--rule);background:color-mix(in srgb,var(--slate) 92%,transparent);backdrop-filter:blur(8px);position:sticky;top:0;z-index:30}
+.rail::before{content:"";display:block;height:3px;background:linear-gradient(90deg,var(--brass),var(--brass-hi),var(--brass))}
+.rail-in{display:flex;align-items:center;gap:30px;padding:14px 28px;max-width:1120px;margin:0 auto}
+.wordmark{font-family:"Besley",serif;font-weight:700;font-size:19px;text-decoration:none;letter-spacing:.01em}
+.wordmark i{font-style:normal;color:var(--brass-hi)}
+.rail-links{display:flex;gap:24px}
+.rail-links a{font-size:14px;font-weight:500;color:var(--chalk-2);text-decoration:none}
+.rail-links a:hover{color:var(--chalk)}
+.btn{display:inline-block;font-weight:600;font-size:14px;letter-spacing:.02em;padding:11px 22px;text-decoration:none;cursor:pointer;transition:filter .12s ease-out}
+.btn-brass{background:linear-gradient(180deg,var(--brass-hi),var(--brass));color:var(--brass-ink);border:1px solid #8A6B25;box-shadow:0 3px 12px -3px rgba(0,0,0,.55)}
+.rail-in .btn-brass{margin-left:auto}
+.btn-brass:hover{filter:brightness(1.07)}
+.btn-chalk{border:1.5px solid var(--chalk-2);color:var(--chalk)}
+.btn-chalk:hover{border-color:var(--chalk);background:rgba(237,231,214,.06)}
+.btn-lg{padding:14px 28px;font-size:15.5px}
+
+/* ————— hero ————— */
+.hero{padding:88px 0 64px;text-align:left;position:relative}
+.margi{position:absolute;right:28px;top:150px;width:300px;transform:rotate(-2.5deg);font-family:"Courier Prime",monospace;color:var(--chalk-y-bright);font-size:15px;line-height:1.7}
+.margi .big{font-size:34px;font-weight:700;display:inline-block;position:relative;padding:6px 10px}
+.margi .big svg{position:absolute;inset:-6px -8px;width:calc(100% + 16px);height:calc(100% + 12px)}
+.margi .vs{color:var(--chalk-2)}
+.margi .note{display:block;margin-top:6px;color:var(--chalk-2);font-size:13px}
+@media (max-width:1180px){.margi{display:none}}
+.boardline{font-family:"Courier Prime",monospace;font-size:14px;color:var(--chalk-y-bright);margin-bottom:26px}
+h1{font-family:"Besley",serif;font-weight:800;font-size:clamp(44px,6.4vw,84px);line-height:1.03;letter-spacing:-.01em;max-width:15ch;text-wrap:balance}
+.chalkline{margin:18px 0 0;height:14px;width:100%;max-width:520px;display:block}
+.chalkline path,.rulep .u path,.struck .what svg path{filter:url(#chalkstroke)}
+.board{overflow:hidden}
+.board::before,.plaque::before{content:"";position:absolute;inset:0;pointer-events:none}
+.board::before{filter:url(#dustgrain)}
+.plaque{position:relative;overflow:hidden}
+.plaque::before{filter:url(#brassgrain)}
+.plaque>*{position:relative}
+.hero .lede{margin:24px 0 34px;font-size:18px;color:var(--chalk-2);max-width:56ch;line-height:1.65}
+.hero .ctas{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+
+/* ————— ticker tape ————— */
+.tapewrap{padding:10px 0 0}
+.tape{background:var(--tape);color:var(--tape-ink);font-family:"Courier Prime",monospace;font-size:14.5px;
+  padding:12px 22px;white-space:nowrap;overflow-x:auto;scrollbar-width:none;
+  clip-path:polygon(0 7px,3% 2px,9% 6px,16% 0,27% 5px,38% 1px,52% 6px,64% 0,75% 5px,86% 1px,94% 6px,100% 2px,100% calc(100% - 6px),95% 100%,87% calc(100% - 4px),76% calc(100% - 1px),63% calc(100% - 6px),51% calc(100% - 1px),39% calc(100% - 5px),26% 100%,15% calc(100% - 4px),7% calc(100% - 1px),0 calc(100% - 6px));
+  box-shadow:0 10px 26px -10px rgba(0,0,0,.55)}
+.tape::-webkit-scrollbar{display:none}
+.tape b{font-weight:700}
+.tape .up{color:#0E5C2E}
+.tape-cap{font-size:12.5px;color:var(--chalk-3);margin-top:12px}
+
+/* ————— sections ————— */
+section{padding:84px 0;border-top:1px solid var(--rule)}
+.sec-head{margin-bottom:44px}
+h2{font-family:"Besley",serif;font-weight:700;font-size:clamp(30px,3.8vw,46px);line-height:1.08;letter-spacing:0;max-width:24ch;text-wrap:balance}
+.sec-head p{margin-top:16px;font-size:16px;color:var(--chalk-2);max-width:60ch}
+
+/* rules: chalk panels */
+.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.rulep{background:var(--slate-2);border:1px dashed var(--rule);padding:30px 28px 32px}
+.rulep .n{font-family:"Courier Prime",monospace;font-size:14px;color:var(--chalk-y-bright);display:block;margin-bottom:16px}
+.rulep h3{font-family:"Besley",serif;font-size:22px;font-weight:700;margin-bottom:10px}
+.rulep p{font-size:14.5px;color:var(--chalk-2)}
+.rulep .u{display:block;height:8px;margin-top:6px;max-width:120px}
+
+/* chalk chart */
+.board{background:var(--slate-2);border:1px solid var(--rule);padding:34px 34px 26px;position:relative}
+.board-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:10px}
+.board-title{font-size:16.5px;font-weight:600}
+.legend{display:flex;gap:20px;font-size:13px;color:var(--chalk-2)}
+.key{display:inline-flex;align-items:center;gap:8px}
+.key i{display:inline-block;width:18px;height:3px;background:currentColor}
+.chart-box{position:relative}
+#chart{display:block;width:100%;height:auto}
+.tip{position:absolute;pointer-events:none;background:var(--tape);color:var(--tape-ink);padding:8px 12px;font-size:12.5px;line-height:1.5;box-shadow:0 8px 22px -6px rgba(0,0,0,.6);white-space:nowrap;display:none;z-index:3;
+  clip-path:polygon(0 3px,3% 0,97% 1px,100% 5px,100% calc(100% - 3px),97% 100%,3% calc(100% - 1px),0 calc(100% - 4px))}
+.tip .row{display:flex;align-items:center;gap:7px}
+.tip .row i{width:10px;height:0;border-top:3px solid;display:inline-block}
+.caption{margin-top:14px;font-size:12.5px;color:var(--chalk-3);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+details.tableview{margin-top:10px;font-size:13px}
+details.tableview summary{cursor:pointer;font-weight:500;color:var(--chalk-2);list-style:none;display:inline-flex;gap:8px;align-items:center}
+details.tableview summary::-webkit-details-marker{display:none}
+details.tableview .scroll{max-height:260px;overflow:auto;margin-top:10px;border:1px solid var(--rule);padding:8px}
+details.tableview table{width:100%;border-collapse:collapse}
+details.tableview th,details.tableview td{padding:5px 12px;border-bottom:1px solid var(--rule);text-align:right;font-family:"Courier Prime",monospace;font-size:12.5px;color:var(--chalk-2)}
+details.tableview th:first-child,details.tableview td:first-child{text-align:left}
+details.tableview thead th{position:sticky;top:0;background:var(--slate-2);color:var(--chalk)}
+
+/* quote board: portfolios */
+.qboard{border:1px solid var(--rule);background:var(--slate-2)}
+.qboard table{width:100%;border-collapse:collapse}
+.qboard th{font-family:"Courier Prime",monospace;font-size:12.5px;letter-spacing:.08em;color:var(--chalk-3);text-align:right;padding:14px 20px;border-bottom:1px solid var(--chalk-2);text-transform:uppercase}
+.qboard th:first-child{text-align:left}
+.qboard td{padding:20px;border-bottom:1px dashed var(--rule);text-align:right;vertical-align:top}
+.qboard td:first-child{text-align:left}
+.qboard tr:last-child td{border-bottom:0}
+.qboard .pname{font-family:"Besley",serif;font-size:20px;font-weight:700;display:block}
+.qboard .pid{font-family:"Courier Prime",monospace;font-size:12.5px;color:var(--chalk-3)}
+.qboard .num{font-family:"Courier Prime",monospace;font-size:16.5px;color:var(--chalk)}
+.qboard .dim{font-size:13.5px;color:var(--chalk-2)}
+.fnotes{margin-top:16px;font-size:12.5px;color:var(--chalk-3);line-height:1.7;max-width:90ch}
+.fnotes sup{font-family:"Courier Prime",monospace}
+
+/* struck from the board */
+.struck{list-style:none;border-top:1px solid var(--rule);max-width:860px}
+.struck li{display:grid;grid-template-columns:minmax(200px,42%) 1fr;gap:18px;padding:16px 4px;border-bottom:1px solid var(--rule);font-size:15px;align-items:baseline}
+.struck .what{font-weight:600;position:relative;display:inline-block}
+.struck .what svg{position:absolute;left:-2%;right:-2%;top:50%;width:104%;height:10px;transform:translateY(-50%)}
+.struck .why{color:var(--chalk-2);font-size:14px}
+
+/* risk figures */
+.riskrow{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.riskcell{border-top:2px solid var(--chalk-y-bright);padding-top:14px}
+.riskcell b{font-family:"Courier Prime",monospace;font-size:26px;font-weight:700;display:block;margin-bottom:6px;color:var(--chalk)}
+.riskcell span{font-size:13.5px;color:var(--chalk-2);line-height:1.5}
+.risk-copy{font-size:17px;line-height:1.7;max-width:64ch;margin-bottom:40px;color:var(--chalk)}
+
+/* brass plaque */
+.plaque{background:linear-gradient(160deg,var(--brass-hi) 0%,var(--brass) 45%,#A9843A 100%);color:var(--brass-ink);
+  padding:64px 56px;border:1px solid #8A6B25;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 14px 30px -16px rgba(0,0,0,.6);
+  display:grid;grid-template-columns:minmax(0,7fr) minmax(0,4fr);gap:48px;align-items:center}
+.plaque h2{color:var(--brass-ink);font-weight:800;max-width:none}
+.plaque p{margin-top:16px;font-size:16px;color:#2E2306;max-width:52ch}
+.plaque .ctas{margin-top:28px;display:flex;gap:14px;flex-wrap:wrap}
+.btn-ink{background:var(--slate);color:var(--chalk)}
+.btn-ink:hover{filter:brightness(1.25)}
+.btn-inkline{border:1.5px solid var(--brass-ink);color:var(--brass-ink)}
+.btn-inkline:hover{background:rgba(36,26,5,.08)}
+.plaque ul{list-style:none;display:grid;gap:12px;font-size:14px;color:#2E2306;border-left:1px solid #8A6B25;padding:6px 0 6px 24px}
+.plaque ul b{color:var(--brass-ink)}
+
+/* footer */
+footer{border-top:1px solid var(--rule);padding:44px 0 30px;font-size:12.5px;color:var(--chalk-3);line-height:1.7}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:44px}
+.foot-grid h3{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--chalk-2);margin-bottom:10px}
+.foot-grid a{text-decoration:underline;text-underline-offset:3px}
+.colophon{margin-top:32px;padding-top:16px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+
+@media (max-width:980px){
+  .rules{grid-template-columns:1fr}
+  .riskrow{grid-template-columns:1fr 1fr;gap:28px}
+  .plaque{grid-template-columns:1fr;padding:44px 30px}
+  .plaque ul{border-left:0;padding-left:0;border-top:1px solid #8A6B25;padding-top:22px}
+  .foot-grid{grid-template-columns:1fr}
+}
+@media (max-width:720px){
+  .wrap{padding:0 18px}
+  .rail-links{display:none}
+  .rail-in{padding:12px 18px}
+  section{padding:58px 0}
+  .hero{padding:60px 0 48px}
+  .board{padding:22px 16px 18px}
+  /* quote board stacks */
+  .qboard thead{display:none}
+  .qboard,.qboard tbody,.qboard tr,.qboard td{display:block;text-align:left}
+  .qboard td{border-bottom:0;padding:4px 20px;text-align:left}
+  .qboard td[data-l]::before{content:attr(data-l) "  ";font-family:"Courier Prime",monospace;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--chalk-3)}
+  .qboard tr{border-bottom:1px dashed var(--rule);padding:16px 0}
+  .struck li{grid-template-columns:1fr;gap:4px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<!--
+THESIS: Momentum as the market's oldest edge — the Indian trading-ring
+heritage (chalk quote boards, ticker tape, brass plaques) carries a
+discipline older than screens; refuses the neon dark-terminal AND the
+light SaaS page (variant 2) AND the paper certificate (variant 1).
+OWN-WORLD: slate chalkboard ground (#161C18), warm chalk ink (#EDE7D6),
+rubbed-chalk secondary, brass rail and plaque (#C9A24B) as the single
+metal moment, cream ticker-tape strips with torn clip-path edges;
+yellow-chalk (#AD861F) and blue-chalk (#4C86C9) data inks (validated);
+Besley signage display + Archivo body + Courier Prime tape/figures;
+dashed chalk rules, hand-drawn SVG underlines, chalk strikethroughs.
+STORY: the visitor walks up to the board — reads the three rules
+chalked as panels, watches the premium drawn in chalk from real NSE
+data, reads the quote board of four portfolios, sees six ideas struck
+through, and leaves via the brass plaque.
+FIRST VIEWPORT: brass rail nav; courier boardline; Besley 800
+headline with a chalk underline stroke; lede; brass + chalk CTAs;
+real ticker tape of 12-05-2026 signals below.
+FORM: BSE trading-floor heritage — candidate 5 of the re-ordered
+grounded list (assigned); seed key 95734758. Mode: Persuade.
+FINISH: unreviewed and undocumented is unfinished; this build ends
+with the finish review, the verdict, and the variant note.
+-->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="chalkstroke" x="-5%" y="-40%" width="110%" height="180%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="2" seed="11" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="2.6"/>
+  </filter>
+  <filter id="dustgrain">
+    <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="2" seed="4"/>
+    <feColorMatrix type="matrix" values="0 0 0 0 0.93  0 0 0 0 0.90  0 0 0 0 0.84  0 0 0 0.055 0"/>
+  </filter>
+  <filter id="brassgrain">
+    <feTurbulence type="fractalNoise" baseFrequency="0.55 0.9" numOctaves="3" seed="9"/>
+    <feColorMatrix type="matrix" values="0 0 0 0 0.16  0 0 0 0 0.11  0 0 0 0 0.02  0 0 0 0.16 0"/>
+  </filter>
+</defs></svg>
+<nav class="rail">
+  <div class="rail-in">
+    <a class="wordmark" href="#top">marketworks<i>.</i></a>
+    <div class="rail-links">
+      <a href="#rules">The rules</a>
+      <a href="#premium">The premium</a>
+      <a href="#board">The board</a>
+      <a href="#struck">Struck off</a>
+    </div>
+    <a class="btn btn-brass" href="#plaque">Request access</a>
+  </div>
+</nav>
+
+<main id="top">
+  <!-- ————— HERO ————— -->
+  <header class="hero wrap">
+    <aside class="margi" aria-label="Chalked margin note: the momentum index compounded at 19.9 percent a year against 14.0 for the market, 2020 to 2026">
+      <span class="big">19.9%<svg viewBox="0 0 120 52" preserveAspectRatio="none" aria-hidden="true"><ellipse cx="60" cy="26" rx="56" ry="22" fill="none" stroke="#D9B858" stroke-width="2.2" opacity=".85" style="filter:url(#chalkstroke)"/></svg></span> <span class="vs">p.a. vs 14.0%</span>
+      <span class="note">momentum index vs Nifty 500, 2020–26 — chalked from Exhibit below</span>
+    </aside>
+    <p class="boardline mono">EST. ON EVIDENCE · NSE · INDIAN EQUITIES · REBUILT DAILY 16:30 IST</p>
+    <h1>The market's oldest edge, kept by rules.</h1>
+    <svg class="chalkline" viewBox="0 0 520 14" aria-hidden="true" preserveAspectRatio="none"><path d="M4 9 C 90 4, 180 12, 270 8 S 440 5, 516 9" fill="none" stroke="#D9B858" stroke-width="3.5" stroke-linecap="round" opacity=".9"/></svg>
+    <p class="lede">Before screens, the ring rewarded whoever followed their book:
+    buy strength, cut losers, show up every session. Marketworks writes that
+    discipline into software. Rules-based momentum portfolios on Indian
+    equities, validated out of sample, published drawdowns and all.</p>
+    <div class="ctas">
+      <a class="btn btn-brass btn-lg" href="#plaque">Request beta access</a>
+      <a class="btn btn-chalk btn-lg" href="#premium">Read the board</a>
+    </div>
+    <div class="tapewrap">
+      <div class="tape" tabindex="0" aria-label="Ticker tape: Core Momentum signal ranks for 12 May 2026">
+        12·05·2026&nbsp; <b>CORE MOMENTUM — TOP OF BOOK</b> &nbsp;▮&nbsp; HFCL <b>4.78</b> &nbsp;▮&nbsp; HINDCOPPER <b>3.74</b> &nbsp;▮&nbsp; MCX <b>3.64</b> &nbsp;▮&nbsp; NATIONALUM <b>3.60</b> &nbsp;▮&nbsp; POWERINDIA <b>3.08</b> &nbsp;▮&nbsp; KIRLOSENG <b>2.98</b> &nbsp;▮&nbsp; BSE <b>2.91</b> &nbsp;▮&nbsp; NSE 500 RANKED · EQUAL WEIGHT 1/24 · CAP 7.5%
+      </div>
+      <p class="tape-cap">Real signal ranks from the research record, 12 May 2026. Scroll the tape sideways.</p>
+    </div>
+  </header>
+
+  <!-- ————— RULES ————— -->
+  <section id="rules">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Three rules run everything.</h2>
+        <p>Chalked on the board, kept in code. Nothing else is allowed to vote.</p>
+      </div>
+      <div class="rules">
+        <div class="rulep">
+          <span class="n">RULE 1</span>
+          <h3>Own strength, by rank</h3>
+          <svg class="u" viewBox="0 0 120 8" aria-hidden="true" preserveAspectRatio="none"><path d="M2 5 C 30 2, 60 7, 118 4" fill="none" stroke="#D9B858" stroke-width="2.5" stroke-linecap="round" opacity=".85"/></svg>
+          <p>Rank the universe (NSE 500 or Nifty 250) by measured momentum.
+          Hold the top of the list, equal-weighted, 7.5% cap a name. A stock is
+          held because it ranks, and for no other reason.</p>
+        </div>
+        <div class="rulep">
+          <span class="n">RULE 2</span>
+          <h3>Exit by rule, not nerve</h3>
+          <svg class="u" viewBox="0 0 120 8" aria-hidden="true" preserveAspectRatio="none"><path d="M2 4 C 40 7, 80 2, 118 5" fill="none" stroke="#D9B858" stroke-width="2.5" stroke-linecap="round" opacity=".85"/></svg>
+          <p>Out of rank, or through a 20% drawdown stop: either way, the exit
+          was written before the entry. Discipline is what remains when
+          conviction runs out.</p>
+        </div>
+        <div class="rulep">
+          <span class="n">RULE 3</span>
+          <h3>Repeat, on cadence</h3>
+          <svg class="u" viewBox="0 0 120 8" aria-hidden="true" preserveAspectRatio="none"><path d="M2 5 C 25 3, 95 8, 118 3" fill="none" stroke="#D9B858" stroke-width="2.5" stroke-linecap="round" opacity=".85"/></svg>
+          <p>Signals rebuild after every close at 16:30 IST; rebalances land
+          weekly or bi-weekly on a fixed calendar. Greed, fear, and boredom
+          notwithstanding.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ————— PREMIUM (chalk chart) ————— -->
+  <section id="premium">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>The premium is public. The discipline is the product.</h2>
+        <p>Momentum is one of the most documented effects in markets; the
+        exchange publishes its own momentum index. What compounds is not the
+        idea but the nerve to follow it.</p>
+      </div>
+      <figure class="board">
+        <div class="board-head">
+          <figcaption class="board-title">Nifty500 Momentum 50 vs Nifty 500 — growth of 100</figcaption>
+          <div class="legend" aria-hidden="true">
+            <span class="key"><i style="color:var(--chalk-y-bright)"></i>Nifty500 Momentum 50</span>
+            <span class="key"><i style="color:var(--chalk-b)"></i>Nifty 500</span>
+          </div>
+        </div>
+        <div class="chart-box">
+          <svg id="chart" viewBox="0 0 1060 440" role="img"
+            aria-label="Line chart drawn in chalk: Nifty500 Momentum 50 grows from 100 to 325 between January 2020 and July 2026, a 19.9 percent CAGR; the Nifty 500 grows from 100 to 235, a 14.0 percent CAGR."></svg>
+          <div class="tip" id="tip"></div>
+        </div>
+        <div class="caption">
+          <span>NSE index price series (price return, excl. dividends), month-end closes.</span>
+          <span class="mono">CAGR: momentum 19.9% · market 14.0%</span>
+        </div>
+        <details class="tableview">
+          <summary><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M3 1.5 L7.5 5 L3 8.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>View the underlying table</summary>
+          <div class="scroll"><table id="datatable">
+            <thead><tr><th scope="col">Month</th><th scope="col">Momentum 50</th><th scope="col">Nifty 500</th></tr></thead>
+            <tbody></tbody>
+          </table></div>
+        </details>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ————— QUOTE BOARD ————— -->
+  <section id="board">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>The quote board.</h2>
+        <p>Four portfolios, one discipline, drawdowns in the same chalk. Read the
+        max drawdown with the same attention as the CAGR; you will live through both.</p>
+      </div>
+      <div class="qboard">
+        <table>
+          <thead><tr>
+            <th scope="col">Portfolio</th><th scope="col">Universe</th><th scope="col">Cadence</th>
+            <th scope="col">CAGR</th><th scope="col">Sharpe</th><th scope="col">Max DD</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="pname">Quality Momentum<sup class="mono">1</sup></span><span class="pid">OM25 v3 · capture asymmetry + regime tilt</span></td>
+              <td class="dim" data-l="Universe">Nifty 250</td>
+              <td class="dim" data-l="Cadence">Bi-weekly</td>
+              <td class="num" data-l="CAGR">44.78%</td>
+              <td class="num" data-l="Sharpe">1.86</td>
+              <td class="num" data-l="Max DD">−36.6%</td>
+            </tr>
+            <tr>
+              <td><span class="pname">Trend Leaders<sup class="mono">1</sup></span><span class="pid">TL25 v3 · three-component trend quality</span></td>
+              <td class="dim" data-l="Universe">NSE 500</td>
+              <td class="dim" data-l="Cadence">Bi-weekly</td>
+              <td class="num" data-l="CAGR">34.86%</td>
+              <td class="num" data-l="Sharpe">1.53</td>
+              <td class="num" data-l="Max DD">−39.0%</td>
+            </tr>
+            <tr>
+              <td><span class="pname">Core Momentum<sup class="mono">2</sup></span><span class="pid">L6 v2 · volatility-scaled 6-month momentum</span></td>
+              <td class="dim" data-l="Universe">NSE 500</td>
+              <td class="dim" data-l="Cadence">Weekly</td>
+              <td class="num" data-l="CAGR">59.4%</td>
+              <td class="num" data-l="Sharpe">1.92</td>
+              <td class="num" data-l="Max DD">−30.0%</td>
+            </tr>
+            <tr>
+              <td><span class="pname">Defensive Blend<sup class="mono">3</sup></span><span class="pid">COMBO · 50/50 composite, regime overlay</span></td>
+              <td class="dim" data-l="Universe">NSE 500</td>
+              <td class="dim" data-l="Cadence">Bi-weekly</td>
+              <td class="dim" data-l="CAGR">Composite</td>
+              <td class="dim" data-l="Sharpe">Composite</td>
+              <td class="dim" data-l="Max DD">Reduced by design</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="fnotes">
+        All figures are backtests net of 0.2% per-trade slippage, executed at next-day OHLC/4.
+        <sup>1</sup>&nbsp;Out-of-sample: tuned 2009–2016, validated untouched 2017–2026 (9.3 years).
+        <sup>2</sup>&nbsp;In-sample tune, Jul 2020 – Feb 2026. <sup>3</sup>&nbsp;Blends Core and Quality
+        Momentum ranks; allocation cut 50% in confirmed bear regime. Backtested performance does not
+        assure future returns.
+      </p>
+    </div>
+  </section>
+
+  <!-- ————— STRUCK OFF ————— -->
+  <section id="struck">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Struck from the board.</h2>
+        <p>A system you can trust names what it discarded. Each of these was
+        built, backtested, and struck off on the evidence.</p>
+      </div>
+      <ul class="struck">
+        <li><span class="what">Volatility targeting<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path d="M1 6 C 30 3, 70 8, 99 4" fill="none" stroke="#D9B858" stroke-width="2.2" stroke-linecap="round" opacity=".9"/></svg></span><span class="why">Dynamic sizing disrupts the momentum signal it means to protect.</span></li>
+        <li><span class="what">Longer lookbacks (9, 12 months)<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path d="M1 5 C 40 8, 60 2, 99 6" fill="none" stroke="#D9B858" stroke-width="2.2" stroke-linecap="round" opacity=".9"/></svg></span><span class="why">Underperform the 6-month window on NSE equities.</span></li>
+        <li><span class="what">Volume-weighted scoring<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path d="M1 4 C 25 7, 75 3, 99 7" fill="none" stroke="#D9B858" stroke-width="2.2" stroke-linecap="round" opacity=".9"/></svg></span><span class="why">Dollar-volume and OBV blends both trail pure momentum.</span></li>
+        <li><span class="what">Profit-hold exit filters<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path d="M1 6 C 35 2, 65 8, 99 5" fill="none" stroke="#D9B858" stroke-width="2.2" stroke-linecap="round" opacity=".9"/></svg></span><span class="why">Freeze the portfolio and kill the rotation that drives returns.</span></li>
+        <li><span class="what">Re-entry confirmation windows<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path d="M1 5 C 30 8, 70 2, 99 6" fill="none" stroke="#D9B858" stroke-width="2.2" stroke-linecap="round" opacity=".9"/></svg></span><span class="why">Delay recovery after corrections; drawdowns explode.</span></li>
+        <li><span class="what">Large-caps only (Nifty 100)<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path d="M1 4 C 45 7, 55 2, 99 5" fill="none" stroke="#D9B858" stroke-width="2.2" stroke-linecap="round" opacity=".9"/></svg></span><span class="why">Safer, but leaves roughly 13 points of CAGR in mid-caps.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ————— RISK ————— -->
+  <section id="risk">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Risk, in plain chalk.</h2>
+      </div>
+      <p class="risk-copy">These systems have drawn down <b>30 to 39 percent</b> in backtests, and
+      will draw down again. Momentum pays a premium because holding it through those months is
+      hard. We are probabilistic, never predictive: we do not call markets, we write the
+      controls into the rules.</p>
+      <div class="riskrow">
+        <div class="riskcell"><b>20%</b><span>Drawdown stop on every position, checked weekly against its running peak.</span></div>
+        <div class="riskcell"><b>7.5%</b><span>Hard cap per position; equal-weight sizing, no conviction bets.</span></div>
+        <div class="riskcell"><b>1/N</b><span>24–25 stocks a portfolio, diversified enough to survive a wrong pick.</span></div>
+        <div class="riskcell"><b>−50%</b><span>Defensive Blend halves allocation when the regime signal turns bearish.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ————— PLAQUE ————— -->
+  <section id="plaque" style="border-top:0;padding-top:0">
+    <div class="wrap">
+      <div class="plaque">
+        <div>
+          <h2>The record is open. The beta is allowlisted.</h2>
+          <p>Marketworks is in private beta. Request access and we will write back.
+          The portfolios, the daily signal boards, and the full research record are
+          inside. Bring your own broker; we bring the discipline.</p>
+          <div class="ctas">
+            <a class="btn btn-ink btn-lg" href="https://marketworks.in/sign-up">Request beta access</a>
+            <a class="btn btn-inkline btn-lg" href="https://marketworks.in/library">Read the library</a>
+          </div>
+        </div>
+        <ul>
+          <li><b>Who it serves.</b> Self-directed investors on Indian brokerages who want a written system, not another opinion feed.</li>
+          <li><b>What it asks weekly.</b> One rebalance note, a few minutes of orders. The pipeline does the rest, daily at 16:30 IST.</li>
+          <li><b>What it never does.</b> No calls, no targets, no assured returns. Ever.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h3>Disclosures</h3>
+        <p>All performance figures on this page are backtested, net of modelled slippage of 0.2% per trade,
+        and are not indicative of future returns. The chart uses NSE index price-return series and excludes
+        dividends. Equity investments are subject to market risks; momentum strategies experience deep
+        drawdowns. Nothing on this page is a recommendation to buy or sell any security.
+        [Regulatory status line — to be supplied by the founder before any public use.]</p>
+      </div>
+      <div>
+        <h3>The board</h3>
+        <p><a href="#rules">The rules</a><br><a href="#premium">The premium</a><br>
+        <a href="#board">The quote board</a><br><a href="#struck">Struck off</a></p>
+      </div>
+      <div>
+        <h3>Marketworks</h3>
+        <p><a href="https://marketworks.in">marketworks.in</a><br>Momentum research on Indian equities.</p>
+      </div>
+    </div>
+    <div class="colophon">
+      <span class="wordmark" style="font-size:15px">marketworks<i style="font-style:normal;color:var(--brass-hi)">.</i></span>
+      <span>© 2026 Marketworks. Design prototype — variant 3 of the design_reset study.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ————— real NSE month-end series, Jan 2020 = 100 (same record as variants 1–2) ————— */
+const MOM = [100.0,96.8,74.8,86.7,84.9,90.1,96.8,98.4,101.9,102.6,109.4,116.4,116.9,129.0,136.1,148.0,155.4,162.2,167.9,179.4,187.1,196.7,195.7,207.0,195.4,184.4,197.8,186.7,174.9,161.3,177.6,193.5,190.7,195.0,196.5,189.7,182.5,174.6,177.5,189.8,202.2,213.2,225.6,230.6,238.9,229.3,256.1,278.3,309.7,306.4,307.1,338.2,353.7,373.8,392.3,387.8,392.4,363.5,363.5,351.3,305.4,275.6,293.0,305.6,322.1,339.8,319.0,308.2,310.5,328.4,336.3,323.6,311.8,321.5,282.4,317.8,325.8,331.2,325.3];
+const N500 = [100.0,93.7,71.0,81.3,79.3,85.9,91.6,95.0,94.7,97.2,108.7,116.8,114.6,123.5,124.9,125.4,134.1,136.6,138.6,147.6,152.6,153.0,148.5,152.1,151.3,145.1,151.0,149.9,143.2,135.8,148.7,155.4,150.4,156.4,161.7,156.7,151.5,147.2,147.6,154.3,159.9,166.6,173.0,171.6,175.4,170.4,182.4,197.0,200.8,203.7,205.4,212.9,214.0,228.8,238.6,240.7,245.9,230.1,230.1,226.9,218.8,201.6,216.4,223.4,231.2,239.5,232.4,227.8,230.5,240.4,242.7,242.1,234.0,234.9,208.2,230.0,229.8,233.2,234.8];
+const monthName = i => ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][i % 12] + " " + (2020 + Math.floor(i / 12));
+/* series inks: validated pair for the dark slate; bright variants only for large labels */
+const C1 = "#D9B858", C1_LINE = "#AD861F", C2 = "#4C86C9";
+
+(function chart() {
+  const svg = document.getElementById("chart");
+  const box = svg.parentElement;
+  const n = MOM.length, ymin = 60, ymax = 400;
+  let G = null, drawn = false;
+
+  function build() {
+    const narrow = box.clientWidth < 640;
+    const W = narrow ? 440 : 1060, H = narrow ? 470 : 440;
+    const L = narrow ? 38 : 52, R = narrow ? 16 : 236, T = narrow ? 14 : 18, B = narrow ? 34 : 40;
+    const pw = W - L - R, ph = H - T - B;
+    const X = i => L + pw * i / (n - 1);
+    const Y = v => T + ph * (1 - (v - ymin) / (ymax - ymin));
+    G = { W, H, L, R, T, pw, ph, X, Y };
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    const line = a => a.map((v, i) => (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(v).toFixed(1)).join("");
+    /* chalk filter: slight turbulence displacement gives the line a hand-drawn edge */
+    let s = `<defs><filter id="chalkf" x="-2%" y="-4%" width="104%" height="108%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="7" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/></filter></defs>`;
+    for (const gv of [100, 200, 300, 400]) {
+      s += `<line x1="${L}" x2="${W - R}" y1="${Y(gv)}" y2="${Y(gv)}" stroke="#39423B" stroke-width="1" ${gv === 100 ? "" : 'stroke-dasharray="2 5"'}/>`;
+      s += `<text x="${L - 10}" y="${Y(gv) + 4}" text-anchor="end" font-family="Courier Prime,monospace" font-size="${narrow ? 13 : 12.5}" fill="#8E8878">${gv}</text>`;
+    }
+    for (let i = 0; i < n; i += narrow ? 24 : 12) {
+      s += `<text x="${X(i)}" y="${H - 10}" text-anchor="middle" font-family="Courier Prime,monospace" font-size="${narrow ? 13 : 12.5}" fill="#8E8878">${2020 + i / 12}</text>`;
+    }
+    s += `<g filter="url(#chalkf)">`;
+    s += `<path id="ln-n500" d="${line(N500)}" fill="none" stroke="${C2}" stroke-width="${narrow ? 2 : 2.4}" stroke-linecap="round"/>`;
+    s += `<path id="ln-mom" d="${line(MOM)}" fill="none" stroke="${C1_LINE}" stroke-width="${narrow ? 2.4 : 3}" stroke-linecap="round"/>`;
+    s += `</g>`;
+    const e1 = Y(MOM[n - 1]), e2 = Y(N500[n - 1]);
+    s += `<circle cx="${X(n - 1)}" cy="${e1}" r="4" fill="${C1}"/>`;
+    s += `<circle cx="${X(n - 1)}" cy="${e2}" r="4" fill="${C2}"/>`;
+    if (!narrow) {
+      s += `<text x="${X(n - 1) + 12}" y="${e1 + 4}" font-family="Archivo,sans-serif" font-size="13" font-weight="600" fill="#EDE7D6">Momentum 50 · <tspan font-family="Courier Prime,monospace">325</tspan></text>`;
+      s += `<text x="${X(n - 1) + 12}" y="${e2 + 4}" font-family="Archivo,sans-serif" font-size="13" fill="#B5AF9E">Nifty 500 · <tspan font-family="Courier Prime,monospace">235</tspan></text>`;
+    }
+    s += `<line id="xh" y1="${T}" y2="${T + ph}" stroke="#EDE7D6" stroke-width="1" stroke-dasharray="2 4" opacity="0"/>`;
+    s += `<circle id="d1" r="4.5" fill="${C1}" stroke="#161C18" stroke-width="2" opacity="0"/>`;
+    s += `<circle id="d2" r="4.5" fill="${C2}" stroke="#161C18" stroke-width="2" opacity="0"/>`;
+    s += `<rect x="${L}" y="${T}" width="${pw}" height="${ph}" fill="transparent"/>`;
+    svg.innerHTML = s;
+    if (!drawn) prepDraw();
+  }
+  function reveal() {
+    if (drawn) return; drawn = true;
+    for (const id of ["ln-mom", "ln-n500"]) {
+      const el = document.getElementById(id); if (!el) continue;
+      el.style.transition = "stroke-dashoffset 1.9s cubic-bezier(0.22,1,0.36,1)";
+      el.style.strokeDashoffset = 0;
+    }
+  }
+  function prepDraw() {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) { drawn = true; return; }
+    for (const id of ["ln-mom", "ln-n500"]) {
+      const el = document.getElementById(id), len = el.getTotalLength();
+      el.style.strokeDasharray = len; el.style.strokeDashoffset = len;
+    }
+    new IntersectionObserver((es, o) => {
+      if (es.some(e => e.isIntersecting)) { reveal(); o.disconnect(); }
+    }, { threshold: .2 }).observe(svg);
+    setTimeout(reveal, 4000);
+  }
+  build();
+  let lastNarrow = box.clientWidth < 640;
+  addEventListener("resize", () => {
+    const nw = box.clientWidth < 640;
+    if (nw !== lastNarrow) { lastNarrow = nw; build(); }
+  });
+
+  const tip = document.getElementById("tip");
+  svg.addEventListener("pointermove", ev => {
+    const { W, H, L, R, T, pw, X, Y } = G;
+    const r = svg.getBoundingClientRect();
+    const sx = (ev.clientX - r.left) * (W / r.width);
+    if (sx < L || sx > W - R) return hide();
+    const i = Math.max(0, Math.min(n - 1, Math.round((sx - L) / pw * (n - 1))));
+    const cx = X(i);
+    const xh = document.getElementById("xh");
+    xh.setAttribute("x1", cx); xh.setAttribute("x2", cx); xh.setAttribute("opacity", ".35");
+    const d1 = document.getElementById("d1"), d2 = document.getElementById("d2");
+    d1.setAttribute("cx", cx); d1.setAttribute("cy", Y(MOM[i])); d1.setAttribute("opacity", "1");
+    d2.setAttribute("cx", cx); d2.setAttribute("cy", Y(N500[i])); d2.setAttribute("opacity", "1");
+    tip.style.display = "block";
+    tip.innerHTML = `<b>${monthName(i)}</b>
+      <span class="row"><i style="border-color:${C1}"></i>Momentum 50&nbsp; <b class="mono">${MOM[i].toFixed(1)}</b></span>
+      <span class="row"><i style="border-color:${C2}"></i>Nifty 500&nbsp; <b class="mono">${N500[i].toFixed(1)}</b></span>`;
+    const bw = box.clientWidth, px = cx / W * bw;
+    tip.style.left = Math.min(bw - tip.offsetWidth - 8, Math.max(8, px + 14)) + "px";
+    tip.style.top = (Y(Math.max(MOM[i], N500[i])) / H * box.clientHeight - tip.offsetHeight - 12) + "px";
+  });
+  svg.addEventListener("pointerleave", hide);
+  function hide() {
+    tip.style.display = "none";
+    for (const id of ["xh", "d1", "d2"]) { const el = document.getElementById(id); if (el) el.setAttribute("opacity", "0"); }
+  }
+  const tb = document.querySelector("#datatable tbody");
+  let rows = "";
+  for (let i = 0; i < n; i++) rows += `<tr><td>${monthName(i)}</td><td>${MOM[i].toFixed(1)}</td><td>${N500[i].toFixed(1)}</td></tr>`;
+  tb.innerHTML = rows;
+})();
+</script>
+</body>
+</html>
