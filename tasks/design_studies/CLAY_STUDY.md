@@ -139,3 +139,83 @@ active one, and section media always sitting on the section's tint.
 5. Vibrant color arrives through ELEMENTS on the near-white ground:
    accent-framed cards, vivid pills, colored section eyebrows,
    two-tone headings — never through tinted page bands.
+
+---
+
+# Part 2 — structure, sections, motion (2026-08-13, reference round 3)
+
+Part 1 decoded type + colour (both since superseded by our own set
+system — LB + single green — but the triad formula and vibrance
+lessons carried into loop 23). This pass mines STRUCTURE: sections,
+cards, motion. Homepage re-crawl + /customers + /pricing.
+
+## The devices
+
+| # | Device | What it is |
+|---|---|---|
+| K1 | Sticky-stacking section cards | THE clay structural signature: full-width tinted section panels (48px top radius), each in its own hue triad, pinning and stacking as the next slides over. Canonical GSAP sticky-stack |
+| K2 | Ghost-pill label stack | The section pill label with 2-3 offset pastel ghost pills trailing behind it — depth on a label for pennies |
+| K3 | Proof mosaic | Mixed-content tile wall: plain logo cells, stat cells (+140% OUTBOUND PIPELINE), and quote cells in ONE uniform cell language, marquee rows inside a rounded container |
+| K4 | Product-table hero media | A real product table (highlighted row, real columns) as the hero's media, under a category pill-filter row (active pill = vivid highlight) |
+| K5 | Toy-machine illustration program | Playful 3D-rendered contraptions on grainy paper grounds — one consistent material across every section |
+| K6 | Trust marks in brand material | Compliance badges (SOC2, GDPR, ISO) rendered as clay-toy flowers — institutional facts wearing the brand's own material |
+| K7 | Inline case footnote | Inside a feature card: a small logo trio + one-line customer result — proof without a testimonial section |
+| K8 | cmd-K chip in nav | A ⌘K search affordance in the marketing nav — product surface leaking into marketing, in a good way |
+
+## Takes (mapped, with one honest tension)
+
+1. **K1 stacked sections — WITH a colour caveat.** The stacking
+   structure (pin + slide-over, big top radius) is excellent scroll
+   rhythm for our portfolio sections. BUT clay tints each panel a
+   different hue, and loop 23's rule is explicit: colour through
+   elements, never tinted page bands. Resolution if we build it:
+   panels stay white / --bg-soft / green-wash family only, with the
+   triads carried by elements inside (chips, keylines, stats) — the
+   structure without the rainbow.
+2. **K3 proof mosaic → the record mosaic.** No client logos exist,
+   but our real proof is richer: stat tiles (real figures), method
+   tiles (20% stop · 1/N · 16:30 IST), rejected-ledger lines,
+   library titles. One uniform cell language, drifting rows.
+3. **K4 table hero → the real signal board.** The strongest
+   convergence of the three studies: aeye's tape, percept's activity
+   chips, and clay's table-as-hero all point at the same thing — the
+   REAL 12-May-style signal board as hero media.
+4. **K2 ghost-pill stack** — cheap depth for pill labels; pairs
+   with SectionMeter.
+5. **K6 method marks in brand material** — our institutional facts
+   (OOS VALIDATED 2017–26, NET OF 0.2% SLIPPAGE, 20% DD STOP) drawn
+   as dither/guilloche roundels — the certificate-detour seal
+   reborn at badge scale.
+6. **K7 inline case footnote** — for us: inline METHOD footnotes on
+   feature cards ("tuned 2009–16, validated untouched" + a tiny
+   evidence link). Proof-density without a proof section.
+7. **K5's lesson, not its material** — one illustration material
+   everywhere. Ours is generated geometry (dither, guilloche, flow
+   fields), already in hand.
+
+## Skips
+
+- 3D toy renders (wrong material for us), full-bleed video
+  testimonials (no assets), cmd-K chip (until the dashboard port).
+
+## Combined build menu (all three reference rounds)
+
+Already shipped (loop 27): SectionMeter · StatTable ·
+PipelineDiagram · ExhibitFrame · ScrambleIn.
+
+Candidates, founder to pick the next loop's set:
+- B-a `TexturePanel` — generative green-family card-media backdrops
+  (percept P2; reuses the parked asset-study fields at card scale).
+- B-b `TexturedFooter` — merged CTA + footer mega-section on
+  textured green-deep with the giant lowercase wordmark (percept P8).
+- B-c `InkBand` — the sustained multi-screen dark movement
+  (percept P3).
+- B-d `SignalChips` — REAL pipeline/signal events as drifting chip
+  rows with one highlighted chip (percept P4 × aeye tape).
+- B-e `StackSections` — clay K1 stacking, colour-rule-resolved.
+- B-f `ProofMosaic` — the record mosaic (clay K3, real data only).
+- B-g `MethodMarks` — dither/guilloche fact roundels (clay K6).
+- B-h `AccordionShowcase` — synced accordion + visual swap
+  (percept P5); best after real product screenshots exist.
+- B-i `TableHero` — the real signal board as hero media (clay K4);
+  belongs to the founder's hero round.
