@@ -15,11 +15,15 @@ export function SectionMeter({
   index,
   total,
   label,
+  accentClassName = "text-acc1-fg",
   className = "",
 }: {
   index: number;
   total: number;
   label: string;
+  /* rotate per section when sections form a sibling set (the loop-23
+   * accent rule: rotation encodes structure) — e.g. text-acc2-fg */
+  accentClassName?: string;
   className?: string;
 }) {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -32,7 +36,7 @@ export function SectionMeter({
       </span>
       <span aria-hidden className="w-6 border-t border-border self-center" />
       <span className="shrink-0 uppercase text-muted-foreground">
-        <span aria-hidden className="text-acc1-fg">&gt; </span>
+        <span aria-hidden className={accentClassName}>&gt; </span>
         {label}
       </span>
       <span aria-hidden className="flex-1 border-t border-border self-center" />

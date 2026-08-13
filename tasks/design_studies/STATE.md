@@ -1,5 +1,23 @@
 # design_studies — state of the study (2026-08-13)
 
+> **Loop 30 — founder curation + the accent/gradient rethink.**
+> Cuts: TexturePanel drift + contour variants (founder), and
+> `MethodMark` entirely — it resurrected the REJECTED design_reset
+> certificate seal without approval; provenance lesson recorded.
+> Adds: `grid` (chart paper) and `dots` (pipeline lattice) texture
+> variants. Accents now do STRUCTURAL work per the loop-23 rule:
+> ProofMosaic cell kinds carry triads (method = sun wash, rejected =
+> coral, library = purple), SignalChips dot colour encodes event kind
+> (green portfolio / sky system), SectionMeter takes a rotating
+> accent for sibling section sets, and SignalBoard pills carry the
+> PROPOSED portfolio identity hues (Core = green · Quality = sun ·
+> Trend = sky · Defensive = purple — one hue per portfolio
+> site-wide; founder to ratify). Gradient position: no decorative
+> colour gradients on light surfaces — textures + masked fades do
+> that work; luminous radials remain a dark-surface device; the
+> legacy hero gradient dies in the hero rework. Gallery renumbered
+> 13-20. Evidence: `evidence/loop30_accent-pass.jpg`.
+
 > **Loop 29 — system-incorporation pass (founder flagged it).** Two
 > real defects found and fixed: (1) the green light theme was still
 > GATED to `data-palette="ocean"` — any visitor with a stale stored

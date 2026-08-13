@@ -22,7 +22,15 @@ const BAYER8 = [
   [63, 31, 55, 23, 61, 29, 53, 21],
 ];
 
-function bayerPattern(id: string, density: number, cell: number) {
+function BayerPattern({
+  id,
+  density,
+  cell,
+}: {
+  id: string;
+  density: number;
+  cell: number;
+}) {
   const dots: string[] = [];
   const cut = density * 64;
   for (let y = 0; y < 8; y++)
@@ -43,7 +51,7 @@ function bayerPattern(id: string, density: number, cell: number) {
   );
 }
 
-export type TextureVariant = "dither" | "drift" | "contour" | "hatch";
+export type TextureVariant = "dither" | "hatch" | "grid" | "dots";
 
 export function TexturePanel({
   variant = "dither",
@@ -64,7 +72,9 @@ export function TexturePanel({
       <>
         <defs>
           {bands.map((d, i) =>
-            d > 0 ? bayerPattern(`${uid}-${i}`, d, 5) : null,
+            d > 0 ? (
+              <BayerPattern key={i} id={`${uid}-${i}`} density={d} cell={5} />
+            ) : null,
           )}
         </defs>
         <g className="text-acc1-line" opacity="0.5">
@@ -83,58 +93,72 @@ export function TexturePanel({
         </g>
       </>
     );
-  } else if (variant === "drift") {
-    const curve = (seed: number, y0: number, amp: number) => {
-      let d = `M-20 ${y0}`;
-      let y = y0;
-      for (let x = 0; x <= W + 40; x += 64) {
-        const rise = 8 + ((seed * (x + 11)) % 15);
-        const wob = Math.sin(x / 130 + seed) * amp;
-        y = y - rise * 0.35 + wob * 0.2;
-        d += ` C ${x - 42} ${y + wob}, ${x - 20} ${y - wob}, ${x} ${y}`;
-      }
-      return d;
-    };
+  } else if (variant === "grid") {
+    /* fine chart-paper: the homepage grid idiom at card scale */
     body = (
-      <g fill="none" strokeLinecap="round">
-        {[0, 1, 2, 3, 4].map((i) => (
-          <path
-            key={i}
-            d={curve(i * 2.3 + 1, 330 + i * 26, 22)}
-            className="stroke-[var(--acc1-line)]"
-            strokeWidth={1.6}
-            opacity={0.34 - i * 0.05}
-          />
-        ))}
-      </g>
+      <>
+        <defs>
+          <pattern
+            id={`${uid}-p`}
+            width={36}
+            height={36}
+            patternUnits="userSpaceOnUse"
+          >
+            <path
+              d="M36 0H0V36"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1"
+            />
+          </pattern>
+          <radialGradient id={`${uid}-f`} cx="0.6" cy="0.4" r="0.9">
+            <stop offset="0" stopColor="#fff" stopOpacity="1" />
+            <stop offset="1" stopColor="#fff" stopOpacity="0" />
+          </radialGradient>
+          <mask id={`${uid}-m`}>
+            <rect width={W} height={H} fill={`url(#${uid}-f)`} />
+          </mask>
+        </defs>
+        <rect
+          width={W}
+          height={H}
+          fill={`url(#${uid}-p)`}
+          mask={`url(#${uid}-m)`}
+          className="text-acc1-line"
+          opacity="0.4"
+        />
+      </>
     );
-  } else if (variant === "contour") {
-    const ring = (r: number, seed: number) => {
-      const N = 40;
-      let d = "";
-      for (let i = 0; i <= N; i++) {
-        const t = (2 * Math.PI * i) / N;
-        const wob =
-          Math.sin(t * 3 + seed) * r * 0.06 +
-          Math.sin(t * 7 + seed * 2) * r * 0.03;
-        const x = W * 0.68 + (r + wob) * Math.cos(t);
-        const y = H * 0.42 + (r + wob) * 0.82 * Math.sin(t);
-        d += (i ? "L" : "M") + x.toFixed(1) + " " + y.toFixed(1);
-      }
-      return d + "Z";
-    };
+  } else if (variant === "dots") {
+    /* uniform dot lattice — the pipeline canvas as a texture */
     body = (
-      <g fill="none">
-        {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
-          <path
-            key={i}
-            d={ring(36 + i * 34, i * 1.7)}
-            className="stroke-[var(--acc1-line)]"
-            strokeWidth={1}
-            opacity={0.3 - i * 0.032}
-          />
-        ))}
-      </g>
+      <>
+        <defs>
+          <pattern
+            id={`${uid}-p`}
+            width={20}
+            height={20}
+            patternUnits="userSpaceOnUse"
+          >
+            <circle cx={2} cy={2} r={1.4} fill="currentColor" />
+          </pattern>
+          <linearGradient id={`${uid}-f`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#fff" stopOpacity="0.25" />
+            <stop offset="1" stopColor="#fff" stopOpacity="1" />
+          </linearGradient>
+          <mask id={`${uid}-m`}>
+            <rect width={W} height={H} fill={`url(#${uid}-f)`} />
+          </mask>
+        </defs>
+        <rect
+          width={W}
+          height={H}
+          fill={`url(#${uid}-p)`}
+          mask={`url(#${uid}-m)`}
+          className="text-acc1-line"
+          opacity="0.5"
+        />
+      </>
     );
   } else {
     /* hatch: fine diagonal strokes fading across, the quiet one */
@@ -189,82 +213,18 @@ export function TexturePanel({
   );
 }
 
-/* ————— B-g · MethodMark — fact roundels in the brand line-work ————— */
-/* Clay renders SOC2 as toy flowers; our institutional facts wear our
- * material: rose-curve rings (the certificate-detour seal, badge-scale). */
-
-function rosePath(cx: number, cy: number, base: number, a1: number, n1: number) {
-  const N = 180;
-  let d = "";
-  for (let i = 0; i <= N; i++) {
-    const t = (2 * Math.PI * i) / N;
-    const r = base + a1 * Math.sin(n1 * t);
-    d +=
-      (i ? "L" : "M") +
-      (cx + r * Math.cos(t)).toFixed(1) +
-      " " +
-      (cy + r * Math.sin(t)).toFixed(1);
-  }
-  return d + "Z";
-}
-
-export function MethodMark({
-  lines,
-  className = "",
-}: {
-  lines: [string] | [string, string];
-  className?: string;
-}) {
-  const S = 128;
-  const c = S / 2;
-  return (
-    <div className={`flex flex-col items-center gap-3 ${className}`}>
-      <svg viewBox={`0 0 ${S} ${S}`} className="h-28 w-28" role="img" aria-label={lines.join(" ")}>
-        <path
-          d={rosePath(c, c, 52, 5, 18)}
-          fill="none"
-          className="stroke-[var(--acc1-line)]"
-          strokeWidth="1"
-          opacity="0.7"
-        />
-        <path
-          d={rosePath(c, c, 44, 4, 12)}
-          fill="none"
-          className="stroke-[var(--primary)]"
-          strokeWidth="1"
-          opacity="0.5"
-        />
-        <circle
-          cx={c}
-          cy={c}
-          r={34}
-          className="fill-[var(--acc1-bg)] stroke-[var(--primary)]"
-          strokeWidth="1"
-        />
-        {lines.map((l, i) => (
-          <text
-            key={l}
-            x={c}
-            y={lines.length === 1 ? c + 3.5 : c - 2 + i * 12}
-            textAnchor="middle"
-            className="fill-[var(--acc1-fg)] font-mono"
-            fontSize="9.5"
-            fontWeight="500"
-          >
-            {l}
-          </text>
-        ))}
-      </svg>
-    </div>
-  );
-}
-
 /* ————— B-d · SignalChips — real events as ambient rows ————— */
 /* PERCEPT P4 × the aeye tape, with OUR real record: the 2026-05-12
  * Core Momentum ranks (data/final_portfolio/final_portfolio_24.csv)
  * and pipeline facts. No invented events. */
 
-export type SignalChip = { text: string; highlight?: boolean };
+/* kind -> dot colour: portfolio events green (acc1), system/pipeline
+ * events sky (acc3, the info accent). Structure, not decoration. */
+export type SignalChip = {
+  text: string;
+  kind?: "portfolio" | "system";
+  highlight?: boolean;
+};
 
 const REAL_CHIPS: SignalChip[][] = [
   [
@@ -272,13 +232,13 @@ const REAL_CHIPS: SignalChip[][] = [
     { text: "HINDCOPPER · rank 2 · 3.74" },
     { text: "MCX · rank 3 · 3.64" },
     { text: "NATIONALUM · rank 4 · 3.60" },
-    { text: "signals rebuilt · 16:30 IST" },
+    { text: "signals rebuilt · 16:30 IST", kind: "system" },
   ],
   [
     { text: "POWERINDIA · rank 5 · 3.08" },
-    { text: "weekly rebalance published" },
-    { text: "KIRLOSENG · rank 6 · 2.98", highlight: false },
-    { text: "NSE 500 scored · 499 names" },
+    { text: "weekly rebalance published", kind: "system" },
+    { text: "KIRLOSENG · rank 6 · 2.98" },
+    { text: "NSE 500 scored · 499 names", kind: "system" },
     { text: "BSE · rank 7 · 2.91" },
   ],
 ];
@@ -326,7 +286,13 @@ export function SignalChips({
                 }`}
               >
                 <span
-                  className={`h-1.5 w-1.5 rounded-full ${dark ? "bg-[var(--surface-panel-deep-foreground)] opacity-60" : "bg-acc1-line"}`}
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    dark
+                      ? "bg-[var(--surface-panel-deep-foreground)] opacity-60"
+                      : c.kind === "system"
+                        ? "bg-acc3-line"
+                        : "bg-acc1-line"
+                  }`}
                 />
                 {c.text}
               </span>
@@ -422,7 +388,7 @@ function MosaicTile({ cell }: { cell: MosaicCell }) {
     );
   if (cell.kind === "method")
     return (
-      <div className="flex min-w-[180px] items-center rounded-[14px] bg-acc1-bg px-5 py-4 font-mono text-xs text-acc1-fg">
+      <div className="flex min-w-[180px] items-center rounded-[14px] bg-acc2-bg px-5 py-4 font-mono text-xs text-acc2-fg">
         {cell.text}
       </div>
     );
@@ -489,18 +455,22 @@ export function SignalBoard({ className = "" }: { className?: string }) {
   const max = BOARD_ROWS[0]!.score;
   return (
     <div className={className}>
+      {/* portfolio identity hues (proposal): Core=green, Quality=sun,
+          Trend=sky, Defensive=purple — the same hue follows each
+          portfolio everywhere it appears. */}
       <div className="mb-4 flex flex-wrap gap-2" aria-hidden>
         <span className="rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground">
           Core Momentum
         </span>
-        {["Quality Momentum", "Trend Leaders", "Defensive Blend"].map((p) => (
-          <span
-            key={p}
-            className="rounded-full border border-border bg-card px-4 py-1.5 text-xs font-semibold text-muted-foreground"
-          >
-            {p}
-          </span>
-        ))}
+        <span className="rounded-full bg-acc2-bg px-4 py-1.5 text-xs font-semibold text-acc2-fg">
+          Quality Momentum
+        </span>
+        <span className="rounded-full bg-acc3-bg px-4 py-1.5 text-xs font-semibold text-acc3-fg">
+          Trend Leaders
+        </span>
+        <span className="rounded-full bg-acc5-bg px-4 py-1.5 text-xs font-semibold text-acc5-fg">
+          Defensive Blend
+        </span>
       </div>
       <div className="overflow-hidden rounded-[16px] border border-border bg-card">
         <div className="flex items-center justify-between border-b border-border px-5 py-3">

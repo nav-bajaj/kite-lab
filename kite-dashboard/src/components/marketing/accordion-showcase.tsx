@@ -20,7 +20,7 @@ const ITEMS: Item[] = [
   {
     title: "Weekly scoring",
     body: "The system scores the whole NSE 500 every week and ranks it by momentum. No headlines, no hunches.",
-    visual: "drift",
+    visual: "grid",
     chip: "499 names scored",
   },
   {
@@ -32,7 +32,7 @@ const ITEMS: Item[] = [
   {
     title: "Written risk controls",
     body: "A 20% drawdown stop checked weekly, equal 1/N sizing, and a 7.5% cap per position. The exits are written before the entries.",
-    visual: "contour",
+    visual: "dots",
     chip: "20% stop · 1/N · 7.5% cap",
   },
 ];

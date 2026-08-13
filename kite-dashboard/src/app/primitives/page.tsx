@@ -27,7 +27,6 @@ import {
 import {
   InkBand,
   InkCard,
-  MethodMark,
   ProofMosaic,
   SignalBoard,
   SignalChips,
@@ -364,17 +363,17 @@ export default function PrimitivesPage() {
         </div>
 
         <Caption>
-          13 · TexturePanel — generative card-media backdrops in four
-          variants (PERCEPT P2); the parked asset-study fields, re-homed at
-          card scale
+          13 · TexturePanel — card-media backdrops, curated set (founder cut
+          drift + contour; grid + dots added). Textures + masked fades do the
+          richness work; no decorative colour gradients on light surfaces
         </Caption>
         <div className="grid gap-5 sm:grid-cols-2">
           {(
             [
               ["dither", "stepped bayer dots"],
-              ["drift", "cumulative curves"],
-              ["contour", "terrain rings"],
               ["hatch", "fine diagonal fade"],
+              ["grid", "chart paper"],
+              ["dots", "pipeline lattice"],
             ] as const
           ).map(([variant, note]) => (
             <div
@@ -391,33 +390,22 @@ export default function PrimitivesPage() {
 
         <Caption>
           14 · SignalChips — real pipeline events as ambient rows, one
-          highlighted (PERCEPT P4 × the aeye tape); drifts gently, static
-          under reduced motion
+          highlighted; dot colour encodes kind (green = portfolio event,
+          sky = system event); drifts gently, static under reduced motion
         </Caption>
         <div className="rounded-[24px] border border-border/60 bg-card px-4 py-8">
           <SignalChips />
         </div>
 
         <Caption>
-          15 · ProofMosaic — the record as one tile wall: real stats, method
-          facts, the rejected ledger, real library titles (clay K3, no
-          invented logos or quotes)
+          15 · ProofMosaic — the record as one tile wall; each cell KIND
+          carries its triad (stats = ink on card, method = sun wash,
+          rejected = coral, library = purple) — accents encoding structure
         </Caption>
         <ProofMosaic />
 
         <Caption>
-          16 · MethodMark — institutional facts as rose-curve roundels (clay
-          K6 in our line-work; the certificate seal at badge scale)
-        </Caption>
-        <div className="flex flex-wrap items-center justify-center gap-10 rounded-[24px] border border-border/60 bg-card px-6 py-10">
-          <MethodMark lines={["OOS", "2017–26"]} />
-          <MethodMark lines={["NET OF", "SLIPPAGE"]} />
-          <MethodMark lines={["20% DD", "STOP"]} />
-          <MethodMark lines={["1/N", "WEIGHT"]} />
-        </div>
-
-        <Caption>
-          17 · InkBand + InkCard + dark SignalChips — the sustained dark
+          16 · InkBand + InkCard + dark SignalChips — the sustained dark
           movement (PERCEPT P3) on the green-deep drench token; one per page
         </Caption>
         <InkBand>
@@ -446,7 +434,7 @@ export default function PrimitivesPage() {
         </InkBand>
 
         <Caption>
-          18 · AccordionShowcase — synced accordion + swapping visual
+          17 · AccordionShowcase — synced accordion + swapping visual
           (PERCEPT P5); texture stand-ins until real product screenshots land
         </Caption>
         <div className="rounded-[24px] border border-border/60 bg-card px-6 py-10 sm:px-10">
@@ -454,21 +442,22 @@ export default function PrimitivesPage() {
         </div>
 
         <Caption>
-          19 · SignalBoard — the real table as hero media (clay K4): the
-          2026-05-12 record with a highlighted top row under portfolio pills
+          18 · SignalBoard — the real table as hero media; the pills carry
+          the proposed portfolio identity hues (Core = green, Quality = sun,
+          Trend = sky, Defensive = purple — one hue per portfolio, site-wide)
         </Caption>
         <div className="rounded-[24px] border border-border/60 bg-surface-panel-mist px-6 py-10 sm:px-10">
           <SignalBoard className="mx-auto max-w-[640px]" />
         </div>
 
         <Caption>
-          20 · StackSection ×3 — clay&apos;s sticky-stacking sections,
+          19 · StackSection ×3 — clay&apos;s sticky-stacking sections,
           colour-rule-resolved: panels stay white / soft / wash, triads live
           in the elements (scroll through to feel the stack)
         </Caption>
         <div>
           <StackSection tone="card">
-            <SectionMeter index={1} total={3} label="The idea" />
+            <SectionMeter index={1} total={3} label="The idea" accentClassName="text-acc1-fg" />
             <h2 className="mt-8 max-w-[18ch] text-3xl font-semibold leading-[1.15] sm:text-4xl">
               Stocks already leading tend to keep leading
             </h2>
@@ -478,7 +467,7 @@ export default function PrimitivesPage() {
             </p>
           </StackSection>
           <StackSection tone="soft">
-            <SectionMeter index={2} total={3} label="The system" />
+            <SectionMeter index={2} total={3} label="The system" accentClassName="text-acc2-fg" />
             <h2 className="mt-8 max-w-[18ch] text-3xl font-semibold leading-[1.15] sm:text-4xl">
               Scored weekly, rebuilt on schedule
             </h2>
@@ -488,7 +477,7 @@ export default function PrimitivesPage() {
             </p>
           </StackSection>
           <StackSection tone="wash">
-            <SectionMeter index={3} total={3} label="The record" />
+            <SectionMeter index={3} total={3} label="The record" accentClassName="text-acc3-fg" />
             <h2 className="mt-8 max-w-[18ch] text-3xl font-semibold leading-[1.15] sm:text-4xl">
               Judged on years it never saw
             </h2>
@@ -500,7 +489,7 @@ export default function PrimitivesPage() {
         </div>
 
         <Caption>
-          21 · TexturedFooter — the merged CTA + footer mega-section on
+          20 · TexturedFooter — the merged CTA + footer mega-section on
           textured green-deep with the giant wordmark (PERCEPT P8)
         </Caption>
         <TexturedFooter />
