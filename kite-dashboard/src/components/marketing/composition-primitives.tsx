@@ -8,6 +8,14 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 
+/* tailwind scanner safelist for the dynamic acc${n} classes:
+   bg-acc1 bg-acc2 bg-acc3 bg-acc4 bg-acc5 bg-acc6
+   bg-acc1-fg bg-acc2-fg bg-acc3-fg bg-acc4-fg bg-acc5-fg bg-acc6-fg
+   bg-acc1-line bg-acc2-line bg-acc3-line bg-acc4-line bg-acc5-line bg-acc6-line
+   text-acc1 text-acc2 text-acc3 text-acc4 text-acc5 text-acc6
+   text-acc1-fg text-acc2-fg text-acc3-fg text-acc4-fg text-acc5-fg text-acc6-fg
+   text-acc1-line text-acc2-line text-acc3-line text-acc4-line text-acc5-line text-acc6-line */
+
 /* ————— B-a · TexturePanel — generative card-media backdrops ————— */
 /* The parked asset-study fields, re-homed at card scale (PERCEPT P2). */
 
@@ -55,9 +63,12 @@ export type TextureVariant = "dither" | "hatch" | "grid" | "dots";
 
 export function TexturePanel({
   variant = "dither",
+  toneClassName = "text-acc1-line",
   className = "",
 }: {
   variant?: TextureVariant;
+  /* the hue the texture draws in — matches the host card's triad */
+  toneClassName?: string;
   className?: string;
 }) {
   const W = 640;
@@ -77,7 +88,7 @@ export function TexturePanel({
             ) : null,
           )}
         </defs>
-        <g className="text-acc1-line" opacity="0.5">
+        <g className={toneClassName} opacity="0.5">
           {bands.map((d, i) =>
             d > 0 ? (
               <rect
@@ -124,7 +135,7 @@ export function TexturePanel({
           height={H}
           fill={`url(#${uid}-p)`}
           mask={`url(#${uid}-m)`}
-          className="text-acc1-line"
+          className={toneClassName}
           opacity="0.4"
         />
       </>
@@ -155,7 +166,7 @@ export function TexturePanel({
           height={H}
           fill={`url(#${uid}-p)`}
           mask={`url(#${uid}-m)`}
-          className="text-acc1-line"
+          className={toneClassName}
           opacity="0.5"
         />
       </>
@@ -194,7 +205,7 @@ export function TexturePanel({
           height={H}
           fill={`url(#${uid}-p)`}
           mask={`url(#${uid}-m)`}
-          className="text-acc1-line"
+          className={toneClassName}
           opacity="0.35"
         />
       </>
@@ -388,7 +399,7 @@ function MosaicTile({ cell }: { cell: MosaicCell }) {
     );
   if (cell.kind === "method")
     return (
-      <div className="flex min-w-[180px] items-center rounded-[14px] bg-acc2-bg px-5 py-4 font-mono text-xs text-acc2-fg">
+      <div className="flex min-w-[180px] items-center rounded-[14px] bg-acc2 px-5 py-4 font-mono text-xs text-acc2-fg">
         {cell.text}
       </div>
     );
@@ -462,13 +473,13 @@ export function SignalBoard({ className = "" }: { className?: string }) {
         <span className="rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground">
           Core Momentum
         </span>
-        <span className="rounded-full bg-acc2-bg px-4 py-1.5 text-xs font-semibold text-acc2-fg">
+        <span className="rounded-full bg-acc2 px-4 py-1.5 text-xs font-semibold text-acc2-fg">
           Quality Momentum
         </span>
-        <span className="rounded-full bg-acc3-bg px-4 py-1.5 text-xs font-semibold text-acc3-fg">
+        <span className="rounded-full bg-acc3 px-4 py-1.5 text-xs font-semibold text-acc3-fg">
           Trend Leaders
         </span>
-        <span className="rounded-full bg-acc5-bg px-4 py-1.5 text-xs font-semibold text-acc5-fg">
+        <span className="rounded-full bg-acc5 px-4 py-1.5 text-xs font-semibold text-acc5-fg">
           Defensive Blend
         </span>
       </div>
@@ -494,7 +505,7 @@ export function SignalBoard({ className = "" }: { className?: string }) {
             {BOARD_ROWS.map((r) => (
               <tr
                 key={r.symbol}
-                className={`border-b border-border/60 last:border-0 ${r.hot ? "bg-acc1-bg" : ""}`}
+                className={`border-b border-border/60 last:border-0 ${r.hot ? "bg-acc1" : ""}`}
               >
                 <td className="px-5 py-2.5 font-mono text-xs text-muted-foreground">
                   {r.rank}
@@ -503,7 +514,7 @@ export function SignalBoard({ className = "" }: { className?: string }) {
                   {r.symbol}
                 </td>
                 <td className="px-2 py-2.5">
-                  <span className="block h-1.5 max-w-[180px] rounded-full bg-acc1-bg">
+                  <span className="block h-1.5 max-w-[180px] rounded-full bg-acc1">
                     <span
                       className="block h-1.5 rounded-full bg-primary"
                       style={{ width: `${(r.score / max) * 100}%` }}
@@ -530,27 +541,66 @@ export function SignalBoard({ className = "" }: { className?: string }) {
  * slides over it. Panels stay white / soft / green-wash; the triads
  * live in elements inside (the loop-23 rule). */
 
+/* Loop 31 (founder amendment): sibling section cards take the FULL clay
+ * triad — tint ground, deep ink, vivid marks — one hue per card, white
+ * page between the cards. Full-bleed tinted bands stay banned; these are
+ * inset rounded cards, colour as clay uses it. */
 export function StackSection({
+  accent,
   tone = "card",
   children,
   className = "",
 }: {
+  /* 1..6 — the card takes accN's triad as its world */
+  accent?: 1 | 2 | 3 | 4 | 5 | 6;
   tone?: "card" | "soft" | "wash";
   children: ReactNode;
   className?: string;
 }) {
-  const bg =
-    tone === "wash"
+  const bg = accent
+    ? `bg-acc${accent}`
+    : tone === "wash"
       ? "bg-[var(--wash1)]"
       : tone === "soft"
         ? "bg-surface-panel-mist"
         : "bg-card";
+  const border = accent ? "border-transparent" : "border-border/70";
   return (
     <section
-      className={`sticky top-16 min-h-[68vh] rounded-t-[36px] border border-border/70 ${bg} px-7 py-12 shadow-[0_-14px_40px_-24px_rgba(20,26,23,0.25)] sm:px-12 ${className}`}
+      className={`sticky top-16 min-h-[68vh] rounded-t-[36px] border ${border} ${bg} px-7 py-12 shadow-[0_-14px_40px_-24px_rgba(20,26,23,0.25)] sm:px-12 ${className}`}
     >
       {children}
     </section>
+  );
+}
+
+/* the clay pill-with-ghosts label, in the card's triad (deep on tint
+ * inverted: deep bg, tint text — the validated pair, so it always passes) */
+export function GhostPill({
+  accent,
+  children,
+  className = "",
+}: {
+  accent: 1 | 2 | 3 | 4 | 5 | 6;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <span className={`relative inline-flex ${className}`}>
+      <span
+        aria-hidden
+        className={`absolute left-2.5 top-0 h-full w-full rounded-full bg-acc${accent}-line opacity-25`}
+      />
+      <span
+        aria-hidden
+        className={`absolute left-1.5 top-0 h-full w-full rounded-full bg-acc${accent}-line opacity-45`}
+      />
+      <span
+        className={`relative rounded-full bg-acc${accent}-fg px-4 py-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-acc${accent}`}
+      >
+        {children}
+      </span>
+    </span>
   );
 }
 

@@ -1,5 +1,21 @@
 # design_studies — state of the study (2026-08-13)
 
+> **Loop 31 — colour commitment, clay's way (founder amendment).**
+> "We use the sets too sparingly - they are barely known." The
+> elements-only rule is AMENDED: sibling section cards now take the
+> FULL triad as their world (tint ground · deep ink · vivid marks —
+> the CLAY_STUDY part-1 formula), with white page between cards and
+> full-bleed bands still banned. Built: StackSection `accent` mode +
+> `GhostPill` (clay's pill-with-ghost-pills, deep-on-tint so contrast
+> is validated by construction) + TexturePanel `toneClassName`; the
+> stack demo is now four portfolio cards in their identity hues
+> (Core green · Quality sun · Trend sky · Defensive purple) with real
+> figures and per-card toned textures. BUG found while building: the
+> tint utilities are `bg-accN` (NOT `bg-accN-bg`) — loop-28/30 uses
+> of `bg-accN-bg` (mosaic method cells, board pills/hot-row) were
+> silently transparent; all fixed. Contract amended in
+> palette.html. Evidence: `evidence/loop31_committed-stack.jpg`.
+
 > **Loop 30 — founder curation + the accent/gradient rethink.**
 > Cuts: TexturePanel drift + contour variants (founder), and
 > `MethodMark` entirely — it resurrected the REJECTED design_reset

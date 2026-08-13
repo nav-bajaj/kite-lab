@@ -25,6 +25,7 @@ import {
   StatTable,
 } from "@/components/marketing/instrument-primitives";
 import {
+  GhostPill,
   InkBand,
   InkCard,
   ProofMosaic,
@@ -451,40 +452,143 @@ export default function PrimitivesPage() {
         </div>
 
         <Caption>
-          19 · StackSection ×3 — clay&apos;s sticky-stacking sections,
-          colour-rule-resolved: panels stay white / soft / wash, triads live
-          in the elements (scroll through to feel the stack)
+          19 · StackSection, clay-committed (founder amendment): sibling
+          section cards take the FULL triad — tint ground, deep ink, vivid
+          marks — one hue per portfolio (the identity hues), white page
+          between. Scroll through the stack
         </Caption>
         <div>
-          <StackSection tone="card">
-            <SectionMeter index={1} total={3} label="The idea" accentClassName="text-acc1-fg" />
-            <h2 className="mt-8 max-w-[18ch] text-3xl font-semibold leading-[1.15] sm:text-4xl">
-              Stocks already leading tend to keep leading
+          <StackSection accent={1}>
+            <GhostPill accent={1}>Core Momentum</GhostPill>
+            <h2 className="mt-7 max-w-[20ch] text-3xl font-semibold leading-[1.15] text-acc1-fg sm:text-4xl">
+              The flagship: pure momentum, rebuilt weekly
             </h2>
-            <p className="mt-4 max-w-[52ch] text-[15px] leading-[1.65] text-muted-foreground">
-              Momentum is one of the most documented effects in markets. The
-              hard part is following it with discipline — that is the product.
+            <p className="mt-4 max-w-[52ch] text-[15px] leading-[1.65] text-acc1-fg/80">
+              Six-month momentum scaled by volatility across the NSE 500.
+              The highest-CAGR system, and the most demanding of nerve.
             </p>
+            <div className="mt-8 grid max-w-[560px] gap-5 sm:grid-cols-3">
+              <div>
+                <p className="font-mono text-2xl text-acc1-fg [font-variant-numeric:tabular-nums]">59.4%</p>
+                <p className="mt-1 text-xs text-acc1-fg/70">CAGR · Jul 2020–Feb 2026</p>
+              </div>
+              <div>
+                <p className="font-mono text-2xl text-acc1-fg [font-variant-numeric:tabular-nums]">1.92</p>
+                <p className="mt-1 text-xs text-acc1-fg/70">Sharpe</p>
+              </div>
+              <div>
+                <p className="font-mono text-2xl text-acc1-fg [font-variant-numeric:tabular-nums]">−30.0%</p>
+                <p className="mt-1 text-xs text-acc1-fg/70">max drawdown · shown</p>
+              </div>
+            </div>
+            <div className="relative mt-8 h-[160px] overflow-hidden rounded-[18px] bg-card/60">
+              <TexturePanel variant="grid" toneClassName="text-acc1-line" />
+            </div>
+            <a
+              href="/portfolios"
+              className="mt-8 inline-block rounded-full bg-acc1-fg px-6 py-3 text-sm font-semibold text-acc1"
+            >
+              Explore the record
+            </a>
           </StackSection>
-          <StackSection tone="soft">
-            <SectionMeter index={2} total={3} label="The system" accentClassName="text-acc2-fg" />
-            <h2 className="mt-8 max-w-[18ch] text-3xl font-semibold leading-[1.15] sm:text-4xl">
-              Scored weekly, rebuilt on schedule
+          <StackSection accent={2}>
+            <GhostPill accent={2}>Quality Momentum</GhostPill>
+            <h2 className="mt-7 max-w-[20ch] text-3xl font-semibold leading-[1.15] text-acc2-fg sm:text-4xl">
+              Validated on nine years it never saw
             </h2>
-            <p className="mt-4 max-w-[52ch] text-[15px] leading-[1.65] text-muted-foreground">
-              The whole NSE 500 is ranked every week; portfolios keep the
-              leaders and step away from the fades. No headlines in between.
+            <p className="mt-4 max-w-[52ch] text-[15px] leading-[1.65] text-acc2-fg/80">
+              Capture asymmetry with a regime tilt on the Nifty 250 — tuned on
+              2009–2016, then judged untouched on 2017–2026.
             </p>
+            <div className="mt-8 grid max-w-[560px] gap-5 sm:grid-cols-3">
+              <div>
+                <p className="font-mono text-2xl text-acc2-fg [font-variant-numeric:tabular-nums]">44.78%</p>
+                <p className="mt-1 text-xs text-acc2-fg/70">CAGR · out of sample</p>
+              </div>
+              <div>
+                <p className="font-mono text-2xl text-acc2-fg [font-variant-numeric:tabular-nums]">1.86</p>
+                <p className="mt-1 text-xs text-acc2-fg/70">Sharpe</p>
+              </div>
+              <div>
+                <p className="font-mono text-2xl text-acc2-fg [font-variant-numeric:tabular-nums]">−36.6%</p>
+                <p className="mt-1 text-xs text-acc2-fg/70">max drawdown · shown</p>
+              </div>
+            </div>
+            <div className="relative mt-8 h-[160px] overflow-hidden rounded-[18px] bg-card/60">
+              <TexturePanel variant="dither" toneClassName="text-acc2-line" />
+            </div>
+            <a
+              href="/portfolios"
+              className="mt-8 inline-block rounded-full bg-acc2-fg px-6 py-3 text-sm font-semibold text-acc2"
+            >
+              Explore the record
+            </a>
           </StackSection>
-          <StackSection tone="wash">
-            <SectionMeter index={3} total={3} label="The record" accentClassName="text-acc3-fg" />
-            <h2 className="mt-8 max-w-[18ch] text-3xl font-semibold leading-[1.15] sm:text-4xl">
-              Judged on years it never saw
+          <StackSection accent={3}>
+            <GhostPill accent={3}>Trend Leaders</GhostPill>
+            <h2 className="mt-7 max-w-[20ch] text-3xl font-semibold leading-[1.15] text-acc3-fg sm:text-4xl">
+              Three measures of trend quality, one list
             </h2>
-            <p className="mt-4 max-w-[52ch] text-[15px] leading-[1.65] text-muted-foreground">
-              44.78% CAGR with a −36.6% drawdown, out of sample, net of
-              slippage. Both numbers, same ink.
+            <p className="mt-4 max-w-[52ch] text-[15px] leading-[1.65] text-acc3-fg/80">
+              Persistence above the 100-day average, drawdown control, and
+              ranked momentum across the NSE 500.
             </p>
+            <div className="mt-8 grid max-w-[560px] gap-5 sm:grid-cols-3">
+              <div>
+                <p className="font-mono text-2xl text-acc3-fg [font-variant-numeric:tabular-nums]">34.86%</p>
+                <p className="mt-1 text-xs text-acc3-fg/70">CAGR · out of sample</p>
+              </div>
+              <div>
+                <p className="font-mono text-2xl text-acc3-fg [font-variant-numeric:tabular-nums]">1.53</p>
+                <p className="mt-1 text-xs text-acc3-fg/70">Sharpe</p>
+              </div>
+              <div>
+                <p className="font-mono text-2xl text-acc3-fg [font-variant-numeric:tabular-nums]">−39.0%</p>
+                <p className="mt-1 text-xs text-acc3-fg/70">max drawdown · shown</p>
+              </div>
+            </div>
+            <div className="relative mt-8 h-[160px] overflow-hidden rounded-[18px] bg-card/60">
+              <TexturePanel variant="dots" toneClassName="text-acc3-line" />
+            </div>
+            <a
+              href="/portfolios"
+              className="mt-8 inline-block rounded-full bg-acc3-fg px-6 py-3 text-sm font-semibold text-acc3"
+            >
+              Explore the record
+            </a>
+          </StackSection>
+          <StackSection accent={5}>
+            <GhostPill accent={5}>Defensive Blend</GhostPill>
+            <h2 className="mt-7 max-w-[20ch] text-3xl font-semibold leading-[1.15] text-acc5-fg sm:text-4xl">
+              Built for staying in the game
+            </h2>
+            <p className="mt-4 max-w-[52ch] text-[15px] leading-[1.65] text-acc5-fg/80">
+              A 50/50 blend of Core and Quality Momentum ranks that halves
+              allocation when the market regime turns bearish.
+            </p>
+            <div className="mt-8 grid max-w-[560px] gap-5 sm:grid-cols-3">
+              <div>
+                <p className="font-mono text-2xl text-acc5-fg [font-variant-numeric:tabular-nums]">50/50</p>
+                <p className="mt-1 text-xs text-acc5-fg/70">component blend</p>
+              </div>
+              <div>
+                <p className="font-mono text-2xl text-acc5-fg [font-variant-numeric:tabular-nums]">−50%</p>
+                <p className="mt-1 text-xs text-acc5-fg/70">bear-regime allocation</p>
+              </div>
+              <div>
+                <p className="font-mono text-2xl text-acc5-fg [font-variant-numeric:tabular-nums]">3-day</p>
+                <p className="mt-1 text-xs text-acc5-fg/70">regime confirmation</p>
+              </div>
+            </div>
+            <div className="relative mt-8 h-[160px] overflow-hidden rounded-[18px] bg-card/60">
+              <TexturePanel variant="hatch" toneClassName="text-acc5-line" />
+            </div>
+            <a
+              href="/portfolios"
+              className="mt-8 inline-block rounded-full bg-acc5-fg px-6 py-3 text-sm font-semibold text-acc5"
+            >
+              Explore the record
+            </a>
           </StackSection>
         </div>
 
