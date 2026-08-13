@@ -1,0 +1,28 @@
+name: insights_dashboard_v2
+status: planned
+opened: 2026-08-13
+closed: null
+branch: insights_dashboard_v2   # branched from auth_stack_v2 (latest)
+related_commits: []
+supersedes: []
+depends_on:
+  - insight_engine      # v1 engine (market-level)
+  - insights_v2         # v2 admin launch + stock analytics
+  - sector_mapping      # zerodha_sectors.csv + 15 super-sectors (RRG constituent basis)
+  - breadth_atlas       # historical breadth panel data/breadth/breadth_daily.csv
+  - auth_stack_v2       # launch rides on the new auth stack
+register_rows: []       # expected: intraday-data posture row; public /insights exposure row
+
+goals:
+  - "Reposition: insight_engine becomes the PRIMARY launch surface (portfolios stay admin-only pending regulatory approval)"
+  - "Dashboard-first /insights: every headline indicator = today's value + historical chart (data + charting augmented)"
+  - "Intraday refresh during market hours (data-licensing posture decided first)"
+  - "RRG: state-of-the-art Relative Rotation Graph, sectors scoped to Nifty 50/100/250/500, with historical scrubbing"
+  - "Curated guided lists: volume surges, coiled fresh momentum, custom RS, trend & consistency"
+  - "Demote the general screener; the product guides, it is not an empty playground"
+
+governance:
+  - "TDD per tasks/insight_engine/TDD_POLICY.md for all new engine/detector work (RRG math, intraday breadth, list detectors)"
+  - "VALIDITY_PROTOCOL.md gates any forward-return claim on new lists"
+  - "Compliance lexicon (conditions, not instructions) binds all new UI copy"
+  - "security-reviewer subagent on any new API surface / sync-path diffs"
