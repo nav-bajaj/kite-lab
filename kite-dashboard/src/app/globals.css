@@ -594,3 +594,28 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
 @media (prefers-reduced-motion: reduce) {
   .mw-pipe-light { animation: none; stroke-dasharray: none; opacity: 0.25; }
 }
+
+/* Loop 28: composition primitives. Chip/mosaic rows drift gently
+ * (transform-only, alternating directions); a soft fade for swapped
+ * visuals. Static under reduced motion. */
+.mw-chip-row {
+  animation: mw-chips-drift 26s ease-in-out infinite alternate;
+}
+.mw-chip-row-alt {
+  animation-duration: 34s;
+  animation-direction: alternate-reverse;
+}
+@keyframes mw-chips-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-6%, 0, 0); }
+}
+.mw-fade-in {
+  animation: mw-fade-in 260ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+@keyframes mw-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mw-chip-row, .mw-chip-row-alt, .mw-fade-in { animation: none; }
+}

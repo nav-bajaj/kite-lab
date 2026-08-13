@@ -1,5 +1,23 @@
 # design_studies — state of the study (2026-08-13)
 
+> **Loop 28 — the full composition batch (founder: "make the whole
+> batch, we can always delete later").** All nine menu items from the
+> three reference studies, gallery entries 13-21:
+> `TexturePanel` (4 generative card-backdrop variants — the parked
+> asset fields re-homed at card scale), `SignalChips` (real 12-May
+> events, light + dark), `ProofMosaic` (stats/method/rejected/library
+> tiles, one cell language), `MethodMark` (rose-curve fact roundels),
+> `InkBand`+`InkCard` (the sustained dark movement), 
+> `AccordionShowcase` (synced accordion + swapping visual, client),
+> `SignalBoard` (the real table as hero media), `StackSection`
+> (clay stacking, colour-rule-resolved: white/soft/wash panels only),
+> `TexturedFooter` (merged CTA+footer on textured green-deep, giant
+> wordmark). Components: `composition-primitives.tsx` +
+> `accordion-showcase.tsx`; CSS: `.mw-chip-row`, `.mw-fade-in`. All
+> deterministic (RSC-safe), all real data, reduced-motion static.
+> Evidence: `evidence/loop28_composition-batch.jpg`. Founder curates:
+> keep / tune / delete per entry.
+
 > **Loop 27 — instrument primitives shipped to /primitives (founder
 > to judge).** From AEYE_STUDY.md, five devices built on the set
 > system, gallery entries 08-12: `SectionMeter` (metered index

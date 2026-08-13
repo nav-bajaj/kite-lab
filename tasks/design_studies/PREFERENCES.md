@@ -652,3 +652,14 @@ ExhibitFrame, ScrambleIn (rationed to once per page by design).
 Flagged-not-built: the sticky dark-plate opening as a hero-gradient
 replacement candidate (founder's hero round). Awaiting founder read
 on which primitives graduate to the homepage.
+
+## Loop 28 (2026-08-13) — the whole batch, for curation
+
+Founder: build everything from the combined menu, delete later. Nine
+primitives shipped to /primitives (13-21) in one loop; notable
+resolutions: clay's stacked sections built colour-rule-resolved
+(white/soft/wash panels, triads only in elements); the mosaic and
+chips carry ONLY real record content; the footer merge (CTA + sitemap
++ giant wordmark on textured green-deep) reads immediately
+production-grade and is the strongest candidate to graduate first.
+Awaiting founder cuts.

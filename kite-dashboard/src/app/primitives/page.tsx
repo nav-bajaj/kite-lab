@@ -24,6 +24,18 @@ import {
   SectionMeter,
   StatTable,
 } from "@/components/marketing/instrument-primitives";
+import {
+  InkBand,
+  InkCard,
+  MethodMark,
+  ProofMosaic,
+  SignalBoard,
+  SignalChips,
+  StackSection,
+  TexturePanel,
+  TexturedFooter,
+} from "@/components/marketing/composition-primitives";
+import { AccordionShowcase } from "@/components/marketing/accordion-showcase";
 import { HeroFlow } from "@/components/marketing/hero-flow";
 
 export const metadata = {
@@ -350,6 +362,148 @@ export default function PrimitivesPage() {
             template&apos;s personality; used once it is ours.
           </p>
         </div>
+
+        <Caption>
+          13 · TexturePanel — generative card-media backdrops in four
+          variants (PERCEPT P2); the parked asset-study fields, re-homed at
+          card scale
+        </Caption>
+        <div className="grid gap-5 sm:grid-cols-2">
+          {(
+            [
+              ["dither", "stepped bayer dots"],
+              ["drift", "cumulative curves"],
+              ["contour", "terrain rings"],
+              ["hatch", "fine diagonal fade"],
+            ] as const
+          ).map(([variant, note]) => (
+            <div
+              key={variant}
+              className="relative h-[200px] overflow-hidden rounded-[16px] border border-border/60 bg-card"
+            >
+              <TexturePanel variant={variant} />
+              <span className="absolute bottom-4 left-4 rounded-full border border-border bg-background px-3 py-1 font-mono text-[11px] text-muted-foreground">
+                {variant} · {note}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <Caption>
+          14 · SignalChips — real pipeline events as ambient rows, one
+          highlighted (PERCEPT P4 × the aeye tape); drifts gently, static
+          under reduced motion
+        </Caption>
+        <div className="rounded-[24px] border border-border/60 bg-card px-4 py-8">
+          <SignalChips />
+        </div>
+
+        <Caption>
+          15 · ProofMosaic — the record as one tile wall: real stats, method
+          facts, the rejected ledger, real library titles (clay K3, no
+          invented logos or quotes)
+        </Caption>
+        <ProofMosaic />
+
+        <Caption>
+          16 · MethodMark — institutional facts as rose-curve roundels (clay
+          K6 in our line-work; the certificate seal at badge scale)
+        </Caption>
+        <div className="flex flex-wrap items-center justify-center gap-10 rounded-[24px] border border-border/60 bg-card px-6 py-10">
+          <MethodMark lines={["OOS", "2017–26"]} />
+          <MethodMark lines={["NET OF", "SLIPPAGE"]} />
+          <MethodMark lines={["20% DD", "STOP"]} />
+          <MethodMark lines={["1/N", "WEIGHT"]} />
+        </div>
+
+        <Caption>
+          17 · InkBand + InkCard + dark SignalChips — the sustained dark
+          movement (PERCEPT P3) on the green-deep drench token; one per page
+        </Caption>
+        <InkBand>
+          <p className="font-mono text-xs uppercase tracking-[0.14em] text-[color-mix(in_oklab,var(--surface-panel-deep-foreground)_60%,transparent)]">
+            Why a system
+          </p>
+          <h2 className="mt-3 max-w-[22ch] text-3xl font-semibold leading-[1.15] sm:text-4xl">
+            Discipline is the product
+          </h2>
+          <div className="mt-10 grid gap-4 sm:grid-cols-3">
+            <InkCard title="Rules, written down">
+              Entries, exits, and sizing decided before the market opens ever
+              factor into it.
+            </InkCard>
+            <InkCard title="Validated out of sample">
+              Tuned on 2009–2016, then left alone and judged on the next 9.3
+              years.
+            </InkCard>
+            <InkCard title="Drawdowns, shown">
+              −36.6% is printed beside 44.78% wherever the record appears.
+            </InkCard>
+          </div>
+          <div className="mt-10">
+            <SignalChips dark />
+          </div>
+        </InkBand>
+
+        <Caption>
+          18 · AccordionShowcase — synced accordion + swapping visual
+          (PERCEPT P5); texture stand-ins until real product screenshots land
+        </Caption>
+        <div className="rounded-[24px] border border-border/60 bg-card px-6 py-10 sm:px-10">
+          <AccordionShowcase />
+        </div>
+
+        <Caption>
+          19 · SignalBoard — the real table as hero media (clay K4): the
+          2026-05-12 record with a highlighted top row under portfolio pills
+        </Caption>
+        <div className="rounded-[24px] border border-border/60 bg-surface-panel-mist px-6 py-10 sm:px-10">
+          <SignalBoard className="mx-auto max-w-[640px]" />
+        </div>
+
+        <Caption>
+          20 · StackSection ×3 — clay&apos;s sticky-stacking sections,
+          colour-rule-resolved: panels stay white / soft / wash, triads live
+          in the elements (scroll through to feel the stack)
+        </Caption>
+        <div>
+          <StackSection tone="card">
+            <SectionMeter index={1} total={3} label="The idea" />
+            <h2 className="mt-8 max-w-[18ch] text-3xl font-semibold leading-[1.15] sm:text-4xl">
+              Stocks already leading tend to keep leading
+            </h2>
+            <p className="mt-4 max-w-[52ch] text-[15px] leading-[1.65] text-muted-foreground">
+              Momentum is one of the most documented effects in markets. The
+              hard part is following it with discipline — that is the product.
+            </p>
+          </StackSection>
+          <StackSection tone="soft">
+            <SectionMeter index={2} total={3} label="The system" />
+            <h2 className="mt-8 max-w-[18ch] text-3xl font-semibold leading-[1.15] sm:text-4xl">
+              Scored weekly, rebuilt on schedule
+            </h2>
+            <p className="mt-4 max-w-[52ch] text-[15px] leading-[1.65] text-muted-foreground">
+              The whole NSE 500 is ranked every week; portfolios keep the
+              leaders and step away from the fades. No headlines in between.
+            </p>
+          </StackSection>
+          <StackSection tone="wash">
+            <SectionMeter index={3} total={3} label="The record" />
+            <h2 className="mt-8 max-w-[18ch] text-3xl font-semibold leading-[1.15] sm:text-4xl">
+              Judged on years it never saw
+            </h2>
+            <p className="mt-4 max-w-[52ch] text-[15px] leading-[1.65] text-muted-foreground">
+              44.78% CAGR with a −36.6% drawdown, out of sample, net of
+              slippage. Both numbers, same ink.
+            </p>
+          </StackSection>
+        </div>
+
+        <Caption>
+          21 · TexturedFooter — the merged CTA + footer mega-section on
+          textured green-deep with the giant wordmark (PERCEPT P8)
+        </Caption>
+        <TexturedFooter />
       </main>
     </div>
   );
