@@ -1,5 +1,28 @@
 # design_studies — state of the study (2026-08-13)
 
+> **PRIMITIVES PHASE CLOSED (2026-08-13, founder call).** Loops 23-31
+> delivered: the SET colour system (single green, five triads,
+> light + green-black dark) and type system (Libre Baskerville 500 ·
+> Outfit · IBM Plex Mono) — contract at brand/palette.html; both
+> ported into the app; and a 20-entry primitive library at
+> /primitives spanning the clay-era cards (01-07), the instrument set
+> (08-12), and the composition set (13-20, incl. the clay-committed
+> portfolio stack in identity hues and the textured mega-footer).
+> Reference decodes: CLAY_STUDY (+part 2), AEYE_STUDY, PERCEPT_STUDY.
+> Refinement continues as-needed against real page builds. NEXT WHEN
+> RESUMED: (1) homepage recomposition from the library — hero rework
+> first (the gradient dies; candidates: sticky dark plate, table-as-
+> hero, daylight collage row), then banded/carded body, ink band,
+> committed stack, textured footer; (2) real product screenshots into
+> the media slots (still the highest-impact open item); (3) other
+> marketing surfaces (/portfolios, /library, sign-in) onto the
+> system; (4) the merge checklist below (middleware /primitives,
+> providers defaultTheme + dashboard picker retirement, Lenis scope,
+> critique re-run, R-023); (5) port the final contract back to
+> ~/marketworks-design as a new DESIGN.md major version. Branch has
+> never been pushed — consider pushing design_studies_clay to origin
+> as backup before a long pause.
+
 > **Loop 31 — colour commitment, clay's way (founder amendment).**
 > "We use the sets too sparingly - they are barely known." The
 > elements-only rule is AMENDED: sibling section cards now take the
