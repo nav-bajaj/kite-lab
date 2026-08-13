@@ -50,9 +50,9 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  /* Brand display serif — `font-serif` resolves to Fraunces (loaded in
-   * layout.tsx). Only the `.mw-brand` marketing surfaces use it. */
-  --font-serif: var(--font-fraunces);
+  /* Brand display serif — `font-serif` resolves to Libre Baskerville
+   * (loop 25; loaded in layout.tsx). Only `.mw-brand` surfaces use it. */
+  --font-serif: var(--font-libre-baskerville);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -310,77 +310,86 @@
  * line · deep fg) retuned to Clay vibrance. Vivids meet 4.5:1 as text only
  * where used at display sizes; every accN-fg is >= 4.5:1 on its accN-bg
  * AND on white. The dark companion is the .dark .mw-brand block below. */
+/* Loop 24: IBM Plex Mono is the data voice on brand surfaces — figures,
+ * labels, captions, tickers, axes. Re-pointing the aliased var scopes the
+ * swap to .mw-brand without touching the dashboard's Geist Mono. */
+.mw-brand {
+  --font-geist-mono: var(--font-plex-mono), ui-monospace, monospace;
+}
+
 html[data-palette="ocean"]:not(.dark) .mw-brand {
-  /* Loop 20 founder call: pure white ground (was warm paper #FBFAF7) —
-   * "white will make the colors pop the most". */
+  /* Loop 26: the loop-23 SINGLE-GREEN system rides the ocean slot (the
+   * study's default). White ground, green-cast ink + one grey, brand green
+   * #0B7E52 (clay-vibrance band, 5.1:1), five leashed accent triads
+   * (sun/sky/coral/purple/lime) on the acc sockets — acc1 carries the green
+   * family itself. Contract: tasks/design_studies/brand/palette.html. */
   --background: #FFFFFF;
-  --foreground: #1B1A17;
-  --muted-foreground: #615E56;
-  --border: #E6E3DB;
-  --input: #E6E3DB;
-  --primary: #0A5CFF;
+  --foreground: #141A17;
+  --muted-foreground: #5C6663;
+  --border: #E3E8E5;
+  --input: #E3E8E5;
+  --primary: #0B7E52;
   --primary-foreground: #FFFFFF;
-  --secondary: #F5B71E;
-  --secondary-foreground: #1B1A17;
-  --ring: #0A5CFF;
-  --display-accent: #FF5A3C;
-  --acc1-bg: #EAF1FF; --acc1-line: #0A5CFF; --acc1-fg: #0846C4;
-  --acc2-bg: #FEF3CF; --acc2-line: #F5B71E; --acc2-fg: #7A5308;
-  --acc3-bg: #DFF6E7; --acc3-line: #12A85F; --acc3-fg: #0E6B3C;
-  --acc4-bg: #FFEBE3; --acc4-line: #FF5A3C; --acc4-fg: #B03414;
-  --acc5-bg: #EFEAFF; --acc5-line: #7C4BF5; --acc5-fg: #5318D9;
-  --acc6-bg: #FDE8F5; --acc6-line: #E44FBE; --acc6-fg: #A5107C;
-  --wash1: #F1F6FF; --wash2: #FEF8E6; --wash3: #FFF1EC;
-  --chart-series-1: #0A5CFF;
-  --chart-series-2: #C77E14;
-  --chart-series-3: #64748B;
-  /* Deep panel (footer + drench) follows the palette: ink-navy. */
-  --surface-panel-deep: #081F4D;
-  --surface-panel-deep-foreground: #EAF1FF;
-  /* Panels sit warm-neutral on the paper ground (Clay oat-100/200), not
-   * blue-tinted — color below the hero comes from ELEMENTS, not fields. */
-  --surface-panel-mist: #F4F2EC;
-  --surface-panel-tint: #F8F7F2;
+  --secondary: #F5B73E;
+  --secondary-foreground: #141A17;
+  --ring: #0B7E52;
+  --display-accent: #14A468;
+  --acc1-bg: #DFF4E8; --acc1-line: #14A468; --acc1-fg: #0A3B28;
+  --acc2-bg: #FFF1CE; --acc2-line: #F5B73E; --acc2-fg: #6B4A08;
+  --acc3-bg: #E2EEFF; --acc3-line: #2179E8; --acc3-fg: #123C77;
+  --acc4-bg: #FDE5DE; --acc4-line: #E85D45; --acc4-fg: #6E2114;
+  --acc5-bg: #EFE8FD; --acc5-line: #8B5CF6; --acc5-fg: #341B70;
+  --acc6-bg: #F4FBD9; --acc6-line: #C6E437; --acc6-fg: #333F06;
+  --wash1: #EEF9F3; --wash2: #FFF6DE; --wash3: #EDF3FE;
+  --chart-series-1: #0B7E52;
+  --chart-series-2: #1B66C9;
+  --chart-series-3: #79837F;
+  /* Deep panel (footer + drench): the one green-deep moment per page. */
+  --surface-panel-deep: #0A3B28;
+  --surface-panel-deep-foreground: #BFEBD8;
+  /* Bands stay near-white with a faint green cast — colour below the hero
+   * comes from ELEMENTS, never tinted page fields. */
+  --surface-panel-mist: #F4F7F5;
+  --surface-panel-tint: #F8FAF8;
   --surface-base: #FFFFFF;
 }
 
-/* Marketworks Dark — the dark half of the two-theme system (fires for the
- * Midnight/dark picks; scoped to marketing surfaces during the study).
- * Ink-navy ground rather than Midnight's blue-grey, so the Ocean identity
- * holds in the dark: brightened Horizon primary, and the same six triads
- * inverted — deep wash · bright line · pale fg. */
+/* Marketworks Dark (loop 26): the green-black companion of the single-green
+ * system — designed, not inverted. Brightened anchor #3FCE95 (9.3:1), triads
+ * flipped to deep wash · bright line · pale fg. Contract:
+ * tasks/design_studies/brand/palette.html (dark column). */
 .dark .mw-brand {
-  --background: #0A111F;
-  --foreground: #EDF1F8;
-  --card: #131C2E;
-  --card-foreground: #EDF1F8;
-  --popover: #131C2E;
-  --popover-foreground: #EDF1F8;
-  --muted: #162033;
-  --muted-foreground: #98A2B3;
-  --border: #263248;
-  --input: #263248;
-  --primary: #4D8DFF;
-  --primary-foreground: #071022;
-  --secondary: #FFC94D;
-  --secondary-foreground: #1B1A17;
-  --ring: #4D8DFF;
-  --display-accent: #FF7A5C;
-  --acc1-bg: #122344; --acc1-line: #4D8DFF; --acc1-fg: #A8C6FF;
-  --acc2-bg: #2E2408; --acc2-line: #FFC94D; --acc2-fg: #FFD98A;
-  --acc3-bg: #0D2B1D; --acc3-line: #2ECC7A; --acc3-fg: #8FE6B4;
-  --acc4-bg: #331410; --acc4-line: #FF7A5C; --acc4-fg: #FFAE9A;
-  --acc5-bg: #221541; --acc5-line: #9B76FF; --acc5-fg: #C9B3FF;
-  --acc6-bg: #331028; --acc6-line: #F06AD0; --acc6-fg: #F5A9E1;
-  --wash1: #101B31; --wash2: #221D10; --wash3: #291511;
-  --chart-series-1: #4D8DFF;
-  --chart-series-2: #FFC94D;
-  --chart-series-3: #8A94A6;
-  --surface-panel-deep: #060F26;
-  --surface-panel-deep-foreground: #EAF1FF;
-  --surface-panel-mist: #121A2A;
-  --surface-panel-tint: #0E1626;
-  --surface-base: #0A111F;
+  --background: #0D1412;
+  --foreground: #E9EFEB;
+  --card: #141C19;
+  --card-foreground: #E9EFEB;
+  --popover: #141C19;
+  --popover-foreground: #E9EFEB;
+  --muted: #111916;
+  --muted-foreground: #A2ADA7;
+  --border: #26302A;
+  --input: #26302A;
+  --primary: #3FCE95;
+  --primary-foreground: #0D1412;
+  --secondary: #F2C25C;
+  --secondary-foreground: #141A17;
+  --ring: #3FCE95;
+  --display-accent: #3FCE95;
+  --acc1-bg: #12271D; --acc1-line: #3FCE95; --acc1-fg: #BFEBD8;
+  --acc2-bg: #2A2210; --acc2-line: #F2C25C; --acc2-fg: #F7DDA0;
+  --acc3-bg: #101E30; --acc3-line: #6AA6F2; --acc3-fg: #BCD7FA;
+  --acc4-bg: #2C1610; --acc4-line: #F0876F; --acc4-fg: #F8C4B6;
+  --acc5-bg: #1D1530; --acc5-line: #A98BF8; --acc5-fg: #D8CCFB;
+  --acc6-bg: #232B0E; --acc6-line: #C9E45B; --acc6-fg: #E6F5B0;
+  --wash1: #12271D; --wash2: #241F10; --wash3: #101E30;
+  --chart-series-1: #2EA274;
+  --chart-series-2: #4C86C9;
+  --chart-series-3: #7E8A84;
+  --surface-panel-deep: #082E1F;
+  --surface-panel-deep-foreground: #BFEBD8;
+  --surface-panel-mist: #111916;
+  --surface-panel-tint: #101714;
+  --surface-base: #0D1412;
 }
 
 
@@ -405,24 +414,13 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
 }
 
 
-/* Heading sans layer (loop 7): flips every heading — including the ones
- * inside shared production components — to the trial heading face without
- * editing components. Remove the class to fall back to each component's own
- * heading font. */
-.mw-sans-headings :is(h1, h2, h3, h4) {
-  font-family: "Stack Sans Text", var(--font-schibsted), var(--font-outfit),
-    ui-sans-serif, system-ui, sans-serif;
-  letter-spacing: -0.015em;
-}
-
-/* Heading serif layer (loop 20): the founder wants another look at the
- * original Fraunces + Outfit pairing on the new composition. Same
- * mechanism as .mw-sans-headings; gentler tracking than the sans — a
- * display serif cramps below about -0.02em. Being unlayered, this
- * letter-spacing intentionally beats per-element tracking utilities. */
+/* Heading serif layer (loop 20 mechanism, loop 26 face): Libre Baskerville
+ * at 500 — the working display weight. LB runs wide and carries its own
+ * tension; tracking stays at 0 (negative tracking cramps it). */
 .mw-serif-headings :is(h1, h2, h3, h4) {
-  font-family: var(--font-fraunces), Georgia, serif;
-  letter-spacing: -0.012em;
+  font-family: var(--font-libre-baskerville), Georgia, serif;
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
 /* Loop 11: the dramatic Sui-anatomy hero — near-black top, luminous primary
@@ -436,8 +434,8 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
 .mw-hero-drama {
   background: linear-gradient(
     180deg,
-    color-mix(in oklab, var(--primary) 22%, #010714) 0%,
-    color-mix(in oklab, var(--primary) 62%, #02102e) 40%,
+    color-mix(in oklab, var(--primary) 22%, #020B07) 0%,
+    color-mix(in oklab, var(--primary) 62%, #06251A) 40%,
     color-mix(in oklab, var(--primary) 88%, #ffffff) 72%,
     color-mix(in oklab, var(--primary) 30%, var(--surface-base, #ffffff)) 90%,
     color-mix(in oklab, var(--primary) 8%, var(--surface-base, #ffffff)) 97%,
@@ -450,9 +448,9 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
 .dark .mw-hero-drama {
   background: linear-gradient(
     180deg,
-    color-mix(in oklab, var(--primary) 16%, #01040c) 0%,
-    color-mix(in oklab, var(--primary) 52%, #030b20) 44%,
-    color-mix(in oklab, var(--primary) 74%, #0a1a3a) 72%,
+    color-mix(in oklab, var(--primary) 16%, #020806) 0%,
+    color-mix(in oklab, var(--primary) 52%, #07231A) 44%,
+    color-mix(in oklab, var(--primary) 74%, #0E3B28) 72%,
     color-mix(in oklab, var(--primary) 26%, var(--surface-base)) 90%,
     color-mix(in oklab, var(--primary) 8%, var(--surface-base)) 97%,
     var(--surface-base) 100%

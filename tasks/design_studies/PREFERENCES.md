@@ -620,3 +620,21 @@ branch's VARIANTS.md).
    system: LB display + Outfit body/UI + IBM Plex Mono data voice.
    COLOUR + TYPOGRAPHY ARE SET; punctuation/copy explicitly out of
    scope for the visual effort.
+
+## Loop 26 (2026-08-13) — port: green system + LB into the app
+
+Founder: "let's do 1 and 2" (the two port items), then more
+primitives/sections/assets with his exploration ideas. Done as a
+re-valuing, not a re-plumbing: the ocean-slot light block and the
+.dark .mw-brand block in globals.css now carry the loop-23 green
+tokens (acc1 = the green family itself; acc2-6 = sun/sky/coral/
+purple/lime; washes, chart series, green-deep drench panel).
+layout.tsx: Fraunces + Schibsted + Stack Sans CDN out; Libre
+Baskerville (variable 400-700 + italic) + IBM Plex Mono in;
+.mw-serif-headings pins LB 500, tracking 0; .mw-brand re-points the
+mono var to Plex Mono (dashboard Geist untouched). /primitives now
+uses serif headings. Hero gradient re-anchored to green-blacks but
+remains the known-dated device — replacement belongs to the
+founder's asset round. Verified light + dark + /primitives; tsc
+clean. Turbopack cache cleared before verification (the stale-css
+gotcha).

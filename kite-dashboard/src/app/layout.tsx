@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import {
   Geist,
   Geist_Mono,
-  Fraunces,
+  Libre_Baskerville,
   Outfit,
-  Schibsted_Grotesk,
+  IBM_Plex_Mono,
 } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -21,13 +21,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Brand fonts (DESIGN.md §3) — self-hosted by next/font (CSP-safe; no CDN).
-// Used by the `.mw-brand` marketing/library surfaces. The rest of the app
-// keeps Geist. Fraunces = display serif, Outfit = sans body/UI.
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+// Brand fonts (loop 25, tasks/design_studies/brand/): Libre Baskerville =
+// display serif (variable 400-700; 500 is the working display weight),
+// Outfit = sans body/UI, IBM Plex Mono = the data voice (figures, labels,
+// captions, tickers, axes — never body text). Self-hosted by next/font
+// (CSP-safe; no CDN). Used by `.mw-brand` surfaces; the app shell keeps
+// Geist until the dashboard port.
+const libreBaskerville = Libre_Baskerville({
+  variable: "--font-libre-baskerville",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
   style: ["normal", "italic"],
 });
 
@@ -37,13 +39,10 @@ const outfit = Outfit({
   weight: ["400", "500", "600"],
 });
 
-// design_studies loop 7: heading sans under study (founder: two sans faces —
-// Outfit for content, a slightly stylized one for headings). Schibsted
-// Grotesk is the shortlist pick; swap here to trial alternatives.
-const schibsted = Schibsted_Grotesk({
-  variable: "--font-schibsted",
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -62,26 +61,8 @@ export default function RootLayout({
       signUpFallbackRedirectUrl="/"
     >
       <html lang="en" suppressHydrationWarning>
-        {/* Stack Sans Text (design_studies heading trial) predates this Next
-            version's next/font data, so it loads via the Google Fonts
-            stylesheet (CSP already allows these origins; React hoists the
-            links). Self-host via next/font after the next Next.js upgrade. */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        {/* eslint-disable-next-line @next/next/no-page-custom-font -- rule
-            targets the pages router; this is the App Router ROOT layout, so
-            the stylesheet applies to every route */}
-        <link
-          rel="stylesheet"
-          precedence="default"
-          href="https://fonts.googleapis.com/css2?family=Stack+Sans+Text:wght@500;600;700&display=swap"
-        />
         <body
-          className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${outfit.variable} ${schibsted.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} ${libreBaskerville.variable} ${outfit.variable} ${plexMono.variable} antialiased`}
         >
           <Providers>{children}</Providers>
           <SpeedInsights />

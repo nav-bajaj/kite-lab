@@ -37,7 +37,7 @@ function Caption({ children }: { children: React.ReactNode }) {
 
 export default function PrimitivesPage() {
   return (
-    <div className="mw-brand mw-mint2 mw-sans-headings relative min-h-screen bg-surface-base">
+    <div className="mw-brand mw-mint2 mw-serif-headings relative min-h-screen bg-surface-base">
       <FloatingNav />
       <main className="mx-auto max-w-[1140px] px-6 pb-28 pt-32">
         <h1 className="text-[2rem] font-semibold leading-[1.1] tracking-[-0.02em] text-foreground sm:text-[2.5rem]">

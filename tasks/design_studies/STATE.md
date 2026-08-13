@@ -1,30 +1,19 @@
-# design_studies — state of the study (2026-08-12)
+# design_studies — state of the study (2026-08-13)
 
-> **Loop 23 — direction reset (founder-approved): single-green colour
-> system.** The six-palette system AND the loop-19 two-theme Clay
-> mapping are superseded by one green-anchored light + dark system:
-> white ground, ink `#141A17` + one grey `#5C6663`, brand green
-> `#0B7E52` (4-step family), five leashed accent triads (sun / sky /
-> coral / purple / lime), validated data inks, green-black dark
-> companion. Live guide: `tasks/design_studies/brand/palette.html`
-> (serve the folder; light/dark toggle; contrast badges computed
-> live). Evidence: `evidence/loop23_palette-{light,dark}.jpg`.
-> Positioning line (founder, binding): Marketworks lives in the
-> overlap of **Finance × Technology × Editorial Research** — every
-> element is judged against that. Roadmap: font pairings → asset
-> study (hero replacement for the heavy gradient, textures, dither,
-> light motion) → homepage re-composition (banded + carded rhythm).
-> The guide page grows into the full visual contract; the /primitives
-> page will be folded into it. Sections below describe loops ≤22.
-
-> **Loop 24 — type decided (superseded by loop 25 on the serif).**
-> Nine wardrobes at `tasks/design_studies/brand/fonts.html` (6
-> founder-named references harvested live: public.com, hebbia,
-> tars.pro, zerohash, aeye webflow, clay.com; + 2 hybrids). Verdict:
-> keep Fraunces + Outfit, adopt **IBM Plex Mono** as the third
-> voice, used generously — figures, labels, captions, metadata,
-> tickers, chart axes; never body text. Evidence:
-> `evidence/loop24_fonts-{decided,study}.jpg`.
+> **Loop 26 — the SET systems are IN THE APP.** kite-dashboard now
+> renders the loop-23/25 decisions: the ocean slot carries the
+> single-green light theme, `.dark .mw-brand` is the green-black
+> companion, and fonts are Libre Baskerville (next/font variable
+> 400-700 + italic; `.mw-serif-headings` pins 500) + Outfit + IBM
+> Plex Mono (the data voice — `.mw-brand` re-points the mono var, so
+> the dashboard keeps Geist Mono untouched). Stack Sans CDN link and
+> Schibsted removed; /primitives moved to serif headings; hero-drama
+> gradient anchors re-cast green (still the old gradient device — the
+> founder's asset work replaces it). Evidence:
+> `evidence/loop26_home-{light,dark}.jpg`, `loop26_primitives.jpg`.
+> tsc clean; both themes verified. **Next: founder-led primitives /
+> sections / assets exploration on this canvas** (exploration ideas
+> to come from the founder).
 
 > **Loop 25 — COLOUR + TYPE ARE SET. Serif revised to Libre
 > Baskerville; asset studies parked.** The type system is now
@@ -48,6 +37,32 @@
 > review bar), and the open agency-review items: real product
 > screenshots into media slots (highest-impact), accurate India
 > geometry if the dot-map survives.
+
+> **Loop 24 — type decided (superseded by loop 25 on the serif).**
+> Nine wardrobes at `tasks/design_studies/brand/fonts.html` (6
+> founder-named references harvested live: public.com, hebbia,
+> tars.pro, zerohash, aeye webflow, clay.com; + 2 hybrids). Verdict:
+> keep Fraunces + Outfit, adopt **IBM Plex Mono** as the third
+> voice, used generously — figures, labels, captions, metadata,
+> tickers, chart axes; never body text. Evidence:
+> `evidence/loop24_fonts-{decided,study}.jpg`.
+
+> **Loop 23 — direction reset (founder-approved): single-green colour
+> system.** The six-palette system AND the loop-19 two-theme Clay
+> mapping are superseded by one green-anchored light + dark system:
+> white ground, ink `#141A17` + one grey `#5C6663`, brand green
+> `#0B7E52` (4-step family), five leashed accent triads (sun / sky /
+> coral / purple / lime), validated data inks, green-black dark
+> companion. Live guide: `tasks/design_studies/brand/palette.html`
+> (serve the folder; light/dark toggle; contrast badges computed
+> live). Evidence: `evidence/loop23_palette-{light,dark}.jpg`.
+> Positioning line (founder, binding): Marketworks lives in the
+> overlap of **Finance × Technology × Editorial Research** — every
+> element is judged against that. Roadmap: font pairings → asset
+> study (hero replacement for the heavy gradient, textures, dither,
+> light motion) → homepage re-composition (banded + carded rhythm).
+> The guide page grows into the full visual contract; the /primitives
+> page will be folded into it. Sections below describe loops ≤22.
 
 > Loop 19 lives on branch **design_studies_clay** (off design_studies):
 > clay.com decoded (CLAY_STUDY.md) and the six-palette picker collapsed
