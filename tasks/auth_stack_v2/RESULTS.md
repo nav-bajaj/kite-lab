@@ -259,3 +259,21 @@ amendments when founder provides direction.
 Remaining before Phase 4 can start: SES production access GRANTED +
 the generic /security-review pass (run in a fresh session). Then C4.1
 prod-project setup per the recorded checklist.
+
+## 2026-08-13 — SES PRODUCTION ACCESS GRANTED
+
+AWS approved after the founder's case reply: ProductionAccessEnabled
+true, quota 50,000/day @ 14/sec, account-level suppression (BOUNCE +
+COMPLAINT) active. Verified live: API send to an UNVERIFIED recipient
+(founder's gmail) accepted — sandbox restriction gone. The hard
+public-beta email blocker is CLEARED.
+
+ZeptoMail (Zoho, India-hosted) was signed up as a hedge during the AWS
+wait; vetting materials prepared (evidence/marketworks-signin-
+zeptomail.png + reply text). PARKED as fallback — no DNS/SMTP work
+done or needed; switching later is a Supabase-dashboard SMTP swap +
+domain verification (mind the Namecheap doubled-Host gotcha).
+
+Gate status for Phase 4: only the generic /security-review pass
+remains (run in a fresh session). MSG91 registration still pending
+(Phase 5, BLOCKED externally).
