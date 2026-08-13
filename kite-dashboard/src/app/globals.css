@@ -569,3 +569,28 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
     opacity: 0.85;
   }
 }
+/* Loop 27: instrument primitives (AEYE_STUDY.md). Dotted canvas for the
+ * pipeline diagram, and the travelling light on its connector rail —
+ * a short bright dash cycling the pathLength=100 rail. Decorative:
+ * static under reduced motion. */
+.mw-dot-canvas {
+  background-image: radial-gradient(
+    color-mix(in oklab, var(--foreground) 14%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 18px 18px;
+}
+.mw-pipe-light {
+  stroke: var(--primary);
+  stroke-dasharray: 8 92;
+  stroke-dashoffset: 100;
+  stroke-linecap: round;
+  animation: mw-pipe-travel 6s linear infinite;
+}
+@keyframes mw-pipe-travel {
+  from { stroke-dashoffset: 100; }
+  to { stroke-dashoffset: -100; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mw-pipe-light { animation: none; stroke-dasharray: none; opacity: 0.25; }
+}

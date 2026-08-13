@@ -638,3 +638,17 @@ remains the known-dated device — replacement belongs to the
 founder's asset round. Verified light + dark + /primitives; tsc
 clean. Turbopack cache cleared before verification (the stale-css
 gotcha).
+
+## Loop 27 (2026-08-13) — aeye study + instrument primitives
+
+Founder pointed at aeye-saas.webflow.io: mine layout/sections/cards/
+animations only (colour+type locked). Full Playwright exploration +
+DOM dig (their stack: GSAP ScrollTrigger + ScrambleText, sticky
+sheets, pixel-font decoration, hairline-table-as-layout). Decoded in
+AEYE_STUDY.md: 17-device catalogue, 11 mapped takes, skip list.
+Built the shortlist onto /primitives (08-12): SectionMeter,
+StatTable (real QM record), PipelineDiagram (real pipeline order),
+ExhibitFrame, ScrambleIn (rationed to once per page by design).
+Flagged-not-built: the sticky dark-plate opening as a hero-gradient
+replacement candidate (founder's hero round). Awaiting founder read
+on which primitives graduate to the homepage.

@@ -17,6 +17,14 @@ import {
   SectionHeader,
   StackCard,
 } from "@/components/marketing/study-cards";
+import {
+  ExhibitFrame,
+  PipelineDiagram,
+  ScrambleIn,
+  SectionMeter,
+  StatTable,
+} from "@/components/marketing/instrument-primitives";
+import { HeroFlow } from "@/components/marketing/hero-flow";
 
 export const metadata = {
   title: "Primitives gallery — design_studies",
@@ -273,6 +281,75 @@ export default function PrimitivesPage() {
             </p>
           </div>
         </section>
+
+        <Caption>
+          08 · SectionMeter — the metered index header (AEYE_STUDY D4);
+          evolves the mono section captions into instrument telemetry
+        </Caption>
+        <div className="space-y-10 rounded-[24px] border border-border/60 bg-card px-6 py-10 sm:px-10">
+          <div>
+            <SectionMeter index={2} total={5} label="How it works" />
+            <h2 className="mt-6 text-2xl font-semibold tracking-[-0.01em] text-foreground sm:text-3xl">
+              Momentum, done properly
+            </h2>
+          </div>
+          <div>
+            <SectionMeter index={4} total={5} label="The portfolios" />
+            <h2 className="mt-6 text-2xl font-semibold tracking-[-0.01em] text-foreground sm:text-3xl">
+              Three ways to follow momentum
+            </h2>
+          </div>
+        </div>
+
+        <Caption>
+          09 · StatTable — figures in hairline cells, no cards (AEYE_STUDY
+          D5); real Quality Momentum record
+        </Caption>
+        <StatTable
+          cells={[
+            { value: "44.78%", label: "CAGR", note: "compounded annual return" },
+            { value: "1.86", label: "Sharpe", note: "return per unit of risk" },
+            { value: "−36.6%", label: "Max drawdown", note: "printed beside returns" },
+            { value: "9.3y", label: "Validation window", note: "rules never re-tuned" },
+          ]}
+          footnote="Quality Momentum · out-of-sample 2017–2026 · net of 0.2% per-trade slippage · Nifty 250"
+        />
+
+        <Caption>
+          10 · PipelineDiagram — the real daily pipeline as labelled nodes on
+          a dotted canvas (AEYE_STUDY D10); one light travels the rail,
+          static under reduced motion
+        </Caption>
+        <PipelineDiagram />
+
+        <Caption>
+          11 · ExhibitFrame — corner-tick framing for charts and media
+          (AEYE_STUDY D8); shown around the HeroFlow signal field
+        </Caption>
+        <ExhibitFrame
+          label="Exhibit — signal field"
+          caption="The homepage flow-field canvas inside the frame; any chart, screenshot, or media slots in the same way."
+        >
+          <div className="relative h-[300px] w-full overflow-hidden rounded-[16px] border border-border/60 bg-card">
+            <div aria-hidden className="mw-grid-fade absolute inset-0" />
+            <HeroFlow className="absolute inset-0" />
+          </div>
+        </ExhibitFrame>
+
+        <Caption>
+          12 · ScrambleIn — the single decode moment (AEYE_STUDY D3,
+          rationed: once per page); scroll it into view to trigger, refresh
+          to replay
+        </Caption>
+        <div className="rounded-[24px] border border-border/60 bg-card px-6 py-16 text-center sm:px-10">
+          <h2 className="text-2xl font-semibold tracking-[-0.01em] text-foreground sm:text-4xl">
+            <ScrambleIn text="Rebuilt on schedule, not on headlines." />
+          </h2>
+          <p className="mx-auto mt-4 max-w-[46ch] text-[15px] leading-[1.6] text-muted-foreground">
+            One authored decode per page. On every heading it would be the
+            template&apos;s personality; used once it is ours.
+          </p>
+        </div>
       </main>
     </div>
   );

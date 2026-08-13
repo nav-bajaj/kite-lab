@@ -1,5 +1,18 @@
 # design_studies — state of the study (2026-08-13)
 
+> **Loop 27 — instrument primitives shipped to /primitives (founder
+> to judge).** From AEYE_STUDY.md, five devices built on the set
+> system, gallery entries 08-12: `SectionMeter` (metered index
+> header), `StatTable` (hairline-cell figures, real Quality Momentum
+> record), `PipelineDiagram` (the real daily pipeline as nodes on a
+> dotted canvas, travelling light on the rail, static under
+> reduced-motion), `ExhibitFrame` (corner-tick media framing), and
+> `ScrambleIn` (the single rationed decode moment, hand-rolled, no
+> GSAP). Components:
+> `components/marketing/instrument-primitives.tsx` + `scramble-in.tsx`;
+> CSS: `.mw-dot-canvas`, `.mw-pipe-light` in globals. Evidence:
+> `evidence/loop27_instrument-primitives.jpg`.
+
 > **Loop 26 — the SET systems are IN THE APP.** kite-dashboard now
 > renders the loop-23/25 decisions: the ocean slot carries the
 > single-green light theme, `.dark .mw-brand` is the green-black
