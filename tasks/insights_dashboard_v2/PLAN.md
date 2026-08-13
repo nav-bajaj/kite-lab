@@ -12,6 +12,7 @@ Companion docs in this folder:
 | `RRG_SPEC.md` | Relative Rotation Graph: methodology, math, UX, universe scoping |
 | `REALTIME_SPEC.md` | Intraday refresh layer: options, licensing posture, technical design |
 | `TASKS.md` | Phased breakdown (written once scope is locked with the founder) |
+| `DECISIONS.md` | Founder decisions log + canonical list locations (start here for "what did we decide") |
 
 ## Why this work
 
@@ -104,6 +105,8 @@ expected:
 
 **Out of scope**
 - Portfolio product changes (stays as-is behind admin).
+- Cross-asset module (dropped 2026-08-13 — see `DECISIONS.md`; VIX
+  stays, it is part of the macro/stress stack).
 - Fundamental data, delivery volumes, options analytics.
 - Alerts, saved watchlists, notes archive (post-launch).
 - WhatsApp/email broadcast automation.

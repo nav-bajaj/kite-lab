@@ -6,10 +6,14 @@ Risk tags: [compliance] [licensing] [perf] [data] [design].
 
 ## Phase 0 — Decisions & direction (gate for everything)
 
-- [ ] D1 👤 [licensing] Intraday posture A/B/C/D (`REALTIME_SPEC.md` §0).
-      Output: decision + new risk-register row.
-- [ ] D2 👤 [design] IA sign-off: 4-tab structure, screener demotion,
-      insights as primary signed-in surface (`DASHBOARD_DESIGN.md` §1).
+- [x] D1 👤 [licensing] Intraday posture: DECIDED 2026-08-13 — live
+      route approved (posture C: live derived indicators, no public
+      per-stock live quotes). See `DECISIONS.md`. Still owed: risk-
+      register row before public exposure.
+- [x] D2 👤 [design] PARTIAL 2026-08-13: insights stays inside
+      kite-dashboard and becomes the primary signed-in surface (no
+      separate app — `DECISIONS.md`). Still open: 4-tab IA + screener
+      demotion sign-off via Pencil mock (0.1).
 - [ ] D3 👤 RRG methodology sign-off (`RRG_SPEC.md`): normalization
       choice, universe-scoped composites, daily vs weekly default.
 - [ ] D4 👤 [compliance] Confirm launch plan: portfolios admin-only at

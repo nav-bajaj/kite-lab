@@ -40,6 +40,13 @@ register as a new row before anything intraday goes public. Per-stock
 intraday values stay admin-only until/unless a proper data agreement
 exists.
 
+**DECIDED 2026-08-13 (founder): live route approved — build posture C.**
+Register row still owed before public exposure; per-stock live quote
+display remains excluded. See `DECISIONS.md` (includes the KiteTicker
+single-connection streaming note: NSE 500 + indices ≈ 574 tokens, one
+websocket connection holds 3,000 — multiple API keys unnecessary for
+data volume).
+
 ## 1. What "live" should mean per module
 
 Not everything should tick. Proposed refresh classes:
