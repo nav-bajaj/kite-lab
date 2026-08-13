@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketworks — asset study: hero fields, textures, motion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Outfit:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Asset study on the decided system (loop 23 palette, loop 24 type).
+   Five hero-field candidates + surface/texture library + motion tokens.
+   Motion follows Emil Kowalski's standards: transform/opacity only,
+   strong curves, CSS off the main thread, reduced-motion = gentler. */
+:root{
+  --bg:#FFFFFF; --bg-soft:#F4F7F5; --card:#FFFFFF;
+  --line:#E3E8E5; --line-strong:#C9D2CC;
+  --ink:#141A17; --grey:#5C6663;
+  --green:#0B7E52; --green-vivid:#14A468; --green-tint:#DFF4E8; --green-deep:#0A3B28;
+  --sun:#F5B73E; --down:#C74A32;
+  --shadow:0 10px 30px -12px rgba(20,26,23,.12);
+  --ease-out:cubic-bezier(0.23,1,0.32,1);
+  --ease-in-out:cubic-bezier(0.77,0,0.175,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg-soft);color:var(--ink);font-family:"Outfit",system-ui,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+h1,h2{font-family:"Fraunces",serif;font-weight:500;letter-spacing:-.01em}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+.top{position:sticky;top:0;z-index:20;background:rgba(244,247,245,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top-in{display:flex;align-items:center;gap:16px;padding:13px 24px;max-width:1080px;margin:0 auto;flex-wrap:wrap}
+.wordmark{font-weight:600;font-size:17px;color:var(--green)}
+.top .tag{font-size:13px;color:var(--grey)}
+.jump{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+.jump a{font-size:12.5px;color:var(--grey);text-decoration:none;border:1px solid var(--line);border-radius:99px;padding:4px 11px;background:var(--card)}
+.jump a:hover{color:var(--green);border-color:var(--green)}
+
+.intro{padding:36px 0 6px}
+.intro p{color:var(--grey);font-size:14.5px;max-width:78ch}
+
+/* ————— hero specimen scaffolding ————— */
+.hspec{margin:26px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.hlabel{display:flex;align-items:baseline;gap:14px;padding:13px 26px;border-bottom:1px solid var(--line);background:var(--bg-soft);flex-wrap:wrap}
+.hlabel .no{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--green)}
+.hlabel b{font-size:15px}
+.hlabel .mech{font-size:12.5px;color:var(--grey)}
+.hlabel .mot{margin-left:auto;font-size:12px;color:var(--grey);font-family:"IBM Plex Mono",monospace}
+
+.hero{position:relative;min-height:480px;display:flex;align-items:center;overflow:hidden;background:var(--bg)}
+.hero .field{position:absolute;inset:0;pointer-events:none}
+.hero .content{position:relative;z-index:2;padding:64px 56px;max-width:720px}
+.hero .beta{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--grey);margin-bottom:16px}
+.hero h1{font-size:clamp(38px,4.6vw,56px);line-height:1.05;text-wrap:balance}
+.hero .hl{color:var(--green)}
+.hero .lede{margin:18px 0 26px;font-size:16.5px;color:var(--grey);max-width:48ch}
+.pill{display:inline-block;background:transparent;border-radius:999px;padding:11px 22px;font-weight:600;font-size:14.5px;text-decoration:none;border:1.5px solid transparent;cursor:pointer;transition:transform 160ms var(--ease-out),background 160ms var(--ease-out),border-color 160ms var(--ease-out)}
+.pill:active{transform:scale(0.97)}
+.pill-green{background:var(--green);color:#fff}
+.pill-ghost{border-color:var(--line-strong);color:var(--ink)}
+@media (hover:hover) and (pointer:fine){
+  .pill-green:hover{background:var(--green-deep)}
+  .pill-ghost:hover{border-color:var(--green);color:var(--green)}
+}
+.ctas{display:flex;gap:12px;flex-wrap:wrap}
+
+/* H1 · dither field — stepped Bayer bands, slow diagonal drift */
+.f-dither svg{position:absolute;right:-12%;top:-22%;width:85%;height:150%;
+  animation:ditherdrift 90s linear infinite alternate}
+@keyframes ditherdrift{from{transform:translate3d(0,0,0)}to{transform:translate3d(-4%,3%,0)}}
+
+/* H2 · momentum drift — faint cumulative curves, two-speed parallax */
+.f-drift svg{position:absolute;inset:-10% -5%;width:110%;height:120%}
+.f-drift .g1{animation:driftx 70s linear infinite alternate}
+.f-drift .g2{animation:driftx 110s linear infinite alternate-reverse}
+@keyframes driftx{from{transform:translate3d(-2.5%,1%,0)}to{transform:translate3d(2.5%,-1%,0)}}
+
+/* H3 · contour field — static hairline terrain, one travelling glow */
+.f-contour svg{position:absolute;right:-16%;top:-30%;width:80%;height:160%}
+.f-contour .glow{position:absolute;width:520px;height:520px;border-radius:50%;
+  background:radial-gradient(circle,rgba(20,164,104,.16),transparent 65%);
+  right:6%;top:0;animation:glowpath 40s var(--ease-in-out) infinite alternate}
+@keyframes glowpath{from{transform:translate3d(0,-6%,0)}to{transform:translate3d(-14%,26%,0)}}
+
+/* H4 · graph paper — fine grid, masked, one slow light sweep */
+.f-grid .paper{position:absolute;inset:0;
+  background:
+    linear-gradient(var(--line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:44px 44px;
+  -webkit-mask-image:radial-gradient(120% 90% at 78% 30%,#000 30%,transparent 78%);
+  mask-image:radial-gradient(120% 90% at 78% 30%,#000 30%,transparent 78%)}
+.f-grid .sweep{position:absolute;top:-20%;bottom:-20%;left:-30%;width:34%;
+  background:linear-gradient(100deg,transparent,rgba(223,244,232,.75) 45%,transparent 90%);
+  transform:rotate(6deg);animation:sweep 14s var(--ease-in-out) infinite}
+@keyframes sweep{0%,55%{transform:translate3d(0,0,0) rotate(6deg)}
+  100%{transform:translate3d(520%,0,0) rotate(6deg)}}
+
+/* H5 · the tape — real signal data as texture, cells surface one by one */
+.f-tape{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  align-content:space-between;padding:18px 22px;gap:6px 26px;
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--grey);
+  -webkit-mask-image:linear-gradient(78deg,transparent 34%,#000 62%);
+  mask-image:linear-gradient(78deg,transparent 34%,#000 62%)}
+.f-tape span{opacity:.28;white-space:nowrap}
+.f-tape span.lit{animation:lit 9s var(--ease-in-out) infinite}
+.f-tape span.lit b{font-weight:500}
+@keyframes lit{0%,74%,100%{opacity:.28;color:var(--grey)}80%,90%{opacity:1;color:var(--green)}}
+
+/* ————— library sections ————— */
+section.lib{padding:56px 0}
+section.lib h2{font-size:28px;margin-bottom:6px}
+.sub{color:var(--grey);font-size:14.5px;max-width:70ch;margin-bottom:30px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+.tcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;position:relative;overflow:hidden}
+.tcard h3{font-size:16px;font-weight:600;margin-bottom:6px;font-family:"Outfit",sans-serif}
+.tcard p{font-size:13.5px;color:var(--grey)}
+.tcard .meta{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--grey);margin-top:14px;display:block}
+.tcard.wash{background:var(--green-tint);border-color:transparent}
+.tcard.wash h3{color:var(--green-deep)}
+.tcard.wash p{color:#2A5C46}
+.tcard.lift{border:0;box-shadow:var(--shadow)}
+.tcard.dithertop{padding-top:34px}
+.tcard.dithertop .strip{position:absolute;top:0;left:0;right:0;height:14px}
+.tcard.monohead .mh{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--green);border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:12px;display:flex;justify-content:space-between}
+.tcard.keyline{border-left:none;position:relative}
+.tcard.keyline::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:2px;background:var(--green-vivid)}
+@media (hover:hover) and (pointer:fine){
+  .tcard.hoverable{transition:transform 180ms var(--ease-out),box-shadow 180ms var(--ease-out)}
+  .tcard.hoverable:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+}
+
+.bandrow{display:grid;gap:14px}
+.bandit{border-radius:14px;border:1px solid var(--line);overflow:hidden}
+.bandit .b{padding:26px 30px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.bandit .b p{font-size:14px;max-width:44ch}
+.bandit .name{font-family:"IBM Plex Mono",monospace;font-size:11.5px}
+.b-soft{background:var(--bg-soft)}
+.b-grid{background:
+  linear-gradient(var(--line) 1px,transparent 1px),
+  linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:36px 36px;background-color:var(--bg)}
+.b-drench{background:var(--green-deep);color:#EFF8F3}
+.b-drench p{color:#A9C4B4}
+.b-drench .name{color:#7FB89D}
+.b-dither{position:relative;background:var(--bg)}
+.b-dither svg{position:absolute;inset:0;width:100%;height:100%}
+.b-dither .b{position:relative}
+
+.swatches{display:flex;gap:14px;flex-wrap:wrap}
+.sw{width:150px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+.sw svg{display:block;width:100%;height:74px}
+.sw span{display:block;padding:8px 12px;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--grey)}
+
+/* motion demos */
+.mrow{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.mcell{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+.mcell h3{font-size:15px;font-weight:600;margin-bottom:4px;font-family:"Outfit",sans-serif}
+.mcell p{font-size:13px;color:var(--grey);margin-bottom:16px}
+.mcell .demo{min-height:86px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.chipdemo{display:inline-block;border-radius:99px;background:var(--green-tint);color:var(--green-deep);font-size:13px;font-weight:600;padding:8px 16px;
+  opacity:1;transform:translateY(0);transition:opacity 300ms var(--ease-out),transform 300ms var(--ease-out)}
+.mcell.replaying .chipdemo{opacity:0;transform:translateY(8px);transition:none}
+.rev{border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--grey);background:var(--bg-soft);
+  clip-path:inset(0 0 0 0);transition:clip-path 600ms var(--ease-out)}
+.mcell.replaying .rev{clip-path:inset(0 100% 0 0);transition:none}
+.replay{font:inherit;font-size:12.5px;font-weight:500;color:var(--green);background:none;border:1px solid var(--line);border-radius:99px;padding:5px 13px;cursor:pointer;margin-top:12px}
+.replay:hover{border-color:var(--green)}
+.tokens{font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:2;color:var(--grey);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 24px;overflow-x:auto}
+.tokens b{color:var(--ink);font-weight:500}
+
+footer{padding:36px 0 56px;font-size:13px;color:var(--grey)}
+footer .wrap{border-top:1px solid var(--line);padding-top:20px}
+footer a{color:var(--green)}
+
+@media (max-width:880px){
+  .grid3,.mrow{grid-template-columns:1fr}
+  .grid2{grid-template-columns:1fr}
+  .hero .content{padding:44px 24px}
+  .f-dither svg,.f-contour svg{right:-40%;width:120%}
+}
+@media (prefers-reduced-motion:reduce){
+  .f-dither svg,.f-drift .g1,.f-drift .g2,.f-contour .glow,.f-grid .sweep,.f-tape span.lit{animation:none!important}
+  .pill,.tcard.hoverable,.chipdemo,.rev{transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="top-in">
+    <span class="wordmark">marketworks.</span>
+    <span class="tag">brand guide · asset study · hero fields, textures, motion</span>
+    <nav class="jump" aria-label="Jump to section">
+      <a href="#h1">dither</a><a href="#h2">drift</a><a href="#h3">contour</a>
+      <a href="#h4">paper</a><a href="#h5">tape</a><a href="#surfaces">surfaces</a>
+      <a href="#motion">motion</a>
+    </nav>
+  </div>
+</div>
+
+<div class="wrap intro">
+  <p>Five candidates to replace the hero gradient — each a light field on the white
+  ground, real copy on top, ambient motion kept barely-perceptible (transform and
+  opacity only, CSS off the main thread, static under reduced motion). Below them:
+  the surface and texture library, and the motion tokens the site would adopt.
+  Palette loop 23 · type loop 24 · judged against Finance × Technology × Editorial Research.</p>
+</div>
+
+<main class="wrap">
+
+  <!-- ————— H1 · DITHER FIELD ————— -->
+  <section class="hspec" id="h1">
+    <div class="hlabel"><span class="no">H1</span><b>Dither field</b>
+      <span class="mech">Bayer-ordered dots stepping from dense to nothing — the research-tool texture (ResearchLens heritage)</span>
+      <span class="mot">drift 90s linear · reduced-motion: static</span></div>
+    <div class="hero">
+      <div class="field f-dither"><svg id="dithersvg" aria-hidden="true"></svg></div>
+      <div class="content">
+        <p class="beta">private beta</p>
+        <h1>Indian markets, <span class="hl">the calm way.</span></h1>
+        <p class="lede">Marketworks helps you follow the strongest stocks in the Indian
+        market without watching it all day. Three ready-made portfolios and a daily
+        market read, built on live data instead of news and noise.</p>
+        <div class="ctas"><a class="pill pill-green" href="#">Request beta access</a><a class="pill pill-ghost" href="#">Read the library</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ————— H2 · MOMENTUM DRIFT ————— -->
+  <section class="hspec" id="h2">
+    <div class="hlabel"><span class="no">H2</span><b>Momentum drift</b>
+      <span class="mech">Faint cumulative curves rising left-to-right — the product's own line, almost subliminal</span>
+      <span class="mot">two-layer parallax 70s/110s · reduced-motion: static</span></div>
+    <div class="hero">
+      <div class="field f-drift"><svg id="driftsvg" aria-hidden="true"></svg></div>
+      <div class="content">
+        <p class="beta">private beta</p>
+        <h1>Indian markets, <span class="hl">the calm way.</span></h1>
+        <p class="lede">Marketworks helps you follow the strongest stocks in the Indian
+        market without watching it all day. Three ready-made portfolios and a daily
+        market read, built on live data instead of news and noise.</p>
+        <div class="ctas"><a class="pill pill-green" href="#">Request beta access</a><a class="pill pill-ghost" href="#">Read the library</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ————— H3 · CONTOUR FIELD ————— -->
+  <section class="hspec" id="h3">
+    <div class="hlabel"><span class="no">H3</span><b>Contour field</b>
+      <span class="mech">Hairline terrain rings, like a map of the market's surface; one soft light crosses it</span>
+      <span class="mot">glow path 40s ease-in-out · reduced-motion: static rings</span></div>
+    <div class="hero">
+      <div class="field f-contour"><div class="glow"></div><svg id="contoursvg" aria-hidden="true"></svg></div>
+      <div class="content">
+        <p class="beta">private beta</p>
+        <h1>Indian markets, <span class="hl">the calm way.</span></h1>
+        <p class="lede">Marketworks helps you follow the strongest stocks in the Indian
+        market without watching it all day. Three ready-made portfolios and a daily
+        market read, built on live data instead of news and noise.</p>
+        <div class="ctas"><a class="pill pill-green" href="#">Request beta access</a><a class="pill pill-ghost" href="#">Read the library</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ————— H4 · GRAPH PAPER ————— -->
+  <section class="hspec" id="h4">
+    <div class="hlabel"><span class="no">H4</span><b>Graph paper</b>
+      <span class="mech">Fine chart-paper grid dissolving at the edges; a slow sheen passes every 14s</span>
+      <span class="mot">sweep 14s ease-in-out · reduced-motion: static grid</span></div>
+    <div class="hero">
+      <div class="field f-grid"><div class="paper"></div><div class="sweep"></div></div>
+      <div class="content">
+        <p class="beta">private beta</p>
+        <h1>Indian markets, <span class="hl">the calm way.</span></h1>
+        <p class="lede">Marketworks helps you follow the strongest stocks in the Indian
+        market without watching it all day. Three ready-made portfolios and a daily
+        market read, built on live data instead of news and noise.</p>
+        <div class="ctas"><a class="pill pill-green" href="#">Request beta access</a><a class="pill pill-ghost" href="#">Read the library</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ————— H5 · THE TAPE ————— -->
+  <section class="hspec" id="h5">
+    <div class="hlabel"><span class="no">H5</span><b>The tape</b>
+      <span class="mech">Real signal ranks as texture (12 May 2026 record); cells surface briefly in green, one at a time</span>
+      <span class="mot">staggered 9s cycles · reduced-motion: static field</span></div>
+    <div class="hero">
+      <div class="field f-tape" id="tapefield" aria-hidden="true"></div>
+      <div class="content">
+        <p class="beta">private beta</p>
+        <h1>Indian markets, <span class="hl">the calm way.</span></h1>
+        <p class="lede">Marketworks helps you follow the strongest stocks in the Indian
+        market without watching it all day. Three ready-made portfolios and a daily
+        market read, built on live data instead of news and noise.</p>
+        <div class="ctas"><a class="pill pill-green" href="#">Request beta access</a><a class="pill pill-ghost" href="#">Read the library</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ————— SURFACES ————— -->
+  <section class="lib" id="surfaces">
+    <h2>Surfaces: cards</h2>
+    <p class="sub">Six card treatments on the system. Default is the hairline card;
+    the others are deliberate upgrades, each with a named job. Hover lift is gated
+    to fine pointers and 180ms ease-out.</p>
+    <div class="grid3">
+      <div class="tcard hoverable">
+        <h3>Hairline card</h3>
+        <p>The default container. One border, no shadow at rest, lift on hover where
+        the card is a link.</p>
+        <span class="meta">border 1px --line · r 14</span>
+      </div>
+      <div class="tcard lift">
+        <h3>Lifted card</h3>
+        <p>Shadow instead of border — for the one card per section that carries the
+        headline number or the primary path.</p>
+        <span class="meta">--shadow · no border</span>
+      </div>
+      <div class="tcard wash">
+        <h3>Wash card</h3>
+        <p>Green-tint field with deep-green ink. Callouts, "start here" moments,
+        the calm version of emphasis.</p>
+        <span class="meta">bg --green-tint · ink --green-deep</span>
+      </div>
+      <div class="tcard monohead">
+        <div class="mh"><span>OM25 · QUALITY MOMENTUM</span><span>OOS 2017–26</span></div>
+        <h3>Mono-meta card</h3>
+        <p>A Plex Mono header row turns any card into an instrument readout — the
+        loop-24 "more mono" move for data cards.</p>
+        <span class="meta">header: mono 11px --green</span>
+      </div>
+      <div class="tcard dithertop">
+        <svg class="strip" id="stripsvg" aria-hidden="true"></svg>
+        <h3>Dither-edge card</h3>
+        <p>A one-line dither strip on the top edge. The texture signature at
+        card scale, used sparingly.</p>
+        <span class="meta">8×8 bayer strip · --green-tint</span>
+      </div>
+      <div class="tcard keyline">
+        <h3>Keyline card</h3>
+        <p>A 2px vivid keyline marks membership in a set — the accent-triad
+        carrier at card scale.</p>
+        <span class="meta">keyline 2px --green-vivid</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ————— BANDS ————— -->
+  <section class="lib" style="padding-top:8px">
+    <h2>Surfaces: bands</h2>
+    <p class="sub">Full-width section treatments, in the order a homepage would
+    breathe them: white → soft → textured → one drench near the close.</p>
+    <div class="bandrow">
+      <div class="bandit b-soft"><div class="b"><p><b>Soft band.</b> The near-white field for quiet content — process, methodology, explanations.</p><span class="name">bg --bg-soft</span></div></div>
+      <div class="bandit b-grid"><div class="b"><p><b>Paper band.</b> The chart-paper grid as a section ground; content cards sit directly on it.</p><span class="name">grid 36px --line</span></div></div>
+      <div class="bandit b-dither"><svg id="bandsvg" aria-hidden="true"></svg><div class="b"><p><b>Dither band.</b> The Bayer texture as a transition moment between white sections.</p><span class="name">bayer 8×8 fade</span></div></div>
+      <div class="bandit b-drench"><div class="b"><p><b>The drench.</b> Deep green, once per page, near the close. Scarcity is what makes it the signature.</p><span class="name">bg --green-deep</span></div></div>
+    </div>
+  </section>
+
+  <!-- ————— DITHER SWATCHES ————— -->
+  <section class="lib" style="padding-top:8px">
+    <h2>The dither patterns</h2>
+    <p class="sub">One 8×8 Bayer matrix, five densities — a reusable SVG pattern set.
+    Dither is the brand's texture: it is literally data resolved into an image,
+    which is the product. Use in green-tint on white, or pale-on-deep in the drench.</p>
+    <div class="swatches" id="swatches"></div>
+  </section>
+
+  <!-- ————— MOTION ————— -->
+  <section class="lib" id="motion">
+    <h2>Motion tokens</h2>
+    <p class="sub">Adopted from Emil Kowalski's animation standards: transform and
+    opacity only, strong curves, UI under 300ms, ambient marketing motion slow and
+    interruptible, reduced-motion gentler not zero, hover gated to fine pointers.</p>
+    <div class="mrow">
+      <div class="mcell">
+        <h3>Press feedback</h3>
+        <p>scale(0.97) on :active, 160ms ease-out. Every pressable element.</p>
+        <div class="demo"><button class="pill pill-green">Press me</button><button class="pill pill-ghost">And me</button></div>
+      </div>
+      <div class="mcell" id="mc-enter">
+        <h3>Entrance</h3>
+        <p>opacity 0 → 1 with translateY(8px) → 0, 300ms ease-out. Never from scale(0).</p>
+        <div class="demo"><span class="chipdemo">Signals updated</span></div>
+        <button class="replay" data-for="mc-enter">Replay</button>
+      </div>
+      <div class="mcell" id="mc-reveal">
+        <h3>Reveal</h3>
+        <p>clip-path inset sweep, 600ms ease-out — for charts and media drawing in on scroll.</p>
+        <div class="demo"><div class="rev mono">NIFTY500M50 &nbsp;+19.9% p.a. · 2020–26</div></div>
+        <button class="replay" data-for="mc-reveal">Replay</button>
+      </div>
+    </div>
+    <div class="tokens" style="margin-top:16px">
+<b>--ease-out</b>:    cubic-bezier(0.23, 1, 0.32, 1)     /* entrances, exits, hovers — the default   */<br>
+<b>--ease-in-out</b>: cubic-bezier(0.77, 0, 0.175, 1)    /* on-screen movement, ambient sweeps       */<br>
+<b>press</b>:  100–160ms   · <b>hover</b>: 150–200ms  · <b>reveal</b>: 300–600ms  · <b>ambient</b>: 14s–110s linear/in-out<br>
+<b>rules</b>:  transform/opacity only · no ease-in · no scale(0) · stagger 30–80ms · UI &lt;300ms<br>
+<b>gates</b>:  @media (prefers-reduced-motion: reduce) → static fields, keep fades · @media (hover:hover) → hover motion
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Method: every field is generated geometry (SVG patterns and paths, CSS
+    gradients) — no raster assets, all token-derived, re-themeable. H5's texture is
+    the real 12 May 2026 signal record. Motion standards from
+    <a href="https://github.com/emilkowalski/skills">emilkowalski/skills</a>
+    (animate + review-animations). Palette loop 23 · type loop 24 · asset study ·
+    2026-08-13</p>
+  </div>
+</footer>
+
+<script>
+/* ————— 8×8 Bayer matrix, shared by all dither assets ————— */
+const BAYER8 = [
+  [ 0,32, 8,40, 2,34,10,42],[48,16,56,24,50,18,58,26],
+  [12,44, 4,36,14,46, 6,38],[60,28,52,20,62,30,54,22],
+  [ 3,35,11,43, 1,33, 9,41],[51,19,59,27,49,17,57,25],
+  [15,47, 7,39,13,45, 5,37],[63,31,55,23,61,29,53,21]
+];
+function bayerTile(density, cell, color){
+  /* density 0..1 → which matrix slots get a dot */
+  let dots = "";
+  const cut = density * 64;
+  for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++)
+    if (BAYER8[y][x] < cut) dots += `<rect x="${x*cell}" y="${y*cell}" width="${cell*0.62}" height="${cell*0.62}" rx="${cell*0.31}" fill="${color}"/>`;
+  return dots;
+}
+function pattern(id, density, cell, color){
+  const s = cell * 8;
+  return `<pattern id="${id}" width="${s}" height="${s}" patternUnits="userSpaceOnUse">${bayerTile(density, cell, color)}</pattern>`;
+}
+
+/* H1 · dither field: stepped density bands sweeping to nothing */
+(function(){
+  const svg = document.getElementById("dithersvg");
+  const W = 900, H = 900, BANDS = [0.68,0.5,0.36,0.24,0.15,0.08,0.04,0.015];
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  let defs = "<defs>";
+  BANDS.forEach((d,i) => defs += pattern(`bd${i}`, d, 6, "#9ED4BA"));
+  defs += "</defs>";
+  let bands = "";
+  const bw = W / BANDS.length;
+  BANDS.forEach((d,i) => {
+    bands += `<rect x="${W - (i+1)*bw}" y="0" width="${bw+1}" height="${H}" fill="url(#bd${i})"/>`;
+  });
+  svg.innerHTML = defs + `<g transform="rotate(-8 ${W/2} ${H/2})">${bands}</g>`;
+})();
+
+/* H2 · momentum drift: two groups of faint cumulative curves */
+(function(){
+  const svg = document.getElementById("driftsvg");
+  const W = 1400, H = 620;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  function curve(seed, amp, y0){
+    let d = `M-40 ${y0}`;
+    let y = y0;
+    for (let x = 0; x <= W + 80; x += 90){
+      const rise = 14 + ((seed * (x + 13)) % 23);
+      const wob = Math.sin((x / 210) + seed) * amp;
+      y = y - rise * 0.32 + wob * 0.14;
+      d += ` C ${x-58} ${y + wob}, ${x-28} ${y - wob}, ${x} ${y}`;
+    }
+    return d;
+  }
+  let g1 = "", g2 = "";
+  for (let i = 0; i < 5; i++)
+    g1 += `<path d="${curve(i*2.7+1, 30, 430 + i*46)}" fill="none" stroke="#14A468" stroke-width="1.8" opacity="${0.30 - i*0.04}"/>`;
+  for (let i = 0; i < 4; i++)
+    g2 += `<path d="${curve(i*3.3+7, 46, 540 + i*40)}" fill="none" stroke="#0B7E52" stroke-width="1.4" opacity="${0.18 - i*0.03}"/>`;
+  svg.innerHTML = `<g class="g1">${g1}</g><g class="g2">${g2}</g>`;
+})();
+
+/* H3 · contour field: irregular concentric hairline rings */
+(function(){
+  const svg = document.getElementById("contoursvg");
+  const W = 800, H = 900, CX = 470, CY = 420;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  function ring(r, seed){
+    const N = 42; let d = "";
+    for (let i = 0; i <= N; i++){
+      const t = 2 * Math.PI * i / N;
+      const wob = Math.sin(t * 3 + seed) * r * 0.07 + Math.sin(t * 7 + seed * 2) * r * 0.035;
+      const x = CX + (r + wob) * Math.cos(t), y = CY + (r + wob) * 0.86 * Math.sin(t);
+      d += (i ? "L" : "M") + x.toFixed(1) + " " + y.toFixed(1);
+    }
+    return d + "Z";
+  }
+  let s = "";
+  for (let i = 0; i < 11; i++)
+    s += `<path d="${ring(60 + i * 44, i * 1.7)}" fill="none" stroke="#0B7E52" stroke-width="1" opacity="${0.16 - i * 0.011}"/>`;
+  svg.innerHTML = s;
+})();
+
+/* H5 · the tape: real 12 May 2026 signal record as texture */
+(function(){
+  const REAL = [
+    ["HFCL","4.78"],["HINDCOPPER","3.74"],["MCX","3.64"],["NATIONALUM","3.60"],
+    ["POWERINDIA","3.08"],["KIRLOSENG","2.98"],["BSE","2.91"],["NSE500","ranked"],
+    ["NIFTY250","ranked"],["OM25","bi-weekly"],["TL25","bi-weekly"],["L6","weekly"],
+    ["COMBO","regime"],["16:30","IST"],["1/N","eq-weight"],["7.5%","cap"],
+    ["20%","dd-stop"],["0.2%","slippage"],["2017-26","OOS"],["44.78%","CAGR"],
+    ["1.86","sharpe"],["-36.6%","maxdd"],["100DMA","signal"],["3-day","confirm"]
+  ];
+  const field = document.getElementById("tapefield");
+  let cells = "";
+  for (let r = 0; r < 3; r++){
+    REAL.forEach(([k,v], i) => {
+      const lit = ((i + r * 7) % 11 === 3);
+      const delay = ((i * 1.7 + r * 3.1) % 9).toFixed(1);
+      cells += `<span class="${lit ? "lit" : ""}" style="${lit ? `animation-delay:${delay}s` : ""}">${k} <b>${v}</b></span>`;
+    });
+  }
+  field.innerHTML = cells;
+})();
+
+/* card strip + band dither */
+(function(){
+  const strip = document.getElementById("stripsvg");
+  strip.setAttribute("viewBox","0 0 600 14");
+  strip.setAttribute("preserveAspectRatio","none");
+  strip.innerHTML = `<defs>${pattern("sp1",0.45,1.75,"#9ED4BA")}</defs><rect width="600" height="14" fill="url(#sp1)"/>`;
+  const band = document.getElementById("bandsvg");
+  band.setAttribute("viewBox","0 0 1200 120");
+  band.setAttribute("preserveAspectRatio","none");
+  band.innerHTML = `<defs>${pattern("bp1",0.3,4,"#BFE5D2")}
+    <linearGradient id="bfade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".55" stop-color="#fff" stop-opacity="1"/></linearGradient>
+    <mask id="bmask"><rect width="1200" height="120" fill="url(#bfade)"/></mask></defs>
+    <rect width="1200" height="120" fill="url(#bp1)" mask="url(#bmask)"/>`;
+})();
+
+/* dither swatch row */
+(function(){
+  const host = document.getElementById("swatches");
+  const D = [[0.08,"8%"],[0.18,"18%"],[0.32,"32%"],[0.5,"50%"],[0.72,"72%"]];
+  host.innerHTML = D.map(([d,l],i) =>
+    `<div class="sw"><svg viewBox="0 0 150 74" preserveAspectRatio="none">
+       <defs>${pattern("sw"+i, d, 3.2, "#7CC3A2")}</defs>
+       <rect width="150" height="74" fill="url(#sw${i})"/></svg>
+     <span>bayer8 · ${l}</span></div>`).join("");
+})();
+
+/* motion replays */
+document.querySelectorAll(".replay").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const cell = document.getElementById(btn.dataset.for);
+    cell.classList.add("replaying");
+    void cell.offsetWidth;               /* flush so the reset lands */
+    requestAnimationFrame(() => cell.classList.remove("replaying"));
+  });
+});
+</script>
+</body>
+</html>

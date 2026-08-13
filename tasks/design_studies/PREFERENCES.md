@@ -581,3 +581,42 @@ Verified both themes (evidence/loop21_*). tsc clean.
 Toolchain note: Turbopack's persistent cache served stale compiled
 globals.css across a dev-server restart — `rm -rf .next` is the fix
 when style edits refuse to land.
+
+## Loops 23-25 (2026-08-12/13) — the brand/ pages: colour + type SET
+
+Ran as standalone HTML studies in tasks/design_studies/brand/
+(served locally, outside the Next app), after a rejected from-scratch
+detour on branch design_reset (three worlds built unattended; founder:
+"nothing really did work, but good to see" — salvage list in that
+branch's VARIANTS.md).
+
+1. Loop 23 — colour ("this looks beautiful"). Single-green system
+   replaces the six-palette picker AND the loop-19 clay two-theme
+   mapping: white ground, ink #141A17 + one grey #5C6663, brand green
+   #0B7E52 (tint/vivid/anchor/deep family), FIVE leashed accent
+   triads (sun/sky/coral/purple/lime — founder asked for purple+lime
+   additions; purple = editorial heirloom, lime = highlighter, vivid
+   lime never text), green-black dark companion (#0D1412), validated
+   data inks both themes. palette.html = the visual contract; live
+   contrast badges. Binding positioning (founder): Finance x
+   Technology x Editorial Research overlap.
+2. Loop 24 — fonts, method that worked: harvest the founder's six
+   reference sites' COMPUTED styles live (weights/tracking/leading)
+   and re-render our real hero section in each wardrobe (fonts.html,
+   9 blocks). Verdict then: keep Fraunces+Outfit, adopt IBM Plex Mono
+   generously (figures/labels/captions/tickers/axes; never body).
+3. Asset studies — three rounds, all PARKED. v1 abstract light fields
+   ("quite basic, no richness"); v2 zerohash-inspired luminous dark
+   ("darks too dramatic, shout crypto more than our positioning" —
+   but the ASCII glass-card drench band was liked); v3 daylight
+   convergence (figurative dot-graphics on the loop-23 system) +
+   agency-review fixes from .agents/skills/design-taste-frontend
+   (asymmetric drench, one CTA per band, no hero eyebrows, gridded
+   ASCII icons). Founder: assets/primitives restart founder-led.
+4. Loop 25 — serif REVISED: Libre Baskerville replaces Fraunces
+   ("LB looks great"), seen live via the assets3.html serif toggle.
+   GF now serves LB 400/500/600/700 + italic; 500 is the working
+   display weight; LB runs wide -> display sizes step down. Type
+   system: LB display + Outfit body/UI + IBM Plex Mono data voice.
+   COLOUR + TYPOGRAPHY ARE SET; punctuation/copy explicitly out of
+   scope for the visual effort.

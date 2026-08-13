@@ -17,15 +17,37 @@
 > The guide page grows into the full visual contract; the /primitives
 > page will be folded into it. Sections below describe loops ≤22.
 
-> **Loop 24 — type DECIDED.** Nine wardrobes at
-> `tasks/design_studies/brand/fonts.html` (6 founder-named references
-> harvested live: public.com, hebbia, tars.pro, zerohash, aeye
-> webflow, clay.com; + 2 hybrids). Verdict: keep **Fraunces +
-> Outfit**, adopt **IBM Plex Mono** as the third voice, used
-> generously — figures, labels, captions, metadata, tickers, chart
-> axes; never body text. Evidence:
-> `evidence/loop24_fonts-{decided,study}.jpg`. Next: the asset study
-> (hero replacement, textures, dither, light motion).
+> **Loop 24 — type decided (superseded by loop 25 on the serif).**
+> Nine wardrobes at `tasks/design_studies/brand/fonts.html` (6
+> founder-named references harvested live: public.com, hebbia,
+> tars.pro, zerohash, aeye webflow, clay.com; + 2 hybrids). Verdict:
+> keep Fraunces + Outfit, adopt **IBM Plex Mono** as the third
+> voice, used generously — figures, labels, captions, metadata,
+> tickers, chart axes; never body text. Evidence:
+> `evidence/loop24_fonts-{decided,study}.jpg`.
+
+> **Loop 25 — COLOUR + TYPE ARE SET. Serif revised to Libre
+> Baskerville; asset studies parked.** The type system is now
+> **Libre Baskerville** (display — Google Fonts serves
+> 400/500/600/700 + italic; 500 is the working display weight; LB
+> runs wide so display sizes step down vs Fraunces) + **Outfit**
+> (body/UI) + **IBM Plex Mono** (data voice per loop 24). Decided
+> after seeing LB in full composition (assets3.html serif toggle).
+> The asset-study rounds are PARKED as founder-judged
+> not-working-yet: `brand/assets.html` (v1 flat fields),
+> `brand/assets2.html` (v2 luminous dark — "too crypto"),
+> `brand/assets3.html` (v3 daylight convergence + agency-review
+> fixes: asymmetric drench with one CTA, no hero eyebrows, gridded
+> ASCII icons). Keep all brand HTML files — palette.html and
+> fonts.html are the visual contract; the assets pages are the
+> exploration record and contain reusable pieces (annotated-exhibit
+> hero, daylight dot-map, drench band, dither edges). **Assets and
+> primitives restart founder-led in the main study from here.**
+> Useful context for that restart: the design-taste-frontend skill
+> at `.agents/skills/design-taste-frontend/SKILL.md` (agency-grade
+> review bar), and the open agency-review items: real product
+> screenshots into media slots (highest-impact), accurate India
+> geometry if the dot-map survives.
 
 > Loop 19 lives on branch **design_studies_clay** (off design_studies):
 > clay.com decoded (CLAY_STUDY.md) and the six-palette picker collapsed

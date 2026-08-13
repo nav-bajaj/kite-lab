@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="en" data-serif="lb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketworks — asset study v3: rich, in daylight</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Libre+Baskerville:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Asset study v3 — the convergence.
+   Keep v2's figurative richness (dots that draw things, ASCII icons,
+   annotated data) but return to the loop-23 system: white ground, ink
+   first, colour through ELEMENTS via the accent triads, and the one
+   drench in OUR green-deep — not crypto-black. */
+:root{
+  --bg:#FFFFFF; --bg-soft:#F4F7F5; --card:#FFFFFF;
+  --line:#E3E8E5; --line-strong:#C9D2CC;
+  --ink:#141A17; --grey:#5C6663;
+  --green:#0B7E52; --green-vivid:#14A468; --green-tint:#DFF4E8; --green-deep:#0A3B28;
+  --green-pale:#BFEBD8; --lumen:#3FCE95;
+  --sun:#F5B73E; --sun-tint:#FFF1CE; --sun-text:#8A6206;
+  --sky:#2179E8; --sky-tint:#E2EEFF; --sky-text:#1B66C9;
+  --coral:#E85D45; --coral-tint:#FDE5DE; --coral-text:#C74A32;
+  --purple-tint:#EFE8FD; --purple-text:#7440E8;
+  --lime-tint:#F4FBD9; --lime-text:#5F7008;
+  --shadow:0 10px 30px -12px rgba(20,26,23,.12);
+  --ease-out:cubic-bezier(0.23,1,0.32,1);
+  --ease-in-out:cubic-bezier(0.77,0,0.175,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg-soft);color:var(--ink);font-family:"Outfit",system-ui,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+h1,h2{font-family:"Fraunces",serif;font-weight:500;letter-spacing:-.01em}
+/* serif toggle: Libre Baskerville tryout (founder request). LB runs wide
+   and only ships 400/700, so display sizes step down a notch. */
+[data-serif="lb"] h1,[data-serif="lb"] h2,[data-serif="lb"] .drench h3{font-family:"Libre Baskerville",serif;font-weight:500;letter-spacing:0}
+[data-serif="lb"] .hero h1{font-size:clamp(35px,4.2vw,51px);line-height:1.12}
+[data-serif="lb"] section.lib h2{font-size:26px}
+[data-serif="lb"] .drench h3{font-size:24px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+.top{position:sticky;top:0;z-index:20;background:rgba(244,247,245,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top-in{display:flex;align-items:center;gap:16px;padding:13px 24px;max-width:1120px;margin:0 auto;flex-wrap:wrap}
+.wordmark{font-weight:600;font-size:17px;color:var(--green)}
+.top .tag{font-size:13px;color:var(--grey)}
+.jump{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+.jump a{font-size:12.5px;color:var(--grey);text-decoration:none;border:1px solid var(--line);border-radius:99px;padding:4px 11px;background:var(--card)}
+.jump a:hover{color:var(--green);border-color:var(--green)}
+.intro{padding:34px 0 4px}
+.intro p{color:var(--grey);font-size:14.5px;max-width:80ch}
+
+.hspec{margin:26px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.hlabel{display:flex;align-items:baseline;gap:14px;padding:13px 26px;border-bottom:1px solid var(--line);background:var(--bg-soft);flex-wrap:wrap}
+.hlabel .no{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--green)}
+.hlabel b{font-size:15px}
+.hlabel .mech{font-size:12.5px;color:var(--grey)}
+.hlabel .mot{margin-left:auto;font-size:12px;color:var(--grey);font-family:"IBM Plex Mono",monospace}
+
+.hero{position:relative;min-height:560px;display:flex;align-items:center;overflow:hidden;background:var(--bg)}
+.hero .content{position:relative;z-index:2;padding:64px 56px;max-width:600px}
+.hero .beta{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--grey);margin-bottom:16px}
+.hero h1{font-size:clamp(40px,4.8vw,58px);line-height:1.05;text-wrap:balance}
+.hero .hl{color:var(--green)}
+.hero .lede{margin:18px 0 28px;font-size:16.5px;color:var(--grey);max-width:46ch}
+.pill{display:inline-block;background:transparent;border-radius:999px;padding:12px 24px;font-weight:600;font-size:14.5px;text-decoration:none;border:1.5px solid transparent;cursor:pointer;transition:transform 160ms var(--ease-out),background 160ms var(--ease-out),border-color 160ms var(--ease-out),color 160ms var(--ease-out)}
+.pill:active{transform:scale(0.97)}
+.pill-green{background:var(--green);color:#fff}
+.pill-ghost{border-color:var(--line-strong);color:var(--ink)}
+@media (hover:hover) and (pointer:fine){
+  .pill-green:hover{background:var(--green-deep)}
+  .pill-ghost:hover{border-color:var(--green);color:var(--green)}
+}
+.ctas{display:flex;gap:12px;flex-wrap:wrap}
+
+/* B1 · the annotated exhibit */
+.f-exhibit{position:absolute;inset:0;pointer-events:none}
+.f-exhibit .paper{position:absolute;inset:0;
+  background:
+    linear-gradient(var(--line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:40px 40px;
+  -webkit-mask-image:radial-gradient(115% 95% at 76% 42%,#000 25%,transparent 74%);
+  mask-image:radial-gradient(115% 95% at 76% 42%,#000 25%,transparent 74%)}
+.f-exhibit svg{position:absolute;right:0;top:0;width:64%;height:100%}
+.cdot{animation:cluster 12s linear infinite}
+@keyframes cluster{0%,100%{opacity:.45}8%,14%{opacity:1}22%{opacity:.5}}
+
+/* B2 · the market, in daylight */
+.f-daymap{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:flex-end;padding-right:4%}
+.f-daymap svg{height:96%;max-height:560px}
+.dot{animation:twinkle 8s var(--ease-in-out) infinite}
+@keyframes twinkle{0%,100%{opacity:var(--o,.6)}50%{opacity:calc(var(--o,.6)*.6)}}
+.city{animation:citypulse 5s var(--ease-in-out) infinite}
+@keyframes citypulse{0%,100%{opacity:1}50%{opacity:.6}}
+.hero .tapeline{position:absolute;left:0;right:0;bottom:0;z-index:2;border-top:1px solid var(--line);
+  font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--grey);background:rgba(255,255,255,.7);backdrop-filter:blur(4px);
+  padding:11px 56px;display:flex;gap:32px;overflow:hidden;white-space:nowrap}
+.hero .tapeline b{color:var(--green);font-weight:500}
+
+/* B3 · the desk */
+.f-desk{position:absolute;inset:0;pointer-events:none}
+.f-desk .piece{position:absolute;border-radius:12px;box-shadow:var(--shadow)}
+.deskcard{background:var(--card);border:1px solid var(--line);padding:16px 18px;width:250px}
+.deskcard .mh{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--green);display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:7px;margin-bottom:10px}
+.deskcard .big{font-family:"IBM Plex Mono",monospace;font-size:24px}
+.deskcard .sm{font-size:11.5px;color:var(--grey);margin-top:3px}
+.deskchip{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:500;border-radius:99px;padding:6px 13px}
+.desknote{background:var(--sun-tint);color:var(--sun-text);padding:12px 15px;font-size:12px;line-height:1.5;width:200px;border-radius:10px;font-family:"IBM Plex Mono",monospace}
+.f-desk .sparkcard{background:var(--card);border:1px solid var(--line);padding:12px 14px;width:220px}
+.f-desk .sparkcard .mh{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--grey);margin-bottom:6px;display:block}
+.float1{animation:float 9s var(--ease-in-out) infinite alternate}
+.float2{animation:float 11s var(--ease-in-out) infinite alternate-reverse}
+@keyframes float{from{transform:translate3d(0,0,0) rotate(var(--rot,0deg))}to{transform:translate3d(0,-8px,0) rotate(var(--rot,0deg))}}
+
+/* ————— library ————— */
+section.lib{padding:56px 0}
+section.lib h2{font-size:28px;margin-bottom:6px}
+.sub{color:var(--grey);font-size:14.5px;max-width:76ch;margin-bottom:28px}
+
+/* the drench, re-grounded */
+.drench{background:var(--green-deep);border-radius:16px;padding:44px 40px}
+.drench .head{display:flex;justify-content:space-between;align-items:baseline;gap:18px;flex-wrap:wrap;margin-bottom:26px}
+.drench h3{font-family:"Fraunces",serif;font-weight:500;font-size:26px;color:var(--green-pale)}
+.drench .head span{font-family:"IBM Plex Mono",monospace;font-size:12px;color:#5E8F76}
+.drench .agrid{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:18px}
+.gcard.feat{grid-row:1/3;display:flex;flex-direction:column;justify-content:flex-end}
+.gcard.feat .icon{font-size:12px;margin-bottom:auto}
+.gcard.feat p{max-width:40ch;margin-top:4px}
+.figs.big{font-size:19px;gap:26px}
+.drench .dfoot{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;margin-top:20px}
+.drench .dfoot>span{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:#5E8F76;max-width:52ch}
+.drench .dfoot .cta{display:inline-block;font-size:13px;font-weight:600;color:var(--green-deep);background:var(--green-pale);border-radius:99px;padding:9px 18px;text-decoration:none}
+.gcard{position:relative;border-radius:14px;padding:24px 22px;overflow:hidden;
+  background:linear-gradient(155deg,#10513A 0%,#0C4430 55%,#0A3B28 100%);
+  border:1px solid #1A5C42}
+.gcard::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(90% 60% at 80% -10%,rgba(63,206,149,.16),transparent 60%)}
+.gcard>*{position:relative}
+.gcard h4{font-family:"Outfit",sans-serif;font-size:16.5px;font-weight:600;color:#EFF8F3;margin:14px 0 6px}
+.gcard p{font-size:13.5px;color:var(--green-pale)}
+.gcard .icon{font-family:"IBM Plex Mono",monospace;font-size:9px;line-height:1.15;color:var(--lumen);white-space:pre;display:block;letter-spacing:.04em}
+.gcard .figs{display:flex;gap:18px;margin-top:12px;font-family:"IBM Plex Mono",monospace;font-size:13px;color:#EFF8F3}
+.gcard .figs span span{display:block;font-family:"Outfit",sans-serif;font-size:10.5px;color:#5E8F76;margin-top:2px;letter-spacing:.02em}
+.gcard .cta{display:inline-block;margin-top:16px;font-size:12.5px;font-weight:600;color:var(--green-deep);background:var(--green-pale);border-radius:99px;padding:7px 15px;text-decoration:none}
+@media (hover:hover) and (pointer:fine){
+  .gcard{transition:transform 200ms var(--ease-out),border-color 200ms var(--ease-out)}
+  .gcard:hover{transform:translateY(-3px);border-color:#3FCE9566}
+}
+
+/* accent triads doing element work on white */
+.triadrow{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.trcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+.trcard .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.trcard .chip{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:500;border-radius:99px;padding:5px 12px}
+.trcard p{font-size:13.5px;color:var(--grey)}
+
+footer{padding:36px 0 56px;font-size:13px;color:var(--grey)}
+footer .wrap{border-top:1px solid var(--line);padding-top:20px}
+footer a{color:var(--green)}
+
+@media (max-width:920px){
+  .drench .agrid,.triadrow{grid-template-columns:1fr}
+  .gcard.feat{grid-row:auto}
+  .hero .content{padding:44px 24px}
+  .f-exhibit svg,.f-daymap{opacity:.3}
+  .f-desk{display:none}
+  .hero .tapeline{padding:11px 24px}
+}
+@media (prefers-reduced-motion:reduce){
+  .dot,.city,.cdot,.float1,.float2{animation:none!important}
+  .pill,.gcard{transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="top-in">
+    <span class="wordmark">marketworks.</span>
+    <span class="tag">brand guide · asset study v3 · rich, in daylight</span>
+    <nav class="jump" aria-label="Jump to section">
+      <a href="#b1">annotated exhibit</a><a href="#b2">daylight map</a><a href="#b3">the desk</a>
+      <a href="#drench">the drench</a><a href="#triads">triads at work</a>
+    </nav>
+    <button class="jump" id="seriftoggle" style="border:1px solid var(--green);color:var(--green);background:var(--card);border-radius:99px;padding:4px 12px;font:inherit;font-size:12.5px;font-weight:500;cursor:pointer" aria-pressed="true">Compare old serif (Fraunces)</button>
+  </div>
+</div>
+
+<div class="wrap intro">
+  <p>The convergence: v2's figurative richness brought home to the loop-23 system.
+  White ground, ink first, colour through elements — the accent triads finally doing
+  their job — and the one deep moment in <b>our</b> green-deep, not crypto-black.
+  Three light-first heroes; the drench band re-grounded; everything real data.</p>
+</div>
+
+<main class="wrap">
+
+  <!-- ————— B1 · ANNOTATED EXHIBIT ————— -->
+  <section class="hspec" id="b1">
+    <div class="hlabel"><span class="no">B1</span><b>The annotated exhibit</b>
+      <span class="mech">Chart paper + the real record as vivid dots + editorial annotations in the triads — the research page as a hero</span>
+      <span class="mot">light wave 12s · reduced-motion: static</span></div>
+    <div class="hero">
+      <div class="f-exhibit"><div class="paper"></div><svg id="exhibitsvg" aria-hidden="true"></svg></div>
+      <div class="content">
+        <h1>Indian markets, <span class="hl">the calm way.</span></h1>
+        <p class="lede">Marketworks helps you follow the strongest stocks in the Indian
+        market without watching it all day. Three ready-made portfolios and a daily
+        market read, built on live data instead of news and noise.</p>
+        <div class="ctas"><a class="pill pill-green" href="#">Request beta access</a><a class="pill pill-ghost" href="#">Read the library</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ————— B2 · DAYLIGHT MAP ————— -->
+  <section class="hspec" id="b2">
+    <div class="hlabel"><span class="no">B2</span><b>The market, in daylight</b>
+      <span class="mech">The India dot-map on white — tint dots, anchor cities, mono labels; the tape runs on a glass strip</span>
+      <span class="mot">twinkle 8s staggered · reduced-motion: static</span></div>
+    <div class="hero">
+      <div class="f-daymap"><svg id="daymapsvg" aria-hidden="true"></svg></div>
+      <div class="content">
+        <h1>Indian markets, <span class="hl">the calm way.</span></h1>
+        <p class="lede">Marketworks helps you follow the strongest stocks in the Indian
+        market without watching it all day. Three ready-made portfolios and a daily
+        market read, built on live data instead of news and noise.</p>
+        <div class="ctas"><a class="pill pill-green" href="#">Request beta access</a><a class="pill pill-ghost" href="#">Read the library</a></div>
+      </div>
+      <div class="tapeline" aria-hidden="true">
+        <span>12·05·2026</span><span>HFCL <b>4.78</b></span><span>HINDCOPPER <b>3.74</b></span>
+        <span>MCX <b>3.64</b></span><span>NATIONALUM <b>3.60</b></span><span>POWERINDIA <b>3.08</b></span>
+        <span>KIRLOSENG <b>2.98</b></span><span>BSE <b>2.91</b></span><span>16:30 IST</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ————— B3 · THE DESK ————— -->
+  <section class="hspec" id="b3">
+    <div class="hlabel"><span class="no">B3</span><b>The desk</b>
+      <span class="mech">The product surface as a composed still-life: real cards, triad chips, a sparkline, a sun note — colour through elements, literally</span>
+      <span class="mot">two floats 9s/11s · reduced-motion: static</span></div>
+    <div class="hero">
+      <div class="f-desk" aria-hidden="true">
+        <div class="piece deskcard float1" style="right:24%;top:12%;--rot:-2deg;transform:rotate(-2deg)">
+          <div class="mh"><span>QUALITY MOMENTUM</span><span>OOS 17–26</span></div>
+          <span class="big">44.78%</span>
+          <span class="sm">CAGR · net of slippage · −36.6% max DD</span>
+        </div>
+        <div class="piece sparkcard float2" style="right:6%;top:34%;--rot:1.5deg;transform:rotate(1.5deg)">
+          <span class="mh">NIFTY500 MOM 50 · 2020–26</span>
+          <svg id="sparksvg" viewBox="0 0 190 54" style="width:100%"></svg>
+        </div>
+        <div class="piece desknote float1" style="right:31%;top:58%;--rot:-1deg;transform:rotate(-1deg)">
+          market read · 13 AUG<br>rotation into industrials; breadth improving
+        </div>
+        <div class="piece float2" style="right:8%;top:74%;--rot:0deg;display:flex;gap:8px;box-shadow:none">
+          <span class="deskchip" style="background:var(--sky-tint);color:var(--sky-text)">NSE 500</span>
+          <span class="deskchip" style="background:var(--purple-tint);color:var(--purple-text)">RESEARCH</span>
+          <span class="deskchip" style="background:var(--lime-tint);color:var(--lime-text)">WEEKLY</span>
+        </div>
+      </div>
+      <div class="content">
+        <h1>Indian markets, <span class="hl">the calm way.</span></h1>
+        <p class="lede">Marketworks helps you follow the strongest stocks in the Indian
+        market without watching it all day. Three ready-made portfolios and a daily
+        market read, built on live data instead of news and noise.</p>
+        <div class="ctas"><a class="pill pill-green" href="#">Request beta access</a><a class="pill pill-ghost" href="#">Read the library</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ————— THE DRENCH, RE-GROUNDED ————— -->
+  <section class="lib" id="drench">
+    <h2>The drench, re-grounded</h2>
+    <p class="sub">The v2 glass-card band you liked, moved from crypto-black onto our
+    own green-deep — the loop-23 drench token. Same ASCII icons, same luminous glass,
+    but it now reads institutional green, and it slots into the palette page's
+    "one drench moment per page" rule unchanged.</p>
+    <div class="drench">
+      <div class="head"><h3>Four portfolios, one discipline.</h3></div>
+      <div class="agrid">
+        <div class="gcard feat">
+          <span class="icon" id="ic1"></span>
+          <svg id="featspark" viewBox="0 0 460 110" style="width:100%;margin:18px 0 6px" aria-label="Nifty500 Momentum 50, 2020 to 2026, indexed growth from 100 to 325"></svg>
+          <h4>Quality Momentum</h4>
+          <p>Capture asymmetry with a regime tilt: defensive ranking when the
+          NIFTY 100 trades below its 100-day average. Validated untouched on
+          2017-26, drawdowns included.</p>
+          <div class="figs big"><span>44.78%<span>CAGR</span></span><span>1.86<span>SHARPE</span></span><span>&minus;36.6%<span>MAX DD</span></span></div>
+        </div>
+        <div class="gcard">
+          <span class="icon" id="ic2"></span>
+          <h4>Core Momentum</h4>
+          <div class="figs"><span>59.4%<span>CAGR</span></span><span>&minus;30.0%<span>MAX DD</span></span></div>
+        </div>
+        <div class="gcard">
+          <span class="icon" id="ic3"></span>
+          <h4>Defensive Blend</h4>
+          <div class="figs"><span>50/50<span>BLEND</span></span><span>&minus;50%<span>BEAR ALLOC</span></span></div>
+        </div>
+      </div>
+      <div class="dfoot">
+        <span>All figures net of 0.2% per-trade slippage. Backtests do not assure future returns.</span>
+        <a class="cta" href="#">Explore the record</a>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ————— TRIADS AT WORK ————— -->
+  <section class="lib" id="triads" style="padding-top:8px">
+    <h2>The triads, finally at work</h2>
+    <p class="sub">Loop 23 defined five accent triads; v2 dropped them. Here is how they
+    earn their place on white — always tint-surface + deep-text, one hue per element.</p>
+    <div class="triadrow">
+      <div class="trcard">
+        <div class="chips">
+          <span class="chip" style="background:var(--sky-tint);color:var(--sky-text)">NSE 500</span>
+          <span class="chip" style="background:var(--sun-tint);color:var(--sun-text)">NIFTY 250</span>
+        </div>
+        <p><b>Universe chips.</b> Sky and sun mark which universe a portfolio hunts in —
+        structure, not decoration.</p>
+      </div>
+      <div class="trcard">
+        <div class="chips">
+          <span class="chip" style="background:var(--purple-tint);color:var(--purple-text)">FROM THE LIBRARY</span>
+          <span class="chip" style="background:var(--lime-tint);color:var(--lime-text)">NEW THIS WEEK</span>
+        </div>
+        <p><b>Editorial markers.</b> Purple voices the research; lime is the highlighter
+        for what just changed.</p>
+      </div>
+      <div class="trcard">
+        <div class="chips">
+          <span class="chip" style="background:var(--coral-tint);color:var(--coral-text)">−36.6% MAX DD</span>
+          <span class="chip" style="background:var(--green-tint);color:var(--green)">+44.78% CAGR</span>
+        </div>
+        <p><b>Direction pair.</b> Green up, coral down — the data rule from the palette
+        page, worn as chips.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>v3 keeps: figurative dots, ASCII icons, annotated real data, glass luminosity.
+    v3 returns to: white ground, triad accents, green-deep drench. Prior rounds:
+    <a href="assets.html">v1 (flat fields)</a> · <a href="assets2.html">v2 (luminous
+    dark)</a>. All data real; motion opacity/transform-only, static under
+    reduced-motion. · asset study v3 · 2026-08-13</p>
+  </div>
+</footer>
+
+<script>
+/* ————— B1: the annotated exhibit — real series, triad annotations ————— */
+const MOM = [100.0,96.8,74.8,86.7,84.9,90.1,96.8,98.4,101.9,102.6,109.4,116.4,116.9,129.0,136.1,148.0,155.4,162.2,167.9,179.4,187.1,196.7,195.7,207.0,195.4,184.4,197.8,186.7,174.9,161.3,177.6,193.5,190.7,195.0,196.5,189.7,182.5,174.6,177.5,189.8,202.2,213.2,225.6,230.6,238.9,229.3,256.1,278.3,309.7,306.4,307.1,338.2,353.7,373.8,392.3,387.8,392.4,363.5,363.5,351.3,305.4,275.6,293.0,305.6,322.1,339.8,319.0,308.2,310.5,328.4,336.3,323.6,311.8,321.5,282.4,317.8,325.8,331.2,325.3];
+(function(){
+  const svg = document.getElementById("exhibitsvg");
+  const W = 780, H = 560, L = 40, R = 46, T = 70, B = 90;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const n = MOM.length, ymin = 60, ymax = 420;
+  const X = i => L + (W - L - R) * i / (n - 1);
+  const Y = v => T + (H - T - B) * (1 - (v - ymin) / (ymax - ymin));
+  let s = "";
+  /* drawdown span 2024 peak → 2025 trough, washed in coral-tint (real: idx 56 peak 392.4 → idx 61 trough 275.6) */
+  s += `<rect x="${X(56)}" y="${T}" width="${X(61)-X(56)}" height="${H-T-B}" fill="#FDE5DE" opacity=".55"/>`;
+  /* dots with green-tint halos (daylight glow) */
+  for (let i = 0; i < n; i++){
+    const cx = X(i), cy = Y(MOM[i]);
+    const delay = (i / n * 12).toFixed(2);
+    s += `<circle cx="${cx}" cy="${cy}" r="7" fill="#DFF4E8"/>`;
+    s += `<circle class="cdot" cx="${cx}" cy="${cy}" r="3" fill="${i===n-1?"#0B7E52":"#14A468"}" style="animation-delay:${delay}s"/>`;
+  }
+  /* annotations: mono, keylines, triad colors — the editorial layer */
+  const ann = [
+    { x: X(2),  y: Y(74.8),  dy: 42,  color:"#5C6663", lines:["MAR 2020","covid low · 75"] },
+    { x: X(56), y: Y(392.4), dy: -34, color:"#0B7E52", lines:["SEP 2024 · peak 392"] },
+    { x: X(61), y: Y(275.6), dy: 46,  color:"#C74A32", lines:["−30% drawdown","lived through"] },
+    { x: X(78), y: Y(325.3), dy: -40, color:"#0B7E52", anchor:"end", lines:["JUL 2026 · 325","+19.9% p.a. since 2020"] },
+  ];
+  for (const a of ann){
+    const ty = a.y + a.dy;
+    s += `<line x1="${a.x}" y1="${a.y + (a.dy>0?10:-10)}" x2="${a.x}" y2="${ty - (a.dy>0?14:-6)}" stroke="${a.color}" stroke-width="1" opacity=".55"/>`;
+    a.lines.forEach((t,i) => {
+      s += `<text x="${a.x + (a.anchor==="end"?6:0)}" y="${ty + i*15 + (a.dy>0?0:-(a.lines.length-1)*15)}" text-anchor="${a.anchor||"middle"}" font-family="IBM Plex Mono,monospace" font-size="11.5" fill="${a.color}">${t}</text>`;
+    });
+  }
+  svg.innerHTML = s;
+})();
+
+/* ————— B2: the daylight map ————— */
+const INDIA = [
+"......##............",
+".....####...........",
+"....#####...........",
+"...########.........",
+"...#########..####..",
+"..##################",
+"..##################",
+".#################..",
+"#################...",
+"#################...",
+".###############....",
+".##############.....",
+"..############......",
+"..###########.......",
+"...##########.......",
+"...#########........",
+"....########........",
+"....#######.........",
+".....######.........",
+".....#####..........",
+"......####..........",
+"......###...........",
+".......##...........",
+".......#............"
+];
+const CITIES = [[4,11,"BSE·NSE"],[6,4,"DEL"],[6,16,"BLR"],[8,16,"MAA"],[11,7,"CCU"],[3,8,"AMD"],[7,13,"HYD"]];
+(function(){
+  const svg = document.getElementById("daymapsvg");
+  const cell = 22, r = 5.5, rows = INDIA.length, cols = 20;
+  const W = cols * cell, H = rows * cell;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  let s = "";
+  for (let y = 0; y < rows; y++){
+    for (let x = 0; x < cols; x++){
+      if (INDIA[y][x] !== "#") continue;
+      const cx = x * cell + cell/2, cy = y * cell + cell/2;
+      const o = (0.45 + ((x * 7 + y * 13) % 10) / 30).toFixed(2);
+      const delay = ((x * 5 + y * 3) % 80) / 10;
+      /* daylight glow = tint halo, vivid core */
+      s += `<circle cx="${cx}" cy="${cy}" r="${r+3}" fill="#DFF4E8" opacity=".9"/>`;
+      s += `<circle class="dot" cx="${cx}" cy="${cy}" r="${r-1.5}" fill="#14A468" style="--o:${o};animation-delay:${delay}s" opacity="${o}"/>`;
+    }
+  }
+  for (const [x, y, code] of CITIES){
+    const cx = x * cell + cell/2, cy = y * cell + cell/2;
+    s += `<circle cx="${cx}" cy="${cy}" r="${r+4}" fill="#DFF4E8"/>`;
+    s += `<circle class="city" cx="${cx}" cy="${cy}" r="${r}" fill="#0B7E52" style="animation-delay:${(x+y)%5}s"/>`;
+    s += `<text x="${cx + 15}" y="${cy + 4}" font-family="IBM Plex Mono,monospace" font-size="11" fill="#0B7E52">${code}</text>`;
+  }
+  svg.innerHTML = s;
+})();
+
+/* ————— drench featured card: the real series in pale mint ————— */
+(function(){
+  const svg = document.getElementById("featspark");
+  const W = 460, H = 110, n = MOM.length, min = 60, max = 400;
+  const X = i => 4 + (W - 8) * i / (n - 1);
+  const Y = v => 6 + (H - 14) * (1 - (v - min) / (max - min));
+  const d = MOM.map((v,i) => (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(v).toFixed(1)).join("");
+  svg.innerHTML = `<path d="${d} L ${X(n-1)} ${H} L 4 ${H} Z" fill="rgba(63,206,149,.10)" stroke="none"/>
+    <path d="${d}" fill="none" stroke="#3FCE95" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="${X(n-1)}" cy="${Y(MOM[n-1])}" r="3.5" fill="#BFEBD8"/>
+    <text x="${X(n-1)-8}" y="${Y(MOM[n-1])-8}" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="11" fill="#BFEBD8">325</text>
+    <text x="4" y="${H-2}" font-family="IBM Plex Mono,monospace" font-size="10" fill="#5E8F76">2020</text>
+    <text x="${W-4}" y="${H-2}" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="10" fill="#5E8F76">2026</text>`;
+})();
+
+/* ————— B3: sparkline on the desk (real series, compressed) ————— */
+(function(){
+  const svg = document.getElementById("sparksvg");
+  const W = 190, H = 54, n = MOM.length;
+  const min = 60, max = 400;
+  const X = i => 4 + (W - 8) * i / (n - 1);
+  const Y = v => 4 + (H - 8) * (1 - (v - min) / (max - min));
+  let d = MOM.map((v,i) => (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(v).toFixed(1)).join("");
+  svg.innerHTML = `<path d="${d}" fill="none" stroke="#0B7E52" stroke-width="1.8"/>
+    <circle cx="${X(n-1)}" cy="${Y(MOM[n-1])}" r="3" fill="#0B7E52"/>
+    <text x="${X(n-1)-8}" y="${Y(MOM[n-1])-7}" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="9.5" fill="#5C6663">325</text>`;
+})();
+
+/* ————— ASCII icons ————— */
+const ICONS = {
+  up: [
+"      ######",
+"        ####",
+"      ## ###",
+"    ##      ",
+"  ##        ",
+"##          ",
+"            "],
+  bars: [
+"        ##  ",
+"        ##  ",
+"    ##  ##  ",
+"    ##  ##  ",
+"##  ##  ##  ",
+"##  ##  ##  ",
+"############"],
+  shield: [
+"  ########  ",
+" ##      ## ",
+" ##  ##  ## ",
+" ##  ##  ## ",
+"  ##    ##  ",
+"   ######   ",
+"     ##     "]
+};
+function ascii(id, rows){ document.getElementById(id).textContent = rows.join("\n"); }
+ascii("ic1", ICONS.up); ascii("ic2", ICONS.bars); ascii("ic3", ICONS.shield);
+
+/* serif toggle — LB is the SET default (loop 25); Fraunces kept for comparison */
+const st = document.getElementById("seriftoggle");
+st.addEventListener("click", () => {
+  const on = document.documentElement.dataset.serif === "lb";
+  document.documentElement.dataset.serif = on ? "" : "lb";
+  st.textContent = on ? "Back to Libre Baskerville (set)" : "Compare old serif (Fraunces)";
+  st.setAttribute("aria-pressed", String(!on));
+});
+</script>
+</body>
+</html>
