@@ -1,5 +1,18 @@
 # design_studies — state of the study (2026-08-13)
 
+> **Loop 29 — system-incorporation pass (founder flagged it).** Two
+> real defects found and fixed: (1) the green light theme was still
+> GATED to `data-palette="ocean"` — any visitor with a stale stored
+> palette from the retired picker rendered old tokens; the light
+> block is now `html:not(.dark) .mw-brand` (palette attribute is
+> irrelevant on brand surfaces, per the loop-23 no-picker decision).
+> (2) both marketing pages still carried the loop-7 `.mw-mint2`
+> override (old lichen #00875F) — class and CSS retired. Verified by
+> simulating stale `mint` and `midnight` visitors: both now render
+> the set systems (#0B7E52/white · #3FCE95/#0D1412), LB 500
+> headings, Plex Mono. Reminder that masked the fix during
+> verification: the Turbopack stale-CSS gotcha (`rm -rf .next`).
+
 > **Loop 28 — the full composition batch (founder: "make the whole
 > batch, we can always delete later").** All nine menu items from the
 > three reference studies, gallery entries 13-21:

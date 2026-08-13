@@ -317,7 +317,11 @@
   --font-geist-mono: var(--font-plex-mono), ui-monospace, monospace;
 }
 
-html[data-palette="ocean"]:not(.dark) .mw-brand {
+/* Loop 29: the palette attribute no longer matters on brand surfaces —
+ * the single-green system IS the light theme (loop 23 decision applied
+ * fully). Dark is the .dark block below; the dashboard's palette sheets
+ * are untouched pending the merge decision. */
+html:not(.dark) .mw-brand {
   /* Loop 26: the loop-23 SINGLE-GREEN system rides the ocean slot (the
    * study's default). White ground, green-cast ink + one grey, brand green
    * #0B7E52 (clay-vibrance band, 5.1:1), five leashed accent triads
@@ -394,24 +398,8 @@ html[data-palette="ocean"]:not(.dark) .mw-brand {
 
 
 
-/* Mint v2 (loop 7): the brand green family with the study's vibrance
- * treatment. The old lichen #0C7A62 already sits at the top of the WCAG
- * vibrance band, so the chroma push is modest (#00875F, 4.53:1, WHITE
- * foreground — mist fails on it) and the brightness comes from the hero sky,
- * a cleaner near-white ground, and white cards. */
-/* Scoped to the Mint palette only (attribute absent = default mint), so the
- * restored palette picker cycles the new design through every palette; the
- * vibrance override applies just where it belongs. */
-:is(html[data-palette="mint"], html:not([data-palette])):not(.dark)
-  .mw-mint2 {
-  --primary: #00875F;
-  --primary-foreground: #FFFFFF;
-  --ring: #00875F;
-  --surface-base: #FAFDFB;
-}
-.mw-mint2 {
-  background-color: var(--surface-base);
-}
+/* Mint v2 (loop 7) retired in loop 29: superseded by the single-green
+ * system; the class is gone from all pages. */
 
 
 /* Heading serif layer (loop 20 mechanism, loop 26 face): Libre Baskerville

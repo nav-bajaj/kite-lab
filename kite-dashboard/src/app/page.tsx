@@ -82,7 +82,7 @@ export default async function LandingPage() {
   const betaLabel = userId ? "View dashboard" : "Get beta access";
 
   return (
-    <div className="mw-brand mw-mint2 mw-serif-headings relative min-h-screen bg-surface-base">
+    <div className="mw-brand mw-serif-headings relative min-h-screen bg-surface-base">
       <SmoothScroll />
       <FloatingNav />
 

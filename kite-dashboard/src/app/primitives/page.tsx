@@ -57,16 +57,16 @@ function Caption({ children }: { children: React.ReactNode }) {
 
 export default function PrimitivesPage() {
   return (
-    <div className="mw-brand mw-mint2 mw-serif-headings relative min-h-screen bg-surface-base">
+    <div className="mw-brand mw-serif-headings relative min-h-screen bg-surface-base">
       <FloatingNav />
       <main className="mx-auto max-w-[1140px] px-6 pb-28 pt-32">
-        <h1 className="text-[2rem] font-semibold leading-[1.1] tracking-[-0.02em] text-foreground sm:text-[2.5rem]">
+        <h1 className="text-[2rem] font-medium leading-[1.15] text-foreground sm:text-[2.5rem]">
           Primitives gallery
         </h1>
         <p className="mt-3 max-w-[560px] text-base leading-[1.6] text-muted-foreground">
-          Card experiments from the reference studies. Everything is
-          token-derived; flip the palette in the nav to re-theme the whole
-          sheet.
+          Card experiments from the reference studies, on the set system:
+          single green, Libre Baskerville, IBM Plex Mono. Everything is
+          token-derived; the sun/moon toggle re-themes the sheet.
         </p>
 
         <Caption>
