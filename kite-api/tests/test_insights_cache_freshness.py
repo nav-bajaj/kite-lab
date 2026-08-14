@@ -259,3 +259,27 @@ class TestStockMetricsSelfInvalidation:
         assert n_cold == 1
         stock_metrics.get_stock_metrics(asof)
         assert calls["n"] == n_cold, "identical inputs must not recompute"
+
+
+class TestSchemaGuard:
+    """A disk cache that is fresh by mtime but written by an OLDER code
+    version (missing newer columns) must be rebuilt, not served — the
+    mtime check can't see code changes (insights_dashboard_v2 Slice 2.5,
+    where avg_dist_from_200dma/mcclellan_sum/pct_above_21dma were added)."""
+
+    def test_stale_schema_pickle_triggers_rebuild(self, breadth_env):
+        # Build once (writes a current-schema pickle), then strip the new
+        # columns and touch the file so it stays mtime-fresh.
+        panel = breadth.get_breadth_panel()
+        old_schema = panel.drop(
+            columns=["avg_dist_from_200dma", "mcclellan_sum", "pct_above_21dma"]
+        )
+        old_schema.to_pickle(breadth_env["cache"])
+        # Simulate a worker restart after a deploy: in-memory cache gone,
+        # stale-schema pickle still on disk (clear_cache would delete it,
+        # which is precisely what does NOT happen on a redeploy).
+        breadth._get_breadth_panel_cached.cache_clear()
+
+        reloaded = breadth.get_breadth_panel()
+        for col in ("avg_dist_from_200dma", "mcclellan_sum", "pct_above_21dma"):
+            assert col in reloaded.columns, f"stale-schema cache served: {col} missing"

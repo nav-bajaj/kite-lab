@@ -20,8 +20,9 @@ from app.insights import breadth, macro
 
 
 EXPECTED_BREADTH_COLUMNS = {
-    "pct_above_50dma", "pct_above_100dma", "pct_above_200dma",
-    "ad_diff_pct", "cumulative_ad", "mcclellan_osc",
+    "pct_above_21dma", "pct_above_50dma", "pct_above_100dma",
+    "pct_above_200dma", "avg_dist_from_200dma",
+    "ad_diff_pct", "cumulative_ad", "mcclellan_osc", "mcclellan_sum",
     "new_52w_highs_pct", "new_52w_lows_pct", "net_new_highs_pct",
     "dispersion", "n_active",
 }
@@ -132,3 +133,56 @@ class TestCombinedPanels:
         # breadth uses `_repo_root()` internally; macro uses `get_settings().data_dir`
         # They should be identical.
         assert breadth._repo_root() == get_settings().data_dir
+
+
+class TestAtlasColumnAdditions:
+    """Spec for the three Breadth Atlas metrics promoted into the live
+    engine (insights_dashboard_v2 Slice 2.5; empirical profile in
+    tasks/breadth_atlas/REPORT.md): pct_above_21dma, avg_dist_from_200dma
+    (the continuous, statistically stronger sibling of pct_above_200dma)
+    and mcclellan_sum. Written spec-first per TDD_POLICY."""
+
+    @staticmethod
+    def _synthetic_panel() -> pd.DataFrame:
+        dates = pd.date_range("2023-01-02", periods=260, freq="B")
+        flat = pd.Series([100.0] * 260, index=dates)
+        rising = pd.Series([100.0 + 0.5 * i for i in range(260)], index=dates)
+        return breadth.compute_breadth_panel(pd.DataFrame({"FLAT": flat, "UP": rising}))
+
+    def test_avg_dist_from_200dma_hand_computed(self):
+        """FLAT sits exactly on its 200-DMA (dist 0); UP's last-day dist is
+        229.5 / 179.75 - 1. The cross-sectional mean follows."""
+        panel = self._synthetic_panel()
+        expected_up = 229.5 / 179.75 - 1.0
+        assert abs(panel["avg_dist_from_200dma"].iloc[-1] - expected_up / 2) < 1e-9
+
+    def test_pct_above_21dma_strict_inequality(self):
+        """FLAT == its 21-DMA (not above, matching the > convention of the
+        other pct_above columns); UP is above. So the share is 0.5."""
+        panel = self._synthetic_panel()
+        assert abs(panel["pct_above_21dma"].iloc[-1] - 0.5) < 1e-9
+
+    def test_pct_above_21dma_warmup(self):
+        """Needs 21 observations — NaN before, populated after."""
+        panel = self._synthetic_panel()
+        assert panel["pct_above_21dma"].iloc[:20].isna().all()
+        assert panel["pct_above_21dma"].iloc[20:].notna().all()
+
+    def test_mcclellan_sum_is_cumsum_of_oscillator(self):
+        """The summation index is by definition the running total of the
+        oscillator (skipping its NaN warm-up)."""
+        panel = self._synthetic_panel()
+        expected = panel["mcclellan_osc"].cumsum()
+        pd.testing.assert_series_equal(
+            panel["mcclellan_sum"], expected, check_names=False
+        )
+
+    def test_avg_dist_and_pct_above_200_agree_on_real_data(self, breadth_panel):
+        """Atlas finding: the continuous and binary forms are the same
+        signal (Pearson 0.97). Pin a loose floor so a wiring mistake
+        (wrong column, wrong sign) fails loudly."""
+        sub = breadth_panel[["avg_dist_from_200dma", "pct_above_200dma"]].dropna()
+        if len(sub) < 500:
+            pytest.skip("not enough real history")
+        corr = sub["avg_dist_from_200dma"].corr(sub["pct_above_200dma"])
+        assert corr > 0.9

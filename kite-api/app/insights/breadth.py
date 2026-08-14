@@ -92,6 +92,7 @@ def compute_breadth_panel(close_panel: pd.DataFrame) -> pd.DataFrame:
     close = close_panel.copy()
     close = close.ffill(limit=5)
 
+    sma_21 = close.rolling(21, min_periods=21).mean()
     sma_50 = close.rolling(50, min_periods=50).mean()
     sma_100 = close.rolling(100, min_periods=100).mean()
     sma_200 = close.rolling(200, min_periods=200).mean()
@@ -101,16 +102,23 @@ def compute_breadth_panel(close_panel: pd.DataFrame) -> pd.DataFrame:
 
     n_active = close.notna().sum(axis=1).astype(float)
 
+    above_21 = (close > sma_21).sum(axis=1).astype(float)
     above_50 = (close > sma_50).sum(axis=1).astype(float)
     above_100 = (close > sma_100).sum(axis=1).astype(float)
     above_200 = (close > sma_200).sum(axis=1).astype(float)
+    have_21 = sma_21.notna().sum(axis=1).astype(float)
     have_50 = sma_50.notna().sum(axis=1).astype(float)
     have_100 = sma_100.notna().sum(axis=1).astype(float)
     have_200 = sma_200.notna().sum(axis=1).astype(float)
 
+    pct_21 = (above_21 / have_21).replace([np.inf, -np.inf], np.nan)
     pct_50 = (above_50 / have_50).replace([np.inf, -np.inf], np.nan)
     pct_100 = (above_100 / have_100).replace([np.inf, -np.inf], np.nan)
     pct_200 = (above_200 / have_200).replace([np.inf, -np.inf], np.nan)
+
+    # Continuous sibling of pct_above_200dma (Breadth Atlas: ρ 0.97, but
+    # its tails carry ~4x the sample of the binary form's extreme bucket).
+    avg_dist_200 = (close / sma_200 - 1.0).mean(axis=1)
 
     n_adv = (daily_ret > 0).sum(axis=1).astype(float)
     n_dec = (daily_ret < 0).sum(axis=1).astype(float)
@@ -120,6 +128,7 @@ def compute_breadth_panel(close_panel: pd.DataFrame) -> pd.DataFrame:
 
     mcclellan = (ad_diff_pct.ewm(span=19, adjust=False).mean()
                  - ad_diff_pct.ewm(span=39, adjust=False).mean())
+    mcclellan_sum = mcclellan.cumsum()
 
     new_high = (close == high_252).sum(axis=1).astype(float)
     new_low = (close == low_252).sum(axis=1).astype(float)
@@ -131,17 +140,20 @@ def compute_breadth_panel(close_panel: pd.DataFrame) -> pd.DataFrame:
     dispersion = daily_ret.std(axis=1)
 
     return pd.DataFrame({
-        "pct_above_50dma":   pct_50,
-        "pct_above_100dma":  pct_100,
-        "pct_above_200dma":  pct_200,
-        "ad_diff_pct":       ad_diff_pct,
-        "cumulative_ad":     cumulative_ad,
-        "mcclellan_osc":     mcclellan,
-        "new_52w_highs_pct": new_high_pct,
-        "new_52w_lows_pct":  new_low_pct,
-        "net_new_highs_pct": net_new_highs_pct,
-        "dispersion":        dispersion,
-        "n_active":          n_active,
+        "pct_above_21dma":      pct_21,
+        "pct_above_50dma":      pct_50,
+        "pct_above_100dma":     pct_100,
+        "pct_above_200dma":     pct_200,
+        "avg_dist_from_200dma": avg_dist_200,
+        "ad_diff_pct":          ad_diff_pct,
+        "cumulative_ad":        cumulative_ad,
+        "mcclellan_osc":        mcclellan,
+        "mcclellan_sum":        mcclellan_sum,
+        "new_52w_highs_pct":    new_high_pct,
+        "new_52w_lows_pct":     new_low_pct,
+        "net_new_highs_pct":    net_new_highs_pct,
+        "dispersion":           dispersion,
+        "n_active":             n_active,
     })
 
 
@@ -191,11 +203,21 @@ def get_breadth_panel(force_rebuild: bool = False) -> pd.DataFrame:
     return _get_breadth_panel_cached(_signature())
 
 
+# Columns the current code version emits that older pickles may lack —
+# the mtime freshness check can't see code changes, so the load path
+# verifies schema before trusting a "fresh" cache (added with the
+# Breadth Atlas columns, insights_dashboard_v2 Slice 2.5).
+_SCHEMA_SENTINEL_COLUMNS = ("avg_dist_from_200dma", "mcclellan_sum", "pct_above_21dma")
+
+
 @lru_cache(maxsize=2)
 def _get_breadth_panel_cached(signature) -> pd.DataFrame:
     cache = _cache_file()
     if _cache_is_fresh(cache):
-        return pd.read_pickle(cache)  # noqa: S301  # internal cache only
+        panel = pd.read_pickle(cache)  # noqa: S301  # internal cache only
+        if all(c in panel.columns for c in _SCHEMA_SENTINEL_COLUMNS):
+            return panel
+        print("[breadth] cache schema outdated — rebuilding")
 
     print("[breadth] cache stale or missing — rebuilding from NSE 500 panel")
     symbols = load_universe()

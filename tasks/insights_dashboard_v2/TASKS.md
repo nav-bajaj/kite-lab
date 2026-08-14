@@ -54,6 +54,21 @@ Everything here runs on endpoints that already exist in production
 - [x] 2.4 🤖 [data] Concentration timeseries endpoint + card + detail
       (panel exists; endpoint missing).
 
+## Slice 2.5 — Atlas follow-ups (from PRIOR_RESEARCH.md) — DONE 2026-08-14
+
+- [x] 2.5a 🤖 Engine: pct_above_21dma, avg_dist_from_200dma,
+      mcclellan_sum added to breadth panel (TDD synthetic fixtures +
+      real-data correlation anchor); stale-schema cache guard so a
+      fresh-by-mtime pickle from older code rebuilds on deploy.
+- [x] 2.5b 🤖 Breadth detail: metric explorer — DMA family + avg-dist
+      with per-metric atlas bands (p5/median/p95 each).
+- [x] 2.5c 🤖 Regime detail: "What followed days like these" base-rates
+      table from conditional_dist (n, median, middle half, % positive
+      per horizon) with history-not-forecast framing [compliance].
+- [x] 2.5d 🤖 Navigation audit: all insights hrefs verified against the
+      new IA; legacy pages (sectors/watchlists/screener/learn/stocks)
+      render correctly inside the app shell; no old-layout links remain.
+
 ## Slice 3 — Sectors & Rotation (the RRG flagship) — needs D3
 
 - [ ] 3.1 🤖 [data] Add missing indices to `tracked_indices.csv`

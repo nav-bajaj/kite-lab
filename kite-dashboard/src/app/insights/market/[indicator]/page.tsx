@@ -16,6 +16,7 @@ import {
 } from "@/lib/insights-api";
 import { DetailShell, StatStrip, type SubRailItem } from "@/components/insights/mission";
 import { TimeseriesChart, type ReferenceBand } from "@/components/insights/timeseries-chart";
+import { MetricExplorer, type MetricVariant } from "@/components/insights/metric-explorer";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 900;
@@ -113,20 +114,60 @@ function ChartCard({
   );
 }
 
-// Reference levels from the Breadth Atlas empirical profile
-// (tasks/breadth_atlas/REPORT.md §1: p5 = 22%, median = 59%, p95 = 94%
-// for pct_above_200dma over 2010-2026). Descriptive context lines, not
-// thresholds to act on.
-const BREADTH_BANDS: ReferenceBand[] = [
-  { value: 0.94, label: "rare strength since 2010 (top 5% of days)", tone: "warning" },
-  { value: 0.59, label: "median day since 2010", tone: "muted" },
-  { value: 0.22, label: "washed-out territory (bottom 5% of days)", tone: "negative" },
+// Reference levels for the whole DMA family from the Breadth Atlas
+// empirical profile (tasks/breadth_atlas/REPORT.md §1, 2010-2026 p5 /
+// median / p95 per metric). Descriptive context lines, not thresholds
+// to act on.
+function atlasBands(p5: number, median: number, p95: number): ReferenceBand[] {
+  return [
+    { value: p95, label: "top 5% of days since 2010", tone: "warning" },
+    { value: median, label: "median day since 2010", tone: "muted" },
+    { value: p5, label: "bottom 5% of days since 2010", tone: "negative" },
+  ];
+}
+
+const BREADTH_VARIANTS: Omit<MetricVariant, "values">[] = [
+  {
+    metric: "pct_above_200dma",
+    label: "% > 200-DMA",
+    sub: "Participation in long-term uptrends — the headline breadth read.",
+    percent: true,
+    bands: atlasBands(0.22, 0.59, 0.94),
+  },
+  {
+    metric: "avg_dist_from_200dma",
+    label: "Avg dist from 200-DMA",
+    sub: "The continuous sibling: average distance of every stock from its 200-day line. Same signal, finer extremes — the atlas's most robust deep-panic gauge.",
+    percent: true,
+    bands: atlasBands(-0.11, 0.051, 0.292),
+  },
+  {
+    metric: "pct_above_100dma",
+    label: "% > 100-DMA",
+    sub: "Medium-horizon participation (about five months of trend).",
+    percent: true,
+    bands: atlasBands(0.169, 0.593, 0.895),
+  },
+  {
+    metric: "pct_above_50dma",
+    label: "% > 50-DMA",
+    sub: "Faster participation — reacts in weeks rather than months.",
+    percent: true,
+    bands: atlasBands(0.157, 0.578, 0.882),
+  },
+  {
+    metric: "pct_above_21dma",
+    label: "% > 21-DMA",
+    sub: "The fastest of the family — one-month trend participation, flickers the most.",
+    percent: true,
+    bands: atlasBands(0.148, 0.549, 0.851),
+  },
 ];
 
 async function BreadthDetail({ reading }: { reading: MarketReading }) {
   const series = await getBreadthTimeseries({
     days: 4000,
-    metrics: ["pct_above_200dma"],
+    metrics: BREADTH_VARIANTS.map((v) => v.metric),
   }).catch((): TimeseriesResponse => ({ index: [], data: {} }));
   const values = series.data["pct_above_200dma"] ?? [];
   const now = reading.regime.pct_above_200dma;
@@ -139,13 +180,19 @@ async function BreadthDetail({ reading }: { reading: MarketReading }) {
     streak += 1;
   }
 
+  const byKey = new Map(Object.entries(series.data));
+  const variants: MetricVariant[] = BREADTH_VARIANTS.map((v) => ({
+    ...v,
+    values: byKey.get(v.metric) ?? [],
+  }));
+
   return (
     <div className="flex flex-col gap-4">
       <ChartCard
-        title="Share of NSE 500 above the 200-day average"
-        sub="Participation in long-term uptrends, daily since 2010. Dashed lines mark where days like today have historically sat."
+        title="Market breadth — the trend-participation family"
+        sub="Daily since 2010. Dashed lines mark where days like today have historically sat for the selected metric."
       >
-        <TimeseriesChart dates={series.index} values={values} bands={BREADTH_BANDS} percent />
+        <MetricExplorer dates={series.index} variants={variants} />
       </ChartCard>
       <StatStrip
         stats={[
@@ -513,6 +560,79 @@ function RegimeTimeline({ episodes }: { episodes: RegimeEpisode[] }) {
   );
 }
 
+/** One bucket × horizon row from the conditional_dist engine (shape locked
+ *  by kite-api tests; `conditional` is loosely typed on MarketReading). */
+interface ConditionalDistRow {
+  n: number;
+  median: number | null;
+  p25: number | null;
+  p75: number | null;
+  pct_positive: number | null;
+}
+
+function BaseRatesTable({ reading }: { reading: MarketReading }) {
+  const conditional = reading.conditional as {
+    by_regime?: Record<string, ConditionalDistRow>;
+  } | null;
+  const byRegime = conditional?.by_regime;
+  if (!byRegime || Object.keys(byRegime).length === 0) return null;
+  const horizons = ["5", "10", "20", "60", "120"].filter((h) =>
+    Object.prototype.hasOwnProperty.call(byRegime, h),
+  );
+  if (horizons.length === 0) return null;
+  const rows = new Map(Object.entries(byRegime));
+  const n = rows.get(horizons[0])?.n;
+
+  return (
+    <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
+      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+        What followed days like these
+      </span>
+      <p className="text-[13px] text-muted-foreground">
+        Every {regimeLabel(reading.regime.regime)} day on record
+        {n ? ` (n=${n.toLocaleString("en-IN")})` : ""} and the Nifty return
+        that followed — a historical distribution, not a forecast.
+      </p>
+      <div className="overflow-x-auto">
+        <table className="w-full text-[13px]">
+          <thead>
+            <tr className="border-b border-border text-left text-[11px] uppercase tracking-[0.08em] text-muted-foreground">
+              <th className="py-2 pr-4 font-semibold">Horizon</th>
+              <th className="py-2 pr-4 font-semibold">Median</th>
+              <th className="py-2 pr-4 font-semibold">Middle half</th>
+              <th className="py-2 pr-4 font-semibold">Positive</th>
+            </tr>
+          </thead>
+          <tbody>
+            {horizons.map((h) => {
+              const d = rows.get(h);
+              if (!d) return null;
+              return (
+                <tr key={h} className="border-b border-border/60 last:border-0">
+                  <td className="py-2 pr-4 font-medium text-foreground">{h} days</td>
+                  <td className="py-2 pr-4 font-mono tabular-nums text-foreground">
+                    {fmtPct(d.median, 1, true)}
+                  </td>
+                  <td className="py-2 pr-4 font-mono tabular-nums text-muted-foreground">
+                    {fmtPct(d.p25, 1, true)} to {fmtPct(d.p75, 1, true)}
+                  </td>
+                  <td className="py-2 pr-4 font-mono tabular-nums text-foreground">
+                    {d.pct_positive !== null ? `${(d.pct_positive * 100).toFixed(0)}%` : "—"}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-[11px] italic leading-[1.5] text-muted-foreground">
+        Past distributions describe history; they do not predict the next
+        occurrence.
+      </p>
+    </div>
+  );
+}
+
 async function RegimeDetail({ reading }: { reading: MarketReading }) {
   const { episodes } = await getRegimeHistory().catch(() => ({ episodes: [] as RegimeEpisode[] }));
   const r = reading.regime;
@@ -546,6 +666,7 @@ async function RegimeDetail({ reading }: { reading: MarketReading }) {
           { label: "Spells on record", value: String(episodes.length), sub: "all states" },
         ]}
       />
+      <BaseRatesTable reading={reading} />
       <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
         <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           Recent spells
