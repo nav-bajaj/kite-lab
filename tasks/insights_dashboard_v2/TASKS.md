@@ -26,20 +26,20 @@ Everything here runs on endpoints that already exist in production
 (`/reading`, `/breadth/timeseries`, `/stress/timeseries`,
 `/regime/history`). Goal: the real mission control in the browser.
 
-- [ ] 1.1 🤖 Route restructure: `/insights` becomes the sidebar shell
+- [x] 1.1 🤖 Route restructure: `/insights` becomes the sidebar shell
       (site navbar untouched); Overview page skeleton with section
       headers; old tab pages kept reachable until slices replace them.
-- [ ] 1.2 🤖 Component kit: IndicatorCard (label/value/sparkline/
+- [x] 1.2 🤖 Component kit: IndicatorCard (label/value/sparkline/
       expand), SectionHeader, DetailShell (back button + sub-rail),
       ChartModule on lightweight-charts (range picker, reference
       bands) — all on existing role tokens, all six palettes.
-- [ ] 1.3 🤖 Market cards v1: Market State (regime), Market Stress,
+- [x] 1.3 🤖 Market cards v1: Market State (regime), Market Stress,
       Breadth — wired to existing endpoints, snapshot `?date=`
       preserved.
-- [ ] 1.4 🤖 Detail views v1: Breadth detail (bands from breadth_atlas
+- [x] 1.4 🤖 Detail views v1: Breadth detail (bands from breadth_atlas
       percentiles, stats strip, learn panel) + Stress detail +
       Regime ribbon detail (episodes over Nifty).
-- [ ] 1.5 🤖 [compliance] Lexicon tests extended to new card/detail
+- [x] 1.5 🤖 [compliance] Lexicon tests extended to new card/detail
       strings; disclaimer footer in the new shell verified.
 - [ ] 1.6 👤 Browser review on real data → adjust before Slice 2.
 
