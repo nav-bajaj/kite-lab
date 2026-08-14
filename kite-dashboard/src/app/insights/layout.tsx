@@ -1,9 +1,13 @@
 import { Suspense } from "react";
 import { CompactSnapshotPicker } from "./_components/snapshot-picker";
-import { InsightsSidebar, InsightsMobileNav } from "@/components/insights/shell";
-import { FloatingNav } from "@/components/marketing/floating-nav";
-import { FooterPanel } from "@/components/marketing/footer-panel";
-import { FlowGrid } from "@/components/marketing/flow-grid";
+import {
+  InsightsAppSidebar,
+  InsightsTopbar,
+  InsightsMobileNav,
+} from "@/components/insights/shell";
+import { DashboardMain } from "@/components/shared/dashboard-main";
+import { DisclaimerFooter } from "@/components/shared/disclaimer-footer";
+import { SidebarProvider } from "@/contexts/sidebar-context";
 
 export const metadata = {
   title: "Insights — Marketworks",
@@ -13,45 +17,35 @@ export const metadata = {
 
 export default function InsightsLayout({ children }: { children: React.ReactNode }) {
   return (
-    // `.mw-app` (not `.mw-brand`) so the finance up/down colours resolve. The
-    // floating nav stays SITE-level (Portfolios / Library / Insights) — the
-    // insights sections live in the sidebar, mission-control style
-    // (tasks/insights_dashboard_v2/DASHBOARD_DESIGN.md §1).
-    <div className="mw-app relative flex min-h-screen flex-col overflow-hidden bg-surface-base">
-      <FlowGrid />
-      <FloatingNav />
+    // Full-screen app shell, same skeleton as the portfolios dashboard
+    // (fixed collapsible sidebar + DashboardMain offset + top bar +
+    // compliance footer). `.mw-app` so the finance up/down colours resolve.
+    <SidebarProvider>
+      <div className="mw-app flex min-h-screen flex-col bg-background">
+        <Suspense fallback={null}>
+          <InsightsAppSidebar />
+        </Suspense>
 
-      <div className="relative z-10 flex-1">
-        <div className="mx-auto max-w-[1360px] px-4 pb-12 pt-24 sm:px-6 sm:pb-16 sm:pt-28">
-          {/* The sidebar reads the ?date= param, so both nav variants need a
-              suspense boundary around useSearchParams. */}
+        <DashboardMain>
+          <InsightsTopbar
+            pickerSlot={
+              <Suspense fallback={null}>
+                <CompactSnapshotPicker />
+              </Suspense>
+            }
+          />
+
           <Suspense fallback={null}>
-            <div className="mb-4 lg:hidden">
+            <div className="px-4 pt-3 lg:hidden">
               <InsightsMobileNav />
             </div>
           </Suspense>
-          <div className="flex gap-8">
-            <Suspense fallback={<div className="hidden w-52 shrink-0 lg:block" />}>
-              <InsightsSidebar />
-            </Suspense>
-            <div className="min-w-0 flex-1">
-              <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
-                <span className="text-[13px] font-semibold uppercase tracking-[0.15em] text-primary">
-                  Marketworks Insights
-                </span>
-                <Suspense fallback={null}>
-                  <CompactSnapshotPicker />
-                </Suspense>
-              </div>
-              {children}
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div className="relative z-10 pb-6">
-        <FooterPanel />
+          <main className="flex-1 overflow-x-clip p-4 lg:p-6">{children}</main>
+
+          <DisclaimerFooter />
+        </DashboardMain>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
