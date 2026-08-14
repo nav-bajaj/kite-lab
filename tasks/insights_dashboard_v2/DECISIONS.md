@@ -58,6 +58,35 @@ the smallcap 250 universe) — structurally NSE's NIFTY LARGEMIDCAP 250
 the official-index benchmark analog for our nifty250 universe in RRG
 mode 2.
 
+## 2026-08-14 — mock + follow-up questions
+
+**Quality Momentum universe: VERIFIED custom, recommend keeping it.**
+OM25 v3 reads `data/static/nifty250_universe.csv` (`scripts/om25_v3.py:42`)
+with effective-dated masking via the membership machinery — NOT the
+official NIFTY LARGEMIDCAP 250 constituent list. Since our list is
+built by the same recipe (Nifty 100 + Midcap 150, verified 2026-08-13),
+the two should track closely but can drift between our refreshes and
+NSE's rebalance dates. Recommendation (founder to confirm): keep the
+custom universe as the portfolio + RRG source (stable `nifty250` ID in
+DB/CSVs, membership history, backtest continuity); add an official
+LARGEMID250 constituent download as a reconciliation CHECK at each
+NSE reconstitution (diff report, not an automatic switch).
+
+**Personalization (watchlists/alerts): architecture documented** in
+`PERSONALIZATION.md`. Headline: two API planes — the public cached
+insights surface never carries per-user data; a new authenticated
+`/api/me/*` namespace (Supabase JWT) holds watchlists/alerts/
+notifications in three Postgres tables; alerts evaluate in the
+existing scheduler against engine snapshots; entitlements_v1 limits
+map onto watchlist/alert capacity. Schema-ready now, build post-launch.
+
+**Mock**: `mock_insights_dashboard.pen` (3 screens: Pulse, Sectors &
+Rotation/RRG, Stock Lists) + PNG exports in `mock_previews/`. Built on
+the vendored Mint tokens (mist bg, lichen primary, Fraunces display,
+Outfit UI, accent-rotation chips, chart-series colors) so it matches
+the existing dashboard language. NOTE: the .pen must be saved from the
+VSCode Pencil tab to persist (MCP edits live in the editor session).
+
 ## Canonical list locations (reconciliation)
 
 | List | File | Notes |
