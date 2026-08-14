@@ -495,6 +495,47 @@ export async function getPreEvent(date?: string): Promise<PreEventResponse> {
   return getJson<PreEventResponse>(`/api/insights/calendar/pre-event${q}`);
 }
 
+// ---------- indicator history (dashboard slice 1) ----------
+
+/**
+ * Column-oriented time series as served by /breadth/timeseries and
+ * /stress/timeseries: one shared date index, one array per metric.
+ * These endpoints tail from the latest build and take no `date` param —
+ * the snapshot picker rewinds card values, while history charts always
+ * run through the most recent day.
+ */
+export interface TimeseriesResponse {
+  index: string[];
+  data: Record<string, (number | null)[]>;
+}
+
+export async function getBreadthTimeseries(opts?: {
+  days?: number;
+  metrics?: string[];
+}): Promise<TimeseriesResponse> {
+  const params: string[] = [];
+  if (opts?.days) params.push(`days=${opts.days}`);
+  if (opts?.metrics?.length) params.push(`metrics=${encodeURIComponent(opts.metrics.join(","))}`);
+  const q = params.length ? `?${params.join("&")}` : "";
+  return getJson<TimeseriesResponse>(`/api/insights/breadth/timeseries${q}`);
+}
+
+export async function getStressTimeseries(days?: number): Promise<TimeseriesResponse> {
+  const q = days ? `?days=${days}` : "";
+  return getJson<TimeseriesResponse>(`/api/insights/stress/timeseries${q}`);
+}
+
+export interface RegimeEpisode {
+  regime: "TREND_BULL" | "DRIFT" | "STRETCHED" | "STRESS";
+  start: string;
+  end: string;
+  days: number;
+}
+
+export async function getRegimeHistory(): Promise<{ episodes: RegimeEpisode[] }> {
+  return getJson<{ episodes: RegimeEpisode[] }>(`/api/insights/regime/history`);
+}
+
 /** Strip the NIFTY_ prefix for display; sector baskets are index names. */
 export function sectorLabel(s: string): string {
   return s.replace(/^NIFTY_/, "").replace(/_/g, " ");
