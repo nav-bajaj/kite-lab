@@ -6,15 +6,17 @@ import {
   getStressTimeseries,
   getMacroTimeseries,
   getConcentrationTimeseries,
-  getRegimeHistory,
   fmtPct,
   fmtNum,
-  regimeLabel,
+  insightsQuery,
+  parseUniverse,
+  universeLabel,
+  type BreadthUniverse,
   type MarketReading,
-  type RegimeEpisode,
   type TimeseriesResponse,
 } from "@/lib/insights-api";
-import { DetailShell, StatStrip, type SubRailItem } from "@/components/insights/mission";
+import { DetailShell, StatStrip } from "@/components/insights/mission";
+import { MARKET_TABS } from "../_tabs";
 import { TimeseriesChart, type ReferenceBand } from "@/components/insights/timeseries-chart";
 import { MetricExplorer, type MetricVariant } from "@/components/insights/metric-explorer";
 
@@ -22,25 +24,17 @@ export const dynamic = "force-dynamic";
 export const revalidate = 900;
 
 /**
- * Market indicator detail views (mission control: expand a card → land here).
- * Slice 1 ships breadth / stress / regime; the remaining Market indicators
- * appear in the sub-rail as "soon" so the section's full shape is visible.
+ * Market indicator detail views (mission control: expand a card → land
+ * here). The tab row is shared with the section root (/insights/market)
+ * so navigation stays identical while drilling. The market-state (regime)
+ * detail was retired 2026-08-14 (founder: confusing) — the four states
+ * stay explained on the Daily read page.
  */
 
-const RAIL: SubRailItem[] = [
-  { slug: "regime", label: "Market state", ready: true },
-  { slug: "stress", label: "Market stress", ready: true },
-  { slug: "breadth", label: "Breadth", ready: true },
-  { slug: "vix", label: "India VIX", ready: true },
-  { slug: "net-new-highs", label: "Net new highs", ready: true },
-  { slug: "mcclellan", label: "McClellan osc", ready: true },
-  { slug: "concentration", label: "Concentration", ready: true },
-];
-
 const TITLES: Record<string, string> = {
-  regime: "Market state",
   stress: "Market stress",
   breadth: "Market breadth",
+  "advance-decline": "Advances & declines",
   vix: "India VIX",
   "net-new-highs": "Net new highs",
   mcclellan: "McClellan oscillator",
@@ -164,41 +158,79 @@ const BREADTH_VARIANTS: Omit<MetricVariant, "values">[] = [
   },
 ];
 
-async function BreadthDetail({ reading }: { reading: MarketReading }) {
+function lastNonNull(values: (number | null)[]): number | null {
+  for (let i = values.length - 1; i >= 0; i--) {
+    const v = values.at(i);
+    if (v !== null && v !== undefined && !Number.isNaN(v)) return v;
+  }
+  return null;
+}
+
+/** Bands computed from the fetched series itself — used for non-default
+ *  universes, where the NSE-500 Breadth Atlas reference values don't apply. */
+function computedBands(values: (number | null)[]): ReferenceBand[] {
+  const p95 = percentile(values, 95);
+  const med = percentile(values, 50);
+  const p5 = percentile(values, 5);
+  return [
+    ...(p95 !== null ? [{ value: p95, label: "top 5% of this universe's days", tone: "warning" as const }] : []),
+    ...(med !== null ? [{ value: med, label: "median day for this universe", tone: "muted" as const }] : []),
+    ...(p5 !== null ? [{ value: p5, label: "bottom 5% of this universe's days", tone: "negative" as const }] : []),
+  ];
+}
+
+async function BreadthDetail({
+  reading,
+  universe,
+}: {
+  reading: MarketReading;
+  universe: BreadthUniverse;
+}) {
   const series = await getBreadthTimeseries({
     days: 4000,
     metrics: BREADTH_VARIANTS.map((v) => v.metric),
+    universe,
   }).catch((): TimeseriesResponse => ({ index: [], data: {} }));
-  const values = series.data["pct_above_200dma"] ?? [];
-  const now = reading.regime.pct_above_200dma;
+  const isDefault = universe === "nse500";
+  const byKey = new Map(Object.entries(series.data));
+  const values = byKey.get("pct_above_200dma") ?? [];
+  const now = isDefault ? reading.regime.pct_above_200dma : lastNonNull(values);
+  const median = isDefault ? 0.59 : percentile(values, 50);
+  const p5 = isDefault ? 0.22 : percentile(values, 5);
 
   let streak = 0;
   for (let i = values.length - 1; i >= 0; i--) {
-    /* eslint-disable-next-line security/detect-object-injection -- numeric loop index */
-    const v = values[i];
-    if (v === null || v < 0.59) break;
+    const v = values.at(i);
+    if (v === null || v === undefined || median === null || v < median) break;
     streak += 1;
   }
 
-  const byKey = new Map(Object.entries(series.data));
-  const variants: MetricVariant[] = BREADTH_VARIANTS.map((v) => ({
-    ...v,
-    values: byKey.get(v.metric) ?? [],
-  }));
+  const variants: MetricVariant[] = BREADTH_VARIANTS.map((v) => {
+    const vals = byKey.get(v.metric) ?? [];
+    return { ...v, values: vals, bands: isDefault ? v.bands : computedBands(vals) };
+  });
 
   return (
     <div className="flex flex-col gap-4">
       <ChartCard
-        title="Market breadth — the trend-participation family"
-        sub="Daily since 2010. Dashed lines mark where days like today have historically sat for the selected metric."
+        title={`Market breadth — the trend-participation family · ${universeLabel(universe)}`}
+        sub="Dashed lines mark where days like today have historically sat for the selected metric and universe."
       >
         <MetricExplorer dates={series.index} variants={variants} />
       </ChartCard>
       <StatStrip
         stats={[
-          { label: "Now", value: fmtPct(now, 0), sub: "of NSE 500" },
-          { label: "Median since 2010", value: "59%", sub: "the typical day" },
-          { label: "Washed-out line", value: "22%", sub: "bottom 5% of days" },
+          { label: "Now", value: fmtPct(now, 0), sub: `of ${universeLabel(universe)}` },
+          {
+            label: "Median day",
+            value: fmtPct(median, 0),
+            sub: isDefault ? "since 2010" : "this universe's history",
+          },
+          {
+            label: "Washed-out line",
+            value: fmtPct(p5, 0),
+            sub: "bottom 5% of days",
+          },
           {
             label: "Days at or above median",
             value: String(streak),
@@ -212,6 +244,90 @@ async function BreadthDetail({ reading }: { reading: MarketReading }) {
         stalls — have historically been the more fragile kind. This series
         moves over weeks, not days, which is why the chart carries more
         information than any single day&apos;s number.
+      </LearnPanel>
+    </div>
+  );
+}
+
+// Net advances reference levels (NSE 500, Breadth Atlas §1: ad_net_pct
+// p5 = -67%, median ≈ 0, p95 = +58%). A flow metric — the atlas's
+// mean-reversion profile says it carries information about what happened
+// today, not where the cycle is.
+const AD_VARIANTS: Omit<MetricVariant, "values">[] = [
+  {
+    metric: "ad_diff_pct",
+    label: "Net advances (daily)",
+    sub: "Advancers minus decliners as a share of names traded — the rawest daily flow read. Spiky by nature.",
+    percent: true,
+    bands: atlasBands(-0.672, 0.004, 0.582),
+  },
+  {
+    metric: "cumulative_ad",
+    label: "A-D line (cumulative)",
+    sub: "Running total of daily net advances. Read its slope and its divergences from the index — the level itself carries no meaning.",
+    percent: false,
+    bands: [],
+  },
+];
+
+async function AdvanceDeclineDetail({
+  reading,
+  universe,
+}: {
+  reading: MarketReading;
+  universe: BreadthUniverse;
+}) {
+  const series = await getBreadthTimeseries({
+    days: 4000,
+    metrics: AD_VARIANTS.map((v) => v.metric),
+    universe,
+  }).catch((): TimeseriesResponse => ({ index: [], data: {} }));
+  const isDefault = universe === "nse500";
+  const byKey = new Map(Object.entries(series.data));
+  const daily = byKey.get("ad_diff_pct") ?? [];
+  const now = isDefault ? (reading.breadth["ad_diff_pct"] ?? null) : lastNonNull(daily);
+
+  const variants: MetricVariant[] = AD_VARIANTS.map((v) => {
+    const vals = byKey.get(v.metric) ?? [];
+    const bands =
+      v.metric === "cumulative_ad" ? [] : isDefault ? v.bands : computedBands(vals);
+    return { ...v, values: vals, bands };
+  });
+
+  return (
+    <div className="flex flex-col gap-4">
+      <ChartCard
+        title={`Advances & declines · ${universeLabel(universe)}`}
+        sub="How many stocks participated in today's move — daily net advances, plus the cumulative A-D line."
+      >
+        <MetricExplorer dates={series.index} variants={variants} />
+      </ChartCard>
+      <StatStrip
+        stats={[
+          { label: "Net advances today", value: fmtPct(now, 0, true), sub: "of names traded" },
+          {
+            label: "Typical day",
+            value: isDefault ? "±0%" : fmtPct(percentile(daily, 50), 0),
+            sub: "median is near zero by nature",
+          },
+          {
+            label: "Heavy-selling day",
+            value: isDefault ? "-67%" : fmtPct(percentile(daily, 5), 0),
+            sub: "bottom 5% of days",
+          },
+          {
+            label: "Broad-buying day",
+            value: isDefault ? "+58%" : fmtPct(percentile(daily, 95), 0),
+            sub: "top 5% of days",
+          },
+        ]}
+      />
+      <LearnPanel title="What this measures">
+        The most direct participation gauge there is: how many stocks rose
+        versus fell today. Single days are noise — the daily series mean-
+        reverts almost immediately — which is why the cumulative A-D line
+        exists: when it flattens while the index keeps rising, fewer and
+        fewer stocks are carrying the move.
       </LearnPanel>
     </div>
   );
@@ -349,28 +465,51 @@ const NNH_BANDS: ReferenceBand[] = [
   { value: -0.1, label: "bottom 5% of days since 2010", tone: "negative" },
 ];
 
-async function NetNewHighsDetail({ reading }: { reading: MarketReading }) {
+async function NetNewHighsDetail({
+  reading,
+  universe,
+}: {
+  reading: MarketReading;
+  universe: BreadthUniverse;
+}) {
   const series = await getBreadthTimeseries({
     days: 4000,
     metrics: ["net_new_highs_pct"],
+    universe,
   }).catch((): TimeseriesResponse => ({ index: [], data: {} }));
+  const isDefault = universe === "nse500";
   const values = series.data["net_new_highs_pct"] ?? [];
-  const now = reading.breadth["net_new_highs_pct"] ?? null;
+  const now = isDefault
+    ? (reading.breadth["net_new_highs_pct"] ?? null)
+    : lastNonNull(values);
+  const bands = isDefault ? NNH_BANDS : computedBands(values);
 
   return (
     <div className="flex flex-col gap-4">
       <ChartCard
-        title="Net new 52-week highs, share of NSE 500"
+        title={`Net new 52-week highs · ${universeLabel(universe)}`}
         sub="Stocks at fresh 1-year highs minus fresh 1-year lows. Crashes push the low side much harder than rallies push the high side."
       >
-        <TimeseriesChart dates={series.index} values={values} bands={NNH_BANDS} percent />
+        <TimeseriesChart dates={series.index} values={values} bands={bands} percent />
       </ChartCard>
       <StatStrip
         stats={[
-          { label: "Now", value: fmtPct(now, 1), sub: "of NSE 500" },
-          { label: "Median since 2010", value: "+2.4%", sub: "the typical day" },
-          { label: "Bottom 5% of days", value: "-10%", sub: "washout territory" },
-          { label: "Top 5% of days", value: "+13.2%", sub: "expansion territory" },
+          { label: "Now", value: fmtPct(now, 1), sub: `of ${universeLabel(universe)}` },
+          {
+            label: "Median day",
+            value: isDefault ? "+2.4%" : fmtPct(percentile(values, 50), 1),
+            sub: isDefault ? "since 2010" : "this universe's history",
+          },
+          {
+            label: "Bottom 5% of days",
+            value: isDefault ? "-10%" : fmtPct(percentile(values, 5), 1),
+            sub: "washout territory",
+          },
+          {
+            label: "Top 5% of days",
+            value: isDefault ? "+13.2%" : fmtPct(percentile(values, 95), 1),
+            sub: "expansion territory",
+          },
         ]}
       />
       <LearnPanel title="What this measures">
@@ -392,21 +531,30 @@ const MCC_BANDS: ReferenceBand[] = [
   { value: -0.068, label: "bottom 5% of days since 2010", tone: "negative" },
 ];
 
-async function McClellanDetail({ reading }: { reading: MarketReading }) {
+async function McClellanDetail({
+  reading,
+  universe,
+}: {
+  reading: MarketReading;
+  universe: BreadthUniverse;
+}) {
   const series = await getBreadthTimeseries({
     days: 4000,
     metrics: ["mcclellan_osc"],
+    universe,
   }).catch((): TimeseriesResponse => ({ index: [], data: {} }));
+  const isDefault = universe === "nse500";
   const values = series.data["mcclellan_osc"] ?? [];
-  const now = reading.breadth["mcclellan_osc"] ?? null;
+  const now = isDefault ? (reading.breadth["mcclellan_osc"] ?? null) : lastNonNull(values);
+  const bands = isDefault ? MCC_BANDS : computedBands(values);
 
   return (
     <div className="flex flex-col gap-4">
       <ChartCard
-        title="McClellan oscillator (NSE 500 advance-decline flow)"
+        title={`McClellan oscillator · ${universeLabel(universe)} advance-decline flow`}
         sub="Fast EMA minus slow EMA of daily advance-decline breadth. A flow gauge — it describes what just happened, not where the cycle is."
       >
-        <TimeseriesChart dates={series.index} values={values} bands={MCC_BANDS} defaultRange="1Y" />
+        <TimeseriesChart dates={series.index} values={values} bands={bands} defaultRange="1Y" />
       </ChartCard>
       <StatStrip
         stats={[
@@ -489,250 +637,42 @@ async function ConcentrationDetail({ reading }: { reading: MarketReading }) {
   );
 }
 
-const REGIME_COLOR: Record<RegimeEpisode["regime"], string> = {
-  TREND_BULL: "var(--positive)",
-  DRIFT: "var(--muted-foreground)",
-  STRETCHED: "var(--warning)",
-  STRESS: "var(--negative)",
-};
-
-function RegimeTimeline({ episodes }: { episodes: RegimeEpisode[] }) {
-  if (episodes.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground">
-        Regime history is not available right now.
-      </p>
-    );
-  }
-  const totalDays = episodes.reduce((acc, e) => acc + e.days, 0);
-  const W = 1000;
-  const H = 34;
-  const segments = episodes.reduce<{ x: number; w: number }[]>((arr, e) => {
-    const prev = arr.length > 0 ? arr[arr.length - 1] : null;
-    arr.push({ x: prev ? prev.x + prev.w : 0, w: (e.days / totalDays) * W });
-    return arr;
-  }, []);
-  return (
-    <div className="flex flex-col gap-2">
-      <svg viewBox={`0 0 ${W} ${H}`} className="h-9 w-full" preserveAspectRatio="none">
-        {episodes.map((e, i) => (
-          <rect
-            key={`${e.start}-${i}`}
-            /* eslint-disable-next-line security/detect-object-injection -- numeric loop index */
-            x={segments[i].x}
-            y={6}
-            /* eslint-disable-next-line security/detect-object-injection -- numeric loop index */
-            width={Math.max(segments[i].w - 0.5, 0.5)}
-            height={22}
-            rx={2}
-            fill={REGIME_COLOR[e.regime]}
-            opacity={0.85}
-          />
-        ))}
-      </svg>
-      <div className="flex justify-between text-[11px] text-muted-foreground">
-        <span>
-          {new Date(episodes[0].start).toLocaleDateString("en-IN", {
-            month: "short",
-            year: "numeric",
-          })}
-        </span>
-        <span>
-          {new Date(episodes[episodes.length - 1].end).toLocaleDateString("en-IN", {
-            month: "short",
-            year: "numeric",
-          })}
-        </span>
-      </div>
-      <div className="flex flex-wrap gap-4 pt-1">
-        {(Object.keys(REGIME_COLOR) as RegimeEpisode["regime"][]).map((r) => (
-          <span key={r} className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
-            <span
-              className="inline-block h-2.5 w-2.5 rounded-[3px]"
-              /* eslint-disable-next-line security/detect-object-injection -- r iterates REGIME_COLOR's own keys */
-              style={{ backgroundColor: REGIME_COLOR[r] }}
-            />
-            {regimeLabel(r)}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/** One bucket × horizon row from the conditional_dist engine (shape locked
- *  by kite-api tests; `conditional` is loosely typed on MarketReading). */
-interface ConditionalDistRow {
-  n: number;
-  median: number | null;
-  p25: number | null;
-  p75: number | null;
-  pct_positive: number | null;
-}
-
-function BaseRatesTable({ reading }: { reading: MarketReading }) {
-  const conditional = reading.conditional as {
-    by_regime?: Record<string, ConditionalDistRow>;
-  } | null;
-  const byRegime = conditional?.by_regime;
-  if (!byRegime || Object.keys(byRegime).length === 0) return null;
-  const horizons = ["5", "10", "20", "60", "120"].filter((h) =>
-    Object.prototype.hasOwnProperty.call(byRegime, h),
-  );
-  if (horizons.length === 0) return null;
-  const rows = new Map(Object.entries(byRegime));
-  const n = rows.get(horizons[0])?.n;
-
-  return (
-    <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
-      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-        What followed days like these
-      </span>
-      <p className="text-[13px] text-muted-foreground">
-        Every {regimeLabel(reading.regime.regime)} day on record
-        {n ? ` (n=${n.toLocaleString("en-IN")})` : ""} and the Nifty return
-        that followed — a historical distribution, not a forecast.
-      </p>
-      <div className="overflow-x-auto">
-        <table className="w-full text-[13px]">
-          <thead>
-            <tr className="border-b border-border text-left text-[11px] uppercase tracking-[0.08em] text-muted-foreground">
-              <th className="py-2 pr-4 font-semibold">Horizon</th>
-              <th className="py-2 pr-4 font-semibold">Median</th>
-              <th className="py-2 pr-4 font-semibold">Middle half</th>
-              <th className="py-2 pr-4 font-semibold">Positive</th>
-            </tr>
-          </thead>
-          <tbody>
-            {horizons.map((h) => {
-              const d = rows.get(h);
-              if (!d) return null;
-              return (
-                <tr key={h} className="border-b border-border/60 last:border-0">
-                  <td className="py-2 pr-4 font-medium text-foreground">{h} days</td>
-                  <td className="py-2 pr-4 font-mono tabular-nums text-foreground">
-                    {fmtPct(d.median, 1, true)}
-                  </td>
-                  <td className="py-2 pr-4 font-mono tabular-nums text-muted-foreground">
-                    {fmtPct(d.p25, 1, true)} to {fmtPct(d.p75, 1, true)}
-                  </td>
-                  <td className="py-2 pr-4 font-mono tabular-nums text-foreground">
-                    {d.pct_positive !== null ? `${(d.pct_positive * 100).toFixed(0)}%` : "—"}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-      <p className="text-[11px] italic leading-[1.5] text-muted-foreground">
-        Past distributions describe history; they do not predict the next
-        occurrence.
-      </p>
-    </div>
-  );
-}
-
-async function RegimeDetail({ reading }: { reading: MarketReading }) {
-  const { episodes } = await getRegimeHistory().catch(() => ({ episodes: [] as RegimeEpisode[] }));
-  const r = reading.regime;
-  const sameRegime = episodes.filter((e) => e.regime === r.regime);
-  const sorted = [...sameRegime].sort((a, b) => a.days - b.days);
-  const medianDays =
-    sorted.length > 0 ? sorted[Math.floor(sorted.length / 2)].days : null;
-  const recent = [...episodes].slice(-10).reverse();
-
-  return (
-    <div className="flex flex-col gap-4">
-      <ChartCard
-        title="Market state over time"
-        sub="One of four rules-based states each day, smoothed with a 3-day confirmation so the label doesn't flip on noise."
-      >
-        <RegimeTimeline episodes={episodes} />
-      </ChartCard>
-      <StatStrip
-        stats={[
-          { label: "Now", value: regimeLabel(r.regime), sub: `day ${r.persistence_days}` },
-          {
-            label: "Previous state",
-            value: r.prev_regime ? regimeLabel(r.prev_regime) : "—",
-            sub: r.prev_regime_lasted_days ? `lasted ${r.prev_regime_lasted_days} days` : undefined,
-          },
-          {
-            label: `Median ${regimeLabel(r.regime)} spell`,
-            value: medianDays !== null ? `${medianDays} days` : "—",
-            sub: `across ${sameRegime.length} historical spells`,
-          },
-          { label: "Spells on record", value: String(episodes.length), sub: "all states" },
-        ]}
-      />
-      <BaseRatesTable reading={reading} />
-      <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-          Recent spells
-        </span>
-        <div className="flex flex-col">
-          {recent.map((e, i) => (
-            <div
-              key={`${e.start}-${i}`}
-              className="flex items-center justify-between gap-3 border-b border-border/60 py-2 text-[13px] last:border-0"
-            >
-              <span className="flex items-center gap-2 font-medium text-foreground">
-                <span
-                  className="inline-block h-2.5 w-2.5 rounded-[3px]"
-                  style={{ backgroundColor: REGIME_COLOR[e.regime] }}
-                />
-                {regimeLabel(e.regime)}
-              </span>
-              <span className="font-mono text-[12px] tabular-nums text-muted-foreground">
-                {new Date(e.start).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "2-digit" })}
-                {" — "}
-                {new Date(e.end).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "2-digit" })}
-                {" · "}
-                {e.days}d
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-      <LearnPanel slug="regime" title="What this measures">
-        The market state is a rules-based label built from trend (Nifty 100 vs
-        its 100-day average), participation (breadth) and volatility. States
-        describe conditions; they are not signals. Spells vary widely in
-        length — the median above is context, not a countdown.
-      </LearnPanel>
-    </div>
-  );
-}
-
 export default async function MarketIndicatorPage({
   params,
   searchParams,
 }: {
   params: Promise<{ indicator: string }>;
-  searchParams: Promise<{ date?: string }>;
+  searchParams: Promise<{ date?: string; universe?: string }>;
 }) {
-  const [{ indicator }, { date }] = await Promise.all([params, searchParams]);
+  const [{ indicator }, { date, universe: rawUniverse }] = await Promise.all([
+    params,
+    searchParams,
+  ]);
   if (!Object.prototype.hasOwnProperty.call(TITLES, indicator)) notFound();
   const title = TITLES[indicator as keyof typeof TITLES];
-  const dateQuery = date ? `?date=${encodeURIComponent(date)}` : "";
+  const universe = parseUniverse(rawUniverse);
+  const dateQuery = insightsQuery({ date, universe });
   const reading = await getReading(date);
 
   return (
     <DetailShell
       section="Market Pulse"
       title={title}
-      items={RAIL}
+      items={MARKET_TABS}
       activeSlug={indicator}
       basePath="/insights/market"
       dateQuery={dateQuery}
     >
-      {indicator === "breadth" && <BreadthDetail reading={reading} />}
+      {indicator === "breadth" && <BreadthDetail reading={reading} universe={universe} />}
       {indicator === "stress" && <StressDetail reading={reading} />}
-      {indicator === "regime" && <RegimeDetail reading={reading} />}
+      {indicator === "advance-decline" && (
+        <AdvanceDeclineDetail reading={reading} universe={universe} />
+      )}
       {indicator === "vix" && <VixDetail reading={reading} />}
-      {indicator === "net-new-highs" && <NetNewHighsDetail reading={reading} />}
-      {indicator === "mcclellan" && <McClellanDetail reading={reading} />}
+      {indicator === "net-new-highs" && (
+        <NetNewHighsDetail reading={reading} universe={universe} />
+      )}
+      {indicator === "mcclellan" && <McClellanDetail reading={reading} universe={universe} />}
       {indicator === "concentration" && <ConcentrationDetail reading={reading} />}
       <p className="mt-4 text-[11px] leading-[1.6] text-muted-foreground">
         Educational market analytics — descriptions of conditions, not

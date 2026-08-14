@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { getWatchlists, WatchlistEntry } from "@/lib/insights-api";
+import { getMovers, getWatchlists, WatchlistEntry } from "@/lib/insights-api";
 import { Pct } from "@/components/insights/ui";
+import { StockMoversSection } from "@/components/insights/movers";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 900;
@@ -70,13 +71,17 @@ const LIST_ORDER = [
 
 export default async function WatchlistsPage({ searchParams }: PageProps) {
   const { date: dateParam } = await searchParams;
-  const { date, lists } = await getWatchlists({ date: dateParam, limit: 25 });
+  const [{ date, lists }, movers] = await Promise.all([
+    getWatchlists({ date: dateParam, limit: 25 }),
+    getMovers(dateParam).catch(() => null),
+  ]);
+  const dateQuery = dateParam ? `?date=${encodeURIComponent(dateParam)}` : "";
 
   return (
     <main className="flex flex-col gap-12">
       <section className="flex flex-col gap-1">
         <h2 className="font-serif text-2xl font-medium tracking-[-0.01em] text-foreground">
-          Watchlists
+          Stock Lists
         </h2>
         <p className="max-w-2xl text-[13px] leading-[1.55] text-muted-foreground">
           {date && `As of ${new Date(date).toLocaleDateString("en-IN")}. `}
@@ -84,6 +89,10 @@ export default async function WatchlistsPage({ searchParams }: PageProps) {
           only — these are not buy or sell recommendations.
         </p>
       </section>
+
+      {movers?.data_available && (
+        <StockMoversSection movers={movers} dateQuery={dateQuery} />
+      )}
 
       {LIST_ORDER.map((listName) => {
         // eslint-disable-next-line security/detect-object-injection

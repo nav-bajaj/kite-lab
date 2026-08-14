@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { CompactSnapshotPicker } from "./_components/snapshot-picker";
+import { UniverseSelector } from "./_components/universe-selector";
 import {
   InsightsAppSidebar,
   InsightsTopbar,
@@ -30,6 +31,7 @@ export default function InsightsLayout({ children }: { children: React.ReactNode
           <InsightsTopbar
             pickerSlot={
               <Suspense fallback={null}>
+                <UniverseSelector />
                 <CompactSnapshotPicker />
               </Suspense>
             }
@@ -41,7 +43,8 @@ export default function InsightsLayout({ children }: { children: React.ReactNode
             </div>
           </Suspense>
 
-          <main className="flex-1 overflow-x-clip p-4 lg:p-6">{children}</main>
+          {/* div, not <main> — the pages render their own <main> landmark. */}
+          <div className="flex-1 overflow-x-clip p-4 lg:p-6">{children}</div>
 
           <DisclaimerFooter />
         </DashboardMain>

@@ -36,8 +36,15 @@ const NAV = [
 function useNavState() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  // Preserve the page-level scope params (snapshot date + universe) across
+  // section navigation.
+  const params = new URLSearchParams();
   const date = searchParams.get("date");
-  const dateQuery = date ? `?date=${encodeURIComponent(date)}` : "";
+  const universe = searchParams.get("universe");
+  if (date) params.set("date", date);
+  if (universe) params.set("universe", universe);
+  const query = params.toString();
+  const dateQuery = query ? `?${query}` : "";
   const isActive = (item: (typeof NAV)[number]) =>
     item.exact
       ? pathname === item.href

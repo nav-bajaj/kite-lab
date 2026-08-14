@@ -79,8 +79,8 @@ def breadth_env(tmp_path, monkeypatch):
 
     monkeypatch.setattr(breadth, "_repo_root", lambda: tmp_path)
     monkeypatch.setattr(breadth, "_prices_dir", lambda: prices)
-    monkeypatch.setattr(breadth, "_universe_file", lambda: universe)
-    monkeypatch.setattr(breadth, "_cache_file", lambda: cache)
+    monkeypatch.setattr(breadth, "_universe_file", lambda u="nse500": universe)
+    monkeypatch.setattr(breadth, "_cache_file", lambda u="nse500": cache)
 
     breadth.clear_cache()
     yield {"prices": prices, "universe": universe, "cache": cache, "dates": dates}
@@ -142,9 +142,9 @@ class TestBreadthSelfInvalidation:
         calls = {"n": 0}
         orig = breadth._cache_is_fresh
 
-        def spy(path):
+        def spy(path, universe="nse500"):
             calls["n"] += 1
-            return orig(path)
+            return orig(path, universe)
 
         monkeypatch.setattr(breadth, "_cache_is_fresh", spy)
 
@@ -209,7 +209,7 @@ def stock_metrics_env(tmp_path, monkeypatch):
 
     monkeypatch.setattr(stock_metrics, "_prices_dir", lambda: prices)
     monkeypatch.setattr(stock_metrics, "_indices_dir", lambda: indices)
-    monkeypatch.setattr(breadth, "_universe_file", lambda: universe)
+    monkeypatch.setattr(breadth, "_universe_file", lambda u="nse500": universe)
     monkeypatch.setattr(
         stock_metrics, "_cache_file",
         lambda key: cache_dir / f"stock_metrics_{key}.pkl",

@@ -52,16 +52,39 @@ def _prices_dir() -> Path:
     return _repo_root() / "nse500_data_merged"
 
 
-def _universe_file() -> Path:
-    return _repo_root() / "data" / "static" / "nse500_universe.csv"
+# Universe selector support (insights_dashboard_v2): breadth panels can be
+# scoped to any committed universe snapshot. "nse500" keeps the legacy
+# file/cache names so existing prod caches and callers stay valid.
+BREADTH_UNIVERSES = ("nse500", "nifty250", "nifty100", "nifty50")
+
+_UNIVERSE_FILENAMES = {
+    "nse500": "nse500_universe.csv",
+    "nifty250": "nifty250_universe.csv",
+    "nifty100": "nifty100_universe.csv",
+    "nifty50": "nifty50_universe.csv",
+}
 
 
-def _cache_file() -> Path:
-    return _repo_root() / "cache" / "insights" / "breadth_panel.pkl"
+def _check_universe(universe: str) -> None:
+    if universe not in _UNIVERSE_FILENAMES:
+        raise ValueError(
+            f"Unknown universe {universe!r}; expected one of {BREADTH_UNIVERSES}"
+        )
 
 
-def load_universe(path: Path | None = None) -> list[str]:
-    df = pd.read_csv(path or _universe_file())
+def _universe_file(universe: str = "nse500") -> Path:
+    _check_universe(universe)
+    # eslint-style note: fixed mapping keyed by validated literal
+    return _repo_root() / "data" / "static" / _UNIVERSE_FILENAMES[universe]
+
+
+def _cache_file(universe: str = "nse500") -> Path:
+    name = "breadth_panel.pkl" if universe == "nse500" else f"breadth_panel_{universe}.pkl"
+    return _repo_root() / "cache" / "insights" / name
+
+
+def load_universe(path: Path | None = None, universe: str = "nse500") -> list[str]:
+    df = pd.read_csv(path or _universe_file(universe))
     return df["Symbol"].astype(str).tolist()
 
 
@@ -157,7 +180,7 @@ def compute_breadth_panel(close_panel: pd.DataFrame) -> pd.DataFrame:
     })
 
 
-def _cache_is_fresh(cache_path: Path) -> bool:
+def _cache_is_fresh(cache_path: Path, universe: str = "nse500") -> bool:
     """Cache is fresh iff it exists AND is newer than the universe file
     AND newer than the most recently-modified stock CSV in the prices dir.
 
@@ -167,7 +190,7 @@ def _cache_is_fresh(cache_path: Path) -> bool:
     if not cache_path.exists():
         return False
     cache_mtime = cache_path.stat().st_mtime
-    uni = _universe_file()
+    uni = _universe_file(universe)
     if uni.exists() and uni.stat().st_mtime > cache_mtime:
         return False
     sentinel = _prices_dir() / "RELIANCE_day.csv"
@@ -176,7 +199,7 @@ def _cache_is_fresh(cache_path: Path) -> bool:
     return True
 
 
-def _signature() -> tuple:
+def _signature(universe: str = "nse500") -> tuple:
     """In-memory cache key: changes when the universe list or the price panel
     changes. Stats only the RELIANCE sentinel (the pipeline writes the panel
     as a batch) plus the universe file — the same inputs `_cache_is_fresh`
@@ -184,23 +207,26 @@ def _signature() -> tuple:
     the next request after the daily pipeline rewrites the panel, instead of
     serving a frozen in-memory copy until redeploy."""
     return (
-        file_signature(_universe_file()),
+        universe,
+        file_signature(_universe_file(universe)),
         dir_signature(_prices_dir(), sentinel="RELIANCE_day.csv"),
     )
 
 
-def get_breadth_panel(force_rebuild: bool = False) -> pd.DataFrame:
-    """Return the breadth panel, building if needed and caching to disk.
+def get_breadth_panel(universe: str = "nse500", force_rebuild: bool = False) -> pd.DataFrame:
+    """Return the breadth panel for `universe`, building if needed and
+    caching to disk.
 
     The in-memory cache is keyed on `_signature()`, so it self-invalidates
     when the source files change. Disk cache survives restarts.
     """
+    _check_universe(universe)
     if force_rebuild:
         _get_breadth_panel_cached.cache_clear()
-        cache = _cache_file()
+        cache = _cache_file(universe)
         if cache.exists():
             cache.unlink()
-    return _get_breadth_panel_cached(_signature())
+    return _get_breadth_panel_cached(_signature(universe))
 
 
 # Columns the current code version emits that older pickles may lack —
@@ -210,17 +236,18 @@ def get_breadth_panel(force_rebuild: bool = False) -> pd.DataFrame:
 _SCHEMA_SENTINEL_COLUMNS = ("avg_dist_from_200dma", "mcclellan_sum", "pct_above_21dma")
 
 
-@lru_cache(maxsize=2)
+@lru_cache(maxsize=8)
 def _get_breadth_panel_cached(signature) -> pd.DataFrame:
-    cache = _cache_file()
-    if _cache_is_fresh(cache):
+    universe = signature[0]
+    cache = _cache_file(universe)
+    if _cache_is_fresh(cache, universe):
         panel = pd.read_pickle(cache)  # noqa: S301  # internal cache only
         if all(c in panel.columns for c in _SCHEMA_SENTINEL_COLUMNS):
             return panel
         print("[breadth] cache schema outdated — rebuilding")
 
-    print("[breadth] cache stale or missing — rebuilding from NSE 500 panel")
-    symbols = load_universe()
+    print(f"[breadth] cache stale or missing — rebuilding {universe} panel")
+    symbols = load_universe(universe=universe)
     close = load_close_panel(symbols)
     print(f"  panel shape: {close.shape}  "
           f"({close.index.min().date()} → {close.index.max().date()})")
@@ -236,9 +263,10 @@ get_breadth_panel.cache_clear = _get_breadth_panel_cached.cache_clear
 
 
 def clear_cache() -> None:
-    """Drop both in-memory and on-disk cache. Use after a data refresh
-    to force a rebuild on next call."""
+    """Drop both in-memory and on-disk caches (all universes). Use after
+    a data refresh to force a rebuild on next call."""
     _get_breadth_panel_cached.cache_clear()
-    cache = _cache_file()
-    if cache.exists():
-        cache.unlink()
+    for universe in BREADTH_UNIVERSES:
+        cache = _cache_file(universe)
+        if cache.exists():
+            cache.unlink()

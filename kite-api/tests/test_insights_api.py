@@ -413,3 +413,17 @@ class TestCacheHeaders:
         cc = r.headers.get("Cache-Control", "")
         assert "max-age=" in cc, f"{path}: no Cache-Control max-age header (got {cc!r})"
         assert "public" in cc
+
+
+class TestUniverseParam:
+    def test_breadth_timeseries_universe_scoped(self, client):
+        r = client.get(
+            "/api/insights/breadth/timeseries?days=30&universe=nifty50&metrics=n_active"
+        )
+        assert r.status_code == 200
+        vals = [v for v in r.json()["data"]["n_active"] if v is not None]
+        assert vals and max(vals) <= 55
+
+    def test_breadth_timeseries_unknown_universe_400(self, client):
+        r = client.get("/api/insights/breadth/timeseries?days=30&universe=nifty9000")
+        assert r.status_code in (400, 422)

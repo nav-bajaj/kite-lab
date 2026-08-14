@@ -151,16 +151,27 @@ async def breadth_timeseries(
         description="Comma-separated metric names. Default: all. "
                     "e.g. 'pct_above_200dma,mcclellan_osc'",
     ),
+    universe: str = Query(
+        "nse500",
+        description="Universe scope: nse500 (default), nifty250, nifty100, nifty50",
+    ),
 ) -> dict:
     """Breadth metrics over the last `days` trading days.
 
     Optionally restrict to a subset of metrics via `?metrics=col1,col2`.
-    Available columns: pct_above_50dma, pct_above_100dma, pct_above_200dma,
-    ad_diff_pct, cumulative_ad, mcclellan_osc, new_52w_highs_pct,
-    new_52w_lows_pct, net_new_highs_pct, dispersion, n_active.
+    Available columns: pct_above_21dma, pct_above_50dma, pct_above_100dma,
+    pct_above_200dma, avg_dist_from_200dma, ad_diff_pct, cumulative_ad,
+    mcclellan_osc, mcclellan_sum, new_52w_highs_pct, new_52w_lows_pct,
+    net_new_highs_pct, dispersion, n_active.
     """
     _set_cache(response)
-    panel = breadth.get_breadth_panel()
+    if universe not in breadth.BREADTH_UNIVERSES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown universe {universe!r}. "
+                   f"Available: {list(breadth.BREADTH_UNIVERSES)}",
+        )
+    panel = breadth.get_breadth_panel(universe)
     if panel.empty:
         return {"index": [], "data": {}}
     sub = panel.tail(days)

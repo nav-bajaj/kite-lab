@@ -127,16 +127,62 @@ export function IndicatorCard({
   return <div className={cardClass}>{body}</div>;
 }
 
-export interface SubRailItem {
+export interface SectionTabItem {
+  /** "" is the section's own root page. */
   slug: string;
   label: string;
-  ready: boolean;
 }
 
 /**
- * Detail-view wrapper: back button + breadcrumb up top, a sub-rail of the
- * section's sibling indicators on the left, content on the right. Not-yet-built
- * indicators render as disabled "soon" rows rather than dead links.
+ * Horizontal browser-tab-style navigation for a section — rendered
+ * identically on the section root AND on every indicator detail, so the
+ * navigation never changes shape as the user drills in (founder feedback,
+ * 2026-08-14). Underline marks the active tab; the row scrolls on narrow
+ * screens.
+ */
+export function SectionTabs({
+  items,
+  activeSlug,
+  basePath,
+  query = "",
+}: {
+  items: SectionTabItem[];
+  activeSlug: string;
+  basePath: string;
+  query?: string;
+}) {
+  return (
+    <nav
+      aria-label="Section indicators"
+      className="flex gap-1 overflow-x-auto border-b border-border"
+    >
+      {items.map((item) => {
+        const href = item.slug ? `${basePath}/${item.slug}${query}` : `${basePath}${query}`;
+        const active = item.slug === activeSlug;
+        return (
+          <Link
+            key={item.slug || "__root"}
+            href={href}
+            aria-current={active ? "page" : undefined}
+            className={cn(
+              "-mb-px shrink-0 whitespace-nowrap border-b-2 px-3 py-2 text-[13px] transition-colors",
+              active
+                ? "border-primary font-semibold text-primary"
+                : "border-transparent font-medium text-muted-foreground hover:border-border hover:text-foreground",
+            )}
+          >
+            {item.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+/**
+ * Detail/section wrapper: back-to-Overview button + section tabs up top,
+ * content full-width below. The tab row is the SAME component on the
+ * section root and on details — consistent navigation while drilling.
  */
 export function DetailShell({
   section,
@@ -150,7 +196,7 @@ export function DetailShell({
 }: {
   section: string;
   title: string;
-  items: SubRailItem[];
+  items: SectionTabItem[];
   activeSlug: string;
   basePath: string;
   overviewPath?: string;
@@ -158,7 +204,7 @@ export function DetailShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-3">
         <Link
           href={`${overviewPath}${dateQuery}`}
@@ -171,41 +217,13 @@ export function DetailShell({
           {section} / <span className="text-foreground">{title}</span>
         </span>
       </div>
-      <div className="flex flex-col gap-5 md:flex-row md:items-start">
-        <nav
-          aria-label={`${section} indicators`}
-          className="flex shrink-0 gap-1 overflow-x-auto md:sticky md:top-24 md:w-44 md:flex-col md:overflow-visible"
-        >
-          {items.map((item) =>
-            item.ready ? (
-              <Link
-                key={item.slug}
-                href={`${basePath}/${item.slug}${dateQuery}`}
-                aria-current={item.slug === activeSlug ? "page" : undefined}
-                className={cn(
-                  "shrink-0 whitespace-nowrap rounded-lg px-3 py-1.5 text-[13px] transition-colors",
-                  item.slug === activeSlug
-                    ? "bg-primary/[0.08] font-semibold text-primary"
-                    : "font-medium text-foreground hover:bg-muted",
-                )}
-              >
-                {item.label}
-              </Link>
-            ) : (
-              <span
-                key={item.slug}
-                className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-[13px] text-muted-foreground"
-              >
-                {item.label}
-                <span className="rounded-full bg-muted px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide">
-                  soon
-                </span>
-              </span>
-            ),
-          )}
-        </nav>
-        <div className="min-w-0 flex-1">{children}</div>
-      </div>
+      <SectionTabs
+        items={items}
+        activeSlug={activeSlug}
+        basePath={basePath}
+        query={dateQuery}
+      />
+      <div className="min-w-0">{children}</div>
     </div>
   );
 }

@@ -186,3 +186,27 @@ class TestAtlasColumnAdditions:
             pytest.skip("not enough real history")
         corr = sub["avg_dist_from_200dma"].corr(sub["pct_above_200dma"])
         assert corr > 0.9
+
+
+class TestUniverseScopedBreadth:
+    """Spec for universe-scoped breadth panels (insights_dashboard_v2:
+    the dashboard's universe selector — Nifty 500 default, plus
+    nifty250 / nifty100 / nifty50 via the committed universe CSVs).
+    Written spec-first per TDD_POLICY."""
+
+    def test_smaller_universe_has_fewer_names(self):
+        full = breadth.get_breadth_panel()
+        n50 = breadth.get_breadth_panel("nifty50")
+        assert n50["n_active"].iloc[-1] <= 55
+        assert full["n_active"].iloc[-1] > 400
+        assert set(n50.columns) == set(full.columns)
+
+    def test_unknown_universe_rejected(self):
+        with pytest.raises(ValueError):
+            breadth.get_breadth_panel("nifty9000")
+
+    def test_universe_caches_do_not_collide(self):
+        assert breadth._cache_file() != breadth._cache_file("nifty50")
+        # Legacy path is preserved for the default universe so existing
+        # prod caches stay valid.
+        assert breadth._cache_file().name == "breadth_panel.pkl"

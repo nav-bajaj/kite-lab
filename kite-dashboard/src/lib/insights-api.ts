@@ -509,13 +509,45 @@ export interface TimeseriesResponse {
   data: Record<string, (number | null)[]>;
 }
 
+/** Universe scope for the breadth-family metrics (dashboard selector).
+ *  Market-wide indicators (VIX, stress, concentration) ignore it. */
+export type BreadthUniverse = "nse500" | "nifty250" | "nifty100" | "nifty50";
+
+export const BREADTH_UNIVERSES: { id: BreadthUniverse; label: string }[] = [
+  { id: "nse500", label: "Nifty 500" },
+  { id: "nifty250", label: "Nifty 250" },
+  { id: "nifty100", label: "Nifty 100" },
+  { id: "nifty50", label: "Nifty 50" },
+];
+
+export function parseUniverse(raw: string | undefined): BreadthUniverse {
+  return BREADTH_UNIVERSES.some((u) => u.id === raw)
+    ? (raw as BreadthUniverse)
+    : "nse500";
+}
+
+export function universeLabel(u: BreadthUniverse): string {
+  return BREADTH_UNIVERSES.find((x) => x.id === u)?.label ?? "Nifty 500";
+}
+
+/** Build the shared page query string, preserving snapshot date and
+ *  universe scope (the default universe is omitted to keep URLs clean). */
+export function insightsQuery(opts: { date?: string; universe?: BreadthUniverse }): string {
+  const params: string[] = [];
+  if (opts.date) params.push(`date=${encodeURIComponent(opts.date)}`);
+  if (opts.universe && opts.universe !== "nse500") params.push(`universe=${opts.universe}`);
+  return params.length ? `?${params.join("&")}` : "";
+}
+
 export async function getBreadthTimeseries(opts?: {
   days?: number;
   metrics?: string[];
+  universe?: BreadthUniverse;
 }): Promise<TimeseriesResponse> {
   const params: string[] = [];
   if (opts?.days) params.push(`days=${opts.days}`);
   if (opts?.metrics?.length) params.push(`metrics=${encodeURIComponent(opts.metrics.join(","))}`);
+  if (opts?.universe && opts.universe !== "nse500") params.push(`universe=${opts.universe}`);
   const q = params.length ? `?${params.join("&")}` : "";
   return getJson<TimeseriesResponse>(`/api/insights/breadth/timeseries${q}`);
 }

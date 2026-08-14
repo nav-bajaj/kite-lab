@@ -6,8 +6,11 @@ import {
   getMovers,
   fmtPct,
   fmtNum,
+  insightsQuery,
+  parseUniverse,
   regimeLabel,
   sectorLabel,
+  universeLabel,
   type MoversResponse,
   type TimeseriesResponse,
   type WatchlistEntry,
@@ -23,13 +26,23 @@ export const revalidate = 900;
  * grouped by section; expanding a card opens its detail view (history +
  * how-to-read). Structure per tasks/insights_dashboard_v2/DASHBOARD_DESIGN.md.
  */
+function lastNonNull(values: (number | null)[]): number | null {
+  for (let i = values.length - 1; i >= 0; i--) {
+    const v = values.at(i);
+    if (v !== null && v !== undefined && !Number.isNaN(v)) return v;
+  }
+  return null;
+}
+
 export default async function OverviewPage({
   searchParams,
 }: {
-  searchParams: Promise<{ date?: string }>;
+  searchParams: Promise<{ date?: string; universe?: string }>;
 }) {
-  const { date } = await searchParams;
-  const dateQuery = date ? `?date=${encodeURIComponent(date)}` : "";
+  const { date, universe: rawUniverse } = await searchParams;
+  const universe = parseUniverse(rawUniverse);
+  const isDefaultUniverse = universe === "nse500";
+  const dateQuery = insightsQuery({ date, universe });
 
   const emptySeries = (): TimeseriesResponse => ({ index: [], data: {} });
   const [reading, breadthSeries, macroSeries, movers] = await Promise.all([
@@ -38,7 +51,8 @@ export default async function OverviewPage({
     // full history themselves. Degrades to no-spark when unavailable.
     getBreadthTimeseries({
       days: 126,
-      metrics: ["pct_above_200dma", "net_new_highs_pct", "mcclellan_osc"],
+      metrics: ["pct_above_200dma", "net_new_highs_pct", "mcclellan_osc", "ad_diff_pct"],
+      universe,
     }).catch(emptySeries),
     getMacroTimeseries({ days: 126, metrics: ["vix_close"] }).catch(emptySeries),
     getMovers(date).catch((): MoversResponse | null => null),
@@ -47,11 +61,25 @@ export default async function OverviewPage({
   const breadthSpark = breadthSeries.data["pct_above_200dma"] ?? [];
   const nnhSpark = breadthSeries.data["net_new_highs_pct"] ?? [];
   const mccSpark = breadthSeries.data["mcclellan_osc"] ?? [];
+  const adSpark = breadthSeries.data["ad_diff_pct"] ?? [];
   const vixSpark = macroSeries.data["vix_close"] ?? [];
   const vixNow = reading.macro["vix_close"] ?? null;
-  const nnhNow = reading.breadth["net_new_highs_pct"] ?? null;
-  const mccNow = reading.breadth["mcclellan_osc"] ?? null;
+  // Universe-scoped card values: the reading is the NSE-500 headline, so
+  // non-default universes read the latest point of their own series.
+  const breadthNow = isDefaultUniverse
+    ? regime.pct_above_200dma
+    : lastNonNull(breadthSpark);
+  const nnhNow = isDefaultUniverse
+    ? (reading.breadth["net_new_highs_pct"] ?? null)
+    : lastNonNull(nnhSpark);
+  const mccNow = isDefaultUniverse
+    ? (reading.breadth["mcclellan_osc"] ?? null)
+    : lastNonNull(mccSpark);
+  const adNow = isDefaultUniverse
+    ? (reading.breadth["ad_diff_pct"] ?? null)
+    : lastNonNull(adSpark);
   const conc = reading.concentration;
+  const scopeSub = universeLabel(universe);
 
   const regimeTone =
     regime.regime === "TREND_BULL"
@@ -100,7 +128,9 @@ export default async function OverviewPage({
           dateQuery={dateQuery}
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <IndicatorCard label="Market state" href={`/insights/market/regime${dateQuery}`}>
+          {/* Regime detail retired (founder: confusing) — the card informs,
+              the Daily read explains the four states. */}
+          <IndicatorCard label="Market state" href={`/insights/market${dateQuery}`}>
             <div className="flex items-baseline gap-2">
               <span className={`text-2xl font-semibold leading-tight ${regimeTone}`}>
                 {regimeLabel(regime.regime)}
@@ -139,11 +169,11 @@ export default async function OverviewPage({
             label="Market breadth"
             href={`/insights/market/breadth${dateQuery}`}
             spark={breadthSpark}
-            foot="Share of NSE 500 stocks above their 200-day average — participation, not just the index."
+            foot={`Share of ${scopeSub} stocks above their 200-day average — participation, not just the index.`}
           >
             <div className="flex items-baseline gap-2">
               <span className="text-2xl font-semibold leading-tight text-foreground">
-                {fmtPct(regime.pct_above_200dma, 0)}
+                {fmtPct(breadthNow, 0)}
               </span>
               <span className="font-mono text-[12px] text-muted-foreground">
                 above 200-DMA
@@ -152,7 +182,7 @@ export default async function OverviewPage({
           </IndicatorCard>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <IndicatorCard
             label="India VIX"
             href={`/insights/market/vix${dateQuery}`}
@@ -167,10 +197,20 @@ export default async function OverviewPage({
             label="Net new highs"
             href={`/insights/market/net-new-highs${dateQuery}`}
             spark={nnhSpark}
-            foot="Fresh 52-week highs minus lows, share of NSE 500."
+            foot={`Fresh 52-week highs minus lows, share of ${scopeSub}.`}
           >
             <span className="text-2xl font-semibold leading-tight text-foreground">
               {fmtPct(nnhNow, 1, true)}
+            </span>
+          </IndicatorCard>
+          <IndicatorCard
+            label="Advances / declines"
+            href={`/insights/market/advance-decline${dateQuery}`}
+            spark={adSpark}
+            foot="Net advancers today, share of names traded."
+          >
+            <span className="text-2xl font-semibold leading-tight text-foreground">
+              {fmtPct(adNow, 0, true)}
             </span>
           </IndicatorCard>
           <IndicatorCard
@@ -201,35 +241,6 @@ export default async function OverviewPage({
           </IndicatorCard>
         </div>
 
-        {movers?.data_available && (
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-border bg-card px-4 py-3 text-[13px]">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-              Movers today
-            </span>
-            <span className="text-foreground">
-              {movers.fresh_highs.count} new 1-year high
-              {movers.fresh_highs.count === 1 ? "" : "s"}
-            </span>
-            <span className="text-foreground">
-              {movers.fresh_lows.count} new 1-year low
-              {movers.fresh_lows.count === 1 ? "" : "s"}
-            </span>
-            {movers.rs_improvers.length > 0 && (
-              <span className="truncate text-muted-foreground">
-                RS climbers:{" "}
-                <span className="font-mono text-foreground">
-                  {movers.rs_improvers.slice(0, 3).map((e) => e.symbol).join(" · ")}
-                </span>
-              </span>
-            )}
-            <Link
-              href={`/insights/market${dateQuery}`}
-              className="ml-auto shrink-0 font-medium text-primary underline-offset-2 hover:underline"
-            >
-              Full movers view ›
-            </Link>
-          </div>
-        )}
       </section>
 
       {/* ──────────────── SECTORS & ROTATION ──────────────── */}
@@ -285,6 +296,37 @@ export default async function OverviewPage({
             );
           })}
         </div>
+
+        {/* Name-level movers live with the lists (founder call 2026-08-14). */}
+        {movers?.data_available && (
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-border bg-card px-4 py-3 text-[13px]">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              Movers today
+            </span>
+            <span className="text-foreground">
+              {movers.fresh_highs.count} new 1-year high
+              {movers.fresh_highs.count === 1 ? "" : "s"}
+            </span>
+            <span className="text-foreground">
+              {movers.fresh_lows.count} new 1-year low
+              {movers.fresh_lows.count === 1 ? "" : "s"}
+            </span>
+            {movers.rs_improvers.length > 0 && (
+              <span className="truncate text-muted-foreground">
+                RS climbers:{" "}
+                <span className="font-mono text-foreground">
+                  {movers.rs_improvers.slice(0, 3).map((e) => e.symbol).join(" · ")}
+                </span>
+              </span>
+            )}
+            <Link
+              href={`/insights/watchlists${dateQuery}`}
+              className="ml-auto shrink-0 font-medium text-primary underline-offset-2 hover:underline"
+            >
+              Full movers view ›
+            </Link>
+          </div>
+        )}
       </section>
 
       {/* Sector context line, derived from the leaderboard (descriptive only). */}
