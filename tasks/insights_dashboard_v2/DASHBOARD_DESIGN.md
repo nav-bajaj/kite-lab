@@ -56,6 +56,25 @@ Mock: `mock_insights_dashboard.pen` — screens "Mission Control",
 in `mock_previews/v2_*.png`; production shell reference screenshots
 in `prod_reference/`.
 
+### As-built amendments (2026-08-14, founder review — see DECISIONS.md)
+
+The implementation supersedes the mock on these points:
+
+- Shell is the FULL-SCREEN portfolio-dashboard skeleton (fixed
+  collapsible sidebar + full-width top bar) — no marketing chrome, no
+  centered container.
+- Top bar carries a **universe selector** (Nifty 500/250/100/50)
+  beside the snapshot picker; both thread as URL params.
+- Within a section, navigation is a **horizontal browser-style tab
+  row** (active tab = raised card), identical at every depth — the
+  mock's detail sub-rail is retired. Market order: Regime, Stress,
+  Breadth, Advances & declines, Net new highs, McClellan, India VIX,
+  Concentration. No section landing page (/insights/market redirects
+  to Regime).
+- Movers/RS-climbers live under STOCK LISTS, not Market.
+- Regime detail is descriptive only — no forward-return tables.
+- Concentration is universe-scoped; per-name attribution nifty50-only.
+
 ## 2. Pulse as a dashboard
 
 Layout: headline strip → chart modules → movers rail. All modules read

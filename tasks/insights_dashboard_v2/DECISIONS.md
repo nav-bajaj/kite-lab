@@ -111,6 +111,39 @@ palette follow `prod_dashboard.png`. Mock rebuilt accordingly
 (4 screens, exports in `mock_previews/v2_*.png`). The v1 top-tab
 Pulse screen is kept in the .pen as "OLD v1 (superseded)".
 
+## 2026-08-14 — indicator review rounds (post-Slice-2.5)
+
+Founder reviewed the built dashboard live. Decisions, as implemented:
+
+- **Universe selector** in the top bar (next to snapshot): Nifty 500
+  default, plus 250 / 100 / 50. Our custom nifty250 construction used
+  (Nifty 100 + Midcap 150); for concentration's cap side its official
+  analog NIFTY LARGEMID250 is the index series. Scopes the breadth
+  family AND concentration; market-wide gauges (VIX, stress) ignore it
+  by design. Atlas reference bands only label the Nifty 500 scope —
+  other universes compute bands from their own history.
+- **Market section navigation = one horizontal browser-style tab row**
+  (active tab is a raised card), identical on every page of the
+  section — never a different menu at different depths. Order: Regime
+  first (the word is "Regime"), then Stress, Breadth, Advances &
+  declines, Net new highs, McClellan, India VIX, Concentration.
+- **"Daily read" page removed** — it duplicated the Overview.
+  /insights/market redirects to the Regime tab.
+- **Regime detail arc**: first read as "remove the detail" —
+  corrected: the detail STAYS (timeline, spells, four-states legend);
+  only the conditional-distribution forward-return table ("what
+  followed days like these") is banned from it as suggestive.
+- **New indicator: Advances & declines** (raw daily net advances +
+  cumulative A-D line) as card + detail.
+- **Movers + RS climbers belong to Stock Lists**, not Market — strip
+  moved under the lists section on Overview; full block on
+  /insights/watchlists (page retitled "Stock Lists").
+- **Concentration expanded to all four index scopes** (was Nifty 50
+  only); per-name attribution stays nifty50-only (factsheet weights)
+  with an explicit note elsewhere.
+- **Next**: founder wants an indicator-by-indicator deep dive; "a lot
+  of nitty gritties to be tackled."
+
 ## Canonical list locations (reconciliation)
 
 | List | File | Notes |

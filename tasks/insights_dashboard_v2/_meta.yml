@@ -3,7 +3,15 @@ status: in-progress
 opened: 2026-08-13
 closed: null
 branch: insights_dashboard_v2   # branched from auth_stack_v2 (latest)
-related_commits: []
+related_commits:
+  - 9aa22f0    # exploration docs
+  - ecc6712    # slice plan (indicator-set slices)
+  - 3a5dae5    # Slice 1: mission-control shell + Market v1
+  - fdf930b    # full-screen app shell
+  - 6401924    # Slice 2: Market set complete
+  - 1d318b1    # Slice 2.5: atlas columns, metric explorer
+  - 4a42387    # founder review round 1
+  - 5c3ed75    # regime restore + tab styling + universe concentration
 supersedes: []
 depends_on:
   - insight_engine      # v1 engine (market-level)
@@ -11,7 +19,9 @@ depends_on:
   - sector_mapping      # zerodha_sectors.csv + 15 super-sectors (RRG constituent basis)
   - breadth_atlas       # historical breadth panel data/breadth/breadth_daily.csv
   - auth_stack_v2       # launch rides on the new auth stack
-register_rows: []       # expected: intraday-data posture row; public /insights exposure row
+register_rows:
+  - R-028    # gitleaks allowlist for .pen fileToken (false positive)
+# still expected: intraday-data posture row; public /insights exposure row
 
 goals:
   - "Reposition: insight_engine becomes the PRIMARY launch surface (portfolios stay admin-only pending regulatory approval)"

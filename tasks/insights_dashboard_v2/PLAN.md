@@ -13,6 +13,9 @@ Companion docs in this folder:
 | `REALTIME_SPEC.md` | Intraday refresh layer: options, licensing posture, technical design |
 | `TASKS.md` | Phased breakdown (written once scope is locked with the founder) |
 | `DECISIONS.md` | Founder decisions log + canonical list locations (start here for "what did we decide") |
+| `STATE.md` | **Resume here** — what is built and working, environment notes, next steps |
+| `PRIOR_RESEARCH.md` | Repo research: atlas bands for all 14 metrics, validity ledger, untapped engines |
+| `PERSONALIZATION.md` | Watchlists/alerts architecture (post-launch) |
 
 ## Why this work
 
