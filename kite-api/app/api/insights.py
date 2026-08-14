@@ -235,12 +235,22 @@ async def macro_timeseries(
 async def concentration_timeseries(
     response: Response,
     days: int = Query(252, ge=20, le=4000),
+    universe: str = Query(
+        "nifty50",
+        description="Index scope: nifty50 (default), nifty100, nifty250, nse500",
+    ),
 ) -> dict:
-    """Cap-weighted vs equal-weighted Nifty 50 spread history (narrow-
-    vs-broad tape). Columns are fixed: cap_ret_pct, eq_ret_pct,
-    cap_vs_equal_spread_pp, spread_20d_avg_pp."""
+    """Cap-weighted vs equal-weighted spread history (narrow-vs-broad
+    tape) for the chosen index. Columns are fixed: cap_ret_pct,
+    eq_ret_pct, cap_vs_equal_spread_pp, spread_20d_avg_pp."""
     _set_cache(response)
-    panel = concentration.compute_concentration_panel()
+    if universe not in concentration.CONCENTRATION_UNIVERSES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown universe {universe!r}. "
+                   f"Available: {list(concentration.CONCENTRATION_UNIVERSES)}",
+        )
+    panel = concentration.compute_concentration_panel(universe)
     if panel.empty:
         return {"index": [], "data": {}}
     sub = panel.tail(days)

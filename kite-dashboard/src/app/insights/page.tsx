@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   getReading,
   getBreadthTimeseries,
+  getConcentrationTimeseries,
   getMacroTimeseries,
   getMovers,
   fmtPct,
@@ -45,7 +46,7 @@ export default async function OverviewPage({
   const dateQuery = insightsQuery({ date, universe });
 
   const emptySeries = (): TimeseriesResponse => ({ index: [], data: {} });
-  const [reading, breadthSeries, macroSeries, movers] = await Promise.all([
+  const [reading, breadthSeries, macroSeries, concSeries, movers] = await Promise.all([
     getReading(date),
     // 6 months of sparkline context for the market cards; detail views fetch
     // full history themselves. Degrades to no-spark when unavailable.
@@ -55,6 +56,7 @@ export default async function OverviewPage({
       universe,
     }).catch(emptySeries),
     getMacroTimeseries({ days: 126, metrics: ["vix_close"] }).catch(emptySeries),
+    getConcentrationTimeseries({ days: 126, universe }).catch(emptySeries),
     getMovers(date).catch((): MoversResponse | null => null),
   ]);
   const { regime, stress } = reading;
@@ -78,7 +80,8 @@ export default async function OverviewPage({
   const adNow = isDefaultUniverse
     ? (reading.breadth["ad_diff_pct"] ?? null)
     : lastNonNull(adSpark);
-  const conc = reading.concentration;
+  const concSpark = concSeries.data["spread_20d_avg_pp"] ?? [];
+  const concNow = lastNonNull(concSeries.data["cap_vs_equal_spread_pp"] ?? []);
   const scopeSub = universeLabel(universe);
 
   const regimeTone =
@@ -128,9 +131,7 @@ export default async function OverviewPage({
           dateQuery={dateQuery}
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {/* Regime detail retired (founder: confusing) — the card informs,
-              the Daily read explains the four states. */}
-          <IndicatorCard label="Market state" href={`/insights/market${dateQuery}`}>
+          <IndicatorCard label="Regime" href={`/insights/market/regime${dateQuery}`}>
             <div className="flex items-baseline gap-2">
               <span className={`text-2xl font-semibold leading-tight ${regimeTone}`}>
                 {regimeLabel(regime.regime)}
@@ -227,16 +228,20 @@ export default async function OverviewPage({
           <IndicatorCard
             label="Concentration"
             href={`/insights/market/concentration${dateQuery}`}
-            foot="Cap-weighted minus equal-weighted Nifty 50 return today."
+            spark={concSpark}
+            foot={`Cap-weighted minus equal-weighted ${scopeSub} return today.`}
           >
             <div className="flex items-baseline gap-2">
               <span className="text-2xl font-semibold leading-tight text-foreground">
-                {conc.cap_vs_equal_spread_pp >= 0 ? "+" : ""}
-                {conc.cap_vs_equal_spread_pp.toFixed(2)}pp
+                {concNow !== null
+                  ? `${concNow >= 0 ? "+" : ""}${concNow.toFixed(2)}pp`
+                  : "—"}
               </span>
-              <span className="font-mono text-[12px] text-muted-foreground">
-                {conc.cap_vs_equal_spread_pp >= 0 ? "narrow tape" : "broad tape"}
-              </span>
+              {concNow !== null && (
+                <span className="font-mono text-[12px] text-muted-foreground">
+                  {concNow >= 0 ? "narrow tape" : "broad tape"}
+                </span>
+              )}
             </div>
           </IndicatorCard>
         </div>

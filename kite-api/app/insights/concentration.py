@@ -64,8 +64,43 @@ def _prices_dir() -> Path:
     return _data_root() / "nse500_data_merged"
 
 
-def _index_file() -> Path:
-    return indices_dir() / "NIFTY_50.csv"
+# Universe-scoped concentration (founder request 2026-08-14): cap side is
+# the universe's own index series (our custom nifty250 uses the official
+# NIFTY LARGEMID250 analog — same construction, see
+# tasks/insights_dashboard_v2/DECISIONS.md); equal side is the mean return
+# of the committed universe snapshot. The weights-based per-name
+# attribution (compute_concentration) stays nifty50-only — factsheet
+# weights exist only for the Nifty 50.
+CONCENTRATION_UNIVERSES = {
+    "nifty50": ("NIFTY_50.csv", None),
+    "nifty100": ("NIFTY_100.csv", "nifty100_universe.csv"),
+    "nifty250": ("NIFTY_LARGEMID250.csv", "nifty250_universe.csv"),
+    "nse500": ("NIFTY_500.csv", "nse500_universe.csv"),
+}
+
+
+def _check_universe(universe: str) -> None:
+    if universe not in CONCENTRATION_UNIVERSES:
+        raise ValueError(
+            f"Unknown universe {universe!r}; expected one of "
+            f"{tuple(CONCENTRATION_UNIVERSES)}"
+        )
+
+
+def _index_file(universe: str = "nifty50") -> Path:
+    _check_universe(universe)
+    return indices_dir() / CONCENTRATION_UNIVERSES[universe][0]
+
+
+def _universe_symbols(universe: str) -> list[str]:
+    """Constituents: the weights factsheet for nifty50 (its authoritative
+    membership), the committed universe CSV otherwise."""
+    _check_universe(universe)
+    csv_name = CONCENTRATION_UNIVERSES[universe][1]
+    if csv_name is None:
+        return list(load_weights().index)
+    df = pd.read_csv(_data_root() / "data" / "static" / csv_name)
+    return df["Symbol"].astype(str).tolist()
 
 
 def _weights_signature() -> tuple:
@@ -97,19 +132,20 @@ def _load_weights_cached(signature) -> pd.Series:
 load_weights.cache_clear = _load_weights_cached.cache_clear
 
 
-def load_constituent_closes() -> pd.DataFrame:
-    """Wide DataFrame of close prices, columns=symbol (only Nifty 50 names)."""
+def load_constituent_closes(universe: str = "nifty50") -> pd.DataFrame:
+    """Wide DataFrame of close prices, columns=symbol, for the universe's
+    constituents."""
     return _load_constituent_closes_cached(
+        universe,
         _weights_signature()
-        + (dir_signature(_prices_dir(), sentinel="RELIANCE_day.csv"),)
+        + (dir_signature(_prices_dir(), sentinel="RELIANCE_day.csv"),),
     )
 
 
-@lru_cache(maxsize=2)
-def _load_constituent_closes_cached(signature) -> pd.DataFrame:
-    weights = load_weights()
+@lru_cache(maxsize=8)
+def _load_constituent_closes_cached(universe, signature) -> pd.DataFrame:
     series = []
-    for sym in weights.index:
+    for sym in _universe_symbols(universe):
         p = _prices_dir() / f"{sym}_day.csv"
         if not p.exists():
             # Some symbols use slightly different filenames (e.g., M&M).
@@ -124,17 +160,23 @@ def _load_constituent_closes_cached(signature) -> pd.DataFrame:
 load_constituent_closes.cache_clear = _load_constituent_closes_cached.cache_clear
 
 
-def load_nifty50_index() -> pd.DataFrame:
-    return _load_nifty50_index_cached(file_signature(_index_file()))
+def load_index_series(universe: str = "nifty50") -> pd.DataFrame:
+    return _load_index_series_cached(universe, file_signature(_index_file(universe)))
 
 
-@lru_cache(maxsize=2)
-def _load_nifty50_index_cached(signature) -> pd.DataFrame:
-    df = pd.read_csv(_index_file(), parse_dates=["date"])
+@lru_cache(maxsize=8)
+def _load_index_series_cached(universe, signature) -> pd.DataFrame:
+    df = pd.read_csv(_index_file(universe), parse_dates=["date"])
     return df.set_index("date").sort_index()
 
 
-load_nifty50_index.cache_clear = _load_nifty50_index_cached.cache_clear
+def load_nifty50_index() -> pd.DataFrame:
+    """Back-compat alias — the point-in-time attribution is nifty50-only."""
+    return load_index_series("nifty50")
+
+
+load_index_series.cache_clear = _load_index_series_cached.cache_clear
+load_nifty50_index.cache_clear = _load_index_series_cached.cache_clear
 
 
 def clear_cache() -> None:
@@ -142,24 +184,25 @@ def clear_cache() -> None:
     reading.clear_all_caches()."""
     _load_weights_cached.cache_clear()
     _load_constituent_closes_cached.cache_clear()
-    _load_nifty50_index_cached.cache_clear()
+    _load_index_series_cached.cache_clear()
 
 
-def compute_concentration_panel() -> pd.DataFrame:
-    """Daily cap-weighted vs equal-weighted Nifty 50 return spread history.
+def compute_concentration_panel(universe: str = "nifty50") -> pd.DataFrame:
+    """Daily cap-weighted vs equal-weighted return spread history for
+    `universe` (nifty50 default; nifty100 / nifty250 / nse500 supported).
 
     Powers the dashboard's concentration chart (a positive spread means
     the heavyweights outran the average constituent — a narrow tape).
-    Cap side is the ACTUAL Nifty 50 return; equal side is the mean of the
-    current constituents' returns — identical semantics per day to
-    compute_concentration, with that function's documented caveat that
-    the constituent set is today's snapshot applied backward.
+    Cap side is the ACTUAL index return; equal side is the mean of the
+    current constituents' returns — with the documented caveat that the
+    constituent set is today's snapshot applied backward.
 
     Columns: cap_ret_pct, eq_ret_pct, cap_vs_equal_spread_pp,
     spread_20d_avg_pp (NaN for the first 19 rows).
     """
-    index = load_nifty50_index()
-    closes = load_constituent_closes()
+    _check_universe(universe)
+    index = load_index_series(universe)
+    closes = load_constituent_closes(universe)
     cap = (index["close"].pct_change(fill_method=None) * 100.0).iloc[1:]
     eq = (closes.pct_change(fill_method=None) * 100.0).iloc[1:].mean(axis=1)
     panel = pd.DataFrame({"cap_ret_pct": cap, "eq_ret_pct": eq}).dropna(

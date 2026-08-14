@@ -568,8 +568,16 @@ export async function getMacroTimeseries(opts?: {
   return getJson<TimeseriesResponse>(`/api/insights/macro/timeseries${q}`);
 }
 
-export async function getConcentrationTimeseries(days?: number): Promise<TimeseriesResponse> {
-  const q = days ? `?days=${days}` : "";
+export async function getConcentrationTimeseries(opts?: {
+  days?: number;
+  universe?: BreadthUniverse;
+}): Promise<TimeseriesResponse> {
+  const params: string[] = [];
+  if (opts?.days) params.push(`days=${opts.days}`);
+  // The backend's default index scope is nifty50; the dashboard passes the
+  // page universe explicitly so the chart follows the selector.
+  if (opts?.universe) params.push(`universe=${opts.universe}`);
+  const q = params.length ? `?${params.join("&")}` : "";
   return getJson<TimeseriesResponse>(`/api/insights/concentration/timeseries${q}`);
 }
 

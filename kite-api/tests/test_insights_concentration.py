@@ -233,9 +233,11 @@ class TestConcentrationPanel:
         import pandas as pd
         dates = constituent_closes.index
         idx_df = pd.DataFrame({"close": index_closes}, index=dates)
-        monkeypatch.setattr(concentration, "load_nifty50_index", lambda: idx_df)
         monkeypatch.setattr(
-            concentration, "load_constituent_closes", lambda: constituent_closes
+            concentration, "load_index_series", lambda u="nifty50": idx_df
+        )
+        monkeypatch.setattr(
+            concentration, "load_constituent_closes", lambda u="nifty50": constituent_closes
         )
 
     def test_synthetic_spread_hand_computed(self, monkeypatch):
@@ -296,3 +298,31 @@ class TestConcentrationPanel:
         if covid in panel.index:
             r = concentration.compute_concentration(covid)
             assert abs(panel.loc[covid, "cap_vs_equal_spread_pp"] - r.cap_vs_equal_spread_pp) < 0.05
+
+
+class TestConcentrationUniverses:
+    """Spec for universe-scoped concentration (founder request 2026-08-14:
+    expand beyond Nifty 50). Cap side = the universe's own index (our
+    nifty250 maps to the official NIFTY LARGEMID250 analog); equal side =
+    mean constituent return from the committed universe CSV. The weights-
+    based top-N attribution stays nifty50-only."""
+
+    def test_index_file_mapping(self):
+        assert concentration._index_file().name == "NIFTY_50.csv"
+        assert concentration._index_file("nifty100").name == "NIFTY_100.csv"
+        assert concentration._index_file("nifty250").name == "NIFTY_LARGEMID250.csv"
+        assert concentration._index_file("nse500").name == "NIFTY_500.csv"
+
+    def test_unknown_universe_rejected(self):
+        with pytest.raises(ValueError):
+            concentration.compute_concentration_panel("nifty9000")
+
+    def test_nifty100_panel_shape(self):
+        panel = concentration.compute_concentration_panel("nifty100")
+        assert list(panel.columns) == [
+            "cap_ret_pct", "eq_ret_pct", "cap_vs_equal_spread_pp", "spread_20d_avg_pp",
+        ]
+        assert len(panel) > 500
+        # Spread must be cap - eq by construction.
+        row = panel.dropna().iloc[-1]
+        assert abs(row["cap_vs_equal_spread_pp"] - (row["cap_ret_pct"] - row["eq_ret_pct"])) < 1e-9

@@ -152,6 +152,8 @@ export function SectionTabs({
   query?: string;
 }) {
   return (
+    // Browser-tab styling: the active tab is a raised card fused with the
+    // content edge (transparent bottom border over the rule line).
     <nav
       aria-label="Section indicators"
       className="flex gap-1 overflow-x-auto border-b border-border"
@@ -165,10 +167,10 @@ export function SectionTabs({
             href={href}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "-mb-px shrink-0 whitespace-nowrap border-b-2 px-3 py-2 text-[13px] transition-colors",
+              "-mb-px shrink-0 whitespace-nowrap rounded-t-lg border px-3.5 py-2 text-[13px] transition-colors",
               active
-                ? "border-primary font-semibold text-primary"
-                : "border-transparent font-medium text-muted-foreground hover:border-border hover:text-foreground",
+                ? "border-border border-b-transparent bg-card font-semibold text-primary"
+                : "border-transparent font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground",
             )}
           >
             {item.label}

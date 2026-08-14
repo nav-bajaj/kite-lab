@@ -427,3 +427,12 @@ class TestUniverseParam:
     def test_breadth_timeseries_unknown_universe_400(self, client):
         r = client.get("/api/insights/breadth/timeseries?days=30&universe=nifty9000")
         assert r.status_code in (400, 422)
+
+    def test_concentration_timeseries_universe_scoped(self, client):
+        r = client.get("/api/insights/concentration/timeseries?days=60&universe=nifty100")
+        assert r.status_code == 200
+        assert "cap_vs_equal_spread_pp" in r.json()["data"]
+
+    def test_concentration_timeseries_unknown_universe_400(self, client):
+        r = client.get("/api/insights/concentration/timeseries?days=60&universe=bogus")
+        assert r.status_code == 400
