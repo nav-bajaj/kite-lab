@@ -525,6 +525,22 @@ export async function getStressTimeseries(days?: number): Promise<TimeseriesResp
   return getJson<TimeseriesResponse>(`/api/insights/stress/timeseries${q}`);
 }
 
+export async function getMacroTimeseries(opts?: {
+  days?: number;
+  metrics?: string[];
+}): Promise<TimeseriesResponse> {
+  const params: string[] = [];
+  if (opts?.days) params.push(`days=${opts.days}`);
+  if (opts?.metrics?.length) params.push(`metrics=${encodeURIComponent(opts.metrics.join(","))}`);
+  const q = params.length ? `?${params.join("&")}` : "";
+  return getJson<TimeseriesResponse>(`/api/insights/macro/timeseries${q}`);
+}
+
+export async function getConcentrationTimeseries(days?: number): Promise<TimeseriesResponse> {
+  const q = days ? `?days=${days}` : "";
+  return getJson<TimeseriesResponse>(`/api/insights/concentration/timeseries${q}`);
+}
+
 export interface RegimeEpisode {
   regime: "TREND_BULL" | "DRIFT" | "STRETCHED" | "STRESS";
   start: string;

@@ -45,13 +45,13 @@ Everything here runs on endpoints that already exist in production
 
 ## Slice 2 — Market set v2 (small backend additions)
 
-- [ ] 2.1 🤖 [data] `GET /api/insights/macro/timeseries` (VIX +
+- [x] 2.1 🤖 [data] `GET /api/insights/macro/timeseries` (VIX +
       z-bands) from the existing macro panel (TDD: shape spec).
-- [ ] 2.2 🤖 Cards + details: India VIX, Net New Highs, McClellan
+- [x] 2.2 🤖 Cards + details: India VIX, Net New Highs, McClellan
       (both already in the breadth panel/timeseries whitelist).
-- [ ] 2.3 🤖 Movers rail on Overview (existing `/movers`), each rail
+- [x] 2.3 🤖 Movers rail on Overview (existing `/movers`), each rail
       linking toward its future list (Slice 4).
-- [ ] 2.4 🤖 [data] Concentration timeseries endpoint + card + detail
+- [x] 2.4 🤖 [data] Concentration timeseries endpoint + card + detail
       (panel exists; endpoint missing).
 
 ## Slice 3 — Sectors & Rotation (the RRG flagship) — needs D3

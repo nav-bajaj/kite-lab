@@ -182,6 +182,63 @@ async def breadth_timeseries(
     }
 
 
+@router.get("/macro/timeseries")
+async def macro_timeseries(
+    response: Response,
+    days: int = Query(252, ge=20, le=4000),
+    metrics: Optional[str] = Query(
+        None,
+        description="Comma-separated metric names. Default: all. "
+                    "Available: vix_close, vix_zscore_60d, vix_zscore_252d, "
+                    "vix_roc_5d, vix_above_20, sector_pct_above_50dma, "
+                    "sector_pct_above_200dma, sector_breadth_st_lt, "
+                    "sector_dispersion_20d",
+    ),
+) -> dict:
+    """Macro (VIX + sector-index breadth) metrics over the last `days`
+    trading days. Same shape as the breadth/stress timeseries."""
+    _set_cache(response)
+    panel = macro.get_macro_panel()
+    if panel.empty:
+        return {"index": [], "data": {}}
+    sub = panel.tail(days)
+    if metrics:
+        wanted = [m.strip() for m in metrics.split(",") if m.strip()]
+        missing = set(wanted) - set(sub.columns)
+        if missing:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Unknown metrics: {sorted(missing)}. "
+                       f"Available: {sorted(sub.columns)}",
+            )
+        cols = wanted
+    else:
+        cols = list(sub.columns)
+    return {
+        "index": [d.isoformat() for d in sub.index],
+        "data": {col: [_jsonable(v) for v in sub[col].values] for col in cols},
+    }
+
+
+@router.get("/concentration/timeseries")
+async def concentration_timeseries(
+    response: Response,
+    days: int = Query(252, ge=20, le=4000),
+) -> dict:
+    """Cap-weighted vs equal-weighted Nifty 50 spread history (narrow-
+    vs-broad tape). Columns are fixed: cap_ret_pct, eq_ret_pct,
+    cap_vs_equal_spread_pp, spread_20d_avg_pp."""
+    _set_cache(response)
+    panel = concentration.compute_concentration_panel()
+    if panel.empty:
+        return {"index": [], "data": {}}
+    sub = panel.tail(days)
+    return {
+        "index": [d.isoformat() for d in sub.index],
+        "data": {col: [_jsonable(v) for v in sub[col].values] for col in sub.columns},
+    }
+
+
 # ---------- sectors ----------
 
 @router.get("/sectors")

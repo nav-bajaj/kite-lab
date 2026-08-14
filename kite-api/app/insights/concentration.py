@@ -145,6 +145,31 @@ def clear_cache() -> None:
     _load_nifty50_index_cached.cache_clear()
 
 
+def compute_concentration_panel() -> pd.DataFrame:
+    """Daily cap-weighted vs equal-weighted Nifty 50 return spread history.
+
+    Powers the dashboard's concentration chart (a positive spread means
+    the heavyweights outran the average constituent — a narrow tape).
+    Cap side is the ACTUAL Nifty 50 return; equal side is the mean of the
+    current constituents' returns — identical semantics per day to
+    compute_concentration, with that function's documented caveat that
+    the constituent set is today's snapshot applied backward.
+
+    Columns: cap_ret_pct, eq_ret_pct, cap_vs_equal_spread_pp,
+    spread_20d_avg_pp (NaN for the first 19 rows).
+    """
+    index = load_nifty50_index()
+    closes = load_constituent_closes()
+    cap = (index["close"].pct_change(fill_method=None) * 100.0).iloc[1:]
+    eq = (closes.pct_change(fill_method=None) * 100.0).iloc[1:].mean(axis=1)
+    panel = pd.DataFrame({"cap_ret_pct": cap, "eq_ret_pct": eq}).dropna(
+        subset=["cap_ret_pct", "eq_ret_pct"]
+    )
+    panel["cap_vs_equal_spread_pp"] = panel["cap_ret_pct"] - panel["eq_ret_pct"]
+    panel["spread_20d_avg_pp"] = panel["cap_vs_equal_spread_pp"].rolling(20).mean()
+    return panel
+
+
 @dataclass
 class ConstituentContribution:
     symbol: str

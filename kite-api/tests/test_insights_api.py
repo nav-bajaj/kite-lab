@@ -95,6 +95,26 @@ class TestTimeseriesEndpoints:
         r = client.get("/api/insights/breadth/timeseries?days=30&metrics=fake_metric")
         assert r.status_code == 400
 
+    def test_macro_timeseries_shape(self, client):
+        r = client.get("/api/insights/macro/timeseries?days=30&metrics=vix_close,vix_zscore_252d")
+        assert r.status_code == 200
+        b = r.json()
+        assert set(b["data"].keys()) == {"vix_close", "vix_zscore_252d"}
+        assert len(b["data"]["vix_close"]) == len(b["index"]) <= 30
+
+    def test_macro_timeseries_unknown_metric_400(self, client):
+        r = client.get("/api/insights/macro/timeseries?days=30&metrics=fake_metric")
+        assert r.status_code == 400
+
+    def test_concentration_timeseries_shape(self, client):
+        r = client.get("/api/insights/concentration/timeseries?days=60")
+        assert r.status_code == 200
+        b = r.json()
+        assert "cap_vs_equal_spread_pp" in b["data"]
+        assert "spread_20d_avg_pp" in b["data"]
+        assert len(b["index"]) <= 60
+
+
 
 class TestSectorsEndpoints:
     def test_all_sectors_present(self, client):

@@ -1,9 +1,14 @@
+import Link from "next/link";
 import {
   getReading,
   getBreadthTimeseries,
+  getMacroTimeseries,
+  getMovers,
   fmtPct,
+  fmtNum,
   regimeLabel,
   sectorLabel,
+  type MoversResponse,
   type TimeseriesResponse,
   type WatchlistEntry,
 } from "@/lib/insights-api";
@@ -26,16 +31,27 @@ export default async function OverviewPage({
   const { date } = await searchParams;
   const dateQuery = date ? `?date=${encodeURIComponent(date)}` : "";
 
-  const [reading, breadthSeries] = await Promise.all([
+  const emptySeries = (): TimeseriesResponse => ({ index: [], data: {} });
+  const [reading, breadthSeries, macroSeries, movers] = await Promise.all([
     getReading(date),
     // 6 months of sparkline context for the market cards; detail views fetch
     // full history themselves. Degrades to no-spark when unavailable.
-    getBreadthTimeseries({ days: 126, metrics: ["pct_above_200dma"] }).catch(
-      (): TimeseriesResponse => ({ index: [], data: {} }),
-    ),
+    getBreadthTimeseries({
+      days: 126,
+      metrics: ["pct_above_200dma", "net_new_highs_pct", "mcclellan_osc"],
+    }).catch(emptySeries),
+    getMacroTimeseries({ days: 126, metrics: ["vix_close"] }).catch(emptySeries),
+    getMovers(date).catch((): MoversResponse | null => null),
   ]);
   const { regime, stress } = reading;
   const breadthSpark = breadthSeries.data["pct_above_200dma"] ?? [];
+  const nnhSpark = breadthSeries.data["net_new_highs_pct"] ?? [];
+  const mccSpark = breadthSeries.data["mcclellan_osc"] ?? [];
+  const vixSpark = macroSeries.data["vix_close"] ?? [];
+  const vixNow = reading.macro["vix_close"] ?? null;
+  const nnhNow = reading.breadth["net_new_highs_pct"] ?? null;
+  const mccNow = reading.breadth["mcclellan_osc"] ?? null;
+  const conc = reading.concentration;
 
   const regimeTone =
     regime.regime === "TREND_BULL"
@@ -135,6 +151,85 @@ export default async function OverviewPage({
             </div>
           </IndicatorCard>
         </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <IndicatorCard
+            label="India VIX"
+            href={`/insights/market/vix${dateQuery}`}
+            spark={vixSpark}
+            foot="Expected 30-day volatility from option prices."
+          >
+            <span className="text-2xl font-semibold leading-tight text-foreground">
+              {fmtNum(vixNow, 1)}
+            </span>
+          </IndicatorCard>
+          <IndicatorCard
+            label="Net new highs"
+            href={`/insights/market/net-new-highs${dateQuery}`}
+            spark={nnhSpark}
+            foot="Fresh 52-week highs minus lows, share of NSE 500."
+          >
+            <span className="text-2xl font-semibold leading-tight text-foreground">
+              {fmtPct(nnhNow, 1, true)}
+            </span>
+          </IndicatorCard>
+          <IndicatorCard
+            label="McClellan osc"
+            href={`/insights/market/mcclellan${dateQuery}`}
+            spark={mccSpark}
+            foot="Daily advance-decline flow, zero-centered."
+          >
+            <span className="text-2xl font-semibold leading-tight text-foreground">
+              {mccNow !== null && mccNow >= 0 ? "+" : ""}
+              {fmtNum(mccNow, 3)}
+            </span>
+          </IndicatorCard>
+          <IndicatorCard
+            label="Concentration"
+            href={`/insights/market/concentration${dateQuery}`}
+            foot="Cap-weighted minus equal-weighted Nifty 50 return today."
+          >
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-semibold leading-tight text-foreground">
+                {conc.cap_vs_equal_spread_pp >= 0 ? "+" : ""}
+                {conc.cap_vs_equal_spread_pp.toFixed(2)}pp
+              </span>
+              <span className="font-mono text-[12px] text-muted-foreground">
+                {conc.cap_vs_equal_spread_pp >= 0 ? "narrow tape" : "broad tape"}
+              </span>
+            </div>
+          </IndicatorCard>
+        </div>
+
+        {movers?.data_available && (
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-border bg-card px-4 py-3 text-[13px]">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              Movers today
+            </span>
+            <span className="text-foreground">
+              {movers.fresh_highs.count} new 1-year high
+              {movers.fresh_highs.count === 1 ? "" : "s"}
+            </span>
+            <span className="text-foreground">
+              {movers.fresh_lows.count} new 1-year low
+              {movers.fresh_lows.count === 1 ? "" : "s"}
+            </span>
+            {movers.rs_improvers.length > 0 && (
+              <span className="truncate text-muted-foreground">
+                RS climbers:{" "}
+                <span className="font-mono text-foreground">
+                  {movers.rs_improvers.slice(0, 3).map((e) => e.symbol).join(" · ")}
+                </span>
+              </span>
+            )}
+            <Link
+              href={`/insights/market${dateQuery}`}
+              className="ml-auto shrink-0 font-medium text-primary underline-offset-2 hover:underline"
+            >
+              Full movers view ›
+            </Link>
+          </div>
+        )}
       </section>
 
       {/* ──────────────── SECTORS & ROTATION ──────────────── */}

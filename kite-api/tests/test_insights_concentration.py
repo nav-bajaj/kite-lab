@@ -74,9 +74,13 @@ class TestLatestReading:
             # If Nifty moved at least 10 bps, attribution should be valid
             assert reading.top_3_share_of_move is not None
             assert reading.top_5_share_of_move is not None
-            # top_5 should explain at least as much as top_3 in absolute terms
-            # (they're sorted by absolute contribution)
-            assert abs(reading.top_5_share_of_move) >= abs(reading.top_3_share_of_move) - 1e-6
+            # top_5 explains at least as much as top_3 ONLY when the
+            # 4th/5th contributions don't offset the sum (mixed signs on
+            # a small-move day legitimately shrink |top_5| — 2026-08-13).
+            top5 = [c.contribution_bps for c in reading.constituents[:5]]
+            signs = {c > 0 for c in top5 if c != 0}
+            if len(signs) <= 1:
+                assert abs(reading.top_5_share_of_move) >= abs(reading.top_3_share_of_move) - 1e-6
 
     def test_equal_weighted_return_in_reasonable_range(self, reading):
         # Daily equal-weighted returns of 49 large-caps are bounded
@@ -136,12 +140,18 @@ class TestConcentrationInvariants:
         )
 
     def test_top_3_share_consistent_with_top_5(self):
-        """Top-5 must explain ≥ |top-3| in absolute contribution terms,
-        since constituents are sorted by abs(contribution) and the 4th/5th
-        names can only add or offset, never reduce |sum|."""
+        """Top-5 must explain ≥ |top-3| in absolute contribution terms —
+        but ONLY when the 4th/5th contributions share the top-3 sum's
+        sign. With mixed signs the added names offset the sum, so the
+        inequality legitimately fails (surfaced on the small-move day
+        2026-08-13; the original docstring's claim was wrong)."""
         r = concentration.compute_concentration()
         if r.top_3_share_of_move is None or r.top_5_share_of_move is None:
             pytest.skip("Index too flat for share-of-move attribution")
+        top5 = [c.contribution_bps for c in r.constituents[:5]]
+        signs = {c > 0 for c in top5 if c != 0}
+        if len(signs) > 1:
+            pytest.skip("Mixed-sign top-5 contributions — offsetting is expected")
         # Allow tiny floating-point slack
         assert abs(r.top_5_share_of_move) >= abs(r.top_3_share_of_move) - 1e-6
 
@@ -209,3 +219,80 @@ class TestConcentrationEdgeCases:
         r = concentration.compute_concentration()
         recomputed = r.nifty_return_pct - r.equal_weighted_return_pct
         assert abs(r.cap_vs_equal_spread_pp - recomputed) < 1e-6
+
+
+class TestConcentrationPanel:
+    """Spec for compute_concentration_panel() — the daily cap-vs-equal
+    spread history that powers the dashboard's concentration chart
+    (insights_dashboard_v2 Slice 2). Cap side is the ACTUAL Nifty 50
+    return (same semantics as compute_concentration); equal side is the
+    mean constituent return. Written spec-first per TDD_POLICY."""
+
+    @staticmethod
+    def _patch(monkeypatch, index_closes, constituent_closes):
+        import pandas as pd
+        dates = constituent_closes.index
+        idx_df = pd.DataFrame({"close": index_closes}, index=dates)
+        monkeypatch.setattr(concentration, "load_nifty50_index", lambda: idx_df)
+        monkeypatch.setattr(
+            concentration, "load_constituent_closes", lambda: constituent_closes
+        )
+
+    def test_synthetic_spread_hand_computed(self, monkeypatch):
+        """Index +1.25%, constituents +2% / -1% -> eq +0.5pp,
+        spread +0.75pp. Flat second day -> spread 0."""
+        dates = pd.date_range("2024-01-01", periods=3, freq="B")
+        closes = pd.DataFrame(
+            {"AAA": [100.0, 102.0, 102.0], "BBB": [200.0, 198.0, 198.0]},
+            index=dates,
+        )
+        self._patch(monkeypatch, [10000.0, 10125.0, 10125.0], closes)
+
+        panel = concentration.compute_concentration_panel()
+        assert len(panel) == 2
+        day1 = panel.iloc[0]
+        assert abs(day1["cap_ret_pct"] - 1.25) < 1e-9
+        assert abs(day1["eq_ret_pct"] - 0.5) < 1e-9
+        assert abs(day1["cap_vs_equal_spread_pp"] - 0.75) < 1e-9
+        assert abs(panel.iloc[1]["cap_vs_equal_spread_pp"]) < 1e-9
+
+    def test_synthetic_missing_symbol_drops_from_equal_side(self, monkeypatch):
+        """A symbol with no data contributes nothing to the equal-weighted
+        mean (skipna), it does not drag it to NaN."""
+        dates = pd.date_range("2024-01-01", periods=2, freq="B")
+        closes = pd.DataFrame(
+            {"AAA": [100.0, 101.0], "BBB": [float("nan"), float("nan")]},
+            index=dates,
+        )
+        self._patch(monkeypatch, [10000.0, 10100.0], closes)
+
+        panel = concentration.compute_concentration_panel()
+        assert abs(panel.iloc[0]["eq_ret_pct"] - 1.0) < 1e-9
+
+    def test_rolling_column_warmup(self, monkeypatch):
+        """spread_20d_avg_pp needs 20 observations — NaN before that,
+        populated after."""
+        dates = pd.date_range("2024-01-01", periods=30, freq="B")
+        closes = pd.DataFrame(
+            {"AAA": [100.0 * (1.01 ** i) for i in range(30)],
+             "BBB": [200.0] * 30},
+            index=dates,
+        )
+        self._patch(monkeypatch, [10000.0 * (1.002 ** i) for i in range(30)], closes)
+
+        panel = concentration.compute_concentration_panel()
+        assert panel["spread_20d_avg_pp"].iloc[:19].isna().all()
+        assert panel["spread_20d_avg_pp"].iloc[19:].notna().all()
+
+    def test_real_panel_shape_and_covid_anchor(self):
+        """Real data: date-indexed panel whose COVID-day spread matches the
+        point-in-time computation (identical formula, shared loaders)."""
+        panel = concentration.compute_concentration_panel()
+        assert list(panel.columns) == [
+            "cap_ret_pct", "eq_ret_pct", "cap_vs_equal_spread_pp", "spread_20d_avg_pp",
+        ]
+        assert panel.index.is_monotonic_increasing
+        covid = pd.Timestamp("2020-03-23")
+        if covid in panel.index:
+            r = concentration.compute_concentration(covid)
+            assert abs(panel.loc[covid, "cap_vs_equal_spread_pp"] - r.cap_vs_equal_spread_pp) < 0.05
