@@ -1,107 +1,125 @@
 # Tasks — insights_dashboard_v2
 
-Status: DRAFT — exploration phase. Locks after founder decisions D1-D4.
-Owners: 👤 founder decision/review · 🤖 agent-executable.
-Risk tags: [compliance] [licensing] [perf] [data] [design].
+Restructured 2026-08-14 (founder direction): development proceeds
+**indicator-set by indicator-set** — vertical slices, each shipping
+backend + card + detail view together — not all-backend-then-all-UI.
+Owners: 👤 founder · 🤖 agent. Tags: [compliance] [licensing] [perf]
+[data] [design].
 
-## Phase 0 — Decisions & direction (gate for everything)
+## Phase 0 — Decisions (status)
 
-- [x] D1 👤 [licensing] Intraday posture: DECIDED 2026-08-13 — live
-      route approved (posture C: live derived indicators, no public
-      per-stock live quotes). See `DECISIONS.md`. Still owed: risk-
-      register row before public exposure.
-- [x] D2 👤 [design] PARTIAL 2026-08-13: insights stays inside
-      kite-dashboard and becomes the primary signed-in surface (no
-      separate app — `DECISIONS.md`). Still open: 4-tab IA + screener
-      demotion sign-off via Pencil mock (0.1).
-- [ ] D3 👤 RRG methodology sign-off (`RRG_SPEC.md`): normalization
-      choice, universe-scoped composites, daily vs weekly default.
-- [ ] D4 👤 [compliance] Confirm launch plan: portfolios admin-only at
-      launch; compliance-consultant pass on new copy before public flip.
-- [ ] 0.1 🤖 [design] Pencil mock of Pulse + Sectors & Rotation + Stock
-      Lists (per visual-validation-first rule); founder review loop.
+- [x] D1 👤 Intraday posture — DECIDED: live route, posture C
+      (register row owed before public exposure). `DECISIONS.md`.
+- [x] D2 👤 IA — DECIDED: sidebar + mission-control overview +
+      expand-to-detail; mock approved 2026-08-14. Production design
+      system is authoritative for visual execution; mock is
+      authoritative for structure. `DASHBOARD_DESIGN.md` §1.
+- [ ] D3 👤 RRG methodology sign-off (`RRG_SPEC.md` §1-2: recipe A
+      defaults, universe composites, benchmark choices). Needed
+      before Slice 3 engine work — not before Slices 1-2.
+- [ ] D4 👤 [compliance] Launch plan + consultant pass before the
+      public flip. Needed before Phase L — not before dev slices.
 
-## Phase 1 — Backend: history plumbing + engines (TDD throughout)
+## Slice 1 — Shell + Market set v1 (NO new engine work)
 
-- [ ] 1.1 🤖 [data] `GET /api/insights/macro/timeseries` (VIX + z-bands)
-      and `/concentration/timeseries` from existing panels; extend
-      `/breadth/timeseries` metric whitelist if needed.
-- [ ] 1.2 🤖 [data] Daily cross-section persistence: append per-day
-      (symbol, rank, percentile, 4 scores, tags, list membership) slice
-      from the 16:30 pipeline; backfill from panels where cheap.
-      Un-blocks rank sparklines + list-membership history.
-      security-reviewer pass on any sync/upload path change.
-- [ ] 1.3 🤖 RRG engine `app/insights/rrg.py` per RRG_SPEC: RS-ratio /
-      RS-momentum math (spec tests first: synthetic series with known
-      quadrant/rotation), tail assembly, universe-scoped sector
-      composites, benchmark matrix, `GET /api/insights/rrg`.
-- [ ] 1.4 🤖 Curated-list detectors formalized in `watchlists.py` (or
-      new `lists.py`): volume_surge, coiled_fresh_momentum,
-      custom_rs_leaders, trend_consistency. Each: synthetic
-      fires/doesn't-fire spec tests, published criteria strings,
-      lexicon-test coverage. Validity study per
-      `pattern_validity_study.py` for any list we want to badge.
-- [ ] 1.5 🤖 [data] Add missing indices to `tracked_indices.csv`
-      (NIFTY 200, MIDCAP 100/50, SMLCAP 100/50, TOTAL MKT + any RRG
-      needs); verify sync into the long panel; freshness rows.
-- [ ] 1.6 🤖 [perf] Payload/latency budget: RRG + timeseries endpoints
-      under 150 KB / <100 ms warm; extend the 15-min cache headers.
+Everything here runs on endpoints that already exist in production
+(`/reading`, `/breadth/timeseries`, `/stress/timeseries`,
+`/regime/history`). Goal: the real mission control in the browser.
 
-## Phase 2 — Frontend: the dashboard rebuild
+- [ ] 1.1 🤖 Route restructure: `/insights` becomes the sidebar shell
+      (site navbar untouched); Overview page skeleton with section
+      headers; old tab pages kept reachable until slices replace them.
+- [ ] 1.2 🤖 Component kit: IndicatorCard (label/value/sparkline/
+      expand), SectionHeader, DetailShell (back button + sub-rail),
+      ChartModule on lightweight-charts (range picker, reference
+      bands) — all on existing role tokens, all six palettes.
+- [ ] 1.3 🤖 Market cards v1: Market State (regime), Market Stress,
+      Breadth — wired to existing endpoints, snapshot `?date=`
+      preserved.
+- [ ] 1.4 🤖 Detail views v1: Breadth detail (bands from breadth_atlas
+      percentiles, stats strip, learn panel) + Stress detail +
+      Regime ribbon detail (episodes over Nifty).
+- [ ] 1.5 🤖 [compliance] Lexicon tests extended to new card/detail
+      strings; disclaimer footer in the new shell verified.
+- [ ] 1.6 👤 Browser review on real data → adjust before Slice 2.
 
-- [ ] 2.1 🤖 [design] Chart-module component kit on lightweight-charts
-      (range picker, reference bands, regime ribbon, provisional-point
-      style, theme-var probe reuse); palette tokens for quadrants/bands.
-- [ ] 2.2 🤖 Pulse rebuild: headline strip + factor-curated chart
-      modules + movers rail (`DASHBOARD_DESIGN.md` §2).
-- [ ] 2.3 🤖 Sectors & Rotation tab: RRG component (trails, playback,
-      universe/benchmark switchers, synced table) + sector strip +
-      subgroup block; absorb orphaned `/sectors`.
-- [ ] 2.4 🤖 Stock Lists tab: 4 list products with criteria cards,
-      list-specific columns, membership-history mini-panels; absorb
-      `/watchlists`; presets removed from screener.
-- [ ] 2.5 🤖 Screener demotion: move under Explore entry points; ship
-      the minimal filter-rail UI (logic already exists client-side).
-- [ ] 2.6 🤖 Learn: explainers for RRG, each list, each charted
-      indicator; glossary additions. [compliance] lexicon tests on all
-      new strings.
-- [ ] 2.7 🤖 Mobile pass: sparkline collapse, RRG small-screen behavior
-      (likely table-first with mini-graph).
+## Slice 2 — Market set v2 (small backend additions)
 
-## Phase 3 — Intraday layer (per D1)
+- [ ] 2.1 🤖 [data] `GET /api/insights/macro/timeseries` (VIX +
+      z-bands) from the existing macro panel (TDD: shape spec).
+- [ ] 2.2 🤖 Cards + details: India VIX, Net New Highs, McClellan
+      (both already in the breadth panel/timeseries whitelist).
+- [ ] 2.3 🤖 Movers rail on Overview (existing `/movers`), each rail
+      linking toward its future list (Slice 4).
+- [ ] 2.4 🤖 [data] Concentration timeseries endpoint + card + detail
+      (panel exists; endpoint missing).
 
-- [ ] 3.1 🤖 `app/insights/intraday.py` + scheduler job + day-file
-      persistence + `GET /api/insights/intraday` (+ delay parameter for
-      posture B). TDD: synthetic quote fixtures.
-- [ ] 3.2 🤖 [data] Time-of-day volume curve calibration probe (uses
-      `nse500_data_hourly/`); powers intraday volume-surge counts.
-- [ ] 3.3 🤖 Frontend live layer: market-hours SWR hook, live pills,
-      flash-on-change, provisional tail point on charts.
-- [ ] 3.4 🤖 Freshness row for intraday job; graceful token-expiry
-      degradation; mid-session restart recovery test.
-- [ ] 3.5 👤 [licensing] Re-verify posture with labels/wording as built
-      ("delayed", "provisional") before public exposure.
+## Slice 3 — Sectors & Rotation (the RRG flagship) — needs D3
 
-## Phase 4 — Launch repositioning
+- [ ] 3.1 🤖 [data] Add missing indices to `tracked_indices.csv`
+      (NIFTY 200, TOTAL MKT, midcap/smallcap variants as needed);
+      verify long-panel sync + freshness rows.
+- [ ] 3.2 🤖 RRG engine `app/insights/rrg.py` (TDD per RRG_SPEC §6:
+      synthetic rotation fixtures, universe-independence, W-FRI
+      completed-bar resample, warm-up policy) + composite builder in
+      the daily pipeline + `GET /api/insights/rrg`.
+- [ ] 3.3 🤖 RRG canvas component (SVG: quadrants, tails, isolate,
+      zoom/fit, playback scrubber) + synced quadrant table + mini-RRG
+      card on Overview.
+- [ ] 3.4 🤖 Sector RS bars card (existing `sector_rs`) + sector
+      detail (existing 252d history endpoint) + constituent
+      drill-down (vs market / vs sector composite toggle).
+- [ ] 3.5 🤖 Learn: RRG explainer with the Optuma-caution framing
+      [compliance]; glossary: quadrant, heading, velocity, distance.
+- [ ] 3.6 [perf] RRG payload <150 KB / <100 ms warm; 15-min cache.
 
-- [ ] 4.1 🤖 Nav/shell: insights becomes signed-in home; portfolio nav
-      behind admin flag (`nav.ts`, `bottom-nav.tsx` SLOTS,
-      `navbar.tsx`, middleware redirect targets, marketing CTAs).
-      Reversible by flag when regulatory approval lands.
-- [ ] 4.2 🤖 [compliance] Disclaimer coverage audit after shell swap
-      (DisclaimerFooter vs FooterPanel); no portfolio data on public
-      marketing/SEO surfaces.
-- [ ] 4.3 👤 [compliance] Consultant pass on all public copy; then flip
+## Slice 4 — Stock Lists
+
+- [ ] 4.1 🤖 [data] Daily cross-section persistence (date, symbol,
+      rank, scores, tags, list membership) appended by the 16:30
+      pipeline; backfill where cheap. security-reviewer on any
+      sync-path diff.
+- [ ] 4.2 🤖 Detectors formalized (TDD synthetic fires/doesn't-fire):
+      volume_surge, coiled_fresh_momentum, custom_rs_leaders,
+      trend_consistency. Validity study for any badge claim
+      [compliance].
+- [ ] 4.3 🤖 List cards on Overview + list detail pages (criteria on
+      card, list-specific columns, membership-history mini-panel).
+- [ ] 4.4 🤖 Screener demotion: sidebar bottom slot, presets removed
+      (now lists), minimal filter-rail UI (logic already client-side).
+
+## Slice 5 — Intraday layer (posture C; independent of 3-4)
+
+- [ ] 5.1 🤖 `app/insights/intraday.py` + scheduler job + day-file +
+      `GET /api/insights/intraday` (delay param for delayed-first
+      rollout). TDD synthetic quote fixtures.
+- [ ] 5.2 🤖 [data] Time-of-day volume curve probe (nse500_data_hourly)
+      → intraday volume-surge counts.
+- [ ] 5.3 🤖 Live pills + market-hours SWR hook + provisional tail
+      point on charts + freshness row + token-expiry degradation.
+- [ ] 5.4 👤 [licensing] Register row + label review before public.
+
+## Phase L — Launch repositioning (needs D4)
+
+- [ ] L.1 🤖 Insights = signed-in home; portfolio nav behind admin
+      flag (`nav.ts`, `bottom-nav.tsx` SLOTS, `navbar.tsx`,
+      middleware redirects, marketing CTAs). Reversible by flag.
+- [ ] L.2 🤖 [compliance] Disclaimer coverage audit; no portfolio
+      data on public marketing/SEO surfaces.
+- [ ] L.3 👤 [compliance] Consultant pass → flip
       `NEXT_PUBLIC_INSIGHTS_ACCESS=all`.
-- [ ] 4.4 🤖 Prod data provisioning check (Railway panels, upload
-      whitelist unchanged?); run full verification checklist; register
-      rows (intraday posture, public surface) filed.
-- [ ] 4.5 👤 Announce/beta comms (content engine work, separate task).
+- [ ] L.4 🤖 Prod provisioning check + verification checklist +
+      register rows (intraday posture, public surface).
+
+## Post-launch (documented, not scheduled)
+
+- Personalization phase 1: watchlists + "My Watchlist" module
+  (`PERSONALIZATION.md`) — sidebar slot already reserved.
+- Alerts + notification center; entitlements tie-in.
 
 ## Standing constraints
 
-- TDD per `tasks/insight_engine/TDD_POLICY.md` for all engine/detector
-  work; validity protocol for any forward-return claim.
-- No pushes 09:00-15:30 IST (live services restart on deploy).
-- `pytest tests/` + `npm run build` clean before any push to main;
-  merge `--no-ff`.
+- TDD per `tasks/insight_engine/TDD_POLICY.md`; validity protocol for
+  forward-return claims; closed lexicon on all copy.
+- No pushes 09:00-15:30 IST. `pytest tests/` + `npm run build` clean
+  before push; merge `--no-ff`.

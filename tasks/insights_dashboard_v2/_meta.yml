@@ -1,5 +1,5 @@
 name: insights_dashboard_v2
-status: planned
+status: in-progress
 opened: 2026-08-13
 closed: null
 branch: insights_dashboard_v2   # branched from auth_stack_v2 (latest)
