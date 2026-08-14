@@ -59,6 +59,10 @@ keywords = ["access_token"]
 
 [allowlist]
 description = "Files known to contain templated/sanitized values, or documentation that names secrets without leaking them"
+# Match allowlist regexes against the full line, not just the extracted
+# secret — needed so context-anchored entries (e.g. the .pen fileToken)
+# can require their surrounding key name.
+regexTarget = "line"
 paths = [
   # Template files
   '''^\.env\.docker\.example$''',
@@ -92,6 +96,10 @@ paths = [
 ]
 
 regexes = [
+  # Pencil .pen design files carry an internal "fileToken" document UUID —
+  # an identifier, not a credential (false positive, Aug 2026).
+  '''"fileToken": "[0-9a-f-]{36}"''',
+
   # Placeholder values we use in templates
   '''change-me-in-production''',
   '''your-api-key-here''',
