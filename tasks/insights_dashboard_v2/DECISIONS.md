@@ -87,6 +87,30 @@ Outfit UI, accent-rotation chips, chart-series colors) so it matches
 the existing dashboard language. NOTE: the .pen must be saved from the
 VSCode Pencil tab to persist (MCP edits live in the editor session).
 
+## 2026-08-14 — IA revision: sidebar + mission control
+
+Founder direction: the top nav bar belongs to the website
+(Portfolios / Library / Insights) — insights tabs must NOT live there.
+New IA (full spec in `DASHBOARD_DESIGN.md` §1):
+
+- Insights gets its own **sidebar** (same shell pattern as the
+  portfolio dashboard: icon + label, active pill).
+- The home surface is a **mission-control Overview**: compact
+  indicator cards grouped into MARKET / SECTORS & ROTATION /
+  STOCK LISTS sections, each card = value + sparkline + one-liner +
+  expand affordance.
+- Expanding a card opens the indicator's **detail view**: back button
+  to Overview + a sub-rail listing the section's sibling indicators
+  + full chart, stats strip, and a "what this measures" learn panel.
+- Screener stays in the sidebar as the last analytics item (the
+  explore escape hatch); My Watchlist has a reserved slot ("soon").
+
+Production reference screenshots captured via Playwright (admin
+session) in `prod_reference/` — the mock's shell, spacing, and Ocean
+palette follow `prod_dashboard.png`. Mock rebuilt accordingly
+(4 screens, exports in `mock_previews/v2_*.png`). The v1 top-tab
+Pulse screen is kept in the .pen as "OLD v1 (superseded)".
+
 ## Canonical list locations (reconciliation)
 
 | List | File | Notes |

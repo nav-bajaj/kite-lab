@@ -5,42 +5,56 @@ read it**. Cards without charts are demoted; charts without a "so what"
 framing are not shipped. The user should always be one glance from
 "where are we now" and one click from "how did we get here".
 
-## 1. Information architecture
+## 1. Information architecture (REVISED 2026-08-14 — mission control)
 
-Current (3 linked tabs + 2 orphans):
+Founder constraint: the top nav bar is the WEBSITE's nav
+(marketworks / Portfolios / Library / Insights + account) and must not
+carry insights tabs. Insights therefore gets its own **sidebar**, the
+same shell pattern the portfolio dashboard already uses (white
+sidebar, icon + label, active pill, collapse control — see
+`prod_reference/prod_dashboard.png`).
 
 ```
-Pulse | Screener | Learn        (+ unlinked: /sectors, /watchlists)
+TopBar (site-level: wordmark · page title · live pill · admin links · palette · avatar)
+──────────────────────────────────────────────────────────────
+Sidebar            │  Content
+  Overview  ◀ home │  MISSION CONTROL — sections of compact cards:
+  Market Pulse     │    MARKET (6 indicator cards: state, stress,
+  Sectors&Rotation │      breadth, VIX, net new highs, McClellan —
+  Stock Lists      │      each value + sparkline + one-liner + expand)
+  Screener         │    SECTORS & ROTATION (mini-RRG map, RS bars)
+  Learn            │    STOCK LISTS (4 list cards: count + top names)
+  ─────            │
+  My Watchlist     │  Card expand → DETAIL VIEW: back button to
+  (soon)           │  Overview, sub-rail of sibling indicators,
+                   │  full chart + stats strip + "what this measures"
 ```
 
-Proposed (4 tabs, guided-first):
+The interaction model is **mission control**: the Overview shows
+every indicator as a compact card grouped by section; the user
+chooses what to open; every detail view has a back button that
+returns to Overview and a sub-rail (secondary list of the section's
+indicators) for lateral movement without going back.
 
-```
-Pulse | Sectors & Rotation | Stock Lists | Learn
-                                └─ Explore (screener, demoted entry point)
-```
+- **Overview (Mission Control)** — the home surface, described above.
+- **Market Pulse** — section view: all market indicator detail
+  modules, reachable from the sidebar or by expanding a Market card.
+- **Sectors & Rotation** — the full RRG flagship (`RRG_SPEC.md`) +
+  sector strip; the mini-RRG card on Overview expands to it.
+- **Stock Lists** — the four curated list products; list cards on
+  Overview expand to them.
+- **Screener** — kept in the sidebar but last among analytics, as the
+  "explore everything" escape hatch; presets removed (they became
+  Stock Lists).
+- **Learn** — unchanged surface, extended with new explainers; every
+  detail view carries a "What this measures" panel linking into it.
+- **My Watchlist** — sidebar slot reserved (ships with
+  `PERSONALIZATION.md` phase 1).
 
-- **Pulse** — the market dashboard. Regime, stress, breadth, VIX,
-  concentration, movers; each headline metric charted historically.
-- **Sectors & Rotation** — the RRG flagship (see `RRG_SPEC.md`) +
-  sector breadth/RS detail. Absorbs today's orphaned `/sectors`.
-- **Stock Lists** — the four curated lists as first-class named
-  products (below), absorbing and replacing `/watchlists` and the
-  screener presets.
-- **Learn** — unchanged surface, extended with new explainers (RRG,
-  each curated list, each charted indicator).
-- **Explore (screener)** — no longer a tab. Reached from "Explore all
-  500 stocks" links at the bottom of each list and from stock pages.
-  Same component, demoted placement. The built-but-unshipped filter
-  rail (`_client.tsx` implements `matchFilters` with no UI) gets a
-  minimal UI here, since presets move out to Stock Lists.
-
-Navigation/shell: `/insights` moves from marketing chrome to the
-primary product shell (decision for the founder: promote the insights
-layout to be the signed-in home, with portfolios demoted behind the
-admin flag — the frontend exploration confirmed nav is centralized in
-`src/lib/nav.ts` + `bottom-nav.tsx` SLOTS + `navbar.tsx` pathNames, so
-this is a small, contained change).
+Mock: `mock_insights_dashboard.pen` — screens "Mission Control",
+"Indicator Detail", "Sectors & Rotation", "Stock Lists"; PNG exports
+in `mock_previews/v2_*.png`; production shell reference screenshots
+in `prod_reference/`.
 
 ## 2. Pulse as a dashboard
 
