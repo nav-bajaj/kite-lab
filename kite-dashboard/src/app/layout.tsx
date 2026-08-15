@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Fraunces, Outfit } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { VercelToolbar } from "@vercel/toolbar/next";
 import "./globals.css";
 import { Providers } from "./providers";
 
@@ -47,6 +48,10 @@ export default function RootLayout({
       >
         <Providers>{children}</Providers>
         <SpeedInsights />
+        {/* Local-only: click-to-comment on any element, so copy review
+            happens on the page instead of being transcribed into chat.
+            Never shipped — the CSP allowances for it are dev-only too. */}
+        {process.env.NODE_ENV === "development" && <VercelToolbar />}
       </body>
     </html>
   );

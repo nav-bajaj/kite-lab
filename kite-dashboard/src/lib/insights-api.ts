@@ -13,7 +13,11 @@
  */
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-const REVALIDATE_SECONDS = 900; // 15 minutes — same as backend Cache-Control
+// 15 minutes in production — same as the backend Cache-Control. Disabled in
+// dev: during a review pass the backend changes shape underneath us, and a
+// cached response from before a field existed renders as a silently empty
+// card for up to 15 minutes.
+const REVALIDATE_SECONDS = process.env.NODE_ENV === "development" ? 0 : 900;
 
 // ---------- shared lightweight types ----------
 
@@ -607,7 +611,7 @@ export interface RegimeEpisode {
   start: string;
   end: string;
   days: number;
-  /** Close-to-close move of the scope's index across the spell. */
+  /** Close-to-close move of the scope's index across the regime. */
   index_return_pct: number | null;
 }
 

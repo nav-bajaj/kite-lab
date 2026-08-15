@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import withVercelToolbar from "@vercel/toolbar/plugins/next";
 
 // API origin allowed for fetch/SSE. Defaults to the production Railway URL;
 // override via NEXT_PUBLIC_API_URL at build time. Read here only to construct
@@ -66,14 +67,25 @@ const supabaseOrigin = (() => {
   }
 })();
 
+// Vercel Toolbar, local development ONLY (insights_dashboard_v2 copy-review
+// loop): the toolbar is served from vercel.live and streams its comment
+// threads over Pusher websockets. Both constants collapse to "" outside
+// development, so the deployed CSP is byte-identical to before this was
+// added — no widening in production, hence no register row (R-006/R-007).
+const isDev = process.env.NODE_ENV === "development";
+const devToolbarOrigin = isDev ? "https://vercel.live https://*.vercel.live" : "";
+const devToolbarSockets = isDev
+  ? "https://vercel.live https://*.vercel.live wss://*.pusher.com https://*.pusher.com"
+  : "";
+
 const cspDirectives = [
   `default-src 'self'`,
-  `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${clerkOrigins} ${turnstileOrigin} https://accounts.google.com https://*.gstatic.com`,
-  `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
+  `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${clerkOrigins} ${turnstileOrigin} https://accounts.google.com https://*.gstatic.com ${devToolbarOrigin}`,
+  `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com ${devToolbarOrigin}`,
   `img-src 'self' data: blob: https:`,
-  `font-src 'self' data: https://fonts.gstatic.com`,
-  `connect-src 'self' ${apiUrl} ${devApiOrigin} ${supabaseOrigin} ${clerkOrigins} ${turnstileOrigin} https://accounts.google.com https://oauth2.googleapis.com https://*.googleapis.com`,
-  `frame-src 'self' ${clerkOrigins} ${turnstileOrigin} https://accounts.google.com`,
+  `font-src 'self' data: https://fonts.gstatic.com ${devToolbarOrigin}`,
+  `connect-src 'self' ${apiUrl} ${devApiOrigin} ${supabaseOrigin} ${clerkOrigins} ${turnstileOrigin} https://accounts.google.com https://oauth2.googleapis.com https://*.googleapis.com ${devToolbarSockets}`,
+  `frame-src 'self' ${clerkOrigins} ${turnstileOrigin} https://accounts.google.com ${devToolbarOrigin}`,
   `worker-src 'self' blob:`,
   `frame-ancestors 'none'`,
   `form-action 'self' ${clerkOrigins} https://accounts.google.com`,
@@ -120,4 +132,6 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// The toolbar plugin only injects its dev-time assets; in a production build
+// it is a no-op, and the <VercelToolbar /> mount is dev-gated in layout.tsx.
+export default withVercelToolbar()(nextConfig);

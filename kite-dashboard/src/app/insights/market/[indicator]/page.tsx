@@ -695,9 +695,9 @@ const REGIME_COLOR: Record<RegimeEpisode["regime"], string> = {
 
 const REGIME_ORDER = Object.keys(REGIME_COLOR) as RegimeEpisode["regime"][];
 
-/** Median spell length per regime, in days — the typical duration of each
+/** Median run length per regime, in days — the typical duration of each
  *  regime rather than how many of them there have been. */
-function medianSpellDays(episodes: RegimeEpisode[], regime: string): number | null {
+function medianRegimeDays(episodes: RegimeEpisode[], regime: string): number | null {
   const lengths = episodes
     .filter((e) => e.regime === regime)
     .map((e) => e.days)
@@ -752,7 +752,7 @@ async function RegimeDetail({
             sub: r.prev_regime_lasted_days ? `lasted ${r.prev_regime_lasted_days} days` : undefined,
           },
           {
-            label: `${indexLabel} this spell`,
+            label: `${indexLabel} this regime`,
             value: fmtPct(current?.index_return_pct ?? null, 1, true),
             sub: "since the regime began",
           },
@@ -765,11 +765,11 @@ async function RegimeDetail({
       />
       <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5">
         <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-          Typical spell length
+          Median regime length
         </span>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {REGIME_ORDER.map((reg) => {
-            const days = medianSpellDays(episodes, reg);
+            const days = medianRegimeDays(episodes, reg);
             return (
               <div key={reg} className="flex flex-col gap-0.5">
                 <span className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
@@ -783,19 +783,18 @@ async function RegimeDetail({
                 <span className="font-serif text-xl font-medium text-foreground">
                   {days !== null ? `${days} days` : "—"}
                 </span>
-                <span className="text-[11px] text-muted-foreground">median spell</span>
               </div>
             );
           })}
         </div>
         <p className="text-[12px] leading-[1.5] text-muted-foreground">
-          Spells vary widely in length — the medians are context, not a
+          Regimes vary widely in length — the medians are context, not a
           countdown.
         </p>
       </div>
       <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
         <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-          Recent spells
+          Recent regimes
         </span>
         <div className="flex flex-col">
           {recent.map((e, i) => (

@@ -221,6 +221,40 @@ Founder notes on the Regime tab, as implemented:
   breadth input) so the row of tiles fills evenly instead of leaving a
   gap at the right.
 
+## 2026-08-15 — copy-review loop: Vercel Toolbar on localhost
+
+Founder wants to mark up copy on the page instead of dictating notes
+into chat, and wants it **local** — no preview deployments in the loop.
+
+**Built**: `@vercel/toolbar` as a dev dependency, `withVercelToolbar()`
+wrapping `next.config.ts`, `<VercelToolbar />` mounted in the root
+layout behind `NODE_ENV === "development"`. CSP gains `vercel.live` +
+Pusher websockets **in development only** — both constants collapse to
+`""` in production, verified against a real `next start` build, so the
+deployed CSP is unchanged and no register row is owed (R-006/R-007).
+The toolbar loads and its launcher renders on localhost.
+
+**Blocked, honestly**: the plan was for the agent to read comment
+threads back through the Vercel MCP connector. It cannot —
+`list_teams` returns `[]` for this account and `list_toolbar_threads`
+errors, consistent with the known 403 on this team (see the
+`reference_deploy_verification` note). So the founder can comment, but
+the agent cannot yet read the comments programmatically.
+
+Two ways forward, founder to pick:
+1. `vercel login` in the terminal (CLI now installed, v59.1.3). The
+   agent then reads threads from the Vercel REST API with the CLI's
+   token instead of the MCP connector.
+2. Drop the Vercel dependency and build a local annotation overlay:
+   shortcut toggles review mode, click any string to leave a note,
+   notes append to a JSON file in the repo that the agent reads
+   directly. Fully offline, ~150 lines, no account involved.
+
+Also fixed while here: `REVALIDATE_SECONDS` is now 0 in development.
+The 15-minute fetch cache was serving `/reading` responses captured
+before a backend field existed, which is what made the Participation
+tile look empty on non-default universes.
+
 ## Canonical list locations (reconciliation)
 
 | List | File | Notes |
