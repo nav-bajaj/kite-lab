@@ -396,3 +396,49 @@ those daily anyway); the second command brings the long panels
 (`nse500_data_merged/`, `indices_data_full/`) up to date. Append-only
 by construction, so never run it mid-session (partial bars would
 freeze into the long panels).
+
+## 2026-08-15 — computation audit (Stress + Breadth)
+
+Two read-only agents re-derived every quantity on both tabs from the raw
+panels and compared against the live API. **Breadth's backend maths came
+back clean** — every metric matched an independent rebuild to 1e-9 on
+two universes, atlas band constants match `tasks/breadth_atlas/REPORT.md`
+exactly, per-universe caches verified distinct. The defects were on the
+as-of path and in presentation.
+
+Fixed:
+1. **Overview showed today's data under a historical header.** The
+   timeseries endpoints take no date and always return the most recent
+   rows; the page never truncated them. On `?date=2020-03-20&universe=
+   nifty50` the breadth card read **46%** when the true value was
+   **11%** — a 35pp error. Endpoints now accept `date=` and truncate
+   server-side; sparklines rewind too.
+2. Same defect on Advances/declines, Net new highs, McClellan and
+   Concentration detail tabs off the default universe — all truncate now.
+3. **`.fillna(0)` on stress components scored "no data" as "maximum
+   calm".** Early-2010 dates reachable from the snapshot picker were
+   understated by ~18 points. Now renormalised over the components that
+   exist; `None` when none do.
+4. **A missing percentile was served as `0.0`** and rendered "p0" — a
+   confident-looking number for "unknown". Now `None` → em dash.
+5. The percentile window is only nominally full early on; the snapshot
+   ships `score_percentile_obs` and the card says "vs N sessions so far"
+   when the window isn't yet deep.
+6. **The stress explainer cited 2008 twice** — the panel starts
+   2009-03-05 and contains no 2008 — and claimed 2022 "didn't crack 80"
+   when it peaked at 87.6 with 9 days above 80. It also omitted the two
+   largest clusters (2011: 69 days, 2016: 16). Rewritten from the panel;
+   I verified each figure myself before editing.
+7. Dead `StressGauge` component deleted (stale copy, unused).
+8. Atlas band constants to full precision (0.222/0.588/0.937).
+
+Open, not fixed:
+- Three different band schemes for the same score (docstring 20/40/60/80,
+  UI 33/66, explainer 30/60/80). Measured occupancy: <33 = 42.9%,
+  33-66 = 46.0%, >66 = 11.1%. Needs one decision, then derive the rest.
+- Breadth tiles describe % > 200-DMA while the chart follows the active
+  chip; the labels now name the metric but the strip is still static.
+- McClellan axis precision collapses (±0.14 range rendered at 1dp).
+- Survivorship bias is documented in the engine and the atlas but not
+  surfaced on the page.
+- `_indices_dir()` duplicated in five modules instead of `_paths.py`.

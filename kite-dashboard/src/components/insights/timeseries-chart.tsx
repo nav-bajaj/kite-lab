@@ -62,6 +62,7 @@ export function TimeseriesChart({
   defaultRange = "3Y",
   height = 320,
   overlay,
+  overlayValueLabel = "Value",
 }: {
   dates: string[];
   values: (number | null)[];
@@ -71,11 +72,24 @@ export function TimeseriesChart({
   defaultRange?: (typeof RANGES)[number]["label"];
   height?: number;
   overlay?: IndexOverlay;
+  /** Name for this chart's own series in the crosshair readout. */
+  overlayValueLabel?: string;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { theme, resolvedTheme } = useTheme();
   const [range, setRange] = useState(defaultRange);
   const [showOverlay, setShowOverlay] = useState(false);
+  const [hover, setHover] = useState<{
+    day: string;
+    value: number;
+    overlay: number | null;
+  } | null>(null);
+  // Held in a ref so the crosshair subscription never has to be a chart
+  // rebuild dependency. Assigned in an effect, not during render.
+  const onHoverRef = useRef(setHover);
+  useEffect(() => {
+    onHoverRef.current = setHover;
+  }, []);
 
   const sliced = useMemo(() => {
     const days = RANGES.find((r) => r.label === range)?.days ?? null;
@@ -165,6 +179,27 @@ export function TimeseriesChart({
       });
     }
 
+    // Crosshair readout: the day, the indicator's own value and the
+    // overlay's percent change, shown above the chart rather than in a
+    // floating tooltip. Both series are named so neither number is
+    // ambiguous, and the colours are token-derived so it reads in every
+    // palette (founder, 2026-08-15).
+    const indicatorAt = new Map(sliced.map((p) => [p.time as number, p.value]));
+    const overlayAt = new Map(overlaySliced.map((p) => [p.time as number, p.value]));
+    chart.subscribeCrosshairMove((param) => {
+      const time = param.time as number | undefined;
+      const v = time === undefined ? undefined : indicatorAt.get(time);
+      if (time === undefined || v === undefined) {
+        onHoverRef.current(null);
+        return;
+      }
+      onHoverRef.current({
+        day: new Date(time * 1000).toISOString().slice(0, 10),
+        value: v,
+        overlay: showOverlay ? (overlayAt.get(time) ?? null) : null,
+      });
+    });
+
     if (showOverlay && overlaySliced.length > 0) {
       const index = chart.addSeries(LineSeries, {
         color: muted,
@@ -214,15 +249,22 @@ export function TimeseriesChart({
           <button
             onClick={() => setShowOverlay((v) => !v)}
             aria-pressed={showOverlay}
-            title={`Overlay ${overlay.label}, rebased to 0% at the left edge`}
+            title={`Overlay ${overlay.label}, rebased to 0% at the left edge of the window`}
             className={cn(
-              "mr-auto rounded-md px-2.5 py-1 text-[11px] transition-colors",
+              "mr-auto flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[12px] font-medium transition-colors",
               showOverlay
-                ? "bg-muted font-medium text-foreground"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-border text-foreground hover:bg-muted",
             )}
           >
-            {showOverlay ? "Hide" : "Show"} {overlay.label}
+            <span
+              aria-hidden
+              className="inline-block h-0.5 w-3.5 rounded-full"
+              style={{
+                backgroundColor: showOverlay ? "currentColor" : "var(--muted-foreground)",
+              }}
+            />
+            {overlay.label}
           </button>
         )}
         {RANGES.map((r) => (
@@ -240,6 +282,32 @@ export function TimeseriesChart({
             {r.label}
           </button>
         ))}
+      </div>
+      <div className="flex min-h-[18px] flex-wrap items-baseline gap-x-3 font-mono text-[11px] tabular-nums">
+        {hover ? (
+          <>
+            <span className="text-foreground">
+              {new Date(hover.day).toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}
+            </span>
+            <span className="text-[color:var(--chart-1)]">
+              {overlayValueLabel} {percent ? `${hover.value.toFixed(1)}%` : hover.value.toFixed(2)}
+            </span>
+            {hover.overlay !== null && overlay && (
+              <span className="text-muted-foreground">
+                {overlay.label} {hover.overlay >= 0 ? "+" : ""}
+                {hover.overlay.toFixed(1)}%
+              </span>
+            )}
+          </>
+        ) : (
+          <span className="text-muted-foreground/70">
+            hover the chart for that day&apos;s values
+          </span>
+        )}
       </div>
       <div ref={containerRef} style={{ height }} className="w-full" />
       {overlay && showOverlay && (

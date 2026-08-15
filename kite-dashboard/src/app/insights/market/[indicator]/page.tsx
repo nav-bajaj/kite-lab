@@ -31,6 +31,7 @@ import {
 } from "@/components/insights/timeseries-chart";
 import { MetricExplorer, type MetricVariant } from "@/components/insights/metric-explorer";
 import { RegimeChart } from "@/components/insights/regime-chart";
+import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 900;
@@ -116,6 +117,21 @@ function cutoff(dates: string[], day: string): number {
   return i === -1 ? dates.length : i;
 }
 
+/** The timeseries endpoints take no `date` — they always return the most
+ *  recent rows — so every detail view truncates what it fetched. Without
+ *  this, a rewound non-default universe read its "now" value off today's
+ *  last point while the header said otherwise. */
+function truncateSeries(series: TimeseriesResponse, day: string): TimeseriesResponse {
+  const end = cutoff(series.index, day);
+  if (end === series.index.length) return series;
+  return {
+    index: series.index.slice(0, end),
+    data: Object.fromEntries(
+      Object.entries(series.data).map(([k, v]) => [k, v.slice(0, end)]),
+    ),
+  };
+}
+
 /** p-th percentile of the non-null values (nearest-rank). */
 function percentile(values: (number | null)[], p: number): number | null {
   const clean = values
@@ -124,6 +140,60 @@ function percentile(values: (number | null)[], p: number): number | null {
   if (clean.length === 0) return null;
   const idx = Math.min(clean.length - 1, Math.max(0, Math.round((p / 100) * (clean.length - 1))));
   return clean.at(idx) ?? null;
+}
+
+/** Two readings of the same thing in one card — the level and where that
+ *  level sits (founder, 2026-08-15: "current score and its percentile can
+ *  become one dual card"). */
+function DualStat({
+  label,
+  primary,
+  secondary,
+}: {
+  label: string;
+  primary: { value: string; sub?: string };
+  secondary: { value: string; sub?: string };
+}) {
+  return (
+    <div className="flex flex-col gap-2 rounded-xl border border-border bg-card px-4 py-3">
+      <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+        {label}
+      </span>
+      <div className="flex items-end justify-between gap-3">
+        {[primary, secondary].map((part, i) => (
+          <div
+            key={i}
+            className={cn(
+              "flex min-w-0 flex-col gap-0.5",
+              i === 1 && "items-end border-l border-border/70 pl-3 text-right",
+            )}
+          >
+            <span
+              className={cn(
+                "font-serif font-medium text-foreground",
+                i === 0 ? "text-xl" : "text-base",
+              )}
+            >
+              {part.value}
+            </span>
+            {part.sub && (
+              <span className="text-[11px] leading-[1.35] text-muted-foreground">
+                {part.sub}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** "the past year" / "the last 5 years" from a trading-day window. */
+function describeWindow(days: number | null | undefined): string {
+  if (!days) return "its own history";
+  const years = Math.round(days / 252);
+  if (years <= 1) return "the past year";
+  return `the last ${years} years`;
 }
 
 function ChartCard({
@@ -146,15 +216,17 @@ function ChartCard({
   );
 }
 
+const ATLAS_FROM_YEAR = 2010;
+
 // Reference levels for the whole DMA family from the Breadth Atlas
 // empirical profile (tasks/breadth_atlas/REPORT.md §1, 2010-2026 p5 /
 // median / p95 per metric). Descriptive context lines, not thresholds
 // to act on.
 function atlasBands(p5: number, median: number, p95: number): ReferenceBand[] {
   return [
-    { value: p95, label: "top 5% of days since 2010", tone: "warning" },
-    { value: median, label: "median day since 2010", tone: "muted" },
-    { value: p5, label: "bottom 5% of days since 2010", tone: "negative" },
+    { value: p95, label: `top 5% of days since ${ATLAS_FROM_YEAR}`, tone: "warning" },
+    { value: median, label: `median day since ${ATLAS_FROM_YEAR}`, tone: "muted" },
+    { value: p5, label: `bottom 5% of days since ${ATLAS_FROM_YEAR}`, tone: "negative" },
   ];
 }
 
@@ -162,9 +234,9 @@ const BREADTH_VARIANTS: Omit<MetricVariant, "values">[] = [
   {
     metric: "pct_above_200dma",
     label: "% > 200-DMA",
-    sub: "The share of stocks trading above their own 200-day average — how many are in a long-term uptrend.",
+    sub: "Percentage share of stocks trading above their 200 day average.",
     percent: true,
-    bands: atlasBands(0.22, 0.59, 0.94),
+    bands: atlasBands(0.222, 0.588, 0.937),
   },
   {
     metric: "avg_dist_from_200dma",
@@ -187,13 +259,6 @@ const BREADTH_VARIANTS: Omit<MetricVariant, "values">[] = [
     percent: true,
     bands: atlasBands(0.157, 0.578, 0.882),
   },
-  {
-    metric: "pct_above_21dma",
-    label: "% > 21-DMA",
-    sub: "The share of stocks above their own 21-day average — participation over the past month.",
-    percent: true,
-    bands: atlasBands(0.148, 0.549, 0.851),
-  },
 ];
 
 function lastNonNull(values: (number | null)[]): number | null {
@@ -206,15 +271,42 @@ function lastNonNull(values: (number | null)[]): number | null {
 
 /** Bands computed from the fetched series itself — used for non-default
  *  universes, where the NSE-500 Breadth Atlas reference values don't apply. */
-function computedBands(values: (number | null)[]): ReferenceBand[] {
+function computedBands(values: (number | null)[], fromYear?: number): ReferenceBand[] {
   const p95 = percentile(values, 95);
   const med = percentile(values, 50);
   const p5 = percentile(values, 5);
+  // Name the year the window actually starts from, exactly as the atlas
+  // bands do — "for this universe" left the reader guessing which span the
+  // percentile was taken over (founder, 2026-08-15).
+  const since = fromYear ? `since ${fromYear}` : "on record";
   return [
-    ...(p95 !== null ? [{ value: p95, label: "top 5% of this universe's days", tone: "warning" as const }] : []),
-    ...(med !== null ? [{ value: med, label: "median day for this universe", tone: "muted" as const }] : []),
-    ...(p5 !== null ? [{ value: p5, label: "bottom 5% of this universe's days", tone: "negative" as const }] : []),
+    ...(p95 !== null ? [{ value: p95, label: `top 5% of days ${since}`, tone: "warning" as const }] : []),
+    ...(med !== null ? [{ value: med, label: `median day ${since}`, tone: "muted" as const }] : []),
+    ...(p5 !== null ? [{ value: p5, label: `bottom 5% of days ${since}`, tone: "negative" as const }] : []),
   ];
+}
+
+/** Calendar year the fetched window opens on, for band labels. */
+function firstYear(dates: string[]): number | undefined {
+  const first = dates.at(0);
+  return first ? Number(first.slice(0, 4)) : undefined;
+}
+
+/** Where `value` sits within the series' own distribution, 0-100. */
+function pctRank(values: (number | null)[], value: number | null): number | null {
+  if (value === null) return null;
+  const clean = values.filter((v): v is number => v !== null && !Number.isNaN(v));
+  if (clean.length === 0) return null;
+  const below = clean.filter((v) => v <= value).length;
+  return (below / clean.length) * 100;
+}
+
+/** Change in the series over the last `n` observations, in raw units. */
+function changeOver(values: (number | null)[], n: number): number | null {
+  const last = lastNonNull(values);
+  const prior = values.at(values.length - 1 - n) ?? null;
+  if (last === null || prior === null || Number.isNaN(prior)) return null;
+  return last - prior;
 }
 
 async function BreadthDetail({
@@ -244,46 +336,74 @@ async function BreadthDetail({
   const byKey = new Map(Object.entries(series.data));
   const values = byKey.get("pct_above_200dma") ?? [];
   const now = isDefault ? reading.regime.pct_above_200dma : lastNonNull(values);
-  const median = isDefault ? 0.59 : percentile(values, 50);
-  const p5 = isDefault ? 0.22 : percentile(values, 5);
+  const from = firstYear(series.index);
 
-  let streak = 0;
-  for (let i = values.length - 1; i >= 0; i--) {
-    const v = values.at(i);
-    if (v === null || v === undefined || median === null || v < median) break;
-    streak += 1;
-  }
+  // The tiles used to be three static reference levels and a streak, which
+  // told you nothing you could act on (founder, 2026-08-15). They now
+  // describe state: where participation sits in its own history, which way
+  // it is going, and whether the index is being carried by fewer names.
+  const rank = pctRank(values, now);
+  const changed20 = changeOver(values, 20);
+  const overlayCloses = overlay?.closes ?? [];
+  const indexChange20 =
+    overlayCloses.length > 20
+      ? (() => {
+          const last = lastNonNull(overlayCloses);
+          const prior = overlayCloses.at(overlayCloses.length - 21) ?? null;
+          return last !== null && prior !== null && prior > 0 ? last / prior - 1 : null;
+        })()
+      : null;
+  const divergence =
+    changed20 !== null && indexChange20 !== null
+      ? indexChange20 >= 0 && changed20 < 0
+        ? "index up, participation down — the move is narrowing"
+        : indexChange20 < 0 && changed20 >= 0
+          ? "index down, participation up — the decline is narrowing"
+          : "index and participation moving together"
+      : undefined;
 
   const variants: MetricVariant[] = BREADTH_VARIANTS.map((v) => {
     const vals = byKey.get(v.metric) ?? [];
-    return { ...v, values: vals, bands: isDefault ? v.bands : computedBands(vals) };
+    return {
+      ...v,
+      values: vals,
+      bands: isDefault ? v.bands : computedBands(vals, from),
+    };
   });
 
   return (
     <div className="flex flex-col gap-4">
-      <ChartCard title={`Market Breadth ${universeLabel(universe)}`}>
-        <MetricExplorer dates={series.index} variants={variants} overlay={overlay} />
-      </ChartCard>
       <StatStrip
         stats={[
-          { label: "Now", value: fmtPct(now, 0), sub: `of ${universeLabel(universe)}` },
           {
-            label: "Median day",
-            value: fmtPct(median, 0),
-            sub: isDefault ? "since 2010" : "this universe's history",
+            label: "Above 200-DMA",
+            value: fmtPct(now, 0),
+            sub: `of ${universeLabel(universe)}`,
           },
           {
-            label: "Washed-out line",
-            value: fmtPct(p5, 0),
-            sub: "bottom 5% of days",
+            label: "Vs its own history",
+            value: rank !== null ? `p${rank.toFixed(0)}` : "—",
+            sub: from ? `since ${from}` : "on record",
           },
           {
-            label: "Days at or above median",
-            value: String(streak),
-            sub: streak === 0 ? "currently below the median" : "current run",
+            label: "Change, 20 sessions",
+            value: changed20 !== null ? `${changed20 >= 0 ? "+" : ""}${(changed20 * 100).toFixed(0)}pp` : "—",
+            sub: "participation widening or narrowing",
+          },
+          {
+            label: `${overlay?.label ?? "Index"}, 20 sessions`,
+            value: fmtPct(indexChange20, 1, true),
+            sub: divergence,
           },
         ]}
       />
+      <ChartCard title={`Market Breadth ${universeLabel(universe)}`}>
+        <MetricExplorer
+          dates={series.index}
+          variants={variants}
+          overlay={overlay}
+        />
+      </ChartCard>
       <LearnPanel slug="pct-above-200dma" title="Learn more">
         Breadth counts how many stocks are in long-term uptrends, not just
         whether the index is up. Narrow rallies — index rising while breadth
@@ -323,11 +443,13 @@ async function AdvanceDeclineDetail({
   reading: MarketReading;
   universe: BreadthUniverse;
 }) {
-  const series = await getBreadthTimeseries({
+  const asOf = reading.date.slice(0, 10);
+  const raw = await getBreadthTimeseries({
     days: 4000,
     metrics: AD_VARIANTS.map((v) => v.metric),
     universe,
   }).catch((): TimeseriesResponse => ({ index: [], data: {} }));
+  const series = truncateSeries(raw, asOf);
   const isDefault = universe === "nse500";
   const byKey = new Map(Object.entries(series.data));
   const daily = byKey.get("ad_diff_pct") ?? [];
@@ -422,10 +544,63 @@ async function StressDetail({
       weight: w["dispersion"] ?? 0,
     },
   ];
-  const years = Math.round((s.percentile_window_days ?? 1260) / 252);
+  // Windows come from the engine; describe them rather than restating a
+  // hardcoded number that can drift from it.
+  const windowLabel = describeWindow(s.percentile_window_days);
+  const componentWindowLabel = describeWindow(s.component_window_days);
+  // Below a full window the comparison is shallower than the label claims,
+  // so say so rather than implying a depth we don't have (audit).
+  const shallow =
+    s.score_percentile_obs !== null &&
+    s.percentile_window_days !== null &&
+    s.score_percentile_obs < s.percentile_window_days;
 
   return (
     <div className="flex flex-col gap-4">
+      {/* State first, chart second — same order as the Regime tab. */}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <DualStat
+          label="Stress"
+          primary={{
+            value: s.score !== null ? s.score.toFixed(0) : "—",
+            sub: "out of 100",
+          }}
+          secondary={{
+            value: s.score_percentile !== null ? `p${s.score_percentile.toFixed(0)}` : "—",
+            sub:
+              s.score_percentile === null
+                ? "not enough history yet"
+                : shallow
+                  ? `vs ${s.score_percentile_obs} sessions so far`
+                  : `vs ${windowLabel}`,
+          }}
+        />
+        <DualStat
+          label="India VIX"
+          primary={{ value: s.vix_close?.toFixed(1) ?? "—", sub: "index level" }}
+          secondary={{
+            value:
+              s.vix_pctile_component !== null
+                ? `p${s.vix_pctile_component.toFixed(0)}`
+                : "—",
+            sub: `vs ${componentWindowLabel}`,
+          }}
+        />
+        <DualStat
+          label="Nifty drawdown"
+          primary={{
+            value: fmtPct(s.nifty_drawdown_pct, 1),
+            sub: `from its ${componentWindowLabel} closing high`,
+          }}
+          secondary={{
+            value:
+              s.below_200dma_component !== null
+                ? fmtPct(1 - s.below_200dma_component / 100, 0)
+                : "—",
+            sub: "of NSE 500 above 200-DMA",
+          }}
+        />
+      </div>
       <ChartCard
         title="Market Stress Composite"
         sub="A blended score using Volatility, Drawdown, Breadth, and Dispersion. Quiet stretches are the norm but spike clusters can occur at regime breaks."
@@ -435,31 +610,9 @@ async function StressDetail({
           values={values}
           bands={STRESS_BANDS}
           overlay={overlay}
+          overlayValueLabel="Stress"
         />
       </ChartCard>
-      <StatStrip
-        stats={[
-          { label: "Current score", value: s.score.toFixed(0), sub: "out of 100" },
-          {
-            label: "Percentile",
-            value: `p${s.score_percentile.toFixed(0)}`,
-            sub: `vs the last ${years} years`,
-          },
-          {
-            label: "India VIX",
-            value: s.vix_close?.toFixed(1) ?? "—",
-            sub:
-              s.vix_pctile_component !== null
-                ? `p${s.vix_pctile_component.toFixed(0)} of the past year`
-                : undefined,
-          },
-          {
-            label: "Nifty drawdown",
-            value: fmtPct(s.nifty_drawdown_pct, 1),
-            sub: "below its 1-year high",
-          },
-        ]}
-      />
       <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
         <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           What&apos;s driving the score today
@@ -523,8 +676,7 @@ async function StressDetail({
           </li>
           <li>
             Each input is capped to 0–100, multiplied by its weight and summed.
-            The percentile above compares today&apos;s score with the last{" "}
-            {years} years.
+            The percentile above compares today&apos;s score with {windowLabel}.
           </li>
         </ul>
       </div>
@@ -539,8 +691,11 @@ async function StressDetail({
 }
 
 async function VixDetail({ reading }: { reading: MarketReading }) {
-  const series = await getMacroTimeseries({ days: 4000, metrics: ["vix_close"] }).catch(
-    (): TimeseriesResponse => ({ index: [], data: {} }),
+  const series = truncateSeries(
+    await getMacroTimeseries({ days: 4000, metrics: ["vix_close"] }).catch(
+      (): TimeseriesResponse => ({ index: [], data: {} }),
+    ),
+    reading.date.slice(0, 10),
   );
   const values = series.data["vix_close"] ?? [];
   // Reference lines from the fetched history itself — descriptive context,
@@ -605,11 +760,15 @@ async function NetNewHighsDetail({
   reading: MarketReading;
   universe: BreadthUniverse;
 }) {
-  const series = await getBreadthTimeseries({
-    days: 4000,
-    metrics: ["net_new_highs_pct"],
-    universe,
-  }).catch((): TimeseriesResponse => ({ index: [], data: {} }));
+  const asOf = reading.date.slice(0, 10);
+  const series = truncateSeries(
+    await getBreadthTimeseries({
+      days: 4000,
+      metrics: ["net_new_highs_pct"],
+      universe,
+    }).catch((): TimeseriesResponse => ({ index: [], data: {} })),
+    asOf,
+  );
   const isDefault = universe === "nse500";
   const values = series.data["net_new_highs_pct"] ?? [];
   const now = isDefault
@@ -671,11 +830,15 @@ async function McClellanDetail({
   reading: MarketReading;
   universe: BreadthUniverse;
 }) {
-  const series = await getBreadthTimeseries({
-    days: 4000,
-    metrics: ["mcclellan_osc"],
-    universe,
-  }).catch((): TimeseriesResponse => ({ index: [], data: {} }));
+  const asOf = reading.date.slice(0, 10);
+  const series = truncateSeries(
+    await getBreadthTimeseries({
+      days: 4000,
+      metrics: ["mcclellan_osc"],
+      universe,
+    }).catch((): TimeseriesResponse => ({ index: [], data: {} })),
+    asOf,
+  );
   const isDefault = universe === "nse500";
   const values = series.data["mcclellan_osc"] ?? [];
   const now = isDefault ? (reading.breadth["mcclellan_osc"] ?? null) : lastNonNull(values);
@@ -715,8 +878,12 @@ async function ConcentrationDetail({
   reading: MarketReading;
   universe: BreadthUniverse;
 }) {
-  const series = await getConcentrationTimeseries({ days: 4000, universe }).catch(
-    (): TimeseriesResponse => ({ index: [], data: {} }),
+  const asOf = reading.date.slice(0, 10);
+  const series = truncateSeries(
+    await getConcentrationTimeseries({ days: 4000, universe }).catch(
+      (): TimeseriesResponse => ({ index: [], data: {} }),
+    ),
+    asOf,
   );
   const values = series.data["spread_20d_avg_pp"] ?? [];
   const daily = series.data["cap_vs_equal_spread_pp"] ?? [];

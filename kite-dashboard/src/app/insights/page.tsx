@@ -55,17 +55,29 @@ export default async function OverviewPage({
       days: 126,
       metrics: ["pct_above_200dma", "net_new_highs_pct", "mcclellan_osc", "ad_diff_pct"],
       universe,
+      date,
     }).catch(emptySeries),
-    getMacroTimeseries({ days: 126, metrics: ["vix_close"] }).catch(emptySeries),
-    getConcentrationTimeseries({ days: 126, universe }).catch(emptySeries),
+    getMacroTimeseries({ days: 126, metrics: ["vix_close"], date }).catch(emptySeries),
+    getConcentrationTimeseries({ days: 126, universe, date }).catch(emptySeries),
     getMovers(date).catch((): MoversResponse | null => null),
   ]);
   const { regime, stress } = reading;
-  const breadthSpark = breadthSeries.data["pct_above_200dma"] ?? [];
-  const nnhSpark = breadthSeries.data["net_new_highs_pct"] ?? [];
-  const mccSpark = breadthSeries.data["mcclellan_osc"] ?? [];
-  const adSpark = breadthSeries.data["ad_diff_pct"] ?? [];
-  const vixSpark = macroSeries.data["vix_close"] ?? [];
+  // The timeseries endpoints take no `date` — they always return the most
+  // recent rows — so every series is truncated to the reading date here.
+  // Without this a rewound Overview showed today's breadth under a
+  // historical header (audit, 2026-08-15: 46% shown for 20 Mar 2020, whose
+  // real value was 11%).
+  const readingDay = reading.date.slice(0, 10);
+  const cut = (dates: string[], values: (number | null)[]) => {
+    const i = dates.findIndex((d) => d.slice(0, 10) > readingDay);
+    return i === -1 ? values : values.slice(0, i);
+  };
+  const breadthDates = breadthSeries.index;
+  const breadthSpark = cut(breadthDates, breadthSeries.data["pct_above_200dma"] ?? []);
+  const nnhSpark = cut(breadthDates, breadthSeries.data["net_new_highs_pct"] ?? []);
+  const mccSpark = cut(breadthDates, breadthSeries.data["mcclellan_osc"] ?? []);
+  const adSpark = cut(breadthDates, breadthSeries.data["ad_diff_pct"] ?? []);
+  const vixSpark = cut(macroSeries.index, macroSeries.data["vix_close"] ?? []);
   const vixNow = reading.macro["vix_close"] ?? null;
   // Universe-scoped card values: the reading is the NSE-500 headline, so
   // non-default universes read the latest point of their own series.
@@ -81,8 +93,10 @@ export default async function OverviewPage({
   const adNow = isDefaultUniverse
     ? (reading.breadth["ad_diff_pct"] ?? null)
     : lastNonNull(adSpark);
-  const concSpark = concSeries.data["spread_20d_avg_pp"] ?? [];
-  const concNow = lastNonNull(concSeries.data["cap_vs_equal_spread_pp"] ?? []);
+  const concSpark = cut(concSeries.index, concSeries.data["spread_20d_avg_pp"] ?? []);
+  const concNow = lastNonNull(
+    cut(concSeries.index, concSeries.data["cap_vs_equal_spread_pp"] ?? []),
+  );
   const scopeSub = universeLabel(universe);
 
   const regimeTone =
@@ -94,7 +108,13 @@ export default async function OverviewPage({
           ? "text-[color:var(--warning)]"
           : "text-foreground";
   const stressLevel =
-    stress.score < 33 ? "Calm" : stress.score < 66 ? "Elevated" : "High";
+    stress.score === null
+      ? "—"
+      : stress.score < 33
+        ? "Calm"
+        : stress.score < 66
+          ? "Elevated"
+          : "High";
 
   const asOf = new Date(reading.date).toLocaleDateString("en-IN", {
     weekday: "long",
@@ -153,13 +173,15 @@ export default async function OverviewPage({
                 {stressLevel}
               </span>
               <span className="font-mono text-[12px] text-muted-foreground">
-                {stress.score.toFixed(0)}/100 · p{stress.score_percentile.toFixed(0)}
+                {stress.score !== null ? `${stress.score.toFixed(0)}/100` : "—"}
+                {stress.score_percentile !== null &&
+                  ` · p${stress.score_percentile.toFixed(0)}`}
               </span>
             </div>
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
               <div
                 className="h-full rounded-full bg-[color:var(--warning)]"
-                style={{ width: `${Math.max(0, Math.min(100, stress.score))}%` }}
+                style={{ width: `${Math.max(0, Math.min(100, stress.score ?? 0))}%` }}
               />
             </div>
             <span className="text-[12px] leading-[1.5] text-muted-foreground">

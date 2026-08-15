@@ -24,25 +24,26 @@ Each component is scaled to 0-100 and then weighted as above. The output is a si
       heading: "Why it matters",
       body: `Markets rarely give one clean signal. Volatility can be high while breadth still holds; drawdowns can deepen while dispersion stays calm. The composite forces those threads into one number that's hard to argue with — when stress reads 85, multiple things are wrong at once.
 
-The score is also useful for **conditional thinking**: how have markets historically behaved when stress was last in this range? Our [conditional distribution engine](/insights/learn/concept/conditional-distribution) uses this exact bucketing — over 16 years of Indian data, the highest-stress quintile has shown materially higher forward returns at the 20-day horizon than calm quintiles. That's the empirical basis for "buy panic" thinking, with the caveat that any individual instance can still feel terrible.`,
+The score is also useful for **conditional thinking**: how have markets historically behaved when stress was last in this range? Our [conditional distribution engine](/insights/learn/concept/conditional-distribution) uses this exact bucketing — over 17 years of Indian data, the highest-stress quintile has shown materially higher forward returns at the 20-day horizon than calm quintiles. That's the empirical basis for "buy panic" thinking, with the caveat that any individual instance can still feel terrible.`,
     },
     {
       heading: "How to read it",
       body: `- **Below 30 — Calm.** Trend-following conditions; breadth typically healthy.
 - **30-60 — Normal.** Most trading days live here. No clear edge.
 - **60-80 — Elevated.** Volatility unusually high, breadth weakening, drawdown notable. Pay closer attention; reduce sizing if you're discretionary.
-- **80+ — Panic / capitulation.** Historically the strongest forward-return zone in our data — but also the most uncomfortable to act in. Past stress > 80 days include March 2020 (COVID), October 2008 (GFC), Sep-Oct 2018 (NBFC crisis).
+- **80+ — Panic / capitulation.** Historically the strongest forward-return zone in our data — but also the most uncomfortable to act in. Past stress > 80 days include Aug-Dec 2011 (euro-zone crisis), Feb 2016 (global growth scare), Feb-Apr 2020 (COVID) and Oct 2018 (NBFC crisis).
 
 Single-day jumps of 15+ points in the score are themselves informative — they usually mark either a crystallising breakdown or the early phase of an event that will need several days to resolve.`,
     },
     {
       heading: "Historical context",
-      body: `Episodes in our 16-year panel where stress crossed 80:
+      body: `The panel starts in **March 2009**, so it does not contain 2008. Across it, 180 days have crossed 80 — the largest clusters:
 
-- **Feb-Mar 2020 — COVID lockdown.** Stress at its highest reading in the panel; VIX and drawdown both at extremes; breadth collapsed below 10%.
-- **Oct 2018 — IL&FS / NBFC crisis.** Stress elevated for weeks rather than days; breadth deteriorated more slowly than VIX spiked.
-- **Aug-Oct 2008 — global financial crisis.** Multi-month stress regime; the highest sustained readings outside COVID.
-- **May-Jun 2022 — global rate shock.** Stress rose into the 60-70 zone but didn't crack 80; an example of "elevated, not panic".
+- **Aug-Dec 2011 — euro-zone crisis.** 69 days above 80, the longest stretch in the panel; a grinding, months-long regime rather than a spike.
+- **Feb-Mar 2020 — COVID lockdown.** 55 days above 80 and the panel's highest readings; VIX and drawdown both at extremes, breadth collapsed below 10%.
+- **Jan-Feb 2016 — global growth scare.** 16 days above 80.
+- **Oct 2018 — IL&FS / NBFC crisis.** 13 days above 80; breadth deteriorated more slowly than VIX spiked.
+- **Jun 2022 — global rate shock.** 9 days above 80, peaking at 87.6 on 20 June.
 
 For the live chart and the exact daily values, see the [stress timeseries on Pulse](/insights). The breakdown table shows each of the four components' current contributions.`,
     },

@@ -52,18 +52,24 @@ WEIGHTS = {
 }
 assert abs(sum(WEIGHTS.values()) - 1.0) < 1e-9
 
-# Lookbacks. Components rank against one year; the headline score's
-# percentile ranks against five, so "how tense is this by recent standards"
-# isn't answered purely by the last twelve months.
+# Lookbacks. Every input on this indicator is a one-year quantity — the VIX
+# percentile ranks over 252d, the drawdown is measured against the 252d high,
+# the dispersion z-score uses a 252d mean and stdev — so the headline
+# percentile matches them rather than reaching back five years and being the
+# odd one out (founder, 2026-08-15).
 COMPONENT_WINDOW = 252
-SCORE_PERCENTILE_WINDOW = 252 * 5
+SCORE_PERCENTILE_WINDOW = 252
 
 
 @dataclass
 class StressSnapshot:
     date: pd.Timestamp
-    score: float                  # 0-100 composite
-    score_percentile: float       # where today sits in historical score distribution
+    score: float | None           # 0-100 composite; None if no input exists
+    score_percentile: float | None  # where today sits in the trailing distribution
+    # Observations actually behind that percentile. Below
+    # SCORE_PERCENTILE_WINDOW the comparison is shallower than the copy
+    # implies, so the UI can qualify or suppress it.
+    score_percentile_obs: int | None
 
     # Component contributions (each 0-100)
     vix_pctile_component: float | None
@@ -168,18 +174,37 @@ def _compute_stress_panel_cached(signature) -> pd.DataFrame:
     # +2 z = max stress (100), -2 z = no dispersion stress (0)
     dispersion_component = ((disp_z + 2.0) / 4.0 * 100.0).clip(0, 100)
 
-    score = (
-        WEIGHTS["vix_pctile"]   * vix_pct.fillna(0)
-        + WEIGHTS["drawdown"]   * drawdown_component.fillna(0)
-        + WEIGHTS["below_200dma"] * below_200_component.fillna(0)
-        + WEIGHTS["dispersion"] * dispersion_component.fillna(0)
-    )
+    # Renormalise over the components that actually exist on the day.
+    # Filling a missing input with 0 would score "no data" as "maximum
+    # calm": in early 2010, with VIX and drawdown not yet available, that
+    # understated the composite by ~18 points on dates the snapshot picker
+    # can reach (audit, 2026-08-15). Once all four are present the weights
+    # sum to 1 and this is a no-op.
+    parts = {
+        "vix_pctile": vix_pct,
+        "drawdown": drawdown_component,
+        "below_200dma": below_200_component,
+        "dispersion": dispersion_component,
+    }
+    weighted = sum(WEIGHTS[k] * v.fillna(0) for k, v in parts.items())
+    live_weight = sum(WEIGHTS[k] * v.notna() for k, v in parts.items())
+    score = (weighted / live_weight).where(live_weight > 0)
 
     score_pctile = _rolling_percentile(score, window=SCORE_PERCENTILE_WINDOW) * 100.0
+    # How many observations actually back each percentile — the window is
+    # only nominally five years until enough history accumulates, and the
+    # UI states the window out loud.
+    score_pctile_obs = (
+        score.notna()
+        .rolling(SCORE_PERCENTILE_WINDOW, min_periods=1)
+        .sum()
+        .where(score_pctile.notna())
+    )
 
     return pd.DataFrame({
         "score": score,
         "score_percentile": score_pctile,
+        "score_percentile_obs": score_pctile_obs,
         "vix_pctile_component": vix_pct,
         "drawdown_component": drawdown_component,
         "below_200dma_component": below_200_component,
@@ -217,10 +242,18 @@ def get_stress_snapshot(asof: pd.Timestamp | None = None) -> StressSnapshot | No
         except (TypeError, ValueError):
             return None
 
+    # `or 0.0` would turn "unknown" into a confident-looking reading — a
+    # missing percentile rendered as "p0" (audit, 2026-08-15). None means
+    # None all the way to the UI, which shows an em dash.
     return StressSnapshot(
         date=asof,
-        score=_f(row["score"]) or 0.0,
-        score_percentile=_f(row["score_percentile"]) or 0.0,
+        score=_f(row["score"]),
+        score_percentile=_f(row["score_percentile"]),
+        score_percentile_obs=(
+            int(row["score_percentile_obs"])
+            if pd.notna(row.get("score_percentile_obs"))
+            else None
+        ),
         vix_pctile_component=_f(row["vix_pctile_component"]),
         drawdown_component=_f(row["drawdown_component"]),
         below_200dma_component=_f(row["below_200dma_component"]),

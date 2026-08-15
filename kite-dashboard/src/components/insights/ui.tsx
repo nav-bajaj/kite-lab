@@ -3,7 +3,6 @@ import {
   fmtPct,
   regimeLabel,
   type RegimeSnapshot,
-  type StressSnapshot,
   type SectorRSSnapshot,
 } from "@/lib/insights-api";
 
@@ -158,56 +157,6 @@ export function RegimeCard({
       help={help}
       takeaway={REGIME_TAKEAWAY.get(regime.regime)}
     />
-  );
-}
-
-/** Market-stress card with a 0–100 gauge bar. */
-export function StressGauge({
-  stress,
-  help,
-}: {
-  stress: StressSnapshot;
-  help?: React.ReactNode;
-}) {
-  const score = Math.max(0, Math.min(100, stress.score));
-  const level = score < 33 ? "Low" : score < 66 ? "Elevated" : "High";
-  const tone: Tone = score < 33 ? "positive" : score < 66 ? "warning" : "negative";
-  const barColor =
-    tone === "positive"
-      ? "var(--positive)"
-      : tone === "warning"
-        ? "var(--warning)"
-        : "var(--negative)";
-  const takeaway =
-    score < 33
-      ? "Calm conditions — low fear and steady trading. Swings tend to be smaller here."
-      : score < 66
-        ? "Some caution in the air, but not panic. Normal, workable conditions."
-        : "Fear is high — expect bigger, faster swings than usual until it settles.";
-
-  return (
-    <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
-      <Eyebrow>Market stress</Eyebrow>
-      <div className="flex items-baseline gap-2">
-        <span className={cn("text-3xl font-semibold leading-tight", toneClass(tone))}>
-          {level}
-        </span>
-        <span className="font-mono text-sm text-muted-foreground">
-          {score.toFixed(0)}/100
-        </span>
-      </div>
-      <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-muted">
-        <div
-          className="h-full rounded-full"
-          style={{ width: `${score}%`, backgroundColor: barColor }}
-        />
-      </div>
-      <span className="text-[13px] text-muted-foreground">
-        More stressed than {stress.score_percentile.toFixed(0)}% of past days
-      </span>
-      {help && <div className="mt-1">{help}</div>}
-      <CardTakeaway>{takeaway}</CardTakeaway>
-    </div>
   );
 }
 

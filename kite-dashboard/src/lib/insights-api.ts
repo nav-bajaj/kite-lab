@@ -48,8 +48,13 @@ export interface RegimeSnapshot {
 
 export interface StressSnapshot {
   date: string;
-  score: number;
-  score_percentile: number;
+  /** Null when no component has data for the day — never coerce to 0, that
+   *  reads as "maximum calm" rather than "unknown". */
+  score: number | null;
+  score_percentile: number | null;
+  /** Observations actually behind that percentile; below the nominal
+   *  window the comparison is shallower than the caption implies. */
+  score_percentile_obs: number | null;
   vix_pctile_component: number | null;
   drawdown_component: number | null;
   below_200dma_component: number | null;
@@ -573,11 +578,14 @@ export async function getBreadthTimeseries(opts?: {
   days?: number;
   metrics?: string[];
   universe?: BreadthUniverse;
+  /** As-of date — the endpoint returns the window ENDING here, not today. */
+  date?: string;
 }): Promise<TimeseriesResponse> {
   const params: string[] = [];
   if (opts?.days) params.push(`days=${opts.days}`);
   if (opts?.metrics?.length) params.push(`metrics=${encodeURIComponent(opts.metrics.join(","))}`);
   if (opts?.universe && opts.universe !== "nse500") params.push(`universe=${opts.universe}`);
+  if (opts?.date) params.push(`date=${encodeURIComponent(opts.date)}`);
   const q = params.length ? `?${params.join("&")}` : "";
   return getJson<TimeseriesResponse>(`/api/insights/breadth/timeseries${q}`);
 }
@@ -590,10 +598,12 @@ export async function getStressTimeseries(days?: number): Promise<TimeseriesResp
 export async function getMacroTimeseries(opts?: {
   days?: number;
   metrics?: string[];
+  date?: string;
 }): Promise<TimeseriesResponse> {
   const params: string[] = [];
   if (opts?.days) params.push(`days=${opts.days}`);
   if (opts?.metrics?.length) params.push(`metrics=${encodeURIComponent(opts.metrics.join(","))}`);
+  if (opts?.date) params.push(`date=${encodeURIComponent(opts.date)}`);
   const q = params.length ? `?${params.join("&")}` : "";
   return getJson<TimeseriesResponse>(`/api/insights/macro/timeseries${q}`);
 }
@@ -601,9 +611,11 @@ export async function getMacroTimeseries(opts?: {
 export async function getConcentrationTimeseries(opts?: {
   days?: number;
   universe?: BreadthUniverse;
+  date?: string;
 }): Promise<TimeseriesResponse> {
   const params: string[] = [];
   if (opts?.days) params.push(`days=${opts.days}`);
+  if (opts?.date) params.push(`date=${encodeURIComponent(opts.date)}`);
   // The backend's default index scope is nifty50; the dashboard passes the
   // page universe explicitly so the chart follows the selector.
   if (opts?.universe) params.push(`universe=${opts.universe}`);

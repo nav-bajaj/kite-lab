@@ -394,6 +394,96 @@ class TestUniverseScopedRegimeSpec:
         assert abs(float(ep["index_return_pct"]) - expected) < 1e-9
 
 
+class TestStressCoverageSpec:
+    """Spec: the composite must not present a guess as a reading.
+
+    Two defects found in the 2026-08-15 audit: a missing percentile was
+    served as 0.0 (rendering as a confident "p0"), and a missing component
+    contributed 0 to the weighted sum — i.e. "no data" scored as "maximum
+    calm", understating early-2010 dates by up to 18 points.
+    """
+
+    def test_missing_percentile_is_none_not_zero(self):
+        """Spec: before the percentile window has enough data, the field is
+        None. `rank(pct=True)` can never legitimately return 0, so a 0.0
+        here could only ever be a stand-in for missing.
+
+        The date is derived from the panel rather than hardcoded — these
+        boundaries move whenever a lookback window is retuned.
+        """
+        panel = stress.compute_stress_panel()
+        missing = panel.index[panel["score_percentile"].isna()]
+        assert len(missing) > 0, "expected some warm-up rows"
+        snap = stress.get_stress_snapshot(missing.max())
+        assert snap is not None
+        assert snap.score_percentile is None, (
+            "an unavailable percentile must be None, not 0.0"
+        )
+
+    def test_percentile_is_never_zero_when_present(self):
+        panel = stress.compute_stress_panel()
+        present = panel["score_percentile"].dropna()
+        assert present.min() > 0.0
+
+    def test_score_renormalises_over_available_components(self):
+        """Spec: with only some components available, the score is the
+        weighted mean of those present — not a sum that treats absent
+        inputs as 0."""
+        snap = stress.get_stress_snapshot(pd.Timestamp("2010-01-15"))
+        assert snap is not None
+        present = {
+            "vix_pctile": snap.vix_pctile_component,
+            "drawdown": snap.drawdown_component,
+            "below_200dma": snap.below_200dma_component,
+            "dispersion": snap.dispersion_component,
+        }
+        available = {k: v for k, v in present.items() if v is not None}
+        assert 0 < len(available) < 4, "fixture date should be partially covered"
+        total_weight = sum(stress.WEIGHTS[k] for k in available)
+        expected = sum(stress.WEIGHTS[k] * v for k, v in available.items()) / total_weight
+        assert abs(snap.score - expected) < 0.5, (
+            f"score {snap.score} should renormalise to {expected}"
+        )
+
+    def test_score_is_none_when_no_component_is_available(self):
+        panel = stress.compute_stress_panel()
+        comp_cols = ["vix_pctile_component", "drawdown_component",
+                     "below_200dma_component", "dispersion_component"]
+        empty = panel[panel[comp_cols].isna().all(axis=1)]
+        assert empty["score"].isna().all(), (
+            "a day with no inputs at all must not carry a score"
+        )
+
+    def test_fully_covered_days_are_unchanged(self):
+        """Regression guard: renormalisation must be a no-op once all four
+        components are present — weights already sum to 1."""
+        snap = stress.get_stress_snapshot()
+        assert snap is not None
+        expected = (
+            stress.WEIGHTS["vix_pctile"] * (snap.vix_pctile_component or 0)
+            + stress.WEIGHTS["drawdown"] * (snap.drawdown_component or 0)
+            + stress.WEIGHTS["below_200dma"] * (snap.below_200dma_component or 0)
+            + stress.WEIGHTS["dispersion"] * (snap.dispersion_component or 0)
+        )
+        assert abs(snap.score - expected) < 1e-9
+
+    def test_snapshot_reports_how_much_history_backs_the_percentile(self):
+        """Spec: the UI says "vs the last 5 years", so it needs to know when
+        the window is not actually five years deep yet."""
+        snap = stress.get_stress_snapshot()
+        assert snap is not None
+        assert snap.score_percentile_obs == stress.SCORE_PERCENTILE_WINDOW
+
+        # The first day the percentile exists is by construction backed by
+        # fewer observations than the nominal window.
+        panel = stress.compute_stress_panel()
+        first = panel.index[panel["score_percentile"].notna()].min()
+        early = stress.get_stress_snapshot(first)
+        assert early is not None
+        assert early.score_percentile_obs is not None
+        assert early.score_percentile_obs < stress.SCORE_PERCENTILE_WINDOW
+
+
 class TestStressBoundarySpec:
     """Spec for stress panel boundary cases — missing components, weights."""
 

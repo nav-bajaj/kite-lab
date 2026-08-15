@@ -125,6 +125,16 @@ async def clear_cache_endpoint(user: dict = Depends(require_admin)) -> dict:
     return {"status": "cleared"}
 
 
+def _as_of(panel: pd.DataFrame, date: Optional[str]) -> pd.DataFrame:
+    """Drop rows after `date`. These endpoints otherwise always return the
+    most recent rows, which is how a rewound Overview came to show today's
+    breadth under a historical header (audit, 2026-08-15)."""
+    asof = _parse_date(date)
+    if asof is None or panel.empty:
+        return panel
+    return panel.loc[:asof]
+
+
 # ---------- timeseries endpoints ----------
 
 @router.get("/stress/timeseries")
@@ -167,6 +177,12 @@ async def breadth_timeseries(
         "nse500",
         description="Universe scope: nse500 (default), nifty250, nifty100, nifty50",
     ),
+    date: Optional[str] = Query(
+        None,
+        description="As-of date, ISO YYYY-MM-DD. Rows after it are dropped "
+                    "before `days` is applied, so a rewound page gets the "
+                    "window ending on that day rather than today's.",
+    ),
 ) -> dict:
     """Breadth metrics over the last `days` trading days.
 
@@ -184,6 +200,7 @@ async def breadth_timeseries(
                    f"Available: {list(breadth.BREADTH_UNIVERSES)}",
         )
     panel = breadth.get_breadth_panel(universe)
+    panel = _as_of(panel, date)
     if panel.empty:
         return {"index": [], "data": {}}
     sub = panel.tail(days)
@@ -217,11 +234,12 @@ async def macro_timeseries(
                     "sector_pct_above_200dma, sector_breadth_st_lt, "
                     "sector_dispersion_20d",
     ),
+    date: Optional[str] = Query(None, description="As-of date, ISO YYYY-MM-DD."),
 ) -> dict:
     """Macro (VIX + sector-index breadth) metrics over the last `days`
     trading days. Same shape as the breadth/stress timeseries."""
     _set_cache(response)
-    panel = macro.get_macro_panel()
+    panel = _as_of(macro.get_macro_panel(), date)
     if panel.empty:
         return {"index": [], "data": {}}
     sub = panel.tail(days)
@@ -251,6 +269,7 @@ async def concentration_timeseries(
         "nifty50",
         description="Index scope: nifty50 (default), nifty100, nifty250, nse500",
     ),
+    date: Optional[str] = Query(None, description="As-of date, ISO YYYY-MM-DD."),
 ) -> dict:
     """Cap-weighted vs equal-weighted spread history (narrow-vs-broad
     tape) for the chosen index. Columns are fixed: cap_ret_pct,
@@ -262,7 +281,7 @@ async def concentration_timeseries(
             detail=f"Unknown universe {universe!r}. "
                    f"Available: {list(concentration.CONCENTRATION_UNIVERSES)}",
         )
-    panel = concentration.compute_concentration_panel(universe)
+    panel = _as_of(concentration.compute_concentration_panel(universe), date)
     if panel.empty:
         return {"index": [], "data": {}}
     sub = panel.tail(days)
