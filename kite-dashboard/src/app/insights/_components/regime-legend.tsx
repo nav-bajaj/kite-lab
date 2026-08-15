@@ -23,28 +23,27 @@ function regimes(
       label: "Trend Bull",
       accent: "var(--positive)",
       plain:
-        "A healthy uptrend with the market behind it — direction is up and most stocks are joining the move.",
+        "A healthy uptrend with the market behind it. The direction is up and a majority of stocks are joining the move.",
       rule: `${indexLabel} is above its ${trend}-day average and more than 55% of ${universeLabel} stocks are above their own ${participation}-day average.`,
     },
     {
       label: "Drift",
       accent: "var(--muted-foreground)",
-      plain:
-        "The messy middle — neither trending strongly nor under real pressure. This is the most common regime.",
+      plain: "The messy middle. Not trending strongly on either side.",
       rule: "Neither the trend-and-participation conditions nor the stress conditions are met.",
     },
     {
       label: "Stretched",
       accent: "var(--warning)",
       plain:
-        "Above trend, almost everything participating, and nobody worried. A description of complacency, not a sell signal.",
+        "An overstretched trend. Wide participation with low levels of worry. A sign of complacency.",
       rule: `${indexLabel} is above its ${trend}-day average, more than 85% of ${universeLabel} stocks are above their ${participation}-day average, and India VIX sits more than one standard deviation below its average of the past year.`,
     },
     {
       label: "Stress",
       accent: "var(--negative)",
       plain:
-        "Conditions are tense — volatility has spiked, or the market is below trend while participation breaks down.",
+        "Conditions are tense and volatility has spiked. The market is below trend while participation breaks down.",
       rule: `India VIX is more than 1.5 standard deviations above its average of the past year, or ${indexLabel} is below its ${trend}-day average while fewer than 35% of ${universeLabel} stocks hold above their ${participation}-day average.`,
     },
   ];
@@ -65,7 +64,7 @@ export function RegimeLegend({
     <section id="regime-legend" className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
         <h3 className="font-serif text-xl font-medium tracking-[-0.01em] text-foreground">
-          The four regimes, explained
+          The four regimes explained:
         </h3>
         <p className="text-[13px] text-muted-foreground">
           Every day the market is sorted into one of four regimes from three

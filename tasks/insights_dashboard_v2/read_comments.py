@@ -71,12 +71,25 @@ def _text_of(message: dict) -> str:
     return json.dumps(message)[:200]
 
 
+def _selected_element(framework_context: str | None) -> str | None:
+    """Pull the `Selected: <...>` line out of the React tree the toolbar
+    captures — a hint at which component to edit, not a source location."""
+    if not framework_context:
+        return None
+    for line in framework_context.splitlines():
+        if line.startswith("Selected:"):
+            return line[len("Selected:"):].strip()
+    return None
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--status", default="unresolved", choices=["unresolved", "resolved"])
     ap.add_argument("--page", help="Filter by page path or glob, e.g. '/insights*'")
     ap.add_argument("--branch", help="Filter by git branch")
     ap.add_argument("--limit", type=int, default=50)
+    ap.add_argument("--component", action="store_true",
+                    help="Also show the selected React element")
     ap.add_argument("--raw", action="store_true", help="Dump the raw JSON payload")
     args = ap.parse_args()
 
@@ -100,16 +113,26 @@ def main() -> None:
               f"localhost:3000, then re-run.")
         return
 
+    # Oldest first: the founder comments top-down the page, so this reads in
+    # roughly the order the notes were made.
+    threads.sort(key=lambda t: ((t.get("messages") or [{}])[0].get("timestamp") or 0))
+
     print(f"{len(threads)} {args.status} thread(s)\n")
     for thread in threads:
-        location = thread.get("path") or thread.get("url") or thread.get("page") or "?"
-        print(f"── {thread.get('id', '?')}  ·  {location}")
-        selector = thread.get("selector") or thread.get("anchor")
-        if selector:
-            print(f"   anchored to: {json.dumps(selector)[:160]}")
+        context = thread.get("context") or {}
+        print(f"── {thread.get('id', '?')}  ·  {context.get('path', '?')}")
+        # The single most useful field: the exact on-page text the note is
+        # pinned to, which is what has to be found in the source.
+        selection = context.get("selection")
+        if selection:
+            print(f'   on: "{selection.strip()[:300]}"')
+        if args.component:
+            element = _selected_element(context.get("frameworkContext"))
+            if element:
+                print(f"   element: {element}")
         for message in thread.get("messages", []) or []:
             author = (message.get("author") or {}).get("username") or "?"
-            print(f"   [{author}] {_text_of(message)}")
+            print(f"   → [{author}] {_text_of(message)}")
         print()
 
 

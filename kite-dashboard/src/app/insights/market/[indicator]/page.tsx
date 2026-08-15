@@ -695,6 +695,31 @@ const REGIME_COLOR: Record<RegimeEpisode["regime"], string> = {
 
 const REGIME_ORDER = Object.keys(REGIME_COLOR) as RegimeEpisode["regime"][];
 
+/** Close-to-close return between two days of a fetched close series.
+ *  Used so a rewound snapshot reports the move *so far* in its regime
+ *  rather than the whole episode, which would include days that hadn't
+ *  happened yet on the snapshot date. */
+function returnBetween(
+  dates: string[],
+  closes: (number | null)[],
+  startDay: string,
+  endDay: string,
+): number | null {
+  let first: number | null = null;
+  let last: number | null = null;
+  for (let i = 0; i < dates.length; i++) {
+    /* eslint-disable-next-line security/detect-object-injection -- parallel arrays, numeric loop index */
+    const day = dates[i].slice(0, 10);
+    if (day < startDay || day > endDay) continue;
+    const value = closes.at(i);
+    if (value === null || value === undefined || Number.isNaN(value)) continue;
+    if (first === null) first = value;
+    last = value;
+  }
+  if (first === null || last === null || first <= 0) return null;
+  return last / first - 1;
+}
+
 /** Median run length per regime, in days — the typical duration of each
  *  regime rather than how many of them there have been. */
 function medianRegimeDays(episodes: RegimeEpisode[], regime: string): number | null {
@@ -727,8 +752,25 @@ async function RegimeDetail({
   const episodes = history.episodes;
   const r = reading.regime;
   const indexLabel = series.index_label ?? history.index_label ?? r.index_label;
-  const recent = [...episodes].slice(-10).reverse();
-  const current = episodes.at(-1);
+  // The episode the reading itself sits in — not simply the newest one, or
+  // a rewound snapshot would pair its own regime with today's index move.
+  const readingDay = r.date.slice(0, 10);
+  const current =
+    episodes.find(
+      (e) => e.start.slice(0, 10) <= readingDay && readingDay <= e.end.slice(0, 10),
+    ) ?? episodes.at(-1);
+  const currentReturn = current
+    ? (returnBetween(
+        series.index,
+        series.data.close ?? [],
+        current.start.slice(0, 10),
+        readingDay,
+      ) ?? current.index_return_pct)
+    : null;
+  const upToReading = episodes.filter((e) => e.start.slice(0, 10) <= readingDay);
+  const recent = [...(upToReading.length > 0 ? upToReading : episodes)]
+    .slice(-10)
+    .reverse();
 
   return (
     <div className="flex flex-col gap-4">
@@ -745,16 +787,19 @@ async function RegimeDetail({
       </ChartCard>
       <StatStrip
         stats={[
-          { label: "Now", value: regimeLabel(r.regime), sub: `day ${r.persistence_days}` },
+          {
+            label: "Current regime",
+            value: regimeLabel(r.regime),
+            sub: `day ${r.persistence_days}`,
+          },
           {
             label: "Previous regime",
             value: r.prev_regime ? regimeLabel(r.prev_regime) : "—",
-            sub: r.prev_regime_lasted_days ? `lasted ${r.prev_regime_lasted_days} days` : undefined,
+            sub: r.prev_regime_lasted_days ? `day ${r.prev_regime_lasted_days}` : undefined,
           },
           {
             label: `${indexLabel} this regime`,
-            value: fmtPct(current?.index_return_pct ?? null, 1, true),
-            sub: "since the regime began",
+            value: fmtPct(currentReturn, 1, true),
           },
           {
             label: "Participation",
@@ -787,10 +832,6 @@ async function RegimeDetail({
             );
           })}
         </div>
-        <p className="text-[12px] leading-[1.5] text-muted-foreground">
-          Regimes vary widely in length — the medians are context, not a
-          countdown.
-        </p>
       </div>
       <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
         <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">

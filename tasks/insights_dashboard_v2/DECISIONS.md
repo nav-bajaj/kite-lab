@@ -249,11 +249,27 @@ it as liable to change. Wrapped in
 `tasks/insights_dashboard_v2/read_comments.py`; run it after a review
 pass to print every unresolved thread with its page and anchor.
 
-Still unverified: the *writing* half. Leaving a comment needs the
-founder's own Vercel session in his browser, which the agent cannot
-exercise. One test comment settles it. The fallback if it disappoints
-stays on the table — a local annotation overlay writing notes to a
-JSON file in the repo, fully offline, no account involved.
+**The loop works, round 1 done.** Founder left 10 comments on the
+Regime tab; all 10 were read, applied, replied to and resolved from the
+terminal without anything being retyped. Three scripts/endpoints:
+
+| Step | How |
+|---|---|
+| Read notes | `read_comments.py` → `GET /v1/toolbar/threads` |
+| Reply + resolve | `reply_comments.py` → `POST .../{id}/messages`, `PATCH .../{id}` |
+
+The payload's `context.selection` carries the **exact on-page text** a
+note is pinned to, which is what makes the notes actionable; when the
+founder pins without selecting text, `context.frameworkContext` gives
+the React element path instead and the target has to be inferred.
+Selecting the text first makes it unambiguous — worth doing where the
+note is about specific wording.
+
+One blocker fixed on the way: `Cross-Origin-Opener-Policy: same-origin`
+nulls `window.opener` for cross-origin popups, so the toolbar's
+"Continue with Vercel" window loaded blank and could never hand the
+session back. Development now sends `same-origin-allow-popups`;
+production still sends `same-origin` (verified against a real build).
 
 Also fixed while here: `REVALIDATE_SECONDS` is now 0 in development.
 The 15-minute fetch cache was serving `/reading` responses captured

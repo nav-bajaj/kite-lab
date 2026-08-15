@@ -80,7 +80,23 @@ export function CompactSnapshotPicker() {
     : "Latest";
 
   return (
-    <div ref={rootRef} className="relative">
+    <div ref={rootRef} className="relative flex items-center gap-1.5">
+      {/* Always in the bar, not buried in the popover: one click back to
+          today from any historical snapshot. Carries an active state when
+          already on the latest close, matching the chart range pickers. */}
+      <button
+        onClick={() => navigate("")}
+        aria-pressed={!currentDate}
+        title="Back to the latest trading day"
+        className={
+          "rounded-lg border px-2.5 py-1.5 text-[11px] font-medium transition-colors " +
+          (currentDate
+            ? "border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+            : "border-primary bg-primary text-primary-foreground")
+        }
+      >
+        Latest
+      </button>
       <button
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
