@@ -267,15 +267,15 @@ class TestUniverseScopedRegimeSpec:
         panel = regime.compute_regime_panel(universe)
         assert not panel.empty
         for col in ["raw_regime", "regime", "persistence_days",
-                    "index_above_100dma", "pct_above_200dma", "vix_zscore_252d"]:
+                    "index_above_trend_ma", "participation_pct", "vix_zscore_252d"]:
             assert col in panel.columns, f"{universe} panel missing {col}"
         assert set(panel["regime"].unique()).issubset(set(regime.REGIMES))
 
     def test_trend_filter_differs_between_universes(self):
         """Spec: the trend input is the universe's OWN index. Nifty 50 and
         Nifty 500 do not sit above their 100-DMA on exactly the same days."""
-        small = regime.compute_regime_panel("nifty50")["index_above_100dma"]
-        broad = regime.compute_regime_panel("nse500")["index_above_100dma"]
+        small = regime.compute_regime_panel("nifty50")["index_above_trend_ma"]
+        broad = regime.compute_regime_panel("nse500")["index_above_trend_ma"]
         common = small.index.intersection(broad.index)
         assert len(common) > 500
         assert not small.loc[common].equals(broad.loc[common]), (
@@ -287,14 +287,58 @@ class TestUniverseScopedRegimeSpec:
         """Spec: participation is measured over the same universe, not
         always the NSE 500."""
         panel = regime.compute_regime_panel("nifty50")
-        own = breadth.get_breadth_panel("nifty50")["pct_above_200dma"]
+        own = breadth.get_breadth_panel("nifty50")["pct_above_50dma"]
         common = panel.index.intersection(own.index)
         assert len(common) > 500
         pd.testing.assert_series_equal(
-            panel.loc[common, "pct_above_200dma"],
+            panel.loc[common, "participation_pct"],
             own.loc[common],
             check_names=False,
         )
+
+    def test_scoped_rules_run_on_the_50_day_windows(self):
+        """Spec (founder, 2026-08-15): the scoped regime reads the index
+        against its 50-day average and participation as the share of the
+        universe above their own 50-day averages — not 100/200."""
+        assert regime.TREND_MA_DAYS == 50
+        assert regime.PARTICIPATION_MA_DAYS == 50
+
+        panel = regime.compute_regime_panel("nifty50")
+        closes = regime.regime_index_close("nifty50")
+        expected = closes > closes.rolling(50, min_periods=50).mean()
+        common = panel.index.intersection(expected[expected.notna()].index)
+        assert len(common) > 500
+        pd.testing.assert_series_equal(
+            panel.loc[common, "index_above_trend_ma"].astype(bool),
+            expected.loc[common].astype(bool),
+            check_names=False,
+        )
+
+    def test_legacy_panel_keeps_the_100_200_windows(self):
+        """Regression guard: the market-wide panel the note generator uses
+        is untouched by the dashboard's redefinition."""
+        panel = regime.compute_regime_panel()
+        own = breadth.get_breadth_panel()["pct_above_200dma"]
+        common = panel.index.intersection(own.index)
+        pd.testing.assert_series_equal(
+            panel.loc[common, "participation_pct"],
+            own.loc[common],
+            check_names=False,
+        )
+
+    def test_snapshot_reports_the_windows_that_drove_it(self):
+        """Spec: the UI states the rule, so the snapshot must carry the
+        windows actually used rather than the UI hardcoding them."""
+        scoped = regime.get_regime_snapshot(universe="nifty50")
+        assert scoped is not None
+        assert scoped.trend_ma_days == 50
+        assert scoped.participation_ma_days == 50
+        assert scoped.participation_pct is not None
+
+        legacy = regime.get_regime_snapshot()
+        assert legacy is not None
+        assert legacy.trend_ma_days == 100
+        assert legacy.participation_ma_days == 200
 
     def test_panel_starts_where_that_index_has_data(self):
         """Spec: each universe's regime starts from the point its own index

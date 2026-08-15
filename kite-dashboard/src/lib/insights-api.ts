@@ -33,6 +33,13 @@ export interface RegimeSnapshot {
   /** Index whose trend defined this regime, e.g. "Nifty 500". */
   index_label: string;
   index_above_100dma: boolean;
+  index_above_trend_ma: boolean;
+  /** Participation actually used by the classifier, and the windows it
+   *  and the trend filter were measured over — so displayed rule text
+   *  never drifts from the engine. */
+  participation_pct: number | null;
+  trend_ma_days: number;
+  participation_ma_days: number;
 }
 
 export interface StressSnapshot {

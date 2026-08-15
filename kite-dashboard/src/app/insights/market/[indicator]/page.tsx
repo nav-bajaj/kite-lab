@@ -734,7 +734,7 @@ async function RegimeDetail({
     <div className="flex flex-col gap-4">
       <ChartCard
         title={`${indexLabel} through its regimes`}
-        sub={`The index itself, tinted by the regime in force each day. One of four rules-based regimes, smoothed with a 3-day confirmation so the label doesn't flip on noise. History starts where ${indexLabel} data begins.`}
+        sub="The index with an overlay tint by regime in force. One of four rules-based regimes, smoothed with a 3-day confirmation."
       >
         <RegimeChart
           dates={series.index}
@@ -755,6 +755,11 @@ async function RegimeDetail({
             label: `${indexLabel} this spell`,
             value: fmtPct(current?.index_return_pct ?? null, 1, true),
             sub: "since the regime began",
+          },
+          {
+            label: "Participation",
+            value: fmtPct(r.participation_pct, 0),
+            sub: `of ${universeLabel(universe)} above their ${r.participation_ma_days}-day average`,
           },
         ]}
       />
@@ -830,17 +835,19 @@ async function RegimeDetail({
             </div>
           ))}
         </div>
-        <p className="text-[12px] text-muted-foreground">
-          The right-hand figure is what {indexLabel} did over the spell,
-          close to close.
-        </p>
       </div>
-      <RegimeLegend indexLabel={indexLabel} universeLabel={universeLabel(universe)} />
+      <RegimeLegend
+        indexLabel={indexLabel}
+        universeLabel={universeLabel(universe)}
+        trendMaDays={r.trend_ma_days}
+        participationMaDays={r.participation_ma_days}
+      />
       <LearnPanel slug="regime" title="Learn more">
         The regime is a rules-based label built from trend ({indexLabel}{" "}
-        versus its 100-day average), participation (how many{" "}
-        {universeLabel(universe)} stocks are above their 200-day average) and
-        volatility (India VIX). It describes conditions; it is not a signal.
+        versus its {r.trend_ma_days}-day average), participation (how many{" "}
+        {universeLabel(universe)} stocks are above their{" "}
+        {r.participation_ma_days}-day average) and volatility (India VIX). It
+        describes conditions; it is not a signal.
       </LearnPanel>
     </div>
   );

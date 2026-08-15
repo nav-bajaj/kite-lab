@@ -55,6 +55,16 @@ REGIMES = (TREND_BULL, DRIFT, STRETCHED, STRESS)
 # declaring a transition. Avoids day-to-day flip-flopping.
 SMOOTHING_DAYS = 3
 
+# Window lengths for the universe-scoped regime (founder, 2026-08-15):
+# the index against its 50-day average, participation as the share of the
+# universe above their own 50-day averages. The legacy market-wide panel
+# keeps 100/200 because the note generator and conditional distributions
+# are calibrated on it.
+TREND_MA_DAYS = 50
+PARTICIPATION_MA_DAYS = 50
+LEGACY_TREND_MA_DAYS = 100
+LEGACY_PARTICIPATION_MA_DAYS = 200
+
 
 @dataclass
 class RegimeSnapshot:
@@ -73,7 +83,14 @@ class RegimeSnapshot:
     # Scope. `universe` is None for the legacy market-wide reading.
     universe: str | None = None
     index_label: str = "Nifty 100"
-    index_above_100dma: bool = False
+    index_above_100dma: bool = False        # legacy alias
+    index_above_trend_ma: bool = False
+    # Participation actually used by the classifier, and the windows it and
+    # the trend filter were measured over — so the UI can state the rule
+    # without hardcoding numbers that drift from the engine.
+    participation_pct: float | None = None
+    trend_ma_days: int = LEGACY_TREND_MA_DAYS
+    participation_ma_days: int = LEGACY_PARTICIPATION_MA_DAYS
 
     def to_dict(self) -> dict:
         d = asdict(self)
@@ -108,7 +125,6 @@ _UNIVERSE_INDEX: dict[str, tuple[str, str]] = {
 # VIX is market-wide — there is no per-universe volatility index, so every
 # universe's regime shares the same volatility input. Documented rather
 # than silently assumed.
-_TREND_DMA = 100
 
 
 def _check_universe(universe: str) -> None:
@@ -143,14 +159,14 @@ def _index_close_cached(universe: str, signature: float) -> pd.Series:
     return df["close"].dropna()
 
 
-def _index_above_100dma(universe: str) -> pd.Series:
+def _index_above_trend_ma(universe: str) -> pd.Series:
     """Bool series: True on days the universe's index closed above its
-    100-day average. NaN warm-up days are dropped, which is what bounds
+    trend average. NaN warm-up days are dropped, which is what bounds
     each universe's regime history."""
     close = regime_index_close(universe)
     if close.empty:
         return pd.Series(dtype=bool)
-    dma = close.rolling(_TREND_DMA, min_periods=_TREND_DMA).mean()
+    dma = close.rolling(TREND_MA_DAYS, min_periods=TREND_MA_DAYS).mean()
     return (close > dma)[dma.notna()].astype(bool)
 
 
@@ -184,30 +200,34 @@ def _nifty100_above_100dma_cached(signature) -> pd.Series:
     return (close > dma).astype(bool)
 
 
-def _classify_one(*, nifty_up: bool,
-                   pct_200: float | None,
+def _classify_one(*, trend_up: bool,
+                   participation: float | None,
                    vix_z: float | None) -> str:
-    """Classify a single day given its inputs."""
-    if pct_200 is None and vix_z is None:
+    """Classify a single day given its inputs.
+
+    Thresholds are shared by both panels; only the windows the inputs are
+    measured over differ (see TREND_MA_DAYS / LEGACY_TREND_MA_DAYS).
+    """
+    if participation is None and vix_z is None:
         return DRIFT  # default before enough data is available
 
     # STRESS — strongest signal wins regardless of trend filter
     if vix_z is not None and vix_z > 1.5:
         return STRESS
-    if not nifty_up and pct_200 is not None and pct_200 < 0.35:
+    if not trend_up and participation is not None and participation < 0.35:
         return STRESS
 
     # If trend is down, we're in drift at best (not stretched/bull)
-    if not nifty_up:
+    if not trend_up:
         return DRIFT
 
     # STRETCHED — uptrend + extreme breadth + low vol
-    if (pct_200 is not None and pct_200 > 0.85
+    if (participation is not None and participation > 0.85
             and vix_z is not None and vix_z < -1.0):
         return STRETCHED
 
     # TREND_BULL — uptrend + healthy breadth
-    if pct_200 is not None and pct_200 > 0.55:
+    if participation is not None and participation > 0.55:
         return TREND_BULL
 
     return DRIFT
@@ -289,26 +309,28 @@ def _compute_universe_panel_cached(signature) -> pd.DataFrame:
     universe = signature[0]
     breadth_panel = get_breadth_panel(universe)
     macro_panel = get_macro_panel()
-    index_up = _index_above_100dma(universe)
+    index_up = _index_above_trend_ma(universe)
     if breadth_panel.empty or index_up.empty:
         return pd.DataFrame()
 
     # The universe's own index bounds the history — no regime before its
-    # 100-DMA exists. Breadth/macro are then aligned onto that calendar.
+    # trend average exists. Breadth/macro are aligned onto that calendar.
     idx = breadth_panel.index.intersection(index_up.index)
     if len(idx) == 0:
         return pd.DataFrame()
 
     macro_aligned = macro_panel.reindex(idx).ffill()
     index_aligned = index_up.reindex(idx).ffill().fillna(False).astype(bool)
-    pct_200 = breadth_panel.loc[idx, "pct_above_200dma"]
+    participation = breadth_panel.loc[idx, f"pct_above_{PARTICIPATION_MA_DAYS}dma"]
     vix_z = macro_aligned["vix_zscore_252d"]
 
     raw = pd.Series("", index=idx, dtype=object)
     for i in range(len(idx)):
         raw.iloc[i] = _classify_one(
-            nifty_up=bool(index_aligned.iloc[i]),
-            pct_200=(None if pd.isna(pct_200.iloc[i]) else float(pct_200.iloc[i])),
+            trend_up=bool(index_aligned.iloc[i]),
+            participation=(
+                None if pd.isna(participation.iloc[i]) else float(participation.iloc[i])
+            ),
             vix_z=(None if pd.isna(vix_z.iloc[i]) else float(vix_z.iloc[i])),
         )
 
@@ -317,8 +339,11 @@ def _compute_universe_panel_cached(signature) -> pd.DataFrame:
         "raw_regime": raw,
         "regime": smoothed,
         "persistence_days": _compute_persistence(smoothed),
-        "index_above_100dma": index_aligned,
-        "pct_above_200dma": pct_200,
+        "index_above_trend_ma": index_aligned,
+        "participation_pct": participation,
+        # Kept alongside so the breadth detail can read its headline
+        # metric off the same reading.
+        "pct_above_200dma": breadth_panel.loc[idx, "pct_above_200dma"],
         "vix_zscore_252d": vix_z,
     })
 
@@ -340,8 +365,8 @@ def _compute_regime_panel_cached(signature) -> pd.DataFrame:
     raw = pd.Series("", index=idx, dtype=object)
     for i in range(len(idx)):
         raw.iloc[i] = _classify_one(
-            nifty_up=bool(nifty_aligned.iloc[i]),
-            pct_200=(None if pd.isna(pct_200.iloc[i]) else float(pct_200.iloc[i])),
+            trend_up=bool(nifty_aligned.iloc[i]),
+            participation=(None if pd.isna(pct_200.iloc[i]) else float(pct_200.iloc[i])),
             vix_z=(None if pd.isna(vix_z.iloc[i]) else float(vix_z.iloc[i])),
         )
 
@@ -353,7 +378,8 @@ def _compute_regime_panel_cached(signature) -> pd.DataFrame:
         "regime": smoothed,
         "persistence_days": persistence,
         "nifty100_above_100dma": nifty_aligned,
-        "index_above_100dma": nifty_aligned,
+        "index_above_trend_ma": nifty_aligned,
+        "participation_pct": pct_200,
         "pct_above_200dma": pct_200,
         "vix_zscore_252d": vix_z,
     })
@@ -392,7 +418,10 @@ def get_regime_snapshot(
             prev_regime = different.loc[transition_idx, "regime"]
             prev_lasted = int(different.loc[transition_idx, "persistence_days"])
 
-    index_up = bool(row["index_above_100dma"])
+    index_up = bool(row["index_above_trend_ma"])
+    participation = (
+        float(row["participation_pct"]) if pd.notna(row["participation_pct"]) else None
+    )
     return RegimeSnapshot(
         date=asof,
         regime=row["regime"],
@@ -408,6 +437,12 @@ def get_regime_snapshot(
         universe=universe,
         index_label=regime_index_label(universe) if universe else "Nifty 100",
         index_above_100dma=index_up,
+        index_above_trend_ma=index_up,
+        participation_pct=participation,
+        trend_ma_days=TREND_MA_DAYS if universe else LEGACY_TREND_MA_DAYS,
+        participation_ma_days=(
+            PARTICIPATION_MA_DAYS if universe else LEGACY_PARTICIPATION_MA_DAYS
+        ),
     )
 
 

@@ -135,7 +135,7 @@ export function RegimeChart({
   closes,
   regimes,
   indexLabel,
-  defaultRange = "Max",
+  defaultRange = "1Y",
   height = 340,
 }: {
   dates: string[];

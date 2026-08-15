@@ -31,12 +31,16 @@ Breadth | Advances & declines | Net new highs | McClellan | India VIX
 old "Daily read" page was removed as an Overview duplicate). Detail
 views: chart on lightweight-charts (range picker 6M→Max), reference
 bands, stat strip, "what this measures" learn panel, disclaimer.
-- Regime (deep-dive pass done 2026-08-15): the chart is the universe's
-  own index with a light regime tint per day + range picker; regime is
-  computed per universe (own index trend + own breadth, VIX shared);
-  tiles show median spell length per regime + the index move this
-  spell; recent spells carry their index return; four-regime cards
-  state rules inline. NO forward-return content anywhere on the tab.
+- Regime (deep-dive pass done 2026-08-15, two rounds): the chart is the
+  universe's own index with a light regime tint per day + range picker
+  (default 1Y); regime is computed per universe (own index trend + own
+  breadth, VIX shared) on **50-day** windows for both trend and
+  participation; four tiles (now / previous / index this spell /
+  participation) + median spell length per regime; recent spells carry
+  their index return; four-regime cards state rules inline, generated
+  from the engine's own window constants. NO forward-return content
+  anywhere on the tab. Open flag: STRETCHED fires only ~3 times in 11
+  years on the broad universes under the new rule.
 - Breadth: metric explorer chips (% > 200/100/50/21-DMA + avg-dist).
 - A/D: daily net advances + cumulative A-D line variants.
 - Bands: Breadth-Atlas values label the Nifty 500 scope; other

@@ -188,6 +188,39 @@ Founder notes on the Regime tab, as implemented:
   one click away via "Read the full explainer" — flagged for the D4
   compliance pass, not edited unilaterally.
 
+## 2026-08-15 — Regime, round 2 (rules redefined)
+
+- **Regime rules now run on 50-day windows.** Founder redefined them:
+  the index against its **50-day** average (was 100) and participation
+  as the share of the universe above their own **50-day** averages
+  (was 200). Thresholds unchanged (55% / 85% + VIX z < -1 / VIX z >
+  1.5 or below-trend with < 35%). Applies to the universe-scoped
+  panels only; the legacy market-wide panel keeps 100/200 (D5 still
+  open). The windows now travel on the snapshot
+  (`trend_ma_days`, `participation_ma_days`) so the displayed rule text
+  is generated from the engine and cannot drift from it again.
+- **Consequence — the regime is much twitchier.** On Nifty 500 the
+  median Drift spell fell from 16 to 8 days and episode count rose to
+  147. At the new 1-year default the tint reads as narrow stripes.
+- **Consequence — STRETCHED is nearly extinct on the broad universes**:
+  3 spells in 11 years on Nifty 500, 3 on Nifty 250, versus 8 (Nifty
+  100) and 10 (Nifty 50) since 2010. >85% of 500 names above their
+  50-DMA *and* VIX a full sigma below its year is a very rare joint
+  condition. Flagged for the founder — a regime that fires three times
+  a decade may want a looser threshold or a merge into Trend Bull.
+- **Chart default is 1 year** (was Max).
+- **VIX wording fixed**: "above its own year" read as a half sentence;
+  now "more than 1.5 standard deviations above its average of the past
+  year".
+- **Copy**: chart sub is "The index with an overlay tint by regime in
+  force. One of four rules-based regimes, smoothed with a 3-day
+  confirmation."; legend intro trimmed to one sentence; the
+  close-to-close footnote under Recent spells and the 3-day-smoothing
+  footnote under the legend are removed.
+- **Fourth stat tile added** — Participation (the classifier's own
+  breadth input) so the row of tiles fills evenly instead of leaving a
+  gap at the right.
+
 ## Canonical list locations (reconciliation)
 
 | List | File | Notes |

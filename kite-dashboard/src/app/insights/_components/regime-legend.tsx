@@ -12,14 +12,19 @@
  * 500's own breadth.
  */
 
-function regimes(indexLabel: string, universeLabel: string) {
+function regimes(
+  indexLabel: string,
+  universeLabel: string,
+  trend: number,
+  participation: number,
+) {
   return [
     {
       label: "Trend Bull",
       accent: "var(--positive)",
       plain:
         "A healthy uptrend with the market behind it — direction is up and most stocks are joining the move.",
-      rule: `${indexLabel} is above its 100-day average and more than 55% of ${universeLabel} stocks are above their own 200-day average.`,
+      rule: `${indexLabel} is above its ${trend}-day average and more than 55% of ${universeLabel} stocks are above their own ${participation}-day average.`,
     },
     {
       label: "Drift",
@@ -33,14 +38,14 @@ function regimes(indexLabel: string, universeLabel: string) {
       accent: "var(--warning)",
       plain:
         "Above trend, almost everything participating, and nobody worried. A description of complacency, not a sell signal.",
-      rule: `${indexLabel} is above its 100-day average, more than 85% of ${universeLabel} stocks are above their 200-day average, and India VIX sits more than one standard deviation below its own year.`,
+      rule: `${indexLabel} is above its ${trend}-day average, more than 85% of ${universeLabel} stocks are above their ${participation}-day average, and India VIX sits more than one standard deviation below its average of the past year.`,
     },
     {
       label: "Stress",
       accent: "var(--negative)",
       plain:
         "Conditions are tense — volatility has spiked, or the market is below trend while participation breaks down.",
-      rule: `India VIX is more than 1.5 standard deviations above its own year, or ${indexLabel} is below its 100-day average while fewer than 35% of ${universeLabel} stocks hold above their 200-day average.`,
+      rule: `India VIX is more than 1.5 standard deviations above its average of the past year, or ${indexLabel} is below its ${trend}-day average while fewer than 35% of ${universeLabel} stocks hold above their ${participation}-day average.`,
     },
   ];
 }
@@ -48,9 +53,13 @@ function regimes(indexLabel: string, universeLabel: string) {
 export function RegimeLegend({
   indexLabel = "Nifty 500",
   universeLabel = "Nifty 500",
+  trendMaDays = 50,
+  participationMaDays = 50,
 }: {
   indexLabel?: string;
   universeLabel?: string;
+  trendMaDays?: number;
+  participationMaDays?: number;
 }) {
   return (
     <section id="regime-legend" className="flex flex-col gap-4">
@@ -60,13 +69,11 @@ export function RegimeLegend({
         </h3>
         <p className="text-[13px] text-muted-foreground">
           Every day the market is sorted into one of four regimes from three
-          observable inputs: trend, participation and volatility. Each card
-          gives the plain meaning and the exact rule the engine checks — so
-          there is no gap between what we say and what the model does.
+          observable inputs: trend, participation and volatility.
         </p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
-        {regimes(indexLabel, universeLabel).map((r) => (
+        {regimes(indexLabel, universeLabel, trendMaDays, participationMaDays).map((r) => (
           <div
             key={r.label}
             className="flex flex-col gap-2 rounded-xl border border-border bg-card p-4 text-sm"
@@ -87,10 +94,6 @@ export function RegimeLegend({
           </div>
         ))}
       </div>
-      <p className="text-[13px] text-muted-foreground">
-        A regime change needs 3 consecutive days in the new regime before the
-        label switches, so a single rough session doesn&apos;t flip it.
-      </p>
     </section>
   );
 }
