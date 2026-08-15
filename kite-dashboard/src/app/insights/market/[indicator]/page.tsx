@@ -758,10 +758,23 @@ async function RegimeDetail({
     episodes.find(
       (e) => e.start.slice(0, 10) <= readingDay && readingDay <= e.end.slice(0, 10),
     ) ?? episodes.at(-1);
+  // Truncate the chart at the reading date too. Everything else on this tab
+  // rewinds with the snapshot, so a chart running on to today was the one
+  // element still showing days that hadn't happened yet.
+  const future = series.index.findIndex((d) => d.slice(0, 10) > readingDay);
+  const end = future === -1 ? series.index.length : future;
+  const chart = {
+    dates: series.index.slice(0, end),
+    opens: (series.data.open ?? []).slice(0, end),
+    highs: (series.data.high ?? []).slice(0, end),
+    lows: (series.data.low ?? []).slice(0, end),
+    closes: (series.data.close ?? []).slice(0, end),
+    regimes: (series.data.regime ?? []).slice(0, end),
+  };
   const currentReturn = current
     ? (returnBetween(
-        series.index,
-        series.data.close ?? [],
+        chart.dates,
+        chart.closes,
         current.start.slice(0, 10),
         readingDay,
       ) ?? current.index_return_pct)
@@ -803,12 +816,12 @@ async function RegimeDetail({
         sub="The index with an overlay tint by regime in force. One of four rules-based regimes, smoothed with a 3-day confirmation."
       >
         <RegimeChart
-          dates={series.index}
-          opens={series.data.open ?? []}
-          highs={series.data.high ?? []}
-          lows={series.data.low ?? []}
-          closes={series.data.close ?? []}
-          regimes={series.data.regime ?? []}
+          dates={chart.dates}
+          opens={chart.opens}
+          highs={chart.highs}
+          lows={chart.lows}
+          closes={chart.closes}
+          regimes={chart.regimes}
           indexLabel={indexLabel}
         />
       </ChartCard>
@@ -940,8 +953,10 @@ export default async function MarketIndicatorPage({
       )}
       <p className="mt-4 text-[11px] leading-[1.6] text-muted-foreground">
         Educational market analytics — descriptions of conditions, not
-        recommendations. History charts always run through the most recent
-        trading day, while the snapshot date rewinds today&apos;s readings.
+        recommendations.{" "}
+        {indicator === "regime"
+          ? "The snapshot date rewinds this page in full — readings and chart both stop on that day."
+          : "History charts always run through the most recent trading day, while the snapshot date rewinds today's readings."}
       </p>
     </DetailShell>
   );

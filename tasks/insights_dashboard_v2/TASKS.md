@@ -75,17 +75,21 @@ The founder walks Market Pulse one tab at a time and gives notes on
 copy, reference bands, stat tiles and defaults; each tab's notes are
 batched, applied and click-verified before moving to the next.
 
-- [x] 2.6a 🤖 **Regime tab** (notes 2026-08-15). Chart is now the
-      universe's own index with a light regime tint per day (replaces
-      the episode-share timeline) + the standard 6M/1Y/3Y/5Y/Max
-      picker; regime is computed **per universe** (own index trend +
-      own breadth) so history starts where that index's data starts;
-      stat tiles show median spell length per regime and the index
-      move this spell (total spell count dropped); recent-spells rows
-      carry the index's close-to-close return; language standardised
-      to "Regime" (never "state"); the four-regime cards state their
-      rule inline instead of behind a disclosure; bottom panel
-      retitled "Learn more" across every tab.
+- [x] 2.6a 🤖 **Regime tab — DONE** (three rounds, 2026-08-15; 15
+      on-page comments). Chart is the universe's own index with a
+      regime tint per day, line **or candles**, crosshair readout of
+      date + OHLC + regime, 6M/1Y/3Y/5Y/Max defaulting to 1Y. Regime
+      is computed **per universe** on **50-day** windows for both
+      trend and participation, so history starts where that index's
+      data starts. Four cards above the chart (current / previous /
+      index this regime / participation) + median regime length +
+      recent regimes with each one's index return. Language is
+      "regime" throughout — no "state", no "spell". Rule text is
+      generated from the engine's own window constants. The whole tab
+      rewinds with the snapshot date, chart included.
+- [x] 2.6-tooling 🤖 On-page copy review: Vercel Toolbar mounted in dev
+      (`read_comments.py` / `reply_comments.py` in this folder).
+      See DECISIONS.md for the auth path and the COOP fix it needed.
 - [ ] 2.6b 👤 Stress tab notes.
 - [ ] 2.6c 👤 Breadth tab notes.
 - [ ] 2.6d 👤 Advances & declines tab notes.

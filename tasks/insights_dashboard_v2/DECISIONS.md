@@ -305,10 +305,18 @@ pairing a rewound reading with un-rewound history:
    reading date — 23 Mar 2020 reads -32.0% (the move so far) rather
    than -18.1% (including an April recovery that had not happened).
 
-**Open**: the chart still runs to the latest close on a rewound
-snapshot, per the footer disclaimer, so it is now the only element that
-does not rewind. Worth deciding whether the time machine should be
-strict. Also: candles are very dense at 3Y+.
+**Closed (round 5)**: the chart now stops at the snapshot date too, so
+the Regime tab rewinds *in full* — the time machine is strict here.
+The footer disclaimer is conditional: on Regime it says readings and
+chart both stop on that day; the other seven tabs keep the old wording
+because their charts still run to the latest close. **The same fix is
+owed on those seven** — take it as each tab comes up for review.
+
+Still open: candles are very dense at 3Y+ (2,700 bars); consider
+capping the candle view to shorter ranges or falling back to the line.
+
+**TAB STATUS: Regime is DONE** (founder, 2026-08-15) — 15 comments
+across two rounds, all applied and resolved.
 
 ## Canonical list locations (reconciliation)
 

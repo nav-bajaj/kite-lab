@@ -1,11 +1,30 @@
 # STATE — read this first when resuming
 
-Last updated: 2026-08-14, branch `insights_dashboard_v2` (13 commits
+Last updated: 2026-08-15, branch `insights_dashboard_v2` (19 commits
 ahead of `auth_stack_v2`, its base). Working tree clean. Not merged,
-not pushed. All verification: backend `pytest tests/` 1197 passed /
+not pushed. All verification: backend `pytest tests/` 1215 passed /
 2 skipped; `npm run build` clean; every change click-verified in a
 signed-in browser against the local backend (evidence PNGs in
 `evidence/`).
+
+## Copy review runs on the page, not in chat
+
+The founder marks up wording directly on localhost via the Vercel
+Toolbar (dev-only mount in `kite-dashboard/src/app/layout.tsx`):
+
+```
+python3 tasks/insights_dashboard_v2/read_comments.py      # his notes
+... apply them ...
+echo '{"<threadId>": "what changed"}' | python3 \
+    tasks/insights_dashboard_v2/reply_comments.py         # reply + resolve
+```
+
+Auth is the Vercel CLI token (`vercel login`), NOT the claude.ai Vercel
+MCP connector — that returns no teams for this account. Both REST
+endpoints are undocumented; see DECISIONS.md. Notes pinned **after
+selecting the text** carry `context.selection` and are unambiguous;
+notes pinned without a selection only carry a React element path and
+have to be inferred.
 
 ## What is BUILT and working (run it: backend uvicorn :8000 + `npm run
 dev` in kite-dashboard; sign in; open /insights)
@@ -31,16 +50,23 @@ Breadth | Advances & declines | Net new highs | McClellan | India VIX
 old "Daily read" page was removed as an Overview duplicate). Detail
 views: chart on lightweight-charts (range picker 6M→Max), reference
 bands, stat strip, "what this measures" learn panel, disclaimer.
-- Regime (deep-dive pass done 2026-08-15, two rounds): the chart is the
-  universe's own index with a light regime tint per day + range picker
-  (default 1Y); regime is computed per universe (own index trend + own
-  breadth, VIX shared) on **50-day** windows for both trend and
-  participation; four tiles (now / previous / index this spell /
-  participation) + median spell length per regime; recent spells carry
-  their index return; four-regime cards state rules inline, generated
-  from the engine's own window constants. NO forward-return content
-  anywhere on the tab. Open flag: STRETCHED fires only ~3 times in 11
-  years on the broad universes under the new rule.
+- **Regime — DONE, signed off 2026-08-15** (three rounds, 15 on-page
+  comments). Index chart with a per-day regime tint, **line or
+  candles**, crosshair readout (date + OHLC + regime), 1Y default.
+  Regime is per universe on **50-day** trend + 50-day participation
+  windows (VIX shared — no per-universe analog); history starts where
+  that index's data starts: 2010 for Nifty 100/50, 2015 for Nifty 500,
+  2020 for Nifty 250. Four cards **above** the chart (current /
+  previous / index this regime / participation), then median regime
+  length, then recent regimes with each one's index return. Rule text
+  is generated from the engine's window constants so copy cannot drift
+  from behaviour. The whole tab rewinds with `?date=`, chart included.
+  NO forward-return content anywhere on it. The word "spell" is gone;
+  so is "state".
+  Open flags: STRETCHED fires only ~3 times in 11 years on the broad
+  universes under the new rule (may want a looser threshold); candles
+  are dense at 3Y+; the other seven tabs still don't truncate their
+  charts on a rewound snapshot.
 - Breadth: metric explorer chips (% > 200/100/50/21-DMA + avg-dist).
 - A/D: daily net advances + cumulative A-D line variants.
 - Bands: Breadth-Atlas values label the Nifty 500 scope; other
@@ -79,7 +105,12 @@ still render their pre-branch content inside the new shell.
   mock (mock_insights_dashboard.pen) was directional only.
 - Development proceeds indicator-set by indicator-set.
 - Regime: keep the detail, never show forward-return tables on it.
-- Founder wants an indicator-by-indicator deep dive next.
+- Indicator-by-indicator deep dive is IN PROGRESS, tab by tab, with
+  notes left on the page itself. Regime is signed off; Stress is next.
+- Regime rules were redefined to 50-day windows by eye, not by study.
+  Founder's call: an independent study later should test whether a
+  different rule set defines the current regime better, rather than
+  tuning thresholds live.
 
 ## Environment notes
 
@@ -96,8 +127,11 @@ still render their pre-branch content inside the new shell.
 ## Next up (in order)
 
 1. Founder's indicator-by-indicator deep dive, tab by tab (TASKS.md
-   Slice 2.6). Regime done 2026-08-15; Stress is next, then Breadth,
-   A/D, Net new highs, McClellan, VIX, Concentration.
+   Slice 2.6). **Regime signed off 2026-08-15. Stress is next**, then
+   Breadth, A/D, Net new highs, McClellan, VIX, Concentration.
+   Carry forward to each tab as it comes up: truncate its chart on a
+   rewound snapshot (Regime does this; the other seven do not), and
+   check its copy for "state"/"spell" leftovers.
 2. D3 sign-off → Slice 3 (RRG per RRG_SPEC.md).
 3. Slice 4 (Stock Lists detectors + daily cross-section persistence).
 4. Slice 5 (intraday, posture C) — independent, can move earlier.
