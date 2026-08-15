@@ -241,14 +241,19 @@ errors, consistent with the known 403 on this team (see the
 `reference_deploy_verification` note). So the founder can comment, but
 the agent cannot yet read the comments programmatically.
 
-Two ways forward, founder to pick:
-1. `vercel login` in the terminal (CLI now installed, v59.1.3). The
-   agent then reads threads from the Vercel REST API with the CLI's
-   token instead of the MCP connector.
-2. Drop the Vercel dependency and build a local annotation overlay:
-   shortcut toggles review mode, click any string to leave a note,
-   notes append to a JSON file in the repo that the agent reads
-   directly. Fully offline, ~150 lines, no account involved.
+**Resolved (same day)**: founder ran `vercel login`, and the read path
+now works through the CLI token rather than the MCP connector. The
+endpoint is `GET /v1/toolbar/threads?teamId=&projectId=&status=` —
+undocumented in the public REST reference, found by probing, so treat
+it as liable to change. Wrapped in
+`tasks/insights_dashboard_v2/read_comments.py`; run it after a review
+pass to print every unresolved thread with its page and anchor.
+
+Still unverified: the *writing* half. Leaving a comment needs the
+founder's own Vercel session in his browser, which the agent cannot
+exercise. One test comment settles it. The fallback if it disappoints
+stays on the table — a local annotation overlay writing notes to a
+JSON file in the repo, fully offline, no account involved.
 
 Also fixed while here: `REVALIDATE_SECONDS` is now 0 in development.
 The 15-minute fetch cache was serving `/reading` responses captured
