@@ -880,22 +880,21 @@ async def regime_timeseries(
     panel = regime_mod.compute_regime_panel(universe)
     if panel.empty:
         return {"index": [], "data": {}, "index_label": None}
-    closes = (
-        regime_mod.regime_index_close(universe)
-        if universe
-        else regime_mod.regime_index_close("nifty100")
-    )
+    ohlc = regime_mod.regime_index_ohlc(universe or "nifty100")
     sub = panel.tail(days)
-    close_aligned = closes.reindex(sub.index)
+    aligned = ohlc.reindex(sub.index)
+    data = {
+        col: [_jsonable(v) for v in aligned[col].values]
+        for col in ("open", "high", "low", "close")
+        if col in aligned.columns
+    }
+    data["regime"] = [str(v) for v in sub["regime"].values]
     return {
         "index_label": (
             regime_mod.regime_index_label(universe) if universe else "Nifty 100"
         ),
         "index": [d.isoformat() for d in sub.index],
-        "data": {
-            "close": [_jsonable(v) for v in close_aligned.values],
-            "regime": [str(v) for v in sub["regime"].values],
-        },
+        "data": data,
     }
 
 

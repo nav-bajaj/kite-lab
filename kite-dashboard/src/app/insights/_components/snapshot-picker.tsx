@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { CalendarDays, ChevronDown } from "lucide-react";
+import { CalendarCheck, CalendarDays, ChevronDown } from "lucide-react";
 
 /**
  * Quick-jump bar for viewing historical insight snapshots.
@@ -82,20 +82,22 @@ export function CompactSnapshotPicker() {
   return (
     <div ref={rootRef} className="relative flex items-center gap-1.5">
       {/* Always in the bar, not buried in the popover: one click back to
-          today from any historical snapshot. Carries an active state when
-          already on the latest close, matching the chart range pickers. */}
+          today from any historical snapshot. It earns its place when the
+          user is on some other date, so it only lights up as an action
+          then — on today it sits quiet rather than inviting a no-op. */}
       <button
         onClick={() => navigate("")}
-        aria-pressed={!currentDate}
-        title="Back to the latest trading day"
+        disabled={!currentDate}
+        title={currentDate ? "Back to today" : "Already showing today"}
         className={
-          "rounded-lg border px-2.5 py-1.5 text-[11px] font-medium transition-colors " +
+          "flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-medium transition-colors " +
           (currentDate
-            ? "border-border text-muted-foreground hover:bg-muted hover:text-foreground"
-            : "border-primary bg-primary text-primary-foreground")
+            ? "border-border text-foreground hover:bg-muted"
+            : "cursor-default border-transparent text-muted-foreground/60")
         }
       >
-        Latest
+        <CalendarCheck className="h-3.5 w-3.5" aria-hidden />
+        Today
       </button>
       <button
         onClick={() => setOpen((v) => !v)}

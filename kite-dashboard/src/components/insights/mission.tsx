@@ -156,7 +156,7 @@ export function SectionTabs({
     // content edge (transparent bottom border over the rule line).
     <nav
       aria-label="Section indicators"
-      className="flex gap-1 overflow-x-auto border-b border-border"
+      className="mw-no-scrollbar flex gap-1 overflow-x-auto border-b border-border"
     >
       {items.map((item) => {
         const href = item.slug ? `${basePath}/${item.slug}${query}` : `${basePath}${query}`;

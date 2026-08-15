@@ -17,6 +17,7 @@ import {
   type BreadthUniverse,
   type MarketReading,
   type RegimeEpisode,
+  type RegimeTimeseriesResponse,
   type TimeseriesResponse,
 } from "@/lib/insights-api";
 import { DetailShell, StatStrip } from "@/components/insights/mission";
@@ -743,11 +744,9 @@ async function RegimeDetail({
       index_label: null,
       episodes: [] as RegimeEpisode[],
     })),
-    getRegimeTimeseries({ universe }).catch(() => ({
-      index_label: null,
-      index: [] as string[],
-      data: {} as { close?: (number | null)[]; regime?: string[] },
-    })),
+    getRegimeTimeseries({ universe }).catch(
+      (): RegimeTimeseriesResponse => ({ index_label: null, index: [], data: {} }),
+    ),
   ]);
   const episodes = history.episodes;
   const r = reading.regime;
@@ -774,17 +773,8 @@ async function RegimeDetail({
 
   return (
     <div className="flex flex-col gap-4">
-      <ChartCard
-        title={`${indexLabel} through its regimes`}
-        sub="The index with an overlay tint by regime in force. One of four rules-based regimes, smoothed with a 3-day confirmation."
-      >
-        <RegimeChart
-          dates={series.index}
-          closes={series.data.close ?? []}
-          regimes={series.data.regime ?? []}
-          indexLabel={indexLabel}
-        />
-      </ChartCard>
+      {/* Tiles lead: the state of affairs reads faster than the chart, so it
+          comes first and the chart backs it up (founder, 2026-08-15). */}
       <StatStrip
         stats={[
           {
@@ -808,6 +798,20 @@ async function RegimeDetail({
           },
         ]}
       />
+      <ChartCard
+        title={`${indexLabel} through its regimes`}
+        sub="The index with an overlay tint by regime in force. One of four rules-based regimes, smoothed with a 3-day confirmation."
+      >
+        <RegimeChart
+          dates={series.index}
+          opens={series.data.open ?? []}
+          highs={series.data.high ?? []}
+          lows={series.data.low ?? []}
+          closes={series.data.close ?? []}
+          regimes={series.data.regime ?? []}
+          indexLabel={indexLabel}
+        />
+      </ChartCard>
       <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5">
         <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           Median regime length

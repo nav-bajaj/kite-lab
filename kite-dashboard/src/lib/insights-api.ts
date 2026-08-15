@@ -630,7 +630,13 @@ export async function getRegimeHistory(
 export interface RegimeTimeseriesResponse {
   index_label: string | null;
   index: string[];
-  data: { close?: (number | null)[]; regime?: string[] };
+  data: {
+    open?: (number | null)[];
+    high?: (number | null)[];
+    low?: (number | null)[];
+    close?: (number | null)[];
+    regime?: string[];
+  };
 }
 
 /** The scope index's close plus its regime label per day — the regime

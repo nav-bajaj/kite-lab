@@ -293,3 +293,14 @@
     opacity: 0.85;
   }
 }
+/* Horizontal rails that must not show scrollbar chrome — the Market Pulse
+ * tab row reads as a fixed row of browser tabs, and a permanently-visible
+ * macOS scrollbar under it breaks that. Overflow still works on narrow
+ * viewports; only the chrome is hidden. */
+.mw-no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.mw-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

@@ -152,11 +152,26 @@ def regime_index_close(universe: str) -> pd.Series:
 
 @lru_cache(maxsize=8)
 def _index_close_cached(universe: str, signature: float) -> pd.Series:
+    ohlc = _index_ohlc_cached(universe, signature)
+    if ohlc.empty:
+        return pd.Series(dtype=float)
+    return ohlc["close"]
+
+
+def regime_index_ohlc(universe: str) -> pd.DataFrame:
+    """Open/high/low/close of the universe's own index — the regime chart
+    offers a candle view, not just the close line."""
+    return _index_ohlc_cached(universe, file_signature(_universe_index_path(universe)))
+
+
+@lru_cache(maxsize=8)
+def _index_ohlc_cached(universe: str, signature: float) -> pd.DataFrame:
     p = _universe_index_path(universe)
     if not p.exists():
-        return pd.Series(dtype=float)
+        return pd.DataFrame()
     df = pd.read_csv(p, parse_dates=["date"]).set_index("date").sort_index()
-    return df["close"].dropna()
+    cols = [c for c in ("open", "high", "low", "close") if c in df.columns]
+    return df[cols].dropna(subset=["close"])
 
 
 def _index_above_trend_ma(universe: str) -> pd.Series:
@@ -502,3 +517,4 @@ def clear_cache() -> None:
     _compute_regime_panel_cached.cache_clear()
     _compute_universe_panel_cached.cache_clear()
     _index_close_cached.cache_clear()
+    _index_ohlc_cached.cache_clear()

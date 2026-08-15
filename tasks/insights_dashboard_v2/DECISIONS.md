@@ -276,6 +276,40 @@ The 15-minute fetch cache was serving `/reading` responses captured
 before a backend field existed, which is what made the Participation
 tile look empty on non-default universes.
 
+## 2026-08-15 — Regime, comment rounds 3-4
+
+Round 3 (10 notes): "Now" card → "Current regime"; previous-regime card
+reads "day N" like its neighbour; "since the regime began" and the
+"regimes vary widely" line dropped; legend heading "The four regimes
+explained:"; all four regime descriptions replaced with the founder's
+wording; "Latest" button lifted out of the snapshot popover into the
+bar.
+
+Round 4 (5 notes): the four cards moved **above** the chart (state
+first, chart as backup); the "Latest" button became "Today" with an
+icon, live only when on another date; the Market Pulse tab row no
+longer shows scrollbar chrome (`.mw-no-scrollbar` in globals.css);
+**candlestick view** added alongside the close line; **crosshair
+readout** showing date + OHLC + that day's regime beside the index
+name. `/regime/timeseries` now returns open/high/low/close, not just
+close (`regime_index_ohlc`).
+
+**Two snapshot bugs found by reviewing on a rewound date**, both from
+pairing a rewound reading with un-rewound history:
+1. The "this regime" card read the *newest* episode, so the COVID
+   snapshot showed Stress next to +2.4% (August 2026's move). It now
+   finds the episode the reading sits in, and Recent regimes stops at
+   the reading date.
+2. That figure covered the whole episode, including days after the
+   snapshot. It is now computed from the close series up to the
+   reading date — 23 Mar 2020 reads -32.0% (the move so far) rather
+   than -18.1% (including an April recovery that had not happened).
+
+**Open**: the chart still runs to the latest close on a rewound
+snapshot, per the footer disclaimer, so it is now the only element that
+does not rewind. Worth deciding whether the time machine should be
+strict. Also: candles are very dense at 3Y+.
+
 ## Canonical list locations (reconciliation)
 
 | List | File | Notes |
