@@ -5,6 +5,7 @@ import { useTheme } from "next-themes";
 import {
   createChart,
   AreaSeries,
+  LineSeries,
   ColorType,
   LineStyle,
   type IChartApi,
@@ -44,6 +45,15 @@ function resolveColor(el: HTMLElement, cssVar: string, fallback: string): string
   return rgb || fallback;
 }
 
+/** The scope index drawn alongside an indicator. Rebased to percent change
+ *  from the first visible bar so the two are readable on one canvas — the
+ *  raw index level carries no information here, the shape does. */
+export interface IndexOverlay {
+  label: string;
+  dates: string[];
+  closes: (number | null)[];
+}
+
 export function TimeseriesChart({
   dates,
   values,
@@ -51,6 +61,7 @@ export function TimeseriesChart({
   percent = false,
   defaultRange = "3Y",
   height = 320,
+  overlay,
 }: {
   dates: string[];
   values: (number | null)[];
@@ -59,10 +70,12 @@ export function TimeseriesChart({
   percent?: boolean;
   defaultRange?: (typeof RANGES)[number]["label"];
   height?: number;
+  overlay?: IndexOverlay;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { theme, resolvedTheme } = useTheme();
   const [range, setRange] = useState(defaultRange);
+  const [showOverlay, setShowOverlay] = useState(false);
 
   const sliced = useMemo(() => {
     const days = RANGES.find((r) => r.label === range)?.days ?? null;
@@ -77,6 +90,25 @@ export function TimeseriesChart({
     }
     return out;
   }, [dates, values, range, percent]);
+
+  // Rebase the index over the same window the indicator is showing, so 0%
+  // is always the left edge of what you are looking at.
+  const overlaySliced = useMemo(() => {
+    if (!overlay || sliced.length === 0) return [];
+    const firstDay = sliced[0].time;
+    const out: { time: UTCTimestamp; value: number }[] = [];
+    let base: number | null = null;
+    for (let i = 0; i < overlay.dates.length; i++) {
+      /* eslint-disable-next-line security/detect-object-injection -- parallel arrays, numeric loop index */
+      const t = (Date.parse(overlay.dates[i]) / 1000) as UTCTimestamp;
+      if (t < firstDay) continue;
+      const v = overlay.closes.at(i);
+      if (v === null || v === undefined || Number.isNaN(v) || v <= 0) continue;
+      if (base === null) base = v;
+      out.push({ time: t, value: (v / base - 1) * 100 });
+    }
+    return out;
+  }, [overlay, sliced]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -133,9 +165,38 @@ export function TimeseriesChart({
       });
     }
 
+    if (showOverlay && overlaySliced.length > 0) {
+      const index = chart.addSeries(LineSeries, {
+        color: muted,
+        lineWidth: 1,
+        lineStyle: LineStyle.Solid,
+        priceScaleId: "overlay",
+        priceLineVisible: false,
+        lastValueVisible: false,
+        priceFormat: {
+          type: "custom",
+          formatter: (v: number) => `${v >= 0 ? "+" : ""}${v.toFixed(0)}%`,
+          minMove: 0.1,
+        },
+      });
+      index.setData(overlaySliced);
+      index.createPriceLine({
+        price: 0,
+        color: border,
+        lineWidth: 1,
+        lineStyle: LineStyle.Dotted,
+        axisLabelVisible: false,
+        title: "",
+      });
+      chart.priceScale("overlay").applyOptions({
+        scaleMargins: { top: 0.1, bottom: 0.1 },
+        visible: false,
+      });
+    }
+
     chart.timeScale().fitContent();
     return () => chart.remove();
-  }, [sliced, bands, percent, theme, resolvedTheme]);
+  }, [sliced, overlaySliced, showOverlay, bands, percent, theme, resolvedTheme]);
 
   if (dates.length === 0) {
     return (
@@ -148,7 +209,22 @@ export function TimeseriesChart({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-end gap-1">
+      <div className="flex flex-wrap items-center justify-end gap-1">
+        {overlay && (
+          <button
+            onClick={() => setShowOverlay((v) => !v)}
+            aria-pressed={showOverlay}
+            title={`Overlay ${overlay.label}, rebased to 0% at the left edge`}
+            className={cn(
+              "mr-auto rounded-md px-2.5 py-1 text-[11px] transition-colors",
+              showOverlay
+                ? "bg-muted font-medium text-foreground"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground",
+            )}
+          >
+            {showOverlay ? "Hide" : "Show"} {overlay.label}
+          </button>
+        )}
         {RANGES.map((r) => (
           <button
             key={r.label}
@@ -166,6 +242,13 @@ export function TimeseriesChart({
         ))}
       </div>
       <div ref={containerRef} style={{ height }} className="w-full" />
+      {overlay && showOverlay && (
+        <p className="text-[11px] text-muted-foreground">
+          {overlay.label} is drawn as percent change from the left edge of the
+          visible window, on its own scale — read the shape against the
+          indicator, not the level.
+        </p>
+      )}
       <div className="flex items-center justify-end text-[10px] text-muted-foreground">
         <a
           href="https://www.tradingview.com"

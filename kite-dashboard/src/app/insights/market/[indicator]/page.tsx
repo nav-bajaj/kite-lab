@@ -8,6 +8,7 @@ import {
   getConcentrationTimeseries,
   getRegimeHistory,
   getRegimeTimeseries,
+  getIndexTimeseries,
   fmtPct,
   fmtNum,
   insightsQuery,
@@ -23,7 +24,11 @@ import {
 import { DetailShell, StatStrip } from "@/components/insights/mission";
 import { MARKET_TABS } from "../_tabs";
 import { RegimeLegend } from "../../_components/regime-legend";
-import { TimeseriesChart, type ReferenceBand } from "@/components/insights/timeseries-chart";
+import {
+  TimeseriesChart,
+  type IndexOverlay,
+  type ReferenceBand,
+} from "@/components/insights/timeseries-chart";
 import { MetricExplorer, type MetricVariant } from "@/components/insights/metric-explorer";
 import { RegimeChart } from "@/components/insights/regime-chart";
 
@@ -86,6 +91,31 @@ function LearnPanel({
   );
 }
 
+/** The scope index, ready to hand to a chart as an overlay. Indicators
+ *  mean little without the price they are describing, so most detail
+ *  charts offer it behind a toggle. */
+async function indexOverlay(
+  universe: BreadthUniverse,
+  asOf: string,
+): Promise<IndexOverlay | undefined> {
+  const series = await getIndexTimeseries({ universe }).catch(() => null);
+  if (!series || series.index.length === 0) return undefined;
+  const end = cutoff(series.index, asOf);
+  return {
+    label: series.index_label,
+    dates: series.index.slice(0, end),
+    closes: (series.data.close ?? []).slice(0, end),
+  };
+}
+
+/** One past the last row dated on or before `day` — everything on a tab
+ *  stops at the snapshot date, charts included, so a rewound view never
+ *  shows days that hadn't happened yet. */
+function cutoff(dates: string[], day: string): number {
+  const i = dates.findIndex((d) => d.slice(0, 10) > day);
+  return i === -1 ? dates.length : i;
+}
+
 /** p-th percentile of the non-null values (nearest-rank). */
 function percentile(values: (number | null)[], p: number): number | null {
   const clean = values
@@ -102,14 +132,14 @@ function ChartCard({
   children,
 }: {
   title: string;
-  sub: string;
+  sub?: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5">
       <div className="flex flex-col gap-0.5">
         <span className="font-serif text-lg font-medium text-foreground">{title}</span>
-        <span className="text-[13px] text-muted-foreground">{sub}</span>
+        {sub && <span className="text-[13px] text-muted-foreground">{sub}</span>}
       </div>
       {children}
     </div>
@@ -132,35 +162,35 @@ const BREADTH_VARIANTS: Omit<MetricVariant, "values">[] = [
   {
     metric: "pct_above_200dma",
     label: "% > 200-DMA",
-    sub: "Participation in long-term uptrends — the headline breadth read.",
+    sub: "The share of stocks trading above their own 200-day average — how many are in a long-term uptrend.",
     percent: true,
     bands: atlasBands(0.22, 0.59, 0.94),
   },
   {
     metric: "avg_dist_from_200dma",
     label: "Avg dist from 200-DMA",
-    sub: "The continuous sibling: average distance of every stock from its 200-day line. Same signal, finer extremes — the atlas's most robust deep-panic gauge.",
+    sub: "How far the average stock sits above or below its own 200-day average, in percent.",
     percent: true,
     bands: atlasBands(-0.11, 0.051, 0.292),
   },
   {
     metric: "pct_above_100dma",
     label: "% > 100-DMA",
-    sub: "Medium-horizon participation (about five months of trend).",
+    sub: "The share of stocks above their own 100-day average — participation over about five months.",
     percent: true,
     bands: atlasBands(0.169, 0.593, 0.895),
   },
   {
     metric: "pct_above_50dma",
     label: "% > 50-DMA",
-    sub: "Faster participation — reacts in weeks rather than months.",
+    sub: "The share of stocks above their own 50-day average — participation over roughly a quarter.",
     percent: true,
     bands: atlasBands(0.157, 0.578, 0.882),
   },
   {
     metric: "pct_above_21dma",
     label: "% > 21-DMA",
-    sub: "The fastest of the family — one-month trend participation, flickers the most.",
+    sub: "The share of stocks above their own 21-day average — participation over the past month.",
     percent: true,
     bands: atlasBands(0.148, 0.549, 0.851),
   },
@@ -194,11 +224,22 @@ async function BreadthDetail({
   reading: MarketReading;
   universe: BreadthUniverse;
 }) {
-  const series = await getBreadthTimeseries({
-    days: 4000,
-    metrics: BREADTH_VARIANTS.map((v) => v.metric),
-    universe,
-  }).catch((): TimeseriesResponse => ({ index: [], data: {} }));
+  const asOf = reading.date.slice(0, 10);
+  const [raw, overlay] = await Promise.all([
+    getBreadthTimeseries({
+      days: 4000,
+      metrics: BREADTH_VARIANTS.map((v) => v.metric),
+      universe,
+    }).catch((): TimeseriesResponse => ({ index: [], data: {} })),
+    indexOverlay(universe, asOf),
+  ]);
+  const end = cutoff(raw.index, asOf);
+  const series = {
+    index: raw.index.slice(0, end),
+    data: Object.fromEntries(
+      Object.entries(raw.data).map(([k, v]) => [k, v.slice(0, end)]),
+    ),
+  };
   const isDefault = universe === "nse500";
   const byKey = new Map(Object.entries(series.data));
   const values = byKey.get("pct_above_200dma") ?? [];
@@ -220,11 +261,8 @@ async function BreadthDetail({
 
   return (
     <div className="flex flex-col gap-4">
-      <ChartCard
-        title={`Market breadth — the trend-participation family · ${universeLabel(universe)}`}
-        sub="Dashed lines mark where days like today have historically sat for the selected metric and universe."
-      >
-        <MetricExplorer dates={series.index} variants={variants} />
+      <ChartCard title={`Market Breadth ${universeLabel(universe)}`}>
+        <MetricExplorer dates={series.index} variants={variants} overlay={overlay} />
       </ChartCard>
       <StatStrip
         stats={[
@@ -347,40 +385,78 @@ const STRESS_BANDS: ReferenceBand[] = [
   { value: 33, label: "calm below this line", tone: "muted" },
 ];
 
-async function StressDetail({ reading }: { reading: MarketReading }) {
-  const series = await getStressTimeseries(4000).catch(
-    (): TimeseriesResponse => ({ index: [], data: {} }),
-  );
-  const values = series.data["score"] ?? [];
+async function StressDetail({
+  reading,
+  universe,
+}: {
+  reading: MarketReading;
+  universe: BreadthUniverse;
+}) {
+  const asOf = reading.date.slice(0, 10);
+  const [raw, overlay] = await Promise.all([
+    getStressTimeseries(4000).catch(
+      (): TimeseriesResponse => ({ index: [], data: {} }),
+    ),
+    indexOverlay(universe, asOf),
+  ]);
+  const end = cutoff(raw.index, asOf);
+  const series = { index: raw.index.slice(0, end) };
+  const values = (raw.data["score"] ?? []).slice(0, end);
   const s = reading.stress;
-  const components: { label: string; value: number | null }[] = [
-    { label: "Volatility (VIX percentile)", value: s.vix_pctile_component },
-    { label: "Nifty drawdown", value: s.drawdown_component },
-    { label: "Stocks below 200-DMA", value: s.below_200dma_component },
-    { label: "Return dispersion", value: s.dispersion_component },
+  const w = s.weights ?? {};
+  const components: { label: string; value: number | null; weight: number }[] = [
+    {
+      label: "Volatility (VIX percentile)",
+      value: s.vix_pctile_component,
+      weight: w["vix_pctile"] ?? 0,
+    },
+    { label: "Nifty drawdown", value: s.drawdown_component, weight: w["drawdown"] ?? 0 },
+    {
+      label: "Stocks below 200-DMA",
+      value: s.below_200dma_component,
+      weight: w["below_200dma"] ?? 0,
+    },
+    {
+      label: "Return dispersion",
+      value: s.dispersion_component,
+      weight: w["dispersion"] ?? 0,
+    },
   ];
+  const years = Math.round((s.percentile_window_days ?? 1260) / 252);
 
   return (
     <div className="flex flex-col gap-4">
       <ChartCard
-        title="Market stress composite, 0–100"
-        sub="Volatility, drawdown, breadth and dispersion folded into one score. Spikes cluster at regime breaks; quiet stretches are the norm."
+        title="Market Stress Composite"
+        sub="A blended score using Volatility, Drawdown, Breadth, and Dispersion. Quiet stretches are the norm but spike clusters can occur at regime breaks."
       >
-        <TimeseriesChart dates={series.index} values={values} bands={STRESS_BANDS} />
+        <TimeseriesChart
+          dates={series.index}
+          values={values}
+          bands={STRESS_BANDS}
+          overlay={overlay}
+        />
       </ChartCard>
       <StatStrip
         stats={[
-          { label: "Now", value: s.score.toFixed(0), sub: "out of 100" },
+          { label: "Current score", value: s.score.toFixed(0), sub: "out of 100" },
           {
             label: "Percentile",
             value: `p${s.score_percentile.toFixed(0)}`,
-            sub: "vs all past days",
+            sub: `vs the last ${years} years`,
           },
-          { label: "India VIX", value: s.vix_close?.toFixed(1) ?? "—", sub: "close" },
+          {
+            label: "India VIX",
+            value: s.vix_close?.toFixed(1) ?? "—",
+            sub:
+              s.vix_pctile_component !== null
+                ? `p${s.vix_pctile_component.toFixed(0)} of the past year`
+                : undefined,
+          },
           {
             label: "Nifty drawdown",
             value: fmtPct(s.nifty_drawdown_pct, 1),
-            sub: "from recent high",
+            sub: "below its 1-year high",
           },
         ]}
       />
@@ -388,20 +464,69 @@ async function StressDetail({ reading }: { reading: MarketReading }) {
         <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           What&apos;s driving the score today
         </span>
+        <p className="text-[12px] text-muted-foreground">
+          Each input is scored 0–100 on its own, then weighted into the
+          composite. The weight is what it contributes; the bar is how hot
+          that input is running.
+        </p>
         {components.map((c) => (
           <div key={c.label} className="flex items-center gap-3">
-            <span className="w-56 shrink-0 text-[13px] text-foreground">{c.label}</span>
+            <span className="w-56 shrink-0 text-[13px] text-foreground">
+              {c.label}
+              <span className="ml-1.5 text-[11px] text-muted-foreground">
+                {(c.weight * 100).toFixed(0)}%
+              </span>
+            </span>
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
               <div
                 className="h-full rounded-full bg-[color:var(--chart-1)]"
-                style={{ width: `${Math.max(0, Math.min(100, (c.value ?? 0) * 100))}%` }}
+                style={{ width: `${Math.max(0, Math.min(100, c.value ?? 0))}%` }}
               />
             </div>
             <span className="w-10 shrink-0 text-right font-mono text-[12px] tabular-nums text-muted-foreground">
-              {c.value === null ? "—" : (c.value * 100).toFixed(0)}
+              {c.value === null ? "—" : c.value.toFixed(0)}
             </span>
           </div>
         ))}
+      </div>
+      <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          How the score is computed
+        </span>
+        <ul className="flex list-disc flex-col gap-1.5 pl-4 text-[13px] leading-[1.55] text-muted-foreground">
+          <li>
+            <span className="text-foreground">
+              Volatility ({fmtPct(w["vix_pctile"], 0)})
+            </span>{" "}
+            — where India VIX sits within its own past year, as a percentile.
+          </li>
+          <li>
+            <span className="text-foreground">
+              Drawdown ({fmtPct(w["drawdown"], 0)})
+            </span>{" "}
+            — how far the Nifty is below its highest close of the past year.
+            At the high scores 0; down 20% or more scores 100.
+          </li>
+          <li>
+            <span className="text-foreground">
+              Breadth ({fmtPct(w["below_200dma"], 0)})
+            </span>{" "}
+            — the share of NSE 500 stocks trading <em>below</em> their 200-day
+            average.
+          </li>
+          <li>
+            <span className="text-foreground">
+              Dispersion ({fmtPct(w["dispersion"], 0)})
+            </span>{" "}
+            — how spread out daily returns are versus their own past year, as
+            a z-score. Stocks scattering in different directions scores high.
+          </li>
+          <li>
+            Each input is capped to 0–100, multiplied by its weight and summed.
+            The percentile above compares today&apos;s score with the last{" "}
+            {years} years.
+          </li>
+        </ul>
       </div>
       <LearnPanel slug="stress-score" title="Learn more">
         A single 0–100 read on how tense conditions are, blending four
@@ -939,7 +1064,7 @@ export default async function MarketIndicatorPage({
     >
       {indicator === "regime" && <RegimeDetail reading={reading} universe={universe} />}
       {indicator === "breadth" && <BreadthDetail reading={reading} universe={universe} />}
-      {indicator === "stress" && <StressDetail reading={reading} />}
+      {indicator === "stress" && <StressDetail reading={reading} universe={universe} />}
       {indicator === "advance-decline" && (
         <AdvanceDeclineDetail reading={reading} universe={universe} />
       )}
@@ -954,7 +1079,7 @@ export default async function MarketIndicatorPage({
       <p className="mt-4 text-[11px] leading-[1.6] text-muted-foreground">
         Educational market analytics — descriptions of conditions, not
         recommendations.{" "}
-        {indicator === "regime"
+        {["regime", "stress", "breadth"].includes(indicator)
           ? "The snapshot date rewinds this page in full — readings and chart both stop on that day."
           : "History charts always run through the most recent trading day, while the snapshot date rewinds today's readings."}
       </p>

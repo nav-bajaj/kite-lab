@@ -65,9 +65,17 @@ bands, stat strip, "what this measures" learn panel, disclaimer.
   so is "state".
   Open flags: STRETCHED fires only ~3 times in 11 years on the broad
   universes under the new rule (may want a looser threshold); candles
-  are dense at 3Y+; the other seven tabs still don't truncate their
-  charts on a rewound snapshot.
-- Breadth: metric explorer chips (% > 200/100/50/21-DMA + avg-dist).
+  are dense at 3Y+.
+- **Stress — DONE 2026-08-15** (7 notes): "Market Stress Composite",
+  Current score, percentile stated as 5y and VIX percentile shown as
+  1y, drawdown "below its 1-year high"; the drivers card's 0-100
+  values are no longer multiplied by 100 again (bars were all clamped
+  full-width); "How the score is computed" bullets render from
+  engine-shipped weights/windows; index overlay; rewinds in full.
+- **Breadth — DONE 2026-08-15** (3 notes): title follows the universe,
+  per-metric one-line explainers on every chip, dashed-line caption
+  gone, index overlay, rewinds in full. Metric explorer chips
+  (% > 200/100/50/21-DMA + avg-dist) unchanged.
 - A/D: daily net advances + cumulative A-D line variants.
 - Bands: Breadth-Atlas values label the Nifty 500 scope; other
   universes get percentiles computed from their own fetched history.
@@ -88,7 +96,9 @@ invariant). Deep-dive round added universe-scoped regime:
 (no-arg call keeps the legacy market-wide panel for notes/conditional
 dist/calendar — see DECISIONS D5), episode `index_return_pct`, `GET
 /regime/timeseries?universe=`, `?universe=` on /regime/history and
-/reading. Stress engine untouched.
+/reading. Stress now ships `weights` + percentile/component windows on
+its snapshot so the UI states the maths without retyping it; new `GET
+/index/timeseries?universe=` powers the chart overlays.
 
 **Not started**: Sectors & Rotation rebuild (RRG — Slice 3, needs D3
 sign-off), Stock Lists detectors (Slice 4), intraday layer (Slice 5),
@@ -106,7 +116,10 @@ still render their pre-branch content inside the new shell.
 - Development proceeds indicator-set by indicator-set.
 - Regime: keep the detail, never show forward-return tables on it.
 - Indicator-by-indicator deep dive is IN PROGRESS, tab by tab, with
-  notes left on the page itself. Regime is signed off; Stress is next.
+  notes left on the page itself. Regime, Stress and Breadth are done.
+- Indicator charts carry an optional **index overlay** (rebased to % from
+  the left edge of the visible window) behind a toggle — the founder
+  wants it on every gauge, since the point is correlation with price.
 - Regime rules were redefined to 50-day windows by eye, not by study.
   Founder's call: an independent study later should test whether a
   different rule set defines the current regime better, rather than
@@ -127,11 +140,16 @@ still render their pre-branch content inside the new shell.
 ## Next up (in order)
 
 1. Founder's indicator-by-indicator deep dive, tab by tab (TASKS.md
-   Slice 2.6). **Regime signed off 2026-08-15. Stress is next**, then
-   Breadth, A/D, Net new highs, McClellan, VIX, Concentration.
-   Carry forward to each tab as it comes up: truncate its chart on a
-   rewound snapshot (Regime does this; the other seven do not), and
-   check its copy for "state"/"spell" leftovers.
+   Slice 2.6). **Regime, Stress and Breadth done 2026-08-15.
+   Advances & declines is next**, then Net new highs, McClellan,
+   India VIX, Concentration.
+   Carry forward to each tab as it comes up: (a) truncate its chart on
+   a rewound snapshot — Regime, Stress and Breadth do this, the other
+   five do not; (b) offer the index overlay (`indexOverlay()` +
+   `TimeseriesChart overlay=`), which the founder wants everywhere;
+   (c) check copy for "state"/"spell" leftovers; (d) never retype a
+   number the engine owns — ship it from the engine, as Stress now
+   does with its weights and windows.
 2. D3 sign-off → Slice 3 (RRG per RRG_SPEC.md).
 3. Slice 4 (Stock Lists detectors + daily cross-section persistence).
 4. Slice 5 (intraday, posture C) — independent, can move earlier.

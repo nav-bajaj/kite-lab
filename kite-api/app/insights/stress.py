@@ -52,6 +52,12 @@ WEIGHTS = {
 }
 assert abs(sum(WEIGHTS.values()) - 1.0) < 1e-9
 
+# Lookbacks. Components rank against one year; the headline score's
+# percentile ranks against five, so "how tense is this by recent standards"
+# isn't answered purely by the last twelve months.
+COMPONENT_WINDOW = 252
+SCORE_PERCENTILE_WINDOW = 252 * 5
+
 
 @dataclass
 class StressSnapshot:
@@ -74,6 +80,13 @@ class StressSnapshot:
     def to_dict(self) -> dict:
         d = asdict(self)
         d["date"] = self.date.isoformat() if isinstance(self.date, pd.Timestamp) else self.date
+        # Ship the weights with the reading: the UI states how the score is
+        # computed, and hardcoding them there is how displayed rules drift
+        # away from the engine.
+        d["weights"] = dict(WEIGHTS)
+        # Windows behind the percentile figures, for the same reason.
+        d["percentile_window_days"] = SCORE_PERCENTILE_WINDOW
+        d["component_window_days"] = COMPONENT_WINDOW
         return d
 
 
@@ -112,7 +125,7 @@ def _nifty_close_cached(signature) -> pd.Series:
 _nifty_close.cache_clear = _nifty_close_cached.cache_clear
 
 
-def _rolling_percentile(series: pd.Series, window: int = 252) -> pd.Series:
+def _rolling_percentile(series: pd.Series, window: int = COMPONENT_WINDOW) -> pd.Series:
     """For each date, return the percentile rank of today's value within
     the trailing `window` observations. 0 = lowest in window, 1 = highest."""
     return series.rolling(window, min_periods=max(50, window // 4)).rank(pct=True)
@@ -162,7 +175,7 @@ def _compute_stress_panel_cached(signature) -> pd.DataFrame:
         + WEIGHTS["dispersion"] * dispersion_component.fillna(0)
     )
 
-    score_pctile = _rolling_percentile(score, window=252 * 5) * 100.0  # 5y historical context
+    score_pctile = _rolling_percentile(score, window=SCORE_PERCENTILE_WINDOW) * 100.0
 
     return pd.DataFrame({
         "score": score,

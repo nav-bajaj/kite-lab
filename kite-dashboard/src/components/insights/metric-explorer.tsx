@@ -4,6 +4,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import {
   TimeseriesChart,
+  type IndexOverlay,
   type ReferenceBand,
 } from "@/components/insights/timeseries-chart";
 
@@ -27,9 +28,11 @@ export interface MetricVariant {
 export function MetricExplorer({
   dates,
   variants,
+  overlay,
 }: {
   dates: string[];
   variants: MetricVariant[];
+  overlay?: IndexOverlay;
 }) {
   const [active, setActive] = useState(variants[0]?.metric);
   const current = variants.find((v) => v.metric === active) ?? variants[0];
@@ -61,6 +64,7 @@ export function MetricExplorer({
         values={current.values}
         bands={current.bands}
         percent={current.percent}
+        overlay={overlay}
       />
     </div>
   );

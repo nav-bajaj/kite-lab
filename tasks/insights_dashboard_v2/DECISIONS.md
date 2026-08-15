@@ -318,6 +318,50 @@ capping the candle view to shorter ranges or falling back to the line.
 **TAB STATUS: Regime is DONE** (founder, 2026-08-15) — 15 comments
 across two rounds, all applied and resolved.
 
+## 2026-08-15 — Stress + Breadth (deep dive tabs 2-3)
+
+**Index overlay, now a shared capability.** Founder: most of these
+gauges only mean something against price. `GET
+/api/insights/index/timeseries?universe=` returns the scope index's
+close; `TimeseriesChart` takes an optional `overlay` and draws it
+**rebased to percent change from the left edge of the visible window**,
+on its own hidden scale, behind a toggle. Rebasing (not raw level) was
+the founder's own suggestion and is what makes the two readable
+together. Live on Stress and Breadth; reusable for the remaining tabs.
+
+**A real bug in the stress drivers card.** The engine scores each
+component 0-100; the card multiplied by 100 again, so every bar
+overflowed to full width and the numbers read ~2659 instead of 27.
+Founder spotted it as "the numbers seem off, and all the bars look
+alike". Fixed, and each row now shows its weight.
+
+**Displayed rules are now read from the engine, not retyped.** Stress
+ships `weights`, `percentile_window_days` and `component_window_days`
+on its snapshot; the "How the score is computed" bullets and the
+percentile caption render from those. (I had drafted the bullets from
+memory and got the weights wrong — 30/30/25/15 instead of the real
+35/25/20/20. Same class of error as the regime copy claiming 100/200
+windows. Hence the rule: if the UI states a number the engine owns,
+the engine ships it.)
+
+**Answers to the founder's three questions**, all from source:
+- Score percentile is over **5 years** (252*5) — not all history, not
+  one year. Caption now says so; easy to retune, it is one constant.
+- VIX percentile is **1-year rolling** (252d) — his guess was right,
+  and it is now shown on the card (p27 today).
+- "Recent high" meant the **highest close of the trailing 252 days**.
+  Copy now says "below its 1-year high".
+
+**Copy**: "Market Stress Composite" / "Market Breadth {universe}";
+"Now" → "Current score"; per-metric one-line explainers on every
+breadth chip; the dashed-line caption removed. Founder's stress
+subtitle used verbatim except "Quite stretches" → "Quiet stretches"
+(assumed typo, flagged to him).
+
+**Snapshot truncation extended** to Stress and Breadth (charts + the
+index overlay stop at the reading date). Three of eight tabs now
+rewind in full; the disclaimer is keyed off that list.
+
 ## Canonical list locations (reconciliation)
 
 | List | File | Notes |

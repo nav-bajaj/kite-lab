@@ -862,6 +862,41 @@ async def regime_history(
     }
 
 
+@router.get("/index/timeseries")
+async def index_timeseries(
+    response: Response,
+    days: int = Query(5000, ge=20, le=8000),
+    universe: str = Query(
+        "nse500",
+        description="Which universe's index: nse500 (Nifty 500), nifty250 "
+                    "(LARGEMID250), nifty100, nifty50.",
+    ),
+) -> dict:
+    """Close series of a universe's own index.
+
+    Exists so any indicator chart can carry the index as an overlay — the
+    point of most of these gauges is how they line up against price, which
+    a bare indicator line cannot show.
+    """
+    _set_cache(response)
+    if universe not in regime_mod.REGIME_UNIVERSES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown universe {universe!r}. "
+                   f"Available: {list(regime_mod.REGIME_UNIVERSES)}",
+        )
+    closes = regime_mod.regime_index_close(universe)
+    if closes.empty:
+        return {"index_label": regime_mod.regime_index_label(universe),
+                "index": [], "data": {}}
+    sub = closes.tail(days)
+    return {
+        "index_label": regime_mod.regime_index_label(universe),
+        "index": [d.isoformat() for d in sub.index],
+        "data": {"close": [_jsonable(v) for v in sub.values]},
+    }
+
+
 @router.get("/regime/timeseries")
 async def regime_timeseries(
     response: Response,

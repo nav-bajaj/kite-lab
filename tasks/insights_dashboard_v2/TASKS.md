@@ -90,8 +90,15 @@ batched, applied and click-verified before moving to the next.
 - [x] 2.6-tooling 🤖 On-page copy review: Vercel Toolbar mounted in dev
       (`read_comments.py` / `reply_comments.py` in this folder).
       See DECISIONS.md for the auth path and the COOP fix it needed.
-- [ ] 2.6b 👤 Stress tab notes.
-- [ ] 2.6c 👤 Breadth tab notes.
+- [x] 2.6b 🤖 **Stress tab** (7 notes, 2026-08-15): title/copy, Current
+      score, percentile window stated (5y) and VIX percentile shown
+      (1y), "below its 1-year high"; **drivers bar bug fixed** (0-100
+      values were multiplied by 100 again); "How the score is computed"
+      bullets rendered from engine-shipped weights/windows; index
+      overlay; snapshot truncation.
+- [x] 2.6c 🤖 **Breadth tab** (3 notes, 2026-08-15): title follows the
+      universe, dashed-line caption removed, per-metric one-line
+      explainers on every chip, index overlay, snapshot truncation.
 - [ ] 2.6d 👤 Advances & declines tab notes.
 - [ ] 2.6e 👤 Net new highs tab notes.
 - [ ] 2.6f 👤 McClellan tab notes.

@@ -58,6 +58,11 @@ export interface StressSnapshot {
   nifty_drawdown_pct: number | null;
   pct_above_200dma: number | null;
   dispersion_z: number | null;
+  /** Component weights and lookbacks straight from the engine, so the
+   *  "how this is computed" copy can never drift from the maths. */
+  weights: Record<string, number>;
+  percentile_window_days: number;
+  component_window_days: number;
 }
 
 export interface SectorBreadthSnapshot {
@@ -625,6 +630,25 @@ export async function getRegimeHistory(
 ): Promise<RegimeHistoryResponse> {
   const q = universe ? `?universe=${universe}` : "";
   return getJson<RegimeHistoryResponse>(`/api/insights/regime/history${q}`);
+}
+
+export interface IndexTimeseriesResponse {
+  index_label: string;
+  index: string[];
+  data: { close?: (number | null)[] };
+}
+
+/** The scope index's close, for drawing as an overlay on indicator charts
+ *  — most of these gauges only mean something against price. */
+export async function getIndexTimeseries(opts?: {
+  days?: number;
+  universe?: BreadthUniverse;
+}): Promise<IndexTimeseriesResponse> {
+  const params: string[] = [];
+  if (opts?.days) params.push(`days=${opts.days}`);
+  if (opts?.universe) params.push(`universe=${opts.universe}`);
+  const q = params.length ? `?${params.join("&")}` : "";
+  return getJson<IndexTimeseriesResponse>(`/api/insights/index/timeseries${q}`);
 }
 
 export interface RegimeTimeseriesResponse {
