@@ -1,68 +1,75 @@
 /**
- * Plain-English glossary for the four regime labels. Mirrors the actual
+ * Plain-English legend for the four regime labels. Mirrors the actual
  * classifier rules in `kite-api/app/insights/regime.py` so what readers
  * see here is exactly what the engine is doing — no marketing translation
  * gap.
  *
- * Lives on the Pulse page (where the regime is the headline). Also linked
- * to from any regime label via the anchor id "regime-legend" so we can
- * deep-link "What do these mean?" from anywhere on the page.
+ * The rules are stated in the open, not behind a disclosure control
+ * (founder, 2026-08-15): if the reader has to click to find out what the
+ * label means, the label is doing the talking instead of the rule. The
+ * rule text is scoped to the selected universe, because the regime is —
+ * a Nifty 500 Trend Bull reads the Nifty 500's own trend and the Nifty
+ * 500's own breadth.
  */
 
-const REGIMES = [
-  {
-    label: "Trend Bull",
-    accent: "var(--positive)",
-    rule: "NIFTY 100 above its 100-day average AND broad participation (more than 55% of NSE 500 stocks above their 200-day average).",
-    plain:
-      "Markets in a healthy uptrend — direction is up and most stocks are joining the move.",
-  },
-  {
-    label: "Drift",
-    accent: "var(--muted-foreground)",
-    rule:
-      "Neither the trend/breadth nor the stress thresholds are firing. The 'messy middle' — mixed signals.",
-    plain:
-      "Markets are neutral — neither trending strongly nor under pressure. Most common regime; about 30-35% of historical days.",
-  },
-  {
-    label: "Stretched",
-    accent: "var(--warning)",
-    rule:
-      "Uptrend in place AND very broad (more than 85% above 200-DMA) AND very low vol (VIX z-score below -1).",
-    plain:
-      "Markets are above trend, almost everything is participating, and nobody is worried — historically a setup that precedes pullbacks. Not a sell signal; just a 'be aware' tag.",
-  },
-  {
-    label: "Stress",
-    accent: "var(--negative)",
-    rule:
-      "VIX z-score above +1.5 (vol spike) OR (Nifty below trend AND less than 35% of stocks above 200-DMA).",
-    plain:
-      "Markets are under pressure — vol elevated or breadth deteriorating. Historically the BEST forward-return regime in the data: median +3% over the next 20 days from STRESS days, with 72% of observations finishing positive. The 'buy panic' zone, statistically.",
-  },
-];
+function regimes(indexLabel: string, universeLabel: string) {
+  return [
+    {
+      label: "Trend Bull",
+      accent: "var(--positive)",
+      plain:
+        "A healthy uptrend with the market behind it — direction is up and most stocks are joining the move.",
+      rule: `${indexLabel} is above its 100-day average and more than 55% of ${universeLabel} stocks are above their own 200-day average.`,
+    },
+    {
+      label: "Drift",
+      accent: "var(--muted-foreground)",
+      plain:
+        "The messy middle — neither trending strongly nor under real pressure. This is the most common regime.",
+      rule: "Neither the trend-and-participation conditions nor the stress conditions are met.",
+    },
+    {
+      label: "Stretched",
+      accent: "var(--warning)",
+      plain:
+        "Above trend, almost everything participating, and nobody worried. A description of complacency, not a sell signal.",
+      rule: `${indexLabel} is above its 100-day average, more than 85% of ${universeLabel} stocks are above their 200-day average, and India VIX sits more than one standard deviation below its own year.`,
+    },
+    {
+      label: "Stress",
+      accent: "var(--negative)",
+      plain:
+        "Conditions are tense — volatility has spiked, or the market is below trend while participation breaks down.",
+      rule: `India VIX is more than 1.5 standard deviations above its own year, or ${indexLabel} is below its 100-day average while fewer than 35% of ${universeLabel} stocks hold above their 200-day average.`,
+    },
+  ];
+}
 
-export function RegimeLegend() {
+export function RegimeLegend({
+  indexLabel = "Nifty 500",
+  universeLabel = "Nifty 500",
+}: {
+  indexLabel?: string;
+  universeLabel?: string;
+}) {
   return (
     <section id="regime-legend" className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
         <h3 className="font-serif text-xl font-medium tracking-[-0.01em] text-foreground">
-          The four market states, explained
+          The four regimes, explained
         </h3>
         <p className="text-[13px] text-muted-foreground">
-          Every day we sort the market into one of four states (the technical
-          name is &ldquo;regime&rdquo;). It&apos;s a simple rules-based read on
-          trend and stress. Each shows its plain-English meaning; open{" "}
-          &ldquo;the exact rule&rdquo; to see precisely what the engine checks —
-          so there&apos;s no gap between what we say and what the model does.
+          Every day the market is sorted into one of four regimes from three
+          observable inputs: trend, participation and volatility. Each card
+          gives the plain meaning and the exact rule the engine checks — so
+          there is no gap between what we say and what the model does.
         </p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
-        {REGIMES.map((r) => (
+        {regimes(indexLabel, universeLabel).map((r) => (
           <div
             key={r.label}
-            className="rounded-xl border border-border bg-card p-4 text-sm"
+            className="flex flex-col gap-2 rounded-xl border border-border bg-card p-4 text-sm"
           >
             <div className="flex items-center gap-2 font-medium text-foreground">
               <span
@@ -72,21 +79,17 @@ export function RegimeLegend() {
               />
               {r.label}
             </div>
-            <p className="mt-2 text-sm leading-[1.55] text-foreground">{r.plain}</p>
-            <details className="mt-2">
-              <summary className="cursor-pointer text-[13px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline">
-                See the exact rule
-              </summary>
-              <p className="mt-1.5 text-[13px] leading-[1.5] text-muted-foreground">
-                {r.rule}
-              </p>
-            </details>
+            <p className="text-sm leading-[1.55] text-foreground">{r.plain}</p>
+            <p className="text-[13px] leading-[1.5] text-muted-foreground">
+              <span className="font-medium text-foreground">The rule: </span>
+              {r.rule}
+            </p>
           </div>
         ))}
       </div>
       <p className="text-[13px] text-muted-foreground">
-        Regime transitions need 3 consecutive days in the new state before
-        the label changes (smoothing avoids day-to-day flip-flopping).
+        A regime change needs 3 consecutive days in the new regime before the
+        label switches, so a single rough session doesn&apos;t flip it.
       </p>
     </section>
   );

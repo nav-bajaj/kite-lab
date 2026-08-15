@@ -129,7 +129,7 @@ const REGIME_TONE = new Map<RegimeSnapshot["regime"], Tone>([
   ["STRESS", "negative"],
 ]);
 
-// Plain-English "so what" per market state. Descriptive of conditions — no
+// Plain-English "so what" per regime. Descriptive of conditions — no
 // buy/sell call, no forecast.
 const REGIME_TAKEAWAY = new Map<RegimeSnapshot["regime"], string>([
   ["TREND_BULL", "The market is trending up and most stocks are joining in — conditions are healthy."],
@@ -151,7 +151,7 @@ export function RegimeCard({
       : `Day ${regime.persistence_days}`;
   return (
     <MetricCard
-      label="Market state"
+      label="Regime"
       value={regimeLabel(regime.regime)}
       tone={REGIME_TONE.get(regime.regime) ?? "default"}
       sub={transitioned}

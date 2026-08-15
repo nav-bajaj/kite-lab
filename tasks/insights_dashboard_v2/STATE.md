@@ -31,9 +31,12 @@ Breadth | Advances & declines | Net new highs | McClellan | India VIX
 old "Daily read" page was removed as an Overview duplicate). Detail
 views: chart on lightweight-charts (range picker 6M→Max), reference
 bands, stat strip, "what this measures" learn panel, disclaimer.
-- Regime: episode timeline to 2009, spell stats, recent spells,
-  four-states legend. NO forward-return content (base-rates table
-  removed — founder: suggestive).
+- Regime (deep-dive pass done 2026-08-15): the chart is the universe's
+  own index with a light regime tint per day + range picker; regime is
+  computed per universe (own index trend + own breadth, VIX shared);
+  tiles show median spell length per regime + the index move this
+  spell; recent spells carry their index return; four-regime cards
+  state rules inline. NO forward-return content anywhere on the tab.
 - Breadth: metric explorer chips (% > 200/100/50/21-DMA + avg-dist).
 - A/D: daily net advances + cumulative A-D line variants.
 - Bands: Breadth-Atlas values label the Nifty 500 scope; other
@@ -50,7 +53,12 @@ cache guard; `GET /macro/timeseries`;
 `compute_concentration_panel(universe)` + `GET
 /concentration/timeseries?universe=`; `?universe=` on
 /breadth/timeseries. Two latent test bugs fixed (mixed-sign top-5
-invariant). NO changes to reading/regime/stress engines.
+invariant). Deep-dive round added universe-scoped regime:
+`compute_regime_panel/get_regime_snapshot/get_regime_history(universe)`
+(no-arg call keeps the legacy market-wide panel for notes/conditional
+dist/calendar — see DECISIONS D5), episode `index_return_pct`, `GET
+/regime/timeseries?universe=`, `?universe=` on /regime/history and
+/reading. Stress engine untouched.
 
 **Not started**: Sectors & Rotation rebuild (RRG — Slice 3, needs D3
 sign-off), Stock Lists detectors (Slice 4), intraday layer (Slice 5),
@@ -83,8 +91,9 @@ still render their pre-branch content inside the new shell.
 
 ## Next up (in order)
 
-1. Founder's indicator-by-indicator deep dive (copy, bands, stat
-   tiles, defaults — batch changes per his notes).
+1. Founder's indicator-by-indicator deep dive, tab by tab (TASKS.md
+   Slice 2.6). Regime done 2026-08-15; Stress is next, then Breadth,
+   A/D, Net new highs, McClellan, VIX, Concentration.
 2. D3 sign-off → Slice 3 (RRG per RRG_SPEC.md).
 3. Slice 4 (Stock Lists detectors + daily cross-section persistence).
 4. Slice 5 (intraday, posture C) — independent, can move earlier.

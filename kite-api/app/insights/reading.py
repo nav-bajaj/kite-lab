@@ -135,16 +135,24 @@ def _serialise_panel_row(panel: pd.DataFrame, asof: pd.Timestamp) -> dict[str, f
     return out
 
 
-def get_market_reading(asof: pd.Timestamp | None = None) -> MarketReading:
+def get_market_reading(
+    asof: pd.Timestamp | None = None,
+    universe: str | None = None,
+) -> MarketReading:
     """Compose the unified MarketReading for `asof` (default: latest).
 
     Internally calls every Phase 0 module; this is the single function
     the Daily Quant Note generator should depend on. If you find yourself
     importing more than this from insights/, the orchestrator should
     probably be extended instead.
+
+    `universe` scopes the regime only — to that universe's own index trend
+    and own breadth (see `regime.compute_regime_panel`). The rest of the
+    reading stays market-wide; the dashboard fetches the universe-scoped
+    breadth family from the timeseries endpoints.
     """
     # Use the regime panel's index as the canonical calendar (breadth ⊇ macro)
-    regime_panel = regime_mod.compute_regime_panel()
+    regime_panel = regime_mod.compute_regime_panel(universe)
     if regime_panel.empty:
         raise RuntimeError("MarketReading requires non-empty regime panel — check data pipeline")
 
@@ -156,7 +164,7 @@ def get_market_reading(asof: pd.Timestamp | None = None) -> MarketReading:
         raise ValueError(f"No data available on or before {asof}")
     asof = valid.max()
 
-    regime_snap = regime_mod.get_regime_snapshot(asof)
+    regime_snap = regime_mod.get_regime_snapshot(asof, universe=universe)
     stress_snap = stress.get_stress_snapshot(asof)
     if regime_snap is None or stress_snap is None:
         raise RuntimeError(f"Could not compute regime/stress at {asof}")

@@ -83,14 +83,26 @@ def _parse_date(date_str: Optional[str]) -> Optional[pd.Timestamp]:
 async def reading_endpoint(
     response: Response,
     date: Optional[str] = Query(None, description="As-of date, ISO YYYY-MM-DD. Default: latest."),
+    universe: Optional[str] = Query(
+        None,
+        description="Scope the regime to a universe's own index + breadth: "
+                    "nse500, nifty250, nifty100, nifty50. Default: the "
+                    "market-wide reading (NIFTY 100 trend + NSE 500 breadth).",
+    ),
 ) -> dict:
     """Full MarketReading for `date`. Includes regime, stress, sector views,
     analog matches, conditional distributions, watchlists — everything the
     Daily Quant Note has access to."""
     _set_cache(response)
     asof = _parse_date(date)
+    if universe is not None and universe not in regime_mod.REGIME_UNIVERSES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown universe {universe!r}. "
+                   f"Available: {list(regime_mod.REGIME_UNIVERSES)}",
+        )
     try:
-        r = get_market_reading(asof)
+        r = get_market_reading(asof, universe=universe)
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
     return r.to_dict()
@@ -805,25 +817,85 @@ async def subgroups_endpoint(
 
 # ---------- regime history ----------
 
+def _check_regime_universe(universe: Optional[str]) -> None:
+    if universe is not None and universe not in regime_mod.REGIME_UNIVERSES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown universe {universe!r}. "
+                   f"Available: {list(regime_mod.REGIME_UNIVERSES)}",
+        )
+
+
 @router.get("/regime/history")
-async def regime_history(response: Response) -> dict:
+async def regime_history(
+    response: Response,
+    universe: Optional[str] = Query(
+        None,
+        description="Scope: nse500, nifty250, nifty100, nifty50. Default: "
+                    "market-wide. Each universe's history starts where its "
+                    "own index series starts.",
+    ),
+) -> dict:
     """Episode-level regime history — one row per consecutive run of a
-    regime. Useful for timeline visualisations and for grounding 'this
-    phase typically lasts X days' commentary."""
+    regime, with the scope index's close-to-close move across the spell.
+    Useful for timeline visualisations and for grounding 'this phase
+    typically lasts X days' commentary."""
     _set_cache(response)
-    history = regime_mod.get_regime_history()
+    _check_regime_universe(universe)
+    history = regime_mod.get_regime_history(universe)
     if history.empty:
-        return {"episodes": []}
+        return {"episodes": [], "index_label": None}
     return {
+        "index_label": (
+            regime_mod.regime_index_label(universe) if universe else "Nifty 100"
+        ),
         "episodes": [
             {
                 "regime": str(row["regime"]),
                 "start": row["start"].isoformat(),
                 "end": row["end"].isoformat(),
                 "days": int(row["days"]),
+                "index_return_pct": _jsonable(row["index_return_pct"]),
             }
             for _, row in history.iterrows()
         ],
+    }
+
+
+@router.get("/regime/timeseries")
+async def regime_timeseries(
+    response: Response,
+    days: int = Query(5000, ge=20, le=8000),
+    universe: Optional[str] = Query(
+        None,
+        description="Scope: nse500, nifty250, nifty100, nifty50. Default: "
+                    "market-wide (NIFTY 100).",
+    ),
+) -> dict:
+    """The scope index's close alongside its regime label per day — the
+    payload behind the regime chart, where the index line carries a light
+    regime-coloured overlay. History starts where that index starts."""
+    _set_cache(response)
+    _check_regime_universe(universe)
+    panel = regime_mod.compute_regime_panel(universe)
+    if panel.empty:
+        return {"index": [], "data": {}, "index_label": None}
+    closes = (
+        regime_mod.regime_index_close(universe)
+        if universe
+        else regime_mod.regime_index_close("nifty100")
+    )
+    sub = panel.tail(days)
+    close_aligned = closes.reindex(sub.index)
+    return {
+        "index_label": (
+            regime_mod.regime_index_label(universe) if universe else "Nifty 100"
+        ),
+        "index": [d.isoformat() for d in sub.index],
+        "data": {
+            "close": [_jsonable(v) for v in close_aligned.values],
+            "regime": [str(v) for v in sub["regime"].values],
+        },
     }
 
 

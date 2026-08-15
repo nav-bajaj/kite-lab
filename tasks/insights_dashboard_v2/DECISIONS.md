@@ -144,6 +144,50 @@ Founder reviewed the built dashboard live. Decisions, as implemented:
 - **Next**: founder wants an indicator-by-indicator deep dive; "a lot
   of nitty gritties to be tackled."
 
+## 2026-08-15 — deep dive, tab 1: Regime
+
+Founder notes on the Regime tab, as implemented:
+
+- **The chart is the index, not a timeline.** Show the universe's own
+  index with the regime as a light colour overlay on it — reading the
+  regime against the price it produced is the point. Each universe
+  plots from the date its own index series begins. Standard range
+  picker (6M/1Y/3Y/5Y/Max, defaulting to Max).
+- **Regime is defined per universe.** A Nifty 500 Trend Bull reads the
+  NIFTY 500's trend and the NSE 500's breadth — not the Nifty 100's.
+  `compute_regime_panel(universe)` scopes both inputs; India VIX stays
+  shared because there is no per-universe volatility index.
+- **History depth is bounded by the index series**, and differs per
+  scope: Nifty 100 / Nifty 50 from 2010, Nifty 500 from May 2015,
+  Nifty 250 (LARGEMID250) from May 2020. Founder accepted this
+  explicitly ("from the point that we have the data for that one").
+- **The legacy market-wide panel is retained** for the note generator,
+  conditional distributions and calendar lookbacks — `compute_regime_
+  panel()` with no argument is unchanged (NIFTY 100 trend + NSE 500
+  breadth, 2010+). Those surfaces would otherwise silently lose five
+  years of base-rate history. **Open (D5): should the Daily Quant Note
+  adopt the universe-scoped regime, accepting the shorter history?**
+- **Stat tiles**: median spell length for each of the four regimes,
+  plus the index's move since the current spell began. The total count
+  of spells on record is dropped — it wasn't telling anyone anything.
+- **Recent spells list** carries what the index did across each spell
+  (close to close, coloured by sign).
+- **Language standardised to "Regime"** — the word "state" is gone
+  from the UI.
+- **Explainers are stated plainly.** The four-regime cards no longer
+  hide their rule behind a "See the exact rule" disclosure; the rule
+  is printed under the plain-English meaning, and it names the
+  selected universe's index and breadth. The bottom panel is retitled
+  "Learn more" (applied to every Market tab for consistency).
+- **Removed while in there**: the Stress card in the four-regime
+  legend carried a forward-return claim ("median +3% over the next 20
+  days... the 'buy panic' zone, statistically"). That contradicted the
+  2026-08-14 decision banning forward-return content from the regime
+  detail, and it was live. It is gone. **Note the `/insights/learn/
+  regime` explainer still contains the same class of claim** and is
+  one click away via "Read the full explainer" — flagged for the D4
+  compliance pass, not edited unilaterally.
+
 ## Canonical list locations (reconciliation)
 
 | List | File | Notes |

@@ -7,6 +7,7 @@ import {
   getMacroTimeseries,
   getConcentrationTimeseries,
   getRegimeHistory,
+  getRegimeTimeseries,
   fmtPct,
   fmtNum,
   insightsQuery,
@@ -23,6 +24,7 @@ import { MARKET_TABS } from "../_tabs";
 import { RegimeLegend } from "../../_components/regime-legend";
 import { TimeseriesChart, type ReferenceBand } from "@/components/insights/timeseries-chart";
 import { MetricExplorer, type MetricVariant } from "@/components/insights/metric-explorer";
+import { RegimeChart } from "@/components/insights/regime-chart";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 900;
@@ -76,7 +78,7 @@ function LearnPanel({
           href={`/insights/learn/${slug}`}
           className="text-[13px] font-medium text-primary underline-offset-2 hover:underline"
         >
-          Learn more →
+          Read the full explainer →
         </Link>
       )}
     </div>
@@ -243,7 +245,7 @@ async function BreadthDetail({
           },
         ]}
       />
-      <LearnPanel slug="pct-above-200dma" title="What this measures">
+      <LearnPanel slug="pct-above-200dma" title="Learn more">
         Breadth counts how many stocks are in long-term uptrends, not just
         whether the index is up. Narrow rallies — index rising while breadth
         stalls — have historically been the more fragile kind. This series
@@ -327,7 +329,7 @@ async function AdvanceDeclineDetail({
           },
         ]}
       />
-      <LearnPanel title="What this measures">
+      <LearnPanel title="Learn more">
         The most direct participation gauge there is: how many stocks rose
         versus fell today. Single days are noise — the daily series mean-
         reverts almost immediately — which is why the cumulative A-D line
@@ -400,7 +402,7 @@ async function StressDetail({ reading }: { reading: MarketReading }) {
           </div>
         ))}
       </div>
-      <LearnPanel slug="stress-score" title="What this measures">
+      <LearnPanel slug="stress-score" title="Learn more">
         A single 0–100 read on how tense conditions are, blending four
         observable inputs. It describes the environment — calm markets tend to
         produce smaller swings, stressed ones bigger and faster swings — and
@@ -449,7 +451,7 @@ async function VixDetail({ reading }: { reading: MarketReading }) {
           },
         ]}
       />
-      <LearnPanel slug="vix" title="What this measures">
+      <LearnPanel slug="vix" title="Learn more">
         VIX reads the price of near-term protection: how much movement option
         buyers are paying for over the next month. Low readings describe calm;
         high readings describe fear already being priced. It says nothing
@@ -517,7 +519,7 @@ async function NetNewHighsDetail({
           },
         ]}
       />
-      <LearnPanel title="What this measures">
+      <LearnPanel title="Learn more">
         New-high/new-low counts catch leadership turning before averages do —
         a rally where fewer and fewer names make new highs is thinning out
         even while the index holds up. The measure is asymmetric by nature:
@@ -569,7 +571,7 @@ async function McClellanDetail({
           { label: "Top 5% of days", value: "+0.067", sub: "heavy buying flow" },
         ]}
       />
-      <LearnPanel slug="mcclellan-oscillator" title="What this measures">
+      <LearnPanel slug="mcclellan-oscillator" title="Learn more">
         A zero-centered oscillator over daily advances minus declines. It
         flickers — most readings sit in the middle band, and extremes fade
         within days. Historically its sharpest positive spikes have clustered
@@ -674,7 +676,7 @@ async function ConcentrationDetail({
           Nifty 50 scope, where official index weights exist.
         </p>
       )}
-      <LearnPanel slug="concentration" title="What this measures">
+      <LearnPanel slug="concentration" title="Learn more">
         Whether the index&apos;s move is the market&apos;s move. A persistently
         positive spread means a handful of heavyweights are carrying the
         tape while the average stock lags — the kind of rally that looks
@@ -691,103 +693,101 @@ const REGIME_COLOR: Record<RegimeEpisode["regime"], string> = {
   STRESS: "var(--negative)",
 };
 
-function RegimeTimeline({ episodes }: { episodes: RegimeEpisode[] }) {
-  if (episodes.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground">
-        Regime history is not available right now.
-      </p>
-    );
-  }
-  const totalDays = episodes.reduce((acc, e) => acc + e.days, 0);
-  const W = 1000;
-  const H = 34;
-  const segments = episodes.reduce<{ x: number; w: number }[]>((arr, e) => {
-    const prev = arr.length > 0 ? arr[arr.length - 1] : null;
-    arr.push({ x: prev ? prev.x + prev.w : 0, w: (e.days / totalDays) * W });
-    return arr;
-  }, []);
-  return (
-    <div className="flex flex-col gap-2">
-      <svg viewBox={`0 0 ${W} ${H}`} className="h-9 w-full" preserveAspectRatio="none">
-        {episodes.map((e, i) => (
-          <rect
-            key={`${e.start}-${i}`}
-            /* eslint-disable-next-line security/detect-object-injection -- numeric loop index */
-            x={segments[i].x}
-            y={6}
-            /* eslint-disable-next-line security/detect-object-injection -- numeric loop index */
-            width={Math.max(segments[i].w - 0.5, 0.5)}
-            height={22}
-            rx={2}
-            fill={REGIME_COLOR[e.regime]}
-            opacity={0.85}
-          />
-        ))}
-      </svg>
-      <div className="flex justify-between text-[11px] text-muted-foreground">
-        <span>
-          {new Date(episodes[0].start).toLocaleDateString("en-IN", {
-            month: "short",
-            year: "numeric",
-          })}
-        </span>
-        <span>
-          {new Date(episodes[episodes.length - 1].end).toLocaleDateString("en-IN", {
-            month: "short",
-            year: "numeric",
-          })}
-        </span>
-      </div>
-      <div className="flex flex-wrap gap-4 pt-1">
-        {(Object.keys(REGIME_COLOR) as RegimeEpisode["regime"][]).map((r) => (
-          <span key={r} className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
-            <span
-              className="inline-block h-2.5 w-2.5 rounded-[3px]"
-              /* eslint-disable-next-line security/detect-object-injection -- r iterates REGIME_COLOR's own keys */
-              style={{ backgroundColor: REGIME_COLOR[r] }}
-            />
-            {regimeLabel(r)}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
+const REGIME_ORDER = Object.keys(REGIME_COLOR) as RegimeEpisode["regime"][];
+
+/** Median spell length per regime, in days — the typical duration of each
+ *  regime rather than how many of them there have been. */
+function medianSpellDays(episodes: RegimeEpisode[], regime: string): number | null {
+  const lengths = episodes
+    .filter((e) => e.regime === regime)
+    .map((e) => e.days)
+    .sort((a, b) => a - b);
+  if (lengths.length === 0) return null;
+  return lengths.at(Math.floor(lengths.length / 2)) ?? null;
 }
 
-async function RegimeDetail({ reading }: { reading: MarketReading }) {
-  const { episodes } = await getRegimeHistory().catch(() => ({ episodes: [] as RegimeEpisode[] }));
+async function RegimeDetail({
+  reading,
+  universe,
+}: {
+  reading: MarketReading;
+  universe: BreadthUniverse;
+}) {
+  const [history, series] = await Promise.all([
+    getRegimeHistory(universe).catch(() => ({
+      index_label: null,
+      episodes: [] as RegimeEpisode[],
+    })),
+    getRegimeTimeseries({ universe }).catch(() => ({
+      index_label: null,
+      index: [] as string[],
+      data: {} as { close?: (number | null)[]; regime?: string[] },
+    })),
+  ]);
+  const episodes = history.episodes;
   const r = reading.regime;
-  const sameRegime = episodes.filter((e) => e.regime === r.regime);
-  const sorted = [...sameRegime].sort((a, b) => a.days - b.days);
-  const medianDays =
-    sorted.length > 0 ? sorted[Math.floor(sorted.length / 2)].days : null;
+  const indexLabel = series.index_label ?? history.index_label ?? r.index_label;
   const recent = [...episodes].slice(-10).reverse();
+  const current = episodes.at(-1);
 
   return (
     <div className="flex flex-col gap-4">
       <ChartCard
-        title="Market state over time"
-        sub="One of four rules-based states each day, smoothed with a 3-day confirmation so the label doesn't flip on noise."
+        title={`${indexLabel} through its regimes`}
+        sub={`The index itself, tinted by the regime in force each day. One of four rules-based regimes, smoothed with a 3-day confirmation so the label doesn't flip on noise. History starts where ${indexLabel} data begins.`}
       >
-        <RegimeTimeline episodes={episodes} />
+        <RegimeChart
+          dates={series.index}
+          closes={series.data.close ?? []}
+          regimes={series.data.regime ?? []}
+          indexLabel={indexLabel}
+        />
       </ChartCard>
       <StatStrip
         stats={[
           { label: "Now", value: regimeLabel(r.regime), sub: `day ${r.persistence_days}` },
           {
-            label: "Previous state",
+            label: "Previous regime",
             value: r.prev_regime ? regimeLabel(r.prev_regime) : "—",
             sub: r.prev_regime_lasted_days ? `lasted ${r.prev_regime_lasted_days} days` : undefined,
           },
           {
-            label: `Median ${regimeLabel(r.regime)} spell`,
-            value: medianDays !== null ? `${medianDays} days` : "—",
-            sub: `across ${sameRegime.length} historical spells`,
+            label: `${indexLabel} this spell`,
+            value: fmtPct(current?.index_return_pct ?? null, 1, true),
+            sub: "since the regime began",
           },
-          { label: "Spells on record", value: String(episodes.length), sub: "all states" },
         ]}
       />
+      <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          Typical spell length
+        </span>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {REGIME_ORDER.map((reg) => {
+            const days = medianSpellDays(episodes, reg);
+            return (
+              <div key={reg} className="flex flex-col gap-0.5">
+                <span className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
+                  <span
+                    className="inline-block h-2.5 w-2.5 rounded-[3px]"
+                    /* eslint-disable-next-line security/detect-object-injection -- reg iterates a literal tuple */
+                    style={{ backgroundColor: REGIME_COLOR[reg] }}
+                  />
+                  {regimeLabel(reg)}
+                </span>
+                <span className="font-serif text-xl font-medium text-foreground">
+                  {days !== null ? `${days} days` : "—"}
+                </span>
+                <span className="text-[11px] text-muted-foreground">median spell</span>
+              </div>
+            );
+          })}
+        </div>
+        <p className="text-[12px] leading-[1.5] text-muted-foreground">
+          Spells vary widely in length — the medians are context, not a
+          countdown.
+        </p>
+      </div>
       <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
         <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           Recent spells
@@ -805,23 +805,42 @@ async function RegimeDetail({ reading }: { reading: MarketReading }) {
                 />
                 {regimeLabel(e.regime)}
               </span>
-              <span className="font-mono text-[12px] tabular-nums text-muted-foreground">
-                {new Date(e.start).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "2-digit" })}
-                {" — "}
-                {new Date(e.end).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "2-digit" })}
-                {" · "}
-                {e.days}d
+              <span className="flex items-center gap-3 font-mono text-[12px] tabular-nums">
+                <span className="text-muted-foreground">
+                  {new Date(e.start).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "2-digit" })}
+                  {" — "}
+                  {new Date(e.end).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "2-digit" })}
+                  {" · "}
+                  {e.days}d
+                </span>
+                <span
+                  className="w-16 text-right font-medium"
+                  style={{
+                    color:
+                      e.index_return_pct === null
+                        ? "var(--muted-foreground)"
+                        : e.index_return_pct >= 0
+                          ? "var(--positive)"
+                          : "var(--negative)",
+                  }}
+                >
+                  {fmtPct(e.index_return_pct, 1, true)}
+                </span>
               </span>
             </div>
           ))}
         </div>
+        <p className="text-[12px] text-muted-foreground">
+          The right-hand figure is what {indexLabel} did over the spell,
+          close to close.
+        </p>
       </div>
-      <RegimeLegend />
-      <LearnPanel slug="regime" title="What this measures">
-        The market state is a rules-based label built from trend (Nifty 100 vs
-        its 100-day average), participation (breadth) and volatility. States
-        describe conditions; they are not signals. Spells vary widely in
-        length — the median above is context, not a countdown.
+      <RegimeLegend indexLabel={indexLabel} universeLabel={universeLabel(universe)} />
+      <LearnPanel slug="regime" title="Learn more">
+        The regime is a rules-based label built from trend ({indexLabel}{" "}
+        versus its 100-day average), participation (how many{" "}
+        {universeLabel(universe)} stocks are above their 200-day average) and
+        volatility (India VIX). It describes conditions; it is not a signal.
       </LearnPanel>
     </div>
   );
@@ -842,7 +861,8 @@ export default async function MarketIndicatorPage({
   const title = TITLES[indicator as keyof typeof TITLES];
   const universe = parseUniverse(rawUniverse);
   const dateQuery = insightsQuery({ date, universe });
-  const reading = await getReading(date);
+  // The regime is universe-scoped, so the reading is fetched per scope.
+  const reading = await getReading(date, universe);
 
   return (
     <DetailShell
@@ -853,7 +873,7 @@ export default async function MarketIndicatorPage({
       basePath="/insights/market"
       dateQuery={dateQuery}
     >
-      {indicator === "regime" && <RegimeDetail reading={reading} />}
+      {indicator === "regime" && <RegimeDetail reading={reading} universe={universe} />}
       {indicator === "breadth" && <BreadthDetail reading={reading} universe={universe} />}
       {indicator === "stress" && <StressDetail reading={reading} />}
       {indicator === "advance-decline" && (

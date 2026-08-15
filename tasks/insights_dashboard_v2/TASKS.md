@@ -69,6 +69,31 @@ Everything here runs on endpoints that already exist in production
       new IA; legacy pages (sectors/watchlists/screener/learn/stocks)
       render correctly inside the app shell; no old-layout links remain.
 
+## Slice 2.6 — Founder indicator deep dive (tab by tab)
+
+The founder walks Market Pulse one tab at a time and gives notes on
+copy, reference bands, stat tiles and defaults; each tab's notes are
+batched, applied and click-verified before moving to the next.
+
+- [x] 2.6a 🤖 **Regime tab** (notes 2026-08-15). Chart is now the
+      universe's own index with a light regime tint per day (replaces
+      the episode-share timeline) + the standard 6M/1Y/3Y/5Y/Max
+      picker; regime is computed **per universe** (own index trend +
+      own breadth) so history starts where that index's data starts;
+      stat tiles show median spell length per regime and the index
+      move this spell (total spell count dropped); recent-spells rows
+      carry the index's close-to-close return; language standardised
+      to "Regime" (never "state"); the four-regime cards state their
+      rule inline instead of behind a disclosure; bottom panel
+      retitled "Learn more" across every tab.
+- [ ] 2.6b 👤 Stress tab notes.
+- [ ] 2.6c 👤 Breadth tab notes.
+- [ ] 2.6d 👤 Advances & declines tab notes.
+- [ ] 2.6e 👤 Net new highs tab notes.
+- [ ] 2.6f 👤 McClellan tab notes.
+- [ ] 2.6g 👤 India VIX tab notes.
+- [ ] 2.6h 👤 Concentration tab notes.
+
 ## Slice 3 — Sectors & Rotation (the RRG flagship) — needs D3
 
 - [ ] 3.1 🤖 [data] Add missing indices to `tracked_indices.csv`

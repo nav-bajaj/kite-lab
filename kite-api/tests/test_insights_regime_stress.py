@@ -232,6 +232,124 @@ class TestRegimeSmoothingSpec:
         assert out.iloc[0] == "STRESS"
 
 
+class TestUniverseScopedRegimeSpec:
+    """Spec: the regime is defined per universe — a Nifty 500 TREND_BULL
+    reads the NIFTY 500's own trend and the NSE 500's own breadth, not the
+    NIFTY 100's (founder, 2026-08-15).
+
+    The no-argument call keeps the legacy market-wide definition (NIFTY 100
+    trend + NSE 500 breadth, 2010+) because the note generator, conditional
+    distributions and calendar lookbacks depend on its depth — the NIFTY 500
+    price series only starts in 2015.
+    """
+
+    @pytest.fixture(scope="class", autouse=True)
+    def _clear_cache(self):
+        regime.clear_cache()
+        breadth.clear_cache()
+        macro.clear_cache()
+
+    def test_universes_match_the_breadth_universes(self):
+        assert regime.REGIME_UNIVERSES == breadth.BREADTH_UNIVERSES
+
+    def test_each_universe_names_its_own_index(self):
+        assert regime.regime_index_label("nse500") == "Nifty 500"
+        assert regime.regime_index_label("nifty250") == "Nifty 250"
+        assert regime.regime_index_label("nifty100") == "Nifty 100"
+        assert regime.regime_index_label("nifty50") == "Nifty 50"
+
+    def test_unknown_universe_rejected(self):
+        with pytest.raises(ValueError):
+            regime.compute_regime_panel("nifty42")
+
+    @pytest.mark.parametrize("universe", ["nse500", "nifty250", "nifty100", "nifty50"])
+    def test_panel_builds_for_every_universe(self, universe):
+        panel = regime.compute_regime_panel(universe)
+        assert not panel.empty
+        for col in ["raw_regime", "regime", "persistence_days",
+                    "index_above_100dma", "pct_above_200dma", "vix_zscore_252d"]:
+            assert col in panel.columns, f"{universe} panel missing {col}"
+        assert set(panel["regime"].unique()).issubset(set(regime.REGIMES))
+
+    def test_trend_filter_differs_between_universes(self):
+        """Spec: the trend input is the universe's OWN index. Nifty 50 and
+        Nifty 500 do not sit above their 100-DMA on exactly the same days."""
+        small = regime.compute_regime_panel("nifty50")["index_above_100dma"]
+        broad = regime.compute_regime_panel("nse500")["index_above_100dma"]
+        common = small.index.intersection(broad.index)
+        assert len(common) > 500
+        assert not small.loc[common].equals(broad.loc[common]), (
+            "Nifty 50 and Nifty 500 trend filters are identical — the "
+            "universe's own index is not being used"
+        )
+
+    def test_breadth_input_is_the_universes_own_breadth(self):
+        """Spec: participation is measured over the same universe, not
+        always the NSE 500."""
+        panel = regime.compute_regime_panel("nifty50")
+        own = breadth.get_breadth_panel("nifty50")["pct_above_200dma"]
+        common = panel.index.intersection(own.index)
+        assert len(common) > 500
+        pd.testing.assert_series_equal(
+            panel.loc[common, "pct_above_200dma"],
+            own.loc[common],
+            check_names=False,
+        )
+
+    def test_panel_starts_where_that_index_has_data(self):
+        """Spec: each universe's regime starts from the point its own index
+        series begins (plus the 100-day average warm-up), never before."""
+        # NIFTY 500 history starts 2015-01-01; LARGEMID250 starts 2020-01-01.
+        assert regime.compute_regime_panel("nse500").index.min() >= pd.Timestamp("2015-01-01")
+        assert regime.compute_regime_panel("nifty250").index.min() >= pd.Timestamp("2020-01-01")
+        # ...and each must actually start soon after warm-up, not years later.
+        assert regime.compute_regime_panel("nse500").index.min() <= pd.Timestamp("2015-12-31")
+
+    def test_legacy_market_wide_panel_is_unchanged(self):
+        """Regression guard: the no-argument call keeps its 2010 depth and
+        its NIFTY 100 trend column for the note generator."""
+        panel = regime.compute_regime_panel()
+        assert "nifty100_above_100dma" in panel.columns
+        assert panel.index.min() <= pd.Timestamp("2010-12-31")
+
+    def test_snapshot_carries_its_scope(self):
+        snap = regime.get_regime_snapshot(universe="nifty50")
+        assert snap is not None
+        assert snap.universe == "nifty50"
+        assert snap.index_label == "Nifty 50"
+        json.dumps(snap.to_dict())
+
+    def test_covid_crash_is_stress_in_every_universe(self):
+        """Sanity across definitions: March 2020 was stress everywhere the
+        data reaches (LARGEMID250 starts 2020-01, so it warms up later)."""
+        for universe in ["nse500", "nifty100", "nifty50"]:
+            snap = regime.get_regime_snapshot(pd.Timestamp("2020-03-23"), universe=universe)
+            assert snap is not None, universe
+            assert snap.regime == regime.STRESS, f"{universe} → {snap.regime}"
+
+    def test_history_episodes_carry_the_index_move(self):
+        """Spec: each episode reports what the universe's index did over the
+        spell, so the UI can say what the market actually returned."""
+        h = regime.get_regime_history("nse500")
+        assert not h.empty
+        assert "index_return_pct" in h.columns
+        for _, ep in h.iterrows():
+            assert ep["regime"] in regime.REGIMES
+            assert ep["start"] <= ep["end"]
+            assert ep["days"] >= 1
+            if ep["index_return_pct"] is not None and not pd.isna(ep["index_return_pct"]):
+                assert -0.95 < float(ep["index_return_pct"]) < 3.0
+
+    def test_episode_index_return_matches_the_index_series(self):
+        """Spec: the reported move is close-to-close across the spell."""
+        h = regime.get_regime_history("nifty50")
+        closes = regime.regime_index_close("nifty50")
+        ep = h.iloc[len(h) // 2]
+        window = closes.loc[ep["start"]:ep["end"]]
+        expected = float(window.iloc[-1]) / float(window.iloc[0]) - 1.0
+        assert abs(float(ep["index_return_pct"]) - expected) < 1e-9
+
+
 class TestStressBoundarySpec:
     """Spec for stress panel boundary cases — missing components, weights."""
 

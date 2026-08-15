@@ -64,12 +64,16 @@ class RegimeSnapshot:
     persistence_days: int              # how long current regime has held
     days_since_last_change: int        # alias / clarity
     # Inputs that drove the call (for commentary to surface)
-    nifty100_above_100dma: bool
+    nifty100_above_100dma: bool        # legacy alias of index_above_100dma
     pct_above_200dma: float | None
     vix_zscore_252d: float | None
     # Previous regime (for transition narratives)
     prev_regime: str | None
     prev_regime_lasted_days: int | None
+    # Scope. `universe` is None for the legacy market-wide reading.
+    universe: str | None = None
+    index_label: str = "Nifty 100"
+    index_above_100dma: bool = False
 
     def to_dict(self) -> dict:
         d = asdict(self)
@@ -83,6 +87,71 @@ def _indices_dir() -> Path:
     if external.exists():
         return external
     return settings.data_dir / "indices_data_historical"
+
+
+# Universe-scoped regime (insights_dashboard_v2): a Nifty 500 TREND_BULL
+# reads the NIFTY 500's own trend and the NSE 500's own breadth. Each
+# universe's regime therefore starts where its index series starts —
+# NIFTY 500 from 2015, LARGEMID250 from 2020 — which is why the
+# no-argument call keeps the legacy market-wide definition below
+# (NIFTY 100 trend + NSE 500 breadth, 2010+) for the note generator,
+# conditional distributions and calendar lookbacks that need the depth.
+REGIME_UNIVERSES = _breadth.BREADTH_UNIVERSES
+
+_UNIVERSE_INDEX: dict[str, tuple[str, str]] = {
+    "nse500": ("NIFTY_500.csv", "Nifty 500"),
+    "nifty250": ("NIFTY_LARGEMID250.csv", "Nifty 250"),
+    "nifty100": ("NIFTY_100.csv", "Nifty 100"),
+    "nifty50": ("NIFTY_50.csv", "Nifty 50"),
+}
+
+# VIX is market-wide — there is no per-universe volatility index, so every
+# universe's regime shares the same volatility input. Documented rather
+# than silently assumed.
+_TREND_DMA = 100
+
+
+def _check_universe(universe: str) -> None:
+    if universe not in _UNIVERSE_INDEX:
+        raise ValueError(
+            f"Unknown universe {universe!r}; expected one of {REGIME_UNIVERSES}"
+        )
+
+
+def regime_index_label(universe: str) -> str:
+    """Display name of the index whose trend defines this universe's regime."""
+    _check_universe(universe)
+    return _UNIVERSE_INDEX[universe][1]
+
+
+def _universe_index_path(universe: str) -> Path:
+    _check_universe(universe)
+    return _indices_dir() / _UNIVERSE_INDEX[universe][0]
+
+
+def regime_index_close(universe: str) -> pd.Series:
+    """Close series of the universe's own index (full available history)."""
+    return _index_close_cached(universe, file_signature(_universe_index_path(universe)))
+
+
+@lru_cache(maxsize=8)
+def _index_close_cached(universe: str, signature: float) -> pd.Series:
+    p = _universe_index_path(universe)
+    if not p.exists():
+        return pd.Series(dtype=float)
+    df = pd.read_csv(p, parse_dates=["date"]).set_index("date").sort_index()
+    return df["close"].dropna()
+
+
+def _index_above_100dma(universe: str) -> pd.Series:
+    """Bool series: True on days the universe's index closed above its
+    100-day average. NaN warm-up days are dropped, which is what bounds
+    each universe's regime history."""
+    close = regime_index_close(universe)
+    if close.empty:
+        return pd.Series(dtype=bool)
+    dma = close.rolling(_TREND_DMA, min_periods=_TREND_DMA).mean()
+    return (close > dma)[dma.notna()].astype(bool)
 
 
 def _nifty100_signature() -> tuple:
@@ -192,9 +261,66 @@ def _compute_persistence(regime_series: pd.Series) -> pd.Series:
 _nifty100_above_100dma.cache_clear = _nifty100_above_100dma_cached.cache_clear
 
 
-def compute_regime_panel() -> pd.DataFrame:
-    """Time series of regime classifications with persistence tracking."""
-    return _compute_regime_panel_cached(_signature())
+def compute_regime_panel(universe: str | None = None) -> pd.DataFrame:
+    """Time series of regime classifications with persistence tracking.
+
+    `universe=None` is the legacy market-wide reading (NIFTY 100 trend +
+    NSE 500 breadth, 2010+). Passing a universe scopes both the trend
+    filter and the participation input to that universe's own index and
+    own breadth panel, and bounds the history to where that index starts.
+    """
+    if universe is None:
+        return _compute_regime_panel_cached(_signature())
+    _check_universe(universe)
+    return _compute_universe_panel_cached(_universe_signature(universe))
+
+
+def _universe_signature(universe: str) -> tuple:
+    return (
+        (universe,)
+        + _breadth._signature(universe)
+        + _macro._signature()
+        + (file_signature(_universe_index_path(universe)),)
+    )
+
+
+@lru_cache(maxsize=8)
+def _compute_universe_panel_cached(signature) -> pd.DataFrame:
+    universe = signature[0]
+    breadth_panel = get_breadth_panel(universe)
+    macro_panel = get_macro_panel()
+    index_up = _index_above_100dma(universe)
+    if breadth_panel.empty or index_up.empty:
+        return pd.DataFrame()
+
+    # The universe's own index bounds the history — no regime before its
+    # 100-DMA exists. Breadth/macro are then aligned onto that calendar.
+    idx = breadth_panel.index.intersection(index_up.index)
+    if len(idx) == 0:
+        return pd.DataFrame()
+
+    macro_aligned = macro_panel.reindex(idx).ffill()
+    index_aligned = index_up.reindex(idx).ffill().fillna(False).astype(bool)
+    pct_200 = breadth_panel.loc[idx, "pct_above_200dma"]
+    vix_z = macro_aligned["vix_zscore_252d"]
+
+    raw = pd.Series("", index=idx, dtype=object)
+    for i in range(len(idx)):
+        raw.iloc[i] = _classify_one(
+            nifty_up=bool(index_aligned.iloc[i]),
+            pct_200=(None if pd.isna(pct_200.iloc[i]) else float(pct_200.iloc[i])),
+            vix_z=(None if pd.isna(vix_z.iloc[i]) else float(vix_z.iloc[i])),
+        )
+
+    smoothed = _apply_smoothing(raw, SMOOTHING_DAYS)
+    return pd.DataFrame({
+        "raw_regime": raw,
+        "regime": smoothed,
+        "persistence_days": _compute_persistence(smoothed),
+        "index_above_100dma": index_aligned,
+        "pct_above_200dma": pct_200,
+        "vix_zscore_252d": vix_z,
+    })
 
 
 @lru_cache(maxsize=2)
@@ -227,14 +353,19 @@ def _compute_regime_panel_cached(signature) -> pd.DataFrame:
         "regime": smoothed,
         "persistence_days": persistence,
         "nifty100_above_100dma": nifty_aligned,
+        "index_above_100dma": nifty_aligned,
         "pct_above_200dma": pct_200,
         "vix_zscore_252d": vix_z,
     })
 
 
-def get_regime_snapshot(asof: pd.Timestamp | None = None) -> RegimeSnapshot | None:
-    """Regime snapshot for `asof` (default: most recent date)."""
-    panel = compute_regime_panel()
+def get_regime_snapshot(
+    asof: pd.Timestamp | None = None,
+    universe: str | None = None,
+) -> RegimeSnapshot | None:
+    """Regime snapshot for `asof` (default: most recent date), scoped to
+    `universe` when given (see `compute_regime_panel`)."""
+    panel = compute_regime_panel(universe)
     if panel.empty:
         return None
 
@@ -261,41 +392,71 @@ def get_regime_snapshot(asof: pd.Timestamp | None = None) -> RegimeSnapshot | No
             prev_regime = different.loc[transition_idx, "regime"]
             prev_lasted = int(different.loc[transition_idx, "persistence_days"])
 
+    index_up = bool(row["index_above_100dma"])
     return RegimeSnapshot(
         date=asof,
         regime=row["regime"],
         persistence_days=int(row["persistence_days"]),
         days_since_last_change=int(row["persistence_days"]),
-        nifty100_above_100dma=bool(row["nifty100_above_100dma"]),
+        nifty100_above_100dma=index_up,
         pct_above_200dma=(float(row["pct_above_200dma"])
                           if pd.notna(row["pct_above_200dma"]) else None),
         vix_zscore_252d=(float(row["vix_zscore_252d"])
                          if pd.notna(row["vix_zscore_252d"]) else None),
         prev_regime=prev_regime,
         prev_regime_lasted_days=prev_lasted,
+        universe=universe,
+        index_label=regime_index_label(universe) if universe else "Nifty 100",
+        index_above_100dma=index_up,
     )
 
 
-def get_regime_history() -> pd.DataFrame:
-    """Summary table: one row per regime episode, with start/end dates
-    and duration. Useful for "historical phases like this lasted ~X days"
-    type commentary."""
-    panel = compute_regime_panel()
+def get_regime_history(universe: str | None = None) -> pd.DataFrame:
+    """Summary table: one row per regime episode, with start/end dates,
+    duration, and what the scope's index did across the spell.
+
+    `index_return_pct` is the close-to-close move of the universe's own
+    index over the episode (NIFTY 100 for the legacy market-wide call) —
+    so the UI can say what the market actually returned during it.
+    """
+    panel = compute_regime_panel(universe)
     if panel.empty:
         return pd.DataFrame()
 
+    closes = regime_index_close(universe) if universe else _legacy_index_close()
+
     # Group consecutive runs of the same regime
-    regime = panel["regime"]
-    changes = (regime != regime.shift()).cumsum()
+    regime_series = panel["regime"]
+    changes = (regime_series != regime_series.shift()).cumsum()
     episodes = []
-    for episode_id, episode in regime.groupby(changes):
+    for _, episode in regime_series.groupby(changes):
+        start, end = episode.index[0], episode.index[-1]
         episodes.append({
             "regime": episode.iloc[0],
-            "start": episode.index[0],
-            "end": episode.index[-1],
+            "start": start,
+            "end": end,
             "days": len(episode),
+            "index_return_pct": _window_return(closes, start, end),
         })
     return pd.DataFrame(episodes)
+
+
+def _legacy_index_close() -> pd.Series:
+    return _index_close_cached("nifty100", file_signature(_universe_index_path("nifty100")))
+
+
+def _window_return(closes: pd.Series, start, end) -> float | None:
+    """Close-to-close return across [start, end], or None when the index
+    has no data covering the window."""
+    if closes.empty:
+        return None
+    window = closes.loc[start:end]
+    if len(window) < 2:
+        return None
+    first, last = float(window.iloc[0]), float(window.iloc[-1])
+    if first <= 0:
+        return None
+    return last / first - 1.0
 
 
 compute_regime_panel.cache_clear = _compute_regime_panel_cached.cache_clear
@@ -304,3 +465,5 @@ compute_regime_panel.cache_clear = _compute_regime_panel_cached.cache_clear
 def clear_cache() -> None:
     _nifty100_above_100dma_cached.cache_clear()
     _compute_regime_panel_cached.cache_clear()
+    _compute_universe_panel_cached.cache_clear()
+    _index_close_cached.cache_clear()

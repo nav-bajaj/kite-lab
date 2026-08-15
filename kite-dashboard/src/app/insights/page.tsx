@@ -47,7 +47,8 @@ export default async function OverviewPage({
 
   const emptySeries = (): TimeseriesResponse => ({ index: [], data: {} });
   const [reading, breadthSeries, macroSeries, concSeries, movers] = await Promise.all([
-    getReading(date),
+    // The regime is universe-scoped, so the Overview card matches the tab.
+    getReading(date, universe),
     // 6 months of sparkline context for the market cards; detail views fetch
     // full history themselves. Degrades to no-spark when unavailable.
     getBreadthTimeseries({
@@ -141,8 +142,8 @@ export default async function OverviewPage({
               </span>
             </div>
             <span className="text-[12px] leading-[1.5] text-muted-foreground">
-              One of four rules-based market states, from trend and stress
-              conditions.
+              One of four rules-based regimes, from trend, participation and
+              volatility.
             </span>
           </IndicatorCard>
 

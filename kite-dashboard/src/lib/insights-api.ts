@@ -22,11 +22,17 @@ export interface RegimeSnapshot {
   regime: "TREND_BULL" | "DRIFT" | "STRETCHED" | "STRESS";
   persistence_days: number;
   days_since_last_change: number;
+  /** @deprecated legacy alias of index_above_100dma */
   nifty100_above_100dma: boolean;
   pct_above_200dma: number | null;
   vix_zscore_252d: number | null;
   prev_regime: string | null;
   prev_regime_lasted_days: number | null;
+  /** Scope the regime was computed for; null = market-wide reading. */
+  universe: string | null;
+  /** Index whose trend defined this regime, e.g. "Nifty 500". */
+  index_label: string;
+  index_above_100dma: boolean;
 }
 
 export interface StressSnapshot {
@@ -226,8 +232,16 @@ async function getJson<T>(path: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export async function getReading(date?: string): Promise<MarketReading> {
-  const q = date ? `?date=${encodeURIComponent(date)}` : "";
+export async function getReading(
+  date?: string,
+  universe?: BreadthUniverse,
+): Promise<MarketReading> {
+  const params: string[] = [];
+  if (date) params.push(`date=${encodeURIComponent(date)}`);
+  // The regime is universe-scoped end to end, so it is always passed —
+  // including the default, whose backend default is the market-wide read.
+  if (universe) params.push(`universe=${universe}`);
+  const q = params.length ? `?${params.join("&")}` : "";
   return getJson<MarketReading>(`/api/insights/reading${q}`);
 }
 
@@ -586,10 +600,39 @@ export interface RegimeEpisode {
   start: string;
   end: string;
   days: number;
+  /** Close-to-close move of the scope's index across the spell. */
+  index_return_pct: number | null;
 }
 
-export async function getRegimeHistory(): Promise<{ episodes: RegimeEpisode[] }> {
-  return getJson<{ episodes: RegimeEpisode[] }>(`/api/insights/regime/history`);
+export interface RegimeHistoryResponse {
+  index_label: string | null;
+  episodes: RegimeEpisode[];
+}
+
+export async function getRegimeHistory(
+  universe?: BreadthUniverse,
+): Promise<RegimeHistoryResponse> {
+  const q = universe ? `?universe=${universe}` : "";
+  return getJson<RegimeHistoryResponse>(`/api/insights/regime/history${q}`);
+}
+
+export interface RegimeTimeseriesResponse {
+  index_label: string | null;
+  index: string[];
+  data: { close?: (number | null)[]; regime?: string[] };
+}
+
+/** The scope index's close plus its regime label per day — the regime
+ *  chart draws the index and tints the background by regime. */
+export async function getRegimeTimeseries(opts?: {
+  days?: number;
+  universe?: BreadthUniverse;
+}): Promise<RegimeTimeseriesResponse> {
+  const params: string[] = [];
+  if (opts?.days) params.push(`days=${opts.days}`);
+  if (opts?.universe) params.push(`universe=${opts.universe}`);
+  const q = params.length ? `?${params.join("&")}` : "";
+  return getJson<RegimeTimeseriesResponse>(`/api/insights/regime/timeseries${q}`);
 }
 
 /** Strip the NIFTY_ prefix for display; sector baskets are index names. */
