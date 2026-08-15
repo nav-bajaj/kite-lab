@@ -113,7 +113,16 @@ const securityHeaders = [
   },
   // Cross-origin isolation — defensive defaults; revisit if we ever embed
   // third-party widgets that need to be cross-origin-accessible.
-  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  // `same-origin` severs window.opener for cross-origin popups, which is
+  // what leaves the Vercel Toolbar's "Continue with Vercel" window blank —
+  // it can never hand the session back. `same-origin-allow-popups` keeps
+  // this document isolated while letting popups it opens talk back, and it
+  // applies in development ONLY: production still sends plain `same-origin`
+  // because nothing there opens an auth popup.
+  {
+    key: "Cross-Origin-Opener-Policy",
+    value: isDev ? "same-origin-allow-popups" : "same-origin",
+  },
   { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
 ];
 
