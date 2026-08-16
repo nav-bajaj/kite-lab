@@ -14,14 +14,20 @@ Usage:
 By default writes to data/topic_dossiers/<slug>.json. See
 data/topic_dossiers/SCHEMA.md for the dossier shape.
 
-Out-of-scope for v1: subgroup analysis (PSU vs private banks etc.) and
+Handlers read the LOCAL insight engine, with one exception: `analyse_stock_rs`
+reads the live production API (see its docstring for why). Set
+MARKETWORKS_API_BASE to point it elsewhere.
+
+Out-of-scope: subgroup analysis (PSU vs private banks etc.) and
 anniversary/calendar phrases. Add wrapper functions when those topics
-become recurring.
+become recurring — per-stock relative strength graduated that way in
+2026-08 and is now `analyse_stock_rs`.
 """
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from dataclasses import dataclass, field
@@ -92,6 +98,16 @@ ROUTING_RULES: list[RoutingRule] = [
             "calm", "state of market", "market state",
         ),
         handler_name="analyse_regime",
+    ),
+    RoutingRule(
+        category="stock_rs",
+        keywords=(
+            "relative strength", "rs rank", "rs score", "rs of",
+            "cross-sectional", "cross sectional", "time-series momentum",
+            "time series momentum", "stock momentum", "vs the index",
+            "against the index",
+        ),
+        handler_name="analyse_stock_rs",
     ),
 ]
 
@@ -516,12 +532,215 @@ def analyse_regime(phrase: str, asof) -> dict[str, Any]:
     }
 
 
+# ---------------------------------------------------------------------------
+# Stock-level relative strength (production-sourced)
+# ---------------------------------------------------------------------------
+
+PROD_API_BASE = os.environ.get(
+    "MARKETWORKS_API_BASE", "https://kite-lab-production.up.railway.app"
+).rstrip("/")
+
+# Spoken/company names a content brief is likely to use, mapped to NSE symbols.
+# Extend as briefs need them; unmapped bare symbols are picked up by the
+# uppercase-token rule in symbols_in().
+STOCK_NAME_MAP: dict[str, str] = {
+    "hdfc bank": "HDFCBANK", "hdfcbank": "HDFCBANK",
+    "icici bank": "ICICIBANK", "icicibank": "ICICIBANK",
+    "state bank": "SBIN", "sbi": "SBIN", "sbin": "SBIN",
+    "kotak": "KOTAKBANK", "kotak mahindra": "KOTAKBANK", "kotakbank": "KOTAKBANK",
+    "axis bank": "AXISBANK", "axisbank": "AXISBANK",
+    "indusind": "INDUSINDBK", "federal bank": "FEDERALBNK",
+}
+
+_SYMBOL_TOKEN_RE = re.compile(r"\b[A-Z][A-Z0-9&]{3,}\b")
+
+
+def symbols_in(phrase: str) -> list[str]:
+    """Resolve NSE symbols named in a phrase, preserving first-mention order.
+
+    Longest names match first, and a matched span is consumed so its words
+    cannot be re-read as a bare symbol — otherwise "HDFC Bank" yields both
+    HDFCBANK and a phantom HDFC, and the phantom 404s against production.
+    """
+    found: list[str] = []
+    remainder = phrase
+    for name in sorted(STOCK_NAME_MAP, key=len, reverse=True):
+        pattern = re.compile(re.escape(name), re.IGNORECASE)
+        if pattern.search(remainder):
+            symbol = STOCK_NAME_MAP[name]
+            if symbol not in found:
+                found.append(symbol)
+            remainder = pattern.sub(" ", remainder)
+    for token in _SYMBOL_TOKEN_RE.findall(remainder):
+        if token not in found:
+            found.append(token)
+    return found
+
+
+def _fetch_json(path: str, timeout: int = 90) -> dict[str, Any]:
+    """GET JSON from the configured API host.
+
+    The scheme is checked because MARKETWORKS_API_BASE is operator-supplied;
+    urlopen would otherwise honour `file:` and turn a config typo into a local
+    file read.
+    """
+    import urllib.request
+    url = f"{PROD_API_BASE}{path}"
+    if not url.startswith(("http://", "https://")):
+        raise ValueError(f"refusing non-HTTP API base: {PROD_API_BASE!r}")
+    with urllib.request.urlopen(url, timeout=timeout) as resp:  # noqa: S310 - scheme checked above
+        return json.load(resp)
+
+
+def analyse_stock_rs(phrase: str, asof) -> dict[str, Any]:
+    """Per-stock relative strength for named stocks, from PRODUCTION.
+
+    Unlike the other handlers, this one reads the live production API rather
+    than importing the local engine. Content dossiers must carry the same
+    numbers the published dashboard shows; local price mirrors can lag the
+    16:30 IST pipeline, and a reel quoting a number the site contradicts is
+    worse than no reel. Override the host with MARKETWORKS_API_BASE.
+
+    The returned facts carry PRODUCTION's as-of date, which may trail the
+    requested one (weekends, holidays, a late pipeline). That mismatch is
+    surfaced as a fact rather than silently accepted, so the writer dates the
+    claim correctly.
+    """
+    symbols = symbols_in(phrase)
+    if not symbols:
+        return {"modules_invoked": [], "verified_facts": [], "data_points": [],
+                "chart_suggestions": [], "related_signals": [], "supersedes": [],
+                "claim_verified": "not_applicable", "claim_evidence": "",
+                "confidence": "low"}
+
+    verified_facts: list[dict[str, Any]] = []
+    data_points: list[dict[str, Any]] = []
+    related: list[str] = []
+    prod_asof: str | None = None
+    rows: list[tuple[str, dict[str, Any]]] = []
+
+    for symbol in symbols:
+        try:
+            payload = _fetch_json(f"/api/insights/stocks/{symbol}")
+        except Exception as exc:
+            print(f"  ⚠  {symbol}: production fetch failed: {exc}", file=sys.stderr)
+            continue
+        row = payload.get("row")
+        if not payload.get("data_available", True) or not row:
+            print(f"  ⚠  {symbol}: no production data", file=sys.stderr)
+            continue
+        prod_asof = prod_asof or str(row.get("date", ""))[:10]
+        rows.append((symbol, row))
+
+    for symbol, row in rows:
+        rank, pct = row.get("rank"), row.get("percentile")
+        if rank is None:
+            continue
+        verified_facts.append({
+            "fact": (f"{symbol} RS rank {rank} of 500 "
+                     f"({pct:.0f}th percentile) on {str(row.get('date'))[:10]}"),
+            "source": f"production:api/insights/stocks/{symbol}.rank",
+            "value": rank,
+            "context": f"rs_score {row.get('rs_score')}",
+        })
+        for horizon, key in (("3-month", "ret_3m"), ("12-month", "ret_12m")):
+            val = row.get(key)
+            if val is None:
+                continue
+            verified_facts.append({
+                "fact": f"{symbol} {horizon} return {val * 100:+.1f}%",
+                "source": f"production:api/insights/stocks/{symbol}.{key}",
+                "value": val,
+                "context": str(row.get("date"))[:10],
+            })
+        # Own-trend state. A stock's position against its own 200-day average
+        # is the time-series (absolute) reading, as opposed to the rank, which
+        # is the cross-sectional (relative) one — the contrast a piece
+        # separating the two momentum families needs.
+        above = row.get("above_200dma")
+        if above is not None:
+            dist = row.get("dist_200dma_pct")
+            verified_facts.append({
+                "fact": (f"{symbol} is {'above' if above else 'below'} its 200-day average"
+                         + (f" by {abs(dist) * 100:.1f}%" if dist is not None else "")),
+                "source": f"production:api/insights/stocks/{symbol}.above_200dma",
+                "value": bool(above),
+                "context": str(row.get("date"))[:10],
+            })
+        data_points.append({
+            "label": f"{symbol} RS rank",
+            "value": f"{rank}/500",
+            "context": f"{pct:.0f}th pctile · 3m {row.get('ret_3m', 0) * 100:+.1f}%",
+        })
+
+    # Sector context: how the stocks' sector is doing against the Nifty.
+    sectors = named_sectors_in(phrase)
+    if sectors:
+        try:
+            snap = _fetch_json("/api/insights/sectors").get("sector_rs", {})
+            for sector in sectors:
+                entry = snap.get(sector)
+                if not entry:
+                    continue
+                rs60 = entry.get("rs_60d")
+                if rs60 is None:
+                    continue
+                verified_facts.append({
+                    "fact": (f"{sector} is {rs60 * 100:+.1f}% against the Nifty "
+                             f"over 60 trading days (rank {entry.get('rank_60d')} of sectors)"),
+                    "source": f"production:api/insights/sectors.{sector}.rs_60d",
+                    "value": rs60,
+                    "context": str(entry.get("date"))[:10],
+                })
+                data_points.append({
+                    "label": f"{sector} vs Nifty (60d)",
+                    "value": f"{rs60 * 100:+.1f}%",
+                    "context": f"sector rank {entry.get('rank_60d')}",
+                })
+        except Exception as exc:
+            print(f"  ⚠  sector context failed: {exc}", file=sys.stderr)
+
+    requested = str(asof)[:10]
+    if prod_asof and prod_asof != requested:
+        related.append(
+            f"Production data is as of {prod_asof}, not the requested {requested} "
+            f"— date every claim {prod_asof}."
+        )
+
+    # sector_rank/sector_size are deliberately NOT surfaced: rs_rank keeps a
+    # stock's BEST rank across every sector it belongs to and reports that
+    # sector's size, without naming which sector won. Two banks in the same
+    # sector can therefore report different denominators (HDFCBANK 14/14 from
+    # NIFTY_FIN_SERVICE vs KOTAKBANK 9/20 from NIFTY_BANK), so the numbers are
+    # not comparable to each other and must not go on screen.
+
+    return {
+        "modules_invoked": ["production:insights.stocks", "production:insights.sectors"],
+        # Local sector_rs computes the same sector-vs-Nifty metric off local
+        # price mirrors and disagrees with production (+4.6% vs +4.3%, and a
+        # different sector universe). Two numbers for one metric in one
+        # dossier is how a wrong figure reaches a screen, so production wins.
+        "supersedes": ["sector_rs"] if verified_facts else [],
+        "verified_facts": verified_facts,
+        "data_points": data_points,
+        "chart_suggestions": [
+            "Ranked bar of the named stocks by RS rank (lower = stronger), labelled with each 3m and 12m return",
+            "Small-multiples: each stock's price rebased to 100 against the Nifty over 12 months",
+        ],
+        "related_signals": related,
+        "claim_verified": "not_applicable",
+        "claim_evidence": "",
+        "confidence": "high" if verified_facts else "low",
+    }
+
+
 HANDLERS: dict[str, Callable[[str, Any], dict[str, Any]]] = {
     "analyse_sector":        analyse_sector,
     "analyse_currency":      analyse_currency,
     "analyse_concentration": analyse_concentration,
     "analyse_watchlist":     analyse_watchlist,
     "analyse_regime":        analyse_regime,
+    "analyse_stock_rs":      analyse_stock_rs,
 }
 
 
@@ -566,6 +785,8 @@ def assemble_dossier(phrase: str, slug: str, asof_str: str) -> dict[str, Any]:
     claim_evidence = ""
     confidences: list[str] = []
 
+    superseded: set[str] = set()
+
     for rule in matched:
         handler = HANDLERS.get(rule.handler_name)
         if handler is None:
@@ -575,6 +796,7 @@ def assemble_dossier(phrase: str, slug: str, asof_str: str) -> dict[str, Any]:
         except Exception as exc:
             print(f"  ⚠  handler {rule.handler_name} failed: {exc}", file=sys.stderr)
             continue
+        superseded.update(result.get("supersedes", ()))
         modules_invoked.extend(result.get("modules_invoked", []))
         verified_facts.extend(result.get("verified_facts", []))
         data_points.extend(result.get("data_points", []))
@@ -588,6 +810,20 @@ def assemble_dossier(phrase: str, slug: str, asof_str: str) -> dict[str, Any]:
         elif result.get("claim_verified") is False and claim_verified == "not_applicable":
             claim_verified = False
             claim_evidence = result.get("claim_evidence", "")
+
+    # A handler may declare that it supersedes another source for the same
+    # metric (e.g. production sector RS over the locally-computed one). Drop
+    # the superseded facts so the dossier never offers a writer two different
+    # numbers for one thing.
+    if superseded:
+        def _kept(item: dict[str, Any]) -> bool:
+            src = str(item.get("source", ""))
+            return not any(src == s or src.startswith(f"{s}.") for s in superseded)
+
+        dropped = [f for f in verified_facts if not _kept(f)]
+        verified_facts = [f for f in verified_facts if _kept(f)]
+        for fact in dropped:
+            print(f"  ·  superseded by production: {fact['fact'][:70]}", file=sys.stderr)
 
     if "high" in confidences:
         confidence = "high"
