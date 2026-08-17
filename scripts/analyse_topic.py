@@ -667,6 +667,22 @@ def analyse_stock_rs(phrase: str, asof) -> dict[str, Any]:
                 "value": bool(above),
                 "context": str(row.get("date"))[:10],
             })
+        # The average's own direction, which is NOT recoverable from the gap
+        # above. A 200-day average follows the price that built it, so a stock
+        # can sit well above a flat or falling average purely by bouncing,
+        # while another sits barely above one that has been climbing all year.
+        # Any piece explaining WHY an own-trend reading and a cross-sectional
+        # rank disagree needs the slope; the gap alone will mislead it.
+        slope = row.get("slope_200dma_20d")
+        if slope is not None:
+            verified_facts.append({
+                "fact": (f"{symbol}'s own 200-day average is "
+                         f"{'rising' if slope > 0 else 'falling'} at "
+                         f"{abs(slope) * 100:.2f}% over the last 20 trading days"),
+                "source": f"production:api/insights/stocks/{symbol}.slope_200dma_20d",
+                "value": slope,
+                "context": str(row.get("date"))[:10],
+            })
         data_points.append({
             "label": f"{symbol} RS rank",
             "value": f"{rank}/500",
