@@ -226,7 +226,11 @@ def report(df: pd.DataFrame) -> None:
           .agg(["count", "mean", "median", "min"]).to_string())
     print(f"\n  corr(slope, P&L after 13:00) = {h.dc_am.corr(h.A_pnl_pm):+.3f}  <- return: nothing")
     print(f"  corr(conc LEVEL at 13:00, P&L after 13:00) = {h.c13.corr(h.A_pnl_pm):+.3f}")
-    print("  risk separates where return does not — see the mae columns above.")
+    b = h[h.bucket == "building"].A_mae_pm
+    o = h[h.bucket != "building"].A_mae_pm
+    print(f"  worst afternoon drawdown: building {b.min():+.2f} vs not-building "
+          f"{o.min():+.2f} — the buckets must SEPARATE for the slope to be a "
+          "risk conditioner; at n=15 they do not.")
 
 
 def main():

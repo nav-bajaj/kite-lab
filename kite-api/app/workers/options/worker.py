@@ -385,10 +385,16 @@ class OptionsWorker:
         except Exception as exc:
             log.warning("paper-straddle ledger failed: %s", exc)
         try:
-            from app.microstructure.gamma_profile import store_daily
+            from app.microstructure.gamma_profile import store_daily, store_intraday
 
-            n = store_daily(now.date().isoformat())
+            day = now.date().isoformat()
+            n = store_daily(day)
             log.info("eod: gamma profile rows stored: %d", n)
+            # Per-minute profile: the 3 snapshots above are the day-type
+            # library; this is the resolution the concentration slope needs
+            # to be calibrated against (Stage 2b).
+            m = store_intraday(day)
+            log.info("eod: gamma profile minute rows stored: %d", m)
         except Exception as exc:
             log.warning("gamma profile store failed: %s", exc)
 

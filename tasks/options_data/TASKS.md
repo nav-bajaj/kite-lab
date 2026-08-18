@@ -143,6 +143,27 @@ consumes bars only) · proprietary dataset compounding daily.
       surfacing the field on the /admin card is absorbed into
       tasks/options_dashboard Phase 1 (the card becomes a link into the
       real-time /options analytics page).
+- [x] **Stage 2b — per-minute gamma profile (2026-08-18).** The
+      3-snapshot profile made the concentration slope a two-point
+      estimate across three hours, which is what stalled the positioning
+      study. `option_greeks_minute` already carries gamma+IV per minute
+      per contract, so the profile is computable at 1-minute resolution
+      from data already stored — no new capture, and the 10s chain
+      snapshots are not needed. New `gamma_profile_minute` table +
+      `store_intraday()`, wired into the EOD hook after `store_daily()`.
+      Both writers share one pure core (`profile_series`) so the two
+      tables cannot drift; the refactor reproduces all 39 pre-existing
+      gamma_profile_daily rows EXACTLY (validated against prod).
+      15 spec tests, red-first. Backfilled over every session with
+      greeks: 13,978 minute rows over 37 sessions, and the daily profile
+      history grows 13 -> 37 sessions (option_greeks_minute reaches back
+      to 06-29 while gamma_profile_daily began 07-31, so every
+      history-based consumer had been reading a third of the record —
+      day_plan.iv_percentile now ranks against ~36 prior days, not ~12).
+      First act of the upgrade was to FALSIFY the concentration-slope
+      risk finding that justified it (RESULTS gamma_positioning, Q3
+      retraction) — the 3 recovered sessions include 07-28, the steepest
+      building slope on record and the second-worst afternoon drawdown.
 - [ ] **Threshold calibration — GATE MET 2026-08-18 (ledger n=15).** The
       MAE library now separates the catastrophic losers (-78.3, -72.3)
       from every winner (band -0.5..-28.2, median -12.2), but the two

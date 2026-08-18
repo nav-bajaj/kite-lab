@@ -1,11 +1,17 @@
 # Does the gamma profile help POSITION a trade?
 
 **Date:** 2026-08-18 (after the 08-18 expiry) · **Ledger:** n=15 rows /
-16 sessions · **Panel:** 12 sessions with both a gamma profile and a
-ledger row · **Probe:** `gamma_positioning_probe.py` (+ 25 unit tests)
+16 sessions · **Probe:** `gamma_positioning_probe.py` (+ 25 unit tests)
 
-**Verdict: no positioning edge. A weak risk-conditioning signal. One
-convincing false positive, recorded below so nobody finds it twice.**
+**REVISED same day at n=15 — see "Correction" below.** The first pass ran
+on the 12 sessions `gamma_profile_daily` happened to hold. Backfilling
+the profile over every session with greeks (the Stage 2b upgrade this
+document argued for) added the three earliest sessions, and the panel's
+one positive finding did not survive them.
+
+**Verdict: no positioning edge, and no risk-conditioning signal either.
+Two convincing false positives, both recorded below so nobody finds them
+twice.**
 
 ---
 
@@ -47,28 +53,31 @@ regression guard.
 
 | Variant | n | Total | Mean | Median | W/L | Worst MAE |
 |---|---|---|---|---|---|---|
-| A 09:20 @ ATM | 12 | +104.2 | +8.68 | +12.27 | 8/4 | -78.35 |
-| B 10:00 @ ATM | 12 | +88.8 | +7.40 | +14.30 | 10/2 | -133.15 |
-| C 10:00 @ WALL | 12 | +114.8 | +9.56 | +12.32 | 10/2 | -86.80 |
+| A 09:20 @ ATM | 15 | +141.3 | +9.42 | +13.15 | 11/4 | -78.35 |
+| B 10:00 @ ATM | 15 | +157.0 | +10.47 | +13.95 | 13/2 | -133.15 |
+| C 10:00 @ WALL | 15 | +179.2 | +11.95 | +10.70 | 13/2 | -86.80 |
 
-Paired (B vs C, only the strike differs): **the wall wins 5 of 12**,
-mean difference **+2.17 pts** on credits of 80-280. On the 9 sessions
-where the wall was a different strike from ATM it is 5 of 9. That is a
-coin flip, and the effect is far inside the friction the ledger already
-measures. **There is no strike-selection signal here.**
+Paired (B vs C, only the strike differs): **the wall wins 5 of 15**,
+mean difference **+1.48 pts** on credits of 80-280. That is a coin flip,
+and the effect is far inside the friction the ledger already measures.
+The wall's higher total comes with a *lower* median — a couple of large
+days, not a repeatable edge. **There is no strike-selection signal
+here**, and the extra sessions made the record worse (5/15 vs 5/12), not
+better.
 
 ## Q2 — The best-looking variant is a directional bet in disguise
 
 Variant D — center on yesterday's closing wall — posts the best numbers
-in the study: **+140.7 total, +12.79 mean, +25.80 median**, against the
-baseline's +104.2. It is spurious, three ways:
+in the study: **+208.5 total, +13.90 mean**, against the baseline's
++141.3. It is spurious, three ways:
 
-1. Head-to-head it is **4-4** (3 ties).
-2. `corr(D - A, prior-wall offset x spot move) = **+0.959**`. Almost all
+1. Head-to-head the baseline **wins 7 to 5** (3 ties). D's total comes
+   from margin on a few days, not from being right more often.
+2. `corr(D - A, prior-wall offset x spot move) = **+0.838**`. Most of
    the variance is explained by whether spot happened to travel toward
    the strike the stale wall pushed you onto.
-3. Remove its two best days and it makes **+72.1 where the baseline made
-   +108.0** on the same sessions.
+3. At n=12 it was 4-4 with `corr = 0.959`; the extra sessions moved the
+   head-to-head against it.
 
 Mechanically: a wall left overhead by yesterday's chain centers today's
 straddle above spot. In the 08-13/14/17 down-trend that paid three times
@@ -77,33 +86,71 @@ bet on direction relative to a stale strike wearing a gamma costume, and
 at n=11 it is exactly the shape that survives a naive backtest. **Do not
 trade it.**
 
-## Q3 — The concentration slope tracks risk, not return
+## Q3 — The concentration slope: RETRACTED
 
-Ex-ante test: bucket on the 10:00→13:00 concentration slope (dead band
-±0.01), score only what happens after 13:00.
+Ex-ante test: bucket on the 10:00->13:00 concentration slope (dead band
++-0.01), score only what happens after 13:00.
+
+**At n=12 this looked like the study's one positive result.** Every
+building-concentration session held its afternoon drawdown inside -7.05,
+while both afternoon blowouts sat outside that bucket. It was reported
+here as a tail-risk conditioner.
+
+**At n=15 it is gone.**
 
 | Morning slope | n | P&L after 13:00 (mean / median) | Worst drawdown after 13:00 |
 |---|---|---|---|
-| building | 5 | +9.54 / +10.60 | **-7.05** |
-| flat | 3 | +12.68 / +24.65 | -30.55 |
-| decaying | 4 | +12.14 / +15.28 | **-51.00** |
+| building | 6 | +6.44 / +6.55 | **-31.05** |
+| flat | 4 | +9.35 / +12.00 | -30.55 |
+| decaying | 5 | +10.78 / +5.35 | -51.00 |
 
-- **Return: nothing.** `corr(slope, P&L after 13:00) = +0.083`, and the
-  three buckets earn the same. If anything the *decaying* bucket earns
-  slightly more per session.
-- **Risk: the tails do not overlap.** Every building session's afternoon
-  drawdown sits inside -7.05 (all five: -7.1, -3.7, -2.6, -0.9, -0.4).
-  Both afternoon blowouts in the library (-51.0, -30.6) are outside that
-  bucket.
+- **Return: still nothing.** `corr(slope, P&L after 13:00) = -0.044`.
+- **Risk: the separation was an artifact of the truncated history.** The
+  building bucket's worst afternoon drawdown moves from -7.05 to
+  **-31.05**, level with the flat bucket's -30.55. Only the decaying
+  bucket's -51.00 stands apart, and that is the single 08-04 session
+  that was already known to be the ledger's worst day.
 
-Honest limits: the medians barely separate (-2.60 vs -7.65); 08-04 alone
-drives the worst tail (drop it and not-building's worst is -30.55, mean
--8.50); n is 5 vs 7. **This is a statement about tails, not means, on a
-sample too small to size from.**
+The session that breaks it is **2026-07-28** — the program's very first
+day, the archetype pin. It has the steepest building slope in the whole
+panel (+0.104 over the morning, R^2 0.93) and an afternoon drawdown of
+-31.05. It is the single most on-thesis "concentration is building"
+session on record, and its afternoon was the second-worst measured.
+
+It was invisible to the first pass only because `gamma_profile_daily`
+started on 07-31. **The finding was a boundary artifact of where the
+profile table happened to begin.**
+
+### Correction
+
+The Q3 result published in the first version of this document should not
+be used. It survived one lookahead check (§ "Method") and then failed the
+first honest out-of-sample sessions it met — which arrived within hours,
+from a backfill this very document requested. Recorded rather than
+quietly edited: this is the second false positive in one short study, and
+the pattern in both is the same — a small panel whose boundaries were set
+by data availability rather than by anything about the market.
+
+### What the upgrade did to the measurement itself
+
+With the per-minute profile the slope stops being a two-point guess:
+
+- Fitted by regression over the ~220-minute morning window, the slope
+  carries a standard error. **Median |t| = 14.6**, so it is
+  distinguishable from zero on most days — but **median R^2 = 0.49**, so
+  a straight line explains only half the movement in the concentration
+  path. "Slope" is a weak summary of a genuinely wiggly series.
+- **4 of 15 sessions change bucket label** between the two-point estimate
+  and the regression.
+- On 2026-08-05 the two-point estimate reported *decaying* (-0.012); the
+  regression gives a slope indistinguishable from zero (R^2 0.003,
+  |t| 0.87). The old method manufactured a direction where the data has
+  none. That is precisely the measurement error the upgrade removes —
+  it just happens to remove the finding too.
 
 ## Q4 — Concentration LEVEL runs the wrong way
 
-- `corr(level at 13:00, P&L after 13:00) = **-0.348**`
+- `corr(level at 13:00, P&L after 13:00) = **-0.409**` (n=15)
 - `corr(level at 10:00, full-day MAE) = **-0.319**` (MAE is negative, so
   more concentration went with *deeper* drawdowns)
 
@@ -117,46 +164,60 @@ spot settled 45 pts below the wall at the day's low.
 
 1. **Do not move the strike for gamma.** Center ATM. Strike selection
    comes off the table as a lever; that is a real result, not a null one
-   — it removes a degree of freedom that would otherwise get tuned.
-2. **Gamma is a sizing/hold input, not an entry input.** Building
-   concentration is the state in which the afternoon tail has not yet
-   appeared; decaying is the state that has produced every large one.
-   This is precisely the founder framework's shape
-   (`NOTE_risk_thresholds.md`): gamma configures risk, it does not
-   forecast price.
-3. **Never read concentration level as permission to sell more.** It
-   points the other way here, and it is already the flagged weakness in
+   — it removes a degree of freedom that would otherwise get tuned. This
+   held and strengthened when the panel grew.
+2. **The gamma profile has no demonstrated use as a trading input.** Not
+   for entry (Q1), not for strike (Q1/Q2), and — after the retraction —
+   not for hold/size either (Q3). What it retains is descriptive value:
+   it is how the day-type library labels a regime, and obs. 32/39 read
+   pin mechanics off it. That is worth keeping. It is not worth trading
+   off yet.
+3. **Never read concentration level as permission to sell more.** The
+   one relationship that has strengthened as the panel grew points the
+   *other* way (Q4). This is already the flagged weakness in
    `day_plan`'s PIN-GRAVITY branch.
-4. **The binding constraint is measurement resolution, not sample size.**
-   A "slope" built from 3 snapshots a day is a two-point estimate across
-   three hours. Before spending anything more on this panel, the profile
-   should be computed per minute — see below.
+4. **The founder framework's caution is doing real work.** Its rule —
+   thresholds must be state-conditioned and derived from measured base
+   rates, never fixed or predictive — is the reason this study looked for
+   a conditioner rather than a signal, and the reason the conditioner was
+   tested ex-ante instead of assumed. Two candidate edges died on those
+   two checks. Neither would have died on a naive backtest.
+5. **Both false positives came from panel boundaries, not from the
+   market.** One from scoring with a future reading, one from a table
+   that began three sessions late. At n=15 the honest posture is that
+   this panel can *reject* claims and cannot yet *establish* any. Obs. 38
+   (thin credit is dangerous when concentration decays) leans on the same
+   mechanism as the retracted Q3 and should be treated as weaker than its
+   already-hedged "n=2, weak" label.
 
-## The resolution upgrade this probe justifies
+## The resolution upgrade this probe justified — DONE, same day
 
 `gamma_profile.store_daily()` computes from `option_greeks_minute` +
-`option_minute_bars`, both of which are already **per-minute for every
-contract**. The profile is therefore computable at 1-minute resolution
-from data we already hold — the 10-second chain snapshots are not needed
-and neither is any new capture.
+`option_minute_bars`, both already **per-minute for every contract**. The
+profile was therefore computable at 1-minute resolution from data already
+held — no new capture, and the 10-second chain snapshots were not needed.
 
-Two things fall out, both free:
+Shipped as Stage 2b (`gamma_profile_minute` + `store_intraday()`, wired
+into the EOD hook, both writers sharing one `profile_series()` core, 15
+spec tests red-first, the refactor reproducing all 39 pre-existing daily
+rows exactly). Backfilled over every session with greeks:
 
-- **Resolution: 3 snapshots → 375+ per session**, which turns the
-  concentration slope from a two-point guess into something with a
-  standard error.
-- **History: 13 sessions → 37.** `option_greeks_minute` runs back to
-  2026-06-29, but `gamma_profile_daily` only starts 2026-07-31, so every
-  history-based consumer is reading a third of the available record.
-  `day_plan.iv_percentile` currently ranks today's ATM IV against ~12
-  prior days; it could be ranking against 37. That directly addresses
-  the DTE-blindness criticism in obs. 40 — with 37 sessions there are
-  enough same-DTE days to condition on.
+- **Resolution: 3 snapshots -> 13,978 minute rows across 37 sessions**
+  (375-386 per session), which is what made the slope diagnostics in Q3
+  possible.
+- **History: 13 sessions -> 37.** `option_greeks_minute` runs back to
+  2026-06-29 while `gamma_profile_daily` began 2026-07-31, so every
+  history-based consumer had been reading a third of the record.
+  `day_plan.iv_percentile` now ranks today's ATM IV against ~36 prior
+  days instead of ~12.
+- **And it immediately falsified the finding that justified it** (Q3).
+  That is the upgrade working, not the upgrade failing.
 
-Note the ledger cannot be extended the same way: the pre-07-28 sessions
-are `hist` source with no book, so straddle fills would have to be
-fabricated. It stays at n=15, and the 08-11 hole stays empty — same rule
-as the outage row.
+The ledger cannot be extended the same way: pre-07-28 sessions are `hist`
+source with no book, so straddle fills would have to be fabricated. It
+stays at n=15 and the 08-11 hole stays empty — same rule as the outage
+row. **The panel's constraint is now outcomes, not measurement.** No
+further conditioning study is worth running until the ledger grows.
 
 ---
 

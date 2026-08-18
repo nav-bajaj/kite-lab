@@ -7,7 +7,7 @@ Dated results (read in order for the narrative):
 | `RESULTS_2026-07-27_history_probe.md` | Historical API capability check + 5-session exploratory read (pin forming, straddle premium, PCR coincident) |
 | `RESULTS_2026-07-28_first_patterns.md` | Day-one depth findings: pin built intraday (ATM OI 3x), ITM-put imbalance cluster (later killed), expiry friction curve |
 | `RESULTS_2026-07-29_trend_day.md` | Out-of-sample: cluster killed honestly; OI-migration regimes (star result); friction two-regime confirmation |
-| `RESULTS_2026-08-18_gamma_positioning.md` | **Can gamma position a trade?** No: wall-centering is a coin flip (5/12), the best-looking variant is a directional bet (corr 0.96 with offset x spot move), and the concentration slope tracks RISK not return. Justifies the per-minute profile upgrade |
+| `RESULTS_2026-08-18_gamma_positioning.md` | **Can gamma position a trade?** No. Wall-centering is a coin flip (5/15); the best-looking variant is a directional bet (corr 0.84 with offset x spot move); the concentration-slope risk finding was RETRACTED same-day when the Stage-2b backfill added 3 sessions. Two false positives, both from panel boundaries |
 | `NOTE_risk_thresholds.md` | **Founder framework**: MAE problem (drawdown > final profit all 3 days), probabilistic-not-predictive hold/roll/exit, per-regime threshold table as the future risk config |
 
 Reusable scripts (run from `kite-api/` with DATABASE_URL set; see each
