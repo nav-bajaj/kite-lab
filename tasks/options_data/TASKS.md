@@ -68,7 +68,12 @@ Phases per PLAN.md. Local-first: 1-3 run on the laptop; Railway is Phase 4.
       packets, staleness, bars counters, widen events, error strip
 - [x] Error lifecycle 2026-07-30: 08:30 login race gets a 2-min grace
       window; success clears last_error; dot prefers live capture state
-- [ ] Push alerting (beyond panel red-dot) — PRIORITY RAISED by the
+- [ ] Push alerting (beyond panel red-dot) — STILL THE TOP OPS GAP.
+      The post-EOD recycle fix has now held 5 consecutive unattended
+      sessions (2026-08-12..18, 0 db errors, full contract coverage),
+      so the 08-11 incident is closed at n=5 — but the recycle fixed
+      THAT failure mode, not the class of silent-death failures.
+      PRIORITY RAISED by the
       2026-08-11 incident: capture was dead 09:15-11:33 on expiry morning
       with a green panel (heartbeat fine, last_error None) and the founder
       noticed before the system did. Minimum bar: alert when phase=capture
@@ -138,7 +143,27 @@ consumes bars only) · proprietary dataset compounding daily.
       surfacing the field on the /admin card is absorbed into
       tasks/options_dashboard Phase 1 (the card becomes a link into the
       real-time /options analytics page).
-- [ ] Threshold calibration once day-type library >= 15-20 sessions
+- [ ] **Threshold calibration — GATE MET 2026-08-18 (ledger n=15).** The
+      MAE library now separates the catastrophic losers (-78.3, -72.3)
+      from every winner (band -0.5..-28.2, median -12.2), but the two
+      marginal losers (-16.7, -15.2) sit INSIDE the winner band — so
+      the table must be state-conditioned, not a price level (founder
+      framework, research/NOTE_risk_thresholds.md). Condition on
+      regime AND days-to-expiry; see OBSERVATIONS obs. 42.
+- [ ] **day_plan: rewrite the DIFFUSE branch rationale.** The
+      2026-08-18 cycle tested down-diffuse for the first time (n=3)
+      and the "covering-fuel drift, writers re-form a rung up, 4/4
+      up-drift days closed strong" text is now wrong on half its
+      sample; the "zero down-diffuse tested" caveat is stale. Short
+      premium was NOT punished on diffuse-down (+33.0/+13.7/-1.4).
+      OBSERVATIONS obs. 35, 43.
+- [ ] **day_plan: condition IV percentile and credit thinness on DTE.**
+      `iv_percentile` compares ATM IV across all history at one snap
+      and `credit_min_win` compares a 0-DTE credit against a 4-DTE
+      one — both DTE-blind, and both produced the cycle's advisory
+      misses. The 40-pt divergence flag band has the same problem
+      (carry baseline collapsed -61.6 -> -7.1 into expiry).
+      OBSERVATIONS obs. 38, 40, 41.
 - [ ] Housekeeping: merge options_data_v1 -> main (closes R-025/R-026
       Alembic condition); prune old branches/stash
 - [~] **Stage 3 — signed dealer gamma (GEX sign)** — STARTED 2026-08-08

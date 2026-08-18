@@ -1,6 +1,6 @@
 # Options Program — Comprehensive Note
 
-**Written:** 2026-07-30 · **Updated:** 2026-08-04 post-expiry · **Covers:** 2026-06-19 (first plan) → 2026-08-04 close
+**Written:** 2026-07-30 · **Updated:** 2026-08-18 post-expiry · **Covers:** 2026-06-19 (first plan) → 2026-08-18 close
 **Scope:** the options data engine (this folder), the Market Microstructure
 Engine (`tasks/microstructure_engine/`), the research produced so far, and
 the road to an autonomous options strategy.
@@ -100,9 +100,50 @@ OTM depth comparison), analysis suites for both captured days.
 
 ## 4. What the data has said so far (honest ledger)
 
-Sample: ~26 days of OHLC/OI bars, **6 days of depth** — everything below
-is diagnostic until the day-type library grows. (Updated 2026-08-04;
-the daily OBSERVATIONS.md log in research/ is the running detail.)
+Sample: ~31 days of OHLC/OI bars, **16 days of depth**, 4 expiries,
+ledger n=15 — everything below is diagnostic until the day-type library
+grows. (Updated 2026-08-18; the daily OBSERVATIONS.md log in research/
+is the running detail.)
+
+**Added 2026-08-18 (the 08-18 cycle — the first TREND cycle):**
+
+- **Ledger +141.3** (15 rows / 16 sessions, 11W +220.3 / 4L -79.0). The
+  08-18 cycle added +62.2 over five sessions: +33.0, +13.7, -1.4, -2.8,
+  +19.7. The 08-11 outage row stays empty by design.
+- **Ledger verdict #2 — implied was CHEAP, 4/4.** EOD straddle vs the
+  realized move to settlement on every day of the cycle: 1.00% vs
+  -1.15%, 0.89% vs -0.99%, 0.74% vs -0.87%, 0.48% vs -0.55%. Program
+  verdicts now 3 cycles implied-rich, 1 implied-cheap — and the cheap
+  one was the trending cycle. **The short-vol edge is a range-regime
+  edge, not a constant.**
+- **Intraday-only, now measured across a whole cycle.** The same five
+  sessions that made +62.2 intraday gave back -316.8 pts of index on a
+  hold-through basis, and **-187.8 of that (59%) arrived in the five
+  opening gaps** with the market shut. Strongest evidence yet for the
+  standing constraint.
+- **Down-diffuse tested for the first time (n=3)** and short premium
+  was not punished (+33.0 / +13.7 / -1.4). The day-plan's up-drift
+  rationale is now falsified on half its sample — a queued rewrite.
+- **Record concentration did not pin.** Expiry 4 hit 47.6%
+  concentration (an all-time high) with the wall at 24200, and spot
+  settled 45 pts BELOW it at the day's low. Pin archetypes now read
+  1 gravitational / 2 chased / 1 no-pin: concentration LEVEL alone is
+  not a tradeable pin signal.
+- **Thin credit was not the risk variable.** The thinnest credit on
+  record (82.8, below the 93.0 that produced the worst day) paid +19.7.
+  The separator was concentration's direction — decaying on 08-04,
+  building on 08-18. Refines hypothesis 10.
+- **Two measurement bugs surfaced**: IV percentile and the credit-
+  thinness test are both DTE-blind (a 0-DTE credit compared against a
+  4-DTE one), and so is the fixed 40-pt divergence flag band against a
+  carry baseline that collapses -61.6 → -7.1 into expiry.
+- **Threshold-calibration gate MET at n=15.** MAE cleanly separates the
+  catastrophic losers from every winner but NOT the marginal ones —
+  which is exactly the founder framework's argument for
+  state-conditioned thresholds over price levels.
+- **Ops: the post-EOD recycle fix held 5/5 unattended sessions**, 0 db
+  errors, full contract coverage. The 08-11 incident is closed at n=5;
+  push alerting remains the top ops gap.
 
 **Added 2026-08-04 (the pivotal week):**
 

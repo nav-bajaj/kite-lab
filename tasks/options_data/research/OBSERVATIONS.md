@@ -559,9 +559,258 @@ assumed; Monday was this session.)
       only thing an outage truly destroys. (n=1, intended to stay
       n=1)
 
+## 2026-08-12 (day 12) — new cycle opens diffuse; the V that closed strong
+
+- Tape: open 24,461.4 (-10.3 gap), sold to 24,266.0 by midday, bought
+  back to close 24,436.0 (-35.8, -0.15%). Range 200.0 pts (0.82%) —
+  the widest range of the week, and the only session that closed in
+  its upper half.
+- Regime: DIFFUSE and the most diffuse readings in the library —
+  concentration 16.9% -> 14.9% -> 15.0%, max-gamma oscillating
+  24500 / 24400 / 24500 with no strike holding it. Total gamma
+  ₹66k -> 86k -> 71k cr/1%, an order of magnitude under expiry-day
+  levels: the post-expiry chain rebuilt as an open field, exactly the
+  question day 11's footer asked.
+- OI: the bearish tell, in hindsight. CE BUILT below spot (24250 +78%,
+  24350 +102%) while PE drained at every strike (-16/-23/-70/-68/-50%).
+  Overhead writing migrating DOWN plus wholesale put de-grossing —
+  the structure for the week's slide was laid on its first session.
+- Vol: ATM IV 10.68% (09:20) -> 10.73% (12:30) -> 9.77% (15:15). EOD
+  ATM straddle (24450) 245.5 pts = 1.00% implied to the 08-18 expiry.
+- Paper straddle: **+33.0** (credit 279.9 @ 24400). MAE -6.3 at 09:27,
+  underwater 7 minutes. Running ledger **+112.1**.
+- Day-plan advisory #4: DIRECTIONAL_DEBIT_SPREAD at 24500 (diffuse,
+  IV pctile 12% n=8, credit 274) — i.e. naked short straddle
+  discouraged. The naked straddle made +33.0. Miss.
+- Divergence: **FLAG** +53.1 pts at 15:33 (baseline -61.6), close
+  window +51.3 vs baseline — but note the print sits in the post-15:30
+  extended window, not the settlement window.
+- Depth/friction: baseline. Spread 0.40 -> 0.38 pts (flat 0.23% of
+  premium); imbalance +0.20.
+- Engine: 2.33M ticks, 38,081 bars, 0 db errors, 2 widens, 103
+  contracts — first unattended morning after the 08-11 recycle fix,
+  and it armed clean.
+
+## 2026-08-13 (day 13) — gap down, grind sideways, IV keeps bleeding
+
+- Tape: open 24,383.4 (-52.5 gap), low 24,311.5, high 24,414.9, close
+  24,395.8 (-40.1, -0.16%). Range 103.5 pts (0.42%) — the gap was the
+  whole day's move; the session itself went nowhere.
+- Regime: DIFFUSE, and for the first time this cycle a strike held —
+  max-gamma pinned at 24400 across all three snapshots (conc 16.1% /
+  17.1% / 15.2%). Total gamma ₹97k -> 104k -> 95k cr/1%.
+- OI: CE drained at the money and below (24300 -53%, 24400 -29%,
+  24200 -23%) against a flat put side (+4 / -10 / -8 / +2 / -3%).
+  Note against day 12: the put drain stopped, the call drain started.
+- Vol: 9.79% -> 9.03% -> 8.85%. EOD ATM straddle (24350) 216.6 pts =
+  0.89% implied to expiry. Third straight session of IV compression.
+- Paper straddle: **+13.7** (credit 232.2 @ 24350). MAE -10.9 at
+  12:03, underwater 16 minutes. Running ledger **+125.8**.
+- Day-plan advisory #5: DIRECTIONAL_DEBIT_SPREAD at 24400 (diffuse,
+  IV pctile 11% n=9, credit 226). Naked straddle again discouraged,
+  again paid — a mild miss.
+- Divergence: clean (max -36.1 at 14:58, close +13.9 vs baseline).
+- Depth/friction: baseline. Spread 0.34-0.36 pts (0.23%); imbalance
+  +0.17.
+- Engine: 2.23M ticks, 36,614 bars, 0 db errors, 1 widen.
+
+## 2026-08-14 (day 14) — the library's lowest IV; first flat day of the slide
+
+- Tape: open 24,331.7 (-64.2 gap), low 24,298.3, high 24,405.2, close
+  24,366.0 (-29.8, -0.12%). Range 106.9 pts (0.44%). Third straight
+  session where the gap was the move.
+- Regime: DIFFUSE (conc 16.3% / 16.5% / 17.9%), max-gamma 24400 /
+  24300 / 24400. Total gamma steps up to ₹160k -> 183k -> 143k cr/1%
+  as expiry approaches.
+- OI: two-sided wholesale de-grossing into the weekend — every strike
+  in the window drained on BOTH sides (CE -58/-71/-58/-32/-32%,
+  PE -21/-29/-28/-24/-26%). Nobody carried a position over.
+- Vol: 9.05% -> 8.31% -> 8.13%. **IV percentile 0% (n=10)** — the
+  lowest ATM IV recorded in the program. EOD ATM straddle (24350)
+  179.7 pts = 0.74% implied to expiry.
+- Paper straddle: **-1.4** (credit 195.8 @ 24300). MAE -16.7 at 14:02,
+  underwater 101 minutes and **still underwater at the 15:15 exit** —
+  the first session that never came back. Running ledger **+124.4**.
+- Day-plan advisory #6: DIRECTIONAL_DEBIT_SPREAD at 24400 (diffuse,
+  IV pctile 0%, credit 184) — naked short premium discouraged on the
+  cheapest premium in the library, and it was right. Hit.
+- Divergence: **FLAG** -41.5 pts at 15:18 (settlement window), close
+  -20.9 vs a -34.5 baseline.
+- Depth/friction: baseline. Spread 0.30-0.31 pts (0.23-0.24%);
+  imbalance +0.09.
+- Engine: 2.30M ticks, 36,669 bars, 0 db errors, 1 widen.
+
+## 2026-08-17 (day 15) — weekend markup again; sold from the open
+
+- Tape: open 24,353.2 (-12.8 gap) within 7 pts of the day's HIGH,
+  then a one-way sell to 24,227.0, close 24,287.7 (-78.3, -0.32%).
+  Range 132.8 pts (0.55%) — the first session of the week where the
+  intraday tape, not the gap, did the damage.
+- Regime: **first MIXED morning read since Aug 3** — concentration
+  27.4% at 10:00, decaying to 21.8% then 19.7% as the day aged;
+  max-gamma 24300 / 24300 / 24400, i.e. the wall drifted UP while
+  spot went down. Total gamma ₹248k -> 251k -> 223k cr/1%.
+- OI: the call side capitulated everywhere (24300 -69%, 24200 -61%,
+  24100 -55%, 24400 -41%, 24500 -28%) against a milder put drain.
+  Compare day 12, where calls BUILT: the whole cycle's call structure
+  was written and then covered inside four sessions.
+- Vol: the weekend markup repeats — 8.13% Friday 15:15 -> **11.60%**
+  Monday 09:20 (+3.5 vols over a weekend that delivered a -12.8 gap),
+  10.99% at 12:30, 11.51% at 15:15. EOD ATM straddle (24300) 115.7
+  pts = 0.48% implied to the next day's expiry.
+- Paper straddle: **-2.8** (credit 132.8 @ 24300). MAE -15.2 at 13:15,
+  underwater 145 minutes, still underwater at the exit. Running
+  ledger **+121.6**.
+- Day-plan advisory #7: REDUCED_SIZE at 24300 (MIXED conc 27%, IV
+  pctile 45% n=11, credit 123). Half size on a losing session. Hit.
+- Divergence: clean (max -32.6 at 15:28, close -20.9 vs a -30.1
+  baseline — carry compressing into expiry as it should).
+- Depth/friction: absolute spreads tightest yet at 0.26-0.29 pts, but
+  the relative cost started to climb intraday (0.25% -> 0.28%);
+  imbalance +0.14.
+- Engine: 2.40M ticks, 36,172 bars, 0 db errors, 1 widen.
+
+## 2026-08-18 (day 16) — EXPIRY 4: record concentration, and spot ignored it
+
+- Tape: open 24,239.7 (-48.0 gap), high 24,269.5, low 24,154.9,
+  **close 24,154.9 = the low** (-132.8, -0.55%). Range 114.6 pts
+  (0.47%). No settlement-window bounce at all — the first expiry that
+  closed on its low.
+- Regime: **PIN-GRAVITY, and the strongest gamma structure ever
+  recorded** — concentration 27.7% -> 37.3% -> **47.6%** (prior high
+  37% on 08-11), total gamma ₹514k -> 685k -> 581k cr/1%. Max-gamma
+  migrated 24250 -> 24200 -> 24200. Spot settled 24,154.9, **45 pts
+  BELOW the wall**, at the low, with no reversion.
+- OI: the build landed a rung under the wall — 24150 CE **+298%** /
+  PE +1% at the settle strike, while 24250 (CE -25 / PE -77%) and
+  24350 (CE -50 / PE -79%) emptied. Structure formed at the
+  destination again, not at the magnet.
+- Vol: 15.99% (09:20) -> 17.12% (12:30) -> 36.97% (15:15, the usual
+  tiny-premium expiry artifact — the EOD straddle is 4.9 pts = 0.02%).
+  Morning IV percentile 75% (n=12).
+- Paper straddle: **+19.7** (credit 82.8 @ 24250 — the **thinnest
+  credit on record**, thinner than the 93.0 that produced the ledger's
+  worst day). MAE -14.9 at 11:30, underwater 11 minutes.
+- **CUMULATIVE LEDGER: +141.3** (15 rows / 16 sessions, 11W +220.3 /
+  4L -79.0; the 08-11 outage row stays empty by design).
+- Day-plan advisory #8: REDUCED_SIZE at 24250 (MIXED conc 28%, IV
+  pctile 75%, credit 76 flagged THIN). Half size on a winner —
+  defensible, but the THIN flag pointed at the wrong risk (obs. 38).
+- Divergence: **FLAG** -40.6 pts at 15:19 (settlement window); close
+  +7.3 vs a -7.1 baseline — carry all but gone at expiry.
+- Depth/friction: absolute spreads the tightest on record (0.22-0.24
+  pts) while the relative cost ran 0.32% -> 0.76% into the close — the
+  cleanest confirmation yet of the standing "no near-ATM transactions
+  after 15:15 on expiry" constraint. Book imbalance +0.44, the highest
+  recorded (vs +0.03 on day 10).
+- Engine: 2.48M ticks, 36,536 bars, 0 db errors, 1 widen, 95/95
+  contracts ticking.
+
+### Observations — the 08-18 cycle (days 12-16)
+
+35. **The first sustained DOWN-trend week**, and it fills the library's
+    oldest hole. Five consecutive lower closes: 24,471.7 -> 24,435.9
+    -> 24,395.9 -> 24,366.0 -> 24,287.7 -> 24,154.9, total -316.8 pts
+    (-1.29%). Three of those sessions read DIFFUSE, so the day-plan
+    caveat standing since day 7 — "all diffuse days so far were
+    UP-drift (n=3); zero down-diffuse tested" — is now answered:
+    down-diffuse tested n=3, intraday short straddle made +33.0 /
+    +13.7 / -1.4. Diffuse-down did NOT punish short premium the way
+    the caveat feared. But the branch's rationale text in
+    `day_plan.recommend_structure` ("covering-fuel drift, writers
+    re-form a rung up, 4/4 up-drift days closed strong") is now
+    descriptively wrong on half its own sample and must be rewritten.
+    (n=3 down-diffuse)
+36. **Implied was CHEAP on every measured mark, for the first time in
+    the program.** EOD straddle vs the realized move to the 08-18
+    settlement: 08-12 implied 1.00% vs realized -1.15%; 08-13 0.89%
+    vs -0.99%; 08-14 0.74% vs -0.87%; 08-17 0.48% vs -0.55%. 4/4 to
+    realized. Program verdicts now stand at 3 cycles implied-rich, 1
+    implied-cheap — and the cheap one was the trending cycle. The
+    short-vol edge is a range-regime edge, not a constant. (n=4 marks,
+    1 cycle)
+37. **And yet the intraday straddle made +62.2 across the same five
+    sessions.** Those two facts are compatible only one way: premium
+    was fairly priced for the multi-day drift and over-priced for the
+    session. The arithmetic is direct — the five opens gapped -10.3,
+    -52.5, -64.2, -12.8, -48.0 = **-187.8 pts, 59% of the cycle's
+    -316.8**, delivered with the market shut. This is the strongest
+    evidence yet for the standing intraday-only constraint, and the
+    first time it has been measured across a whole cycle rather than
+    on one Fri->Mon counterfactual. (n=5)
+38. **The thin-credit trap did not spring — and the credit was never
+    the variable.** 08-18 sold 82.8, thinner than 08-04's 93.0 that
+    lost -55.2 with MAE -78.3, and it paid +19.7 with MAE -14.9. The
+    difference is what concentration DID: 08-04 decayed (32% -> 22%,
+    pin never formed) while 08-18 built (28% -> 37% -> 48%).
+    Provisional refinement of hyp. 10: thin credit is dangerous when
+    concentration is DECAYING, not thin credit as such. This is
+    sharply testable and it contradicts the current `credit_thin`
+    branch, which keys on credit level alone. (n=2, weak)
+39. **Record concentration still did not pin.** 47.6% at 15:15 — the
+    highest ever — with the wall migrating 24250 -> 24200, and spot
+    settled 45 pts below it at the day's low. The OI build was at
+    24150 (CE +298%), a rung under the wall. Third straight expiry
+    where structure formed where price already was. Obs. 32's
+    archetypes now read 1 gravitational (07-28) / 2 chased (08-11,
+    08-18) / 1 no-pin (08-04): the archetype the program opened with
+    is looking like the outlier, and concentration LEVEL alone is not
+    a tradeable pin signal. What might be: concentration level plus
+    the wall's own displacement from spot. (n=4 expiries)
+40. **Obs. 30 does not survive, and the reason is a measurement bug.**
+    It read "the measured edge is premium LEVEL vs realizing" off two
+    >=80th-percentile winners. This week: IV percentiles 12 / 11 / 0 /
+    45 / 75 against P&L +33.0 / +13.7 / -1.4 / -2.8 / +19.7 — the
+    biggest winner came at the 12th percentile. The confound is
+    days-to-expiry: 08-12's 279.9 credit is fat because it holds four
+    sessions of theta, not because vol is rich. Both
+    `day_plan.iv_percentile` (ATM IV vs all history at the same snap)
+    and the `credit_min_win` thinness test (a 0-DTE credit compared
+    against a 4-DTE one) are DTE-blind, and neither can carry weight
+    until they condition on it. (n=5, and a code finding)
+41. **The clean-close run ended.** Divergence flagged beyond the 40-pt
+    band on 3 of 5 sessions (08-12 +53.1 @15:33, 08-14 -41.5 @15:18,
+    08-18 -40.6 @15:19), so day 11's read that hyp. 24 is "fully
+    adapted-out at n=7" does not hold at n=12. The shapes differ —
+    08-12's print sits in the post-15:30 extended window, the other
+    two inside the settlement window — and the carry baseline
+    collapsed across the cycle (-61.6 -> -30.1 -> -7.1) exactly as it
+    should into expiry. A fixed 40-pt band measured against a
+    shrinking baseline is itself DTE-blind; the flag is doing double
+    duty for two different phenomena. (n=12)
+42. **The MAE library reaches the calibration gate at n=15.** Winners'
+    MAE now spans -0.5 to -28.2 (median -12.2) and the two structural
+    losers sat far outside it (-78.3, -72.3) — but the week's two
+    small losers (-16.7, -15.2) fall INSIDE the winners' band. So MAE
+    separates the catastrophic days and cannot separate the marginal
+    ones, which is precisely why the founder framework requires
+    state-conditioned thresholds rather than price levels. Also worth
+    recording: the pattern that motivated the framework — MAE
+    exceeding final profit on all three of the first days — has
+    reversed, with only 3 of 11 winners now finishing below their own
+    drawdown. The n>=15 gate in TASKS.md is MET; calibration can
+    begin, conditioned on regime AND days-to-expiry. (n=15)
+43. **Day-plan track record, n=8.** This cycle: #4 miss, #5 miss,
+    #6 hit, #7 hit, #8 mixed (half size on a winner). The two misses
+    share one cause — the diffuse branch refuses naked short premium
+    on the strength of an up-drift story (obs. 35) — and the mixed
+    call inherits the DTE-blind thin-credit test (obs. 38, 40). The
+    advisory's failures are concentrated in exactly the two heuristics
+    this cycle falsified, which is the useful kind of failure. (n=8)
+44. **Ops: the recycle fix held.** Five consecutive unattended
+    sessions since the 08-11 incident — 0 db errors, every contract
+    ticking (95-103 of 95-103), 2.2-2.5M ticks a day, and EOD
+    materialization + three gamma snapshots + a ledger row landing on
+    all five with no intervention. The incident is closed at n=5. Push
+    alerting is still unbuilt and remains the top ops gap: the recycle
+    fixed THIS failure mode, not the class of silent-death failures.
+    (n=5)
+
 ---
 
-*Next entry: 2026-08-12 (Wed) — first session of the 08-18 weekly with
-IV coming off a 26-vol expiry; does the recycle fix hold through its
-first unattended morning, and does the post-expiry chain rebuild put
-the wall back at a strike or leave the field diffuse?*
+*Next entry: 2026-08-19 (Wed) — first session of the 08-25 weekly off
+a trend cycle rather than a range one. Does the post-expiry chain
+rebuild diffuse again (day 12's shape), and does IV hold the expiry-day
+markup or resume compressing? Open items carried in: the diffuse-branch
+rewrite (obs. 35), DTE-conditioning for IV percentile and credit
+thinness (obs. 40), and the n=15 threshold calibration (obs. 42).*
