@@ -171,6 +171,30 @@ consumes bars only) · proprietary dataset compounding daily.
       the table must be state-conditioned, not a price level (founder
       framework, research/NOTE_risk_thresholds.md). Condition on
       regime AND days-to-expiry; see OBSERVATIONS obs. 42.
+- [ ] **day_plan: DEMOTE the concentration regime from the primary
+      branch (2026-08-18).** `recommend_structure` branches on the 10:00
+      regime FIRST for 100% of sessions and concentration is the label's
+      sole input — but against the 15 sessions with outcomes nothing is
+      significant (conc vs P&L r=-0.281 |t|=1.06; vs MAE r=-0.230
+      |t|=0.85), and the PIN-GRAVITY branch (short-straddle vs iron-fly,
+      the thin-credit rule) fires on 3 of 37 sessions with ONE outcome
+      behind it (07-28). Six tests, all negative — RESULTS
+      gamma_positioning. What HAS earned evidence and should drive the
+      advisory instead: overnight carry (59% of the trend cycle's damage
+      arrived in gaps) and the implied-vs-realized regime across 4 cycles.
+- [ ] **day_plan: cutoffs from the realized distribution, not intuition.**
+      Across 37 sessions the 10:00 concentration runs 0.151-0.363
+      (median 0.236): CONC_PIN=0.35 sits above 92% of all morning reads,
+      CONC_DIFFUSE=0.25 splits at the 57th percentile. Terciles would fall
+      at 0.200/0.259. Only worth doing if the label survives the demotion
+      question above.
+- [ ] **Stage 3 is now the only gamma thread with a defensible premise.**
+      Our gamma is UNSIGNED: B76 gamma is positive and identical for CE
+      and PE at a strike, so the profile cannot distinguish stabilizing
+      (long-gamma, pins) from destabilizing (short-gamma, trends) — which
+      is exactly the distinction every failed thesis needed. Unblocking
+      signed_gex_probe.py step 4 is an OPS task (tick-file access on the
+      worker volume: `railway ssh` or GDrive offload), not research.
 - [ ] **day_plan: rewrite the DIFFUSE branch rationale.** The
       2026-08-18 cycle tested down-diffuse for the first time (n=3)
       and the "covering-fuel drift, writers re-form a rung up, 4/4

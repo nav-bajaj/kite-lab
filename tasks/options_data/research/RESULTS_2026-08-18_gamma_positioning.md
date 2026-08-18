@@ -9,9 +9,19 @@ the profile over every session with greeks (the Stage 2b upgrade this
 document argued for) added the three earliest sessions, and the panel's
 one positive finding did not survive them.
 
-**Verdict: no positioning edge, and no risk-conditioning signal either.
-Two convincing false positives, both recorded below so nobody finds them
-twice.**
+**Verdict after a full day of testing: four negative results, no usable
+gamma signal for positioning, sizing or holding — and a diagnosis of why
+that is unsurprising (the measure is unsigned). Three convincing false
+positives are recorded below so nobody finds them twice.**
+
+| | Test | Result |
+|---|---|---|
+| Q1 | centre the straddle on the wall | coin flip, 5/15 |
+| Q2 | centre on the prior close's wall | directional bet (r=0.84), not gamma |
+| Q3 | concentration slope as risk conditioner | **retracted** — boundary artifact |
+| Q4 | concentration level | runs backwards (-0.409), n.s. |
+| Q5 | wall stickiness (pre-registered) | **falsified**, Welch t=0.68 |
+| Q6 | the regime label the advisory uses | not significant; PIN branch rests on n=1 |
 
 ---
 
@@ -160,35 +170,180 @@ consistent with OBSERVATIONS obs. 39, where the highest concentration
 ever recorded (47.6% on the 08-18 expiry) produced no pin at all and
 spot settled 45 pts below the wall at the day's low.
 
+## Q5 — Wall stickiness: PRE-REGISTERED, and falsified
+
+The Q3 null has an innocent explanation worth testing: concentration
+rising means two opposite things depending on whether the wall is
+*standing still* (a pin forming) or *moving* (a trend being chased), and
+averaging them would produce exactly the zero we measured.
+
+Thesis: **a growing gamma pile only pins price if the pile is standing
+still.** Registered before looking, with a stated kill condition:
+
+- state (09:20-13:00): `beta` of wall on spot — ~0 anchored, ~1 tracking
+- outcome (13:00-15:15): does spot move toward where the wall WAS at
+  13:00 (reference fixed, or a chasing wall scores as convergence by
+  coming to price — the opposite of the claim)
+- split at median beta; control for morning range
+- **falsified if convergence is the same in both buckets**
+
+Run once, n=37:
+
+| Bucket | n | Mean convergence | Median |
+|---|---|---|---|
+| sticky | 27 | +6.87 pts | +3.35 |
+| tracking | 10 | -2.25 pts | -6.70 |
+
+**Welch t = 0.68. `corr(beta, converge) = -0.092`. Not supported.**
+
+The pre-registered control passed — stickiness is not a quiet-day proxy
+(`corr(beta, morning range) = +0.087`) — so that is not the explanation.
+
+Two things make it worse than merely insignificant:
+
+1. **The split was near-degenerate.** beta was exactly 0.000 on **27 of
+   37** sessions. Strikes sit on a 50-pt grid and a typical morning range
+   is ~100 pts, so the wall usually never moves at all within a morning.
+   The state variable barely varies. This costs the test power, and is a
+   design weakness rather than a reprieve.
+2. **The unregistered confound is fatal to the mechanism.** Wall distance
+   from spot at 13:00: **sticky 122 pts, tracking 30 pts.** "Sticky" does
+   not mean *anchored magnet holding price*. It mostly means *the wall is
+   parked on a big-OI strike far from where price is, so of course it
+   does not move.* Converging 6.87 pts out of a 122-pt gap is 5% — noise.
+
+And on expiry days, where the pin should be strongest, spot moved AWAY
+from the 13:00 wall on **3 of 4** — including 07-28, the archetype day
+that inspired the thesis:
+
+| Session | gap 13:00 | converge |
+|---|---|---|
+| 07-28 | 4.75 | **-14.55** |
+| 08-04 | 5.05 | **-31.50** |
+| 08-11 | 55.20 | +5.45 |
+| 08-18 | 8.80 | **-24.85** |
+
+07-28 closed 3.7 pts from max pain, but not because an afternoon wall
+pulled it there — price and wall were already together at 13:00 and
+drifted slightly apart. The thesis was built on that session and that
+session does not support it.
+
+*Probe: `wall_stickiness_probe.py` (+9 unit tests, including a regression
+guard that a chasing wall must not score as convergence).*
+
+## Q6 — The label the advisory actually branches on
+
+`day_plan.recommend_structure` branches on the 10:00 concentration regime
+**first, for 100% of sessions**; concentration is the sole input to that
+label. Against the 15 sessions with outcomes:
+
+| 10:00 regime | n | mean P&L | mean MAE |
+|---|---|---|---|
+| DIFFUSE | 11 | +15.13 | -17.23 |
+| MIXED | 3 | -12.75 | -36.15 |
+| PIN-GRAVITY | 1 | +13.15 | -19.05 |
+
+Nothing here is distinguishable from noise: `conc vs P&L r=-0.281
+(|t|=1.06)`, `conc vs MAE r=-0.230 (|t|=0.85)`. And the branch carrying
+the most specific logic — PIN-GRAVITY, which selects between short
+straddle and iron fly via the thin-credit rule — **fires on 3 of 37
+sessions and has exactly one outcome behind it (07-28)**.
+
+**The cutoffs are imported intuition, not measured.** Across all 37
+sessions the 10:00 concentration runs 0.151-0.363, median 0.236:
+
+- `CONC_PIN = 0.35` sits above **92%** of all morning reads
+- `CONC_DIFFUSE = 0.25` splits at the 57th percentile
+- terciles of the realized distribution would fall at **0.200 / 0.259**
+
+There are now 37 sessions of concentration history to set cutoffs from
+instead of guessing. Whether the label deserves to survive at all is a
+separate question — see the diagnosis below.
+
+## The diagnosis: the measure is UNSIGNED
+
+All four negative results above test functions of one quantity, and that
+quantity is a magnitude.
+
+The engine computes, per contract per minute, Black-76
+`gamma = e^(-rT)·phi(d1)/(F·sigma·sqrt(T))` on a parity-implied forward,
+then aggregates `gex_cr = gamma x OI x F^2 x 0.01 / 1e7`, summing CE and
+PE at each strike. Two consequences that are easy to miss:
+
+- **B76 gamma is positive for calls and puts, and identical for both at
+  the same strike.** Summing CE+PE is adding two positive numbers. There
+  is no sign anywhere.
+- **Because gamma is identical for both, the CE/PE split contributes
+  nothing except through OI.** The OI-migration section tracks calls and
+  puts separately; the gamma profile discards that distinction at the
+  aggregation step.
+
+This is deliberate — `gamma_profile.py`: *"Measured quantities only;
+dealer-sign assumptions are Stage 3."* The US convention (dealers assumed
+long calls / short puts) was explicitly rejected because NIFTY writers
+are structurally net short gamma (`NOTE_stage3_signed_gex.md`).
+
+But it has a consequence for everything above. **An unsigned measure
+cannot distinguish stabilizing from destabilizing gamma.** If the holders
+at a strike are long gamma they buy dips and sell rallies and price
+compresses (pin); if short, they sell dips and buy rallies and price
+extends (trend). **Both produce the identical unsigned number.**
+
+That is precisely the distinction Q3 and Q5 needed. Level, slope and wall
+velocity are all functions of the same magnitude-only quantity. The four
+nulls may not mean "gamma is useless" — they may mean **we measured the
+half of gamma that cannot answer the question.**
+
+This is a specification gap, not a promise that signing it will work.
+`research/signed_gex_probe.py` (steps 1-3, 18 tests) estimates the sign
+empirically from our own tape — Lee-Ready aggressor classification
+against the recorded book, writer modelled as the passive side, dOI
+splitting opened/closed, aggregated as signed gamma FLOW (not level: the
+book standing before recording began is unknowable and is not assumed).
+Step 4, the out-of-sample sign test against the journal's behavioural
+labels, is the pass/fail gate and **has never been run** — blocked on
+tick-file access on the worker volume. It is the only gamma work left
+with a defensible premise.
+
+## One descriptive finding worth keeping
+
+Wall distance from spot is **bimodal**. The wall either sits on top of
+price (~15-30 pts, and then it tracks ATM near-mechanically and carries
+little information) or it is parked 100-400 pts away (and then it never
+moves, because it is not ATM-driven at all). These are two different
+objects sharing one name, and any future gamma work should separate them
+before anything else. Descriptive, not a trade idea.
+
 ## What this means for the program
 
-1. **Do not move the strike for gamma.** Center ATM. Strike selection
-   comes off the table as a lever; that is a real result, not a null one
-   — it removes a degree of freedom that would otherwise get tuned. This
-   held and strengthened when the panel grew.
-2. **The gamma profile has no demonstrated use as a trading input.** Not
-   for entry (Q1), not for strike (Q1/Q2), and — after the retraction —
-   not for hold/size either (Q3). What it retains is descriptive value:
-   it is how the day-type library labels a regime, and obs. 32/39 read
-   pin mechanics off it. That is worth keeping. It is not worth trading
-   off yet.
-3. **Never read concentration level as permission to sell more.** The
-   one relationship that has strengthened as the panel grew points the
-   *other* way (Q4). This is already the flagged weakness in
-   `day_plan`'s PIN-GRAVITY branch.
-4. **The founder framework's caution is doing real work.** Its rule —
-   thresholds must be state-conditioned and derived from measured base
-   rates, never fixed or predictive — is the reason this study looked for
-   a conditioner rather than a signal, and the reason the conditioner was
-   tested ex-ante instead of assumed. Two candidate edges died on those
-   two checks. Neither would have died on a naive backtest.
-5. **Both false positives came from panel boundaries, not from the
-   market.** One from scoring with a future reading, one from a table
-   that began three sessions late. At n=15 the honest posture is that
-   this panel can *reject* claims and cannot yet *establish* any. Obs. 38
-   (thin credit is dangerous when concentration decays) leans on the same
-   mechanism as the retracted Q3 and should be treated as weaker than its
-   already-hedged "n=2, weak" label.
+1. **Do not move the strike for gamma.** Centre ATM. Strike selection
+   comes off the table as a lever — a real result, not a null one, since
+   it removes a degree of freedom that would otherwise get tuned. It held
+   and strengthened as the panel grew.
+2. **Demote the regime label out of the day-plan's primary branch.** It
+   currently selects the structure for 100% of sessions on evidence that
+   is not significant, and its most specific branch rests on a single
+   outcome. If it is kept, its cutoffs should come from the realized
+   distribution (terciles 0.200/0.259), not from imported intuition.
+3. **Never read concentration level as permission to sell more.** The one
+   relationship that strengthened as the panel grew points the *other*
+   way (Q4).
+4. **Stop generating gamma trade theses until the ledger grows.** Three
+   died today. Two from panel boundaries, one from a mechanism that is
+   not there. At n=15 outcomes this panel can *reject* and cannot
+   *establish*; a fourth thesis now would be pattern-matching on noise.
+5. **The founder framework's caution is doing real work.** Its rule —
+   state-conditioned thresholds from measured base rates, never fixed or
+   predictive — is why this study looked for a conditioner rather than a
+   signal, and why conditioners were tested ex-ante. Every candidate died
+   on those checks. **None would have died on a naive backtest.**
+6. **What has earned evidence, by contrast**: overnight carry as the
+   dominant risk (59% of the trend cycle's damage arrived in gaps), and
+   the implied-vs-realized regime distinction across four cycles. Those
+   are strong enough to drive an advisory. Concentration is not.
+7. **The one gamma thread left with a defensible premise is Stage 3**
+   (signed/dealer gamma), and unblocking it is an ops task — tick-file
+   access — not a research one.
 
 ## The resolution upgrade this probe justified — DONE, same day
 

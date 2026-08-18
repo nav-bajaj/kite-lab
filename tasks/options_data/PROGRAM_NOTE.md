@@ -144,6 +144,29 @@ is the running detail.)
 - **Ops: the post-EOD recycle fix held 5/5 unattended sessions**, 0 db
   errors, full contract coverage. The 08-11 incident is closed at n=5;
   push alerting remains the top ops gap.
+- **Gamma does not position trades — six tests, all negative** (research/
+  RESULTS_2026-08-18_gamma_positioning.md). Wall-centering is a coin flip
+  (5/15); the best-looking variant was a directional bet (r=0.84); the
+  concentration-slope risk finding was RETRACTED same-day when the
+  Stage-2b backfill added three sessions; a pre-registered anchored-wall
+  thesis was falsified (Welch t=0.68); and the regime label the day-plan
+  branches on for 100% of sessions is not significant, with its most
+  specific branch resting on one outcome. Three false positives in one
+  day, all from panel boundaries or a mechanism that was not there.
+- **Diagnosis — our gamma is UNSIGNED.** B76 gamma is positive and
+  identical for CE and PE at a strike, so `gex = gamma x OI x F^2`
+  measures WHERE gamma sits, never WHO holds it, and the CE/PE split is
+  discarded at aggregation. An unsigned measure cannot separate
+  stabilizing (long-gamma, pins) from destabilizing (short-gamma,
+  trends) — the exact distinction every thesis needed. The nulls may mean
+  we measured the half of gamma that cannot answer the question. Stage 3
+  (signed_gex_probe.py, steps 1-3 built, step 4 never run, blocked on
+  tick access) is the only gamma thread left with a defensible premise.
+- **Standing rule from the day**: at n=15 outcomes this panel can REJECT
+  and cannot ESTABLISH. No further gamma theses until the ledger grows.
+  Note that none of the three would have died on a naive backtest — they
+  died on the ex-ante and pre-registration checks the founder framework
+  demands.
 
 **Added 2026-08-04 (the pivotal week):**
 
