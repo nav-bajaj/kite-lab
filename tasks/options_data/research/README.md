@@ -7,6 +7,7 @@ Dated results (read in order for the narrative):
 | `RESULTS_2026-07-27_history_probe.md` | Historical API capability check + 5-session exploratory read (pin forming, straddle premium, PCR coincident) |
 | `RESULTS_2026-07-28_first_patterns.md` | Day-one depth findings: pin built intraday (ATM OI 3x), ITM-put imbalance cluster (later killed), expiry friction curve |
 | `RESULTS_2026-07-29_trend_day.md` | Out-of-sample: cluster killed honestly; OI-migration regimes (star result); friction two-regime confirmation |
+| `RESULTS_2026-08-18_gamma_positioning.md` | **Can gamma position a trade?** No: wall-centering is a coin flip (5/12), the best-looking variant is a directional bet (corr 0.96 with offset x spot move), and the concentration slope tracks RISK not return. Justifies the per-minute profile upgrade |
 | `NOTE_risk_thresholds.md` | **Founder framework**: MAE problem (drawdown > final profit all 3 days), probabilistic-not-predictive hold/roll/exit, per-regime threshold table as the future risk config |
 
 Reusable scripts (run from `kite-api/` with DATABASE_URL set; see each
@@ -19,6 +20,7 @@ docstring):
 | `analyze_positioning.py` | Day-one four-study suite (imbalance, OI crush, straddle, spreads) |
 | `analyze_day2_trend.py` | Day-two out-of-sample + trend-day OI mechanics |
 | `straddle_sim.py` | Short-straddle sim, real bid/ask fills; per-day CLI args |
+| `gamma_positioning_probe.py` | Tests the gamma profile as a positioning input (4 straddle variants + ex-ante slope conditioning); `test_gamma_positioning_probe.py` guards the fill convention and the lookahead trap |
 
 Visual explorers (self-contained HTML, open in a browser):
 
