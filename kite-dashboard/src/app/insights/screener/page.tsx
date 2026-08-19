@@ -21,7 +21,7 @@ export default async function ScreenerPage({ searchParams }: PageProps) {
   if (!data_available || rows.length === 0) {
     return (
       <main className="flex flex-col gap-4">
-        <h2 className="font-serif text-2xl font-medium tracking-[-0.01em] text-foreground">
+        <h2 className="text-2xl font-semibold tracking-[-0.01em] text-foreground">
           NSE 500 screener
         </h2>
         <p className="max-w-2xl text-[14px] leading-[1.6] text-muted-foreground">

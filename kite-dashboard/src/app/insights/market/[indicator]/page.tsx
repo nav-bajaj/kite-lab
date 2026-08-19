@@ -171,7 +171,7 @@ function DualStat({
           >
             <span
               className={cn(
-                "font-serif font-medium text-foreground",
+                "font-semibold text-foreground",
                 i === 0 ? "text-xl" : "text-base",
               )}
             >
@@ -209,7 +209,7 @@ function ChartCard({
   return (
     <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5">
       <div className="flex flex-col gap-0.5">
-        <span className="font-serif text-lg font-medium text-foreground">{title}</span>
+        <span className="text-lg font-semibold text-foreground">{title}</span>
         {sub && <span className="text-[13px] text-muted-foreground">{sub}</span>}
       </div>
       {children}
@@ -1139,7 +1139,7 @@ async function RegimeDetail({
                   />
                   {regimeLabel(reg)}
                 </span>
-                <span className="font-serif text-xl font-medium text-foreground">
+                <span className="text-xl font-semibold text-foreground">
                   {days !== null ? `${days} days` : "—"}
                 </span>
               </div>

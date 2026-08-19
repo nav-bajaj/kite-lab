@@ -66,7 +66,7 @@ export default async function StockDetailPage({ params, searchParams }: PageProp
       <section className="flex flex-col gap-3">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="flex flex-col gap-1">
-            <h2 className="font-serif text-3xl font-medium tracking-[-0.01em] text-foreground">{r.symbol}</h2>
+            <h2 className="text-3xl font-semibold tracking-[-0.01em] text-foreground">{r.symbol}</h2>
             <p className="text-[13px] text-muted-foreground">
               {r.zerodha_sector ? (
                 <span className="font-medium text-foreground">{r.zerodha_sector}</span>
@@ -233,7 +233,7 @@ export default async function StockDetailPage({ params, searchParams }: PageProp
 function SectionHead({ title, help }: { title: string; help?: React.ReactNode }) {
   return (
     <div className="flex items-baseline justify-between gap-4 border-b border-border pb-2">
-      <h3 className="font-serif text-lg font-medium tracking-[-0.01em] text-foreground">{title}</h3>
+      <h3 className="text-lg font-semibold tracking-[-0.01em] text-foreground">{title}</h3>
       {help}
     </div>
   );
@@ -328,7 +328,7 @@ function boolText(v: boolean | null | undefined): string {
 function NotFoundState({ symbol, backHref }: { symbol: string; backHref: string }) {
   return (
     <main className="flex flex-col gap-4">
-      <h2 className="font-serif text-2xl font-medium tracking-[-0.01em] text-foreground">
+      <h2 className="text-2xl font-semibold tracking-[-0.01em] text-foreground">
         {symbol} not found
       </h2>
       <p className="max-w-2xl text-[14px] leading-[1.6] text-muted-foreground">

@@ -246,7 +246,7 @@ export function StatStrip({
           <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             {s.label}
           </span>
-          <span className="font-serif text-xl font-medium text-foreground">{s.value}</span>
+          <span className="text-xl font-semibold text-foreground">{s.value}</span>
           {s.sub && <span className="text-[11px] text-muted-foreground">{s.sub}</span>}
         </div>
       ))}

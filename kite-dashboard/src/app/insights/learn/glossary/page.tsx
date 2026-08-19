@@ -41,7 +41,7 @@ export default function GlossaryPage() {
           </Link>
           {" · Glossary"}
         </nav>
-        <h2 className="font-serif text-2xl font-medium tracking-[-0.01em] text-foreground">
+        <h2 className="text-2xl font-semibold tracking-[-0.01em] text-foreground">
           Glossary
         </h2>
         <p className="max-w-2xl text-[15px] leading-[1.6] text-muted-foreground">
@@ -70,7 +70,7 @@ export default function GlossaryPage() {
           id={bucket}
           className="flex flex-col gap-4 scroll-mt-24"
         >
-          <h3 className="border-b border-border pb-2 font-serif text-lg font-medium tracking-[-0.01em] text-foreground">
+          <h3 className="border-b border-border pb-2 text-lg font-semibold tracking-[-0.01em] text-foreground">
             {/* eslint-disable-next-line security/detect-object-injection */}
             {BUCKET_LABELS[bucket]}
           </h3>

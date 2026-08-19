@@ -54,7 +54,7 @@ export function Section({
   return (
     <section className="flex flex-col gap-4">
       <div className="flex items-baseline justify-between gap-4">
-        <h3 className="font-serif text-xl font-medium tracking-[-0.01em] text-foreground">
+        <h3 className="text-xl font-semibold tracking-[-0.01em] text-foreground">
           {title}
         </h3>
         {help && <div className="flex shrink-0 gap-3 text-[13px]">{help}</div>}

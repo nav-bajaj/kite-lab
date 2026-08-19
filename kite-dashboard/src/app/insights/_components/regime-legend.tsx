@@ -63,7 +63,7 @@ export function RegimeLegend({
   return (
     <section id="regime-legend" className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <h3 className="font-serif text-xl font-medium tracking-[-0.01em] text-foreground">
+        <h3 className="text-xl font-semibold tracking-[-0.01em] text-foreground">
           The four regimes explained:
         </h3>
         <p className="text-[13px] text-muted-foreground">

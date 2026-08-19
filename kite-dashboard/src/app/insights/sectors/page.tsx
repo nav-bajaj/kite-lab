@@ -48,7 +48,7 @@ export default async function SectorsPage({
   return (
     <main className="flex flex-col gap-12">
       <section className="flex flex-col gap-1">
-        <h2 className="font-serif text-2xl font-medium tracking-[-0.01em] text-foreground">
+        <h2 className="text-2xl font-semibold tracking-[-0.01em] text-foreground">
           Sectors
         </h2>
         <p className="max-w-2xl text-[13px] leading-[1.55] text-muted-foreground">

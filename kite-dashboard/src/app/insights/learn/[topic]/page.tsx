@@ -43,7 +43,7 @@ export default async function LearnTopicPage(
       </nav>
 
       <header className="flex flex-col gap-3 border-b border-border pb-6">
-        <h2 className="font-serif text-[2rem] font-medium leading-[1.1] tracking-[-0.02em] text-foreground">
+        <h2 className="text-[2rem] font-semibold leading-[1.1] tracking-[-0.02em] text-foreground">
           {explainer.title}
         </h2>
         <p className="text-lg leading-[1.6] text-muted-foreground">{explainer.summary}</p>
@@ -55,7 +55,7 @@ export default async function LearnTopicPage(
       <div className="flex flex-col gap-8">
         {explainer.sections.map((s) => (
           <section key={s.heading} className="flex flex-col gap-2">
-            <h3 className="font-serif text-lg font-medium tracking-[-0.01em] text-foreground">
+            <h3 className="text-lg font-semibold tracking-[-0.01em] text-foreground">
               {s.heading}
             </h3>
             <RenderBody body={s.body} />

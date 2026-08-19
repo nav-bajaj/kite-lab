@@ -37,7 +37,7 @@ export default function LearnIndexPage() {
   return (
     <main className="flex flex-col gap-10">
       <header className="flex flex-col gap-2">
-        <h2 className="font-serif text-2xl font-medium tracking-[-0.01em] text-foreground">
+        <h2 className="text-2xl font-semibold tracking-[-0.01em] text-foreground">
           Learn
         </h2>
         <p className="max-w-2xl text-[15px] leading-[1.6] text-muted-foreground">
@@ -50,7 +50,7 @@ export default function LearnIndexPage() {
       {/* Glossary featured card */}
       <section className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-card p-6">
         <div className="flex flex-col gap-1">
-          <h3 className="font-serif text-lg font-medium tracking-[-0.01em] text-foreground">
+          <h3 className="text-lg font-semibold tracking-[-0.01em] text-foreground">
             Glossary
           </h3>
           <p className="text-[13px] leading-[1.5] text-muted-foreground">
@@ -72,7 +72,7 @@ export default function LearnIndexPage() {
         return (
           <section key={cat.key} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
-              <h3 className="font-serif text-lg font-medium tracking-[-0.01em] text-foreground">
+              <h3 className="text-lg font-semibold tracking-[-0.01em] text-foreground">
                 {cat.label}
               </h3>
               <p className="text-[13px] text-muted-foreground">{cat.blurb}</p>

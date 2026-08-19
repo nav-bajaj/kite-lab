@@ -80,7 +80,7 @@ export default async function WatchlistsPage({ searchParams }: PageProps) {
   return (
     <main className="flex flex-col gap-12">
       <section className="flex flex-col gap-1">
-        <h2 className="font-serif text-2xl font-medium tracking-[-0.01em] text-foreground">
+        <h2 className="text-2xl font-semibold tracking-[-0.01em] text-foreground">
           Stock Lists
         </h2>
         <p className="max-w-2xl text-[13px] leading-[1.55] text-muted-foreground">
@@ -105,7 +105,7 @@ export default async function WatchlistsPage({ searchParams }: PageProps) {
           <section key={listName} className="flex flex-col gap-3">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <div className="flex flex-wrap items-baseline gap-3">
-                <h3 className="font-serif text-lg font-medium tracking-[-0.01em] text-foreground">
+                <h3 className="text-lg font-semibold tracking-[-0.01em] text-foreground">
                   {meta.title}
                 </h3>
                 {meta.validityBadge === "validated" && (

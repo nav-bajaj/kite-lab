@@ -129,7 +129,7 @@ export default async function OverviewPage({
   return (
     <main className="flex flex-col gap-8">
       <div className="flex flex-col gap-1">
-        <h1 className="font-serif text-3xl font-medium tracking-[-0.01em] text-foreground">
+        <h1 className="text-3xl font-semibold tracking-[-0.01em] text-foreground">
           Overview
         </h1>
         <p className="text-[13px] text-muted-foreground">

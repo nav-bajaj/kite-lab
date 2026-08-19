@@ -459,3 +459,25 @@ are middle ground, so "below 35" and "above 60" read literally.
 Occupancy on the 4,262-day panel: **calm 44.6%, middle 38.9%,
 stressed 16.6%**. Days above 60 by year: 2011 (140), 2020 (90), 2018
 (72), 2013 (71), 2022 (63), 2026 (61 so far), 2016 (52), 2025 (48).
+
+## 2026-08-20 — insights typography: sans + mono only
+
+Founder: the third font (Fraunces, the brand display serif) is
+unnecessary and distracting on a dashboard. All 22 `font-serif` usages
+under `src/app/insights/**` and `src/components/insights/**` removed;
+each carried `font-medium`, bumped to `font-semibold` so headings keep
+their step in the hierarchy without the serif's optical weight.
+
+Scope is the dashboard only. Fraunces stays on the brand surfaces —
+marketing, library, sign-in, portfolios, account — which is where the
+display serif earns its place. `--font-serif` is untouched in
+globals.css, so nothing else changes.
+
+Included the `/insights/learn/**` explainer pages: they render inside
+the dashboard shell, so a different heading font there would reintroduce
+exactly the inconsistency this removes. Say the word if long-form
+reading should keep the serif.
+
+Open, deliberately not done: numeric stat values are sans, not mono.
+"Sans and mono" could be read as putting the figures in mono, which
+would be a bigger visual change than asked for.

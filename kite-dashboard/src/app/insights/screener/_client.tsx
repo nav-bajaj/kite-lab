@@ -246,7 +246,7 @@ export function ScreenerClient({ rows, asof }: { rows: StockRow[]; asof: string 
     <main className="flex flex-col gap-6">
       <section className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
-          <h2 className="font-serif text-2xl font-medium tracking-[-0.01em] text-foreground">
+          <h2 className="text-2xl font-semibold tracking-[-0.01em] text-foreground">
             NSE 500 screener
           </h2>
           <p className="max-w-3xl text-[13px] leading-[1.55] text-muted-foreground">
