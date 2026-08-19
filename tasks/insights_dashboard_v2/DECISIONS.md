@@ -442,3 +442,20 @@ Open, not fixed:
 - Survivorship bias is documented in the engine and the atlas but not
   surfaced on the page.
 - `_indices_dir()` duplicated in five modules instead of `_paths.py`.
+
+## 2026-08-20 — stress bands settled
+
+**One scheme: below 35 calm, 35-60 middle ground, above 60 stressed**
+(founder). This replaces the three that were in circulation — engine
+docstring 20/40/60/80, UI 33/66, explainer 30/60/80.
+
+Defined once as `CALM_BELOW` / `STRESSED_ABOVE` in `stress.py` with a
+`stress_band()` classifier, and shipped on the snapshot as `bands` +
+`band`. The chart's reference lines, the card label and the explainer
+all render from that payload, so the scheme cannot fork again. Spec
+tests pin both boundaries and their exact sides — 35 and 60 themselves
+are middle ground, so "below 35" and "above 60" read literally.
+
+Occupancy on the 4,262-day panel: **calm 44.6%, middle 38.9%,
+stressed 16.6%**. Days above 60 by year: 2011 (140), 2020 (90), 2018
+(72), 2013 (71), 2022 (63), 2026 (61 so far), 2016 (52), 2025 (48).

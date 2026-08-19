@@ -19,6 +19,7 @@ import {
   type MarketReading,
   type RegimeEpisode,
   type RegimeTimeseriesResponse,
+  type StressSnapshot,
   type TimeseriesResponse,
 } from "@/lib/insights-api";
 import { DetailShell, StatStrip } from "@/components/insights/mission";
@@ -501,11 +502,15 @@ async function AdvanceDeclineDetail({
   );
 }
 
-// Stress score bands mirror the gauge's own wording (calm / elevated / high).
-const STRESS_BANDS: ReferenceBand[] = [
-  { value: 66, label: "high-stress zone", tone: "negative" },
-  { value: 33, label: "calm below this line", tone: "muted" },
-];
+/** Reference lines drawn from the engine's own band boundaries, so the
+ *  chart, the card and the explainer can never disagree about where calm
+ *  ends and stressed begins (founder, 2026-08-20). */
+function stressBands(bands: StressSnapshot["bands"]): ReferenceBand[] {
+  return [
+    { value: bands.stressed_above, label: "stressed above this line", tone: "negative" },
+    { value: bands.calm_below, label: "calm below this line", tone: "muted" },
+  ];
+}
 
 async function StressDetail({
   reading,
@@ -560,7 +565,7 @@ async function StressDetail({
       {/* State first, chart second — same order as the Regime tab. */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <DualStat
-          label="Stress"
+          label={s.band ? `Stress · ${s.band}` : "Stress"}
           primary={{
             value: s.score !== null ? s.score.toFixed(0) : "—",
             sub: "out of 100",
@@ -608,7 +613,7 @@ async function StressDetail({
         <TimeseriesChart
           dates={series.index}
           values={values}
-          bands={STRESS_BANDS}
+          bands={stressBands(s.bands)}
           overlay={overlay}
           overlayValueLabel="Stress"
         />

@@ -18,13 +18,12 @@ Why this composite vs the regime classifier:
   - Stress also surfaces transitions earlier than regime (which has
     smoothing); useful as an alert trigger
 
-Reading guide for downstream commentary:
-   0-20   very calm
-  20-40   normal
-  40-60   elevated (worth watching)
-  60-80   stressed (defensive setups historically pay off here)
-  80-100  panic / capitulation (historically bullish from here at 20-60d
-          horizons, per the panic-bounce analysis)
+Reading guide (founder, 2026-08-20) — ONE scheme, defined once below in
+CALM_BELOW / STRESSED_ABOVE and shipped with every reading so no surface
+restates it differently:
+  below 35  calm
+  35-60     middle ground
+  above 60  stressed
 """
 from __future__ import annotations
 
@@ -51,6 +50,31 @@ WEIGHTS = {
     "dispersion":     0.20,
 }
 assert abs(sum(WEIGHTS.values()) - 1.0) < 1e-9
+
+# Band boundaries for the headline score. Defined here and shipped on the
+# snapshot: this score previously carried three different schemes across the
+# engine docstring, the UI and the explainer, which is exactly what a single
+# source of truth prevents.
+CALM_BELOW = 35
+STRESSED_ABOVE = 60
+
+BAND_CALM = "Calm"
+BAND_MIDDLE = "Middle ground"
+BAND_STRESSED = "Stressed"
+
+
+def stress_band(score: float | None) -> str | None:
+    """Plain label for a 0-100 score. Boundaries read literally: below 35
+    is calm, above 60 is stressed, and both boundary values themselves sit
+    in the middle ground."""
+    if score is None:
+        return None
+    if score < CALM_BELOW:
+        return BAND_CALM
+    if score > STRESSED_ABOVE:
+        return BAND_STRESSED
+    return BAND_MIDDLE
+
 
 # Lookbacks. Every input on this indicator is a one-year quantity — the VIX
 # percentile ranks over 252d, the drawdown is measured against the 252d high,
@@ -93,6 +117,8 @@ class StressSnapshot:
         # Windows behind the percentile figures, for the same reason.
         d["percentile_window_days"] = SCORE_PERCENTILE_WINDOW
         d["component_window_days"] = COMPONENT_WINDOW
+        d["bands"] = {"calm_below": CALM_BELOW, "stressed_above": STRESSED_ABOVE}
+        d["band"] = stress_band(self.score)
         return d
 
 

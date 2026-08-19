@@ -394,6 +394,45 @@ class TestUniverseScopedRegimeSpec:
         assert abs(float(ep["index_return_pct"]) - expected) < 1e-9
 
 
+class TestStressBandsSpec:
+    """Spec: one band scheme, defined in the engine (founder, 2026-08-20).
+
+    Before this the same score carried three different schemes — the engine
+    docstring said 20/40/60/80, the UI used 33/66 and the explainer 30/60/80.
+    The bands now live here and ship with the reading so no surface can
+    restate them differently.
+    """
+
+    def test_boundaries_are_35_and_60(self):
+        assert stress.CALM_BELOW == 35
+        assert stress.STRESSED_ABOVE == 60
+
+    @pytest.mark.parametrize("score,expected", [
+        (0, "Calm"),
+        (34.9, "Calm"),
+        (35, "Middle ground"),
+        (47, "Middle ground"),
+        (60, "Middle ground"),
+        (60.1, "Stressed"),
+        (100, "Stressed"),
+    ])
+    def test_band_label_at_and_around_each_boundary(self, score, expected):
+        """Boundaries are pinned explicitly: 35 is the first middle-ground
+        value and 60 is the last one, so 'below 35' and 'above 60' read
+        literally."""
+        assert stress.stress_band(score) == expected
+
+    def test_unknown_score_has_no_band(self):
+        assert stress.stress_band(None) is None
+
+    def test_bands_ship_with_the_reading(self):
+        snap = stress.get_stress_snapshot()
+        assert snap is not None
+        d = snap.to_dict()
+        assert d["bands"] == {"calm_below": 35, "stressed_above": 60}
+        assert d["band"] == stress.stress_band(snap.score)
+
+
 class TestStressCoverageSpec:
     """Spec: the composite must not present a guess as a reading.
 

@@ -107,14 +107,8 @@ export default async function OverviewPage({
         : regime.regime === "STRETCHED"
           ? "text-[color:var(--warning)]"
           : "text-foreground";
-  const stressLevel =
-    stress.score === null
-      ? "—"
-      : stress.score < 33
-        ? "Calm"
-        : stress.score < 66
-          ? "Elevated"
-          : "High";
+  // The band label comes from the engine — see stress.stress_band().
+  const stressLevel = stress.band ?? "—";
 
   const asOf = new Date(reading.date).toLocaleDateString("en-IN", {
     weekday: "long",

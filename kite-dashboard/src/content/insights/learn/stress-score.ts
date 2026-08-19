@@ -28,10 +28,11 @@ The score is also useful for **conditional thinking**: how have markets historic
     },
     {
       heading: "How to read it",
-      body: `- **Below 30 — Calm.** Trend-following conditions; breadth typically healthy.
-- **30-60 — Normal.** Most trading days live here. No clear edge.
-- **60-80 — Elevated.** Volatility unusually high, breadth weakening, drawdown notable. Pay closer attention; reduce sizing if you're discretionary.
-- **80+ — Panic / capitulation.** Historically the strongest forward-return zone in our data — but also the most uncomfortable to act in. Past stress > 80 days include Aug-Dec 2011 (euro-zone crisis), Feb 2016 (global growth scare), Feb-Apr 2020 (COVID) and Oct 2018 (NBFC crisis).
+      body: `Three bands, and they are the only ones we use — the chart lines, the card label and this list all read from the same two numbers in the engine:
+
+- **Below 35 — Calm.** Trend-following conditions; breadth typically healthy. About 45% of days sit here.
+- **35-60 — Middle ground.** Mixed signals, no clear edge either way. About 39% of days.
+- **Above 60 — Stressed.** Volatility unusually high, breadth weakening, drawdown notable. About 17% of days — the deepest clusters being Aug-Dec 2011 (euro-zone crisis, 140 days), Feb-Apr 2020 (COVID, 90 days), Oct 2018 (NBFC crisis, 72 days) and 2013's taper tantrum (71 days).
 
 Single-day jumps of 15+ points in the score are themselves informative — they usually mark either a crystallising breakdown or the early phase of an event that will need several days to resolve.`,
     },
@@ -50,7 +51,7 @@ For the live chart and the exact daily values, see the [stress timeseries on Pul
     {
       heading: "Common misreadings",
       body: `- **"Stress is rising fast — it must be a crash coming."** Not always. Rising stress is a warning, but most rises into 50-70 mean-revert without becoming a crisis. The full-blown crash regime requires stress to stay elevated for many days, not just spike for one.
-- **"Stress is below 30 — it's safe."** Calm conditions can persist for very long stretches AND complacency itself becomes a risk — readings below 20 with VIX at multi-year lows have historically preceded volatility expansions.
+- **"Stress is below 35 — it's safe."** Calm conditions can persist for very long stretches AND complacency itself becomes a risk — readings below 20 with VIX at multi-year lows have historically preceded volatility expansions.
 - **"Component X is driving stress today, so I should watch X."** The whole point of the composite is that no single component is the signal — it's the convergence. A 70 driven by VIX alone (other components quiet) is different from a 70 driven by all four climbing together; the latter is far more meaningful.`,
     },
   ],

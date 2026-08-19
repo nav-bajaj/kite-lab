@@ -68,6 +68,10 @@ export interface StressSnapshot {
   weights: Record<string, number>;
   percentile_window_days: number;
   component_window_days: number;
+  /** Band boundaries and today's label, both from the engine — this score
+   *  once carried three different schemes across three surfaces. */
+  bands: { calm_below: number; stressed_above: number };
+  band: string | null;
 }
 
 export interface SectorBreadthSnapshot {
