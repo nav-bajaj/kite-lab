@@ -8,8 +8,14 @@ Output: a daily-indexed `pd.DataFrame` with these columns:
   pct_above_50dma     fraction of NSE 500 stocks with close > 50-DMA
   pct_above_100dma    same, 100-DMA
   pct_above_200dma    same, 200-DMA
-  ad_diff_pct         (#advancers - #decliners) / #active
-  cumulative_ad       running sum of ad_diff_pct (A-D line proxy)
+  ad_diff_pct         (#advancers - #decliners) / (#advancers + #decliners)
+                      — unchanged names are excluded from the divisor
+  cumulative_ad       running sum of ad_diff_pct (unitless index)
+  n_advancing         count of stocks up on the day
+  n_declining         count of stocks down on the day
+  ad_net_count        #advancers - #decliners, in stocks
+  cumulative_ad_count running sum of ad_net_count — the conventional A-D
+                      line, in stocks
   mcclellan_osc       EMA19(ad_diff_pct) - EMA39(ad_diff_pct)
   new_52w_highs_pct   fraction of active stocks at trailing 252d close-high
   new_52w_lows_pct    fraction at trailing 252d close-low
@@ -148,6 +154,12 @@ def compute_breadth_panel(close_panel: pd.DataFrame) -> pd.DataFrame:
     n_total_ad = n_adv + n_dec
     ad_diff_pct = ((n_adv - n_dec) / n_total_ad).replace([np.inf, -np.inf], np.nan)
     cumulative_ad = ad_diff_pct.cumsum()
+    # The conventional A-D line is a running sum of the net COUNT of stocks;
+    # `cumulative_ad` above sums ratios instead, which is a unitless index.
+    # Both are published so the UI can show the line in stocks as well as in
+    # percent (founder, 2026-08-20).
+    ad_net_count = n_adv - n_dec
+    cumulative_ad_count = ad_net_count.cumsum()
 
     mcclellan = (ad_diff_pct.ewm(span=19, adjust=False).mean()
                  - ad_diff_pct.ewm(span=39, adjust=False).mean())
@@ -170,6 +182,10 @@ def compute_breadth_panel(close_panel: pd.DataFrame) -> pd.DataFrame:
         "avg_dist_from_200dma": avg_dist_200,
         "ad_diff_pct":          ad_diff_pct,
         "cumulative_ad":        cumulative_ad,
+        "n_advancing":          n_adv,
+        "n_declining":          n_dec,
+        "ad_net_count":         ad_net_count,
+        "cumulative_ad_count":  cumulative_ad_count,
         "mcclellan_osc":        mcclellan,
         "mcclellan_sum":        mcclellan_sum,
         "new_52w_highs_pct":    new_high_pct,
@@ -233,7 +249,10 @@ def get_breadth_panel(universe: str = "nse500", force_rebuild: bool = False) -> 
 # the mtime freshness check can't see code changes, so the load path
 # verifies schema before trusting a "fresh" cache (added with the
 # Breadth Atlas columns, insights_dashboard_v2 Slice 2.5).
-_SCHEMA_SENTINEL_COLUMNS = ("avg_dist_from_200dma", "mcclellan_sum", "pct_above_21dma")
+_SCHEMA_SENTINEL_COLUMNS = (
+    "avg_dist_from_200dma", "mcclellan_sum", "pct_above_21dma",
+    "cumulative_ad_count",
+)
 
 
 @lru_cache(maxsize=8)

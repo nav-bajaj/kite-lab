@@ -150,10 +150,14 @@ function DualStat({
   label,
   primary,
   secondary,
+  emphasis = false,
 }: {
   label: string;
   primary: { value: string; sub?: string };
   secondary: { value: string; sub?: string };
+  /** Size up the primary reading — used where it is a verdict (the stress
+   *  band) rather than a raw figure. */
+  emphasis?: boolean;
 }) {
   return (
     <div className="flex flex-col gap-2 rounded-xl border border-border bg-card px-4 py-3">
@@ -172,7 +176,7 @@ function DualStat({
             <span
               className={cn(
                 "font-semibold text-foreground",
-                i === 0 ? "text-xl" : "text-base",
+                i === 0 ? (emphasis ? "text-2xl" : "text-xl") : "text-base",
               )}
             >
               {part.value}
@@ -187,6 +191,14 @@ function DualStat({
       </div>
     </div>
   );
+}
+
+/** Percentiles spelled out. "p42" is compact but opaque — it reads as a
+ *  code rather than a position, so every percentile on the dashboard says
+ *  what it means (founder, 2026-08-20). */
+function percentileText(p: number | null | undefined): string {
+  if (p === null || p === undefined || Number.isNaN(p)) return "—";
+  return `Higher than ${p.toFixed(0)}%`;
 }
 
 /** "the past year" / "the last 5 years" from a trading-day window. */
@@ -383,8 +395,8 @@ async function BreadthDetail({
           },
           {
             label: "Vs its own history",
-            value: rank !== null ? `p${rank.toFixed(0)}` : "—",
-            sub: from ? `since ${from}` : "on record",
+            value: percentileText(rank),
+            sub: from ? `of days since ${from}` : "of days on record",
           },
           {
             label: "Change, 20 sessions",
@@ -422,18 +434,25 @@ async function BreadthDetail({
 // today, not where the cycle is.
 const AD_VARIANTS: Omit<MetricVariant, "values">[] = [
   {
-    metric: "ad_diff_pct",
-    label: "Net advances (daily)",
-    sub: "Advancers minus decliners as a share of names traded — the rawest daily flow read. Spiky by nature.",
-    percent: true,
-    bands: atlasBands(-0.672, 0.004, 0.582),
+    metric: "cumulative_ad_count",
+    label: "A-D line (stocks)",
+    sub: "A running total of advancers minus decliners, counted in stocks. The direction it travels is the signal; the level is just where the running total happens to be.",
+    percent: false,
+    bands: [],
   },
   {
     metric: "cumulative_ad",
-    label: "A-D line (cumulative)",
-    sub: "Running total of daily net advances. Read its slope and its divergences from the index — the level itself carries no meaning.",
+    label: "A-D line (%)",
+    sub: "The same running total, with each day counted as a share of the stocks that moved. A heavy day in a thin market counts for less here than in the stock version.",
     percent: false,
     bands: [],
+  },
+  {
+    metric: "ad_diff_pct",
+    label: "Net advances (daily)",
+    sub: "Advancers minus decliners on the day, as a share of the stocks that moved. It swings between extremes most weeks, so read it a day at a time rather than as a trend.",
+    percent: true,
+    bands: atlasBands(-0.672, 0.004, 0.582),
   },
 ];
 
@@ -445,58 +464,98 @@ async function AdvanceDeclineDetail({
   universe: BreadthUniverse;
 }) {
   const asOf = reading.date.slice(0, 10);
-  const raw = await getBreadthTimeseries({
-    days: 4000,
-    metrics: AD_VARIANTS.map((v) => v.metric),
-    universe,
-  }).catch((): TimeseriesResponse => ({ index: [], data: {} }));
+  const [raw, overlay] = await Promise.all([
+    getBreadthTimeseries({
+      days: 4000,
+      metrics: [...AD_VARIANTS.map((v) => v.metric), "n_advancing", "n_declining"],
+      universe,
+    }).catch((): TimeseriesResponse => ({ index: [], data: {} })),
+    indexOverlay(universe, asOf),
+  ]);
   const series = truncateSeries(raw, asOf);
   const isDefault = universe === "nse500";
   const byKey = new Map(Object.entries(series.data));
   const daily = byKey.get("ad_diff_pct") ?? [];
   const now = isDefault ? (reading.breadth["ad_diff_pct"] ?? null) : lastNonNull(daily);
+  const advancing = lastNonNull(byKey.get("n_advancing") ?? []);
+  const declining = lastNonNull(byKey.get("n_declining") ?? []);
+
+  // The A-D line earns its keep as a slope read against price, so the tiles
+  // carry the 20-session move of both and say plainly whether they agree.
+  const lineChange = changeOver(byKey.get("cumulative_ad_count") ?? [], 20);
+  const overlayCloses = overlay?.closes ?? [];
+  const indexChange20 =
+    overlayCloses.length > 20
+      ? (() => {
+          const last = lastNonNull(overlayCloses);
+          const prior = overlayCloses.at(overlayCloses.length - 21) ?? null;
+          return last !== null && prior !== null && prior > 0 ? last / prior - 1 : null;
+        })()
+      : null;
+  const divergence =
+    lineChange !== null && indexChange20 !== null
+      ? indexChange20 >= 0 && lineChange < 0
+        ? "index up while the line falls — fewer names carrying it"
+        : indexChange20 < 0 && lineChange >= 0
+          ? "index down while the line rises — selling is narrowing"
+          : "index and the A-D line agree"
+      : undefined;
 
   const variants: MetricVariant[] = AD_VARIANTS.map((v) => {
     const vals = byKey.get(v.metric) ?? [];
     const bands =
-      v.metric === "cumulative_ad" ? [] : isDefault ? v.bands : computedBands(vals);
+      v.metric === "ad_diff_pct"
+        ? isDefault
+          ? v.bands
+          : computedBands(vals, firstYear(series.index))
+        : [];
     return { ...v, values: vals, bands };
   });
 
   return (
     <div className="flex flex-col gap-4">
-      <ChartCard
-        title={`Advances & declines · ${universeLabel(universe)}`}
-        sub="How many stocks participated in today's move — daily net advances, plus the cumulative A-D line."
-      >
-        <MetricExplorer dates={series.index} variants={variants} />
-      </ChartCard>
       <StatStrip
         stats={[
-          { label: "Net advances today", value: fmtPct(now, 0, true), sub: "of names traded" },
           {
-            label: "Typical day",
-            value: isDefault ? "±0%" : fmtPct(percentile(daily, 50), 0),
-            sub: "median is near zero by nature",
+            label: "Today",
+            value:
+              advancing !== null && declining !== null
+                ? `${advancing.toFixed(0)} up · ${declining.toFixed(0)} down`
+                : "—",
+            sub: `of ${universeLabel(universe)}`,
           },
           {
-            label: "Heavy-selling day",
-            value: isDefault ? "-67%" : fmtPct(percentile(daily, 5), 0),
-            sub: "bottom 5% of days",
+            label: "Net advances",
+            value: fmtPct(now, 0, true),
+            sub: "of the stocks that moved",
           },
           {
-            label: "Broad-buying day",
-            value: isDefault ? "+58%" : fmtPct(percentile(daily, 95), 0),
-            sub: "top 5% of days",
+            label: "A-D line, 20 sessions",
+            value:
+              lineChange !== null
+                ? `${lineChange >= 0 ? "+" : ""}${lineChange.toFixed(0)}`
+                : "—",
+            sub: "net stocks added to the line",
+          },
+          {
+            label: `${overlay?.label ?? "Index"}, 20 sessions`,
+            value: fmtPct(indexChange20, 1, true),
+            sub: divergence,
           },
         ]}
       />
+      <ChartCard
+        title={`Advances & declines · ${universeLabel(universe)}`}
+        sub="How many stocks moved with the market. The A-D line is the running total — switch between counting stocks and counting each day as a share of the stocks that moved."
+      >
+        <MetricExplorer dates={series.index} variants={variants} overlay={overlay} />
+      </ChartCard>
       <LearnPanel title="Learn more">
-        The most direct participation gauge there is: how many stocks rose
-        versus fell today. Single days are noise — the daily series mean-
-        reverts almost immediately — which is why the cumulative A-D line
-        exists: when it flattens while the index keeps rising, fewer and
-        fewer stocks are carrying the move.
+        This counts how many stocks rose versus fell, which the index alone
+        cannot tell you — a handful of large names can carry it while most
+        stocks fall. A single day says little. The running total is where it
+        gets useful: when it turns down while the index keeps climbing, the
+        move is resting on fewer and fewer stocks.
       </LearnPanel>
     </div>
   );
@@ -565,44 +624,42 @@ async function StressDetail({
       {/* State first, chart second — same order as the Regime tab. */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <DualStat
-          label={s.band ? `Stress · ${s.band}` : "Stress"}
+          label="Stress"
+          emphasis
           primary={{
-            value: s.score !== null ? s.score.toFixed(0) : "—",
-            sub: "out of 100",
+            value: s.band ?? "—",
+            sub: s.score !== null ? `${s.score.toFixed(0)}/100` : undefined,
           }}
           secondary={{
-            value: s.score_percentile !== null ? `p${s.score_percentile.toFixed(0)}` : "—",
+            value: percentileText(s.score_percentile),
             sub:
               s.score_percentile === null
                 ? "not enough history yet"
                 : shallow
-                  ? `vs ${s.score_percentile_obs} sessions so far`
-                  : `vs ${windowLabel}`,
+                  ? `of ${s.score_percentile_obs} sessions so far`
+                  : `of ${windowLabel}`,
           }}
         />
         <DualStat
           label="India VIX"
           primary={{ value: s.vix_close?.toFixed(1) ?? "—", sub: "index level" }}
           secondary={{
-            value:
-              s.vix_pctile_component !== null
-                ? `p${s.vix_pctile_component.toFixed(0)}`
-                : "—",
-            sub: `vs ${componentWindowLabel}`,
+            value: percentileText(s.vix_pctile_component),
+            sub: `of ${componentWindowLabel}`,
           }}
         />
         <DualStat
           label="Nifty drawdown"
           primary={{
             value: fmtPct(s.nifty_drawdown_pct, 1),
-            sub: `from its ${componentWindowLabel} closing high`,
+            sub: "from the past year's high",
           }}
           secondary={{
             value:
               s.below_200dma_component !== null
                 ? fmtPct(1 - s.below_200dma_component / 100, 0)
                 : "—",
-            sub: "of NSE 500 above 200-DMA",
+            sub: "of NSE 500 stocks above 200-DMA",
           }}
         />
       </div>
@@ -855,7 +912,7 @@ async function McClellanDetail({
         title={`McClellan oscillator · ${universeLabel(universe)} advance-decline flow`}
         sub="Fast EMA minus slow EMA of daily advance-decline breadth. A flow gauge — it describes what just happened, not where the cycle is."
       >
-        <TimeseriesChart dates={series.index} values={values} bands={bands} defaultRange="1Y" />
+        <TimeseriesChart dates={series.index} values={values} bands={bands} />
       </ChartCard>
       <StatStrip
         stats={[
@@ -908,7 +965,7 @@ async function ConcentrationDetail({
           dates={series.index}
           values={values}
           bands={[{ value: 0, label: "even tape", tone: "muted" }]}
-          defaultRange="1Y"
+         
         />
       </ChartCard>
       <StatStrip

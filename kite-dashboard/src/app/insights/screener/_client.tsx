@@ -111,7 +111,7 @@ const COLUMNS: Column[] = [
   // RS + the two Marketworks scores, kept together next to RS rank
   { id: "rank", label: "RS rank", group: "rs", learn: "rs-rank", sortField: "rank", align: "right",
     render: (r) => (r.rank ?? "—") },
-  { id: "percentile", label: "RS %ile", group: "rs", learn: "rs-rank", sortField: "percentile", align: "right",
+  { id: "percentile", label: "RS percentile", group: "rs", learn: "rs-rank", sortField: "percentile", align: "right",
     render: (r) => (r.percentile === null ? "—" : r.percentile.toFixed(0)) },
   { id: "rank_delta_21d", label: "RS rank Δ 21d", group: "rs", learn: "rs-rank", sortField: "rank_delta_21d", align: "right",
     render: (r) => (r.rank_delta_21d === null ? "—" : (r.rank_delta_21d > 0 ? `+${r.rank_delta_21d}` : `${r.rank_delta_21d}`)) },

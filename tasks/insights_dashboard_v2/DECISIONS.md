@@ -481,3 +481,45 @@ reading should keep the serif.
 Open, deliberately not done: numeric stat values are sans, not mono.
 "Sans and mono" could be read as putting the figures in mono, which
 would be a bigger visual change than asked for.
+
+## 2026-08-20 — Stress polish + Advances & declines rebuild
+
+**Percentiles are spelled out everywhere.** "p42" reads as a code, not a
+position (founder). One `percentileText()` helper renders "Higher than
+42%" with the window as its sub, applied to the stress card, the VIX
+card, the breadth history tile and the Overview. Two more found while
+sweeping: the screener header said "RS %ile", and the stock detail page
+rendered "42th percentile" — a broken ordinal, now "Higher than 42% of
+NSE 500".
+
+**Stress card**: the band leads at display size (it is the analysis of
+the score), the label no longer doubles up as "Stress · Calm", the score
+reads "34/100" with no redundant sub, and "from its the past year
+closing high" — a mangled string — is now "from the past year's high".
+
+**1Y is the default range on every chart, every tab.** The shared
+component defaulted to 3Y with two tabs overriding to 1Y; the default
+moved and the overrides are gone.
+
+**A-D line: the founder's question had a real answer.** He asked whether
+it depicts percentage or stock count. It was neither cleanly —
+`cumulative_ad` is `cumsum(ad_diff_pct)`, a running sum of daily ratios,
+i.e. a unitless index. The engine now also publishes the conventional
+line: `n_advancing`, `n_declining`, `ad_net_count` and
+`cumulative_ad_count` (cumsum of advancers minus decliners, in stocks).
+Both forms are chips, stocks first. `_SCHEMA_SENTINEL_COLUMNS` updated
+so mtime-fresh caches from older code rebuild.
+
+Also fixed the breadth module docstring, which documented `ad_diff_pct`
+as dividing by `#active` when it divides by advancers + decliners
+(audit N5) — and chart axis precision, which is now derived from the
+series' magnitude rather than fixed at 1dp. That printed the A-D line in
+stocks as "-15000.0" and collapsed the McClellan oscillator's entire
+±0.14 range onto "0.1 / 0.0 / -0.1" (audit N7).
+
+The A/D tab's cards are readings now, not reference levels: today's
+split in stocks, net advances, the line's 20-session move, and the
+index's 20-session move with a divergence read.
+
+Open: daily net advances is kept as the third chip. Founder said "maybe
+we don't need it" — kept pending a clear call.

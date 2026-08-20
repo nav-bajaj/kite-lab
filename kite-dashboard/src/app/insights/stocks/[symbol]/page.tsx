@@ -116,7 +116,7 @@ export default async function StockDetailPage({ params, searchParams }: PageProp
               r.sector_rank && r.sector_size
                 ? `#${r.sector_rank} of ${r.sector_size} in sector`
                 : r.percentile !== null
-                  ? `${r.percentile.toFixed(0)}th percentile`
+                  ? `Higher than ${r.percentile.toFixed(0)}% of NSE 500`
                   : undefined
             }
           />

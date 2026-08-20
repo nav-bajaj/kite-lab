@@ -169,7 +169,7 @@ export default async function OverviewPage({
               <span className="font-mono text-[12px] text-muted-foreground">
                 {stress.score !== null ? `${stress.score.toFixed(0)}/100` : "—"}
                 {stress.score_percentile !== null &&
-                  ` · p${stress.score_percentile.toFixed(0)}`}
+                  ` · higher than ${stress.score_percentile.toFixed(0)}% of the past year`}
               </span>
             </div>
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">

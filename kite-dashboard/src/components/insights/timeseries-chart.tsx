@@ -59,7 +59,7 @@ export function TimeseriesChart({
   values,
   bands = [],
   percent = false,
-  defaultRange = "3Y",
+  defaultRange = "1Y",
   height = 320,
   overlay,
   overlayValueLabel = "Value",
@@ -155,6 +155,11 @@ export function TimeseriesChart({
       handleScroll: false,
     });
 
+    // Precision from the series' own magnitude. A fixed 1dp printed the
+    // A-D line in stocks as "-15000.0" and collapsed the McClellan
+    // oscillator's whole +/-0.14 range onto "0.1" / "0.0" / "-0.1".
+    const magnitude = Math.max(...sliced.map((p) => Math.abs(p.value)), 0);
+    const precision = magnitude >= 1000 ? 0 : magnitude >= 10 ? 1 : magnitude >= 1 ? 2 : 3;
     const area = chart.addSeries(AreaSeries, {
       lineColor: chart1,
       topColor: chart1,
@@ -164,7 +169,7 @@ export function TimeseriesChart({
       lastValueVisible: true,
       priceFormat: percent
         ? { type: "custom", formatter: (v: number) => `${v.toFixed(0)}%`, minMove: 0.1 }
-        : { type: "price", precision: 1, minMove: 0.1 },
+        : { type: "price", precision, minMove: 10 ** -precision },
     });
     area.setData(sliced);
 

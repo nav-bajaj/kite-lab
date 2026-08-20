@@ -210,3 +210,61 @@ class TestUniverseScopedBreadth:
         # Legacy path is preserved for the default universe so existing
         # prod caches stay valid.
         assert breadth._cache_file().name == "breadth_panel.pkl"
+
+
+class TestAdvanceDeclineCountsSpec:
+    """Spec: the A-D line must be available in stocks, not only as a running
+    sum of ratios (founder, 2026-08-20: "Is it depicting percentage or number
+    of stocks? I think we should depict both").
+
+    `cumulative_ad` is cumsum(ad_diff_pct) — a unitless index. The
+    conventional A-D line is cumsum(advancers - decliners), which is what
+    `cumulative_ad_count` provides.
+    """
+
+    @pytest.fixture(scope="class")
+    def panel(self):
+        return breadth.get_breadth_panel()
+
+    def test_counts_are_present(self, panel):
+        for col in ["n_advancing", "n_declining", "ad_net_count",
+                    "cumulative_ad_count"]:
+            assert col in panel.columns
+
+    def test_counts_are_whole_non_negative_numbers(self, panel):
+        for col in ["n_advancing", "n_declining"]:
+            v = panel[col].dropna()
+            assert (v >= 0).all()
+            assert (v == v.round()).all(), f"{col} should be whole stocks"
+
+    def test_net_count_is_advancers_minus_decliners(self, panel):
+        expected = panel["n_advancing"] - panel["n_declining"]
+        pd.testing.assert_series_equal(
+            panel["ad_net_count"], expected, check_names=False
+        )
+
+    def test_cumulative_count_is_the_running_sum(self, panel):
+        expected = panel["ad_net_count"].cumsum()
+        pd.testing.assert_series_equal(
+            panel["cumulative_ad_count"], expected, check_names=False
+        )
+
+    def test_counts_reconcile_with_the_percentage_form(self, panel):
+        """Spec: the two forms describe the same day — the ratio is the net
+        count over the number of names that actually moved."""
+        sub = panel.dropna(subset=["ad_diff_pct"]).tail(200)
+        denom = sub["n_advancing"] + sub["n_declining"]
+        expected = (sub["ad_net_count"] / denom)
+        pd.testing.assert_series_equal(
+            sub["ad_diff_pct"], expected, check_names=False
+        )
+
+    def test_percentage_denominator_excludes_unchanged_names(self, panel):
+        """Regression guard on a documented-wrong docstring: the divisor is
+        advancers + decliners, NOT n_active (which counts unchanged too)."""
+        sub = panel.dropna(subset=["ad_diff_pct"]).tail(200)
+        moved = sub["n_advancing"] + sub["n_declining"]
+        assert (moved <= sub["n_active"]).all()
+        assert (moved < sub["n_active"]).any(), (
+            "expected at least some unchanged names in a 200-day sample"
+        )
