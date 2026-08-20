@@ -53,7 +53,7 @@ export default async function OverviewPage({
     // full history themselves. Degrades to no-spark when unavailable.
     getBreadthTimeseries({
       days: 126,
-      metrics: ["pct_above_200dma", "net_new_highs_pct", "mcclellan_osc", "ad_diff_pct"],
+      metrics: ["pct_above_200dma", "avg_dist_from_52w_high", "ad_diff_pct"],
       universe,
       date,
     }).catch(emptySeries),
@@ -74,8 +74,7 @@ export default async function OverviewPage({
   };
   const breadthDates = breadthSeries.index;
   const breadthSpark = cut(breadthDates, breadthSeries.data["pct_above_200dma"] ?? []);
-  const nnhSpark = cut(breadthDates, breadthSeries.data["net_new_highs_pct"] ?? []);
-  const mccSpark = cut(breadthDates, breadthSeries.data["mcclellan_osc"] ?? []);
+  const distSpark = cut(breadthDates, breadthSeries.data["avg_dist_from_52w_high"] ?? []);
   const adSpark = cut(breadthDates, breadthSeries.data["ad_diff_pct"] ?? []);
   const vixSpark = cut(macroSeries.index, macroSeries.data["vix_close"] ?? []);
   const vixNow = reading.macro["vix_close"] ?? null;
@@ -84,12 +83,9 @@ export default async function OverviewPage({
   const breadthNow = isDefaultUniverse
     ? regime.pct_above_200dma
     : lastNonNull(breadthSpark);
-  const nnhNow = isDefaultUniverse
-    ? (reading.breadth["net_new_highs_pct"] ?? null)
-    : lastNonNull(nnhSpark);
-  const mccNow = isDefaultUniverse
-    ? (reading.breadth["mcclellan_osc"] ?? null)
-    : lastNonNull(mccSpark);
+  const distNow = isDefaultUniverse
+    ? (reading.breadth["avg_dist_from_52w_high"] ?? null)
+    : lastNonNull(distSpark);
   const adNow = isDefaultUniverse
     ? (reading.breadth["ad_diff_pct"] ?? null)
     : lastNonNull(adSpark);
@@ -212,13 +208,13 @@ export default async function OverviewPage({
             </span>
           </IndicatorCard>
           <IndicatorCard
-            label="Net new highs"
-            href={`/insights/market/net-new-highs${dateQuery}`}
-            spark={nnhSpark}
-            foot={`Fresh 52-week highs minus lows, share of ${scopeSub}.`}
+            label="52-week highs"
+            href={`/insights/market/52-week-highs${dateQuery}`}
+            spark={distSpark}
+            foot={`How far the average ${scopeSub} stock sits below its own 52-week high.`}
           >
             <span className="text-2xl font-semibold leading-tight text-foreground">
-              {fmtPct(nnhNow, 1, true)}
+              {fmtPct(distNow, 1)}
             </span>
           </IndicatorCard>
           <IndicatorCard
@@ -229,17 +225,6 @@ export default async function OverviewPage({
           >
             <span className="text-2xl font-semibold leading-tight text-foreground">
               {fmtPct(adNow, 0, true)}
-            </span>
-          </IndicatorCard>
-          <IndicatorCard
-            label="McClellan osc"
-            href={`/insights/market/mcclellan${dateQuery}`}
-            spark={mccSpark}
-            foot="Daily advance-decline flow, zero-centered."
-          >
-            <span className="text-2xl font-semibold leading-tight text-foreground">
-              {mccNow !== null && mccNow >= 0 ? "+" : ""}
-              {fmtNum(mccNow, 3)}
             </span>
           </IndicatorCard>
           <IndicatorCard

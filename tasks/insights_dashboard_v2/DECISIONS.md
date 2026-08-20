@@ -523,3 +523,50 @@ index's 20-session move with a divergence read.
 
 Open: daily net advances is kept as the third chip. Founder said "maybe
 we don't need it" — kept pending a clear call.
+
+## 2026-08-20 — McClellan removed; 52-week highs replaces Net new highs
+
+**McClellan tab deleted** (founder). Tab row, Overview card and detail
+view are gone; `/insights/market/mcclellan` now 404s. The engine still
+computes `mcclellan_osc` / `mcclellan_sum` — they are cheap, the notes
+product may use them, and deleting engine columns is not reversible in
+the same easy way a UI route is. The Learn explainer is also kept: it is
+correct educational content and reachable from Learn, just not a
+dashboard tab. Say if either should go too.
+
+**Net new highs → "52-week highs"** (slug `52-week-highs`). Founder
+asked for something more descriptive, suggesting average distance from
+the 52-week high. That is the right call and our own research agrees:
+the Breadth Atlas found the continuous sibling (avg distance from the
+200-DMA) carries the tails far better than the binary count, and the
+same asymmetry applies here — a count of names printing a literal new
+high is near-zero on most days and then spikes.
+
+New engine columns (TDD): `avg_dist_from_52w_high` (mean of
+close/52w-high − 1, always ≤ 0), `pct_within_5pct_of_high`,
+`pct_off_20pct_from_high`. `net_new_highs_pct` is kept as the fourth
+chip since it remains a standard read.
+
+Sanity check across regimes:
+
+| date | avg dist | within 5% | >20% below |
+|---|---|---|---|
+| 2020-03-23 (COVID) | -51.2% | 0.0% | 97.2% |
+| 2021-10-14 (rally peak) | -7.8% | 45.9% | 9.2% |
+| 2026-08-19 (today) | -17.8% | 18.2% | 38.0% |
+
+Worth noting: 38% of the Nifty 500 is more than 20% below its own
+52-week high while the index sits near its high — the kind of split the
+old count could not show.
+
+**Percentile bands at both extremes** on breadth, A/D and VIX. VIX had
+only a p90 and a median; it now uses the same p5 / median / p95 as the
+rest, computed from its own history, so a VIX pinned near its floor
+reads as a condition rather than an absence. The A/D daily chip keeps
+its atlas bands; the two cumulative A-D lines deliberately have none —
+percentile bands on a running total describe where the cumsum happens to
+have reached, not a comparable level.
+
+Chart axis precision is derived from series magnitude (added with the
+A-D work), which is what makes the distance-from-high axis readable at
+1dp instead of collapsing.

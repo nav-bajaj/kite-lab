@@ -51,8 +51,7 @@ const TITLES: Record<string, string> = {
   breadth: "Market breadth",
   "advance-decline": "Advances & declines",
   vix: "India VIX",
-  "net-new-highs": "Net new highs",
-  mcclellan: "McClellan oscillator",
+  "52-week-highs": "52-week highs",
   concentration: "Concentration",
 };
 
@@ -762,12 +761,11 @@ async function VixDetail({ reading }: { reading: MarketReading }) {
   const values = series.data["vix_close"] ?? [];
   // Reference lines from the fetched history itself — descriptive context,
   // recomputed as the series grows rather than hardcoded.
-  const med = percentile(values, 50);
-  const p90 = percentile(values, 90);
-  const bands: ReferenceBand[] = [
-    ...(p90 !== null ? [{ value: p90, label: "top 10% of days on record", tone: "warning" as const }] : []),
-    ...(med !== null ? [{ value: med, label: "median day on record", tone: "muted" as const }] : []),
-  ];
+  // Both extremes, not just the high one — a VIX sitting near its own
+  // floor is as much of a condition as one near its ceiling (founder,
+  // 2026-08-20).
+  const from = firstYear(series.index);
+  const bands: ReferenceBand[] = computedBands(values, from);
   const m = reading.macro;
 
   return (
@@ -780,17 +778,21 @@ async function VixDetail({ reading }: { reading: MarketReading }) {
       </ChartCard>
       <StatStrip
         stats={[
-          { label: "Now", value: fmtNum(m["vix_close"], 1), sub: "close" },
-          { label: "Median on record", value: med !== null ? med.toFixed(1) : "—", sub: "the typical day" },
+          { label: "India VIX", value: fmtNum(m["vix_close"], 1), sub: "index level" },
+          {
+            label: "Vs its own history",
+            value: percentileText(pctRank(values, lastNonNull(values))),
+            sub: from ? `of days since ${from}` : "of days on record",
+          },
           {
             label: "5-day change",
             value: fmtPct(m["vix_roc_5d"], 1),
-            sub: "expansion / contraction",
+            sub: "expansion or contraction",
           },
           {
             label: "Above 20",
             value: m["vix_above_20"] ? "Yes" : "No",
-            sub: "elevated-volatility line",
+            sub: "the elevated-volatility line",
           },
         ]}
       />
@@ -809,13 +811,48 @@ async function VixDetail({ reading }: { reading: MarketReading }) {
 // (tasks/breadth_atlas/REPORT.md §1): net_new_highs_pct p5 = -10.0%,
 // median = +2.4%, p95 = +13.2% over 2010-2026. The asymmetry (deep lows
 // cluster harder than highs) is a documented finding, not a display choice.
+// Reference levels from the Breadth Atlas empirical profile
+// (tasks/breadth_atlas/REPORT.md §1): net_new_highs_pct p5 = -10.0%,
+// median = +2.4%, p95 = +13.2% over 2010-2026.
 const NNH_BANDS: ReferenceBand[] = [
-  { value: 0.132, label: "top 5% of days since 2010", tone: "warning" },
-  { value: 0.024, label: "median day since 2010", tone: "muted" },
-  { value: -0.1, label: "bottom 5% of days since 2010", tone: "negative" },
+  { value: 0.132, label: `top 5% of days since ${ATLAS_FROM_YEAR}`, tone: "warning" },
+  { value: 0.024, label: `median day since ${ATLAS_FROM_YEAR}`, tone: "muted" },
+  { value: -0.1, label: `bottom 5% of days since ${ATLAS_FROM_YEAR}`, tone: "negative" },
 ];
 
-async function NetNewHighsDetail({
+/** The 52-week-high complex. The headline is the continuous measure —
+ *  how far the average stock sits below its own high — because the count
+ *  of names printing a literal new high is sparse and spiky, the same
+ *  finding the Breadth Atlas reached for the 200-DMA family (founder,
+ *  2026-08-20). Bands are computed from each series' own history. */
+const HIGHS_VARIANTS: { metric: string; label: string; sub: string; percent: boolean }[] = [
+  {
+    metric: "avg_dist_from_52w_high",
+    label: "Avg distance from 52w high",
+    sub: "How far the average stock sits below its own 52-week high. Zero would mean every stock is at its high; it falls as stocks drop away from theirs.",
+    percent: true,
+  },
+  {
+    metric: "pct_within_5pct_of_high",
+    label: "% within 5% of high",
+    sub: "The share of stocks trading within 5% of their own 52-week high — how broad the leadership actually is.",
+    percent: true,
+  },
+  {
+    metric: "pct_off_20pct_from_high",
+    label: "% more than 20% below",
+    sub: "The share of stocks more than 20% below their own 52-week high — how much of the market is already in its own bear market.",
+    percent: true,
+  },
+  {
+    metric: "net_new_highs_pct",
+    label: "Net new highs",
+    sub: "Stocks printing a fresh 52-week high minus those printing a fresh low, as a share of the universe.",
+    percent: true,
+  },
+];
+
+async function FiftyTwoWeekHighsDetail({
   reading,
   universe,
 }: {
@@ -823,111 +860,75 @@ async function NetNewHighsDetail({
   universe: BreadthUniverse;
 }) {
   const asOf = reading.date.slice(0, 10);
-  const series = truncateSeries(
-    await getBreadthTimeseries({
+  const [raw, overlay] = await Promise.all([
+    getBreadthTimeseries({
       days: 4000,
-      metrics: ["net_new_highs_pct"],
+      metrics: HIGHS_VARIANTS.map((v) => v.metric),
       universe,
     }).catch((): TimeseriesResponse => ({ index: [], data: {} })),
-    asOf,
-  );
+    indexOverlay(universe, asOf),
+  ]);
+  const series = truncateSeries(raw, asOf);
   const isDefault = universe === "nse500";
-  const values = series.data["net_new_highs_pct"] ?? [];
-  const now = isDefault
-    ? (reading.breadth["net_new_highs_pct"] ?? null)
-    : lastNonNull(values);
-  const bands = isDefault ? NNH_BANDS : computedBands(values);
+  const byKey = new Map(Object.entries(series.data));
+  const from = firstYear(series.index);
+
+  const dist = byKey.get("avg_dist_from_52w_high") ?? [];
+  const within5 = byKey.get("pct_within_5pct_of_high") ?? [];
+  const off20 = byKey.get("pct_off_20pct_from_high") ?? [];
+  const distNow = lastNonNull(dist);
+
+  const variants: MetricVariant[] = HIGHS_VARIANTS.map((v) => {
+    const vals = byKey.get(v.metric) ?? [];
+    return {
+      ...v,
+      values: vals,
+      bands:
+        v.metric === "net_new_highs_pct" && isDefault
+          ? NNH_BANDS
+          : computedBands(vals, from),
+    };
+  });
 
   return (
     <div className="flex flex-col gap-4">
-      <ChartCard
-        title={`Net new 52-week highs · ${universeLabel(universe)}`}
-        sub="Stocks at fresh 1-year highs minus fresh 1-year lows. Crashes push the low side much harder than rallies push the high side."
-      >
-        <TimeseriesChart dates={series.index} values={values} bands={bands} percent />
-      </ChartCard>
       <StatStrip
         stats={[
-          { label: "Now", value: fmtPct(now, 1), sub: `of ${universeLabel(universe)}` },
           {
-            label: "Median day",
-            value: isDefault ? "+2.4%" : fmtPct(percentile(values, 50), 1),
-            sub: isDefault ? "since 2010" : "this universe's history",
+            label: "Avg distance from high",
+            value: fmtPct(distNow, 1),
+            sub: `of ${universeLabel(universe)}`,
           },
           {
-            label: "Bottom 5% of days",
-            value: isDefault ? "-10%" : fmtPct(percentile(values, 5), 1),
-            sub: "washout territory",
+            label: "Vs its own history",
+            value: percentileText(pctRank(dist, distNow)),
+            sub: from ? `of days since ${from}` : "of days on record",
           },
           {
-            label: "Top 5% of days",
-            value: isDefault ? "+13.2%" : fmtPct(percentile(values, 95), 1),
-            sub: "expansion territory",
+            label: "Within 5% of high",
+            value: fmtPct(lastNonNull(within5), 0),
+            sub: "leadership, however broad",
+          },
+          {
+            label: "More than 20% below",
+            value: fmtPct(lastNonNull(off20), 0),
+            sub: "already in their own bear market",
           },
         ]}
       />
+      <ChartCard
+        title={`52-week highs · ${universeLabel(universe)}`}
+        sub="Where stocks sit against their own one-year highs. The dashed lines mark the highest and lowest 5% of days in this series' own history."
+      >
+        <MetricExplorer dates={series.index} variants={variants} overlay={overlay} />
+      </ChartCard>
       <LearnPanel title="Learn more">
-        New-high/new-low counts catch leadership turning before averages do —
-        a rally where fewer and fewer names make new highs is thinning out
-        even while the index holds up. The measure is asymmetric by nature:
-        panics synchronize new lows far more than booms synchronize new
-        highs.
-      </LearnPanel>
-    </div>
-  );
-}
-
-// McClellan oscillator reference levels from the same atlas profile:
-// p5 = -0.068, p95 = +0.067 (76% of days inside ±1σ = ±0.041).
-const MCC_BANDS: ReferenceBand[] = [
-  { value: 0.067, label: "top 5% of days since 2010", tone: "warning" },
-  { value: 0, label: "zero line", tone: "muted" },
-  { value: -0.068, label: "bottom 5% of days since 2010", tone: "negative" },
-];
-
-async function McClellanDetail({
-  reading,
-  universe,
-}: {
-  reading: MarketReading;
-  universe: BreadthUniverse;
-}) {
-  const asOf = reading.date.slice(0, 10);
-  const series = truncateSeries(
-    await getBreadthTimeseries({
-      days: 4000,
-      metrics: ["mcclellan_osc"],
-      universe,
-    }).catch((): TimeseriesResponse => ({ index: [], data: {} })),
-    asOf,
-  );
-  const isDefault = universe === "nse500";
-  const values = series.data["mcclellan_osc"] ?? [];
-  const now = isDefault ? (reading.breadth["mcclellan_osc"] ?? null) : lastNonNull(values);
-  const bands = isDefault ? MCC_BANDS : computedBands(values);
-
-  return (
-    <div className="flex flex-col gap-4">
-      <ChartCard
-        title={`McClellan oscillator · ${universeLabel(universe)} advance-decline flow`}
-        sub="Fast EMA minus slow EMA of daily advance-decline breadth. A flow gauge — it describes what just happened, not where the cycle is."
-      >
-        <TimeseriesChart dates={series.index} values={values} bands={bands} />
-      </ChartCard>
-      <StatStrip
-        stats={[
-          { label: "Now", value: fmtNum(now, 3), sub: "oscillator level" },
-          { label: "Typical band", value: "±0.041", sub: "76% of days sit inside" },
-          { label: "Bottom 5% of days", value: "-0.068", sub: "heavy selling flow" },
-          { label: "Top 5% of days", value: "+0.067", sub: "heavy buying flow" },
-        ]}
-      />
-      <LearnPanel slug="mcclellan-oscillator" title="Learn more">
-        A zero-centered oscillator over daily advances minus declines. It
-        flickers — most readings sit in the middle band, and extremes fade
-        within days. Historically its sharpest positive spikes have clustered
-        around the bounces off deep lows, which is why it reads as flow, not
-        as a level signal.
+        A count of stocks printing a literal new high is sparse — on most
+        days almost none do, so the measure spends its time near zero and
+        then spikes. Distance from the high is defined for every stock every
+        day, which is why it leads here. The two shares either side of it
+        say the same thing in plainer terms: how many names are near their
+        highs, and how many have already fallen a long way from them.
       </LearnPanel>
     </div>
   );
@@ -1298,10 +1299,9 @@ export default async function MarketIndicatorPage({
         <AdvanceDeclineDetail reading={reading} universe={universe} />
       )}
       {indicator === "vix" && <VixDetail reading={reading} />}
-      {indicator === "net-new-highs" && (
-        <NetNewHighsDetail reading={reading} universe={universe} />
+      {indicator === "52-week-highs" && (
+        <FiftyTwoWeekHighsDetail reading={reading} universe={universe} />
       )}
-      {indicator === "mcclellan" && <McClellanDetail reading={reading} universe={universe} />}
       {indicator === "concentration" && (
         <ConcentrationDetail reading={reading} universe={universe} />
       )}

@@ -268,3 +268,54 @@ class TestAdvanceDeclineCountsSpec:
         assert (moved < sub["n_active"]).any(), (
             "expected at least some unchanged names in a 200-day sample"
         )
+
+
+class TestFiftyTwoWeekHighSpec:
+    """Spec: the 52-week-high complex as continuous measures, not just a
+    count of names printing a new high (founder, 2026-08-20).
+
+    Same reasoning the Breadth Atlas found for the 200-DMA family: the
+    binary count is sparse and spiky, while a distance measured on every
+    stock every day carries the tails. `net_new_highs_pct` stays, but the
+    headline becomes how far the average stock sits below its own high.
+    """
+
+    @pytest.fixture(scope="class")
+    def panel(self):
+        return breadth.get_breadth_panel()
+
+    def test_columns_present(self, panel):
+        for col in ["avg_dist_from_52w_high", "pct_within_5pct_of_high",
+                    "pct_off_20pct_from_high"]:
+            assert col in panel.columns
+
+    def test_distance_from_high_is_never_positive(self, panel):
+        """A close cannot exceed its own trailing max, so the mean distance
+        is bounded above by zero."""
+        v = panel["avg_dist_from_52w_high"].dropna()
+        assert len(v) > 1000
+        assert (v <= 1e-12).all(), f"max was {v.max()}"
+
+    def test_shares_are_fractions(self, panel):
+        for col in ["pct_within_5pct_of_high", "pct_off_20pct_from_high"]:
+            v = panel[col].dropna()
+            assert (v >= 0).all() and (v <= 1).all()
+
+    def test_the_two_shares_are_mutually_exclusive(self, panel):
+        """Within 5% of the high and more than 20% below it cannot both
+        describe the same stock, so the shares can never sum above 1."""
+        sub = panel.dropna(subset=["pct_within_5pct_of_high", "pct_off_20pct_from_high"])
+        assert (sub["pct_within_5pct_of_high"] + sub["pct_off_20pct_from_high"] <= 1.0 + 1e-9).all()
+
+    def test_covid_crash_shows_deep_damage(self, panel):
+        """March 2020: almost nothing near its high, most names far below."""
+        row = panel.loc["2020-03-23"]
+        assert row["avg_dist_from_52w_high"] < -0.30
+        assert row["pct_within_5pct_of_high"] < 0.05
+        assert row["pct_off_20pct_from_high"] > 0.80
+
+    def test_distance_tracks_the_new_high_count_directionally(self, panel):
+        """The continuous measure and the count describe the same thing, so
+        they should move together even though the tails differ."""
+        sub = panel[["avg_dist_from_52w_high", "new_52w_highs_pct"]].dropna()
+        assert sub["avg_dist_from_52w_high"].corr(sub["new_52w_highs_pct"]) > 0.4

@@ -12,8 +12,7 @@ export const MARKET_TABS: SectionTabItem[] = [
   { slug: "stress", label: "Stress" },
   { slug: "breadth", label: "Breadth" },
   { slug: "advance-decline", label: "Advances & declines" },
-  { slug: "net-new-highs", label: "Net new highs" },
-  { slug: "mcclellan", label: "McClellan" },
+  { slug: "52-week-highs", label: "52-week highs" },
   { slug: "vix", label: "India VIX" },
   { slug: "concentration", label: "Concentration" },
 ];

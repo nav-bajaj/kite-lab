@@ -20,6 +20,9 @@ Output: a daily-indexed `pd.DataFrame` with these columns:
   new_52w_highs_pct   fraction of active stocks at trailing 252d close-high
   new_52w_lows_pct    fraction at trailing 252d close-low
   net_new_highs_pct   new_52w_highs_pct - new_52w_lows_pct
+  avg_dist_from_52w_high    mean close/52w-high - 1 across stocks (<= 0)
+  pct_within_5pct_of_high   share within 5% of their own 52-week high
+  pct_off_20pct_from_high   share more than 20% below it
   dispersion          cross-sectional stdev of daily returns
   n_active            denominator (count of stocks with non-NaN price)
 
@@ -165,12 +168,23 @@ def compute_breadth_panel(close_panel: pd.DataFrame) -> pd.DataFrame:
                  - ad_diff_pct.ewm(span=39, adjust=False).mean())
     mcclellan_sum = mcclellan.cumsum()
 
+    # Continuous siblings of the new-high count. The count is sparse — most
+    # days almost nothing prints a literal new high — whereas the distance
+    # is defined for every stock every day, which is what carries the tails
+    # (the Breadth Atlas found the same for the 200-DMA family).
+    dist_from_high = close / high_252 - 1.0
+    avg_dist_52w_high = dist_from_high.mean(axis=1)
+
     new_high = (close == high_252).sum(axis=1).astype(float)
     new_low = (close == low_252).sum(axis=1).astype(float)
     have_252 = high_252.notna().sum(axis=1).astype(float)
     new_high_pct = (new_high / have_252).replace([np.inf, -np.inf], np.nan)
     new_low_pct = (new_low / have_252).replace([np.inf, -np.inf], np.nan)
     net_new_highs_pct = new_high_pct - new_low_pct
+    within_5 = (dist_from_high >= -0.05).sum(axis=1).astype(float)
+    off_20 = (dist_from_high <= -0.20).sum(axis=1).astype(float)
+    pct_within_5pct_of_high = (within_5 / have_252).replace([np.inf, -np.inf], np.nan)
+    pct_off_20pct_from_high = (off_20 / have_252).replace([np.inf, -np.inf], np.nan)
 
     dispersion = daily_ret.std(axis=1)
 
@@ -191,6 +205,9 @@ def compute_breadth_panel(close_panel: pd.DataFrame) -> pd.DataFrame:
         "new_52w_highs_pct":    new_high_pct,
         "new_52w_lows_pct":     new_low_pct,
         "net_new_highs_pct":    net_new_highs_pct,
+        "avg_dist_from_52w_high":  avg_dist_52w_high,
+        "pct_within_5pct_of_high": pct_within_5pct_of_high,
+        "pct_off_20pct_from_high": pct_off_20pct_from_high,
         "dispersion":           dispersion,
         "n_active":             n_active,
     })
@@ -251,7 +268,7 @@ def get_breadth_panel(universe: str = "nse500", force_rebuild: bool = False) -> 
 # Breadth Atlas columns, insights_dashboard_v2 Slice 2.5).
 _SCHEMA_SENTINEL_COLUMNS = (
     "avg_dist_from_200dma", "mcclellan_sum", "pct_above_21dma",
-    "cumulative_ad_count",
+    "cumulative_ad_count", "avg_dist_from_52w_high",
 )
 
 
