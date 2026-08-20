@@ -1,0 +1,24 @@
+name: insights_dashboard_v3
+status: planned            # P0 done; build parked until insights_dashboard_v2 is final
+opened: 2026-08-20
+closed: null
+branch: insights_dashboard_v3   # experiment branch off insights_dashboard_v2; docs merged back to v2
+related_commits: []
+supersedes: []
+depends_on:
+  - insights_dashboard_v2   # Terminal mirrors v2's FINAL feature set; do not build in parallel
+  - auth_stack_v2           # profile shell toggle + entitlements hook
+register_rows: []
+
+goals:
+  - "Terminal: Bloomberg-style desktop shell for power users over the existing insight engines"
+  - "Presentation shell only — no new analytics, no new claims; every widget maps to a shipped v2 endpoint"
+  - "Profile-settings toggle BASIC | TERMINAL; desktop-only (~1100px gate)"
+  - "Brand Midnight + marigold skin (looks like a Marketworks product, not a GMT copy)"
+  - "Keyboard layer + slash command palette (stock lookup, go-to panel, actions)"
+
+governance:
+  - "P1 starts only after insights_dashboard_v2 is declared final; re-derive widget catalog from shipped tabs"
+  - "Shared panel cores between basic dashboard and Terminal — single maintenance surface"
+  - "Every colored value carries arrow + signed number (green/red pair alone is not CVD-distinct)"
+  - "Signals wire = engine events only, never external news; as-of stamps on every panel"
