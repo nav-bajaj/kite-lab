@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MW://TERMINAL — P0 layout study (mock data)</title>
+<style>
+  :root {
+    /* Marketworks Midnight tokens (tokens.css .dark) + brand escape hatches.
+       marigold = --brand-marigold; up/down = --chart-positive/negative;
+       primary = Midnight --primary. Panel/faint are derived shades. */
+    --bg: #0C1219;
+    --panel: #111925;
+    --panel-2: #17202C;
+    --border: #2C3947;
+    --border-bright: #3D4E61;
+    --marigold: #E8A33D;
+    --marigold-ink: #0C1219;
+    --marigold-dim: #8A6526;
+    --primary: #58A6E8;
+    --up: #57A876;
+    --down: #D07162;
+    --flat: #8F9AA8;
+    --ink: #E9EEF4;
+    --muted: #8F9AA8;
+    --faint: #5A6673;
+    --grid: #1A2431;
+    --tint-up: rgba(87, 168, 118, 0.08);
+    --tint-warn: rgba(232, 163, 61, 0.065);
+    --tint-down: rgba(208, 113, 98, 0.065);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: var(--bg); }
+  body {
+    font-family: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    min-width: 1100px;
+  }
+  .up   { color: var(--up); }
+  .down { color: var(--down); }
+  .flat { color: var(--flat); }
+  .muted { color: var(--muted); }
+  .faint { color: var(--faint); }
+  .marigold { color: var(--marigold); }
+
+  /* ---------- mock banner ---------- */
+  .mock-banner {
+    background: repeating-linear-gradient(-45deg, #1E1A10, #1E1A10 12px, #161408 12px, #161408 24px);
+    border-bottom: 1px solid var(--marigold-dim);
+    color: var(--marigold);
+    text-align: center;
+    padding: 4px 8px;
+    letter-spacing: 0.08em;
+    font-size: 11px;
+  }
+
+  /* ---------- command bar ---------- */
+  .cmdbar {
+    display: flex; align-items: stretch;
+    background: var(--marigold);
+    color: var(--marigold-ink);
+    font-weight: 700;
+    border-bottom: 2px solid #060B11;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .cmdbar > div { padding: 6px 12px; border-right: 2px solid rgba(0,0,0,0.85); display:flex; align-items:center; gap:8px; }
+  .cmd-dark { background: #0C1219; color: var(--marigold); }
+  .cmd-dark.dim { color: var(--ink); font-weight: 400; }
+  .cmd-chip { background:#0C1219; color: var(--marigold); padding: 1px 7px; font-weight: 700; }
+  .cmd-btn { background: #0C1219; color: var(--marigold); padding: 2px 8px; cursor: default; }
+  .cmd-btn.active { background: var(--marigold); color: var(--marigold-ink); outline: 2px solid #0C1219; outline-offset: -2px; }
+  .cmd-group { display: flex; gap: 4px; }
+  .cmd-spacer { flex: 1; border-right: none !important; }
+  .kbd-legend { font-weight: 400; font-size: 11px; }
+
+  /* ---------- tape ---------- */
+  .tape {
+    display: flex; align-items: center;
+    background: #0A0F16;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .tape-label { padding: 5px 12px; border-right: 1px solid var(--border); color: var(--marigold); font-weight: 700; }
+  .tape-item { padding: 5px 14px; border-right: 1px solid var(--grid); display: inline-flex; gap: 7px; }
+  .tape-item .sym { color: var(--marigold); font-weight: 700; }
+  .tape-item .state { color: var(--faint); font-size: 10px; align-self: center; }
+
+  /* ---------- layout ---------- */
+  .layout { display: flex; align-items: flex-start; }
+  .grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 8px;
+    min-width: 0;
+  }
+  .span2 { grid-column: span 2; }
+  .span3 { grid-column: span 3; }
+
+  /* ---------- panel chrome ---------- */
+  .panel { background: var(--panel); border: 1px solid var(--border); display: flex; flex-direction: column; min-width: 0; }
+  .panel-head {
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel-2);
+  }
+  .pnum { background: var(--marigold); color: var(--marigold-ink); font-weight: 700; padding: 0 5px; }
+  .ptitle { color: var(--marigold); font-weight: 700; letter-spacing: 0.04em; }
+  .phead-right { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+  .asof { color: var(--faint); font-size: 10px; }
+  .mock-tag { border: 1px solid var(--marigold-dim); color: var(--marigold); font-size: 9px; padding: 0 4px; letter-spacing: 0.08em; }
+  .pctl { color: var(--faint); letter-spacing: 2px; cursor: default; }
+  .panel-body { padding: 8px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+
+  /* ---------- stat tiles ---------- */
+  .tile-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .tile { background: var(--panel-2); border: 1px solid var(--grid); padding: 6px 8px; }
+  .tile .k { color: var(--muted); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .tile .v { font-size: 17px; font-weight: 700; margin-top: 2px; }
+  .tile .s { font-size: 10px; color: var(--muted); margin-top: 1px; }
+  .badge { display: inline-block; padding: 1px 8px; font-weight: 700; }
+  .badge.up   { background: rgba(87,168,118,0.14); border: 1px solid var(--up); }
+  .badge.warn { background: rgba(232,163,61,0.14); border: 1px solid var(--marigold); color: var(--marigold); }
+  .badge.down { background: rgba(208,113,98,0.14); border: 1px solid var(--down); }
+
+  /* ---------- bars ---------- */
+  .bar-row { display: grid; grid-template-columns: 118px 1fr 56px; align-items: center; gap: 8px; font-size: 11px; }
+  .bar-row .lbl { color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { background: var(--grid); height: 8px; position: relative; }
+  .bar-fill { position: absolute; top: 0; bottom: 0; }
+  .bar-val { text-align: right; }
+
+  /* tornado */
+  .torn-row { display: grid; grid-template-columns: 92px 1fr 52px; align-items: center; gap: 8px; font-size: 11px; }
+  .torn-track { position: relative; height: 9px; background: var(--grid); }
+  .torn-mid { position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--border-bright); }
+  .torn-fill { position: absolute; top: 0; bottom: 0; }
+
+  /* ---------- signals wire ---------- */
+  .wire-filters { display: flex; gap: 4px; flex-wrap: wrap; }
+  .chip { border: 1px solid var(--border-bright); color: var(--muted); padding: 1px 7px; font-size: 10px; cursor: default; }
+  .chip.on { background: var(--marigold); color: var(--marigold-ink); border-color: var(--marigold); font-weight: 700; }
+  .grep { flex: 1; min-width: 80px; border: 1px solid var(--border-bright); color: var(--faint); padding: 1px 7px; font-size: 10px; }
+  .wire { display: flex; flex-direction: column; }
+  .wire-item { display: flex; gap: 8px; padding: 6px 2px; border-bottom: 1px solid var(--grid); font-size: 11px; line-height: 1.45; }
+  .wire-item .t { color: var(--faint); white-space: nowrap; }
+  .wire-item .cat { font-weight: 700; white-space: nowrap; }
+  .cat.regime { color: var(--marigold); }
+  .cat.stress { color: var(--down); }
+  .cat.breadth { color: var(--up); }
+  .cat.lists { color: var(--primary); }
+
+  /* ---------- tables ---------- */
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  th { text-align: left; color: var(--faint); font-weight: 400; font-size: 10px; letter-spacing: 0.06em; padding: 2px 6px; border-bottom: 1px solid var(--border); }
+  td { padding: 3px 6px; border-bottom: 1px solid var(--grid); }
+  td.num, th.num { text-align: right; }
+  td.sym { color: var(--marigold); font-weight: 700; }
+
+  /* ---------- focus chart ---------- */
+  .ohlc-strip { display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; font-size: 11px; }
+  .ohlc-strip .big { font-size: 17px; font-weight: 700; }
+  .chart-wrap { position: relative; }
+  .chart-note { color: var(--faint); font-size: 10px; }
+  .legend { display: flex; gap: 14px; font-size: 10px; color: var(--muted); align-items: center; flex-wrap: wrap; }
+  .swatch { display: inline-block; width: 10px; height: 10px; vertical-align: -1px; margin-right: 5px; }
+
+  /* ---------- session / freshness ---------- */
+  .sess-clock { font-size: 26px; font-weight: 700; color: var(--marigold); }
+  .kv { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; font-size: 11px; }
+  .kv .k { color: var(--muted); }
+  .kv .v { text-align: right; }
+
+  /* ---------- inspector rail ---------- */
+  .inspector {
+    width: 300px; flex-shrink: 0;
+    border-left: 1px solid var(--border-bright);
+    background: var(--panel);
+    padding: 10px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .insp-head { display: flex; align-items: baseline; gap: 8px; }
+  .insp-title { color: var(--marigold); font-weight: 700; letter-spacing: 0.04em; font-size: 11px; }
+  .insp-sec { border-top: 1px solid var(--border); padding-top: 8px; }
+  .insp-sec h4 { color: var(--marigold); font-size: 10px; letter-spacing: 0.1em; margin-bottom: 6px; font-weight: 700; }
+
+  /* ---------- status bar ---------- */
+  .statusbar {
+    display: flex; gap: 18px; align-items: center;
+    border-top: 1px solid var(--border-bright);
+    background: #0A0F16;
+    padding: 5px 12px;
+    color: var(--faint); font-size: 10px;
+    flex-wrap: wrap;
+  }
+
+  /* ---------- command palette ([/] opens) ---------- */
+  .cmdk { position: fixed; inset: 0; background: rgba(6, 11, 17, 0.66); display: none; align-items: flex-start; justify-content: center; padding-top: 110px; z-index: 50; }
+  body.show-cmdk .cmdk { display: flex; }
+  .cmdk-box { width: 580px; background: var(--panel); border: 1px solid var(--border-bright); box-shadow: 0 18px 60px rgba(0,0,0,0.55); }
+  .cmdk-input { display: flex; gap: 8px; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .cmdk-input .slash { color: var(--marigold); font-weight: 700; }
+  .cmdk-input .caret { display: inline-block; width: 8px; height: 15px; background: var(--marigold); animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .cmdk-group { padding: 6px 12px 2px; color: var(--faint); font-size: 9px; letter-spacing: 0.12em; }
+  .cmdk-item { display: flex; gap: 10px; align-items: baseline; padding: 5px 12px; font-size: 12px; }
+  .cmdk-item.sel { background: var(--panel-2); box-shadow: inset 2px 0 0 var(--marigold); }
+  .cmdk-item .k { color: var(--marigold); font-weight: 700; min-width: 84px; }
+  .cmdk-item .d { color: var(--muted); }
+  .cmdk-item .hint { margin-left: auto; color: var(--faint); font-size: 10px; }
+  .cmdk-foot { display: flex; gap: 16px; padding: 7px 12px; border-top: 1px solid var(--border); color: var(--faint); font-size: 10px; }
+
+  /* desktop gate */
+  .gate { display: none; }
+  @media (max-width: 1099px) {
+    .layout, .tape, .cmdbar, .statusbar { display: none; }
+    .gate { display: block; padding: 60px 24px; text-align: center; color: var(--muted); }
+    .gate b { color: var(--marigold); }
+  }
+</style>
+</head>
+<body>
+
+<div class="mock-banner">P0 LAYOUT STUDY · EVERY VALUE ON THIS PAGE IS AN ILLUSTRATIVE FIXTURE, NOT REAL MARKET DATA · NOT A PRODUCT</div>
+
+<!-- ============ command bar ============ -->
+<header class="cmdbar">
+  <div>MW://TERMINAL <span style="display:inline-block;width:8px;height:14px;background:#0C1219;"></span></div>
+  <div class="cmd-dark dim">16:42:07 IST · WED 2026-08-13</div>
+  <div class="cmd-chip">EOD · AS-OF 13-AUG CLOSE</div>
+  <div class="cmd-dark dim">PIPELINE: <span class="up" style="font-weight:700">FRESH 16:31</span></div>
+  <div class="cmd-dark">UNIVERSE: NIFTY 500 ▾</div>
+  <div class="cmd-dark dim">&gt; FOCUS: TRENT</div>
+  <div class="cmd-dark dim kbd-legend">[/] command · [E]dit [A]dd [U]niverse [D]ate [Esc]</div>
+  <div class="cmd-spacer cmd-dark dim"></div>
+  <div class="cmd-group" style="background:#0C1219;">
+    <span class="cmd-btn active">MKT</span><span class="cmd-btn">BRD</span><span class="cmd-btn">SEC</span><span class="cmd-btn">LST</span>
+  </div>
+  <div class="cmd-group" style="background:#0C1219;">
+    <span class="cmd-btn">EDIT</span><span class="cmd-btn">+WIDGET</span><span class="cmd-btn">RESET</span>
+  </div>
+  <div class="cmd-dark dim">SHELL: <span class="marigold" style="font-weight:700">TERMINAL</span> ⇄ BASIC</div>
+</header>
+
+<!-- ============ tape ============ -->
+<div class="tape">
+  <span class="tape-label">TAPE ⏸</span>
+  <span class="tape-item"><span class="sym">NIFTY 50</span> 24,612.30 <span class="up">▲ +118.40 +0.48%</span> <span class="state">CLOSED</span></span>
+  <span class="tape-item"><span class="sym">NIFTY 500</span> 22,884.15 <span class="up">▲ +141.75 +0.62%</span> <span class="state">CLOSED</span></span>
+  <span class="tape-item"><span class="sym">BANK</span> 55,930.10 <span class="up">▲ +214.55 +0.39%</span> <span class="state">CLOSED</span></span>
+  <span class="tape-item"><span class="sym">IT</span> 34,182.70 <span class="down">▼ -287.35 -0.83%</span> <span class="state">CLOSED</span></span>
+  <span class="tape-item"><span class="sym">AUTO</span> 26,447.85 <span class="up">▲ +312.20 +1.19%</span> <span class="state">CLOSED</span></span>
+  <span class="tape-item"><span class="sym">PHARMA</span> 22,061.45 <span class="up">▲ +96.10 +0.44%</span> <span class="state">CLOSED</span></span>
+  <span class="tape-item"><span class="sym">METAL</span> 10,254.60 <span class="up">▲ +187.90 +1.87%</span> <span class="state">CLOSED</span></span>
+  <span class="tape-item"><span class="sym">FMCG</span> 61,833.25 <span class="down">▼ -74.40 -0.12%</span> <span class="state">CLOSED</span></span>
+  <span class="tape-item"><span class="sym">REALTY</span> 1,092.35 <span class="up">▲ +21.15 +1.97%</span> <span class="state">CLOSED</span></span>
+  <span class="tape-item"><span class="sym">INDIA VIX</span> 12.84 <span class="down">▼ -0.52 -3.89%</span> <span class="state">CLOSED</span></span>
+</div>
+
+<div class="layout">
+  <!-- ============ widget grid ============ -->
+  <main class="grid">
+
+    <!-- 01 REGIME -->
+    <section class="panel">
+      <div class="panel-head">
+        <span class="pnum">01</span><span class="ptitle">REGIME · NIFTY 500</span>
+        <span class="phead-right"><span class="mock-tag">MOCK</span><span class="asof">13-AUG EOD</span><span class="pctl">📌 ─ ▢ ✕</span></span>
+      </div>
+      <div class="panel-body">
+        <div class="tile-row">
+          <div class="tile">
+            <div class="k">Current regime</div>
+            <div class="v"><span class="badge up">UPTREND</span></div>
+            <div class="s">day 34 · median run 41d</div>
+          </div>
+          <div class="tile">
+            <div class="k">Participation</div>
+            <div class="v up">BROAD</div>
+            <div class="s">61.2% above 50-DMA</div>
+          </div>
+        </div>
+        <div class="tile-row">
+          <div class="tile">
+            <div class="k">Index this regime</div>
+            <div class="v up">▲ +7.4%</div>
+            <div class="s">since 26-Jun flip</div>
+          </div>
+          <div class="tile">
+            <div class="k">Previous</div>
+            <div class="v"><span class="badge warn">CHOPPY</span></div>
+            <div class="s">28d · ▼ -1.1%</div>
+          </div>
+        </div>
+        <div>
+          <div class="chart-note" style="margin-bottom:3px;">RECENT REGIMES · 12M</div>
+          <svg viewBox="0 0 360 18" width="100%" height="18" role="img" aria-label="Recent regimes timeline (mock)">
+            <rect x="0"   y="4" width="52"  height="10" fill="rgba(208,113,98,0.45)"/>
+            <rect x="54"  y="4" width="70"  height="10" fill="rgba(232,163,61,0.45)"/>
+            <rect x="126" y="4" width="96"  height="10" fill="rgba(87,168,118,0.45)"/>
+            <rect x="224" y="4" width="42"  height="10" fill="rgba(232,163,61,0.45)"/>
+            <rect x="268" y="4" width="92"  height="10" fill="rgba(87,168,118,0.45)"/>
+          </svg>
+          <div class="legend">
+            <span><span class="swatch" style="background:rgba(87,168,118,0.45)"></span>UPTREND</span>
+            <span><span class="swatch" style="background:rgba(232,163,61,0.45)"></span>CHOPPY</span>
+            <span><span class="swatch" style="background:rgba(208,113,98,0.45)"></span>DOWNTREND</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 STRESS -->
+    <section class="panel">
+      <div class="panel-head">
+        <span class="pnum">02</span><span class="ptitle">MARKET STRESS COMPOSITE</span>
+        <span class="phead-right"><span class="mock-tag">MOCK</span><span class="asof">13-AUG EOD</span><span class="pctl">📌 ─ ▢ ✕</span></span>
+      </div>
+      <div class="panel-body">
+        <div class="tile-row">
+          <div class="tile">
+            <div class="k">Score · 0–100</div>
+            <div class="v">32 <span class="badge up" style="font-size:11px;">CALM</span></div>
+            <div class="s">bands: calm &lt;35 · elevated 35–60 · stressed &gt;60</div>
+          </div>
+          <div class="tile">
+            <div class="k">5y percentile</div>
+            <div class="v">28th</div>
+            <div class="s">▼ -6 pts w/w</div>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:5px;">
+          <div class="chart-note">DRIVERS · 0–100 CONTRIBUTION</div>
+          <div class="bar-row"><span class="lbl">VIX percentile 1y</span><span class="bar-track"><span class="bar-fill" style="left:0;width:24%;background:var(--up)"></span></span><span class="bar-val">24</span></div>
+          <div class="bar-row"><span class="lbl">Index drawdown</span><span class="bar-track"><span class="bar-fill" style="left:0;width:18%;background:var(--up)"></span></span><span class="bar-val">18</span></div>
+          <div class="bar-row"><span class="lbl">Breadth deterioration</span><span class="bar-track"><span class="bar-fill" style="left:0;width:31%;background:var(--up)"></span></span><span class="bar-val">31</span></div>
+          <div class="bar-row"><span class="lbl">Downside dispersion</span><span class="bar-track"><span class="bar-fill" style="left:0;width:47%;background:var(--marigold)"></span></span><span class="bar-val">47</span></div>
+          <div class="bar-row"><span class="lbl">Vol of vol</span><span class="bar-track"><span class="bar-fill" style="left:0;width:52%;background:var(--marigold)"></span></span><span class="bar-val">52</span></div>
+        </div>
+        <div class="chart-note">weights &amp; windows shipped by the engine · drawdown measured below 1-year high</div>
+      </div>
+    </section>
+
+    <!-- 03 BREADTH -->
+    <section class="panel">
+      <div class="panel-head">
+        <span class="pnum">03</span><span class="ptitle">BREADTH · NIFTY 500</span>
+        <span class="phead-right"><span class="mock-tag">MOCK</span><span class="asof">13-AUG EOD</span><span class="pctl">📌 ─ ▢ ✕</span></span>
+      </div>
+      <div class="panel-body">
+        <div style="display:flex; flex-direction:column; gap:5px;">
+          <div class="chart-note">% OF CONSTITUENTS ABOVE MOVING AVERAGE</div>
+          <div class="bar-row"><span class="lbl">&gt; 21-DMA</span><span class="bar-track"><span class="bar-fill" style="left:0;width:66%;background:var(--up)"></span></span><span class="bar-val">66.4%</span></div>
+          <div class="bar-row"><span class="lbl">&gt; 50-DMA</span><span class="bar-track"><span class="bar-fill" style="left:0;width:61%;background:var(--up)"></span></span><span class="bar-val">61.2%</span></div>
+          <div class="bar-row"><span class="lbl">&gt; 100-DMA</span><span class="bar-track"><span class="bar-fill" style="left:0;width:57%;background:var(--up)"></span></span><span class="bar-val">57.0%</span></div>
+          <div class="bar-row"><span class="lbl">&gt; 200-DMA</span><span class="bar-track"><span class="bar-fill" style="left:0;width:54%;background:var(--up)"></span></span><span class="bar-val">53.8%</span></div>
+        </div>
+        <div class="tile-row">
+          <div class="tile">
+            <div class="k">Net new highs · 63d</div>
+            <div class="v up">▲ +38</div>
+            <div class="s">71 highs · 33 lows</div>
+          </div>
+          <div class="tile">
+            <div class="k">Adv / Dec</div>
+            <div class="v up">318 / 164</div>
+            <div class="s">ratio 1.94 · 18 unch</div>
+          </div>
+        </div>
+        <div class="tile-row">
+          <div class="tile">
+            <div class="k">McClellan osc</div>
+            <div class="v up">▲ +42.6</div>
+            <div class="s">sum index rising</div>
+          </div>
+          <div class="tile">
+            <div class="k">Avg dist from 200-DMA</div>
+            <div class="v up">▲ +4.7%</div>
+            <div class="s">universe mean</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 FOCUS CHART (span 2) -->
+    <section class="panel span2">
+      <div class="panel-head">
+        <span class="pnum">06</span><span class="ptitle">FOCUS · NIFTY 500 · 1Y · REGIME TINT</span>
+        <span class="phead-right"><span class="mock-tag">MOCK</span><span class="asof">13-AUG EOD</span><span class="pctl">📌 ─ ▢ ✕</span></span>
+      </div>
+      <div class="panel-body">
+        <div class="ohlc-strip">
+          <span class="marigold" style="font-weight:700">NIFTY 500</span>
+          <span class="big">22,884.15</span>
+          <span class="up">▲ +141.75 (+0.62%)</span>
+          <span class="muted">O 22,761.90</span><span class="muted">H 22,918.40</span><span class="muted">L 22,740.05</span>
+          <span class="muted">52W 19,412.65 – 23,104.80</span>
+          <span style="margin-left:auto" class="faint">6M · <b class="marigold">1Y</b> · 3Y · MAX · LINE|CANDLE · OVERLAY: INDEX %</span>
+        </div>
+        <div class="chart-wrap">
+          <svg viewBox="0 0 760 240" width="100%" height="240" role="img" aria-label="NIFTY 500 one-year line chart with regime tint (mock)">
+            <!-- regime tint bands -->
+            <rect x="0"   y="0" width="120" height="216" fill="var(--tint-down)"/>
+            <rect x="120" y="0" width="150" height="216" fill="var(--tint-warn)"/>
+            <rect x="270" y="0" width="210" height="216" fill="var(--tint-up)"/>
+            <rect x="480" y="0" width="90"  height="216" fill="var(--tint-warn)"/>
+            <rect x="570" y="0" width="190" height="216" fill="var(--tint-up)"/>
+            <!-- gridlines -->
+            <g stroke="var(--grid)" stroke-width="1">
+              <line x1="0" y1="36" x2="760" y2="36"/><line x1="0" y1="90" x2="760" y2="90"/>
+              <line x1="0" y1="144" x2="760" y2="144"/><line x1="0" y1="198" x2="760" y2="198"/>
+            </g>
+            <!-- axis labels -->
+            <g fill="var(--faint)" font-size="9" font-family="inherit">
+              <text x="712" y="33">23,000</text><text x="712" y="87">22,000</text>
+              <text x="712" y="141">21,000</text><text x="712" y="195">20,000</text>
+              <text x="8"   y="230">AUG-25</text><text x="185" y="230">NOV-25</text>
+              <text x="370" y="230">FEB-26</text><text x="555" y="230">MAY-26</text><text x="700" y="230">AUG-26</text>
+            </g>
+            <!-- price line -->
+            <path d="M0,150 L18,158 36,148 54,166 72,178 90,170 108,186 120,180 138,168 156,174 174,160 192,166 210,152 228,158 246,146 270,140 288,128 306,134 324,118 342,124 360,108 378,112 396,98 414,104 432,92 450,96 466,88 480,94 498,104 516,98 534,110 552,102 570,96 588,84 606,88 624,74 642,80 660,66 678,70 696,58 714,62 732,50 750,44 760,40"
+                  fill="none" stroke="var(--up)" stroke-width="2"/>
+            <!-- crosshair -->
+            <line x1="642" y1="0" x2="642" y2="216" stroke="var(--marigold)" stroke-width="1" stroke-dasharray="3,3"/>
+            <circle cx="642" cy="80" r="3.5" fill="var(--marigold)"/>
+            <g transform="translate(430,6)">
+              <rect width="200" height="34" fill="#17202C" stroke="var(--border-bright)"/>
+              <text x="8" y="14" fill="var(--ink)" font-size="9" font-family="inherit">2026-07-14 · 22,318.55 ▲ +0.9%</text>
+              <text x="8" y="27" fill="var(--muted)" font-size="9" font-family="inherit">regime: UPTREND · day 12 · broad</text>
+            </g>
+          </svg>
+          <svg viewBox="0 0 760 42" width="100%" height="42" role="img" aria-label="Volume bars (mock)">
+            <g fill="rgba(232,163,61,0.5)">
+              <rect x="2" y="24" width="10" height="18"/><rect x="20" y="18" width="10" height="24"/><rect x="38" y="28" width="10" height="14"/><rect x="56" y="14" width="10" height="28"/><rect x="74" y="22" width="10" height="20"/><rect x="92" y="26" width="10" height="16"/><rect x="110" y="12" width="10" height="30"/><rect x="128" y="22" width="10" height="20"/><rect x="146" y="30" width="10" height="12"/><rect x="164" y="18" width="10" height="24"/><rect x="182" y="24" width="10" height="18"/><rect x="200" y="10" width="10" height="32"/><rect x="218" y="22" width="10" height="20"/><rect x="236" y="26" width="10" height="16"/><rect x="254" y="16" width="10" height="26"/><rect x="272" y="24" width="10" height="18"/><rect x="290" y="28" width="10" height="14"/><rect x="308" y="14" width="10" height="28"/><rect x="326" y="20" width="10" height="22"/><rect x="344" y="26" width="10" height="16"/><rect x="362" y="18" width="10" height="24"/><rect x="380" y="24" width="10" height="18"/><rect x="398" y="8" width="10" height="34"/><rect x="416" y="20" width="10" height="22"/><rect x="434" y="26" width="10" height="16"/><rect x="452" y="16" width="10" height="26"/><rect x="470" y="24" width="10" height="18"/><rect x="488" y="20" width="10" height="22"/><rect x="506" y="28" width="10" height="14"/><rect x="524" y="14" width="10" height="28"/><rect x="542" y="22" width="10" height="20"/><rect x="560" y="26" width="10" height="16"/><rect x="578" y="12" width="10" height="30"/><rect x="596" y="22" width="10" height="20"/><rect x="614" y="18" width="10" height="24"/><rect x="632" y="24" width="10" height="18"/><rect x="650" y="10" width="10" height="32"/><rect x="668" y="20" width="10" height="22"/><rect x="686" y="26" width="10" height="16"/><rect x="704" y="16" width="10" height="26"/><rect x="722" y="22" width="10" height="20"/><rect x="740" y="18" width="10" height="24"/>
+            </g>
+          </svg>
+        </div>
+        <div class="chart-note">crosshair pins to inspector · regime tint from engine history · rewinds with AS-OF date · overlay rebases index to % from left edge</div>
+      </div>
+    </section>
+
+    <!-- 05 SIGNALS WIRE (tall right col) -->
+    <section class="panel" style="grid-row: span 2;">
+      <div class="panel-head">
+        <span class="pnum">05</span><span class="ptitle">SIGNALS WIRE</span>
+        <span class="phead-right"><span class="mock-tag">MOCK</span><span class="asof">ENGINE EVENTS</span><span class="pctl">📌 ─ ▢ ✕</span></span>
+      </div>
+      <div class="panel-body">
+        <div class="wire-filters">
+          <span class="chip on">ALL</span><span class="chip">REGIME</span><span class="chip">STRESS</span><span class="chip">BREADTH</span><span class="chip">LISTS</span>
+          <span class="grep">&gt; grep</span>
+        </div>
+        <div class="chart-note" style="border:1px dashed var(--marigold-dim); padding:3px 6px; color:var(--marigold);">REAL ENGINE EVENTS ONLY — NO EXTERNAL NEWS. FIXTURE ENTRIES BELOW.</div>
+        <div class="wire">
+          <div class="wire-item"><span class="t">13-08 16:31</span><span class="cat lists">[LISTS]</span><span>TRENT entered Momentum Leaders at rank 12 · 9 entries, 9 exits this rebalance</span></div>
+          <div class="wire-item"><span class="t">13-08 16:31</span><span class="cat breadth">[BREADTH]</span><span>% above 50-DMA crossed above 60 on NIFTY 500 (58.4 → 61.2)</span></div>
+          <div class="wire-item"><span class="t">13-08 16:31</span><span class="cat lists">[LISTS]</span><span>BEL exited High RS Watch after 47 sessions · +19.3% while listed</span></div>
+          <div class="wire-item"><span class="t">12-08 16:30</span><span class="cat stress">[STRESS]</span><span>Composite eased below 35 → CALM band (38 → 32); driver: VIX percentile fell to 24th</span></div>
+          <div class="wire-item"><span class="t">12-08 16:30</span><span class="cat breadth">[BREADTH]</span><span>Net new highs (63d) positive for 8 straight sessions on NIFTY 500</span></div>
+          <div class="wire-item"><span class="t">11-08 16:30</span><span class="cat regime">[REGIME]</span><span>NIFTY 250 regime flipped CHOPPY → UPTREND · participation BROAD at flip</span></div>
+          <div class="wire-item"><span class="t">11-08 16:30</span><span class="cat lists">[LISTS]</span><span>Momentum Leaders turnover 18% at weekly rebalance · median holding age 32 sessions</span></div>
+          <div class="wire-item"><span class="t">08-08 16:30</span><span class="cat stress">[STRESS]</span><span>Downside dispersion driver rose to 47 · watch band</span></div>
+          <div class="wire-item"><span class="t">07-08 16:30</span><span class="cat breadth">[BREADTH]</span><span>McClellan oscillator crossed above zero (−8.2 → +12.4)</span></div>
+          <div class="wire-item"><span class="t">06-08 16:30</span><span class="cat regime">[REGIME]</span><span>NIFTY 500 UPTREND reached its median run length (41 sessions)</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 SECTOR RS -->
+    <section class="panel">
+      <div class="panel-head">
+        <span class="pnum">04</span><span class="ptitle">SECTOR RS · 63D</span>
+        <span class="phead-right"><span class="mock-tag">MOCK</span><span class="asof">13-AUG EOD</span><span class="pctl">📌 ─ ▢ ✕</span></span>
+      </div>
+      <div class="panel-body">
+        <div style="display:flex; flex-direction:column; gap:5px;">
+          <div class="torn-row"><span class="lbl muted">REALTY</span><span class="torn-track"><span class="torn-mid"></span><span class="torn-fill" style="left:50%;width:42%;background:var(--up)"></span></span><span class="up">+8.4</span></div>
+          <div class="torn-row"><span class="lbl muted">METAL</span><span class="torn-track"><span class="torn-mid"></span><span class="torn-fill" style="left:50%;width:34%;background:var(--up)"></span></span><span class="up">+6.8</span></div>
+          <div class="torn-row"><span class="lbl muted">AUTO</span><span class="torn-track"><span class="torn-mid"></span><span class="torn-fill" style="left:50%;width:26%;background:var(--up)"></span></span><span class="up">+5.2</span></div>
+          <div class="torn-row"><span class="lbl muted">BANK</span><span class="torn-track"><span class="torn-mid"></span><span class="torn-fill" style="left:50%;width:12%;background:var(--up)"></span></span><span class="up">+2.4</span></div>
+          <div class="torn-row"><span class="lbl muted">PHARMA</span><span class="torn-track"><span class="torn-mid"></span><span class="torn-fill" style="left:50%;width:5%;background:var(--up)"></span></span><span class="up">+1.0</span></div>
+          <div class="torn-row"><span class="lbl muted">ENERGY</span><span class="torn-track"><span class="torn-mid"></span><span class="torn-fill" style="right:50%;width:8%;background:var(--down)"></span></span><span class="down">-1.6</span></div>
+          <div class="torn-row"><span class="lbl muted">FMCG</span><span class="torn-track"><span class="torn-mid"></span><span class="torn-fill" style="right:50%;width:19%;background:var(--down)"></span></span><span class="down">-3.8</span></div>
+          <div class="torn-row"><span class="lbl muted">IT</span><span class="torn-track"><span class="torn-mid"></span><span class="torn-fill" style="right:50%;width:31%;background:var(--down)"></span></span><span class="down">-6.2</span></div>
+        </div>
+        <div class="chart-note">excess return vs universe over 63 sessions · click a sector → inspector · RRG view lands with Slice 3 (D3)</div>
+      </div>
+    </section>
+
+    <!-- 07 STOCK LISTS -->
+    <section class="panel">
+      <div class="panel-head">
+        <span class="pnum">07</span><span class="ptitle">STOCK LISTS · MOVERS</span>
+        <span class="phead-right"><span class="mock-tag">MOCK</span><span class="asof">13-AUG EOD</span><span class="pctl">📌 ─ ▢ ✕</span></span>
+      </div>
+      <div class="panel-body">
+        <div class="tile-row">
+          <div class="tile"><div class="k">Momentum Leaders</div><div class="v">24</div><div class="s up">▲ +1.4% today · 2 new</div></div>
+          <div class="tile"><div class="k">High RS Watch</div><div class="v">31</div><div class="s up">▲ +0.9% · 1 exit</div></div>
+        </div>
+        <div class="tile-row">
+          <div class="tile"><div class="k">Breakout Setups</div><div class="v">12</div><div class="s flat">— flat · 0 changes</div></div>
+          <div class="tile"><div class="k">Extended / At Risk</div><div class="v">8</div><div class="s down">▼ -0.7% · 3 new</div></div>
+        </div>
+        <table>
+          <thead><tr><th>SYM</th><th>LIST</th><th class="num">LAST</th><th class="num">CHG%</th><th class="num">RS</th></tr></thead>
+          <tbody>
+            <tr><td class="sym">TRENT</td><td class="muted">Momentum</td><td class="num">6,412.55</td><td class="num up">▲ +3.1%</td><td class="num">97</td></tr>
+            <tr><td class="sym">DIXON</td><td class="muted">Momentum</td><td class="num">17,884.20</td><td class="num up">▲ +2.6%</td><td class="num">94</td></tr>
+            <tr><td class="sym">BEL</td><td class="muted">High RS</td><td class="num">332.85</td><td class="num up">▲ +2.2%</td><td class="num">91</td></tr>
+            <tr><td class="sym">POLYCAB</td><td class="muted">Breakout</td><td class="num">7,046.10</td><td class="num down">▼ -1.8%</td><td class="num">88</td></tr>
+            <tr><td class="sym">KAYNES</td><td class="muted">At Risk</td><td class="num">5,918.40</td><td class="num down">▼ -2.4%</td><td class="num">85</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 08 SESSION + FRESHNESS -->
+    <section class="panel">
+      <div class="panel-head">
+        <span class="pnum">08</span><span class="ptitle">SESSION · PIPELINE</span>
+        <span class="phead-right"><span class="mock-tag">MOCK</span><span class="asof">LIVE CLOCK</span><span class="pctl">📌 ─ ▢ ✕</span></span>
+      </div>
+      <div class="panel-body">
+        <div style="display:flex; align-items:baseline; gap:12px;">
+          <span class="sess-clock">16:42:07</span>
+          <span class="muted">IST · NSE <span class="down" style="font-weight:700">CLOSED</span></span>
+        </div>
+        <div class="kv">
+          <span class="k">Session</span><span class="v">09:15 – 15:30 IST</span>
+          <span class="k">Next open</span><span class="v marigold">THU 09:15 · in 16:32:53</span>
+          <span class="k">Pipeline ran</span><span class="v up">16:31 IST · OK</span>
+          <span class="k">Prices through</span><span class="v">13-AUG close</span>
+          <span class="k">Universe file</span><span class="v">2026-07-15 effective</span>
+          <span class="k">Signals</span><span class="v up">7/7 portfolios synced</span>
+        </div>
+        <div class="chart-note">freshness from /api/freshness · terminal goes AMBER when the pipeline is late, RED when stale &gt; 1 session</div>
+      </div>
+    </section>
+
+    <!-- 09 UNIVERSE MAP -->
+    <section class="panel span2">
+      <div class="panel-head">
+        <span class="pnum">09</span><span class="ptitle">UNIVERSES · CROSS-SECTION</span>
+        <span class="phead-right"><span class="mock-tag">MOCK</span><span class="asof">13-AUG EOD</span><span class="pctl">📌 ─ ▢ ✕</span></span>
+      </div>
+      <div class="panel-body">
+        <table>
+          <thead><tr><th>UNIVERSE</th><th class="num">INDEX</th><th class="num">CHG%</th><th class="num">REGIME</th><th class="num">&gt;50-DMA</th><th class="num">NET NH 63D</th><th class="num">A/D</th><th class="num">STRESS</th></tr></thead>
+          <tbody>
+            <tr><td class="sym">NIFTY 50</td><td class="num">24,612.30</td><td class="num up">▲ +0.48%</td><td class="num up">UPTREND</td><td class="num">64.0%</td><td class="num up">+9</td><td class="num">34/15</td><td class="num">29 CALM</td></tr>
+            <tr><td class="sym">NIFTY 100</td><td class="num">25,108.75</td><td class="num up">▲ +0.53%</td><td class="num up">UPTREND</td><td class="num">62.0%</td><td class="num up">+14</td><td class="num">66/31</td><td class="num">30 CALM</td></tr>
+            <tr><td class="sym">NIFTY 250</td><td class="num">21,447.90</td><td class="num up">▲ +0.71%</td><td class="num up">UPTREND</td><td class="num">60.4%</td><td class="num up">+21</td><td class="num">158/84</td><td class="num">33 CALM</td></tr>
+            <tr><td class="sym">NIFTY 500</td><td class="num">22,884.15</td><td class="num up">▲ +0.62%</td><td class="num up">UPTREND</td><td class="num">61.2%</td><td class="num up">+38</td><td class="num">318/164</td><td class="num">32 CALM</td></tr>
+          </tbody>
+        </table>
+        <div class="chart-note">regime + breadth + stress computed per universe by the existing engines · row click switches terminal universe</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ inspector rail ============ -->
+  <aside class="inspector">
+    <div class="insp-head">
+      <span class="insp-title">INSPECTOR · STOCK</span>
+      <span style="margin-left:auto" class="faint">Esc closes ✕</span>
+    </div>
+    <div>
+      <div style="font-size:15px; font-weight:700;" class="marigold">TRENT — Trent Ltd</div>
+      <div class="muted" style="font-size:10px;">NIFTY 500 · CONSUMER · RETAIL</div>
+    </div>
+    <div class="kv">
+      <span class="k">last</span><span class="v">6,412.55 INR</span>
+      <span class="k">change</span><span class="v up">▲ +192.30 (+3.1%)</span>
+      <span class="k">52w range</span><span class="v">4,488 – 8,346</span>
+      <span class="k">from 52w high</span><span class="v down">▼ -23.2%</span>
+      <span class="k">volume</span><span class="v">2.41M sh</span>
+    </div>
+    <div class="insp-sec">
+      <h4>MOMENTUM PROFILE</h4>
+      <div class="kv">
+        <span class="k">RS percentile</span><span class="v up">97</span>
+        <span class="k">vs 21-DMA</span><span class="v up">▲ +4.2%</span>
+        <span class="k">vs 50-DMA</span><span class="v up">▲ +9.8%</span>
+        <span class="k">vs 200-DMA</span><span class="v up">▲ +21.4%</span>
+        <span class="k">63d return</span><span class="v up">▲ +18.7%</span>
+        <span class="k">off-high drawdown</span><span class="v down">▼ -4.1%</span>
+      </div>
+    </div>
+    <div class="insp-sec">
+      <h4>LIST MEMBERSHIP</h4>
+      <div class="kv">
+        <span class="k">Momentum Leaders</span><span class="v up">IN · rank 12 · day 1</span>
+        <span class="k">High RS Watch</span><span class="v up">IN · day 47</span>
+        <span class="k">Breakout Setups</span><span class="v faint">—</span>
+        <span class="k">Extended / At Risk</span><span class="v faint">—</span>
+      </div>
+    </div>
+    <div class="insp-sec">
+      <h4>PROVENANCE</h4>
+      <div class="kv">
+        <span class="k">source</span><span class="v">daily pipeline · EOD</span>
+        <span class="k">as-of</span><span class="v">2026-08-13 15:30 IST</span>
+        <span class="k">universe file</span><span class="v">2026-07-15</span>
+        <span class="k">adjustments</span><span class="v">corp-actions applied</span>
+        <span class="k">engine</span><span class="v">insights v2</span>
+        <span class="k">mode</span><span class="v marigold">MOCK FIXTURE</span>
+      </div>
+    </div>
+    <div class="insp-sec chart-note">
+      convention: EOD close prices, INR; RS percentile ranked within the
+      selected universe; DMA distances from adjusted closes. Nothing on
+      this rail is advice.
+    </div>
+  </aside>
+</div>
+
+<!-- ============ status bar ============ -->
+<footer class="statusbar">
+  <span><b class="marigold">MW://TERMINAL</b> P0 LAYOUT STUDY</span>
+  <span>every value illustrative — fixtures, not market data</span>
+  <span>desktop only · gated below 1100px</span>
+  <span>profile setting: SHELL = BASIC | TERMINAL</span>
+  <span style="margin-left:auto">insights_dashboard_v3 · 2026-08-20</span>
+</footer>
+
+<!-- ============ command palette overlay (mock; toggle body.show-cmdk) ============ -->
+<div class="cmdk" aria-hidden="true">
+  <div class="cmdk-box">
+    <div class="cmdk-input"><span class="slash">/</span><span>tre</span><span class="caret"></span><span style="margin-left:auto" class="faint">command · MOCK</span></div>
+    <div class="cmdk-group">STOCKS</div>
+    <div class="cmdk-item sel"><span class="k">TRENT</span><span class="d">Trent Ltd · NIFTY 500 · RS 97 · Momentum Leaders</span><span class="hint">↵ focus · ⇧↵ inspector</span></div>
+    <div class="cmdk-item"><span class="k">TRENT</span><span class="d">…in Screener (open with filters)</span><span class="hint">↵</span></div>
+    <div class="cmdk-group">GO TO</div>
+    <div class="cmdk-item"><span class="k">/regime</span><span class="d">Regime panel · current universe</span><span class="hint">↵</span></div>
+    <div class="cmdk-item"><span class="k">/stress</span><span class="d">Market Stress Composite</span><span class="hint">↵</span></div>
+    <div class="cmdk-item"><span class="k">/breadth</span><span class="d">Breadth · accepts universe arg: /breadth n250</span><span class="hint">↵</span></div>
+    <div class="cmdk-group">ACTIONS</div>
+    <div class="cmdk-item"><span class="k">/date</span><span class="d">rewind terminal as-of · /date 2026-06-30</span><span class="hint">↵</span></div>
+    <div class="cmdk-item"><span class="k">/universe</span><span class="d">switch universe · /universe n100</span><span class="hint">↵</span></div>
+    <div class="cmdk-item"><span class="k">/shell</span><span class="d">toggle TERMINAL ⇄ BASIC</span><span class="hint">↵</span></div>
+    <div class="cmdk-foot"><span>↑↓ navigate</span><span>↵ open</span><span>⇥ complete</span><span>Esc close</span><span style="margin-left:auto">fuzzy over symbols, names, panels, commands</span></div>
+  </div>
+</div>
+
+<div class="gate">
+  <p><b>MW://TERMINAL</b> is a desktop experience.</p>
+  <p style="margin-top:8px;">Below 1100px the app falls back to the basic insights dashboard.</p>
+</div>
+
+</body>
+</html>
