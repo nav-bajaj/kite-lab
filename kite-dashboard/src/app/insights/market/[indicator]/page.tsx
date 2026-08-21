@@ -33,6 +33,7 @@ import {
 import { MetricExplorer, type MetricVariant } from "@/components/insights/metric-explorer";
 import { RegimeChart } from "@/components/insights/regime-chart";
 import { cn } from "@/lib/utils";
+import { ArrowDown, ArrowDownRight, ArrowUp, ArrowUpRight } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 900;
@@ -192,12 +193,78 @@ function DualStat({
   );
 }
 
-/** Percentiles spelled out. "p42" is compact but opaque — it reads as a
- *  code rather than a position, so every percentile on the dashboard says
- *  what it means (founder, 2026-08-20). */
-function percentileText(p: number | null | undefined): string {
+/** 1st / 2nd / 3rd / 4th, with the teens handled — the stock page shipped
+ *  "42th percentile" before this existed. */
+function ordinal(n: number): string {
+  const v = Math.round(n);
+  const tens = v % 100;
+  if (tens >= 11 && tens <= 13) return `${v}th`;
+  return `${v}${["th", "st", "nd", "rd"][v % 10] ?? "th"}`;
+}
+
+/** A percentile is shown as the stat AND a sentence: "p42" alone reads as
+ *  a code, but the plain sentence alone loses the figure people compare on
+ *  (founder, 2026-08-20 then 2026-08-21). */
+function percentileStat(p: number | null | undefined): string {
   if (p === null || p === undefined || Number.isNaN(p)) return "—";
-  return `Higher than ${p.toFixed(0)}%`;
+  return `${ordinal(p)} percentile`;
+}
+
+function percentileSentence(
+  p: number | null | undefined,
+  window: string,
+): string | undefined {
+  if (p === null || p === undefined || Number.isNaN(p)) return undefined;
+  return `higher than ${p.toFixed(0)}% of ${window}`;
+}
+
+/** A signed percentage that carries its direction in colour and an arrow,
+ *  not in a minus sign alone. Descriptive of the move — this is not a
+ *  buy/sell tone (see the Tag component's note in ui.tsx). */
+function SignedPct({ value, decimals = 1 }: { value: number | null; decimals?: number }) {
+  if (value === null || Number.isNaN(value)) {
+    return <span className="text-muted-foreground">—</span>;
+  }
+  const up = value >= 0;
+  const Icon = up ? ArrowUpRight : ArrowDownRight;
+  return (
+    <span
+      className="flex items-center gap-1"
+      style={{ color: up ? "var(--positive)" : "var(--negative)" }}
+    >
+      <Icon className="h-4 w-4 shrink-0" aria-hidden />
+      {fmtPct(value, decimals, true)}
+    </span>
+  );
+}
+
+/** Advancers and decliners side by side, each with its own direction —
+ *  the split is easier to read as two coloured counts than as one string
+ *  (founder, 2026-08-21). */
+function AdvanceDeclineSplit({ up, down }: { up: number | null; down: number | null }) {
+  if (up === null || down === null) {
+    return <span className="text-muted-foreground">—</span>;
+  }
+  return (
+    <span className="flex items-center gap-3">
+      <span
+        className="flex items-center gap-1"
+        style={{ color: "var(--positive)" }}
+      >
+        <ArrowUp className="h-4 w-4 shrink-0" aria-hidden />
+        {up.toFixed(0)}
+        <span className="sr-only">advancing</span>
+      </span>
+      <span
+        className="flex items-center gap-1"
+        style={{ color: "var(--negative)" }}
+      >
+        <ArrowDown className="h-4 w-4 shrink-0" aria-hidden />
+        {down.toFixed(0)}
+        <span className="sr-only">declining</span>
+      </span>
+    </span>
+  );
 }
 
 /** "the past year" / "the last 5 years" from a trading-day window. */
@@ -394,8 +461,8 @@ async function BreadthDetail({
           },
           {
             label: "Vs its own history",
-            value: percentileText(rank),
-            sub: from ? `of days since ${from}` : "of days on record",
+            value: percentileStat(rank),
+            sub: percentileSentence(rank, from ? `days since ${from}` : "days on record"),
           },
           {
             label: "Change, 20 sessions",
@@ -517,10 +584,7 @@ async function AdvanceDeclineDetail({
         stats={[
           {
             label: "Today",
-            value:
-              advancing !== null && declining !== null
-                ? `${advancing.toFixed(0)} up · ${declining.toFixed(0)} down`
-                : "—",
+            value: <AdvanceDeclineSplit up={advancing} down={declining} />,
             sub: `of ${universeLabel(universe)}`,
           },
           {
@@ -630,21 +694,22 @@ async function StressDetail({
             sub: s.score !== null ? `${s.score.toFixed(0)}/100` : undefined,
           }}
           secondary={{
-            value: percentileText(s.score_percentile),
+            value: percentileStat(s.score_percentile),
             sub:
               s.score_percentile === null
                 ? "not enough history yet"
-                : shallow
-                  ? `of ${s.score_percentile_obs} sessions so far`
-                  : `of ${windowLabel}`,
+                : percentileSentence(
+                    s.score_percentile,
+                    shallow ? `${s.score_percentile_obs} sessions so far` : windowLabel,
+                  ),
           }}
         />
         <DualStat
           label="India VIX"
           primary={{ value: s.vix_close?.toFixed(1) ?? "—", sub: "index level" }}
           secondary={{
-            value: percentileText(s.vix_pctile_component),
-            sub: `of ${componentWindowLabel}`,
+            value: percentileStat(s.vix_pctile_component),
+            sub: percentileSentence(s.vix_pctile_component, componentWindowLabel),
           }}
         />
         <DualStat
@@ -751,13 +816,21 @@ async function StressDetail({
   );
 }
 
-async function VixDetail({ reading }: { reading: MarketReading }) {
-  const series = truncateSeries(
-    await getMacroTimeseries({ days: 4000, metrics: ["vix_close"] }).catch(
+async function VixDetail({
+  reading,
+  universe,
+}: {
+  reading: MarketReading;
+  universe: BreadthUniverse;
+}) {
+  const asOf = reading.date.slice(0, 10);
+  const [rawMacro, overlay] = await Promise.all([
+    getMacroTimeseries({ days: 4000, metrics: ["vix_close"] }).catch(
       (): TimeseriesResponse => ({ index: [], data: {} }),
     ),
-    reading.date.slice(0, 10),
-  );
+    indexOverlay(universe, asOf),
+  ]);
+  const series = truncateSeries(rawMacro, asOf);
   const values = series.data["vix_close"] ?? [];
   // Reference lines from the fetched history itself — descriptive context,
   // recomputed as the series grows rather than hardcoded.
@@ -767,22 +840,25 @@ async function VixDetail({ reading }: { reading: MarketReading }) {
   const from = firstYear(series.index);
   const bands: ReferenceBand[] = computedBands(values, from);
   const m = reading.macro;
+  const closes = overlay?.closes ?? [];
+  const indexChange5 = (() => {
+    const last = lastNonNull(closes);
+    const prior = closes.at(closes.length - 6) ?? null;
+    return last !== null && prior !== null && prior > 0 ? last / prior - 1 : null;
+  })();
 
   return (
     <div className="flex flex-col gap-4">
-      <ChartCard
-        title="India VIX"
-        sub="The market's expected 30-day volatility, from option prices. Quiet regimes sit low for months; spikes are sharp and short."
-      >
-        <TimeseriesChart dates={series.index} values={values} bands={bands} />
-      </ChartCard>
       <StatStrip
         stats={[
           { label: "India VIX", value: fmtNum(m["vix_close"], 1), sub: "index level" },
           {
             label: "Vs its own history",
-            value: percentileText(pctRank(values, lastNonNull(values))),
-            sub: from ? `of days since ${from}` : "of days on record",
+            value: percentileStat(pctRank(values, lastNonNull(values))),
+            sub: percentileSentence(
+              pctRank(values, lastNonNull(values)),
+              from ? `days since ${from}` : "days on record",
+            ),
           },
           {
             label: "5-day change",
@@ -790,12 +866,27 @@ async function VixDetail({ reading }: { reading: MarketReading }) {
             sub: "expansion or contraction",
           },
           {
-            label: "Above 20",
-            value: m["vix_above_20"] ? "Yes" : "No",
-            sub: "the elevated-volatility line",
+            // Paired with the VIX 5-day change beside it: volatility rising
+            // while the index falls is the ordinary case, both rising is the
+            // one worth noticing (founder, 2026-08-21).
+            label: `${overlay?.label ?? "Index"}, 5 sessions`,
+            value: <SignedPct value={indexChange5} />,
+            sub: "over the same window",
           },
         ]}
       />
+      <ChartCard
+        title="India VIX"
+        sub="The market's expected 30-day volatility, from option prices. Quiet regimes sit low for months; spikes are sharp and short."
+      >
+        <TimeseriesChart
+          dates={series.index}
+          values={values}
+          bands={bands}
+          overlay={overlay}
+          overlayValueLabel="VIX"
+        />
+      </ChartCard>
       <LearnPanel slug="vix" title="Learn more">
         VIX reads the price of near-term protection: how much movement option
         buyers are paying for over the next month. Low readings describe calm;
@@ -901,8 +992,11 @@ async function FiftyTwoWeekHighsDetail({
           },
           {
             label: "Vs its own history",
-            value: percentileText(pctRank(dist, distNow)),
-            sub: from ? `of days since ${from}` : "of days on record",
+            value: percentileStat(pctRank(dist, distNow)),
+            sub: percentileSentence(
+              pctRank(dist, distNow),
+              from ? `days since ${from}` : "days on record",
+            ),
           },
           {
             label: "Within 5% of high",
@@ -1298,7 +1392,7 @@ export default async function MarketIndicatorPage({
       {indicator === "advance-decline" && (
         <AdvanceDeclineDetail reading={reading} universe={universe} />
       )}
-      {indicator === "vix" && <VixDetail reading={reading} />}
+      {indicator === "vix" && <VixDetail reading={reading} universe={universe} />}
       {indicator === "52-week-highs" && (
         <FiftyTwoWeekHighsDetail reading={reading} universe={universe} />
       )}

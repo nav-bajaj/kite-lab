@@ -234,7 +234,7 @@ export function DetailShell({
 export function StatStrip({
   stats,
 }: {
-  stats: { label: string; value: string; sub?: string }[];
+  stats: { label: string; value: React.ReactNode; sub?: string }[];
 }) {
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
