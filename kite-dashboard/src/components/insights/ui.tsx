@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { FileText, ShieldCheck } from "lucide-react";
 import {
   fmtPct,
   regimeLabel,
@@ -157,6 +158,31 @@ export function RegimeCard({
       help={help}
       takeaway={REGIME_TAKEAWAY.get(regime.regime)}
     />
+  );
+}
+
+/** Validity provenance on a forward-return claim. Deliberately NOT green:
+ *  positive-token ink measures 4.19-4.34 against the five light palette
+ *  backgrounds, below the 4.5 AA floor, and green on a forward-return claim
+ *  reads as endorsement rather than provenance. `--chart-3` is the
+ *  palette-stable "notable, no valence" token and measures 5.66-5.86.
+ *  The icon carries the distinction so colour is never the only signal. */
+export function ValidityBadge({
+  kind,
+  note,
+}: {
+  kind: "validated" | "names-only";
+  note?: string;
+}) {
+  const Icon = kind === "validated" ? ShieldCheck : FileText;
+  return (
+    <span
+      className="inline-flex items-center gap-1 rounded-full border border-[color:var(--chart-3)] px-2 py-0.5 text-[10px] font-medium text-[color:var(--chart-3)]"
+      title={note}
+    >
+      <Icon className="h-3 w-3 shrink-0" aria-hidden />
+      {kind === "validated" ? "Validity-tested" : "Names only · no fwd-return claims"}
+    </span>
   );
 }
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getMovers, getWatchlists, WatchlistEntry } from "@/lib/insights-api";
-import { Pct } from "@/components/insights/ui";
+import { Pct, ValidityBadge } from "@/components/insights/ui";
 import { StockMoversSection } from "@/components/insights/movers";
 
 export const dynamic = "force-dynamic";
@@ -109,20 +109,10 @@ export default async function WatchlistsPage({ searchParams }: PageProps) {
                   {meta.title}
                 </h3>
                 {meta.validityBadge === "validated" && (
-                  <span
-                    className="rounded-full border border-[color:var(--positive)] px-2 py-0.5 text-[10px] font-medium text-[color:var(--positive)]"
-                    title={meta.validityNote}
-                  >
-                    validity-tested ✓
-                  </span>
+                  <ValidityBadge kind="validated" note={meta.validityNote} />
                 )}
                 {meta.validityBadge === "names-only" && (
-                  <span
-                    className="rounded-full border border-[color:var(--warning)] px-2 py-0.5 text-[10px] font-medium text-[color:var(--warning)]"
-                    title={meta.validityNote}
-                  >
-                    names-only · no fwd-return claims
-                  </span>
+                  <ValidityBadge kind="names-only" note={meta.validityNote} />
                 )}
               </div>
               {meta.learn && (

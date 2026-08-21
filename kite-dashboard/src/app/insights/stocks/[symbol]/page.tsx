@@ -1,3 +1,4 @@
+import { ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import {
   getStockDetail,
@@ -92,10 +93,10 @@ export default async function StockDetailPage({ params, searchParams }: PageProp
         )}
         {isLeader && (
           <div
-            className="max-w-2xl rounded-lg border border-[color:var(--positive)] bg-[color:var(--positive)]/5 px-3 py-2 text-[12px] leading-[1.5] text-muted-foreground"
+            className="max-w-2xl rounded-lg border border-[color:var(--chart-3)] bg-[color:var(--chart-3)]/5 px-3 py-2 text-[12px] leading-[1.5] text-foreground"
             title="Validity-tested against a matched NSE 500 baseline over 165 sample dates"
           >
-            <span className="mr-1 font-medium text-[color:var(--positive)]">Validity-tested ✓</span>
+            <span className="mr-1 inline-flex items-center gap-1 font-medium text-[color:var(--chart-3)]"><ShieldCheck className="h-3.5 w-3.5 shrink-0" aria-hidden />Validity-tested</span>
             RS top-decile names historically led a matched NSE 500 baseline by
             +1.19pp over the next 20 trading days (56% positive vs 54% baseline;
             +3.9pp at 60d), across our 16-year sample. Historical tendency, not a

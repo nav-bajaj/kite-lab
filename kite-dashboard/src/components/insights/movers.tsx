@@ -81,7 +81,7 @@ export function StockMoversSection({
                   </Link>
                   <span className="tabular-nums text-muted-foreground">
                     {e.rank_21d_ago ?? "—"} → {e.rank ?? "—"}
-                    {e.rank_delta_21d ? <span className="ml-1 text-[color:var(--positive)]">(+{e.rank_delta_21d})</span> : null}
+                    {e.rank_delta_21d ? <span className="ml-1 text-foreground">(+{e.rank_delta_21d})</span> : null}
                   </span>
                 </li>
               ))}
