@@ -50,7 +50,7 @@ export function UniverseSelector() {
         className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
       >
         <Layers className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
-        <span className="text-muted-foreground">Universe</span>
+        <span className="hidden text-muted-foreground sm:inline">Universe</span>
         <span>{isPending ? "loading…" : universeLabel(current)}</span>
         <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
       </button>

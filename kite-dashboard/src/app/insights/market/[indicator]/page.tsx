@@ -33,7 +33,8 @@ import {
 import { MetricExplorer, type MetricVariant } from "@/components/insights/metric-explorer";
 import { RegimeChart } from "@/components/insights/regime-chart";
 import { cn } from "@/lib/utils";
-import { ArrowDown, ArrowDownRight, ArrowUp, ArrowUpRight } from "lucide-react";
+import { REGIME_CSS_VAR, RegimeChip, regimeColor } from "@/components/insights/ui";
+import { ArrowDown, ArrowDownRight, ArrowUp, ArrowUpRight, Equal, Split } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 900;
@@ -78,7 +79,7 @@ function LearnPanel({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-2 rounded-xl border border-border bg-primary/[0.03] p-5">
+    <div className="flex flex-col gap-2 rounded-xl border border-border bg-primary/[0.03] p-3 lg:p-4">
       <span className="text-[12px] font-semibold text-foreground">{title}</span>
       <p className="text-[13px] leading-[1.6] text-muted-foreground">{children}</p>
       {slug && (
@@ -218,6 +219,28 @@ function percentileSentence(
   return `higher than ${p.toFixed(0)}% of ${window}`;
 }
 
+/** The divergence read, promoted out of the faint `sub` slot. Deliberately
+ *  on --chart-3 (the palette-stable "notable, no valence" token) rather than
+ *  warning-ochre: a narrowing tape is worth noticing, not an alarm. */
+function DivergenceNote({
+  note,
+}: {
+  note?: { text: string; agreeing: boolean };
+}) {
+  if (!note) return null;
+  const { text, agreeing } = note;
+  const Icon = agreeing ? Equal : Split;
+  return (
+    <p
+      className="flex items-start gap-1.5 text-[12px] leading-[1.45]"
+      style={{ color: agreeing ? "var(--muted-foreground)" : "var(--chart-3)" }}
+    >
+      <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
+      {text}
+    </p>
+  );
+}
+
 /** A signed percentage that carries its direction in colour and an arrow,
  *  not in a minus sign alone. Descriptive of the move — this is not a
  *  buy/sell tone (see the Tag component's note in ui.tsx). */
@@ -234,6 +257,31 @@ function SignedPct({ value, decimals = 1 }: { value: number | null; decimals?: n
     >
       <Icon className="h-4 w-4 shrink-0" aria-hidden />
       {fmtPct(value, decimals, true)}
+    </span>
+  );
+}
+
+/** A signed point/pp value with direction colour. The sign character is
+ *  already in the string, so the colour is redundant reinforcement — the
+ *  safe kind. */
+function SignedPp({
+  value,
+  unit = "pp",
+  decimals = 0,
+}: {
+  value: number | null;
+  unit?: string;
+  decimals?: number;
+}) {
+  if (value === null || Number.isNaN(value)) {
+    return <span className="text-muted-foreground">—</span>;
+  }
+  const up = value >= 0;
+  return (
+    <span style={{ color: up ? "var(--positive)" : "var(--negative)" }}>
+      {up ? "+" : ""}
+      {value.toFixed(decimals)}
+      {unit}
     </span>
   );
 }
@@ -285,9 +333,9 @@ function ChartCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5">
+    <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3 lg:gap-3 lg:p-4">
       <div className="flex flex-col gap-0.5">
-        <span className="text-lg font-semibold text-foreground">{title}</span>
+        <span className="text-[15px] font-semibold text-foreground lg:text-lg">{title}</span>
         {sub && <span className="text-[13px] text-muted-foreground">{sub}</span>}
       </div>
       {children}
@@ -435,10 +483,10 @@ async function BreadthDetail({
   const divergence =
     changed20 !== null && indexChange20 !== null
       ? indexChange20 >= 0 && changed20 < 0
-        ? "index up, participation down — the move is narrowing"
+        ? { text: "Index up, participation down — the move is narrowing", agreeing: false }
         : indexChange20 < 0 && changed20 >= 0
-          ? "index down, participation up — the decline is narrowing"
-          : "index and participation moving together"
+          ? { text: "Index down, participation up — the decline is narrowing", agreeing: false }
+          : { text: "Index and participation are moving together", agreeing: true }
       : undefined;
 
   const variants: MetricVariant[] = BREADTH_VARIANTS.map((v) => {
@@ -451,7 +499,7 @@ async function BreadthDetail({
   });
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2 lg:gap-3">
       <StatStrip
         stats={[
           {
@@ -471,11 +519,12 @@ async function BreadthDetail({
           },
           {
             label: `${overlay?.label ?? "Index"}, 20 sessions`,
-            value: fmtPct(indexChange20, 1, true),
-            sub: divergence,
+            value: <SignedPct value={indexChange20} />,
+            sub: "against participation",
           },
         ]}
       />
+      <DivergenceNote note={divergence} />
       <ChartCard title={`Market Breadth ${universeLabel(universe)}`}>
         <MetricExplorer
           dates={series.index}
@@ -561,10 +610,10 @@ async function AdvanceDeclineDetail({
   const divergence =
     lineChange !== null && indexChange20 !== null
       ? indexChange20 >= 0 && lineChange < 0
-        ? "index up while the line falls — fewer names carrying it"
+        ? { text: "Index up while the A-D line falls — fewer names carrying it", agreeing: false }
         : indexChange20 < 0 && lineChange >= 0
-          ? "index down while the line rises — selling is narrowing"
-          : "index and the A-D line agree"
+          ? { text: "Index down while the A-D line rises — selling is narrowing", agreeing: false }
+          : { text: "Index and the A-D line are moving together", agreeing: true }
       : undefined;
 
   const variants: MetricVariant[] = AD_VARIANTS.map((v) => {
@@ -579,7 +628,7 @@ async function AdvanceDeclineDetail({
   });
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2 lg:gap-3">
       <StatStrip
         stats={[
           {
@@ -594,19 +643,17 @@ async function AdvanceDeclineDetail({
           },
           {
             label: "A-D line, 20 sessions",
-            value:
-              lineChange !== null
-                ? `${lineChange >= 0 ? "+" : ""}${lineChange.toFixed(0)}`
-                : "—",
+            value: <SignedPp value={lineChange} unit="" decimals={0} />,
             sub: "net stocks added to the line",
           },
           {
             label: `${overlay?.label ?? "Index"}, 20 sessions`,
-            value: fmtPct(indexChange20, 1, true),
-            sub: divergence,
+            value: <SignedPct value={indexChange20} />,
+            sub: "against the A-D line",
           },
         ]}
       />
+      <DivergenceNote note={divergence} />
       <ChartCard
         title={`Advances & declines · ${universeLabel(universe)}`}
         sub="How many stocks moved with the market. The A-D line is the running total — switch between counting stocks and counting each day as a share of the stocks that moved."
@@ -683,7 +730,7 @@ async function StressDetail({
     s.score_percentile_obs < s.percentile_window_days;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2 lg:gap-3">
       {/* State first, chart second — same order as the Regime tab. */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <DualStat
@@ -739,7 +786,7 @@ async function StressDetail({
           overlayValueLabel="Stress"
         />
       </ChartCard>
-      <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
+      <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3 lg:p-4">
         <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           What&apos;s driving the score today
         </span>
@@ -768,7 +815,7 @@ async function StressDetail({
           </div>
         ))}
       </div>
-      <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
+      <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3 lg:p-4">
         <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           How the score is computed
         </span>
@@ -848,7 +895,7 @@ async function VixDetail({
   })();
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2 lg:gap-3">
       <StatStrip
         stats={[
           { label: "India VIX", value: fmtNum(m["vix_close"], 1), sub: "index level" },
@@ -982,7 +1029,7 @@ async function FiftyTwoWeekHighsDetail({
   });
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2 lg:gap-3">
       <StatStrip
         stats={[
           {
@@ -1051,7 +1098,7 @@ async function ConcentrationDetail({
   const c = reading.concentration;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2 lg:gap-3">
       <ChartCard
         title={`Cap-weighted vs equal-weighted ${universeLabel(universe)}, 20-day average spread`}
         sub="Above zero: the heavyweights are outrunning the average stock (a narrow tape). Below zero: the average stock leads (broad participation)."
@@ -1136,14 +1183,7 @@ async function ConcentrationDetail({
   );
 }
 
-const REGIME_COLOR: Record<RegimeEpisode["regime"], string> = {
-  TREND_BULL: "var(--positive)",
-  DRIFT: "var(--muted-foreground)",
-  STRETCHED: "var(--warning)",
-  STRESS: "var(--negative)",
-};
-
-const REGIME_ORDER = Object.keys(REGIME_COLOR) as RegimeEpisode["regime"][];
+const REGIME_ORDER = Object.keys(REGIME_CSS_VAR) as RegimeEpisode["regime"][];
 
 /** Close-to-close return between two days of a fetched close series.
  *  Used so a rewound snapshot reports the move *so far* in its regime
@@ -1234,19 +1274,19 @@ async function RegimeDetail({
     .reverse();
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2 lg:gap-3">
       {/* Tiles lead: the state of affairs reads faster than the chart, so it
           comes first and the chart backs it up (founder, 2026-08-15). */}
       <StatStrip
         stats={[
           {
             label: "Current regime",
-            value: regimeLabel(r.regime),
+            value: <RegimeChip regime={r.regime} />,
             sub: `day ${r.persistence_days}`,
           },
           {
             label: "Previous regime",
-            value: r.prev_regime ? regimeLabel(r.prev_regime) : "—",
+            value: r.prev_regime ? <RegimeChip regime={r.prev_regime} /> : "—",
             sub: r.prev_regime_lasted_days ? `day ${r.prev_regime_lasted_days}` : undefined,
           },
           {
@@ -1274,7 +1314,7 @@ async function RegimeDetail({
           indexLabel={indexLabel}
         />
       </ChartCard>
-      <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5">
+      <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-3 lg:p-4">
         <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           Median regime length
         </span>
@@ -1286,8 +1326,7 @@ async function RegimeDetail({
                 <span className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
                   <span
                     className="inline-block h-2.5 w-2.5 rounded-[3px]"
-                    /* eslint-disable-next-line security/detect-object-injection -- reg iterates a literal tuple */
-                    style={{ backgroundColor: REGIME_COLOR[reg] }}
+                    style={{ backgroundColor: regimeColor(reg) }}
                   />
                   {regimeLabel(reg)}
                 </span>
@@ -1299,7 +1338,7 @@ async function RegimeDetail({
           })}
         </div>
       </div>
-      <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
+      <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3 lg:p-4">
         <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           Recent regimes
         </span>
@@ -1312,7 +1351,7 @@ async function RegimeDetail({
               <span className="flex items-center gap-2 font-medium text-foreground">
                 <span
                   className="inline-block h-2.5 w-2.5 rounded-[3px]"
-                  style={{ backgroundColor: REGIME_COLOR[e.regime] }}
+                  style={{ backgroundColor: regimeColor(e.regime) }}
                 />
                 {regimeLabel(e.regime)}
               </span>
@@ -1399,7 +1438,7 @@ export default async function MarketIndicatorPage({
       {indicator === "concentration" && (
         <ConcentrationDetail reading={reading} universe={universe} />
       )}
-      <p className="mt-4 text-[11px] leading-[1.6] text-muted-foreground">
+      <p className="mt-3 text-[11px] leading-[1.6] text-muted-foreground">
         Educational market analytics — descriptions of conditions, not
         recommendations.{" "}
         {["regime", "stress", "breadth"].includes(indicator)

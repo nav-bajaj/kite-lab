@@ -122,6 +122,50 @@ export function Pct({
   return <span className={toneClass(tone)}>{fmtPct(v, decimals, signed)}</span>;
 }
 
+/** THE regime colour map. Before this there were five — the Overview's own
+ *  ternary, this Map, REGIME_COLOR in the detail page, REGIME_VAR in the
+ *  regime chart and inline literals in the legend — and the Overview and this
+ *  file disagreed about DRIFT. Import from here; do not add a sixth.
+ *
+ *  Compliance note: these are safe to colour because regime-legend.tsx prints
+ *  the swatch beside the plain-English meaning AND the literal engine rule, so
+ *  the colour restates a legend entry rather than adding a claim. */
+export const REGIME_CSS_VAR: Record<string, string> = {
+  TREND_BULL: "--positive",
+  DRIFT: "--muted-foreground",
+  STRETCHED: "--warning",
+  STRESS: "--negative",
+};
+
+export function regimeColor(regime: string): string {
+  return `var(${REGIME_CSS_VAR[regime as keyof typeof REGIME_CSS_VAR] ?? "--muted-foreground"})`;
+}
+
+/** Regime label with its swatch — the mark the "Recent regimes" list already
+ *  had, now on every headline that names a regime. */
+export function RegimeChip({
+  regime,
+  className,
+  swatch = true,
+}: {
+  regime: string;
+  className?: string;
+  swatch?: boolean;
+}) {
+  return (
+    <span className={cn("inline-flex items-center gap-1.5", className)}>
+      {swatch && (
+        <span
+          className="inline-block h-2.5 w-2.5 shrink-0 rounded-[3px]"
+          style={{ backgroundColor: regimeColor(regime) }}
+          aria-hidden
+        />
+      )}
+      <span style={{ color: regimeColor(regime) }}>{regimeLabel(regime)}</span>
+    </span>
+  );
+}
+
 const REGIME_TONE = new Map<RegimeSnapshot["regime"], Tone>([
   ["TREND_BULL", "positive"],
   ["DRIFT", "muted"],
@@ -276,7 +320,7 @@ export function SectorBars({
   );
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1">
       {rows.map((s) => {
         const v = s.rs_60d ?? 0;
         const positive = v >= 0;
@@ -297,7 +341,7 @@ export function SectorBars({
                     <Pct v={v} />
                   </span>
                   <div
-                    className="h-6 rounded-[4px]"
+                    className="h-5 rounded-[4px]"
                     style={{ width, backgroundColor: color }}
                   />
                 </>
@@ -314,7 +358,7 @@ export function SectorBars({
               {positive && (
                 <>
                   <div
-                    className="h-6 rounded-[4px]"
+                    className="h-5 rounded-[4px]"
                     style={{ width, backgroundColor: color }}
                   />
                   <span className="font-mono text-[13px] tabular-nums">

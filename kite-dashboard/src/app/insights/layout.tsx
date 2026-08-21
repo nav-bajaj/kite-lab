@@ -28,23 +28,33 @@ export default function InsightsLayout({ children }: { children: React.ReactNode
         </Suspense>
 
         <DashboardMain>
+          {/* The pickers only fit the header from `sm` up — at 390px the
+              universe + snapshot + palette + avatar cluster needs 369px of a
+              243px slot and pushes the page into horizontal scroll. Below
+              `sm` they get their own full-width row instead. */}
           <InsightsTopbar
             pickerSlot={
-              <Suspense fallback={null}>
-                <UniverseSelector />
-                <CompactSnapshotPicker />
-              </Suspense>
+              <div className="hidden items-center gap-1.5 sm:flex sm:gap-3">
+                <Suspense fallback={null}>
+                  <UniverseSelector />
+                  <CompactSnapshotPicker />
+                </Suspense>
+              </div>
             }
           />
 
           <Suspense fallback={null}>
-            <div className="px-4 pt-3 lg:hidden">
+            <div className="flex flex-col gap-2 px-3 pt-2 lg:hidden">
               <InsightsMobileNav />
+              <div className="flex items-center gap-1.5 sm:hidden">
+                <UniverseSelector />
+                <CompactSnapshotPicker />
+              </div>
             </div>
           </Suspense>
 
           {/* div, not <main> — the pages render their own <main> landmark. */}
-          <div className="flex-1 overflow-x-clip p-4 lg:p-6">{children}</div>
+          <div className="flex-1 overflow-x-clip p-3 lg:p-5">{children}</div>
 
           <DisclaimerFooter />
         </DashboardMain>

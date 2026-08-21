@@ -9,15 +9,14 @@ import {
   fmtNum,
   insightsQuery,
   parseUniverse,
-  regimeLabel,
   sectorLabel,
   universeLabel,
   type MoversResponse,
   type TimeseriesResponse,
   type WatchlistEntry,
 } from "@/lib/insights-api";
-import { SectionHeader, IndicatorCard } from "@/components/insights/mission";
-import { SectorBars } from "@/components/insights/ui";
+import { CardGrid, SectionHeader, IndicatorCard } from "@/components/insights/mission";
+import { RegimeChip, SectorBars } from "@/components/insights/ui";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 900;
@@ -95,14 +94,6 @@ export default async function OverviewPage({
   );
   const scopeSub = universeLabel(universe);
 
-  const regimeTone =
-    regime.regime === "TREND_BULL"
-      ? "text-[color:var(--positive)]"
-      : regime.regime === "STRESS"
-        ? "text-[color:var(--negative)]"
-        : regime.regime === "STRETCHED"
-          ? "text-[color:var(--warning)]"
-          : "text-foreground";
   // The band label comes from the engine — see stress.stress_band().
   const stressLevel = stress.band ?? "—";
 
@@ -123,30 +114,37 @@ export default async function OverviewPage({
   ];
 
   return (
-    <main className="flex flex-col gap-8">
+    <main className="flex flex-col gap-4 lg:gap-5">
       <div className="flex flex-col gap-1">
-        <h1 className="text-3xl font-semibold tracking-[-0.01em] text-foreground">
+        <h1 className="text-xl font-semibold tracking-[-0.01em] text-foreground lg:text-2xl">
           Overview
         </h1>
-        <p className="text-[13px] text-muted-foreground">
-          As of {asOf}. Everything at a glance — open any card for its history
-          and how to read it.
+        <p className="text-[12px] text-muted-foreground">
+          As of {asOf}.
+          <span className="hidden lg:inline">
+            {" "}Everything at a glance — open any card for its history and how
+            to read it.
+          </span>
         </p>
       </div>
 
       {/* ──────────────── MARKET ──────────────── */}
-      <section className="flex flex-col gap-4">
+      <section className="flex flex-col gap-2 lg:gap-2.5">
         <SectionHeader
           label="Market"
+          icon="market"
+          accent="acc3"
           link={{ href: "/insights/market", label: "Open Market Pulse" }}
           dateQuery={dateQuery}
         />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <CardGrid>
+          <div className="grid gap-px sm:grid-cols-3">
           <IndicatorCard label="Regime" href={`/insights/market/regime${dateQuery}`}>
             <div className="flex items-baseline gap-2">
-              <span className={`text-2xl font-semibold leading-tight ${regimeTone}`}>
-                {regimeLabel(regime.regime)}
-              </span>
+              <RegimeChip
+                regime={regime.regime}
+                className="text-xl font-semibold leading-tight lg:text-2xl"
+              />
               <span className="font-mono text-[12px] text-muted-foreground">
                 day {regime.persistence_days}
               </span>
@@ -159,7 +157,7 @@ export default async function OverviewPage({
 
           <IndicatorCard label="Market stress" href={`/insights/market/stress${dateQuery}`}>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-semibold leading-tight text-foreground">
+              <span className="text-xl font-semibold leading-tight text-foreground lg:text-2xl">
                 {stressLevel}
               </span>
               <span className="font-mono text-[12px] text-muted-foreground">
@@ -186,7 +184,7 @@ export default async function OverviewPage({
             foot={`Share of ${scopeSub} stocks above their 200-day average — participation, not just the index.`}
           >
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-semibold leading-tight text-foreground">
+              <span className="text-xl font-semibold leading-tight text-foreground lg:text-2xl">
                 {fmtPct(breadthNow, 0)}
               </span>
               <span className="font-mono text-[12px] text-muted-foreground">
@@ -194,16 +192,15 @@ export default async function OverviewPage({
               </span>
             </div>
           </IndicatorCard>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          </div>
+          <div className="grid grid-cols-2 gap-px sm:grid-cols-3 lg:grid-cols-4">
           <IndicatorCard
             label="India VIX"
             href={`/insights/market/vix${dateQuery}`}
             spark={vixSpark}
             foot="Expected 30-day volatility from option prices."
           >
-            <span className="text-2xl font-semibold leading-tight text-foreground">
+            <span className="text-xl font-semibold leading-tight text-foreground lg:text-2xl">
               {fmtNum(vixNow, 1)}
             </span>
           </IndicatorCard>
@@ -213,7 +210,7 @@ export default async function OverviewPage({
             spark={distSpark}
             foot={`How far the average ${scopeSub} stock sits below its own 52-week high.`}
           >
-            <span className="text-2xl font-semibold leading-tight text-foreground">
+            <span className="text-xl font-semibold leading-tight text-foreground lg:text-2xl">
               {fmtPct(distNow, 1)}
             </span>
           </IndicatorCard>
@@ -223,7 +220,7 @@ export default async function OverviewPage({
             spark={adSpark}
             foot="Net advancers today, share of names traded."
           >
-            <span className="text-2xl font-semibold leading-tight text-foreground">
+            <span className="text-xl font-semibold leading-tight text-foreground lg:text-2xl">
               {fmtPct(adNow, 0, true)}
             </span>
           </IndicatorCard>
@@ -234,7 +231,7 @@ export default async function OverviewPage({
             foot={`Cap-weighted minus equal-weighted ${scopeSub} return today.`}
           >
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-semibold leading-tight text-foreground">
+              <span className="text-xl font-semibold leading-tight text-foreground lg:text-2xl">
                 {concNow !== null
                   ? `${concNow >= 0 ? "+" : ""}${concNow.toFixed(2)}pp`
                   : "—"}
@@ -246,19 +243,21 @@ export default async function OverviewPage({
               )}
             </div>
           </IndicatorCard>
-        </div>
-
+          </div>
+        </CardGrid>
       </section>
 
       {/* ──────────────── SECTORS & ROTATION ──────────────── */}
-      <section className="flex flex-col gap-4">
+      <section className="flex flex-col gap-2 lg:gap-2.5">
         <SectionHeader
           label="Sectors & rotation"
+          icon="sectors"
+          accent="acc5"
           link={{ href: "/insights/sectors", label: "Open Sectors" }}
           dateQuery={dateQuery}
         />
-        <div className="rounded-xl border border-border bg-card p-5">
-          <div className="mb-3 flex items-baseline justify-between gap-3">
+        <div className="rounded-xl border border-border bg-card p-3 lg:p-4">
+          <div className="mb-2 flex items-baseline justify-between gap-3">
             <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               Sector relative strength vs Nifty 50 · 60 days
             </span>
@@ -268,13 +267,15 @@ export default async function OverviewPage({
       </section>
 
       {/* ──────────────── STOCK LISTS ──────────────── */}
-      <section className="flex flex-col gap-4">
+      <section className="flex flex-col gap-2 lg:gap-2.5">
         <SectionHeader
           label="Stock lists"
+          icon="lists"
+          accent="acc1"
           link={{ href: "/insights/watchlists", label: "Open Stock Lists" }}
           dateQuery={dateQuery}
         />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <CardGrid cols="grid-cols-2 lg:grid-cols-4">
           {listSlots.map((slot) => {
             const entries: WatchlistEntry[] = reading.watchlists[slot.key] ?? [];
             return (
@@ -285,7 +286,7 @@ export default async function OverviewPage({
                 foot={slot.foot}
               >
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-semibold leading-tight text-foreground">
+                  <span className="text-xl font-semibold leading-tight text-foreground lg:text-2xl">
                     {/* The reading payload caps each list at 15 entries. */}
                     {entries.length >= 15 ? "15+" : entries.length}
                   </span>
@@ -302,11 +303,11 @@ export default async function OverviewPage({
               </IndicatorCard>
             );
           })}
-        </div>
+        </CardGrid>
 
         {/* Name-level movers live with the lists (founder call 2026-08-14). */}
         {movers?.data_available && (
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-border bg-card px-4 py-3 text-[13px]">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl border border-border bg-card px-3 py-2 text-[13px]">
             <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               Movers today
             </span>

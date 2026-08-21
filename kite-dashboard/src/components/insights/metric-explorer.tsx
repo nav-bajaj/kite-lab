@@ -47,7 +47,7 @@ export function MetricExplorer({
             onClick={() => setActive(v.metric)}
             aria-pressed={v.metric === current.metric}
             className={cn(
-              "rounded-full border px-3 py-1 text-[12px] font-medium transition-colors",
+              "rounded-full border px-3 py-1.5 text-[12px] font-medium transition-colors",
               v.metric === current.metric
                 ? "border-primary bg-primary/[0.08] text-primary"
                 : "border-border text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -57,7 +57,7 @@ export function MetricExplorer({
           </button>
         ))}
       </div>
-      <p className="text-[13px] text-muted-foreground">{current.sub}</p>
+      <p className="text-[12px] leading-[1.45] text-muted-foreground lg:text-[13px]">{current.sub}</p>
       <TimeseriesChart
         key={current.metric}
         dates={dates}

@@ -570,3 +570,73 @@ have reached, not a comparable level.
 Chart axis precision is derived from series magnitude (added with the
 A-D work), which is what makes the distance-from-high axis readable at
 1dp instead of collapsing.
+
+## 2026-08-21 — density + semantic colour pass (two agent studies)
+
+Two read-only studies commissioned by the founder: one on semantic
+colour and icons, one on layout density. Both measured rather than
+asserted; I re-verified every number I acted on.
+
+**A live bug the density study found.** The insights topbar had a
+`scrollWidth` of 625px in a 390px viewport — **235px of horizontal
+scroll on every insights page on mobile**. The right-hand cluster
+(universe + snapshot + Today + palette + avatar) needed 369px of a 243px
+slot. `overflow-x-clip` on the content div never covered it because the
+header is a sibling. Fixed structurally: below `sm` the pickers get their
+own full-width row under the mobile nav instead of competing for header
+space. Verified 0px overflow, `scrollWidth === innerWidth`.
+
+**Density.** Hairline grids (`CardGrid`: `gap-px` over a `bg-border`
+parent) replace gap-separated cards, cells lose their own chrome, mobile
+goes 2-up rather than 1-up, and the app padding scale tightens. Measured:
+
+| surface | before | after |
+|---|---|---|
+| Overview @390 | 2943px (3.49 screens) | **1870 (2.22)** |
+| Overview @1440 | 1432 (1.59) | **1126 (1.25)** |
+
+Reclaimed space goes into **data ink, not whitespace** — desktop charts
+grow 320 → 400px; mobile charts drop to 260 (the study's floor is 240).
+Chip tap targets **grew** on mobile (25 → 32px) against the density
+grain, deliberately.
+
+**The app scale is now named**, not scattered: `--app-pad/-lg`,
+`--app-gap/-lg` on `.mw-app` in globals.css. The dashboard forking from
+the marketing scale is a founder decision; naming it means a future
+design pass retunes from one place rather than hunting ~40 paddings.
+This matters because `design_studies_clay` is live on another branch.
+
+**Semantic colour.** The regime label had **five implementations** and
+two disagreed on DRIFT (Overview said foreground, ui.tsx said muted).
+Now one `REGIME_CSS_VAR` + `RegimeChip` in ui.tsx; the other four are
+deleted. The two headline regime tiles finally carry the swatch their
+own "Recent regimes" list already had.
+
+Icons where they earn it: the three Overview section headers reuse the
+sidebar's own glyph in an accent chip, and each Market Pulse tab gets
+one. Deliberately NOT per regime state — that lexicon is
+compliance-controlled and a glyph per state is editorial commentary.
+
+The divergence readout — the most analytical sentence on Breadth and
+A/D — was rendering as the page's smallest, faintest text in the tile
+`sub` slot. Promoted to its own line with `Split`/`Equal` and
+`--chart-3`. On `--chart-3` rather than warning-ochre on purpose: a
+narrowing tape is worth noticing, not an alarm. The agreeing/diverging
+state is now an explicit flag rather than string-matching the sentence.
+
+**Where colour was refused**, per the study and the standing "descriptive,
+never a signal" rule: extension bands (a red "Very high" is a sell call
+in everything but name), the four stress components, new-high/new-low
+counts, and the stress band on a green axis (painting "Calm" green reads
+as "safe to buy" — it uses the calm→warning axis instead).
+
+Standing rule from the measurements: **never put token-coloured text on
+a tint of the same token** — positive-on-positive/10 is 4.16, warning
+on warning/10 is 4.06, both below AA.
+
+Open from the studies, not done: replacing the Overview cards' prose
+`foot` with a data line (`55% · +2pp 20d · 43rd pctile`) — denser *and*
+more informative, but it needs `pctRank`/`changeOver` lifted out of the
+detail page into a shared helper; hiding `InsightsMobileNav` on
+`/insights/market/*` to kill 104px of stacked nav chrome; and a bottom
+nav bar as the better long-term mobile answer.

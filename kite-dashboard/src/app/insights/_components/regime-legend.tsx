@@ -1,3 +1,4 @@
+import { regimeColor } from "@/components/insights/ui";
 /**
  * Plain-English legend for the four regime labels. Mirrors the actual
  * classifier rules in `kite-api/app/insights/regime.py` so what readers
@@ -21,27 +22,27 @@ function regimes(
   return [
     {
       label: "Trend Bull",
-      accent: "var(--positive)",
+      accent: regimeColor("TREND_BULL"),
       plain:
         "A healthy uptrend with the market behind it. The direction is up and a majority of stocks are joining the move.",
       rule: `${indexLabel} is above its ${trend}-day average and more than 55% of ${universeLabel} stocks are above their own ${participation}-day average.`,
     },
     {
       label: "Drift",
-      accent: "var(--muted-foreground)",
+      accent: regimeColor("DRIFT"),
       plain: "The messy middle. Not trending strongly on either side.",
       rule: "Neither the trend-and-participation conditions nor the stress conditions are met.",
     },
     {
       label: "Stretched",
-      accent: "var(--warning)",
+      accent: regimeColor("STRETCHED"),
       plain:
         "An overstretched trend. Wide participation with low levels of worry. A sign of complacency.",
       rule: `${indexLabel} is above its ${trend}-day average, more than 85% of ${universeLabel} stocks are above their ${participation}-day average, and India VIX sits more than one standard deviation below its average of the past year.`,
     },
     {
       label: "Stress",
-      accent: "var(--negative)",
+      accent: regimeColor("STRESS"),
       plain:
         "Conditions are tense and volatility has spiked. The market is below trend while participation breaks down.",
       rule: `India VIX is more than 1.5 standard deviations above its average of the past year, or ${indexLabel} is below its ${trend}-day average while fewer than 35% of ${universeLabel} stocks hold above their ${participation}-day average.`,

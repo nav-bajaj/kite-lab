@@ -192,6 +192,17 @@
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+
+  /* App density scale — deliberately tighter than the marketing scale in
+   * tokens.css (--radius-card 24px, p-5, gap-8). The dashboard's job is to
+   * show a lot at once and stay legible; the marketing pages' job is to
+   * breathe. Naming the fork here means a future design pass retunes the
+   * dashboard from one place instead of hunting ~40 hardcoded paddings.
+   * Founder call, 2026-08-21. */
+  --app-pad: 12px;
+  --app-pad-lg: 16px;
+  --app-gap: 8px;
+  --app-gap-lg: 12px;
 }
 
 /* One-shot highlight for live value changes (see FlashOnChange). Restarted

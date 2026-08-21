@@ -14,6 +14,7 @@ import {
 } from "lightweight-charts";
 import { cn } from "@/lib/utils";
 import { regimeLabel } from "@/lib/insights-api";
+import { REGIME_CSS_VAR } from "@/components/insights/ui";
 
 /**
  * Regime chart: the scope's index drawn as a line over a light background
@@ -37,12 +38,9 @@ const RANGES: { label: string; days: number | null }[] = [
 // arrives in a server component as a client-reference proxy, not a value.
 const REGIME_ORDER = ["TREND_BULL", "DRIFT", "STRETCHED", "STRESS"] as const;
 
-const REGIME_VAR: Record<string, string> = {
-  TREND_BULL: "--positive",
-  DRIFT: "--muted-foreground",
-  STRETCHED: "--warning",
-  STRESS: "--negative",
-};
+// Single source of truth lives in ui.tsx; this file only needs the bare var
+// names for the canvas probe, so it reads them from there.
+const REGIME_VAR = REGIME_CSS_VAR;
 
 function resolveColor(el: HTMLElement, cssVar: string, fallback: string): string {
   const probe = document.createElement("span");
@@ -202,7 +200,7 @@ export function RegimeChart({
   regimes,
   indexLabel,
   defaultRange = "1Y",
-  height = 340,
+  height,
 }: {
   dates: string[];
   opens?: (number | null)[];
@@ -212,6 +210,7 @@ export function RegimeChart({
   regimes: string[];
   indexLabel: string;
   defaultRange?: (typeof RANGES)[number]["label"];
+  /** Explicit override; omit to use the responsive default. */
   height?: number;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -324,7 +323,7 @@ export function RegimeChart({
                 onClick={() => setMode(m)}
                 aria-pressed={mode === m}
                 className={cn(
-                  "rounded-md px-2.5 py-1 text-[11px] transition-colors",
+                  "rounded-md px-3 py-1.5 text-[11px] transition-colors lg:px-2.5 lg:py-1",
                   mode === m
                     ? "bg-muted font-medium text-foreground"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -340,7 +339,7 @@ export function RegimeChart({
               onClick={() => setRange(r.label)}
               aria-pressed={range === r.label}
               className={cn(
-                "rounded-md px-2.5 py-1 font-mono text-[11px] transition-colors",
+                "rounded-md px-3 py-1.5 font-mono text-[11px] transition-colors lg:px-2.5 lg:py-1",
                 range === r.label
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -351,7 +350,11 @@ export function RegimeChart({
           ))}
         </div>
       </div>
-      <div ref={containerRef} style={{ height }} className="w-full" />
+      <div
+        ref={containerRef}
+        style={height ? { height } : undefined}
+        className={cn(!height && "h-[260px] sm:h-[320px] lg:h-[400px]", "w-full")}
+      />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap gap-4">
           {REGIME_ORDER.map((r) => (

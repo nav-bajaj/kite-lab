@@ -97,7 +97,8 @@ export function CompactSnapshotPicker() {
         }
       >
         <CalendarCheck className="h-3.5 w-3.5" aria-hidden />
-        Today
+        <span className="hidden sm:inline">Today</span>
+        <span className="sr-only sm:hidden">Back to today</span>
       </button>
       <button
         onClick={() => setOpen((v) => !v)}
@@ -105,7 +106,7 @@ export function CompactSnapshotPicker() {
         className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
       >
         <CalendarDays className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
-        <span className="text-muted-foreground">Snapshot</span>
+        <span className="hidden text-muted-foreground sm:inline">Snapshot</span>
         <span>{isPending ? "loading…" : label}</span>
         <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
       </button>

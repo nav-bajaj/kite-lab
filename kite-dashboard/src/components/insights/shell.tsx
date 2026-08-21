@@ -135,17 +135,17 @@ export function InsightsAppSidebar() {
  */
 export function InsightsTopbar({ pickerSlot }: { pickerSlot?: React.ReactNode }) {
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b bg-background px-3 sm:px-4 lg:px-6">
+    <header className="sticky top-0 z-30 flex h-12 min-w-0 items-center gap-2 border-b bg-background px-3 sm:gap-3 sm:px-4 lg:h-16 lg:px-6">
       <Link
         href="/"
-        className="text-xl font-semibold tracking-tight text-primary lg:hidden"
+        className="text-base font-semibold tracking-tight text-primary lg:hidden"
       >
         marketworks
       </Link>
       <span className="hidden text-[15px] font-semibold text-foreground lg:block">
         Insights
       </span>
-      <div className="ml-auto flex items-center gap-2 sm:gap-3">
+      <div className="ml-auto flex min-w-0 items-center gap-1.5 sm:gap-3">
         {pickerSlot}
         <Link
           href="/dashboard"

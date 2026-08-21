@@ -60,7 +60,7 @@ export function TimeseriesChart({
   bands = [],
   percent = false,
   defaultRange = "1Y",
-  height = 320,
+  height,
   overlay,
   overlayValueLabel = "Value",
 }: {
@@ -70,6 +70,7 @@ export function TimeseriesChart({
   /** Values are 0-1 ratios — display as 0-100%. */
   percent?: boolean;
   defaultRange?: (typeof RANGES)[number]["label"];
+  /** Explicit override; omit to use the responsive default. */
   height?: number;
   overlay?: IndexOverlay;
   /** Name for this chart's own series in the crosshair readout. */
@@ -278,7 +279,7 @@ export function TimeseriesChart({
             onClick={() => setRange(r.label)}
             aria-pressed={range === r.label}
             className={cn(
-              "rounded-md px-2.5 py-1 font-mono text-[11px] transition-colors",
+              "rounded-md px-3 py-1.5 font-mono text-[11px] transition-colors lg:px-2.5 lg:py-1",
               range === r.label
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -314,7 +315,11 @@ export function TimeseriesChart({
           </span>
         )}
       </div>
-      <div ref={containerRef} style={{ height }} className="w-full" />
+      <div
+        ref={containerRef}
+        style={height ? { height } : undefined}
+        className={cn(!height && "h-[260px] sm:h-[320px] lg:h-[400px]", "w-full")}
+      />
       {overlay && showOverlay && (
         <p className="text-[11px] text-muted-foreground">
           {overlay.label} is drawn as percent change from the left edge of the
