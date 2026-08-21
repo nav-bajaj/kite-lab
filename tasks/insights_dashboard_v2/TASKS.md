@@ -99,11 +99,36 @@ batched, applied and click-verified before moving to the next.
 - [x] 2.6c 🤖 **Breadth tab** (3 notes, 2026-08-15): title follows the
       universe, dashed-line caption removed, per-metric one-line
       explainers on every chip, index overlay, snapshot truncation.
-- [ ] 2.6d 👤 Advances & declines tab notes.
-- [ ] 2.6e 👤 Net new highs tab notes.
-- [ ] 2.6f 👤 McClellan tab notes.
-- [ ] 2.6g 👤 India VIX tab notes.
-- [ ] 2.6h 👤 Concentration tab notes.
+- [x] 2.6d 🤖 **Advances & declines** (5 notes, 2026-08-20): A-D line now
+      published in stocks as well as percent (`cumulative_ad_count`) —
+      `cumulative_ad` alone was a running sum of ratios; cards became
+      readings; coloured up/down counts with arrows; index overlay.
+- [x] 2.6e 🤖 **Net new highs → 52-week highs** (2026-08-20): headline is
+      `avg_dist_from_52w_high`, plus % within 5% of high and % more than
+      20% below; count kept as a fourth chip. Slug `52-week-highs`.
+- [x] 2.6f 🤖 **McClellan REMOVED entirely** (2026-08-20). Route 404s;
+      engine columns and the Learn explainer deliberately kept.
+- [~] 2.6g 👤 **India VIX** — partly done (percentile card, index
+      5-session pairing, bands both extremes, tiles above chart). No
+      dedicated review round yet.
+- [ ] 2.6h 👤 **Concentration** — NOT reviewed. Last tab in the queue.
+      Also still missing snapshot truncation and the index overlay.
+
+## Slice 2.7 — Visual system (two agent studies, 2026-08-21)
+
+- [x] 2.7a 🤖 Semantic colour + icons: one regime map/`RegimeChip`
+      (was five implementations, two disagreeing on DRIFT); section and
+      tab glyphs; divergence note promoted out of the `sub` slot;
+      two AA contrast failures fixed; movers' contradictory green
+      removed.
+- [x] 2.7b 🤖 Density: hairline grids, 2-up mobile, named `--app-*`
+      scale on `.mw-app`, responsive chart heights (charts GREW on
+      desktop), bigger mobile tap targets. Overview 3.49 → 2.22 screens
+      on mobile, 1.59 → 1.25 on desktop.
+- [x] 2.7c 🤖 **Fixed: 235px of horizontal scroll** on every insights
+      page at 390px — the topbar cluster needed 369px of a 243px slot.
+      Pickers now get their own row below `sm`.
+- [ ] 2.7d 🤖 Study leftovers — see STATE.md "Next up" item 2.
 
 ## Slice 3 — Sectors & Rotation (the RRG flagship) — needs D3
 
