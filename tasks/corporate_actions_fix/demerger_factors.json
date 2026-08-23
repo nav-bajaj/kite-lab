@@ -1,0 +1,23 @@
+[
+  {"symbol": "VEDL", "action": "demerger", "ex_date": "2026-04-30", "factor": 0.7150,
+   "raw_pre_ex_close": 404.90,
+   "note": "Vedanta aluminium demerger. Factor = ex-day open 289.50 / prev close 404.90. Replaces the incorrect 0.3834/773.6 entry in corporate_actions.json."},
+  {"symbol": "TRIVENI", "action": "demerger", "ex_date": "2026-07-22", "factor": 0.6150,
+   "raw_pre_ex_close": 471.50,
+   "note": "Step survives Kite refetch (Kite adjusts bonuses, not demergers): 471.50 -> ex open 289.95. Factor = 289.95/471.50."},
+  {"symbol": "SPLPETRO", "action": "unadjusted_bonus", "ex_date": "2022-06-07", "factor": 0.5271,
+   "raw_pre_ex_close": 850.95,
+   "note": "1:1-bonus-shaped step present in Kite's own short-history instrument (serves only from 2022-05-24). Factor = ex open 448.50 / prev close 850.95."},
+  {"symbol": "ADANIENT", "action": "demerger", "ex_date": "2015-06-03", "factor": 0.5808,
+   "raw_pre_ex_close": 183.20,
+   "note": "Ports/Power/Transmission demerger. Factor = ex close 106.40 / prev close 183.20 (ex-day OPEN 555.8 in Kite data is corrupt; close-based continuity used). Ex-day open left as-is and documented."},
+  {"symbol": "MFSL", "action": "demerger", "ex_date": "2016-01-27", "factor": 1.4774,
+   "raw_pre_ex_close": 224.70,
+   "note": "Max India three-way split; listed line becomes Max Financial. Factor = ex open 332.00 / prev close 224.70 (upward re-base)."},
+  {"symbol": "MFSL", "action": "split", "ex_date": "2007-03-12", "factor": 0.2054,
+   "raw_pre_ex_close": null,
+   "note": "1:5-split-shaped step in Kite deep history; observed continuity factor 0.2054 (exact 0.20 plus market move). Observed factor used to preserve day-0 continuity."},
+  {"symbol": "CGPOWER", "action": "vendor_splice", "ex_date": "2015-01-01", "factor": 2.9067,
+   "raw_pre_ex_close": 64.18,
+   "note": "Kite's own series changes basis at 2015-01-01 (+190% overnight, ~x3 = undo 2:1 bonus). Continuity factor 186.40/64.18. Flagged as Kite vendor splice, not a market event."}
+]

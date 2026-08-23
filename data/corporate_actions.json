@@ -1,10 +1,5 @@
 [
-  {
-    "symbol": "VEDL",
-    "action": "demerger",
-    "ex_date": "2026-04-30",
-    "factor": 0.3834,
-    "raw_pre_ex_close": 773.6,
-    "note": "Vedanta demerger - aluminium business spun off"
-  }
+  {"symbol": "VEDL", "action": "demerger", "ex_date": "2026-04-30", "factor": 0.7150, "raw_pre_ex_close": 404.90, "note": "Vedanta demerger - aluminium business spun off. Factor = ex-day open 289.50 / prev close 404.90 (market-implied continuity). Corrected 2026-08-23 from erroneous 0.3834/773.6 entry; see tasks/corporate_actions_fix/."},
+  {"symbol": "TRIVENI", "action": "demerger", "ex_date": "2026-07-22", "factor": 0.6150, "raw_pre_ex_close": 471.50, "note": "Triveni demerger; step survives Kite refetch (Kite adjusts bonuses, not demergers). Factor = ex open 289.95 / prev close 471.50. Added 2026-08-23."},
+  {"symbol": "SPLPETRO", "action": "unadjusted_bonus", "ex_date": "2022-06-07", "factor": 0.5271, "raw_pre_ex_close": 850.95, "note": "1:1-bonus-shaped step present in Kite's own instrument (history served only from 2022-05-24, unadjusted). Factor = ex open 448.50 / prev close 850.95. Added 2026-08-23."}
 ]
