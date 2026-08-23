@@ -1,0 +1,9 @@
+name: dip_vs_breakout_calls
+status: shipped
+opened: 2026-08-23
+closed: 2026-08-23
+related_commits: []
+supersedes: []
+depends_on:
+  - donchian_channel
+  - meanrev_largecap_study

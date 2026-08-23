@@ -173,6 +173,8 @@ panel. Numbers below are real, not synthetic.
 | multi_year_breakouts | 1783 | +1.41pp | +3.5pp | ✅ Validated |
 | sustained_uptrend | 2979 | +0.75pp | +4.9pp | 🟡 Names-only |
 | pullback_to_50dma | 3747 | −0.28pp | −0.6pp | ❌ Not surfaced |
+| dip_momentum_entry (2026-08-23, not yet live) | 978 | +1.02pp | +3.8pp | ✅ Validated (excess at the bar; H2-half +0.74pp — see report) |
+| breakout_momentum (control, same study) | 925 | +0.31pp | +2.5pp | 🟡 Names-only |
 | (Original 5 patterns) | — | — | — | Pre-protocol; descriptive only |
 
 Original 5 watchlists (breakouts, rs_leaders, coiled_springs,
