@@ -1,0 +1,8 @@
+name: meanrev_largecap_study
+status: shipped
+opened: 2026-08-22
+closed: 2026-08-22
+related_commits: []
+supersedes: []
+depends_on:
+  - vcp_l6_study
