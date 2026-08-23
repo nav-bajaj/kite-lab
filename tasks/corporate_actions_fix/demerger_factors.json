@@ -19,5 +19,17 @@
    "note": "1:5-split-shaped step in Kite deep history; observed continuity factor 0.2054 (exact 0.20 plus market move). Observed factor used to preserve day-0 continuity."},
   {"symbol": "CGPOWER", "action": "vendor_splice", "ex_date": "2015-01-01", "factor": 2.9067,
    "raw_pre_ex_close": 64.18,
-   "note": "Kite's own series changes basis at 2015-01-01 (+190% overnight, ~x3 = undo 2:1 bonus). Continuity factor 186.40/64.18. Flagged as Kite vendor splice, not a market event."}
+   "note": "Kite's own series changes basis at 2015-01-01 (+190% overnight, ~x3 = undo 2:1 bonus). Continuity factor 186.40/64.18. Flagged as Kite vendor splice, not a market event."},
+  {"symbol": "JSL", "action": "demerger", "ex_date": "2015-11-19", "factor": 0.4054,
+   "raw_pre_ex_close": 51.80,
+   "note": "JSL Hisar demerger. Factor = ex open 21.00 / prev close 51.80."},
+  {"symbol": "CGPOWER", "action": "demerger", "ex_date": "2016-03-15", "factor": 0.3413,
+   "raw_pre_ex_close": 155.30,
+   "note": "Crompton Greaves consumer-business demerger. Factor = ex open 53.00 / prev close 155.30."},
+  {"symbol": "TATACHEM", "action": "demerger", "ex_date": "2020-03-04", "factor": 0.4377,
+   "raw_pre_ex_close": 719.65,
+   "note": "Consumer business demerged into Tata Consumer. Factor = ex open 315.00 / prev close 719.65. Straddles the live dir (2020+) — mirrored in data/corporate_actions.json."},
+  {"symbol": "ABFRL", "action": "demerger", "ex_date": "2025-05-22", "factor": 0.4815,
+   "raw_pre_ex_close": 203.55,
+   "note": "Madura (ABLBL) demerger. Factor = ex open 98.00 / prev close 203.55. Straddles the live dir — mirrored in data/corporate_actions.json."}
 ]

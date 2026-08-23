@@ -24,11 +24,22 @@ VEDL_TRIM_BEFORE = "2005-02-01"
 
 
 def step_ratio(df: pd.DataFrame, ex_date: str) -> float | None:
+    """Close-to-close step across ex_date (reporting)."""
     pre = df[df.date < ex_date]
     post = df[df.date >= ex_date]
     if pre.empty or post.empty:
         return None
     return float(post.iloc[0].close / pre.iloc[-1].close)
+
+
+def step_ratio_open(df: pd.DataFrame, ex_date: str) -> float | None:
+    """Prev-close to ex-day-open step (the continuity the factor targets;
+    immune to large real intraday moves on the ex-day itself)."""
+    pre = df[df.date < ex_date]
+    post = df[df.date >= ex_date]
+    if pre.empty or post.empty:
+        return None
+    return float(post.iloc[0].open / pre.iloc[-1].close)
 
 
 def main():
@@ -46,12 +57,15 @@ def main():
             df = pd.read_csv(p, parse_dates=["date"]).sort_values("date")
             df["date"] = df["date"].dt.strftime("%Y-%m-%d")
             r = step_ratio(df, ex)
+            ro = step_ratio_open(df, ex)
             if r is None:
                 print(f"  {sym:10s} {d.name:20s} no rows straddle {ex} — skip")
                 continue
-            if abs(r / fac - 1) > 0.12:
+            matches = (abs(r / fac - 1) <= 0.12
+                       or (ro is not None and abs(ro / fac - 1) <= 0.12))
+            if not matches:
                 verdict = ("already adjusted" if abs(r - 1) < 0.12
-                           else f"step {r:.4f} != factor {fac} — REFUSING")
+                           else f"step close {r:.4f} / open {ro:.4f} != factor {fac} — REFUSING")
                 print(f"  {sym:10s} {d.name:20s} {verdict}")
                 continue
             mask = df.date < ex

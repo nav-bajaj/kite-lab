@@ -18,9 +18,11 @@ Safe-by-construction:
   - Only APPENDS; never modifies existing rows
   - Skips any symbol where the live file is missing or has no new dates
   - Verifies the live header matches the long-history header before appending
-  - For split-adjusted merged stocks: assumes no new splits since the last
-    merge ran (true for our typical daily cadence — apply_corporate_actions.py
-    handles splits separately in the live file)
+  - Verifies live and merged AGREE on recent shared dates before appending;
+    a divergence means a corporate action re-based the live file (guard +
+    refetch) while merged still holds the old basis — appending would glue
+    mismatched regimes together. Divergent symbols are skipped, reported,
+    and queued to the merged-rebase sidecar instead.
 
 Run as the last step of the daily refresh, before clearing the insights
 cache + restarting the API.
@@ -46,6 +48,36 @@ LIVE_STOCKS = REPO_ROOT / "nse500_data"
 MERGED_STOCKS = REPO_ROOT / "nse500_data_merged"
 LIVE_INDICES = REPO_ROOT / "indices_data"
 HIST_INDICES = indices_dir()
+REBASE_QUEUE = LIVE_STOCKS / ".merged_rebase_queue.txt"
+DIVERGENCE_TOL = 0.02       # MEDIAN relative deviation on shared dates
+DIVERGENCE_LOOKBACK = 10    # shared dates to compare
+
+
+def _diverged(live: pd.DataFrame, target: pd.DataFrame) -> bool:
+    """True when live and merged disagree on recent shared dates —
+    the signature of a corporate-action re-base that merged missed.
+
+    A re-base shifts EVERY shared date by a large consistent ratio, so
+    we test the MEDIAN deviation. Isolated small differences are Kite
+    candle revisions (preliminary vs finalized values, see
+    docs/zerodha_api_index_data_issue.md) and are expected noise."""
+    lv = live.set_index("date")["close"]
+    tg = target.set_index("date")["close"]
+    shared = lv.index.intersection(tg.index)
+    if len(shared) == 0:
+        return False
+    shared = shared.sort_values()[-DIVERGENCE_LOOKBACK:]
+    dev = (lv.loc[shared] / tg.loc[shared] - 1).abs()
+    return bool(dev.median() > DIVERGENCE_TOL)
+
+
+def _queue_for_rebase(symbol: str) -> None:
+    queued = set()
+    if REBASE_QUEUE.exists():
+        queued = {ln.strip() for ln in REBASE_QUEUE.read_text().splitlines()
+                  if ln.strip()}
+    queued.add(symbol)
+    REBASE_QUEUE.write_text("\n".join(sorted(queued)) + "\n")
 
 
 def _append_new_rows(live_path: Path, target_path: Path) -> tuple[int, str | None]:
@@ -81,6 +113,7 @@ def sync_stocks() -> None:
     appended_total = 0
     n_files_touched = 0
     n_files_seeded = 0
+    n_diverged = 0
     by_new_max: dict[str, int] = {}
     for live_file in sorted(LIVE_STOCKS.glob("*_day.csv")):
         target = MERGED_STOCKS / live_file.name
@@ -93,6 +126,19 @@ def sync_stocks() -> None:
             shutil.copyfile(live_file, target)
             n_files_seeded += 1
             continue
+        try:
+            live_df = pd.read_csv(live_file, parse_dates=["date"])
+            target_df = pd.read_csv(target, parse_dates=["date"])
+        except Exception:
+            live_df = target_df = None
+        if live_df is not None and _diverged(live_df, target_df):
+            sym = live_file.name[: -len("_day.csv")]
+            _queue_for_rebase(sym)
+            n_diverged += 1
+            print(f"  DIVERGED {sym}: live vs merged disagree on recent shared "
+                  "dates (corporate-action re-base?) — append SKIPPED, queued "
+                  f"for merged re-base ({REBASE_QUEUE.name})")
+            continue
         n, new_max = _append_new_rows(live_file, target)
         if n > 0:
             appended_total += n
@@ -101,6 +147,9 @@ def sync_stocks() -> None:
     print(f"  {n_files_touched} files updated, {appended_total} new rows total")
     if n_files_seeded:
         print(f"  {n_files_seeded} new symbols seeded into merged from live")
+    if n_diverged:
+        print(f"  WARNING: {n_diverged} symbols diverged and were NOT appended "
+              f"— run the merged re-base for the queued symbols")
     print(f"  new max-date distribution: {dict(sorted(by_new_max.items()))}")
 
 

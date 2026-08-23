@@ -63,18 +63,39 @@ JBCHEPHARM (2026-07-14) — expected, previously flagged.
   and push DB sync + cloud upload — that IS production propagation.**
   Founder should review before the next run; rollback available.
 
-## Remaining follow-ups
+## Completed follow-ups (2026-08-23 evening, founder-approved plan)
 
-- [ ] Demerger triage (founder confirm factors): TATACHEM 2020-03-04
-      (-56.2, consumer demerger, tangled with COVID week), ABFRL
-      2025-05-22 (-55.9, Madura demerger), JSL 2015-11-19 (-57.4),
-      CGPOWER 2016-03-15 (-71.7, Crompton consumer demerger);
-      verify COHANCE 2020-03-24 (-52.7, likely real COVID crash).
-- [ ] Railway repair + guard wiring into run_daily_pipeline (sign-off).
-- [ ] Re-run dip-feed headline numbers on healed panel, drop
-      CLIFF_SYMBOLS exclusions.
-- [ ] sync_insights_panels divergence check (replace the no-new-splits
-      assumption).
+- [x] Demerger triage: JSL 2015 (x0.4054), CGPOWER 2016 Crompton
+      demerger (x0.3413; ex-day also had a real -17% crash, factor uses
+      open-continuity), TATACHEM 2020 (x0.4377), ABFRL 2025 (x0.4815)
+      applied to both dirs; TATACHEM + ABFRL mirrored into
+      data/corporate_actions.json (they straddle the live dir). COHANCE
+      2020-03-24 adjudicated REAL (refetch matched stored) — no factor.
+      Final scan: definitive rows = PNB + YESBANK only (verified real).
+- [x] Guard promoted to production code (LOCAL commit, not deployed):
+      data_pipeline/corporate_actions.py + tests/test_corporate_actions.py
+      (21 cases) + scripts/reconcile_price_integrity.py, wired into
+      run_daily_pipeline.py BEFORE the fetch step (deleted files rebuild
+      in the same run; non-fatal on guard failure). Heal queue sidecar:
+      nse500_data/.merged_rebase_queue.txt.
+- [x] sync_insights_panels: "no new splits" assumption replaced with a
+      live-vs-merged divergence check (MEDIAN deviation > 2% over last
+      10 shared dates -> skip append + queue for re-base). Median-based
+      because isolated small diffs are Kite candle revisions
+      (preliminary-vs-final, up to ~0.8% observed) — expected noise, and
+      they persist in merged by design (append-only contract kept).
+- [x] Dip-feed re-run on healed full universe (NO_CLIFF_EXCLUDE=1):
+      headline arm 36.9% CAGR / 1.77 Sharpe / -35.9% DD, 66 calls/yr
+      (vs 37.8 / 1.65 / -34.6, 58.5/yr on the excluded universe) —
+      conclusions unchanged, finding robust to the repair.
+
+## Remaining (production, gated)
+
+- [ ] Railway repair: run refetch_history + apply_factors on the
+      Railway volume (its data still damaged; VEDL on the wrong 0.3834
+      basis with a sidecar key that blocks JSON-only correction).
+- [ ] Deploy the guard wiring (this branch's commits) to the Railway
+      service after founder review.
 
 ## Inventory (scan_cliffs.py, both price dirs)
 

@@ -11,6 +11,14 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 # Pre-fetch step: instruments cache (required for symbol resolution)
 INSTRUMENTS_STEP = ("Cache instruments list", [sys.executable, "scripts/cache_instruments.py"])
 
+# Price-integrity guard: detects corporate-action cliffs left by the
+# append-only store (Kite serves adjusted history; our 15-day overlap
+# re-bases only recent rows). Deletes definitively-damaged live CSVs so
+# the fetch step below rebuilds them with full adjusted history in this
+# same run. See tasks/corporate_actions_fix/ for the incident history.
+INTEGRITY_GUARD_STEP = ("Price integrity guard",
+                        [sys.executable, "scripts/reconcile_price_integrity.py"])
+
 # Steps that can run in parallel (data fetching)
 PARALLEL_FETCH_STEPS = [
     ("Refresh NSE 500 data", [sys.executable, "scripts/fetch_nse500_history.py"]),
@@ -194,6 +202,15 @@ def main():
     if not success:
         print("\nFailed to cache instruments. Stock fetches will fail without it.")
         sys.exit(1)
+
+    # Heal corporate-action damage BEFORE fetching, so deleted files are
+    # rebuilt with full adjusted history in this same run. Non-fatal: a
+    # guard failure must not block the pipeline.
+    name, success, _ = run_command(*INTEGRITY_GUARD_STEP, dry_run=args.dry_run,
+                                    timings=timings)
+    if not success:
+        print("\nWARNING: price integrity guard failed; continuing "
+              "(fetch + corporate-actions steps still run).")
 
     # Run data fetch steps
     if args.sequential:
