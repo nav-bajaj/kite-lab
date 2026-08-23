@@ -149,6 +149,17 @@ pooled calls in `calls_all_windows.csv`.
   positions in 10 trading days (dip-rich stretch; slower in quiet
   tapes but signals are abundant).
 
+## Addendum (2026-08-23): healed-data re-run
+
+After the corporate-action repair (tasks/corporate_actions_fix), the
+grid re-ran on the FULL universe (NO_CLIFF_EXCLUDE=1, no exclusions,
+repaired panels). Headline arm dip25_ts20: 66.0 calls/yr, win 51.9%,
+36.91% CAGR / 1.77 Sharpe / -35.9% MaxDD, tail 36.3% / 1.50 — vs
+37.8% / 1.65 / -34.6% on the excluded universe. All arm orderings
+unchanged; dip still beats breakout everywhere (bo25 tail Sharpe 0.89
+vs dip25_ts20 1.50). The exclusion list is retired; healed-panel
+numbers are the quotable set going forward.
+
 ## Verdict
 
 The cap-25 breakout re-sim answers question 1 with "works, but wrong

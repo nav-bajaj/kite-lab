@@ -1,0 +1,53 @@
+{
+  "final_equity": 238195.0,
+  "cash": 648.0,
+  "n_closed": 288,
+  "n_open": 25,
+  "total_tax": 39950.0,
+  "pending_yr_realized": 0.0,
+  "loss_cf": 12054.0,
+  "tax_events": [
+    {
+      "year_end": "2017-12-29",
+      "realized": -443.0,
+      "loss_cf_after": 443.0,
+      "tax": 0.0,
+      "equity_after": 124077.0
+    },
+    {
+      "year_end": "2018-12-31",
+      "realized": 22944.0,
+      "loss_cf_after": 0.0,
+      "tax": 5625.0,
+      "equity_after": 124794.0
+    },
+    {
+      "year_end": "2019-12-31",
+      "realized": 23545.0,
+      "loss_cf_after": 0.0,
+      "tax": 5886.0,
+      "equity_after": 159094.0
+    },
+    {
+      "year_end": "2020-12-31",
+      "realized": 20773.0,
+      "loss_cf_after": 0.0,
+      "tax": 5193.0,
+      "equity_after": 262146.0
+    },
+    {
+      "year_end": "2021-12-31",
+      "realized": 92983.0,
+      "loss_cf_after": 0.0,
+      "tax": 23246.0,
+      "equity_after": 272838.0
+    },
+    {
+      "year_end": "2022-12-30",
+      "realized": -12054.0,
+      "loss_cf_after": 12054.0,
+      "tax": 0.0,
+      "equity_after": 238195.0
+    }
+  ]
+}

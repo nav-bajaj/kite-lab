@@ -1,0 +1,1039 @@
+{
+  "cliff_scan": {
+    "n_drops_lt_-30pct": 88,
+    "n_gains_gt_50pct": 31
+  },
+  "arms": {
+    "bo25": {
+      "calls_per_year": 35.1,
+      "new_per_week": 0.7,
+      "pct_weeks_with_call": 46.0,
+      "n_closed": 566,
+      "n_open": 25,
+      "win_rate_pct": 59.0,
+      "mean_pnl_pct": 16.48,
+      "median_pnl_pct": 3.98,
+      "p5_pnl_pct": -20.1,
+      "p95_pnl_pct": 88.9,
+      "median_hold_td": 138,
+      "open_mean_pnl_pct": 108.7,
+      "pct_ts20_exits": 0.0,
+      "cagr_pct": 24.09,
+      "sharpe": 0.945,
+      "max_dd_pct": -38.02,
+      "calmar": 0.634,
+      "tail_cagr_pct": 47.95,
+      "tail_sharpe": 1.781,
+      "tail_max_dd_pct": -16.72,
+      "tail_calmar": 2.868,
+      "mean_active": 25.0,
+      "pct_days_full": 98.2,
+      "skipped": 32972
+    },
+    "bo25_ts20": {
+      "calls_per_year": 43.5,
+      "new_per_week": 0.86,
+      "pct_weeks_with_call": 48.4,
+      "n_closed": 703,
+      "n_open": 25,
+      "win_rate_pct": 55.2,
+      "mean_pnl_pct": 11.5,
+      "median_pnl_pct": 2.09,
+      "p5_pnl_pct": -19.4,
+      "p95_pnl_pct": 73.7,
+      "median_hold_td": 123,
+      "open_mean_pnl_pct": 16.4,
+      "pct_ts20_exits": 36.7,
+      "cagr_pct": 19.17,
+      "sharpe": 0.87,
+      "max_dd_pct": -23.27,
+      "calmar": 0.824,
+      "tail_cagr_pct": 26.77,
+      "tail_sharpe": 1.374,
+      "tail_max_dd_pct": -16.54,
+      "tail_calmar": 1.618,
+      "mean_active": 24.8,
+      "pct_days_full": 95.3,
+      "skipped": 32462
+    },
+    "dip25": {
+      "calls_per_year": 45.4,
+      "new_per_week": 0.9,
+      "pct_weeks_with_call": 52.6,
+      "n_closed": 733,
+      "n_open": 25,
+      "win_rate_pct": 55.4,
+      "mean_pnl_pct": 19.15,
+      "median_pnl_pct": 2.99,
+      "p5_pnl_pct": -22.5,
+      "p95_pnl_pct": 99.7,
+      "median_hold_td": 97,
+      "open_mean_pnl_pct": 100.2,
+      "pct_ts20_exits": 0.0,
+      "cagr_pct": 30.93,
+      "sharpe": 1.084,
+      "max_dd_pct": -34.36,
+      "calmar": 0.9,
+      "tail_cagr_pct": 56.04,
+      "tail_sharpe": 1.802,
+      "tail_max_dd_pct": -24.26,
+      "tail_calmar": 2.31,
+      "mean_active": 24.6,
+      "pct_days_full": 78.4,
+      "skipped": 14976
+    },
+    "dip25_ts20": {
+      "calls_per_year": 61.2,
+      "new_per_week": 1.2,
+      "pct_weeks_with_call": 57.3,
+      "n_closed": 988,
+      "n_open": 25,
+      "win_rate_pct": 50.7,
+      "mean_pnl_pct": 12.07,
+      "median_pnl_pct": 0.16,
+      "p5_pnl_pct": -20.7,
+      "p95_pnl_pct": 81.5,
+      "median_hold_td": 74,
+      "open_mean_pnl_pct": 23.2,
+      "pct_ts20_exits": 41.3,
+      "cagr_pct": 26.54,
+      "sharpe": 0.996,
+      "max_dd_pct": -29.1,
+      "calmar": 0.912,
+      "tail_cagr_pct": 45.77,
+      "tail_sharpe": 1.614,
+      "tail_max_dd_pct": -24.4,
+      "tail_calmar": 1.876,
+      "mean_active": 24.7,
+      "pct_days_full": 80.6,
+      "skipped": 14615
+    },
+    "dip25_trend": {
+      "calls_per_year": 44.9,
+      "new_per_week": 0.89,
+      "pct_weeks_with_call": 51.4,
+      "n_closed": 725,
+      "n_open": 25,
+      "win_rate_pct": 56.0,
+      "mean_pnl_pct": 19.59,
+      "median_pnl_pct": 3.14,
+      "p5_pnl_pct": -22.4,
+      "p95_pnl_pct": 101.6,
+      "median_hold_td": 98,
+      "open_mean_pnl_pct": 103.6,
+      "pct_ts20_exits": 0.0,
+      "cagr_pct": 31.39,
+      "sharpe": 1.1,
+      "max_dd_pct": -34.15,
+      "calmar": 0.919,
+      "tail_cagr_pct": 59.02,
+      "tail_sharpe": 1.869,
+      "tail_max_dd_pct": -25.56,
+      "tail_calmar": 2.309,
+      "mean_active": 24.6,
+      "pct_days_full": 79.3,
+      "skipped": 13013
+    },
+    "bo50": {
+      "calls_per_year": 68.8,
+      "new_per_week": 1.38,
+      "pct_weeks_with_call": 68.9,
+      "n_closed": 1111,
+      "n_open": 50,
+      "win_rate_pct": 59.2,
+      "mean_pnl_pct": 15.31,
+      "median_pnl_pct": 3.64,
+      "p5_pnl_pct": -20.7,
+      "p95_pnl_pct": 83.7,
+      "median_hold_td": 138,
+      "open_mean_pnl_pct": 89.1,
+      "pct_ts20_exits": 0.0,
+      "cagr_pct": 21.95,
+      "sharpe": 0.906,
+      "max_dd_pct": -36.31,
+      "calmar": 0.605,
+      "tail_cagr_pct": 40.14,
+      "tail_sharpe": 1.735,
+      "tail_max_dd_pct": -18.49,
+      "tail_calmar": 2.171,
+      "mean_active": 49.8,
+      "pct_days_full": 95.1,
+      "skipped": 27750
+    },
+    "dip50_ts20": {
+      "calls_per_year": 114.0,
+      "new_per_week": 2.24,
+      "pct_weeks_with_call": 71.2,
+      "n_closed": 1840,
+      "n_open": 50,
+      "win_rate_pct": 51.4,
+      "mean_pnl_pct": 11.95,
+      "median_pnl_pct": 0.6,
+      "p5_pnl_pct": -20.3,
+      "p95_pnl_pct": 79.5,
+      "median_hold_td": 78,
+      "open_mean_pnl_pct": 24.2,
+      "pct_ts20_exits": 38.9,
+      "cagr_pct": 24.71,
+      "sharpe": 0.986,
+      "max_dd_pct": -32.24,
+      "calmar": 0.766,
+      "tail_cagr_pct": 40.32,
+      "tail_sharpe": 1.562,
+      "tail_max_dd_pct": -20.84,
+      "tail_calmar": 1.935,
+      "mean_active": 48.2,
+      "pct_days_full": 54.7,
+      "skipped": 9323
+    }
+  },
+  "yearly": {
+    "bo25": [
+      {
+        "year": 2010,
+        "n": 40,
+        "win": 67.5,
+        "mean_all": 21.66,
+        "port_ret": 24.8
+      },
+      {
+        "year": 2011,
+        "n": 32,
+        "win": 56.2,
+        "mean_all": 17.03,
+        "port_ret": 4.2
+      },
+      {
+        "year": 2012,
+        "n": 34,
+        "win": 61.8,
+        "mean_all": 19.34,
+        "port_ret": 21.1
+      },
+      {
+        "year": 2013,
+        "n": 29,
+        "win": 75.9,
+        "mean_all": 33.43,
+        "port_ret": 54.3
+      },
+      {
+        "year": 2014,
+        "n": 38,
+        "win": 65.8,
+        "mean_all": 13.32,
+        "port_ret": 22.4
+      },
+      {
+        "year": 2015,
+        "n": 33,
+        "win": 30.3,
+        "mean_all": -3.29,
+        "port_ret": 5.1
+      },
+      {
+        "year": 2016,
+        "n": 41,
+        "win": 75.6,
+        "mean_all": 28.08,
+        "port_ret": 9.7
+      },
+      {
+        "year": 2017,
+        "n": 35,
+        "win": 68.6,
+        "mean_all": 13.67,
+        "port_ret": 37.8
+      },
+      {
+        "year": 2018,
+        "n": 34,
+        "win": 44.1,
+        "mean_all": 7.93,
+        "port_ret": 2.3
+      },
+      {
+        "year": 2019,
+        "n": 40,
+        "win": 45.0,
+        "mean_all": 24.65,
+        "port_ret": 27.6
+      },
+      {
+        "year": 2020,
+        "n": 43,
+        "win": 69.8,
+        "mean_all": 13.19,
+        "port_ret": 19.8
+      },
+      {
+        "year": 2021,
+        "n": 40,
+        "win": 40.0,
+        "mean_all": 2.18,
+        "port_ret": 39.0
+      },
+      {
+        "year": 2022,
+        "n": 42,
+        "win": 57.1,
+        "mean_all": 1.11,
+        "port_ret": -7.2
+      },
+      {
+        "year": 2023,
+        "n": 38,
+        "win": 68.4,
+        "mean_all": 45.62,
+        "port_ret": 19.0
+      },
+      {
+        "year": 2024,
+        "n": 28,
+        "win": 70.4,
+        "mean_all": 29.44,
+        "port_ret": 48.9
+      },
+      {
+        "year": 2025,
+        "n": 28,
+        "win": 42.1,
+        "mean_all": 84.78,
+        "port_ret": 34.0
+      },
+      {
+        "year": 2026,
+        "n": 16,
+        "win": 0.0,
+        "mean_all": 5.63,
+        "port_ret": 43.7
+      }
+    ],
+    "bo25_ts20": [
+      {
+        "year": 2010,
+        "n": 45,
+        "win": 57.8,
+        "mean_all": 13.22,
+        "port_ret": 16.2
+      },
+      {
+        "year": 2011,
+        "n": 41,
+        "win": 48.8,
+        "mean_all": 10.6,
+        "port_ret": 9.8
+      },
+      {
+        "year": 2012,
+        "n": 45,
+        "win": 60.0,
+        "mean_all": 12.38,
+        "port_ret": 7.3
+      },
+      {
+        "year": 2013,
+        "n": 28,
+        "win": 82.1,
+        "mean_all": 30.92,
+        "port_ret": 53.3
+      },
+      {
+        "year": 2014,
+        "n": 37,
+        "win": 67.6,
+        "mean_all": 12.66,
+        "port_ret": 19.7
+      },
+      {
+        "year": 2015,
+        "n": 37,
+        "win": 32.4,
+        "mean_all": -4.4,
+        "port_ret": 5.8
+      },
+      {
+        "year": 2016,
+        "n": 49,
+        "win": 71.4,
+        "mean_all": 24.78,
+        "port_ret": 6.2
+      },
+      {
+        "year": 2017,
+        "n": 33,
+        "win": 75.8,
+        "mean_all": 9.81,
+        "port_ret": 38.7
+      },
+      {
+        "year": 2018,
+        "n": 41,
+        "win": 51.2,
+        "mean_all": 8.77,
+        "port_ret": 5.9
+      },
+      {
+        "year": 2019,
+        "n": 46,
+        "win": 41.3,
+        "mean_all": 0.36,
+        "port_ret": 20.9
+      },
+      {
+        "year": 2020,
+        "n": 55,
+        "win": 70.9,
+        "mean_all": 24.78,
+        "port_ret": 26.8
+      },
+      {
+        "year": 2021,
+        "n": 46,
+        "win": 32.6,
+        "mean_all": -1.15,
+        "port_ret": 37.2
+      },
+      {
+        "year": 2022,
+        "n": 58,
+        "win": 44.8,
+        "mean_all": 1.41,
+        "port_ret": -9.5
+      },
+      {
+        "year": 2023,
+        "n": 45,
+        "win": 62.2,
+        "mean_all": 28.83,
+        "port_ret": 16.9
+      },
+      {
+        "year": 2024,
+        "n": 35,
+        "win": 57.1,
+        "mean_all": 6.95,
+        "port_ret": 38.5
+      },
+      {
+        "year": 2025,
+        "n": 55,
+        "win": 51.1,
+        "mean_all": 16.19,
+        "port_ret": 14.8
+      },
+      {
+        "year": 2026,
+        "n": 32,
+        "win": 20.0,
+        "mean_all": -0.03,
+        "port_ret": 15.8
+      }
+    ],
+    "dip25": [
+      {
+        "year": 2010,
+        "n": 46,
+        "win": 84.8,
+        "mean_all": 29.55,
+        "port_ret": 31.8
+      },
+      {
+        "year": 2011,
+        "n": 48,
+        "win": 37.5,
+        "mean_all": 0.6,
+        "port_ret": -3.0
+      },
+      {
+        "year": 2012,
+        "n": 48,
+        "win": 56.2,
+        "mean_all": 19.6,
+        "port_ret": 38.4
+      },
+      {
+        "year": 2013,
+        "n": 42,
+        "win": 78.6,
+        "mean_all": 32.28,
+        "port_ret": 62.5
+      },
+      {
+        "year": 2014,
+        "n": 54,
+        "win": 53.7,
+        "mean_all": 7.66,
+        "port_ret": 20.0
+      },
+      {
+        "year": 2015,
+        "n": 46,
+        "win": 19.6,
+        "mean_all": -3.81,
+        "port_ret": 4.0
+      },
+      {
+        "year": 2016,
+        "n": 52,
+        "win": 76.9,
+        "mean_all": 35.61,
+        "port_ret": 22.4
+      },
+      {
+        "year": 2017,
+        "n": 49,
+        "win": 61.2,
+        "mean_all": 21.08,
+        "port_ret": 41.8
+      },
+      {
+        "year": 2018,
+        "n": 36,
+        "win": 55.6,
+        "mean_all": 8.23,
+        "port_ret": 7.8
+      },
+      {
+        "year": 2019,
+        "n": 56,
+        "win": 58.9,
+        "mean_all": 24.2,
+        "port_ret": 35.2
+      },
+      {
+        "year": 2020,
+        "n": 44,
+        "win": 63.6,
+        "mean_all": 21.27,
+        "port_ret": 58.5
+      },
+      {
+        "year": 2021,
+        "n": 59,
+        "win": 33.9,
+        "mean_all": -0.14,
+        "port_ret": 22.3
+      },
+      {
+        "year": 2022,
+        "n": 46,
+        "win": 47.8,
+        "mean_all": 11.67,
+        "port_ret": -9.9
+      },
+      {
+        "year": 2023,
+        "n": 43,
+        "win": 69.8,
+        "mean_all": 81.16,
+        "port_ret": 49.6
+      },
+      {
+        "year": 2024,
+        "n": 35,
+        "win": 55.9,
+        "mean_all": 23.64,
+        "port_ret": 65.2
+      },
+      {
+        "year": 2025,
+        "n": 39,
+        "win": 32.1,
+        "mean_all": 53.75,
+        "port_ret": 33.6
+      },
+      {
+        "year": 2026,
+        "n": 15,
+        "win": 0.0,
+        "mean_all": 13.48,
+        "port_ret": 48.0
+      }
+    ],
+    "dip25_ts20": [
+      {
+        "year": 2010,
+        "n": 46,
+        "win": 84.8,
+        "mean_all": 25.36,
+        "port_ret": 32.0
+      },
+      {
+        "year": 2011,
+        "n": 60,
+        "win": 41.7,
+        "mean_all": 8.75,
+        "port_ret": 8.3
+      },
+      {
+        "year": 2012,
+        "n": 49,
+        "win": 49.0,
+        "mean_all": 8.27,
+        "port_ret": 28.7
+      },
+      {
+        "year": 2013,
+        "n": 43,
+        "win": 79.1,
+        "mean_all": 34.3,
+        "port_ret": 59.4
+      },
+      {
+        "year": 2014,
+        "n": 59,
+        "win": 52.5,
+        "mean_all": 6.59,
+        "port_ret": 21.2
+      },
+      {
+        "year": 2015,
+        "n": 51,
+        "win": 25.5,
+        "mean_all": -3.28,
+        "port_ret": 3.3
+      },
+      {
+        "year": 2016,
+        "n": 64,
+        "win": 71.9,
+        "mean_all": 31.91,
+        "port_ret": 28.6
+      },
+      {
+        "year": 2017,
+        "n": 47,
+        "win": 57.4,
+        "mean_all": 12.01,
+        "port_ret": 37.2
+      },
+      {
+        "year": 2018,
+        "n": 66,
+        "win": 54.5,
+        "mean_all": 3.77,
+        "port_ret": 3.1
+      },
+      {
+        "year": 2019,
+        "n": 54,
+        "win": 40.7,
+        "mean_all": -0.14,
+        "port_ret": 23.6
+      },
+      {
+        "year": 2020,
+        "n": 91,
+        "win": 51.6,
+        "mean_all": 20.93,
+        "port_ret": 45.0
+      },
+      {
+        "year": 2021,
+        "n": 84,
+        "win": 32.1,
+        "mean_all": -2.72,
+        "port_ret": 18.0
+      },
+      {
+        "year": 2022,
+        "n": 73,
+        "win": 38.4,
+        "mean_all": -0.36,
+        "port_ret": -10.7
+      },
+      {
+        "year": 2023,
+        "n": 61,
+        "win": 62.3,
+        "mean_all": 29.62,
+        "port_ret": 34.2
+      },
+      {
+        "year": 2024,
+        "n": 55,
+        "win": 45.5,
+        "mean_all": 6.66,
+        "port_ret": 48.4
+      },
+      {
+        "year": 2025,
+        "n": 62,
+        "win": 47.4,
+        "mean_all": 22.26,
+        "port_ret": 21.8
+      },
+      {
+        "year": 2026,
+        "n": 48,
+        "win": 42.9,
+        "mean_all": 13.79,
+        "port_ret": 46.1
+      }
+    ],
+    "dip25_trend": [
+      {
+        "year": 2010,
+        "n": 45,
+        "win": 84.4,
+        "mean_all": 29.95,
+        "port_ret": 31.1
+      },
+      {
+        "year": 2011,
+        "n": 46,
+        "win": 39.1,
+        "mean_all": 4.05,
+        "port_ret": -0.8
+      },
+      {
+        "year": 2012,
+        "n": 44,
+        "win": 61.4,
+        "mean_all": 16.66,
+        "port_ret": 39.2
+      },
+      {
+        "year": 2013,
+        "n": 44,
+        "win": 77.3,
+        "mean_all": 32.54,
+        "port_ret": 62.1
+      },
+      {
+        "year": 2014,
+        "n": 52,
+        "win": 53.8,
+        "mean_all": 8.7,
+        "port_ret": 21.1
+      },
+      {
+        "year": 2015,
+        "n": 47,
+        "win": 21.3,
+        "mean_all": -3.75,
+        "port_ret": 3.0
+      },
+      {
+        "year": 2016,
+        "n": 53,
+        "win": 75.5,
+        "mean_all": 35.34,
+        "port_ret": 24.6
+      },
+      {
+        "year": 2017,
+        "n": 48,
+        "win": 62.5,
+        "mean_all": 21.81,
+        "port_ret": 42.8
+      },
+      {
+        "year": 2018,
+        "n": 36,
+        "win": 55.6,
+        "mean_all": 8.23,
+        "port_ret": 7.8
+      },
+      {
+        "year": 2019,
+        "n": 57,
+        "win": 56.1,
+        "mean_all": 22.61,
+        "port_ret": 32.1
+      },
+      {
+        "year": 2020,
+        "n": 46,
+        "win": 67.4,
+        "mean_all": 20.31,
+        "port_ret": 58.8
+      },
+      {
+        "year": 2021,
+        "n": 58,
+        "win": 34.5,
+        "mean_all": -0.79,
+        "port_ret": 22.7
+      },
+      {
+        "year": 2022,
+        "n": 48,
+        "win": 47.9,
+        "mean_all": 15.51,
+        "port_ret": -13.1
+      },
+      {
+        "year": 2023,
+        "n": 40,
+        "win": 70.0,
+        "mean_all": 87.07,
+        "port_ret": 53.4
+      },
+      {
+        "year": 2024,
+        "n": 33,
+        "win": 56.2,
+        "mean_all": 25.04,
+        "port_ret": 70.1
+      },
+      {
+        "year": 2025,
+        "n": 39,
+        "win": 33.3,
+        "mean_all": 55.38,
+        "port_ret": 31.2
+      },
+      {
+        "year": 2026,
+        "n": 14,
+        "win": 0.0,
+        "mean_all": 15.2,
+        "port_ret": 52.6
+      }
+    ],
+    "bo50": [
+      {
+        "year": 2010,
+        "n": 74,
+        "win": 75.7,
+        "mean_all": 21.76,
+        "port_ret": 23.7
+      },
+      {
+        "year": 2011,
+        "n": 66,
+        "win": 53.0,
+        "mean_all": 14.24,
+        "port_ret": 6.8
+      },
+      {
+        "year": 2012,
+        "n": 72,
+        "win": 62.5,
+        "mean_all": 18.73,
+        "port_ret": 18.5
+      },
+      {
+        "year": 2013,
+        "n": 63,
+        "win": 73.0,
+        "mean_all": 26.45,
+        "port_ret": 46.4
+      },
+      {
+        "year": 2014,
+        "n": 78,
+        "win": 64.1,
+        "mean_all": 8.57,
+        "port_ret": 16.7
+      },
+      {
+        "year": 2015,
+        "n": 66,
+        "win": 42.4,
+        "mean_all": 10.89,
+        "port_ret": 6.3
+      },
+      {
+        "year": 2016,
+        "n": 82,
+        "win": 67.1,
+        "mean_all": 16.18,
+        "port_ret": 10.9
+      },
+      {
+        "year": 2017,
+        "n": 63,
+        "win": 69.8,
+        "mean_all": 15.12,
+        "port_ret": 34.8
+      },
+      {
+        "year": 2018,
+        "n": 63,
+        "win": 55.6,
+        "mean_all": 12.44,
+        "port_ret": 5.2
+      },
+      {
+        "year": 2019,
+        "n": 73,
+        "win": 49.3,
+        "mean_all": 13.58,
+        "port_ret": 28.2
+      },
+      {
+        "year": 2020,
+        "n": 81,
+        "win": 75.3,
+        "mean_all": 21.42,
+        "port_ret": 21.4
+      },
+      {
+        "year": 2021,
+        "n": 81,
+        "win": 30.9,
+        "mean_all": -2.65,
+        "port_ret": 27.5
+      },
+      {
+        "year": 2022,
+        "n": 83,
+        "win": 48.2,
+        "mean_all": 1.46,
+        "port_ret": -9.6
+      },
+      {
+        "year": 2023,
+        "n": 70,
+        "win": 71.4,
+        "mean_all": 46.93,
+        "port_ret": 24.5
+      },
+      {
+        "year": 2024,
+        "n": 53,
+        "win": 60.8,
+        "mean_all": 28.32,
+        "port_ret": 41.8
+      },
+      {
+        "year": 2025,
+        "n": 61,
+        "win": 48.8,
+        "mean_all": 64.27,
+        "port_ret": 31.4
+      },
+      {
+        "year": 2026,
+        "n": 32,
+        "win": 0.0,
+        "mean_all": 3.34,
+        "port_ret": 32.1
+      }
+    ],
+    "dip50_ts20": [
+      {
+        "year": 2010,
+        "n": 89,
+        "win": 78.7,
+        "mean_all": 23.45,
+        "port_ret": 32.3
+      },
+      {
+        "year": 2011,
+        "n": 126,
+        "win": 42.9,
+        "mean_all": 7.05,
+        "port_ret": 6.9
+      },
+      {
+        "year": 2012,
+        "n": 87,
+        "win": 56.3,
+        "mean_all": 14.34,
+        "port_ret": 23.3
+      },
+      {
+        "year": 2013,
+        "n": 84,
+        "win": 75.0,
+        "mean_all": 25.94,
+        "port_ret": 56.6
+      },
+      {
+        "year": 2014,
+        "n": 116,
+        "win": 57.8,
+        "mean_all": 8.5,
+        "port_ret": 19.7
+      },
+      {
+        "year": 2015,
+        "n": 101,
+        "win": 27.7,
+        "mean_all": -2.81,
+        "port_ret": 5.7
+      },
+      {
+        "year": 2016,
+        "n": 116,
+        "win": 74.1,
+        "mean_all": 26.85,
+        "port_ret": 20.2
+      },
+      {
+        "year": 2017,
+        "n": 71,
+        "win": 59.2,
+        "mean_all": 11.29,
+        "port_ret": 32.6
+      },
+      {
+        "year": 2018,
+        "n": 128,
+        "win": 53.1,
+        "mean_all": 5.57,
+        "port_ret": 3.8
+      },
+      {
+        "year": 2019,
+        "n": 90,
+        "win": 42.2,
+        "mean_all": 0.76,
+        "port_ret": 27.1
+      },
+      {
+        "year": 2020,
+        "n": 178,
+        "win": 51.1,
+        "mean_all": 17.76,
+        "port_ret": 38.0
+      },
+      {
+        "year": 2021,
+        "n": 137,
+        "win": 38.0,
+        "mean_all": -1.49,
+        "port_ret": 22.1
+      },
+      {
+        "year": 2022,
+        "n": 160,
+        "win": 40.6,
+        "mean_all": 5.67,
+        "port_ret": -8.5
+      },
+      {
+        "year": 2023,
+        "n": 106,
+        "win": 57.5,
+        "mean_all": 28.69,
+        "port_ret": 31.7
+      },
+      {
+        "year": 2024,
+        "n": 95,
+        "win": 42.6,
+        "mean_all": 12.2,
+        "port_ret": 46.0
+      },
+      {
+        "year": 2025,
+        "n": 124,
+        "win": 48.7,
+        "mean_all": 17.96,
+        "port_ret": 20.5
+      },
+      {
+        "year": 2026,
+        "n": 82,
+        "win": 38.1,
+        "mean_all": 13.58,
+        "port_ret": 36.2
+      }
+    ]
+  }
+}

@@ -214,7 +214,13 @@ def main():
           f"cagr={reg['cagr_pct']} (32.64)  sharpe={reg['sharpe']} (1.496)")
 
     # ---- study arms: cliff symbols excluded, full window ----
-    keep = [c for c in close_f.columns if c not in CLIFF_SYMBOLS]
+    # After the corporate_actions_fix repair (2026-08-23) the exclusion is
+    # obsolete; NO_CLIFF_EXCLUDE=1 runs the full universe on healed data.
+    import os
+    if os.environ.get("NO_CLIFF_EXCLUDE"):
+        keep = list(close_f.columns)
+    else:
+        keep = [c for c in close_f.columns if c not in CLIFF_SYMBOLS]
     close, trade, high = close_f[keep], trade_f[keep], high_f[keep]
     rank = build_score_rank(close, 126)
     cross = breakout_cross(close, donchian_upper(high, 20)).fillna(False)
