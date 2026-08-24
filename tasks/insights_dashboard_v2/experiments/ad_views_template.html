@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A-D chart experiments — insights dashboard v2</title>
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --fg: #1A1A1A;
+    --muted-fg: #737373;
+    --border: #E2E2E2;
+    --card: #FFFFFF;
+    --chart-1: #0C7A62;
+    --chart-2: #AD741C;
+    --chart-3: #42608E;
+    --positive: #3F8059;
+    --negative: #A64C42;
+    --grid: #ECECEC;
+    --axis: #737373;
+    --chip-bg: #F5F5F4;
+  }
+  [data-theme="dark"] {
+    --bg: #0C1219;
+    --fg: #E9EEF4;
+    --muted-fg: #8F9AA8;
+    --border: #2C3947;
+    --card: #101720;
+    --chart-1: #6FB4EC;
+    --chart-2: #E8A33D;
+    --chart-3: #6E8BC0;
+    --positive: #57A876;
+    --negative: #D07162;
+    --grid: #1E2836;
+    --axis: #8F9AA8;
+    --chip-bg: #1A2431;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 14px/1.55 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 24px 80px; }
+  header.page { margin-bottom: 10px; }
+  h1 { font-size: 21px; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: var(--muted-fg); max-width: 72ch; margin: 0; }
+  .controls {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; gap: 8px; align-items: center;
+    padding: 12px 0; margin-bottom: 8px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .seg button {
+    appearance: none; border: 0; background: transparent; color: var(--muted-fg);
+    font: inherit; font-size: 12px; padding: 5px 12px; cursor: pointer;
+    font-variant-numeric: tabular-nums;
+  }
+  .seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+  .spacer { flex: 1; }
+  section.exp { margin-top: 40px; }
+  .exp-head { display: flex; align-items: baseline; gap: 10px; }
+  .exp-tag {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+    color: var(--muted-fg); border: 1px solid var(--border);
+    border-radius: 6px; padding: 1px 7px;
+  }
+  h2 { font-size: 16px; margin: 0; }
+  .why { color: var(--muted-fg); margin: 6px 0 14px; max-width: 78ch; }
+  .chartbox {
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 14px 8px; background: var(--card); position: relative;
+  }
+  .readout {
+    min-height: 18px; display: flex; flex-wrap: wrap; gap: 14px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px; font-variant-numeric: tabular-nums;
+    color: var(--muted-fg); margin-bottom: 8px;
+  }
+  .readout .k { color: var(--fg); }
+  .chip { display: inline-flex; align-items: center; gap: 6px; }
+  .chip i { width: 14px; height: 2px; border-radius: 2px; display: inline-block; }
+  .chart { width: 100%; height: 380px; position: relative; }
+  .chart.tall { height: 460px; }
+  .pane-label {
+    position: absolute; left: 8px; z-index: 5;
+    font-size: 11px; font-weight: 500; color: var(--muted-fg);
+    background: color-mix(in srgb, var(--card) 82%, transparent);
+    padding: 1px 7px; border-radius: 5px; pointer-events: none;
+  }
+  .verdict {
+    margin: 12px 2px 0; padding-left: 12px;
+    border-left: 3px solid var(--border);
+    color: var(--muted-fg); font-size: 13px; max-width: 78ch;
+  }
+  .verdict b { color: var(--fg); font-weight: 600; }
+  .tv-note {
+    margin: 26px 0 0; padding: 16px 18px;
+    border: 1px solid var(--border); border-radius: 10px; background: var(--card);
+  }
+  .tv-note h3 { margin: 0 0 8px; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted-fg); }
+  .tv-note ul { margin: 0; padding-left: 18px; }
+  .tv-note li { margin: 4px 0; max-width: 88ch; }
+  .attr { margin-top: 28px; font-size: 11px; color: var(--muted-fg); text-align: right; }
+  .attr a { color: inherit; }
+  .hint {
+    font-size: 11px; color: var(--muted-fg); opacity: 0.85;
+    margin: 6px 2px 0; display: flex; align-items: center; gap: 10px;
+  }
+  .resetview {
+    appearance: none; font: inherit; font-size: 11px; cursor: pointer;
+    border: 1px solid var(--border); border-radius: 6px;
+    background: transparent; color: var(--muted-fg); padding: 2px 10px;
+  }
+  .resetview:hover { color: var(--fg); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="page">
+    <h1>Advances &amp; declines — presentation experiments</h1>
+    <p class="sub">
+      Six ways to draw the same two series: the NSE&nbsp;500 cumulative A-D line
+      (in stocks, through 2026-08-19) and the Nifty&nbsp;500 index. Real data from
+      the local breadth engine. Toggle range and theme; hover any chart for the
+      day's values.
+    </p>
+  </header>
+
+  <div class="controls">
+    <div class="seg" id="rangeSeg" role="group" aria-label="Range">
+      <button data-range="126">6M</button>
+      <button data-range="252" aria-pressed="true">1Y</button>
+      <button data-range="756">3Y</button>
+    </div>
+    <div class="spacer"></div>
+    <div class="seg" id="themeSeg" role="group" aria-label="Theme">
+      <button data-theme="light" aria-pressed="true">Light</button>
+      <button data-theme="dark">Midnight</button>
+    </div>
+  </div>
+
+  <div class="tv-note">
+    <h3>What TradingView does (from today's session)</h3>
+    <ul>
+      <li><b>Breadth never shares a canvas with price.</b> Their built-in Advance
+        Decline Line renders in its own pane below the price pane — own scale,
+        shared time axis, one crosshair through both. The two shapes align
+        vertically instead of overlapping.</li>
+      <li><b>Each pane carries its own compact legend</b> (name + live value,
+        top-left) and its own last-value chip on the axis, so no number is
+        ever ambiguous.</li>
+      <li><b>Daily flavours are drawn as columns, not lines</b> — their
+        Advance/Decline Ratio (Bars) is a histogram, which matches how you read
+        a day-at-a-time series.</li>
+      <li>When they do overlay a second symbol on one pane, it gets a
+        <b>visible % axis on the left</b> — an overlay you cannot read a level
+        off is treated as a defect.</li>
+    </ul>
+  </div>
+
+  <section class="exp" id="expA">
+    <div class="exp-head"><span class="exp-tag">A</span><h2>Baseline — what production ships today</h2></div>
+    <p class="why">
+      A-D line as a filled area, index overlay as a thin muted line on a hidden
+      scale. Reference point for everything below.
+    </p>
+    <div class="chartbox">
+      <div class="readout" id="roA"></div>
+      <div class="chart" id="chA"></div>
+    </div>
+    <p class="verdict"><b>Known weakness:</b> the gray overlay disappears against
+      the grid, and its level can't be read anywhere except the crosshair row.</p>
+  </section>
+
+  <section class="exp" id="expB">
+    <div class="exp-head"><span class="exp-tag">B</span><h2>Two panes — the TradingView pattern</h2></div>
+    <p class="why">
+      Index on top, A-D line below, shared time axis and crosshair. No hidden
+      scale, no rebasing caveat: both series keep their real units and you read
+      correlation by vertical alignment. This is how every charting platform
+      ships breadth.
+    </p>
+    <div class="chartbox">
+      <div class="readout" id="roB"></div>
+      <div class="chart tall" id="chB"></div>
+    </div>
+    <p class="verdict"><b>Assessment:</b> divergences (index up while A-D flattens)
+      are much easier to spot than in A; costs ~80px of height. lightweight-charts
+      v5 supports panes natively, so this fits the existing component.</p>
+  </section>
+
+  <section class="exp" id="expC">
+    <div class="exp-head"><span class="exp-tag">C</span><h2>Two panes — daily net advances as columns</h2></div>
+    <p class="why">
+      Same layout, but the lower pane draws the day-at-a-time series the tab
+      already reports as "Net advances (daily)": advancers minus decliners as a
+      share of movers, coloured by sign. TradingView draws exactly this as its
+      Advance/Decline Ratio (Bars).
+    </p>
+    <div class="chartbox">
+      <div class="readout" id="roC"></div>
+      <div class="chart tall" id="chC"></div>
+    </div>
+    <p class="verdict"><b>Assessment:</b> the histogram reads as breadth
+      <i>pressure</i> — clusters of red under a rising index jump out. Could
+      replace the cumulative line for the "today" story, or sit beside it as a
+      second view.</p>
+  </section>
+
+  <section class="exp" id="expD">
+    <div class="exp-head"><span class="exp-tag">D</span><h2>Overlay kept, made legible</h2></div>
+    <p class="why">
+      Minimal change to production: same single canvas, but the index line moves
+      from muted gray to the amber counter-series token, gets 1.5px of weight,
+      and both series get colour-chipped names in the readout row.
+    </p>
+    <div class="chartbox">
+      <div class="readout" id="roD"></div>
+      <div class="chart" id="chD"></div>
+    </div>
+    <p class="verdict"><b>Assessment:</b> the overlay stops vanishing and the two
+      shapes stay comparable. Still a hidden scale — the rebasing footnote stays.
+      Cheapest real improvement if panes feel like too much change.</p>
+  </section>
+
+  <section class="exp" id="expE">
+    <div class="exp-head"><span class="exp-tag">E</span><h2>Overlay with a visible % axis on the left</h2></div>
+    <p class="why">
+      The TradingView compare treatment: index rebased to % change from the left
+      edge of the window, but on a <i>visible</i> left axis, so its level is
+      readable anywhere. A-D keeps the right axis.
+    </p>
+    <div class="chartbox">
+      <div class="readout" id="roE"></div>
+      <div class="chart" id="chE"></div>
+      <div class="hint">
+        <button class="resetview" id="resetE">Reset view</button>
+        drag to pan · wheel / pinch to zoom · drag an axis to stretch it ·
+        double-click an axis to reset it · the % rebase follows the left edge
+        as you move
+      </div>
+    </div>
+    <p class="verdict"><b>Assessment:</b> the overlay finally has a readable
+      level, and the 0% line doubles as "flat since window start". The cost:
+      it is openly a dual-axis chart — the shapes' vertical alignment is still
+      arbitrary, which is the argument for B instead.</p>
+  </section>
+
+  <section class="exp" id="expF">
+    <div class="exp-head"><span class="exp-tag">F</span><h2>A-D as a baseline chart — direction since window start</h2></div>
+    <p class="why">
+      The A-D line's level is meaningless; only its direction matters. A baseline
+      series anchors the fill at the window's first value: green above, red
+      below, so "is breadth net-up over what I'm looking at" is answered by
+      colour before you read anything.
+    </p>
+    <div class="chartbox">
+      <div class="readout" id="roF"></div>
+      <div class="chart" id="chF"></div>
+      <div class="hint">
+        <button class="resetview" id="resetF">Reset view</button>
+        drag to pan · wheel / pinch to zoom · double-click an axis to reset it ·
+        the green/red anchor re-bases to the first visible day as you move
+      </div>
+    </div>
+    <p class="verdict"><b>Assessment:</b> strongest at answering the tab's core
+      question at a glance, and it re-anchors itself every time the range
+      changes. Pairs naturally with the pane layout in B (index above, this
+      below).</p>
+  </section>
+
+  <p class="attr">
+    Data: local breadth engine, NSE&nbsp;500, through 2026-08-19 ·
+    <a href="https://www.tradingview.com" target="_blank" rel="noopener noreferrer">Charts by TradingView</a>
+  </p>
+</div>
+
+<script>/*__LIB__*/</script>
+<script id="ad-data" type="application/json">/*__DATA__*/</script>
+<script>
+(function () {
+  "use strict";
+  const RAW = JSON.parse(document.getElementById("ad-data").textContent);
+  const LWC = window.LightweightCharts;
+
+  // Align index closes to panel dates by date-string map (same calendar, but
+  // never trust it silently).
+  const idxByDate = new Map(RAW.index_dates.map((d, i) => [d, RAW.index_ohlc.close[i]]));
+  const ohlcByDate = new Map(RAW.index_dates.map((d, i) => [d, {
+    open: RAW.index_ohlc.open[i], high: RAW.index_ohlc.high[i],
+    low: RAW.index_ohlc.low[i], close: RAW.index_ohlc.close[i],
+  }]));
+
+  function cssVar(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+  function tokens() {
+    return {
+      fg: cssVar("--fg"), muted: cssVar("--muted-fg"), border: cssVar("--border"),
+      grid: cssVar("--grid"), axis: cssVar("--axis"),
+      c1: cssVar("--chart-1"), c2: cssVar("--chart-2"), c3: cssVar("--chart-3"),
+      pos: cssVar("--positive"), neg: cssVar("--negative"),
+    };
+  }
+  function alpha(hex, a) {
+    const n = parseInt(hex.slice(1), 16);
+    return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+  }
+
+  function windowed(days) {
+    const start = Math.max(0, RAW.dates.length - days);
+    const dates = RAW.dates.slice(start);
+    const ad = [], adDaily = [], idxLine = [], idxCandles = [], idxRebased = [];
+    let base = null;
+    for (const [i, d] of dates.entries()) {
+      const j = start + i;
+      const adv = RAW.cumulative_ad_count[j];
+      if (adv !== null) ad.push({ time: d, value: adv });
+      const dd = RAW.ad_diff_pct[j];
+      if (dd !== null) adDaily.push({ time: d, value: dd * 100 });
+      const c = idxByDate.get(d);
+      if (c != null) {
+        idxLine.push({ time: d, value: c });
+        if (base === null) base = c;
+        idxRebased.push({ time: d, value: (c / base - 1) * 100 });
+      }
+      const o = ohlcByDate.get(d);
+      if (o && o.close != null) idxCandles.push({ time: d, ...o });
+    }
+    return { dates, ad, adDaily, idxLine, idxCandles, idxRebased };
+  }
+
+  function baseChart(el, t, opts) {
+    return LWC.createChart(el, Object.assign({
+      autoSize: true,
+      layout: {
+        background: { type: "solid", color: "transparent" },
+        textColor: t.axis, fontFamily: "inherit", attributionLogo: false,
+        panes: { separatorColor: t.border, enableResize: false },
+      },
+      grid: {
+        vertLines: { color: t.grid, style: LWC.LineStyle.Solid },
+        horzLines: { color: t.grid, style: LWC.LineStyle.Solid },
+      },
+      rightPriceScale: { borderColor: t.border },
+      timeScale: { borderColor: t.border },
+      crosshair: {
+        horzLine: { color: t.muted },
+        vertLine: { color: t.muted },
+      },
+      handleScale: false, handleScroll: false,
+    }, opts || {}));
+  }
+
+  // Interaction preset for the experiments that allow pan/zoom: wheel and
+  // pinch zoom around the cursor, drag to pan, drag/double-click the axes,
+  // and a little kinetic glide on release.
+  function interactiveOpts(t) {
+    return {
+      handleScale: {
+        mouseWheel: true, pinch: true,
+        axisPressedMouseMove: true, axisDoubleClickReset: true,
+      },
+      handleScroll: {
+        mouseWheel: false, pressedMouseMove: true,
+        horzTouchDrag: true, vertTouchDrag: false,
+      },
+      kineticScroll: { touch: true, mouse: true },
+      timeScale: { borderColor: t.border, minBarSpacing: 0.4, rightOffset: 2 },
+    };
+  }
+
+  const fmtCount = v => Math.round(v).toLocaleString("en-IN");
+  const fmtPct = v => `${v >= 0 ? "+" : ""}${v.toFixed(1)}%`;
+  const fmtIdx = v => Math.round(v).toLocaleString("en-IN");
+  const fmtDate = d => new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+
+  // Crosshair readout: rows = [{label, series, fmt, colorKey}]
+  function wireReadout(chart, roEl, rows, t, fallback) {
+    const idle = () => {
+      roEl.innerHTML = fallback.map(r =>
+        `<span class="chip"><i style="background:${t[r.colorKey]}"></i>${r.label}</span>`
+      ).join("") + `<span style="opacity:.65">hover for values</span>`;
+    };
+    idle();
+    chart.subscribeCrosshairMove(param => {
+      if (!param.time || !param.seriesData || param.seriesData.size === 0) { idle(); return; }
+      const parts = [`<span class="k">${fmtDate(param.time)}</span>`];
+      for (const r of rows) {
+        const d = param.seriesData.get(r.series);
+        if (!d) continue;
+        const v = d.value !== undefined ? d.value : d.close;
+        parts.push(`<span class="chip"><i style="background:${t[r.colorKey]}"></i>${r.label}&nbsp;<span class="k">${r.fmt(v)}</span></span>`);
+      }
+      roEl.innerHTML = parts.join("");
+    });
+  }
+
+  function paneLabels(chart, box, labels) {
+    // labels: [{pane: 0, text}] — absolute-positioned chips at each pane's top.
+    box.querySelectorAll(".pane-label").forEach(n => n.remove());
+    requestAnimationFrame(() => {
+      let offset = 0;
+      const sizes = [];
+      for (let i = 0; i <= Math.max(...labels.map(l => l.pane)); i++) {
+        sizes.push(offset);
+        try { offset += chart.paneSize(i).height + 1; } catch { break; }
+      }
+      for (const l of labels) {
+        const el = document.createElement("div");
+        el.className = "pane-label";
+        el.textContent = l.text;
+        el.style.top = `${sizes[l.pane] + 6}px`;
+        box.appendChild(el);
+      }
+    });
+  }
+
+  /* ---------------- experiments ---------------- */
+
+  const experiments = [];
+
+  // A — production baseline
+  experiments.push({ el: "chA", ro: "roA", render(el, ro, D, t) {
+    const chart = baseChart(el, t);
+    const area = chart.addSeries(LWC.AreaSeries, {
+      lineColor: t.c1, topColor: alpha(t.c1, 0.28), bottomColor: "transparent",
+      lineWidth: 2, priceLineVisible: false,
+      priceFormat: { type: "custom", formatter: fmtCount, minMove: 1 },
+    });
+    area.setData(D.ad);
+    const idx = chart.addSeries(LWC.LineSeries, {
+      color: t.muted, lineWidth: 1, priceScaleId: "overlay",
+      priceLineVisible: false, lastValueVisible: false,
+      priceFormat: { type: "custom", formatter: fmtPct, minMove: 0.1 },
+    });
+    idx.setData(D.idxRebased);
+    chart.priceScale("overlay").applyOptions({ scaleMargins: { top: 0.1, bottom: 0.1 }, visible: false });
+    chart.timeScale().fitContent();
+    wireReadout(chart, ro, [
+      { label: "A-D line", series: area, fmt: fmtCount, colorKey: "c1" },
+      { label: RAW.index_label, series: idx, fmt: fmtPct, colorKey: "muted" },
+    ], t, [
+      { label: "A-D line (stocks)", colorKey: "c1" },
+      { label: `${RAW.index_label} (rebased, hidden scale)`, colorKey: "muted" },
+    ]);
+    return chart;
+  }});
+
+  // B — two panes, index above, A-D below
+  experiments.push({ el: "chB", ro: "roB", render(el, ro, D, t, box) {
+    const chart = baseChart(el, t);
+    const idx = chart.addSeries(LWC.AreaSeries, {
+      lineColor: t.c2, topColor: alpha(t.c2, 0.10), bottomColor: "transparent",
+      lineWidth: 2, priceLineVisible: false,
+      priceFormat: { type: "custom", formatter: fmtIdx, minMove: 1 },
+    }, 0);
+    idx.setData(D.idxLine);
+    const ad = chart.addSeries(LWC.LineSeries, {
+      color: t.c1, lineWidth: 2, priceLineVisible: false,
+      priceFormat: { type: "custom", formatter: fmtCount, minMove: 1 },
+    }, 1);
+    ad.setData(D.ad);
+    const panes = chart.panes();
+    if (panes.length > 1) { panes[0].setStretchFactor(0.58); panes[1].setStretchFactor(0.42); }
+    chart.timeScale().fitContent();
+    wireReadout(chart, ro, [
+      { label: RAW.index_label, series: idx, fmt: fmtIdx, colorKey: "c2" },
+      { label: "A-D line", series: ad, fmt: fmtCount, colorKey: "c1" },
+    ], t, [
+      { label: RAW.index_label, colorKey: "c2" },
+      { label: "A-D line (stocks)", colorKey: "c1" },
+    ]);
+    paneLabels(chart, box, [
+      { pane: 0, text: RAW.index_label },
+      { pane: 1, text: "A-D line (stocks)" },
+    ]);
+    return chart;
+  }});
+
+  // C — two panes, histogram of daily net advances below
+  experiments.push({ el: "chC", ro: "roC", render(el, ro, D, t, box) {
+    const chart = baseChart(el, t);
+    const idx = chart.addSeries(LWC.AreaSeries, {
+      lineColor: t.c2, topColor: alpha(t.c2, 0.10), bottomColor: "transparent",
+      lineWidth: 2, priceLineVisible: false,
+      priceFormat: { type: "custom", formatter: fmtIdx, minMove: 1 },
+    }, 0);
+    idx.setData(D.idxLine);
+    const hist = chart.addSeries(LWC.HistogramSeries, {
+      priceLineVisible: false,
+      priceFormat: { type: "custom", formatter: fmtPct, minMove: 0.1 },
+    }, 1);
+    hist.setData(D.adDaily.map(p => ({
+      time: p.time, value: p.value,
+      color: p.value >= 0 ? alpha(t.pos, 0.75) : alpha(t.neg, 0.75),
+    })));
+    hist.createPriceLine({ price: 0, color: t.border, lineWidth: 1, lineStyle: LWC.LineStyle.Solid, axisLabelVisible: false, title: "" });
+    const panes = chart.panes();
+    if (panes.length > 1) { panes[0].setStretchFactor(0.6); panes[1].setStretchFactor(0.4); }
+    chart.timeScale().fitContent();
+    wireReadout(chart, ro, [
+      { label: RAW.index_label, series: idx, fmt: fmtIdx, colorKey: "c2" },
+      { label: "Net advances", series: hist, fmt: fmtPct, colorKey: "pos" },
+    ], t, [
+      { label: RAW.index_label, colorKey: "c2" },
+      { label: "Net advances (daily, % of movers)", colorKey: "pos" },
+    ]);
+    paneLabels(chart, box, [
+      { pane: 0, text: RAW.index_label },
+      { pane: 1, text: "Net advances (daily)" },
+    ]);
+    return chart;
+  }});
+
+  // D — overlay recolored
+  experiments.push({ el: "chD", ro: "roD", render(el, ro, D, t) {
+    const chart = baseChart(el, t);
+    const area = chart.addSeries(LWC.AreaSeries, {
+      lineColor: t.c1, topColor: alpha(t.c1, 0.28), bottomColor: "transparent",
+      lineWidth: 2, priceLineVisible: false,
+      priceFormat: { type: "custom", formatter: fmtCount, minMove: 1 },
+    });
+    area.setData(D.ad);
+    const idx = chart.addSeries(LWC.LineSeries, {
+      color: t.c2, lineWidth: 2, priceScaleId: "overlay",
+      priceLineVisible: false, lastValueVisible: false,
+      priceFormat: { type: "custom", formatter: fmtPct, minMove: 0.1 },
+    });
+    idx.setData(D.idxRebased);
+    chart.priceScale("overlay").applyOptions({ scaleMargins: { top: 0.1, bottom: 0.1 }, visible: false });
+    chart.timeScale().fitContent();
+    wireReadout(chart, ro, [
+      { label: "A-D line", series: area, fmt: fmtCount, colorKey: "c1" },
+      { label: RAW.index_label, series: idx, fmt: fmtPct, colorKey: "c2" },
+    ], t, [
+      { label: "A-D line (stocks)", colorKey: "c1" },
+      { label: `${RAW.index_label} (rebased)`, colorKey: "c2" },
+    ]);
+    return chart;
+  }});
+
+  // E — overlay with visible left % axis. Fully pannable/zoomable: the whole
+  // 3y history is loaded, the range picker only sets the initial window, and
+  // the % rebase re-anchors to the left edge of whatever is visible.
+  experiments.push({ el: "chE", ro: "roE", render(el, ro, D, t) {
+    const FULL = windowed(1e9);
+    const chart = baseChart(el, t, Object.assign(interactiveOpts(t), {
+      leftPriceScale: { visible: true, borderColor: t.border },
+    }));
+    const area = chart.addSeries(LWC.AreaSeries, {
+      lineColor: t.c1, topColor: alpha(t.c1, 0.28), bottomColor: "transparent",
+      lineWidth: 2, priceLineVisible: false,
+      priceFormat: { type: "custom", formatter: fmtCount, minMove: 1 },
+    });
+    area.setData(FULL.ad);
+    const idx = chart.addSeries(LWC.LineSeries, {
+      color: t.c2, lineWidth: 2, priceScaleId: "left",
+      priceLineVisible: false, lastValueVisible: true,
+      priceFormat: { type: "custom", formatter: fmtPct, minMove: 0.1 },
+    });
+    idx.createPriceLine({ price: 0, color: t.muted, lineWidth: 1, lineStyle: LWC.LineStyle.Dashed, axisLabelVisible: false, title: "" });
+    chart.priceScale("left").applyOptions({ scaleMargins: { top: 0.1, bottom: 0.1 } });
+
+    // Re-rebase the index to the first visible bar. Rebasing only changes
+    // each point by a constant factor, so recomputing on pan/zoom is cheap.
+    const closes = FULL.idxLine;
+    let lastBaseIdx = -1;
+    const rebase = () => {
+      const lr = chart.timeScale().getVisibleLogicalRange();
+      if (!lr) return;
+      const from = Math.max(0, Math.min(closes.length - 1, Math.round(lr.from)));
+      if (from === lastBaseIdx) return;
+      lastBaseIdx = from;
+      const base = closes[from].value;
+      idx.setData(closes.map(p => ({ time: p.time, value: (p.value / base - 1) * 100 })));
+    };
+    chart.timeScale().subscribeVisibleLogicalRangeChange(() => requestAnimationFrame(rebase));
+
+    const initial = { from: Math.max(0, FULL.ad.length - D.ad.length), to: FULL.ad.length + 1 };
+    chart.timeScale().setVisibleLogicalRange(initial);
+    rebase();
+    const resetBtn = document.getElementById("resetE");
+    if (resetBtn) resetBtn.onclick = () => chart.timeScale().setVisibleLogicalRange(initial);
+
+    wireReadout(chart, ro, [
+      { label: "A-D line", series: area, fmt: fmtCount, colorKey: "c1" },
+      { label: RAW.index_label, series: idx, fmt: fmtPct, colorKey: "c2" },
+    ], t, [
+      { label: "A-D line (stocks, right axis)", colorKey: "c1" },
+      { label: `${RAW.index_label} (% from left edge, left axis)`, colorKey: "c2" },
+    ]);
+    return chart;
+  }});
+
+  // F — baseline series anchored at the first *visible* day. Pan/zoom
+  // enabled; the anchor, its dashed price line, and the green/red split all
+  // follow the window as it moves.
+  experiments.push({ el: "chF", ro: "roF", render(el, ro, D, t) {
+    const FULL = windowed(1e9);
+    const chart = baseChart(el, t, interactiveOpts(t));
+    const first = FULL.ad.length ? FULL.ad[0].value : 0;
+    const base = chart.addSeries(LWC.BaselineSeries, {
+      baseValue: { type: "price", price: first },
+      topLineColor: t.pos, topFillColor1: alpha(t.pos, 0.25), topFillColor2: alpha(t.pos, 0.04),
+      bottomLineColor: t.neg, bottomFillColor1: alpha(t.neg, 0.04), bottomFillColor2: alpha(t.neg, 0.25),
+      lineWidth: 2, priceLineVisible: false,
+      priceFormat: { type: "custom", formatter: fmtCount, minMove: 1 },
+    });
+    base.setData(FULL.ad);
+    const anchorLine = base.createPriceLine({
+      price: first, color: t.muted, lineWidth: 1,
+      lineStyle: LWC.LineStyle.Dashed, axisLabelVisible: true, title: "anchor",
+    });
+
+    let lastAnchorIdx = -1;
+    const reanchor = () => {
+      const lr = chart.timeScale().getVisibleLogicalRange();
+      if (!lr) return;
+      const from = Math.max(0, Math.min(FULL.ad.length - 1, Math.round(lr.from)));
+      if (from === lastAnchorIdx) return;
+      lastAnchorIdx = from;
+      const price = FULL.ad[from].value;
+      base.applyOptions({ baseValue: { type: "price", price } });
+      anchorLine.applyOptions({ price });
+    };
+    chart.timeScale().subscribeVisibleLogicalRangeChange(() => requestAnimationFrame(reanchor));
+
+    const initial = { from: Math.max(0, FULL.ad.length - D.ad.length), to: FULL.ad.length + 1 };
+    chart.timeScale().setVisibleLogicalRange(initial);
+    reanchor();
+    const resetBtn = document.getElementById("resetF");
+    if (resetBtn) resetBtn.onclick = () => chart.timeScale().setVisibleLogicalRange(initial);
+
+    wireReadout(chart, ro, [
+      { label: "A-D line", series: base, fmt: fmtCount, colorKey: "c1" },
+    ], t, [
+      { label: "A-D line vs first visible day (green above / red below)", colorKey: "pos" },
+    ]);
+    return chart;
+  }});
+
+  /* ---------------- orchestration ---------------- */
+
+  let charts = [];
+  let range = 252;
+
+  function renderAll() {
+    for (const c of charts) { try { c.remove(); } catch {} }
+    charts = [];
+    document.querySelectorAll(".pane-label").forEach(n => n.remove());
+    const D = windowed(range);
+    const t = tokens();
+    for (const ex of experiments) {
+      const el = document.getElementById(ex.el);
+      const ro = document.getElementById(ex.ro);
+      el.innerHTML = "";
+      charts.push(ex.render(el, ro, D, t, el));
+    }
+  }
+
+  document.getElementById("rangeSeg").addEventListener("click", e => {
+    const btn = e.target.closest("button[data-range]");
+    if (!btn) return;
+    range = Number(btn.dataset.range);
+    document.querySelectorAll("#rangeSeg button").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+    renderAll();
+  });
+  document.getElementById("themeSeg").addEventListener("click", e => {
+    const btn = e.target.closest("button[data-theme]");
+    if (!btn) return;
+    document.documentElement.setAttribute("data-theme", btn.dataset.theme);
+    document.querySelectorAll("#themeSeg button").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+    renderAll();
+  });
+
+  renderAll();
+})();
+</script>
+</body>
+</html>

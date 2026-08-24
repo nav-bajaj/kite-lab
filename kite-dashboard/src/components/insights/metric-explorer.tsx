@@ -23,16 +23,23 @@ export interface MetricVariant {
   percent: boolean;
   bands: ReferenceBand[];
   values: (number | null)[];
+  /** Dashed start-level reference line for this variant — for running
+   *  totals whose absolute level is meaningless. */
+  anchor?: boolean;
 }
 
 export function MetricExplorer({
   dates,
   variants,
   overlay,
+  interactive = false,
+  overlayAxis = "hidden",
 }: {
   dates: string[];
   variants: MetricVariant[];
   overlay?: IndexOverlay;
+  interactive?: boolean;
+  overlayAxis?: "hidden" | "left";
 }) {
   const [active, setActive] = useState(variants[0]?.metric);
   const current = variants.find((v) => v.metric === active) ?? variants[0];
@@ -65,6 +72,9 @@ export function MetricExplorer({
         bands={current.bands}
         percent={current.percent}
         overlay={overlay}
+        anchor={current.anchor ?? false}
+        interactive={interactive}
+        overlayAxis={overlayAxis}
       />
     </div>
   );

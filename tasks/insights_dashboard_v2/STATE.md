@@ -101,6 +101,21 @@ hairline stat strip, a Learn panel and the disclaimer.
   **in stocks** (`cumulative_ad_count`) as well as in percent —
   `cumulative_ad` alone was a running sum of ratios, i.e. neither.
   Today's split renders as coloured counts with arrows. Index overlay.
+  **2026-08-21 — E/F chart upgrade shipped on this tab only** (founder
+  picked experiments E+F, see DECISIONS): both A-D line variants carry
+  a dashed "start" reference line at the first visible day's value
+  (the green-above/red-below BaselineSeries fill was tried and pulled
+  next day — recolouring on every pan read as noise, worse with the
+  overlay; founder, 2026-08-22); the overlay moved to a VISIBLE left
+  % axis (amber `--chart-series-2`, 2px); pan/zoom is on (wheel/pinch
+  zoom, drag pan, axis drag + double-click reset, both edges fixed,
+  wheel never scrolls the page) and the range pills set the initial
+  window over the full 4000-day fetch, so panning left reveals
+  history. Anchor + rebase follow the window via
+  `subscribeVisibleLogicalRangeChange`. New opt-in props on
+  `TimeseriesChart` (`anchor` / `overlayAxis="left"` /
+  `interactive`) + pass-throughs on `MetricExplorer`; every other tab
+  keeps the old defaults. Awaiting founder review before propagating.
 - **52-week highs — REPLACED Net new highs** (founder, 2026-08-20).
   Headline is `avg_dist_from_52w_high`; chips add % within 5% of high
   and % more than 20% below; the old count is kept as a fourth chip.

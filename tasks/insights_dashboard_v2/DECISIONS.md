@@ -640,3 +640,70 @@ more informative, but it needs `pctRank`/`changeOver` lifted out of the
 detail page into a shared helper; hiding `InsightsMobileNav` on
 `/insights/market/*` to kill 104px of stacked nav chrome; and a bottom
 nav bar as the better long-term mobile answer.
+
+## 2026-08-21 — A-D chart presentation: founder picked E + F
+
+Ran six presentation experiments for the Advances & declines chart
+(`experiments/ad_chart_views.html`, self-contained, real engine data
+through 2026-08-19; editable source `experiments/ad_views_template.html`
+— rebuild by splicing the lightweight-charts standalone bundle + data
+JSON over the `/*__LIB__*/` and `/*__DATA__*/` markers). Informed by a
+signed-in TradingView session: their ADL always gets its own pane below
+price (shared time axis, per-pane legends); overlays they DO allow get
+a visible left % axis; daily series render as sign-coloured columns.
+
+**Founder verdict: E and F look the best.**
+
+- **E** — index overlay rebased to % from the left edge of the visible
+  window on a VISIBLE left axis (readable level, 0% line = "flat since
+  window start"). A-D keeps the right axis.
+- **F** — A-D drawn as a BaselineSeries anchored at the first visible
+  day: green above / red below answers "net breadth up over this
+  window?" by colour alone.
+- Both got pan/zoom in the experiment (wheel/pinch zoom, drag pan,
+  axis drag/double-click reset) with the rebase/anchor re-computed on
+  `subscribeVisibleLogicalRangeChange` — the anchor follows the window
+  as you scroll. lightweight-charts v5 supports all of it natively;
+  v5 panes (`addSeries(..., paneIndex)`) remain available if B's
+  two-pane layout is ever wanted.
+
+Not yet implemented in production `TimeseriesChart` — that's the next
+step when the founder asks: visible-left-axis overlay + baseline mode
++ opt-in pan/zoom (keep `handleScroll.mouseWheel: false` so the page
+still scrolls; consider `fixLeftEdge/fixRightEdge`).
+
+**Implemented same day** on the Advances & declines tab only (founder:
+"implement on one tab and then we can see how it looks"; fixRightEdge
+explicitly approved). `TimeseriesChart` gained opt-in `baseline`,
+`overlayAxis="left"` and `interactive` props (defaults preserve every
+other tab); `MetricExplorer` passes them through; the two cumulative
+A-D variants set `baseline: true`, the daily variant stays a line.
+Interactive charts keep the full fetched history and the range pills
+set the initial visible window (`setVisibleLogicalRange`), edges fixed
+both sides, `handleScroll.mouseWheel: false` so the page still
+scrolls. Verified in a signed-in browser at 1440x900 and 390x844:
+baseline anchor + overlay rebase follow pan/zoom; Breadth and the
+other tabs unchanged; `npm run build` + eslint clean.
+
+**2026-08-22 amendment — anchor line, not baseline fill.** Founder: the
+green-above/red-below fill "keeps redrawing as the zeroline changes...
+especially busy with the overlay". The `baseline` prop became `anchor`:
+same dashed start-level line, same re-anchor-on-pan, but the series
+stays the ordinary single-colour area. BaselineSeries usage removed.
+
+**2026-08-22 — A-D line negativity audited, computation confirmed.**
+Founder asked why the NSE 500 cumulative A-D count sits near −21k.
+Verified three ways: (1) independent recompute of 2026-08-19 straight
+from the raw price CSVs matches the panel exactly (137 adv / 362 dec /
+1 flat of 500); (2) only 21 stock-days in 17 years show < −40% moves
+(possible unadjusted corporate actions, ECLERX worst at 4) — immaterial
+to a −21,026 total; (3) the drift is genuine: 49.29% of stock-moves are
+advances vs 50.71% declines, mean −4.9 net/day since 2009. Count-based
+A-D lines on pure-equity universes drift negative because the median
+stock has slightly more down days — gains come concentrated in fewer,
+bigger up-days. Big negative years line up with known regimes (2011
+−5.2k, 2018 −5.2k midcap bear while Nifty 50 was up, 2019 −4.3k,
+2025 −3.8k). Survivorship bias in the current-membership panel pushes
+the line UP if anything, so the real historical universe would be more
+negative still. This is exactly why the level is meaningless and the
+anchor line + direction is the read.

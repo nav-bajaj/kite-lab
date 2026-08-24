@@ -551,9 +551,10 @@ const AD_VARIANTS: Omit<MetricVariant, "values">[] = [
   {
     metric: "cumulative_ad_count",
     label: "A-D line (stocks)",
-    sub: "A running total of advancers minus decliners, counted in stocks. The direction it travels is the signal; the level is just where the running total happens to be.",
+    sub: "A running total of advancers minus decliners, counted in stocks. The direction it travels is the signal; the level is just where the running total happens to be — the dashed line marks where this window starts.",
     percent: false,
     bands: [],
+    anchor: true,
   },
   {
     metric: "cumulative_ad",
@@ -561,6 +562,7 @@ const AD_VARIANTS: Omit<MetricVariant, "values">[] = [
     sub: "The same running total, with each day counted as a share of the stocks that moved. A heavy day in a thin market counts for less here than in the stock version.",
     percent: false,
     bands: [],
+    anchor: true,
   },
   {
     metric: "ad_diff_pct",
@@ -658,7 +660,13 @@ async function AdvanceDeclineDetail({
         title={`Advances & declines · ${universeLabel(universe)}`}
         sub="How many stocks moved with the market. The A-D line is the running total — switch between counting stocks and counting each day as a share of the stocks that moved."
       >
-        <MetricExplorer dates={series.index} variants={variants} overlay={overlay} />
+        <MetricExplorer
+          dates={series.index}
+          variants={variants}
+          overlay={overlay}
+          interactive
+          overlayAxis="left"
+        />
       </ChartCard>
       <LearnPanel title="Learn more">
         This counts how many stocks rose versus fell, which the index alone
