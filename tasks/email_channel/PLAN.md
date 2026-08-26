@@ -123,9 +123,38 @@ honoured immediately, physical postal address in the footer, SPF + DKIM +
 DMARC aligned. Transactional welcome mail is exempt from unsubscribe
 requirements but we will include a link anyway.
 
-*(Section to be finalised against the compliance research pass — the
-defaults above are deliberately the strict reading, which research can
-only relax.)*
+### Status of this section — read before relying on it
+
+A dedicated compliance research pass was started and **stopped without
+reporting**, so nothing above was verified against a current primary
+source. What is written here is the **strict reading**, assembled from
+general practice. Strict is the safe direction to be wrong in: every item
+is either a genuine requirement or good practice regardless, so building
+to it cannot get us into trouble — it can only cost effort we might have
+saved.
+
+Specifically **unverified**, and worth a lawyer or a proper check before
+the first newsletter (not before the welcome mail, which is
+transactional and lower risk):
+
+- DPDP Act 2023 — which provisions are actually **in force** in 2026 and
+  what the notified rules require for marketing consent, withdrawal
+  mechanics, and whether a named grievance officer is mandatory at our
+  size.
+- The current Gmail/Yahoo **bulk-sender thresholds** — the commonly cited
+  figure is 5,000/day to a single provider, which our list will sit well
+  under for a long time. Below that threshold one-click unsubscribe and
+  DMARC are strongly recommended rather than strictly required. We are
+  building them anyway.
+- The **SEBI advertisement code** as it applies to an applicant whose RA
+  registration is pending — the constraints listed above are the
+  conservative reading (no recommendations, no performance claims, no
+  implying registration). Whether *any* market commentary is permissible
+  pre-registration is the specific question worth professional advice,
+  because it decides what the newsletter can contain at all.
+
+Do not treat this section as researched. Treat it as a safe default that
+still needs a check before Phase 4.
 
 ## 3. Architecture — where React Email runs
 
