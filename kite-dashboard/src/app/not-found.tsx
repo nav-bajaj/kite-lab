@@ -26,7 +26,7 @@ export default function NotFound() {
                         className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 transition-colors"
                     >
                         <Home className="h-4 w-4" />
-                        Go to Dashboard
+                        Go home
                     </Link>
                 </div>
             </div>

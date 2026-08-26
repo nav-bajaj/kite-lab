@@ -1,5 +1,8 @@
+import { gatedRobots } from "@/lib/site-mode";
+
 export const metadata = {
   title: "Disclaimer — Marketworks",
+  ...gatedRobots(),
 };
 
 export default function DisclaimerPage() {

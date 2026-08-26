@@ -1,0 +1,11 @@
+name: site_gate
+status: in-progress
+opened: 2026-08-26
+closed: null
+related_commits: []
+supersedes: []
+depends_on:
+  - client_portal
+register_rows:
+  - R-027
+  - R-028
