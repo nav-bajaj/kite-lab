@@ -3,6 +3,12 @@
  * Tokens copied verbatim from marketworks-design/design-language-guide-v2.html
  * — scoped to this page only; the rest of the app stays on the old system
  * until the planned site-wide design update.
+ *
+ * LIGHT ONLY, deliberately. The guide's dark tokens are not wired up here:
+ * this page has no theme toggle, so a visitor on a dark-mode device would be
+ * shown a variant nobody chose and nobody reviewed. It is the one public
+ * face of the brand while the site is gated, so it renders identically for
+ * everyone. Restore the dark set when the page rejoins the themed app.
  */
 
 .page {
@@ -26,6 +32,11 @@
   --mono: var(--cs-mono), ui-monospace, SFMono-Regular, monospace;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 
+  /* Light only — see the note above the token block. Also pins UA-rendered
+     chrome (the email input, autofill, scrollbars) to light on devices set
+     to dark, which the token variables alone would not do. */
+  color-scheme: light;
+
   position: relative;
   min-height: 100svh;
   display: flex;
@@ -37,62 +48,6 @@
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
-}
-
-/* Dark tokens: system preference by default; an explicit next-themes class
-   on <html> wins in either direction. */
-@media (prefers-color-scheme: dark) {
-  .page {
-    --bg: #0d1412;
-    --bg-soft: #111916;
-    --card: #141c19;
-    --line: #26302a;
-    --line-strong: #39453e;
-    --ink: #e9efeb;
-    --grey: #a2ada7;
-    --grey-soft: #7e8a84;
-    --green: #3fce95;
-    --green-vivid: #2ea274;
-    --green-tint: #12271d;
-    --green-deep: #082e1f;
-    --green-on-deep: #bfebd8;
-    --done-fg: #bfebd8;
-    --shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.5);
-  }
-}
-:global(html.dark) .page {
-  --bg: #0d1412;
-  --bg-soft: #111916;
-  --card: #141c19;
-  --line: #26302a;
-  --line-strong: #39453e;
-  --ink: #e9efeb;
-  --grey: #a2ada7;
-  --grey-soft: #7e8a84;
-  --green: #3fce95;
-  --green-vivid: #2ea274;
-  --green-tint: #12271d;
-  --green-deep: #082e1f;
-  --green-on-deep: #bfebd8;
-  --done-fg: #bfebd8;
-  --shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.5);
-}
-:global(html.light) .page {
-  --bg: #ffffff;
-  --bg-soft: #f4f7f5;
-  --card: #ffffff;
-  --line: #e3e8e5;
-  --line-strong: #c9d2cc;
-  --ink: #141a17;
-  --grey: #5c6663;
-  --grey-soft: #79837f;
-  --green: #0b7e52;
-  --green-vivid: #14a468;
-  --green-tint: #dff4e8;
-  --green-deep: #0a3b28;
-  --green-on-deep: #bfebd8;
-  --done-fg: #0a3b28;
-  --shadow: 0 10px 30px -12px rgba(20, 26, 23, 0.14);
 }
 
 /* Dot texture — guide .tex-dots, inverted mask per founder note: visible at
