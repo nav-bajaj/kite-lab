@@ -39,6 +39,35 @@ Known DNS gotcha from that work: Namecheap doubled-Host — records get
 published under `x.marketworks.in.marketworks.in` if you paste the FQDN.
 Enter host-only values.
 
+### Live DNS audit (dug 2026-08-26) — two real gaps
+
+| Record | State |
+|---|---|
+| `MX marketworks.in` | `smtp.google.com` → **mail is on Google Workspace** |
+| `TXT mail.marketworks.in` | `v=spf1 include:amazonses.com ~all` — SES MAIL FROM SPF is live |
+| `TXT marketworks.in` (SPF) | **MISSING** — only a google-site-verification string |
+| `TXT _dmarc.marketworks.in` | **MISSING — no DMARC policy at all** |
+
+What this means:
+
+- **SES sending will pass SPF** — SPF authenticates the envelope
+  (Return-Path) domain, which SES sets to `mail.marketworks.in`, and that
+  subdomain is correctly configured. Good.
+- **But there is no root SPF**, so anything sent from Google Workspace as
+  `@marketworks.in` (a reply, manual outreach) is not SPF-authorised.
+  Needs `v=spf1 include:_spf.google.com ~all` at the root — and note the
+  two must be reconciled into ONE root record if SES is ever used with
+  the root as MAIL FROM. A domain may have only one SPF record.
+- **There is no DMARC record.** DKIM and SPF are meaningless to a
+  receiver without a policy telling it what to do. Publish at least
+  `v=DMARC1; p=none; rua=mailto:...` before the first send, monitor the
+  aggregate reports, then tighten to `quarantine`. This is Phase 3 work
+  but the record should go up in Phase 2 so reports accumulate.
+
+**SES sends but does not receive.** The `From:` identity must be a real
+monitored Google Workspace mailbox, or replies vanish. This is why the
+sender-identity decision in Phase 0 is not cosmetic.
+
 ## 1. Consent model — decide this first, it drives the schema
 
 **Recommendation: double opt-in.** The signup writes a `pending` row and
@@ -137,6 +166,55 @@ suppression-list API and coarser error reporting, so bounce/complaint
 handling comes from the SES event stream instead (Phase 3). Revisit
 boto3 if we ever need the SES v2 list-management or per-message
 telemetry APIs.
+
+## 3a. Personalisation — do the letters carry the reader's name?
+
+**Today: no. We only collect an email address** — the coming-soon form
+has one field. There is no name to greet anyone with.
+
+To change that, add an **optional** first-name field to the waitlist
+form. Optional matters: a required field measurably reduces signups, and
+this list's whole job is to be easy to join.
+
+Handle the fallback **in Python, before substitution** — pick the whole
+greeting string (`"Hi Navdeep,"` vs `"Hi there,"`) and substitute one
+token. Do NOT put a conditional in the template. `"Hi ,"` reaching a real
+inbox is worse than never using the name at all, and it is exactly the
+kind of bug that survives review because the happy path looks fine.
+
+This does not weaken the §3 architecture: a name is one more escaped
+token, the same class of thing as the unsubscribe URL. The tripwire is
+loops and conditionals, not tokens.
+
+Honest note: name personalisation is weak signal at best, and a research
+brand can sound *more* credible with a clean "Hi there" than with
+machine-inserted first names. Worth doing because we may want it later
+for segmentation; not worth doing for its own sake.
+
+## 3b. Typography — Fraunces and Outfit will NOT render
+
+Being Google Fonts is irrelevant. Google Fonts is a hosting service; the
+blocker is that email clients refuse `@font-face` regardless of who
+serves the file. Verified against caniemail today: **24.39% overall
+support**, and specifically **Gmail does not support custom fonts on any
+platform** — desktop webmail, iOS, Android, mobile webmail — it renders
+only Roboto and Google Sans because those are embedded in its own
+stylesheet. Apple Mail also does not support it. Outlook for Windows
+2003–2019 falls back to **Times New Roman**.
+
+So the site's brand faces cannot come along. Design decisions that follow:
+
+- Pick the **fallback stack deliberately** — that is what recipients
+  actually see. Georgia is the closest web-safe match for Fraunces'
+  warmth; Helvetica/Arial for Outfit.
+- Set `mso-generic-font-family` / `mso-font-alt` or old Outlook silently
+  serves Times New Roman.
+- The email will not look identical to the site, and chasing that is
+  wasted effort. Carry the brand through **colour, spacing, layout and
+  the wordmark image** instead — those do survive.
+- If the wordmark must be the real typeface, ship it as a
+  transparent-background PNG (transparent so dark-mode auto-inversion
+  does not box it in white).
 
 ## 4. Schema
 

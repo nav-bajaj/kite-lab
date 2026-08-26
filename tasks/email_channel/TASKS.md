@@ -9,11 +9,27 @@ Deploy constraints inherited from site_gate: no pushes 09:00–15:30 IST
 
 ## Phase 0 — founder decisions (blocks Phase 2)
 
-- [ ] Sender address + display name; confirm it is a monitored mailbox
+- [ ] Sender address + display name. Must be a real Google Workspace
+      mailbox — SES sends but cannot receive, so replies land in
+      Workspace or nowhere
 - [ ] Physical postal address for the footer
 - [ ] Cadence promise to state in the welcome mail
 - [ ] Ratify double opt-in (PLAN §1)
 - [ ] Beta users folded in, or list kept separate?
+- [ ] Collect an optional first name on the waitlist form? (PLAN §3a)
+
+## Phase 0b — DNS, do before any send (PLAN §2 audit)
+
+- [ ] Publish root SPF for Google Workspace:
+      `v=spf1 include:_spf.google.com ~all` — currently MISSING, so
+      Workspace-sent mail from @marketworks.in is unauthenticated.
+      One SPF record per domain: reconcile, do not add a second
+- [ ] Publish DMARC: start `v=DMARC1; p=none; rua=mailto:<inbox>`,
+      currently MISSING entirely. Put it up early so aggregate reports
+      accumulate before the first blast; tighten to quarantine in Phase 3
+- [ ] Re-verify SES DKIM is still SUCCESS in the SES console (set up
+      during auth_stack_v2; confirm it did not lapse)
+- [ ] Watch the Namecheap doubled-Host gotcha on every record above
 
 ## Phase 1 — see the list (no email sent)
 
