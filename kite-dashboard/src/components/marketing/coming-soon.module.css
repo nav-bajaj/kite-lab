@@ -159,10 +159,11 @@
   margin-top: 20px;
   font-family: var(--serif);
   font-weight: 400;
-  font-size: clamp(32px, 5.4vw, 54px);
+  /* founder: heading stays on ONE line at every viewport — vw-driven size
+     keeps it inside the padding instead of wrapping */
+  font-size: clamp(21px, 6.6vw, 54px);
   line-height: 1.14;
-  max-width: 17ch;
-  text-wrap: balance;
+  white-space: nowrap;
   color: var(--ink);
 }
 .lede {

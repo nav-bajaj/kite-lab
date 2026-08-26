@@ -25,9 +25,8 @@ const mono = IBM_Plex_Mono({
  * hairline top and bottom). This is the ONLY page a non-admin visitor can
  * see while SITE_MODE=under_development. No nav, no sign-in link.
  *
- * PLACEHOLDER COPY: the founder writes the final wording. Keep the register
- * neutral — say the platform is under development; do not make affirmative
- * claims about SEBI registration status.
+ * Copy register stays neutral — the platform is under development; do not
+ * make affirmative claims about SEBI registration status.
  */
 export function ComingSoon() {
   return (
@@ -41,10 +40,13 @@ export function ComingSoon() {
       <main className={styles.main}>
         <section className={styles.hero}>
           <p className={styles.eyebrow}>Under development</p>
-          <h1 className={styles.h1}>Something calm is taking shape.</h1>
+          <h1 className={styles.h1}>Process over prediction.</h1>
           <p className={styles.lede}>
-            Marketworks is a research platform for Indian equities, currently
-            under development.
+            Marketworks aims to publish equity research, market statistics,
+            and stock baskets grounded in its own research. We operate at the
+            intersection of technology, finance, and education. Every decision
+            is driven by data, analytics, and repeatable frameworks &mdash;
+            not by predicting where the market goes next.
           </p>
         </section>
 
@@ -55,11 +57,17 @@ export function ComingSoon() {
             </p>
             <h2 className={styles.bandTitle}>Be the first to know.</h2>
             <p className={styles.bandSub}>
-              Leave your email and we&apos;ll let you know when we launch.
+              We are currently &ldquo;invite only&rdquo; and in Private Beta
+              testing.
+            </p>
+            <p className={styles.bandSub}>
+              Please leave your email to be added to our waitlist and we will
+              reach out to you.
             </p>
             <WaitlistForm />
             <p className={styles.privacy}>
-              We&apos;ll only email you about the launch. See our{" "}
+              We&apos;ll only email you important updates about our
+              development and launch. See our{" "}
               <a href="/privacy">Privacy Policy</a>.
             </p>
           </div>
