@@ -332,7 +332,6 @@
   position: relative;
   z-index: 1;
   overflow: hidden;
-  margin-top: 40px;
   background: var(--green-deep);
   color: var(--green-on-deep);
 }
