@@ -95,22 +95,22 @@
   --shadow: 0 10px 30px -12px rgba(20, 26, 23, 0.14);
 }
 
-/* Dot texture — guide .tex-dots, sized for a full page: soft radial mask so
-   the field fades before the band. */
+/* Dot texture — guide .tex-dots, inverted mask per founder note: visible at
+   the edges, fading out toward the center where the content sits. */
 .dots {
   position: absolute;
   inset: 0;
   pointer-events: none;
   color: var(--green-vivid);
-  opacity: 0.16;
+  opacity: 0.2;
   background-image: radial-gradient(currentColor 1.4px, transparent 1.5px);
   background-size: 18px 18px;
   -webkit-mask-image: radial-gradient(
-    90% 62% at 50% 24%,
-    #000 0,
-    transparent 100%
+    75% 60% at 50% 42%,
+    transparent 32%,
+    #000 100%
   );
-  mask-image: radial-gradient(90% 62% at 50% 24%, #000 0, transparent 100%);
+  mask-image: radial-gradient(75% 60% at 50% 42%, transparent 32%, #000 100%);
 }
 
 /* ── header: centered wordmark, brand green, serif ── */
@@ -121,11 +121,12 @@
   justify-content: center;
   padding: 40px 24px 0;
 }
+/* guide .wordmark: sans, semibold, tight tracking, brand green */
 .wordmark {
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: 31px;
-  letter-spacing: 0;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 28px;
+  letter-spacing: -0.015em;
   color: var(--green);
 }
 
@@ -170,7 +171,7 @@
   line-height: 1.6;
   color: var(--grey);
   max-width: 46ch;
-  text-wrap: pretty;
+  text-wrap: balance;
 }
 
 /* ── email band — guide §06: near-white field edge to edge, hairline top
@@ -213,6 +214,7 @@
   font-size: 14.5px;
   color: var(--grey);
   max-width: 44ch;
+  text-wrap: balance;
 }
 .privacy {
   margin-top: 16px;
@@ -285,6 +287,7 @@
 @media (max-width: 560px) {
   .form {
     flex-direction: column;
+    align-items: center;
   }
   .input {
     /* in the column layout flex:1 would size the input on the vertical
@@ -293,7 +296,10 @@
     width: 100%;
   }
   .submit {
-    width: 100%;
+    /* founder note: keep the button intrinsic-width like desktop, centered
+       under the full-width field */
+    width: auto;
+    min-width: 178px;
   }
 }
 
@@ -320,29 +326,92 @@
   text-align: center;
 }
 
-/* ── footer: centered, mono ── */
-.foot {
+/* ── footer — guide .tfooter: the one deep-green drench, rounded card,
+   hatch texture, giant ghost wordmark, mono base row ── */
+.footWrap {
   position: relative;
   z-index: 1;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 24px 44px;
+}
+.foot {
+  position: relative;
+  overflow: hidden;
+  border-radius: 32px;
+  background: var(--green-deep);
+  color: var(--green-on-deep);
+}
+.hatch {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: var(--green-on-deep);
+  opacity: 0.14;
+  background-image: repeating-linear-gradient(
+    45deg,
+    currentColor 0 1px,
+    transparent 1px 7px
+  );
+  -webkit-mask-image: radial-gradient(
+    120% 100% at 85% 12%,
+    #000 8%,
+    transparent 74%
+  );
+  mask-image: radial-gradient(120% 100% at 85% 12%, #000 8%, transparent 74%);
+}
+.footIn {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 30px 24px 36px;
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--grey);
+  text-align: center;
+  padding: 44px 28px 24px;
 }
-.foot nav {
+.footNote {
+  font-size: 13.5px;
+  line-height: 1.65;
+  max-width: 52ch;
+  color: color-mix(in srgb, var(--green-on-deep) 70%, transparent);
+}
+.footLinks {
+  margin-top: 20px;
   display: flex;
-  gap: 24px;
+  gap: 26px;
+  font-size: 13.5px;
+  font-weight: 500;
 }
-.foot a {
-  color: inherit;
+.footLinks a {
+  color: var(--green-on-deep);
   text-decoration: none;
 }
-.foot a:hover {
-  color: var(--green);
+.footLinks a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.giant {
+  margin-top: 34px;
+  align-self: stretch;
+  text-align: center;
+  user-select: none;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: clamp(48px, 11vw, 132px);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  color: color-mix(in srgb, var(--green-on-deep) 16%, transparent);
+}
+.footBase {
+  margin-top: 20px;
+  padding-top: 18px;
+  align-self: stretch;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid color-mix(in srgb, var(--green-on-deep) 16%, transparent);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: color-mix(in srgb, var(--green-on-deep) 55%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {
