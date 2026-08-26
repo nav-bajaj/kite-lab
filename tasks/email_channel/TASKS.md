@@ -3,20 +3,38 @@
 Branch: `email_channel` off `beta_gtm_mvp` (the live prod branch — NOT
 main; see `tasks/site_gate/RESULTS.md`). Commit prefix `email_channel:`.
 
-Deploy constraints inherited from site_gate: no pushes 09:00–15:30 IST
-(live services restart), and Railway CLI must be given
-`--service kite-lab` explicitly or it targets the options worker.
+Deploy constraints inherited from site_gate, plus one learned on
+2026-08-26:
 
-## Phase 0 — founder decisions (blocks Phase 2)
+- **No pushes 09:00–15:30 IST** — market hours; a deploy restarts live
+  services and the options worker is capturing ticks.
+- **Also avoid 15:55–17:30 IST.** 16:00 is the EOD proposed-orders job
+  and 16:30 is the daily pipeline. A push in that window restarts the
+  API mid-job. The safe windows are before 09:00 or after ~17:30.
+- **Railway CLI needs `--service kite-lab`** explicitly, or it targets
+  the options worker.
+- **Railway keeps logs only for the CURRENT deployment.** Pushing again
+  destroys the previous process's logs, so verify a scheduled job BEFORE
+  the next deploy, or you lose the evidence. Use the admin
+  `GET /api/freshness` endpoint instead — it reads state, not logs.
 
-- [ ] Sender address + display name. Must be a real Google Workspace
-      mailbox — SES sends but cannot receive, so replies land in
-      Workspace or nowhere
+## Phase 0 — founder decisions
+
+DECIDED 2026-08-27:
+- [x] **Self-hosted**, not a newsletter SaaS. SES + our own Postgres +
+      React Email. No new subscription.
+- [x] **Sender: `mail@marketworks.in`**, a new Google Workspace mailbox
+      the founder is creating. Real monitored inbox — SES cannot receive,
+      so replies land here. Never `noreply@`.
+
+STILL OPEN (blocks Phase 2 send):
 - [ ] Physical postal address for the footer
 - [ ] Cadence promise to state in the welcome mail
-- [ ] Ratify double opt-in (PLAN §1)
-- [ ] Beta users folded in, or list kept separate?
+- [ ] Ratify double opt-in (PLAN §1 recommends yes)
+- [ ] Beta users folded in, or list kept separate? (default: separate)
 - [ ] Collect an optional first name on the waitlist form? (PLAN §3a)
+- [ ] Confirm `mail@marketworks.in` exists and receives before Phase 2
+      ships — send it a test from outside
 
 ## Phase 0b — DNS, do before any send (PLAN §2 audit)
 
@@ -87,7 +105,17 @@ Deploy constraints inherited from site_gate: no pushes 09:00–15:30 IST
 - [ ] Risk-register row for the outbound-email surface (PII in transit,
       token design, unsubscribe integrity)
 
-## Phase 4 — newsletter
+## Phase 4 — newsletter — PARKED, do not start yet
+
+Deliberately deferred (founder discussion 2026-08-27). There is no list
+yet, so tooling and format decisions for it are premature. Revisit when
+there are enough real confirmed subscribers to be worth writing to, and
+when we know we will actually write on a cadence. Phases 1–3 are the
+near-term work and stand alone without this.
+
+Also gated on the SEBI question in PLAN §2 — whether any market
+commentary is permissible pre-registration decides what a newsletter may
+contain at all, and that needs professional advice, not a guess.
 
 - [ ] Register `newsletter` format in
       `finance-content-os/registry/content_types.yml` with derivation
