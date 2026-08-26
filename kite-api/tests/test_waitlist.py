@@ -38,6 +38,7 @@ os.environ.setdefault("DISABLE_AUTH", "false")
 
 from app.main import app  # noqa: E402
 from app import auth as auth_module  # noqa: E402
+from app.api import waitlist as waitlist_module  # noqa: E402
 from app.middleware.rate_limiter import limiter  # noqa: E402
 from app.models.database import get_db  # noqa: E402
 from app.models.models import WaitlistSignup  # noqa: E402
@@ -76,8 +77,10 @@ def override_db(db_sessionmaker):
 
 @pytest.fixture(autouse=True)
 def clean_state(db_sessionmaker):
-    """Fresh table + fresh rate-limit buckets for every test."""
+    """Fresh table, rate-limit buckets, and row-count cache for every test."""
     limiter.reset()
+    waitlist_module._count_cache["n"] = 0
+    waitlist_module._count_cache["checked_at"] = 0.0
     db = db_sessionmaker()
     db.query(WaitlistSignup).delete()
     db.commit()
@@ -210,6 +213,18 @@ def test_unknown_source_rejected(test_client, db_sessionmaker):
         json={"email": "person@example.com", "source": "somewhere_else"},
     )
     assert resp.status_code == 422
+    assert _count(db_sessionmaker) == 0
+
+
+def test_row_ceiling_pretends_success_writes_nothing(
+    test_client, db_sessionmaker, monkeypatch
+):
+    """Past _MAX_ROWS the endpoint returns the same 200 but stops writing
+    (R-027 growth ceiling)."""
+    monkeypatch.setattr(waitlist_module, "_MAX_ROWS", 0)
+    resp = test_client.post("/api/waitlist", json={"email": "late@example.com"})
+    assert resp.status_code == 200
+    assert resp.json() == {"status": "ok"}
     assert _count(db_sessionmaker) == 0
 
 

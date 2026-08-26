@@ -9,8 +9,9 @@ Not under /api/system/* — that router is reserved for Zerodha OAuth
 bootstrap (AD-1, R-003).
 """
 import re
+import time
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel, Field
 from slowapi.util import get_remote_address
 from sqlalchemy.exc import IntegrityError
@@ -31,6 +32,23 @@ _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 _ALLOWED_SOURCES = frozenset({"coming_soon"})
 
 _OK = {"status": "ok"}
+
+# Absolute ceiling on table growth (R-027): the XFF-keyed rate limit is
+# spoofable and unique emails are unbounded, so a rotating abuser could
+# otherwise grow the table indefinitely. Past the cap we silently stop
+# writing (same 200 as every other accepted case). Count is cached to keep
+# the public POST from running a COUNT(*) per request.
+_MAX_ROWS = 50_000
+_COUNT_CACHE_TTL_SECONDS = 60
+_count_cache = {"n": 0, "checked_at": 0.0}
+
+
+def _table_full(db: Session) -> bool:
+    now = time.time()
+    if now - _count_cache["checked_at"] > _COUNT_CACHE_TTL_SECONDS:
+        _count_cache["n"] = db.query(WaitlistSignup).count()
+        _count_cache["checked_at"] = now
+    return _count_cache["n"] >= _MAX_ROWS
 
 
 def _waitlist_key(request: Request) -> str:
@@ -76,6 +94,10 @@ async def join_waitlist(
         # Bot filled the honeypot — pretend success, write nothing.
         return _OK
 
+    if _table_full(db):
+        # Ceiling reached — pretend success, write nothing (R-027).
+        return _OK
+
     db.add(WaitlistSignup(email=email, source=body.source))
     try:
         db.commit()
@@ -86,11 +108,14 @@ async def join_waitlist(
 
 @router.get("")
 async def list_waitlist(
+    response: Response,
     limit: int = 500,
     db: Session = Depends(get_db),
     user: dict = Depends(require_admin),
 ):
     """Admin-only readout of the waitlist, newest first."""
+    # Bulk PII — never cacheable (matches the R-026 admin ops-intel pattern).
+    response.headers["Cache-Control"] = "no-store, must-revalidate"
     limit = max(1, min(limit, 5000))
     rows = (
         db.query(WaitlistSignup)

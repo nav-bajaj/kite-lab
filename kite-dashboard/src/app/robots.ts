@@ -7,8 +7,12 @@ import { siteMode } from "@/lib/site-mode";
 // middleware gate (tasks/site_gate).
 export default function robots(): MetadataRoute.Robots {
   if (siteMode() === "under_development") {
+    // Deliberately crawlable while gated: crawlers must be able to re-visit
+    // the previously-indexed pages to see the 307s and the sitewide
+    // X-Robots-Tag: noindex (next.config.ts) and drop them from the index.
+    // Disallow: / would freeze the old index entries in place.
     return {
-      rules: { userAgent: "*", disallow: "/" },
+      rules: { userAgent: "*", allow: "/" },
     };
   }
   return {

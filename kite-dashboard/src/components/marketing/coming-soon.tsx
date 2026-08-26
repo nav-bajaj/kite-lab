@@ -35,6 +35,13 @@ export function ComingSoon() {
               when we launch.
             </p>
             <WaitlistForm />
+            <p className="text-sm text-muted-foreground">
+              We&apos;ll only email you about the launch. See our{" "}
+              <a href="/privacy" className="underline underline-offset-2">
+                Privacy Policy
+              </a>
+              .
+            </p>
           </div>
         </SectionPanel>
       </main>
