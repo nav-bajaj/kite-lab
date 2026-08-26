@@ -41,6 +41,12 @@ class Settings(BaseSettings):
     debug: bool = False
     disable_auth: bool = False
 
+    # Site-gate lockdown (tasks/site_gate). While the public site shows the
+    # under-development page, only admin-role tokens may use protected
+    # endpoints; the normally-public insights/indices readers require an
+    # admin token too. Flip to false at launch.
+    private_mode: bool = False
+
     # Data directory
     @property
     def data_dir(self) -> Path:

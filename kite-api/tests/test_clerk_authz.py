@@ -175,7 +175,7 @@ def test_client() -> TestClient:
 # ---------------------------------------------------------------------------
 
 
-# 17 admin/mutation endpoints. A client-role token must get 403 here.
+# 20 admin/mutation endpoints. A client-role token must get 403 here.
 ADMIN_ENDPOINTS: list[tuple[str, str]] = [
     # jobs.py
     ("GET", "/api/jobs"),
@@ -204,6 +204,8 @@ ADMIN_ENDPOINTS: list[tuple[str, str]] = [
     # options_worker.py — admin-only options-worker heartbeat (ops intel)
     ("GET", "/api/options/worker-status"),
     ("GET", "/api/options/live-analytics"),
+    # waitlist.py — admin-only readout of the coming-soon waitlist
+    ("GET", "/api/waitlist"),
 ]
 # Note: POST /api/sync/upload-data and POST /api/jobs/{id}/cancel above already
 # cover sync.py(3rd) and jobs.py respectively. POST /api/sync/upload-data is
@@ -252,7 +254,9 @@ CLIENT_READ_ENDPOINTS: list[tuple[str, str]] = [
 ]
 
 
-# 7 always-unauthenticated endpoints. No token needed; must return non-401/403.
+# 8 always-unauthenticated endpoints. No token needed; must return non-401/403.
+# (POST /api/waitlist is sent bodyless here, so a 422 proves auth was never
+# demanded — the waitlist behaviour itself is covered in test_waitlist.py.)
 PUBLIC_ENDPOINTS: list[tuple[str, str]] = [
     ("GET", "/api/health"),
     ("GET", "/api/positions/market-status"),
@@ -261,6 +265,7 @@ PUBLIC_ENDPOINTS: list[tuple[str, str]] = [
     ("GET", "/api/system/database"),
     ("GET", "/api/system/sync"),
     ("GET", "/api/system/login-url"),
+    ("POST", "/api/waitlist"),
 ]
 
 

@@ -153,6 +153,20 @@ def _extract_role(payload: dict) -> str:
     return "client"
 
 
+def _enforce_private_mode(role: str) -> None:
+    """PRIVATE_MODE=true: only admin-role tokens may use protected endpoints.
+
+    Site-gate lockdown (tasks/site_gate, risk register R-028): while the
+    public site is behind the under-development page, existing beta users'
+    still-valid tokens must not pull data — the frontend gate alone would
+    leave the API reachable directly.
+    """
+    if get_settings().private_mode and role != "admin":
+        raise ForbiddenError(
+            "Access is restricted while the service is in private mode"
+        )
+
+
 # ---------------------------------------------------------------------------
 # FastAPI dependencies
 # ---------------------------------------------------------------------------
@@ -188,9 +202,12 @@ def get_current_user(
     if not sub:
         raise AuthError("Token missing sub claim")
 
+    role = _extract_role(payload)
+    _enforce_private_mode(role)
+
     return {
         "sub": sub,
-        "role": _extract_role(payload),
+        "role": role,
         "metadata": payload.get("metadata") or {},
         "claims": payload,
         "source": "clerk",
@@ -267,6 +284,28 @@ def check_universe_access(universe: str, user: dict) -> None:
         )
 
 
+def require_admin_when_private(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+) -> None:
+    """Router-level dependency for the intentionally-public data readers
+    (insights, indices — R-023 surface).
+
+    Normal operation: no-op, the routers stay anonymous. Under
+    PRIVATE_MODE=true they require a valid admin bearer token, so the
+    site-gate lockdown has no unauthenticated data holes.
+    """
+    if not get_settings().private_mode:
+        return
+    if credentials is None:
+        raise AuthError("Missing authentication token")
+    # get_current_user raises 401 on an invalid token and 403 on a
+    # non-admin role via _enforce_private_mode; the explicit check below
+    # is belt-and-braces should the enforcement point ever move.
+    user = get_current_user(credentials)
+    if user.get("role") != "admin":
+        raise ForbiddenError("Admin role required")
+
+
 # Convenience aliases — back-compat with existing imports.
 require_auth = Depends(get_current_user)
 optional_auth = Depends(get_optional_user)
@@ -284,9 +323,11 @@ def validate_token_string(token: str) -> dict:
     sub = payload.get("sub")
     if not sub:
         raise AuthError("Token missing sub claim")
+    role = _extract_role(payload)
+    _enforce_private_mode(role)
     return {
         "sub": sub,
-        "role": _extract_role(payload),
+        "role": role,
         "metadata": payload.get("metadata") or {},
         "claims": payload,
         "source": "clerk_query_param",

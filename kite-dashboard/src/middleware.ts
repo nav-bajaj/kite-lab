@@ -1,6 +1,7 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { INSIGHTS_ACCESS } from "@/lib/flags";
+import { siteMode, PUBLIC_WHEN_GATED } from "@/lib/site-mode";
 
 // Public routes — no auth required. Anything not in this list (and not in
 // `config.matcher` exclusions below) requires a signed-in Clerk session.
@@ -38,6 +39,10 @@ const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 //   all   → any signed-in user (the default auth.protect() gate applies).
 const isInsightsRoute = createRouteMatcher(["/insights(.*)"]);
 
+// Under-development gate (tasks/site_gate): routes that stay reachable while
+// SITE_MODE=under_development. Everything else is admin-only.
+const isGateOpenRoute = createRouteMatcher(PUBLIC_WHEN_GATED);
+
 function roleFromClaims(sessionClaims: unknown): string | undefined {
   return (sessionClaims as { metadata?: { role?: string } } | null)?.metadata
     ?.role;
@@ -57,6 +62,24 @@ const authorizedParties = [
 
 export default clerkMiddleware(
   async (auth, req) => {
+    // Under-development gate: while SITE_MODE=under_development everything
+    // except PUBLIC_WHEN_GATED is invisible unless the session's
+    // publicMetadata.role is admin. Non-admins — signed-in beta users
+    // included — and anonymous visitors are bounced to "/" (never to
+    // /sign-in, so the gate does not advertise that a sign-in exists; an
+    // unknown path and a real one behave identically). This block runs
+    // first so it wins over the insights/public-route logic below; the
+    // backend enforces the same lockdown independently via PRIVATE_MODE.
+    if (siteMode() === "under_development" && !isGateOpenRoute(req)) {
+      const { sessionClaims } = await auth();
+      if (roleFromClaims(sessionClaims) !== "admin") {
+        const url = req.nextUrl.clone();
+        url.pathname = "/";
+        url.search = "";
+        return NextResponse.redirect(url);
+      }
+    }
+
     if (isInsightsRoute(req)) {
       if (INSIGHTS_ACCESS === "off") {
         const url = req.nextUrl.clone();

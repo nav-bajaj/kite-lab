@@ -23,6 +23,24 @@ from sqlalchemy.sql import func
 from app.models.database import Base
 
 
+class WaitlistSignup(Base):
+    """Coming-soon waitlist signups (tasks/site_gate). Storage only — no
+    email sending. Emails are normalised (strip + lowercase) before insert;
+    the unique index makes the public POST idempotent."""
+
+    __tablename__ = "waitlist_signups"
+
+    id = Column(Integer, primary_key=True)
+    email = Column(String(320), unique=True, nullable=False, index=True)
+    source = Column(String(50), nullable=False, server_default="coming_soon")
+    created_at = Column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    def __repr__(self):
+        return f"<WaitlistSignup(email='{self.email}')>"
+
+
 class AllowedUser(Base):
     """Whitelist of users allowed to access the dashboard."""
 
