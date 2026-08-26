@@ -32,6 +32,7 @@
       `PRIVATE_MODE` set BEFORE pushing; pushed 15:47 IST (post-freeze)
 - [x] Prod verification (full curl matrix, live waitlist POST, leak
       scan, deindex headers); RESULTS.md written
-- [ ] Founder browser check: sign in as admin on marketworks.in and
-      confirm the full site renders (needs a real Clerk admin session —
-      cannot be curl-verified)
+- [x] Founder browser check: signed in as admin on marketworks.in, full
+      site renders; gated view confirmed on other devices
+- [x] Coming-soon page pinned to light mode for all visitors (`f6b93fc`),
+      verified anonymous + dark device + stored dark preference

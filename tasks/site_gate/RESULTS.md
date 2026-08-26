@@ -51,6 +51,27 @@ write.
 gated route, no `SITE_MODE` string, and not the false "SEBI Registered
 Research Analyst" line.
 
+**Admin path** — founder confirmed sign-in at `/sign-in` (unlinked, direct
+URL only) and the full site rendering afterwards. Independently observed:
+a signed-in admin browser gets the real landing (`h1` = "Indian markets,
+the calm way") while an isolated anonymous context on the same build gets
+the coming-soon page. The gate reuses the same `roleFromClaims()` helper
+the pre-existing `/admin` route gate uses, so admin access could not have
+been narrower than it already was.
+
+**Light mode** (commit `f6b93fc`) — the coming-soon page renders light for
+everyone. Verified on production from an anonymous context with the device
+set to dark AND `html.dark` applied: white ground, `#f4f7f5` band,
+computed `color-scheme: light`. Shipped CSS contains one
+`color-scheme:light` and zero dark tokens. Rationale is in the file
+header: the page has no theme toggle, so a dark variant would be a look
+nobody chose and nobody reviewed on the brand's only public surface.
+
+Careful with automated checks here: the string "Process over prediction."
+appears on BOTH pages — it is the new gated headline and also a section
+heading on the real landing page. Match on the `h1` ("Indian markets, the
+calm way" = real landing) or on the absence of nav, not on that phrase.
+
 ## Unaffected by the lockdown (verified before the 16:30 pipeline)
 
 - The in-process scheduler uses no FastAPI auth dependencies.
