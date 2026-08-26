@@ -19,6 +19,10 @@ const isPublicRoute = createRouteMatcher([
   "/disclaimer",
   "/library(.*)",
   "/portfolios",
+  // Metadata route (src/app/robots.ts). Its .txt extension is not in the
+  // matcher's static-asset exclusions, so without this entry auth.protect()
+  // 404s crawlers.
+  "/robots.txt",
 ]);
 
 // Insight engine pages: behind Clerk login but available to ALL signed-in

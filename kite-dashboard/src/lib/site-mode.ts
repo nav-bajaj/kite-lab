@@ -37,4 +37,8 @@ export const PUBLIC_WHEN_GATED = [
   "/privacy",
   "/disclaimer",
   "/sign-in(.*)", // includes /sign-in/factor-one, /sign-in/sso-callback
+  // .txt is not in the middleware matcher's static-asset exclusions, so
+  // robots.txt must be allowlisted explicitly — crawlers need it reachable
+  // for the deindexing strategy (see robots.ts) to work.
+  "/robots.txt",
 ];
