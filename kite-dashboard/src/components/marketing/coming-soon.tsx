@@ -66,29 +66,22 @@ export function ComingSoon() {
         </section>
       </main>
 
-      <div className={styles.footWrap}>
-        <footer className={styles.foot}>
-          <div className={styles.hatch} aria-hidden />
-          <div className={styles.footIn}>
-            <p className={styles.footNote}>
-              Marketworks publishes educational research on Indian equities.
-              Markets carry risk; past behaviour is not a guarantee of future
-              results.
-            </p>
-            <nav className={styles.footLinks}>
-              <a href="/terms">Terms</a>
-              <a href="/privacy">Privacy</a>
-              <a href="/disclaimer">Disclaimer</a>
-            </nav>
-            <p className={styles.giant} aria-hidden>
-              marketworks
-            </p>
-            <div className={styles.footBase}>
-              <span>&copy; 2026 Marketworks Research</span>
-            </div>
+      <footer className={styles.foot}>
+        <div className={styles.hatch} aria-hidden />
+        <div className={styles.footIn}>
+          <nav className={styles.footLinks}>
+            <a href="/terms">Terms</a>
+            <a href="/privacy">Privacy</a>
+            <a href="/disclaimer">Disclaimer</a>
+          </nav>
+          <p className={styles.giant} aria-hidden>
+            marketworks
+          </p>
+          <div className={styles.footBase}>
+            <span>&copy; 2026 Marketworks Research</span>
           </div>
-        </footer>
-      </div>
+        </div>
+      </footer>
     </div>
   );
 }

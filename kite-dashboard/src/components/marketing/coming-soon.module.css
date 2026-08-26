@@ -326,20 +326,13 @@
   text-align: center;
 }
 
-/* ── footer — guide .tfooter: the one deep-green drench, rounded card,
-   hatch texture, giant ghost wordmark, mono base row ── */
-.footWrap {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 40px 24px 44px;
-}
+/* ── footer — the one deep-green drench, as a thin edge-to-edge band:
+   hatch texture, links, ghost wordmark, mono base row ── */
 .foot {
   position: relative;
+  z-index: 1;
   overflow: hidden;
-  border-radius: 32px;
+  margin-top: 40px;
   background: var(--green-deep);
   color: var(--green-on-deep);
 }
@@ -363,20 +356,15 @@
 }
 .footIn {
   position: relative;
+  max-width: 1080px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 44px 28px 24px;
-}
-.footNote {
-  font-size: 13.5px;
-  line-height: 1.65;
-  max-width: 52ch;
-  color: color-mix(in srgb, var(--green-on-deep) 70%, transparent);
+  padding: 26px 24px 16px;
 }
 .footLinks {
-  margin-top: 20px;
   display: flex;
   gap: 26px;
   font-size: 13.5px;
@@ -391,20 +379,20 @@
   text-underline-offset: 3px;
 }
 .giant {
-  margin-top: 34px;
+  margin-top: 18px;
   align-self: stretch;
   text-align: center;
   user-select: none;
   font-family: var(--sans);
   font-weight: 600;
-  font-size: clamp(48px, 11vw, 132px);
+  font-size: clamp(34px, 6.5vw, 76px);
   line-height: 0.92;
   letter-spacing: -0.04em;
   color: color-mix(in srgb, var(--green-on-deep) 16%, transparent);
 }
 .footBase {
-  margin-top: 20px;
-  padding-top: 18px;
+  margin-top: 14px;
+  padding-top: 13px;
   align-self: stretch;
   display: flex;
   justify-content: center;
