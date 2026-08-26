@@ -14,10 +14,18 @@
 - [x] Frontend: legal layout gated chrome; `robots.ts`; legal-page
       noindex when gated; not-found label fix
 - [x] Risk register rows R-027, R-028
-- [ ] Security review: `/security-review` + `security-reviewer` subagent
-- [ ] Local verification matrix (curl + browser)
+- [x] Security review: `/security-review` (no findings) + `security-reviewer`
+      subagent (APPROVE-WITH-NOTES; all notes addressed — deindex strategy,
+      50k waitlist ceiling, no-store, DPDP notice, register wording,
+      robots.txt reachability)
+- [x] Local verification matrix (curl): all gated routes + unknown paths
+      307 to /; open routes 200; robots.txt serves Allow:/ + sitewide
+      X-Robots-Tag noindex; waitlist POST ok/dup/422/honeypot/401 matrix
+      green; private mode 401s insights/indices/portfolio anon,
+      market-status stays 200; coming-soon + legal HTML leak-scanned clean
 - [ ] Founder demo on local dev servers; founder copy pass on
-      `coming-soon.tsx` placeholders
+      `coming-soon.tsx` placeholders; browser check of admin sign-in
+      (needs real Clerk admin session — cannot be curl-verified)
 - [ ] Merge `--no-ff` to `beta_gtm_mvp`; set Vercel `SITE_MODE` +
       Railway `PRIVATE_MODE` BEFORE pushing; push after 15:30 IST only
 - [ ] Prod verification (curl matrix, live waitlist POST, admin
