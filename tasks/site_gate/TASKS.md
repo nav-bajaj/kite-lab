@@ -23,10 +23,15 @@
       X-Robots-Tag noindex; waitlist POST ok/dup/422/honeypot/401 matrix
       green; private mode 401s insights/indices/portfolio anon,
       market-status stays 200; coming-soon + legal HTML leak-scanned clean
-- [ ] Founder demo on local dev servers; founder copy pass on
-      `coming-soon.tsx` placeholders; browser check of admin sign-in
-      (needs real Clerk admin session — cannot be curl-verified)
-- [ ] Merge `--no-ff` to `beta_gtm_mvp`; set Vercel `SITE_MODE` +
-      Railway `PRIVATE_MODE` BEFORE pushing; push after 15:30 IST only
-- [ ] Prod verification (curl matrix, live waitlist POST, admin
-      click-through); RESULTS.md
+- [x] Founder demo on local dev servers; founder copy pass on
+      `coming-soon.tsx` (final text landed in `b8ba0a4`)
+- [x] Coming-soon restyled to design language v2 per founder notes
+      (dots at edges, sans wordmark, banded email section, thin
+      edge-to-edge footer drench, one-line heading)
+- [x] Merge `--no-ff` to `beta_gtm_mvp`; Vercel `SITE_MODE` + Railway
+      `PRIVATE_MODE` set BEFORE pushing; pushed 15:47 IST (post-freeze)
+- [x] Prod verification (full curl matrix, live waitlist POST, leak
+      scan, deindex headers); RESULTS.md written
+- [ ] Founder browser check: sign in as admin on marketworks.in and
+      confirm the full site renders (needs a real Clerk admin session —
+      cannot be curl-verified)
