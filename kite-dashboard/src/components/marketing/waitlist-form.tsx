@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import styles from "./coming-soon.module.css";
+
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -10,7 +12,9 @@ type FormState = "idle" | "submitting" | "done" | "error";
 /**
  * Waitlist email capture for the under-development page (tasks/site_gate).
  * POSTs to the public kite-api waitlist endpoint. The hidden "website"
- * field is a honeypot — real users never see or fill it.
+ * field is a honeypot — real users never see or fill it. Styled by
+ * coming-soon.module.css: pill input + green pill button side by side on
+ * desktop, stacked full-width on mobile.
  */
 export function WaitlistForm() {
   const [email, setEmail] = useState("");
@@ -39,29 +43,28 @@ export function WaitlistForm() {
 
   if (state === "done") {
     return (
-      <p className="text-base font-medium text-foreground" role="status">
+      <p className={styles.done} role="status">
         You&apos;re on the list. We&apos;ll email you when we launch.
       </p>
     );
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex w-full max-w-[440px] flex-col gap-3 sm:flex-row"
-    >
+    <form onSubmit={handleSubmit} className={styles.form}>
       <label htmlFor="waitlist-email" className="sr-only">
         Email address
       </label>
       <input
         id="waitlist-email"
+        className={styles.input}
         type="email"
+        inputMode="email"
+        autoComplete="email"
         required
         maxLength={320}
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@example.com"
-        className="h-12 flex-1 rounded-full border border-border bg-surface-base px-5 text-base text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40"
       />
       {/* Honeypot — hidden from real users, bots fill it. */}
       <input
@@ -72,17 +75,23 @@ export function WaitlistForm() {
         tabIndex={-1}
         autoComplete="off"
         aria-hidden="true"
-        className="absolute left-[-9999px] h-0 w-0 opacity-0"
+        style={{
+          position: "absolute",
+          left: "-9999px",
+          height: 0,
+          width: 0,
+          opacity: 0,
+        }}
       />
       <button
         type="submit"
+        className={styles.submit}
         disabled={state === "submitting"}
-        className="h-12 rounded-full bg-primary px-6 text-base font-semibold text-primary-foreground transition-[transform,box-shadow] duration-200 ease-expo hover:-translate-y-px hover:shadow-md disabled:opacity-60"
       >
         {state === "submitting" ? "Joining…" : "Notify me"}
       </button>
       {state === "error" && (
-        <p className="text-sm text-muted-foreground sm:basis-full" role="status">
+        <p className={styles.error} role="status">
           Something went wrong — please try again in a minute.
         </p>
       )}
