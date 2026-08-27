@@ -48,9 +48,10 @@ DECIDED 2026-08-27 (second round):
 
 STILL OPEN:
 - [ ] Beta users folded in, or list kept separate? (default: separate)
-- [ ] Confirm `mail@marketworks.in` receives — send it a test from an
-      outside address. SES cannot receive, so this is the only path for
-      replies and a silent failure here loses every reply.
+- [x] `mail@marketworks.in` CONFIRMED RECEIVING (founder, 2026-08-27) —
+      a test from an outside address arrived. The reply path works.
+      NOTE this proves receiving only; SES sending AS that address is a
+      separate direction and is still untested.
 - [ ] Resolve the cadence question (PLAN §2a)
 
 ## Phase 0b — DNS (PLAN §2 audit)
