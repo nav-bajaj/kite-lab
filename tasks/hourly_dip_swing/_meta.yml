@@ -1,0 +1,8 @@
+name: hourly_dip_swing
+status: shipped
+opened: 2026-08-25
+closed: 2026-08-25
+related_commits: []
+supersedes: []
+depends_on:
+  - dip_vs_breakout_calls
