@@ -1,8 +1,11 @@
 name: email_channel
-status: planned
+status: in-progress
 opened: 2026-08-26
 closed: null
-related_commits: []
+related_commits:
+  - b126489   # SMTP 2587 + ses:no-track (the two seed-test fixes)
+  - 46732fb   # admin list management
+  - db7ec9c   # Phase 1+2 merge: schema, send path, consent, design system
 supersedes: []
 depends_on:
   - site_gate
