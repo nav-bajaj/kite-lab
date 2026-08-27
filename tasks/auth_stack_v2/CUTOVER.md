@@ -3,7 +3,64 @@
 Every step below encodes a gotcha we actually hit on the scratch
 project. Do them in order. Stages A–B have ZERO production impact.
 Stages C–D restart live services — market-hours freeze applies
-(09:00–15:30 IST: do not proceed inside that window).
+(09:00–15:30 IST: do not proceed inside that window; also avoid
+15:55–17:30 IST, which is the EOD proposal + daily pipeline window).
+
+---
+
+## ⚠ READ FIRST — this runbook predates the site gate
+
+Written 2026-08-13. Since then `site_gate` shipped (2026-08-26) and
+marketworks.in is **gated**: the public sees only the under-development
+page, and everything else is admin-only pending SEBI registration.
+
+**`auth_stack_v2`'s middleware does NOT contain the gate.** Verified
+2026-08-27 — zero references to `siteMode` / `PUBLIC_WHEN_GATED`. A
+merge that resolves `middleware.ts` in favour of this branch **silently
+un-gates the entire site**, publishing the whole product while the RA
+application is pending. That is the worst available outcome of this
+cutover and it is a one-line mistake.
+
+Nine files conflict between the branches:
+
+    kite-dashboard/src/middleware.ts          ← carries the gate
+    kite-dashboard/src/app/page.tsx           ← carries the gate
+    kite-dashboard/next.config.ts             ← X-Robots-Tag noindex
+    kite-api/app/auth.py                      ← PRIVATE_MODE lockdown
+    kite-api/app/config.py                    ← both flags
+    kite-api/app/models/models.py             ← waitlist table
+    kite-api/tests/test_clerk_authz.py        ← replaced by supabase suite
+    kite-dashboard/src/app/(legal)/privacy/page.tsx
+    docs/security/risk-register.md
+
+**Do the reconciliation BEFORE stage D**, in a worktree, as a merge of
+`beta_gtm_mvp` INTO `auth_stack_v2` — not as a rushed conflict
+resolution during the cutover merge itself. See Stage A0.
+
+The port of the gate is small but must be deliberate: the Supabase
+middleware needs the same first-block gate the Clerk one has, reading
+the role from `app_metadata.role` via `getClaims()` instead of Clerk's
+`sessionClaims.metadata.role`. Everything else about the gate —
+`site-mode.ts`, the coming-soon page, `robots.ts`, the consent pages —
+is auth-agnostic and ports unchanged.
+
+## Stage A0 — reconcile the branches (🤖, BEFORE anything else)
+
+- [ ] A0.1 Land the `email_channel` branch on `beta_gtm_mvp` first, so
+      this reconciliation happens once rather than twice.
+- [ ] A0.2 In a worktree, merge `beta_gtm_mvp` → `auth_stack_v2`.
+- [ ] A0.3 Resolve `middleware.ts` by porting the site gate onto the
+      Supabase middleware. **The gate must survive.**
+- [ ] A0.4 Resolve `page.tsx` keeping the ComingSoon/LandingPage switch.
+- [ ] A0.5 Keep `PRIVATE_MODE` and the waitlist table from production;
+      keep the Supabase auth from this branch. `require_admin` exists
+      in both, so the waitlist endpoints port unchanged.
+- [ ] A0.6 Retire `test_clerk_authz.py` in favour of the Supabase authz
+      suite, moving the waitlist/consent endpoint inventories across so
+      no endpoint loses coverage.
+- [ ] A0.7 Verify with the gate ON: anonymous sees only the
+      under-development page; admin sees the full site; the API refuses
+      non-admin tokens. Then `pytest` + `npm run build` clean.
 
 ## Stage A — build the production Supabase project (👤, anytime)
 
@@ -79,8 +136,19 @@ in the window anyway):
 - [ ] D2 Push (deploys BOTH services; Railway entrypoint runs
       `alembic upgrade head` -> creates the `users` table, migration
       0006, idempotent).
-- [ ] D3 Verify live: marketworks.in renders; /sign-in shows the new
-      card + Turnstile; founder signs in with Google.
+- [ ] D3 Verify live **with the gate still up**: marketworks.in shows
+      the under-development page to an anonymous visitor (NOT the
+      product); `/library`, `/portfolios`, `/dashboard`, `/insights`
+      all 307 to `/`; `/sign-in` shows the new card + Turnstile;
+      founder signs in with Google and then sees the full site.
+      If an anonymous visitor sees the product, the gate did not
+      survive the merge — roll back immediately.
+- [ ] D3.5 **Admin access is now load-bearing for the gate**, not just
+      for `/admin`: until the founder's Supabase account carries
+      `role: admin`, even the founder sees only the under-development
+      page and cannot reach the product at all. Do D4 immediately, in
+      the same window. (Recovery if it goes wrong: remove `SITE_MODE`
+      in Vercel and redeploy — about two minutes.)
 - [ ] D4 Grant founder admin (C4.2): Supabase SQL editor ->
       `update auth.users set raw_app_meta_data = raw_app_meta_data ||
       '{"role":"admin"}' where email = '<founder google email>';`
