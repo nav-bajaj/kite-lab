@@ -23,6 +23,13 @@ const isPublicRoute = createRouteMatcher([
   // matcher's static-asset exclusions, so without this entry auth.protect()
   // 404s crawlers.
   "/robots.txt",
+  // Email consent pages. NOTE these must appear in BOTH lists: this one
+  // (which controls Clerk's auth.protect()) and PUBLIC_WHEN_GATED in
+  // src/lib/site-mode.ts (which controls the under-development gate).
+  // Clearing only the gate leaves auth.protect() returning 404, which is
+  // how these pages broke the first time.
+  "/unsubscribe",
+  "/confirm",
 ]);
 
 // Insight engine pages: behind Clerk login but available to ALL signed-in

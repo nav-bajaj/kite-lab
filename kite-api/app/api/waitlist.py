@@ -8,14 +8,24 @@ to be notified at launch. Storage only — no email sending here.
 Not under /api/system/* — that router is reserved for Zerodha OAuth
 bootstrap (AD-1, R-003).
 """
+from __future__ import annotations
+
 import csv
 import io
+import logging
 import re
 import secrets
 import time
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    HTTPException,
+    Request,
+    Response,
+)
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from slowapi.util import get_remote_address
@@ -28,6 +38,9 @@ from app.config import get_settings
 from app.middleware.rate_limiter import limiter
 from app.models.database import get_db
 from app.models.models import WaitlistSignup
+from app.services import email_service
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/waitlist", tags=["waitlist"])
 
@@ -100,6 +113,7 @@ class WaitlistRequest(BaseModel):
 async def join_waitlist(
     request: Request,
     body: WaitlistRequest,
+    background: BackgroundTasks,
     db: Session = Depends(get_db),
 ):
     """Add an email to the launch waitlist. Idempotent 200 in every
@@ -141,7 +155,86 @@ async def join_waitlist(
         db.commit()
     except IntegrityError:
         db.rollback()  # already on the list — same response as new
+        return _OK
+
+    # Send AFTER the row is committed, and in the background: someone who
+    # just handed us their address must not see an error because our mail
+    # relay blinked. A failed send leaves welcome_sent_at NULL, so it can
+    # be retried without double-mailing anyone.
+    background.add_task(
+        _send_welcome_once,
+        signup_id=signup.id,
+        email=signup.email,
+        token=signup.unsubscribe_token,
+    )
     return _OK
+
+
+def _send_welcome_once(*, signup_id: int, email: str, token: str) -> None:
+    """Background welcome send, guarded by welcome_sent_at so a retry or a
+    duplicate task cannot mail the same person twice."""
+    from app.models.database import get_session_local
+
+    db = get_session_local()()
+    try:
+        row = db.query(WaitlistSignup).filter_by(id=signup_id).one_or_none()
+        if row is None or row.welcome_sent_at is not None:
+            return
+        if email_service.send_welcome(to=email, unsubscribe_token=token):
+            row.welcome_sent_at = datetime.now(timezone.utc)
+            row.last_sent_at = row.welcome_sent_at
+            db.commit()
+    except Exception:
+        logger.exception("welcome send failed for signup %s", signup_id)
+        db.rollback()
+    finally:
+        db.close()
+
+
+# ---------------------------------------------------------------------------
+# Consent endpoints — public by design; the token IS the credential
+# ---------------------------------------------------------------------------
+
+
+def _find_by_token(db: Session, column, token: str) -> WaitlistSignup | None:
+    """Tokens are 32 random bytes, so a direct lookup is safe. Reject
+    obviously malformed input before touching the DB."""
+    if not token or len(token) > 128:
+        return None
+    return db.query(WaitlistSignup).filter(column == token).one_or_none()
+
+
+@router.api_route(  # nosemgrep: tools.security.fastapi-route-missing-auth  # public by design — the token is the credential
+    "/unsubscribe", methods=["GET", "POST"]
+)
+async def unsubscribe(token: str = "", db: Session = Depends(get_db)):
+    """Remove someone from the list.
+
+    Accepts POST as well as GET because RFC 8058 one-click unsubscribe has
+    the mail client POST here directly, unauthenticated. Always returns 200
+    with the same body: a wrong or already-used token must not reveal
+    whether an address is on the list.
+    """
+    row = _find_by_token(db, WaitlistSignup.unsubscribe_token, token)
+    if row is not None and row.status != "unsubscribed":
+        row.status = "unsubscribed"
+        row.unsubscribed_at = datetime.now(timezone.utc)
+        db.commit()
+    return {"status": "unsubscribed"}
+
+
+@router.get("/confirm")  # nosemgrep: tools.security.fastapi-route-missing-auth  # public by design — the token is the credential
+async def confirm(token: str = "", db: Session = Depends(get_db)):
+    """Complete a double opt-in signup. Inert while
+    WAITLIST_DOUBLE_OPT_IN is false, but kept wired so flipping the flag
+    needs no code change."""
+    row = _find_by_token(db, WaitlistSignup.confirm_token, token)
+    if row is not None and row.status == "pending":
+        row.status = "confirmed"
+        row.confirmed_at = datetime.now(timezone.utc)
+        row.confirm_token = None  # single use
+        db.commit()
+    return {"status": "confirmed"}
 
 
 @router.get("")

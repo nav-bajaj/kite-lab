@@ -413,3 +413,118 @@ def test_export_returns_csv_without_tokens(test_client, rsa_keypair):
     assert "person@example.com" in text
     assert "email,source,status" in text
     assert "token" not in text.lower()
+
+
+# ---------------------------------------------------------------------------
+# Consent endpoints + welcome send (email_channel Phase 2)
+# ---------------------------------------------------------------------------
+
+
+def _row(db_sessionmaker):
+    db = db_sessionmaker()
+    try:
+        return db.query(WaitlistSignup).one()
+    finally:
+        db.close()
+
+
+def test_unsubscribe_marks_row_and_is_public(test_client, db_sessionmaker):
+    test_client.post("/api/waitlist", json={"email": "leaver@example.com"})
+    tok = _row(db_sessionmaker).unsubscribe_token
+
+    resp = test_client.post(f"/api/waitlist/unsubscribe?token={tok}")
+    assert resp.status_code == 200  # no auth required
+    row = _row(db_sessionmaker)
+    assert row.status == "unsubscribed"
+    assert row.unsubscribed_at is not None
+
+
+def test_unsubscribe_accepts_get_for_one_click(test_client, db_sessionmaker):
+    """RFC 8058 has the mail client POST, but some clients still GET."""
+    test_client.post("/api/waitlist", json={"email": "oneclick@example.com"})
+    tok = _row(db_sessionmaker).unsubscribe_token
+    assert test_client.get(f"/api/waitlist/unsubscribe?token={tok}").status_code == 200
+    assert _row(db_sessionmaker).status == "unsubscribed"
+
+
+@pytest.mark.parametrize("bad", ["", "not-a-real-token", "x" * 200])
+def test_unsubscribe_bad_token_is_not_an_oracle(test_client, db_sessionmaker, bad):
+    """A wrong token must return the same 200 as a right one — otherwise
+    the endpoint reveals whether an address is on the list."""
+    test_client.post("/api/waitlist", json={"email": "stays@example.com"})
+    resp = test_client.post(f"/api/waitlist/unsubscribe?token={bad}")
+    assert resp.status_code == 200
+    assert resp.json() == {"status": "unsubscribed"}
+    assert _row(db_sessionmaker).status == "confirmed"  # untouched
+
+
+def test_confirm_completes_double_opt_in(test_client, db_sessionmaker):
+    settings = get_settings()
+    settings.waitlist_double_opt_in = True
+    try:
+        test_client.post("/api/waitlist", json={"email": "pending@example.com"})
+        row = _row(db_sessionmaker)
+        assert row.status == "pending"
+        tok = row.confirm_token
+
+        assert test_client.get(f"/api/waitlist/confirm?token={tok}").status_code == 200
+        row = _row(db_sessionmaker)
+        assert row.status == "confirmed"
+        assert row.confirmed_at is not None
+        assert row.confirm_token is None  # single use
+
+        # replaying the spent token must not resurrect anything
+        assert test_client.get(f"/api/waitlist/confirm?token={tok}").status_code == 200
+        assert _row(db_sessionmaker).status == "confirmed"
+    finally:
+        settings.waitlist_double_opt_in = False
+
+
+def test_welcome_send_is_idempotent(db_sessionmaker, monkeypatch, test_client):
+    """The guard is welcome_sent_at: a retried or duplicated background
+    task must not mail the same person twice."""
+    from app.api import waitlist as wl
+
+    test_client.post("/api/waitlist", json={"email": "once@example.com"})
+    row = _row(db_sessionmaker)
+
+    calls = []
+    monkeypatch.setattr(
+        wl.email_service, "send_welcome",
+        lambda **kw: (calls.append(kw), True)[1],
+    )
+    monkeypatch.setattr(
+        "app.models.database.get_session_local", lambda: db_sessionmaker
+    )
+
+    for _ in range(3):
+        wl._send_welcome_once(
+            signup_id=row.id, email=row.email, token=row.unsubscribe_token
+        )
+
+    assert len(calls) == 1
+    assert _row(db_sessionmaker).welcome_sent_at is not None
+
+
+def test_signup_still_succeeds_when_send_fails(db_sessionmaker, monkeypatch, test_client):
+    """A mail-relay failure must never surface to someone who just handed
+    us their address."""
+    from app.api import waitlist as wl
+
+    test_client.post("/api/waitlist", json={"email": "relaydown@example.com"})
+    row = _row(db_sessionmaker)
+
+    def _boom(**_kw):
+        raise RuntimeError("SMTP down")
+
+    monkeypatch.setattr(wl.email_service, "send_welcome", _boom)
+    monkeypatch.setattr(
+        "app.models.database.get_session_local", lambda: db_sessionmaker
+    )
+    wl._send_welcome_once(
+        signup_id=row.id, email=row.email, token=row.unsubscribe_token
+    )
+
+    row = _row(db_sessionmaker)
+    assert row.status == "confirmed"       # signup survived
+    assert row.welcome_sent_at is None     # so it can be retried

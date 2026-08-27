@@ -267,6 +267,11 @@ PUBLIC_ENDPOINTS: list[tuple[str, str]] = [
     ("GET", "/api/system/sync"),
     ("GET", "/api/system/login-url"),
     ("POST", "/api/waitlist"),
+    # Consent endpoints — the token in the URL is the only credential, and
+    # mail clients call unsubscribe unauthenticated (RFC 8058 one-click).
+    ("POST", "/api/waitlist/unsubscribe"),
+    ("GET", "/api/waitlist/unsubscribe"),
+    ("GET", "/api/waitlist/confirm"),
 ]
 
 

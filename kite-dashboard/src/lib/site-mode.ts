@@ -41,4 +41,11 @@ export const PUBLIC_WHEN_GATED = [
   // robots.txt must be allowlisted explicitly — crawlers need it reachable
   // for the deindexing strategy (see robots.ts) to work.
   "/robots.txt",
+  // Email consent pages. Their only credential is the token in the URL, and
+  // they MUST stay reachable while gated — otherwise every unsubscribe link
+  // in every email redirects to "/", which is a compliance failure rather
+  // than just a broken link. /confirm is inert under single opt-in but is
+  // allowlisted now so flipping that flag needs no other change.
+  "/unsubscribe",
+  "/confirm",
 ];
