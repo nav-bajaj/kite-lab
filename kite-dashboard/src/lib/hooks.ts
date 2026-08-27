@@ -24,6 +24,7 @@ import {
   getSchedule,
   getSystemStatus,
   getFreshnessReport,
+  getWaitlist,
   getOptionsWorkerStatus,
   getOptionsLiveAnalytics,
   getHealth,
@@ -34,6 +35,7 @@ import {
   type ScheduleListResponse,
   type SystemStatus,
   type FreshnessReport,
+  type WaitlistReport,
   type OptionsWorkerStatus,
   type OptionsLiveAnalytics,
 } from "./api-client";
@@ -326,6 +328,13 @@ export function useSystemStatus() {
 export function useFreshnessReport() {
   return useAuthedSWR<FreshnessReport>("freshness", getFreshnessReport, {
     refreshInterval: 60000,
+    revalidateOnFocus: true,
+  });
+}
+
+export function useWaitlist() {
+  return useAuthedSWR<WaitlistReport>("waitlist", getWaitlist, {
+    refreshInterval: 120000,
     revalidateOnFocus: true,
   });
 }

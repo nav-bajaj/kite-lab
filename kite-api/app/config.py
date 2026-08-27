@@ -47,6 +47,42 @@ class Settings(BaseSettings):
     # admin token too. Flip to false at launch.
     private_mode: bool = False
 
+    # Outbound email (tasks/email_channel). Sent through AWS SES over SMTP
+    # using stdlib smtplib — no boto3, so no new dependency on a pip-audit
+    # surface that already carries an open High row (R-018).
+    #
+    # SES SENDS BUT CANNOT RECEIVE. email_from must be a real monitored
+    # Google Workspace mailbox or every reply is lost.
+    smtp_host: str = ""          # e.g. email-smtp.eu-north-1.amazonaws.com
+    smtp_port: int = 587         # STARTTLS
+    smtp_user: str = ""
+    smtp_password: str = ""
+    email_from: str = "mail@marketworks.in"
+    email_from_name: str = "Marketworks"
+    email_reply_to: str = ""     # defaults to email_from when blank
+
+    # Public origins used to build links inside emails. Wrong values here
+    # produce dead unsubscribe links, which is a compliance failure, not a
+    # cosmetic one.
+    public_site_url: str = "https://marketworks.in"
+    public_api_url: str = "https://kite-lab-production.up.railway.app"
+
+    # Master switch. False = render and log, never hand anything to SES.
+    # Left OFF by default so no environment starts mailing people by
+    # accident; production turns it on deliberately.
+    email_enabled: bool = False
+
+    # Waitlist consent mode (tasks/email_channel). False = single opt-in:
+    # a signup is mailable immediately. True = double opt-in: the signup
+    # stays 'pending' until it clicks a confirm link.
+    #
+    # Founder chose single opt-in 2026-08-27 to see how signups behave.
+    # The tradeoff is real: the form is public and unauthenticated, so
+    # anyone can enter anyone else's address and we would mail someone who
+    # never asked. Watch the SES complaint rate; if it climbs, flip this to
+    # true — the confirm-token machinery is already built and waiting.
+    waitlist_double_opt_in: bool = False
+
     # Data directory
     @property
     def data_dir(self) -> Path:

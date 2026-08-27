@@ -24,9 +24,16 @@ from app.models.database import Base
 
 
 class WaitlistSignup(Base):
-    """Coming-soon waitlist signups (tasks/site_gate). Storage only — no
-    email sending. Emails are normalised (strip + lowercase) before insert;
-    the unique index makes the public POST idempotent."""
+    """Coming-soon waitlist signups (tasks/site_gate) plus the consent
+    lifecycle the email channel needs (tasks/email_channel).
+
+    Emails are normalised (strip + lowercase) before insert; the unique
+    index makes the public POST idempotent. Only ``status == 'confirmed'``
+    is mailable.
+
+    No consent IP / user-agent is stored on purpose — under double opt-in
+    the confirmation click and ``confirmed_at`` are the evidence, and the
+    address is enough PII for one table (R-027)."""
 
     __tablename__ = "waitlist_signups"
 
@@ -37,8 +44,23 @@ class WaitlistSignup(Base):
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
 
+    # Consent lifecycle: pending -> confirmed -> unsubscribed;
+    # bounced / complained are terminal and set from SES events (Phase 3).
+    status = Column(
+        String(20), nullable=False, server_default="pending", index=True
+    )
+    confirm_token = Column(String(64), unique=True, index=True)
+    confirm_sent_at = Column(DateTime(timezone=True))
+    confirmed_at = Column(DateTime(timezone=True))
+    unsubscribe_token = Column(String(64), unique=True, index=True)
+    unsubscribed_at = Column(DateTime(timezone=True))
+
+    # Send bookkeeping — makes the welcome send idempotent under retry.
+    welcome_sent_at = Column(DateTime(timezone=True))
+    last_sent_at = Column(DateTime(timezone=True))
+
     def __repr__(self):
-        return f"<WaitlistSignup(email='{self.email}')>"
+        return f"<WaitlistSignup(email='{self.email}' status='{self.status}')>"
 
 
 class AllowedUser(Base):

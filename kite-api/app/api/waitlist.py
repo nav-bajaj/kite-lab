@@ -8,19 +8,39 @@ to be notified at launch. Storage only — no email sending here.
 Not under /api/system/* — that router is reserved for Zerodha OAuth
 bootstrap (AD-1, R-003).
 """
-import re
-import time
+from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+import csv
+import io
+import logging
+import re
+import secrets
+import time
+from datetime import datetime, timezone
+
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    HTTPException,
+    Request,
+    Response,
+)
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from slowapi.util import get_remote_address
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.auth import require_admin
+from app.config import get_settings
 from app.middleware.rate_limiter import limiter
 from app.models.database import get_db
 from app.models.models import WaitlistSignup
+from app.services import email_service
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/waitlist", tags=["waitlist"])
 
@@ -31,7 +51,21 @@ _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 _ALLOWED_SOURCES = frozenset({"coming_soon"})
 
+# Consent lifecycle; mirrored in the 0007 migration. Only "confirmed" is
+# mailable. "bounced"/"complained" are terminal and set from SES events.
+STATUSES = ("pending", "confirmed", "unsubscribed", "bounced", "complained")
+MAILABLE = ("confirmed",)
+
 _OK = {"status": "ok"}
+
+
+def new_token() -> str:
+    """URL-safe, unguessable token for confirm / unsubscribe links."""
+    return secrets.token_urlsafe(32)
+
+
+def _iso(dt):
+    return dt.isoformat() if dt else None
 
 # Absolute ceiling on table growth (R-027): the XFF-keyed rate limit is
 # spoofable and unique emails are unbounded, so a rotating abuser could
@@ -79,6 +113,7 @@ class WaitlistRequest(BaseModel):
 async def join_waitlist(
     request: Request,
     body: WaitlistRequest,
+    background: BackgroundTasks,
     db: Session = Depends(get_db),
 ):
     """Add an email to the launch waitlist. Idempotent 200 in every
@@ -98,12 +133,108 @@ async def join_waitlist(
         # Ceiling reached — pretend success, write nothing (R-027).
         return _OK
 
-    db.add(WaitlistSignup(email=email, source=body.source))
+    double_opt_in = get_settings().waitlist_double_opt_in
+    now = datetime.now(timezone.utc)
+    signup = WaitlistSignup(
+        email=email,
+        source=body.source,
+        unsubscribe_token=new_token(),
+    )
+    if double_opt_in:
+        signup.status = "pending"
+        signup.confirm_token = new_token()
+    else:
+        # Single opt-in: mailable straight away. `confirmed_at` records
+        # WHEN consent was given (the form submission), not that the
+        # address was verified by a click — see config.waitlist_double_opt_in.
+        signup.status = "confirmed"
+        signup.confirmed_at = now
+
+    db.add(signup)
     try:
         db.commit()
     except IntegrityError:
         db.rollback()  # already on the list — same response as new
+        return _OK
+
+    # Send AFTER the row is committed, and in the background: someone who
+    # just handed us their address must not see an error because our mail
+    # relay blinked. A failed send leaves welcome_sent_at NULL, so it can
+    # be retried without double-mailing anyone.
+    background.add_task(
+        _send_welcome_once,
+        signup_id=signup.id,
+        email=signup.email,
+        token=signup.unsubscribe_token,
+    )
     return _OK
+
+
+def _send_welcome_once(*, signup_id: int, email: str, token: str) -> None:
+    """Background welcome send, guarded by welcome_sent_at so a retry or a
+    duplicate task cannot mail the same person twice."""
+    from app.models.database import get_session_local
+
+    db = get_session_local()()
+    try:
+        row = db.query(WaitlistSignup).filter_by(id=signup_id).one_or_none()
+        if row is None or row.welcome_sent_at is not None:
+            return
+        if email_service.send_welcome(to=email, unsubscribe_token=token):
+            row.welcome_sent_at = datetime.now(timezone.utc)
+            row.last_sent_at = row.welcome_sent_at
+            db.commit()
+    except Exception:
+        logger.exception("welcome send failed for signup %s", signup_id)
+        db.rollback()
+    finally:
+        db.close()
+
+
+# ---------------------------------------------------------------------------
+# Consent endpoints — public by design; the token IS the credential
+# ---------------------------------------------------------------------------
+
+
+def _find_by_token(db: Session, column, token: str) -> WaitlistSignup | None:
+    """Tokens are 32 random bytes, so a direct lookup is safe. Reject
+    obviously malformed input before touching the DB."""
+    if not token or len(token) > 128:
+        return None
+    return db.query(WaitlistSignup).filter(column == token).one_or_none()
+
+
+@router.api_route(  # nosemgrep: tools.security.fastapi-route-missing-auth  # public by design — the token is the credential
+    "/unsubscribe", methods=["GET", "POST"]
+)
+async def unsubscribe(token: str = "", db: Session = Depends(get_db)):
+    """Remove someone from the list.
+
+    Accepts POST as well as GET because RFC 8058 one-click unsubscribe has
+    the mail client POST here directly, unauthenticated. Always returns 200
+    with the same body: a wrong or already-used token must not reveal
+    whether an address is on the list.
+    """
+    row = _find_by_token(db, WaitlistSignup.unsubscribe_token, token)
+    if row is not None and row.status != "unsubscribed":
+        row.status = "unsubscribed"
+        row.unsubscribed_at = datetime.now(timezone.utc)
+        db.commit()
+    return {"status": "unsubscribed"}
+
+
+@router.get("/confirm")  # nosemgrep: tools.security.fastapi-route-missing-auth  # public by design — the token is the credential
+async def confirm(token: str = "", db: Session = Depends(get_db)):
+    """Complete a double opt-in signup. Inert while
+    WAITLIST_DOUBLE_OPT_IN is false, but kept wired so flipping the flag
+    needs no code change."""
+    row = _find_by_token(db, WaitlistSignup.confirm_token, token)
+    if row is not None and row.status == "pending":
+        row.status = "confirmed"
+        row.confirmed_at = datetime.now(timezone.utc)
+        row.confirm_token = None  # single use
+        db.commit()
+    return {"status": "confirmed"}
 
 
 @router.get("")
@@ -113,7 +244,8 @@ async def list_waitlist(
     db: Session = Depends(get_db),
     user: dict = Depends(require_admin),
 ):
-    """Admin-only readout of the waitlist, newest first."""
+    """Admin-only readout of the waitlist, newest first, with the status
+    breakdown the admin panel renders."""
     # Bulk PII — never cacheable (matches the R-026 admin ops-intel pattern).
     response.headers["Cache-Control"] = "no-store, must-revalidate"
     limit = max(1, min(limit, 5000))
@@ -123,14 +255,55 @@ async def list_waitlist(
         .limit(limit)
         .all()
     )
+
+    counts = dict(
+        db.query(WaitlistSignup.status, func.count(WaitlistSignup.id))
+        .group_by(WaitlistSignup.status)
+        .all()
+    )
+    by_status = {s: int(counts.get(s, 0)) for s in STATUSES}
+
     return {
-        "count": db.query(WaitlistSignup).count(),
+        "count": sum(by_status.values()),
+        "mailable": sum(by_status[s] for s in MAILABLE),
+        "by_status": by_status,
         "signups": [
             {
                 "email": r.email,
                 "source": r.source,
-                "created_at": r.created_at.isoformat() if r.created_at else None,
+                "status": r.status,
+                "created_at": _iso(r.created_at),
+                "confirmed_at": _iso(r.confirmed_at),
+                "unsubscribed_at": _iso(r.unsubscribed_at),
+                "welcome_sent_at": _iso(r.welcome_sent_at),
             }
             for r in rows
         ],
     }
+
+
+@router.get("/export.csv")
+async def export_waitlist(
+    db: Session = Depends(get_db),
+    user: dict = Depends(require_admin),
+):
+    """Admin-only CSV of the whole list. Tokens are deliberately NOT
+    exported — they are live credentials for confirm/unsubscribe links and
+    have no business sitting in a spreadsheet."""
+    buf = io.StringIO()
+    w = csv.writer(buf)
+    w.writerow(["email", "source", "status", "created_at", "confirmed_at",
+                "unsubscribed_at", "welcome_sent_at"])
+    for r in db.query(WaitlistSignup).order_by(WaitlistSignup.created_at.asc()):
+        w.writerow([r.email, r.source, r.status, _iso(r.created_at),
+                    _iso(r.confirmed_at), _iso(r.unsubscribed_at),
+                    _iso(r.welcome_sent_at)])
+    buf.seek(0)
+    return StreamingResponse(
+        iter([buf.getvalue()]),
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": 'attachment; filename="waitlist.csv"',
+            "Cache-Control": "no-store, must-revalidate",
+        },
+    )

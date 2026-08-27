@@ -11,6 +11,7 @@ import {
   FreshnessPanel,
   OptionsWorkerPanel,
   OptionsAnalyticsPanel,
+  WaitlistPanel,
 } from "@/components/admin";
 
 export default function AdminPage() {
@@ -40,6 +41,9 @@ export default function AdminPage() {
 
       {/* Data freshness monitor (full width) */}
       <FreshnessPanel />
+
+      {/* Launch waitlist (full width) */}
+      <WaitlistPanel />
 
       {/* Main Content Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
