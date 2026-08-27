@@ -17,6 +17,11 @@ Deploy constraints inherited from site_gate, plus one learned on
   destroys the previous process's logs, so verify a scheduled job BEFORE
   the next deploy, or you lose the evidence. Use the admin
   `GET /api/freshness` endpoint instead — it reads state, not logs.
+- **Re-read the clock immediately before deciding to push.** Hours pass
+  between turns. On 2026-08-27 a stale 02:25 IST reading was carried
+  forward as "03:15 IST" and nearly produced a push recommendation at
+  13:28 IST, mid-session with the worker live. `TZ=Asia/Kolkata date`,
+  fresh, every time.
 
 ## Phase 0 — founder decisions
 
