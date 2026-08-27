@@ -38,6 +38,7 @@ os.environ.setdefault("DISABLE_AUTH", "false")
 
 from app.main import app  # noqa: E402
 from app import auth as auth_module  # noqa: E402
+from app.config import get_settings  # noqa: E402
 from app.api import waitlist as waitlist_module  # noqa: E402
 from app.middleware.rate_limiter import limiter  # noqa: E402
 from app.models.database import get_db  # noqa: E402
@@ -307,21 +308,42 @@ def test_get_returns_signups_for_admin(test_client, rsa_keypair):
 # ---------------------------------------------------------------------------
 
 
-def test_signup_starts_pending_with_unsubscribe_token(
+def test_signup_single_opt_in_is_mailable_immediately(
     test_client, db_sessionmaker
 ):
-    """A new signup is NOT mailable until it confirms, and carries an
-    unguessable unsubscribe token from the moment it exists."""
+    """Default (founder's choice): single opt-in — mailable at signup,
+    with an unguessable unsubscribe token from the moment it exists."""
     test_client.post("/api/waitlist", json={"email": "person@example.com"})
     db = db_sessionmaker()
     try:
         row = db.query(WaitlistSignup).one()
-        assert row.status == "pending"
-        assert row.confirmed_at is None
+        assert row.status == "confirmed"
+        assert row.confirmed_at is not None
+        assert row.confirm_token is None  # no confirm step under single opt-in
         assert row.unsubscribe_token
         assert len(row.unsubscribe_token) >= 32
     finally:
         db.close()
+
+
+def test_signup_double_opt_in_stays_pending(test_client, db_sessionmaker):
+    """Flipping WAITLIST_DOUBLE_OPT_IN holds the signup at 'pending' with a
+    confirm token — the machinery is ready if complaint rates force it."""
+    settings = get_settings()
+    settings.waitlist_double_opt_in = True
+    try:
+        test_client.post("/api/waitlist", json={"email": "dbl@example.com"})
+        db = db_sessionmaker()
+        try:
+            row = db.query(WaitlistSignup).one()
+            assert row.status == "pending"
+            assert row.confirmed_at is None
+            assert row.confirm_token
+            assert row.confirm_token != row.unsubscribe_token
+        finally:
+            db.close()
+    finally:
+        settings.waitlist_double_opt_in = False
 
 
 def test_unsubscribe_tokens_are_unique_per_signup(test_client, db_sessionmaker):
@@ -346,6 +368,7 @@ def test_status_breakdown_and_mailable_count(test_client, rsa_keypair, db_sessio
         rows = db.query(WaitlistSignup).order_by(WaitlistSignup.id).all()
         rows[0].status = "confirmed"
         rows[1].status = "unsubscribed"
+        rows[2].status = "pending"
         db.commit()
     finally:
         db.close()

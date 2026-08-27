@@ -27,14 +27,26 @@ DECIDED 2026-08-27:
       the founder is creating. Real monitored inbox — SES cannot receive,
       so replies land here. Never `noreply@`.
 
-STILL OPEN (blocks Phase 2 send):
-- [ ] Physical postal address for the footer
-- [ ] Cadence promise to state in the welcome mail
-- [ ] Ratify double opt-in (PLAN §1 recommends yes)
+DECIDED 2026-08-27 (second round):
+- [x] **Postal address** for the footer:
+      SCO 185-187, First Floor, Sector 9-C, Madhya Marg, Chandigarh
+- [x] **Single opt-in** — NOT double. Founder wants to see how signups
+      behave first. Implemented as `WAITLIST_DOUBLE_OPT_IN` (default
+      false): signups go straight to `confirmed` and are mailable. The
+      confirm-token path is built and tested, so flipping the env var is
+      the whole change if complaint rates force it.
+- [x] **No first-name field.** Greeting stays generic; nothing to
+      personalise, which also keeps the template token-free.
+- [~] **Cadence: "daily market updates, weekly product update"** —
+      recorded, but see the concern in PLAN §2a before this wording goes
+      into the welcome mail.
+
+STILL OPEN:
 - [ ] Beta users folded in, or list kept separate? (default: separate)
-- [ ] Collect an optional first name on the waitlist form? (PLAN §3a)
-- [ ] Confirm `mail@marketworks.in` exists and receives before Phase 2
-      ships — send it a test from outside
+- [ ] Confirm `mail@marketworks.in` receives — send it a test from an
+      outside address. SES cannot receive, so this is the only path for
+      replies and a silent failure here loses every reply.
+- [ ] Resolve the cadence question (PLAN §2a)
 
 ## Phase 0b — DNS (PLAN §2 audit)
 

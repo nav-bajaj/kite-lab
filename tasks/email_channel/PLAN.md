@@ -156,6 +156,44 @@ transactional and lower risk):
 Do not treat this section as researched. Treat it as a safe default that
 still needs a check before Phase 4.
 
+## 2a. The cadence promise — flagged, needs a decision
+
+Founder's stated cadence (2026-08-27): **"daily market updates, weekly
+product update."** Recorded, and the product half is uncontroversial. The
+daily-market-update half has three problems worth weighing before it goes
+into a welcome email, because the welcome email turns it into a promise
+made to every subscriber.
+
+1. **It is the highest-risk content category while RA registration is
+   pending.** A weekly note about what we are building is plainly
+   educational. A *daily market update* is, by frequency and framing,
+   the thing a research analyst does. Even scrupulously factual daily
+   commentary invites the question of whether we are holding out as one.
+   PLAN §2 already flags that this specific question needs professional
+   advice; daily cadence is what makes it urgent rather than theoretical.
+2. **It is a heavy operational commitment.** Daily means ~250 sends a
+   year, each needing content, review, and a compliance check. A missed
+   week reads as abandonment to someone who joined on that promise.
+3. **Daily to a cold list is a deliverability risk.** Our sending
+   reputation is new. High frequency to subscribers who signed up for
+   "notify me at launch" — not for a daily letter — is the standard
+   recipe for spam-folder placement, and complaint rate is exactly what
+   we cannot afford to spend right now (compounded by single opt-in).
+
+**Recommendation:** promise the weekly product update in the welcome
+email, and treat daily market updates as something introduced later —
+after registration is granted, on a domain with a warmed reputation,
+and to people who opted into it specifically. Under-promising here costs
+nothing; over-promising costs the list.
+
+If the founder wants daily regardless, the safer shape is: make it
+opt-in as a separate preference rather than the default for everyone who
+joined a launch waitlist, and keep it strictly factual (levels, breadth,
+statistics) with no interpretation.
+
+**Until this is resolved the welcome mail should not state a daily
+cadence.** Everything else in Phase 2 can proceed.
+
 ## 3. Architecture — where React Email runs
 
 The tension: React Email is Node/React; our waitlist data and SES path

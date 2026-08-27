@@ -47,6 +47,17 @@ class Settings(BaseSettings):
     # admin token too. Flip to false at launch.
     private_mode: bool = False
 
+    # Waitlist consent mode (tasks/email_channel). False = single opt-in:
+    # a signup is mailable immediately. True = double opt-in: the signup
+    # stays 'pending' until it clicks a confirm link.
+    #
+    # Founder chose single opt-in 2026-08-27 to see how signups behave.
+    # The tradeoff is real: the form is public and unauthenticated, so
+    # anyone can enter anyone else's address and we would mail someone who
+    # never asked. Watch the SES complaint rate; if it climbs, flip this to
+    # true — the confirm-token machinery is already built and waiting.
+    waitlist_double_opt_in: bool = False
+
     # Data directory
     @property
     def data_dir(self) -> Path:

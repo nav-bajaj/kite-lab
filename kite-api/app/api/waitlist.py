@@ -13,6 +13,7 @@ import io
 import re
 import secrets
 import time
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.responses import StreamingResponse
@@ -23,6 +24,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.auth import require_admin
+from app.config import get_settings
 from app.middleware.rate_limiter import limiter
 from app.models.database import get_db
 from app.models.models import WaitlistSignup
@@ -117,14 +119,24 @@ async def join_waitlist(
         # Ceiling reached — pretend success, write nothing (R-027).
         return _OK
 
-    db.add(
-        WaitlistSignup(
-            email=email,
-            source=body.source,
-            status="pending",
-            unsubscribe_token=new_token(),
-        )
+    double_opt_in = get_settings().waitlist_double_opt_in
+    now = datetime.now(timezone.utc)
+    signup = WaitlistSignup(
+        email=email,
+        source=body.source,
+        unsubscribe_token=new_token(),
     )
+    if double_opt_in:
+        signup.status = "pending"
+        signup.confirm_token = new_token()
+    else:
+        # Single opt-in: mailable straight away. `confirmed_at` records
+        # WHEN consent was given (the form submission), not that the
+        # address was verified by a click — see config.waitlist_double_opt_in.
+        signup.status = "confirmed"
+        signup.confirmed_at = now
+
+    db.add(signup)
     try:
         db.commit()
     except IntegrityError:
