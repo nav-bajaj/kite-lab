@@ -204,9 +204,12 @@ ADMIN_ENDPOINTS: list[tuple[str, str]] = [
     # options_worker.py — admin-only options-worker heartbeat (ops intel)
     ("GET", "/api/options/worker-status"),
     ("GET", "/api/options/live-analytics"),
-    # waitlist.py — admin-only readout + export of the coming-soon waitlist
+    # waitlist.py — admin-only readout, export and list management
     ("GET", "/api/waitlist"),
     ("GET", "/api/waitlist/export.csv"),
+    ("DELETE", "/api/waitlist?email=a@b.co"),
+    ("POST", "/api/waitlist/promote"),
+    ("POST", "/api/waitlist/send-welcome?email=a@b.co"),
 ]
 # Note: POST /api/sync/upload-data and POST /api/jobs/{id}/cancel above already
 # cover sync.py(3rd) and jobs.py respectively. POST /api/sync/upload-data is

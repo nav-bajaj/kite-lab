@@ -528,3 +528,101 @@ def test_signup_still_succeeds_when_send_fails(db_sessionmaker, monkeypatch, tes
     row = _row(db_sessionmaker)
     assert row.status == "confirmed"       # signup survived
     assert row.welcome_sent_at is None     # so it can be retried
+
+
+# ---------------------------------------------------------------------------
+# Admin list management
+# ---------------------------------------------------------------------------
+
+
+def _admin(rsa_keypair):
+    return {"Authorization": f"Bearer {_make_token(rsa_keypair, 'admin')}"}
+
+
+def test_admin_endpoints_reject_non_admin(test_client, rsa_keypair):
+    client = {"Authorization": f"Bearer {_make_token(rsa_keypair, 'client')}"}
+    for method, path in [
+        ("delete", "/api/waitlist?email=a@b.co"),
+        ("post", "/api/waitlist/promote"),
+        ("post", "/api/waitlist/send-welcome?email=a@b.co"),
+    ]:
+        assert getattr(test_client, method)(path).status_code == 401
+        assert getattr(test_client, method)(path, headers=client).status_code == 403
+
+
+def test_delete_removes_the_row(test_client, rsa_keypair, db_sessionmaker):
+    test_client.post("/api/waitlist", json={"email": "gone@example.com"})
+    resp = test_client.delete(
+        "/api/waitlist?email=gone@example.com", headers=_admin(rsa_keypair)
+    )
+    assert resp.status_code == 200
+    assert _count(db_sessionmaker) == 0
+    # missing row is a 404, not a silent success
+    assert test_client.delete(
+        "/api/waitlist?email=gone@example.com", headers=_admin(rsa_keypair)
+    ).status_code == 404
+
+
+def test_promote_makes_pending_rows_mailable(test_client, rsa_keypair, db_sessionmaker):
+    """Mirrors the real situation after migration 0007: rows backfilled to
+    'pending' under single opt-in, so mailable reads 0."""
+    test_client.post("/api/waitlist", json={"email": "backfilled@example.com"})
+    db = db_sessionmaker()
+    try:
+        db.query(WaitlistSignup).update({"status": "pending", "confirmed_at": None})
+        db.commit()
+    finally:
+        db.close()
+
+    resp = test_client.post("/api/waitlist/promote", headers=_admin(rsa_keypair))
+    assert resp.status_code == 200
+    assert resp.json()["count"] == 1
+
+    row = _row(db_sessionmaker)
+    assert row.status == "confirmed"
+    assert row.confirmed_at is not None
+    assert row.unsubscribe_token
+
+
+def test_promote_refuses_under_double_opt_in(test_client, rsa_keypair, db_sessionmaker):
+    """Under double opt-in 'pending' means they never clicked — promoting
+    would fabricate consent."""
+    test_client.post("/api/waitlist", json={"email": "unconfirmed@example.com"})
+    db = db_sessionmaker()
+    try:
+        db.query(WaitlistSignup).update({"status": "pending"})
+        db.commit()
+    finally:
+        db.close()
+
+    settings = get_settings()
+    settings.waitlist_double_opt_in = True
+    try:
+        resp = test_client.post("/api/waitlist/promote", headers=_admin(rsa_keypair))
+        assert resp.status_code == 409
+        assert _row(db_sessionmaker).status == "pending"  # untouched
+    finally:
+        settings.waitlist_double_opt_in = False
+
+
+def test_send_welcome_refuses_unmailable_status(test_client, rsa_keypair, db_sessionmaker):
+    test_client.post("/api/waitlist", json={"email": "left@example.com"})
+    db = db_sessionmaker()
+    try:
+        db.query(WaitlistSignup).update({"status": "unsubscribed"})
+        db.commit()
+    finally:
+        db.close()
+    resp = test_client.post(
+        "/api/waitlist/send-welcome?email=left@example.com", headers=_admin(rsa_keypair)
+    )
+    assert resp.status_code == 409  # never mail someone who left
+
+
+def test_send_welcome_queues_for_a_confirmed_row(test_client, rsa_keypair):
+    test_client.post("/api/waitlist", json={"email": "seed@example.com"})
+    resp = test_client.post(
+        "/api/waitlist/send-welcome?email=seed@example.com", headers=_admin(rsa_keypair)
+    )
+    assert resp.status_code == 200
+    assert resp.json()["status"] == "queued"
