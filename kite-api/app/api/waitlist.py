@@ -223,6 +223,101 @@ async def unsubscribe(token: str = "", db: Session = Depends(get_db)):
     return {"status": "unsubscribed"}
 
 
+@router.delete("")
+async def delete_signup(
+    email: str,
+    db: Session = Depends(get_db),
+    user: dict = Depends(require_admin),
+):
+    """Remove a row outright — test rows, or an erasure request under
+    DPDP. Unsubscribing is the softer action and keeps the record so we
+    can prove we honoured it; deleting leaves no trace, so it is separate
+    and admin-only."""
+    row = db.query(WaitlistSignup).filter_by(email=email.strip().lower()).one_or_none()
+    if row is None:
+        raise HTTPException(status_code=404, detail="Not on the list")
+    db.delete(row)
+    db.commit()
+    _count_cache["checked_at"] = 0.0  # ceiling cache must not hold a stale count
+    return {"status": "deleted", "email": email}
+
+
+@router.post("/promote")
+async def promote_pending(
+    email: str = "",
+    db: Session = Depends(get_db),
+    user: dict = Depends(require_admin),
+):
+    """Move `pending` rows to `confirmed` so they become mailable.
+
+    Needed because migration 0007 backfilled every pre-existing row to
+    `pending`, which under single opt-in is wrong: those people submitted
+    the form, and a form submission IS the consent in that mode. Refuses
+    to run while double opt-in is on, where `pending` genuinely means
+    "has not clicked yet" and promoting would fabricate consent.
+
+    With `email`, promotes one row; without, promotes all pending.
+    """
+    if get_settings().waitlist_double_opt_in:
+        raise HTTPException(
+            status_code=409,
+            detail="Double opt-in is enabled — pending means unconfirmed, "
+                   "and promoting would fabricate consent.",
+        )
+
+    q = db.query(WaitlistSignup).filter(WaitlistSignup.status == "pending")
+    if email:
+        q = q.filter(WaitlistSignup.email == email.strip().lower())
+
+    now = datetime.now(timezone.utc)
+    promoted = []
+    for row in q.all():
+        row.status = "confirmed"
+        row.confirmed_at = row.confirmed_at or now
+        if not row.unsubscribe_token:
+            row.unsubscribe_token = new_token()
+        promoted.append(row.email)
+    db.commit()
+    return {"status": "ok", "promoted": promoted, "count": len(promoted)}
+
+
+@router.post("/send-welcome")
+async def send_welcome_now(
+    background: BackgroundTasks,
+    email: str,
+    force: bool = False,
+    db: Session = Depends(get_db),
+    user: dict = Depends(require_admin),
+):
+    """Send (or re-send) the welcome mail to one address.
+
+    This is the seed-test path: it lets us put a real message in a real
+    inbox before any automatic send is switched on. `force` clears the
+    welcome_sent_at guard — without it this is a no-op for anyone who has
+    already been welcomed, which is the safe default.
+    """
+    row = db.query(WaitlistSignup).filter_by(email=email.strip().lower()).one_or_none()
+    if row is None:
+        raise HTTPException(status_code=404, detail="Not on the list")
+    if row.status not in MAILABLE:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Status is '{row.status}' — only {MAILABLE} may be mailed.",
+        )
+    if not row.unsubscribe_token:
+        row.unsubscribe_token = new_token()
+        db.commit()
+    if force and row.welcome_sent_at is not None:
+        row.welcome_sent_at = None
+        db.commit()
+
+    background.add_task(
+        _send_welcome_once,
+        signup_id=row.id, email=row.email, token=row.unsubscribe_token,
+    )
+    return {"status": "queued", "email": row.email}
+
+
 @router.get("/confirm")  # nosemgrep: tools.security.fastapi-route-missing-auth  # public by design — the token is the credential
 async def confirm(token: str = "", db: Session = Depends(get_db)):
     """Complete a double opt-in signup. Inert while
