@@ -141,8 +141,20 @@ def main():
 
     # daily-return correlations
     rets = pd.DataFrame({k: v.pct_change() for k, v in curves.items()}).dropna()
+    daily_corr = rets.corr().round(3)
     print("\n=== daily-return correlation ===")
-    print(rets.corr().round(2).to_string())
+    print(daily_corr.round(2).to_string())
+    daily_corr.to_csv(OUT_DIR / "correlation_daily.csv")
+
+    # monthly-return correlations -- the decision-relevant view for a
+    # diversification claim; daily co-movement overstates how much two
+    # portfolios actually share over a holding period
+    mrets = pd.DataFrame({k: v.resample("ME").last().pct_change()
+                          for k, v in curves.items()}).dropna()
+    monthly_corr = mrets.corr().round(3)
+    print(f"\n=== monthly-return correlation (n={len(mrets)} months) ===")
+    print(monthly_corr.round(2).to_string())
+    monthly_corr.to_csv(OUT_DIR / "correlation_monthly.csv")
 
     # calendar-year returns
     print("\n=== calendar-year returns (%) ===")

@@ -171,3 +171,44 @@ research line has produced: **dip25_ts20 — 25 slots, ~58 calls/yr,
 the validity protocol; (2) re-run on effective-dated membership once
 the corporate-action fix lands; (3) founder call on cap 25 vs 50
 (median-call quality vs flow).
+
+## Follow-on findings (2026-08-26/27)
+
+Two open questions from this study were closed in
+`tasks/hourly_dip_swing/` — full write-ups in `QUARTILE_STUDY.md` and
+`RESULTS.md` Addendum 8.
+
+**The momentum sleeve is where the edge lives; the dip only times entry
+into it.** Swapping the top quartile for the third quartile, one thing
+changed, costs 12.1pp of CAGR (36.7 → 24.6) under a sleeve-consistent
+exit. The third-quartile entry cohort has no forward excess at all
+(−0.01pp @20d, t_clust −2.03) against this study's +1.02pp / t 9.20, so
+it fails the validity protocol and can carry no forward-return copy. Q2
+sits in between on every measure — the gradient is smooth, so the
+top-quartile cut is not a tuned parameter perched on a cliff.
+
+**The rank-0.35 exit is specific to the top-quartile sleeve.** For a
+Q2/Q3 entry the floor sits inside the entry band, so positions get
+ejected on entry-adjacent noise (median hold 6 days, −53% drawdown).
+Twenty-two hysteresis variants — trail-only, low absolute floor,
+entry-relative, rank-ratchet, and a "must be promoted within N days"
+rule — repair that pathology but none close the gap. The same rules
+applied to the top sleeve do not beat the published exit either.
+
+**"Buy the momentum rebuild" was tested and killed.** The best
+lower-quartile arm works by discarding names that fail to climb back
+into the upper sleeve, which suggested a rebuild entry. As a signal in
+its own right it has no excess (+0.01pp @20d, t_clust 0.33), and
+requiring a prior dip makes a plain rank crossing *worse* than leaving
+it out — the small amount of signal there belongs to momentum
+acceleration, not to the dip.
+
+**Correlation to production, measured and persisted.** The figure this
+line kept citing was computed on 2026-08-23 but never saved —
+`compare_production.py` printed the matrix and dropped it. It now writes
+`correlation_daily.csv` and `correlation_monthly.csv`. Daily: 0.90 vs L6
+v2, 0.87 vs OM25 v3. Monthly (n=43): 0.92 vs L6 v2, 0.83 vs OM25 v3.
+Monthly being higher than daily is the wrong direction for a
+diversification story — the dip feed's case remains the product surface
+(timestamped calls), not portfolio diversification.
+

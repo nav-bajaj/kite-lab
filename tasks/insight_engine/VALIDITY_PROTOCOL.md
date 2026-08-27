@@ -175,7 +175,24 @@ panel. Numbers below are real, not synthetic.
 | pullback_to_50dma | 3747 | −0.28pp | −0.6pp | ❌ Not surfaced |
 | dip_momentum_entry (2026-08-23, not yet live) | 978 | +1.02pp | +3.8pp | ✅ Validated (excess at the bar; H2-half +0.74pp — see report) |
 | breakout_momentum (control, same study) | 925 | +0.31pp | +2.5pp | 🟡 Names-only |
+| dip_momentum_entry_q3 (2026-08-27) | 39,990 | −0.01pp | see note | ❌ Not surfaced |
+| momentum_rebuild_entry (2026-08-27) | 1,464 | +0.01pp | see note | ❌ Not surfaced |
 | (Original 5 patterns) | — | — | — | Pre-protocol; descriptive only |
+
+The two 2026-08-27 rows come from `tasks/hourly_dip_swing/` (sleeve
+quartile study, `rebuild_cohort.py`) and use a slightly different
+harness from the rows above: excess is measured against the same-day
+equal-weight universe over the full 2010-2026 panel, with a
+date-clustered t-stat, and there is no top-25-per-date cap — so the
+direction-lift column is not comparable and is left out rather than
+filled with a number from a different definition. What those two
+cohorts do report: **dip_momentum_entry_q3** −0.01pp @20d (t_clust
+−2.03), −0.25pp @60d, 45.9% of fires beating the universe;
+**momentum_rebuild_entry** +0.01pp @20d (t_clust 0.33), +0.76pp @60d
+(t_clust 1.72), 42.2% beating the universe. Both fail check one and
+carry no publishable forward-return claim. They are logged here so the
+next person does not re-derive them — the third-quartile dip and the
+"buy the momentum rebuild" entry are closed, not untested.
 
 Original 5 watchlists (breakouts, rs_leaders, coiled_springs,
 stretched, recent_breakdowns) were authored before the protocol was
@@ -235,6 +252,8 @@ protocol does not apply.
 
 - `ANALOG_STUDY.md` — original failure case that motivated the
   protocol
+- `tasks/hourly_dip_swing/QUARTILE_STUDY.md` + `RESULTS.md` Addendum 8
+  — the sleeve-quartile and momentum-rebuild cohorts logged above
 - `PATTERN_VALIDITY/{multi_year_breakout, pullback_to_50dma,
   sustained_uptrend}.md` — first three pattern studies under the
   protocol
