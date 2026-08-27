@@ -36,18 +36,39 @@ STILL OPEN (blocks Phase 2 send):
 - [ ] Confirm `mail@marketworks.in` exists and receives before Phase 2
       ships — send it a test from outside
 
-## Phase 0b — DNS, do before any send (PLAN §2 audit)
+## Phase 0b — DNS (PLAN §2 audit)
 
-- [ ] Publish root SPF for Google Workspace:
-      `v=spf1 include:_spf.google.com ~all` — currently MISSING, so
-      Workspace-sent mail from @marketworks.in is unauthenticated.
-      One SPF record per domain: reconcile, do not add a second
-- [ ] Publish DMARC: start `v=DMARC1; p=none; rua=mailto:<inbox>`,
-      currently MISSING entirely. Put it up early so aggregate reports
-      accumulate before the first blast; tighten to quarantine in Phase 3
-- [ ] Re-verify SES DKIM is still SUCCESS in the SES console (set up
-      during auth_stack_v2; confirm it did not lapse)
-- [ ] Watch the Namecheap doubled-Host gotcha on every record above
+DONE 2026-08-27, verified on both authoritative nameservers
+(`dns1`/`dns2.registrar-servers.com`) and via 8.8.8.8 + 1.1.1.1:
+
+- [x] Root SPF live: `v=spf1 include:_spf.google.com ~all`. Single
+      record, no duplicate. Correctly omits `amazonses.com` — SES sends
+      with envelope domain `mail.marketworks.in`, which carries its own
+      SPF, so the root only needs to cover Google Workspace.
+- [x] DMARC live at `_dmarc.marketworks.in`:
+      `v=DMARC1; p=none; rua=mailto:mail@marketworks.in`
+- [x] Google Workspace DKIM was ALREADY published
+      (`google._domainkey.marketworks.in`, valid DKIM1/rsa) — no action
+      was needed.
+- [x] Sender mailbox `mail@marketworks.in` created.
+
+Outstanding tidy-up and checks:
+
+- [ ] **Delete the stray record at `_dmarc.marketworks.in.marketworks.in`**
+      (value `v=DMARC1; p=none;`) — a first attempt where the Host field
+      got the FQDN instead of `_dmarc`, so Namecheap doubled it. Harmless
+      (nothing resolves that name) but delete it so it does not confuse a
+      future audit. In Namecheap the entry to remove is the one whose
+      Host reads `_dmarc.marketworks.in`; keep the one reading `_dmarc`.
+- [ ] Re-verify SES DKIM is still SUCCESS in the SES console. Cannot be
+      checked from outside — SES DKIM selectors are random per-identity
+      CNAMEs, so DNS alone will not confirm it. Definitive check is the
+      Phase 3 real-send header inspection.
+- [ ] Send a test message TO `mail@marketworks.in` from an outside
+      address and confirm it lands — SES cannot receive, so this mailbox
+      is the only path for replies.
+- [ ] After ~2 weeks of DMARC reports, confirm legitimate mail passes,
+      then tighten `p=none` → `p=quarantine` (Phase 3)
 
 ## Phase 1 — see the list (no email sent)
 
