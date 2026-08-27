@@ -132,3 +132,26 @@ def test_unsubscribe_links_point_at_the_right_hosts():
     assert "/unsubscribe?token=tok" in email_service.unsubscribe_url("tok")
     assert email_service.unsubscribe_post_url("tok").startswith(settings.public_api_url)
     assert "/api/waitlist/unsubscribe?token=tok" in email_service.unsubscribe_post_url("tok")
+
+
+def test_unsubscribe_link_opts_out_of_ses_click_tracking():
+    """SES click-tracking rewrites links through awstrack.me. Found in the
+    first real send: it produced a double-encoded redirect that Gmail then
+    wrapped again, and the link did not work.
+
+    An unsubscribe link is a compliance mechanism, not a marketing metric —
+    it must never be instrumented, and must never be broken by
+    instrumentation. `ses:no-track` on the anchor opts it out.
+    """
+    html, _ = email_service.render(
+        "welcome", {"unsubscribe_url": "https://marketworks.in/unsubscribe?token=t"}
+    )
+    # the attribute must sit on the SAME anchor as the unsubscribe href
+    import re
+    anchors = re.findall(r"<a\b[^>]*>", html, flags=re.S)
+    unsub = [a for a in anchors if "unsubscribe" in a]
+    assert unsub, "no unsubscribe anchor in the rendered welcome email"
+    assert all("ses:no-track" in a for a in unsub), (
+        "unsubscribe anchor lost its ses:no-track attribute — SES will "
+        "rewrite the link and break it"
+    )

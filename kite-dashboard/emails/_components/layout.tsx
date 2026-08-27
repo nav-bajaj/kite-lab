@@ -159,7 +159,13 @@ export function Layout({
             >
               You are receiving this because you joined the waitlist at
               marketworks.in.{" "}
+              {/* ses:no-track keeps SES click-tracking from rewriting this
+                  through awstrack.me. Tracking mangled it into a
+                  double-encoded redirect that Gmail then wrapped again —
+                  and an unsubscribe link is a compliance mechanism, not a
+                  marketing metric. It should never be instrumented. */}
               <Link
+                {...{ "ses:no-track": "" }}
                 href={unsubscribeUrl}
                 style={{ color: color.grey, textDecoration: "underline" }}
               >
