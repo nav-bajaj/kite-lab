@@ -1,0 +1,71 @@
+marketworks
+
+Product update · No. 1
+
+ 
+
+This week
+
+Building in the open.
+
+A short note on what moved this week. Nothing here is a recommendation — it’s a look at what we’re building and why.
+
+Universe tracked
+
+NSE 500
+
+daily
+
+Signals rebuilt
+
+7
+
+portfolios
+
+Years validated
+
+9
+
+out-of-sample
+
+----------------------------------------
+
+Shipped
+
+A cleaner read on market breadth
+
+Breadth now reads from the full NSE 500 panel rather than a sampled subset, so a narrow rally is visible on the day it narrows.
+
+Read the note → https://marketworks.in/library
+
+----------------------------------------
+
+In progress
+
+Corporate actions, handled properly
+
+Splits, bonuses and demergers quietly corrupt a price history if they are adjusted late. We rebuilt that pipeline so the adjustment happens before any signal reads the panel.
+
+----------------------------------------
+
+From the library
+
+Why process beats prediction
+
+The case for rules you can restate a year later, and what that discipline costs you in the months it underperforms.
+
+Read the article → https://marketworks.in/library
+
+----------------------------------------
+
+Coming next
+
+We’re opening access in stages. If you’re on the waitlist, you’ll hear from us before anyone else.
+
+See what we’re building https://marketworks.in
+
+Marketworks publishes educational research on Indian equities. Nothing in this email is investment advice or a recommendation to buy or sell any security. Markets carry risk; past behaviour is not a guarantee of future results.
+
+Marketworks Research · SCO 185-187, First Floor, Sector 9-C, Madhya Marg, Chandigarh, India
+
+You are receiving this because you joined the waitlist at marketworks.in. Unsubscribe {{unsubscribe_url}}.
