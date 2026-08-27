@@ -54,7 +54,12 @@ class Settings(BaseSettings):
     # SES SENDS BUT CANNOT RECEIVE. email_from must be a real monitored
     # Google Workspace mailbox or every reply is lost.
     smtp_host: str = ""          # e.g. email-smtp.eu-north-1.amazonaws.com
-    smtp_port: int = 587         # STARTTLS
+    # 2587, NOT 587. Railway blocks outbound connections on the standard
+    # SMTP ports (25/465/587) — verified 2026-08-27, the socket connect
+    # simply times out with no error from SES. SES also listens on the
+    # alternates 2465 and 2587, which are open. Same STARTTLS protocol,
+    # only the port differs. Do not "fix" this back to 587.
+    smtp_port: int = 2587
     smtp_user: str = ""
     smtp_password: str = ""
     email_from: str = "mail@marketworks.in"
