@@ -8,12 +8,17 @@ to be notified at launch. Storage only — no email sending here.
 Not under /api/system/* — that router is reserved for Zerodha OAuth
 bootstrap (AD-1, R-003).
 """
+import csv
+import io
 import re
+import secrets
 import time
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from slowapi.util import get_remote_address
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -31,7 +36,21 @@ _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 _ALLOWED_SOURCES = frozenset({"coming_soon"})
 
+# Consent lifecycle; mirrored in the 0007 migration. Only "confirmed" is
+# mailable. "bounced"/"complained" are terminal and set from SES events.
+STATUSES = ("pending", "confirmed", "unsubscribed", "bounced", "complained")
+MAILABLE = ("confirmed",)
+
 _OK = {"status": "ok"}
+
+
+def new_token() -> str:
+    """URL-safe, unguessable token for confirm / unsubscribe links."""
+    return secrets.token_urlsafe(32)
+
+
+def _iso(dt):
+    return dt.isoformat() if dt else None
 
 # Absolute ceiling on table growth (R-027): the XFF-keyed rate limit is
 # spoofable and unique emails are unbounded, so a rotating abuser could
@@ -98,7 +117,14 @@ async def join_waitlist(
         # Ceiling reached — pretend success, write nothing (R-027).
         return _OK
 
-    db.add(WaitlistSignup(email=email, source=body.source))
+    db.add(
+        WaitlistSignup(
+            email=email,
+            source=body.source,
+            status="pending",
+            unsubscribe_token=new_token(),
+        )
+    )
     try:
         db.commit()
     except IntegrityError:
@@ -113,7 +139,8 @@ async def list_waitlist(
     db: Session = Depends(get_db),
     user: dict = Depends(require_admin),
 ):
-    """Admin-only readout of the waitlist, newest first."""
+    """Admin-only readout of the waitlist, newest first, with the status
+    breakdown the admin panel renders."""
     # Bulk PII — never cacheable (matches the R-026 admin ops-intel pattern).
     response.headers["Cache-Control"] = "no-store, must-revalidate"
     limit = max(1, min(limit, 5000))
@@ -123,14 +150,55 @@ async def list_waitlist(
         .limit(limit)
         .all()
     )
+
+    counts = dict(
+        db.query(WaitlistSignup.status, func.count(WaitlistSignup.id))
+        .group_by(WaitlistSignup.status)
+        .all()
+    )
+    by_status = {s: int(counts.get(s, 0)) for s in STATUSES}
+
     return {
-        "count": db.query(WaitlistSignup).count(),
+        "count": sum(by_status.values()),
+        "mailable": sum(by_status[s] for s in MAILABLE),
+        "by_status": by_status,
         "signups": [
             {
                 "email": r.email,
                 "source": r.source,
-                "created_at": r.created_at.isoformat() if r.created_at else None,
+                "status": r.status,
+                "created_at": _iso(r.created_at),
+                "confirmed_at": _iso(r.confirmed_at),
+                "unsubscribed_at": _iso(r.unsubscribed_at),
+                "welcome_sent_at": _iso(r.welcome_sent_at),
             }
             for r in rows
         ],
     }
+
+
+@router.get("/export.csv")
+async def export_waitlist(
+    db: Session = Depends(get_db),
+    user: dict = Depends(require_admin),
+):
+    """Admin-only CSV of the whole list. Tokens are deliberately NOT
+    exported — they are live credentials for confirm/unsubscribe links and
+    have no business sitting in a spreadsheet."""
+    buf = io.StringIO()
+    w = csv.writer(buf)
+    w.writerow(["email", "source", "status", "created_at", "confirmed_at",
+                "unsubscribed_at", "welcome_sent_at"])
+    for r in db.query(WaitlistSignup).order_by(WaitlistSignup.created_at.asc()):
+        w.writerow([r.email, r.source, r.status, _iso(r.created_at),
+                    _iso(r.confirmed_at), _iso(r.unsubscribed_at),
+                    _iso(r.welcome_sent_at)])
+    buf.seek(0)
+    return StreamingResponse(
+        iter([buf.getvalue()]),
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": 'attachment; filename="waitlist.csv"',
+            "Cache-Control": "no-store, must-revalidate",
+        },
+    )

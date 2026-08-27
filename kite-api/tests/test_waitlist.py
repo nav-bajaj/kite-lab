@@ -300,3 +300,93 @@ def test_get_returns_signups_for_admin(test_client, rsa_keypair):
     assert body["count"] == 1
     assert body["signups"][0]["email"] == "person@example.com"
     assert body["signups"][0]["source"] == "coming_soon"
+
+
+# ---------------------------------------------------------------------------
+# Consent lifecycle (email_channel Phase 1)
+# ---------------------------------------------------------------------------
+
+
+def test_signup_starts_pending_with_unsubscribe_token(
+    test_client, db_sessionmaker
+):
+    """A new signup is NOT mailable until it confirms, and carries an
+    unguessable unsubscribe token from the moment it exists."""
+    test_client.post("/api/waitlist", json={"email": "person@example.com"})
+    db = db_sessionmaker()
+    try:
+        row = db.query(WaitlistSignup).one()
+        assert row.status == "pending"
+        assert row.confirmed_at is None
+        assert row.unsubscribe_token
+        assert len(row.unsubscribe_token) >= 32
+    finally:
+        db.close()
+
+
+def test_unsubscribe_tokens_are_unique_per_signup(test_client, db_sessionmaker):
+    for i in range(5):
+        test_client.post("/api/waitlist", json={"email": f"u{i}@example.com"})
+    db = db_sessionmaker()
+    try:
+        tokens = [r.unsubscribe_token for r in db.query(WaitlistSignup).all()]
+    finally:
+        db.close()
+    assert len(tokens) == 5
+    assert len(set(tokens)) == 5
+
+
+def test_status_breakdown_and_mailable_count(test_client, rsa_keypair, db_sessionmaker):
+    """`mailable` counts only confirmed rows — the number that matters
+    before any send."""
+    for i in range(3):
+        test_client.post("/api/waitlist", json={"email": f"s{i}@example.com"})
+    db = db_sessionmaker()
+    try:
+        rows = db.query(WaitlistSignup).order_by(WaitlistSignup.id).all()
+        rows[0].status = "confirmed"
+        rows[1].status = "unsubscribed"
+        db.commit()
+    finally:
+        db.close()
+
+    token = _make_token(rsa_keypair, "admin")
+    body = test_client.get(
+        "/api/waitlist", headers={"Authorization": f"Bearer {token}"}
+    ).json()
+    assert body["count"] == 3
+    assert body["mailable"] == 1
+    assert body["by_status"]["confirmed"] == 1
+    assert body["by_status"]["unsubscribed"] == 1
+    assert body["by_status"]["pending"] == 1
+
+
+# ---------------------------------------------------------------------------
+# CSV export
+# ---------------------------------------------------------------------------
+
+
+def test_export_requires_admin(test_client, rsa_keypair):
+    assert test_client.get("/api/waitlist/export.csv").status_code == 401
+    client = _make_token(rsa_keypair, "client")
+    resp = test_client.get(
+        "/api/waitlist/export.csv", headers={"Authorization": f"Bearer {client}"}
+    )
+    assert resp.status_code == 403
+
+
+def test_export_returns_csv_without_tokens(test_client, rsa_keypair):
+    """Tokens are live credentials for confirm/unsubscribe links — they
+    must never leave the DB in a spreadsheet."""
+    test_client.post("/api/waitlist", json={"email": "person@example.com"})
+    token = _make_token(rsa_keypair, "admin")
+    resp = test_client.get(
+        "/api/waitlist/export.csv", headers={"Authorization": f"Bearer {token}"}
+    )
+    assert resp.status_code == 200
+    assert "text/csv" in resp.headers["content-type"]
+    assert "no-store" in resp.headers.get("cache-control", "")
+    text = resp.text
+    assert "person@example.com" in text
+    assert "email,source,status" in text
+    assert "token" not in text.lower()
