@@ -155,3 +155,23 @@ def test_unsubscribe_link_opts_out_of_ses_click_tracking():
         "unsubscribe anchor lost its ses:no-track attribute — SES will "
         "rewrite the link and break it"
     )
+
+
+def test_every_link_opts_out_of_ses_click_tracking():
+    """Not just unsubscribe — EVERY link. The templates have to be immune
+    to click tracking regardless of how the SES configuration set is set
+    up, because a rewritten awstrack.me URL both breaks tokenised links
+    and reads as phishing.
+    """
+    import re
+    for template in ("welcome", "product-update"):
+        html, _ = email_service.render(
+            template, {"unsubscribe_url": "https://marketworks.in/unsubscribe?token=t"}
+        )
+        anchors = re.findall(r"<a\b[^>]*>", html, flags=re.S)
+        assert anchors, f"{template}: no anchors at all"
+        unprotected = [a for a in anchors if "ses:no-track" not in a]
+        assert not unprotected, (
+            f"{template}: {len(unprotected)} link(s) missing ses:no-track — "
+            f"SES will rewrite them: {unprotected[:1]}"
+        )

@@ -55,3 +55,18 @@ export const TOKEN = {
   unsubscribe: "{{unsubscribe_url}}",
   preferences: "{{preferences_url}}",
 } as const;
+
+/**
+ * Spread onto EVERY <Link> in an email.
+ *
+ * SES click-tracking rewrites links through awstrack.me. On the first real
+ * send that turned the unsubscribe link into a double-encoded redirect,
+ * which Gmail wrapped again in google.com/url — and it did not resolve.
+ * `ses:no-track` opts an individual anchor out.
+ *
+ * Applied to all links, not just unsubscribe, so the templates are immune
+ * regardless of how the SES configuration set is set up. Rewritten
+ * awstrack.me URLs also read as phishing, which is the wrong signal from a
+ * brand asking to be trusted with money.
+ */
+export const NO_TRACK = { "ses:no-track": "" } as const;

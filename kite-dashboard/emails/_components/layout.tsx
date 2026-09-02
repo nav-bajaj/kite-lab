@@ -9,7 +9,7 @@ import {
   Text,
 } from "react-email";
 
-import { color, font, WIDTH, TOKEN } from "./theme";
+import { color, font, WIDTH, TOKEN, NO_TRACK } from "./theme";
 
 /**
  * The branded shell every Marketworks email sits in.
@@ -165,7 +165,7 @@ export function Layout({
                   and an unsubscribe link is a compliance mechanism, not a
                   marketing metric. It should never be instrumented. */}
               <Link
-                {...{ "ses:no-track": "" }}
+                {...NO_TRACK}
                 href={unsubscribeUrl}
                 style={{ color: color.grey, textDecoration: "underline" }}
               >
