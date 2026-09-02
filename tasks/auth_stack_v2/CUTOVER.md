@@ -105,6 +105,35 @@ is auth-agnostic and ports unchanged.
       already covers marketworks.in). Captcha goes LAST because it
       blocks curl-based smoke tests.
 
+## Stage A/B verification log — 2026-09-03
+
+Production project ref: `jhvkfokskanbaiipvcqu`
+
+| Check | Result |
+|---|---|
+| A2 / B1 — JWKS serves ES256 | **PASS.** Exactly one key, `alg=ES256`, `kty=EC`, `crv=P-256`. |
+| anon key sanity | PASS. `role=anon`, ref matches, expires 2035. HS256 on the anon key is expected — it is a static project key, not a user session token; the ES256 requirement applies to session tokens, which is what the backend verifies. |
+| B2 — auth settings | **PASS.** google=true, email=true, signups open, `mailer_autoconfirm=false` (OTP genuinely required). phone=false, correct — SMS is Phase 5. |
+| B4 — captcha active | **PASS**, but early. A tokenless OTP request returns `captcha_failed`. |
+| B3 — SMTP smoke | **BLOCKED.** Captcha was enabled before this ran (A10 says captcha goes last precisely because it blocks curl smoke tests). |
+
+**B3 is the one gap and it matters.** SES SMTP itself is proven — the
+email_channel welcome mail sends through those same credentials. What is
+NOT proven is the SMTP block entered into the Supabase dashboard, which
+is a separate copy of host/port/user/password. A typo there means nobody
+can sign in, and without B3 we would not discover that until the cutover.
+
+Two ways to close it:
+- Toggle captcha off in Supabase for ~2 minutes, ask for a re-run, toggle
+  back on. Preferred: it isolates SMTP before the cutover.
+- Or accept the risk and let D3 (founder signs in through the browser,
+  which supplies a captcha token) be the first real test.
+
+**Sender address:** A6 specifies `login@marketworks.in`, which does not
+exist as a mailbox. Use **`mail@marketworks.in`** — it is real, monitored,
+and already confirmed receiving. Do not use a noreply address: a reply to
+a sign-in email should reach a human.
+
 ## Stage B — remote verification (🤖, after A9)
 
 - [ ] B1 JWKS: exactly one ES256 key served.
