@@ -92,8 +92,20 @@ Phases per PLAN.md. Local-first: 1-3 run on the laptop; Railway is Phase 4.
 
 - [x] EOD tick archival: day dirs > keep_raw_days tar.gz'd + verified +
       pruned; crash-resumable; volume runway ~3 weeks -> months
-- [ ] GDrive offload of archives (worker needs own creds path) — later
+- [x] GDrive offload of archives (2026-09-02): EOD uploads `<date>.tar.gz`
+      to `kite-lab-backups/options_ticks/`, md5-verified against Drive
+      before the local copy is pruned; `keep_archive_days=5`,
+      `offload_max_files=8` bounds one night's work. Backlog drain via
+      `python -u -m app.workers.options.offload`. Steady state on the
+      volume: ~3 raw days + 5 archives ~= 1.3GB of 5GB.
+      Trigger: volume hit 89% (537MB free, ~3 sessions of runway) because
+      archival shipped without offload — archives accumulated 25 deep.
 - [ ] option_minute_bars partitioning + insert tuning — when size demands
+- [ ] Disk usage in the worker heartbeat + /admin card, warn >85%. Nothing
+      reports volume usage today, which is why the 89% was found by eye.
+- [ ] `Recorder.flush()` pops the buffer before writing and the run loop
+      swallows the exception, so a full volume silently drops every flush
+      window's raw ticks instead of failing loudly. Restore-on-error.
 
 ## V1 SUCCESS CRITERIA (handover doc §22) — ALL MET as of 2026-07-30
 

@@ -67,6 +67,15 @@ class OptionsWorkerSettings(BaseSettings):
     # the queryable layer, the archive the replay source).
     keep_raw_days: int = 2
 
+    # Archive offload: <date>.tar.gz older than this are pushed to Google
+    # Drive and removed from the volume (Phase 6). The volume holds only a
+    # replay-convenience window; Drive is the durable archive.
+    keep_archive_days: int = 5
+
+    # Files one EOD offload run will move. Bounds how long the post-close
+    # sequence can block; a backlog drains over successive nights.
+    offload_max_files: int = 8
+
     # Testing only: capture regardless of the market clock (post-close
     # snapshot ticks still flow). Never leave on in normal operation —
     # it bypasses the session lifecycle entirely.

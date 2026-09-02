@@ -370,6 +370,7 @@ class OptionsWorker:
                 log.warning("daily_sessions write failed: %s", exc)
         self._materialize_greeks(now)
         self._archive_ticks(now)
+        self._offload_archives(now)
         self._eod_analytics(now)
         self._write_daily_report(now)
 
@@ -428,6 +429,24 @@ class OptionsWorker:
                 log.info("eod: tick archive %s", stats)
         except Exception as exc:
             log.warning("tick archival failed (raw data untouched): %s", exc)
+
+    def _offload_archives(self, now: datetime) -> None:
+        """EOD: push aged tick archives to Drive, prune the local copies.
+        Best-effort — a failure leaves the archive on the volume, never the
+        other way around."""
+        try:
+            from app.workers.options.offload import offload_archives
+
+            stats = offload_archives(
+                self.settings.ticks_archive_dir,
+                self.settings.keep_archive_days,
+                now.date(),
+                max_files=self.settings.offload_max_files,
+            )
+            if any(stats.values()):
+                log.info("eod: archive offload %s", stats)
+        except Exception as exc:
+            log.warning("archive offload failed (archives untouched): %s", exc)
 
     def _materialize_greeks(self, now: datetime) -> None:
         """EOD: derive IV/Greeks for the day's bars (microstructure Stage 1).
