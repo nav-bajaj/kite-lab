@@ -215,3 +215,77 @@ class TestWorkerOnTicksGlue:
             assert t in worker.chain.by_token, "widened contracts must be registered in chain state"
         saved = il.load_selection(tmp_path / "tokens" / "2026-07-27.json")
         assert len(saved.contracts) == len(selection.contracts)
+
+
+class TestRecorderWriteFailure:
+    """A full volume must not silently eat ticks (2026-09-02)."""
+
+    def _rec(self, tmp_path, **kw):
+        return TickRecorder(tmp_path, flush_rows=10, **kw)
+
+    def _rows(self, rec, n):
+        from datetime import datetime as _dt
+
+        from app.workers.options.instrument_loader import Contract
+
+        c = Contract(contract_id="NIFTY26SEP24000CE", instrument_token=1,
+                     tradingsymbol="NIFTY26SEP24000CE", kind="CE", expiry=None,
+                     strike=24000.0, lot_size=75, tick_size=0.05,
+                     segment="NFO-OPT", exchange="NFO")
+        for i in range(n):
+            rec._buffer.append(flatten_tick({"last_price": float(i)}, c,
+                                            _dt(2026, 9, 2, 10, 0, 0)))
+
+    def test_failed_write_requeues_rows_instead_of_dropping(self, tmp_path, monkeypatch):
+        rec = self._rec(tmp_path)
+        self._rows(rec, 5)
+        monkeypatch.setattr(rec, "_write", lambda rows: (_ for _ in ()).throw(OSError("No space left on device")))
+
+        assert rec.flush() is None
+        counters = rec.counters()
+        assert counters["buffered"] == 5, "rows must survive a failed write"
+        assert counters["rows_written"] == 0
+        assert counters["rows_dropped"] == 0
+        assert counters["write_errors"] == 1
+        assert "No space left" in rec.last_write_error
+
+    def test_requeued_rows_are_written_once_the_disk_recovers(self, tmp_path, monkeypatch):
+        rec = self._rec(tmp_path)
+        self._rows(rec, 5)
+        boom = {"fail": True}
+        real_write = rec._write
+        monkeypatch.setattr(rec, "_write",
+                            lambda rows: (_ for _ in ()).throw(OSError("ENOSPC"))
+                            if boom["fail"] else real_write(rows))
+
+        rec.flush()
+        boom["fail"] = False
+        self._rows(rec, 3)          # more ticks arrive meanwhile
+        path = rec.flush()
+
+        assert path is not None and path.exists()
+        assert rec.counters()["rows_written"] == 8, "the requeued 5 plus the new 3"
+        assert rec.counters()["buffered"] == 0
+        assert rec.last_write_error is None, "a good write clears the error"
+
+    def test_buffer_is_bounded_and_drops_are_counted(self, tmp_path, monkeypatch):
+        rec = self._rec(tmp_path, max_buffer_rows=12)
+        monkeypatch.setattr(rec, "_write", lambda rows: (_ for _ in ()).throw(OSError("ENOSPC")))
+
+        for _ in range(3):
+            self._rows(rec, 6)
+            rec.flush()
+
+        counters = rec.counters()
+        assert counters["buffered"] == 12, "memory must stay bounded while writes fail"
+        assert counters["rows_dropped"] == 6, "and what was dropped is accounted for"
+        assert counters["write_errors"] == 3
+
+    def test_oldest_rows_are_the_ones_dropped(self, tmp_path, monkeypatch):
+        rec = self._rec(tmp_path, max_buffer_rows=4)
+        monkeypatch.setattr(rec, "_write", lambda rows: (_ for _ in ()).throw(OSError("ENOSPC")))
+
+        self._rows(rec, 6)          # ltp 0..5
+        rec.flush()
+
+        assert [r["ltp"] for r in rec._buffer] == [2.0, 3.0, 4.0, 5.0]

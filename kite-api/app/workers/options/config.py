@@ -76,6 +76,10 @@ class OptionsWorkerSettings(BaseSettings):
     # sequence can block; a backlog drains over successive nights.
     offload_max_files: int = 8
 
+    # Volume headroom warning. A full volume does not crash the worker, it
+    # makes every tick flush fail — so it has to be surfaced deliberately.
+    disk_warn_pct: float = 85.0
+
     # Testing only: capture regardless of the market clock (post-close
     # snapshot ticks still flow). Never leave on in normal operation —
     # it bypasses the session lifecycle entirely.

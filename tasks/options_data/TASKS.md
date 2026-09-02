@@ -101,11 +101,20 @@ Phases per PLAN.md. Local-first: 1-3 run on the laptop; Railway is Phase 4.
       Trigger: volume hit 89% (537MB free, ~3 sessions of runway) because
       archival shipped without offload — archives accumulated 25 deep.
 - [ ] option_minute_bars partitioning + insert tuning — when size demands
-- [ ] Disk usage in the worker heartbeat + /admin card, warn >85%. Nothing
-      reports volume usage today, which is why the 89% was found by eye.
-- [ ] `Recorder.flush()` pops the buffer before writing and the run loop
-      swallows the exception, so a full volume silently drops every flush
-      window's raw ticks instead of failing loudly. Restore-on-error.
+- [x] Disk headroom in the heartbeat (2026-09-02): `_check_disk` on the
+      heartbeat cadence puts `disk{used_pct,free_mb}` in health_snapshot
+      and stamps `last_error` past `disk_warn_pct=85`, so /admin goes red
+      on the existing dot logic with no frontend change. Logs once per
+      whole percent crossed, not once per beat.
+- [x] `Recorder.flush()` restore-on-error (2026-09-02): a failed write
+      requeues its rows at the front of the buffer instead of dropping
+      them, bounded by `MAX_BUFFER_ROWS=25k` with `rows_dropped` /
+      `write_errors` in counters. flush() deliberately does NOT raise —
+      `add()` runs on the KiteTicker callback thread, whose handler
+      swallows exceptions, so raising would abandon the rest of that tick
+      batch (chain snapshot, bar builder) as collateral.
+- [ ] /admin: render the new `disk` field as a card on beta_gtm_mvp
+      (cherry-pick). The warning already surfaces via last_error without it.
 
 ## V1 SUCCESS CRITERIA (handover doc §22) — ALL MET as of 2026-07-30
 

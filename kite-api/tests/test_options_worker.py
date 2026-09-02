@@ -285,3 +285,57 @@ class TestWorkerLifecycle:
         with pytest.raises(SystemExit) as exc:
             worker.run()
         assert exc.value.code == RECYCLE_EXIT_CODE
+
+
+class TestDiskHeadroom:
+    """Nothing reported volume usage before 2026-09-02; the fill was
+    found by eye at 89%."""
+
+    def _worker(self, tmp_path, monkeypatch, used, total=5_000_000_000):
+        import collections
+
+        from app.workers.options.worker import OptionsWorker
+
+        w = OptionsWorker()
+        monkeypatch.setattr(type(w.settings), "options_data_dir",
+                            property(lambda self: tmp_path))
+        usage = collections.namedtuple("usage", "total used free")
+        monkeypatch.setattr("shutil.disk_usage",
+                            lambda p: usage(total, used, total - used))
+        return w
+
+    def test_snapshot_carries_disk_usage(self, tmp_path, monkeypatch):
+        w = self._worker(tmp_path, monkeypatch, used=2_000_000_000)
+        w._check_disk(datetime(2026, 9, 2, 23, 0, tzinfo=IST))
+
+        assert w.health_snapshot()["disk"] == {"used_pct": 40.0, "free_mb": 3000}
+        assert w.last_error is None
+
+    def test_crossing_the_threshold_stamps_last_error(self, tmp_path, monkeypatch):
+        w = self._worker(tmp_path, monkeypatch, used=4_450_000_000)  # 89%
+        w._check_disk(datetime(2026, 9, 2, 23, 0, tzinfo=IST))
+
+        assert w.health_snapshot()["disk"]["used_pct"] == 89.0
+        assert w.last_error is not None and "89% full" in w.last_error
+
+    def test_below_threshold_does_not_stamp(self, tmp_path, monkeypatch):
+        w = self._worker(tmp_path, monkeypatch, used=4_200_000_000)  # 84%
+        w._check_disk(datetime(2026, 9, 2, 23, 0, tzinfo=IST))
+
+        assert w.last_error is None
+
+    def test_warning_logs_once_per_percent_not_per_heartbeat(self, tmp_path, monkeypatch, caplog):
+        w = self._worker(tmp_path, monkeypatch, used=4_450_000_000)
+        with caplog.at_level("ERROR"):
+            for _ in range(5):
+                w._check_disk(datetime(2026, 9, 2, 23, 0, tzinfo=IST))
+
+        assert len([r for r in caplog.records if "volume" in r.message]) == 1
+
+    def test_disk_check_never_raises(self, tmp_path, monkeypatch):
+        w = self._worker(tmp_path, monkeypatch, used=0)
+        monkeypatch.setattr("shutil.disk_usage",
+                            lambda p: (_ for _ in ()).throw(OSError("gone")))
+
+        w._check_disk(datetime(2026, 9, 2, 23, 0, tzinfo=IST))          # must not raise
+        assert w.health_snapshot()["disk"] is None

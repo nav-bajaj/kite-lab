@@ -108,6 +108,8 @@ class OptionsWorker:
         self._last_heartbeat: datetime = now_ist()
         self._capture_started_at: Optional[datetime] = None
         self._selection_failures = 0
+        self.disk: Optional[dict] = None
+        self._disk_warned_at: Optional[int] = None
 
     # -- lifecycle ---------------------------------------------------------
 
@@ -155,6 +157,11 @@ class OptionsWorker:
             if (now - self._last_flush).total_seconds() >= self.settings.flush_seconds:
                 self.recorder.flush()
                 self._last_flush = now
+                if self.recorder.last_write_error:
+                    self.last_error = (
+                        f"{now.isoformat()} tick write failing: "
+                        f"{self.recorder.last_write_error}"
+                    )
                 # One INFO line per flush window — remote log monitoring
                 # (Railway logs are the only live view besides /admin)
                 log.info(
@@ -177,6 +184,7 @@ class OptionsWorker:
 
         if (now - self._last_heartbeat).total_seconds() >= self.settings.heartbeat_seconds:
             self._last_heartbeat = now
+            self._check_disk(now)
             try:
                 from app.services.worker_health_store import write_heartbeat
 
@@ -412,6 +420,38 @@ class OptionsWorker:
         except Exception as exc:
             log.warning("daily report failed (rerun via daily_report CLI): %s", exc)
 
+    def _check_disk(self, now: datetime) -> None:
+        """Volume headroom, on the heartbeat cadence.
+
+        Nothing else reports disk usage — the 2026-09-02 fill was found by
+        eye at 89%. Recorded in the snapshot every beat; stamped into
+        last_error past disk_warn_pct so /admin goes red on its own.
+        """
+        try:
+            import shutil
+
+            usage = shutil.disk_usage(self.settings.options_data_dir)
+        except Exception as exc:
+            log.debug("disk check skipped: %s", exc)
+            return
+
+        used_pct = 100.0 * usage.used / usage.total if usage.total else 0.0
+        free_mb = usage.free / 1e6
+        self.disk = {"used_pct": round(used_pct, 1), "free_mb": round(free_mb)}
+
+        if used_pct < self.settings.disk_warn_pct:
+            self._disk_warned_at = None
+            return
+
+        self.last_error = (
+            f"{now.isoformat()} volume {used_pct:.0f}% full "
+            f"({free_mb:.0f} MB free) — tick writes at risk"
+        )
+        # One log line per whole percent crossed, not one per heartbeat.
+        if self._disk_warned_at != int(used_pct):
+            self._disk_warned_at = int(used_pct)
+            log.error("disk: volume %.0f%% full, %.0f MB free", used_pct, free_mb)
+
     def _archive_ticks(self, now: datetime) -> None:
         """EOD: compress + prune old raw-tick days (Phase 5 retention).
         Best-effort — a failure leaves raw data in place, never the
@@ -483,6 +523,7 @@ class OptionsWorker:
             "contracts": len(self.selection.contracts) if self.selection else 0,
             "atm_strike": self.selection.atm_strike if self.selection else None,
             "last_error": self.last_error,
+            "disk": self.disk,
         }
         if self.ticker:
             snap["ws"] = self.ticker.counters()
