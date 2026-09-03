@@ -28,6 +28,12 @@ os.environ.setdefault(
     "SUPABASE_JWKS_URL", f"{TEST_SUPABASE_ISSUER}/.well-known/jwks.json"
 )
 os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
-os.environ.setdefault("ALLOWED_ORIGINS", "http://localhost:3000")
+# Mirror production: the apex and www are BOTH allowed, which is what
+# makes the CORS-on-304 tests meaningful — a stale header from one
+# host must never be replayed against a request from the other.
+os.environ.setdefault(
+    "ALLOWED_ORIGINS",
+    "http://localhost:3000,https://marketworks.in,https://www.marketworks.in",
+)
 os.environ.setdefault("DEBUG", "false")
 os.environ.setdefault("DISABLE_AUTH", "false")

@@ -22,6 +22,16 @@ from starlette.responses import Response
 # have sent on a 200 that affect caching).
 _PRESERVE_ON_304 = ("cache-control", "vary", "etag")
 
+# CORS headers MUST survive too. This middleware is mounted outside
+# CORSMiddleware, so by the time we rebuild the response the CORS headers
+# are already on it and rebuilding silently drops them. A 304 without
+# Access-Control-Allow-Origin is rejected by the browser, and worse, the
+# browser then falls back to the ACAO stored with its cached copy — so a
+# response cached under www.marketworks.in gets replayed against a request
+# from the apex domain and fails as an origin mismatch. That presents as a
+# CORS misconfiguration on a server that is configured correctly.
+_CORS_PREFIX = "access-control-"
+
 
 class ETagMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
@@ -42,6 +52,9 @@ class ETagMiddleware(BaseHTTPMiddleware):
             for header in _PRESERVE_ON_304:
                 if header in response.headers:
                     not_modified.headers[header] = response.headers[header]
+            for key, value in response.headers.items():
+                if key.lower().startswith(_CORS_PREFIX):
+                    not_modified.headers[key] = value
             not_modified.headers["etag"] = etag
             return not_modified
 
