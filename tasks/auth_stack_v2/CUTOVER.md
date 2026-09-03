@@ -263,9 +263,20 @@ the spike project was promoted in place.
 
 Consequences, in order of severity:
 
-1. **Plan tier is unverified.** A1 specified Pro because the free tier
-   pauses on inactivity, and a paused project means nobody can sign in.
-   Confirm the tier in the dashboard.
+1. **Plan tier: FREE, and that is a deliberate founder decision
+   (2026-09-03).** A1 had specified Pro. Overruled on cost: Free covers
+   50,000 MAU, and the pause rule is "a few user requests each day over
+   the previous week", which daily founder sign-ins clear easily. Two
+   residual exposures to keep in view, neither blocking:
+   - A full week with nobody signing in pauses the project, and **resume
+     is manual** — a dashboard click, not automatic. No data is lost, but
+     sign-in stays down until someone notices. Relevant during travel or
+     illness, not day to day.
+   - **Free includes no backups at all** — no daily snapshots, no PITR.
+     Immaterial today at one user; it becomes material as the waitlist
+     converts. Revisit when real accounts exist.
+   - Auth log retention is 1 day on Free (7 on Pro), so post-mortems on
+     anything auth-related have a one-day window.
 2. **`npm run test:e2e` pointed a user-mutating suite at the live auth
    store.** Fixed: the runner now refuses the production ref unless
    `ALLOW_PROD_E2E=yes-i-mean-production` is set. Note that no separate
