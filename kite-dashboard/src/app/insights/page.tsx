@@ -2,9 +2,11 @@ import Link from "next/link";
 import {
   getReading,
   getMovers,
-  fmtPct,
   MoversResponse,
 } from "@/lib/insights-api";
+import {
+  fmtPct,
+} from "@/lib/insights-format";
 import { RegimeLegend } from "./_components/regime-legend";
 import {
   Section,

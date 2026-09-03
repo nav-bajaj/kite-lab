@@ -12,6 +12,8 @@
  * full styling later. Types/shapes here lock the API contract.
  */
 
+import { getSupabaseServerClient } from "@/lib/supabase/server";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 const REVALIDATE_SECONDS = 900; // 15 minutes — same as backend Cache-Control
 
@@ -216,8 +218,34 @@ export interface MarketReading {
 
 // ---------- fetchers ----------
 
+/**
+ * Forward the caller's Supabase access token to the backend.
+ *
+ * These are Server Component fetches, so there is no browser to attach a
+ * header for us. /api/insights/* is public in normal operation but is
+ * admin-only under PRIVATE_MODE (R-028), and the backend enforces that
+ * independently of the Next.js middleware gate — deliberately, because
+ * R-019 (middleware-bypass CVEs) says one layer is not enough. So the
+ * page being reachable does NOT mean the API call is authorised; the
+ * token has to travel.
+ *
+ * Returns null for an anonymous caller rather than throwing: with
+ * PRIVATE_MODE off this path is genuinely public and must still work.
+ */
+async function authHeader(): Promise<Record<string, string>> {
+  try {
+    const supabase = await getSupabaseServerClient();
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  } catch {
+    return {};
+  }
+}
+
 async function getJson<T>(path: string): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
+    headers: await authHeader(),
     next: { revalidate: REVALIDATE_SECONDS },
   });
   if (!res.ok) {
@@ -493,35 +521,4 @@ export interface PreEventResponse {
 export async function getPreEvent(date?: string): Promise<PreEventResponse> {
   const q = date ? `?date=${encodeURIComponent(date)}` : "";
   return getJson<PreEventResponse>(`/api/insights/calendar/pre-event${q}`);
-}
-
-/** Strip the NIFTY_ prefix for display; sector baskets are index names. */
-export function sectorLabel(s: string): string {
-  return s.replace(/^NIFTY_/, "").replace(/_/g, " ");
-}
-
-// ---------- formatters ----------
-
-export function fmtPct(v: number | null | undefined, decimals = 1, signed = false): string {
-  if (v === null || v === undefined || Number.isNaN(v)) return "—";
-  const formatted = (v * 100).toFixed(decimals);
-  return signed && v >= 0 ? `+${formatted}%` : `${formatted}%`;
-}
-
-export function fmtNum(v: number | null | undefined, decimals = 2): string {
-  if (v === null || v === undefined || Number.isNaN(v)) return "—";
-  return v.toFixed(decimals);
-}
-
-const REGIME_LABELS: Record<string, string> = Object.freeze({
-  TREND_BULL: "Trend Bull",
-  DRIFT: "Drift",
-  STRETCHED: "Stretched",
-  STRESS: "Stress",
-});
-
-export function regimeLabel(r: string): string {
-  return Object.prototype.hasOwnProperty.call(REGIME_LABELS, r)
-    ? REGIME_LABELS[r as keyof typeof REGIME_LABELS]
-    : r;
 }

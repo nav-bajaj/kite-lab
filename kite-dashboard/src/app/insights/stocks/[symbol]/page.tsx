@@ -1,11 +1,13 @@
 import Link from "next/link";
 import {
   getStockDetail,
+  type StockRow,
+} from "@/lib/insights-api";
+import {
   fmtPct,
   fmtNum,
   sectorLabel,
-  type StockRow,
-} from "@/lib/insights-api";
+} from "@/lib/insights-format";
 import { Pct, Tag, ScoreBar, volumeBandTone, type Tone } from "@/components/insights/ui";
 import { PriceChart, RSSparkline } from "./_chart";
 

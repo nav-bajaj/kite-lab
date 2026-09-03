@@ -1,11 +1,13 @@
 import { cn } from "@/lib/utils";
 import {
-  fmtPct,
-  regimeLabel,
   type RegimeSnapshot,
   type StressSnapshot,
   type SectorRSSnapshot,
 } from "@/lib/insights-api";
+import {
+  fmtPct,
+  regimeLabel,
+} from "@/lib/insights-format";
 
 /** Tone → text color, using the brand role tokens + semantic finance colors
  *  provided by the `.mw-app` scope. */

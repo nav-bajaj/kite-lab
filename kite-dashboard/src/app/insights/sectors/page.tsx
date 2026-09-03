@@ -2,10 +2,12 @@ import Link from "next/link";
 import {
   getSectors,
   getSubgroups,
-  fmtPct,
   type SubgroupSnapshot,
   type SubgroupSpread,
 } from "@/lib/insights-api";
+import {
+  fmtPct,
+} from "@/lib/insights-format";
 import { Section, Pct, SectorBars } from "@/components/insights/ui";
 
 function LearnLink({ slug, label = "What is this?" }: { slug: string; label?: string }) {

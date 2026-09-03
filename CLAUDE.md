@@ -47,6 +47,7 @@ script, or removed `.md`. Don't push to that branch.
 - **CSP, security headers, rate limiting** on the backend are R-006/R-007 risk-register closures. Loosening any requires a register row first — see `docs/security/risk-register.md`.
 - **Token files** (`access_token.txt`, `session.json`) written with mode 0o600. Pattern in `kite-api/app/services/system_service.py`.
 - **Daily pipeline order** (see `scripts/run_daily_pipeline.py`): login → instruments → NSE 500 + indices → corporate-actions adjust → benchmark → shared-state cache → all 7 portfolios via `update_all_portfolios.py` → DB sync → cloud upload. Each step has a downstream consumer — don't reorder casually.
+- **`PRIVATE_MODE` changes an endpoint's auth contract, so its frontend callers must change too.** `/api/insights/*` and `/api/indices/*` are public in normal operation but admin-only under `PRIVATE_MODE` (R-028). Both had tokenless frontend callers and 401'd silently from 2026-08-26 to 2026-09-03. If you mount `require_admin_when_private` on a router, update every caller in the same commit. Server Components have no browser to attach the header — `insights-api.ts` forwards the session token itself, which is why it is server-only and its formatters live in `insights-format.ts`.
 - **`/api/system/*`** is intentionally unauthenticated (AD-1, R-003). Only OAuth-bootstrap routes go there; any new route here must pass through the `security-reviewer` subagent first.
 
 ## Conventions

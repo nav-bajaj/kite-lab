@@ -3,12 +3,14 @@
 import { useMemo, useState, useCallback } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import {
+import type {
   StockRow,
+} from "@/lib/insights-api";
+import {
   fmtPct,
   fmtNum,
   sectorLabel,
-} from "@/lib/insights-api";
+} from "@/lib/insights-format";
 import { Pct, Tag, ScoreBar, volumeBandTone } from "@/components/insights/ui";
 import { TagBadges } from "@/components/insights/tag-badges";
 import { cn } from "@/lib/utils";
