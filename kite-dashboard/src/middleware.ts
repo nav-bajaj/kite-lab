@@ -52,6 +52,27 @@ function roleFromClaims(claims: Record<string, unknown> | null): string {
 }
 
 export async function middleware(request: NextRequest) {
+  // Canonicalise onto the apex host BEFORE anything else.
+  //
+  // www and the apex both served the app, which made them two distinct
+  // browser origins hitting one API. The browser caches an API response
+  // along with the Access-Control-Allow-Origin it was issued under, so a
+  // response fetched on www would be replayed against an apex request and
+  // rejected as an origin mismatch — reported as a CORS misconfiguration
+  // on a server that echoes the correct origin every time. Collapsing to a
+  // single origin removes the whole class of failure rather than patching
+  // where it surfaces.
+  //
+  // Also runs ahead of the gate so the redirect never leaks whether a path
+  // exists: www/anything lands on the apex and is then gated normally.
+  const host = request.headers.get("host") ?? "";
+  if (host.startsWith("www.")) {
+    const url = request.nextUrl.clone();
+    url.host = host.slice(4);
+    url.port = "";
+    return NextResponse.redirect(url, 308);
+  }
+
   // The response we'll return on pass-through. Session-refresh cookies from
   // Supabase get written onto whichever response actually goes out, so a
   // refreshed token is never dropped — including on redirects.
