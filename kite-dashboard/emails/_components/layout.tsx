@@ -31,6 +31,12 @@ export interface LayoutProps {
   /** Small mono line in the header band, e.g. "Product update · No. 4". */
   kicker?: string;
   unsubscribeUrl?: string;
+  /** Transactional mail (a sign-in code) hides the unsubscribe line and
+   *  the "you joined the waitlist" provenance. You cannot unsubscribe
+   *  from a login code, and offering it is both meaningless and a way to
+   *  lose someone their account access. The risk disclaimer and postal
+   *  address stay — those belong on anything we send. */
+  transactional?: boolean;
   children: React.ReactNode;
 }
 
@@ -38,6 +44,7 @@ export function Layout({
   preview,
   kicker,
   unsubscribeUrl = TOKEN.unsubscribe,
+  transactional = false,
   children,
 }: LayoutProps) {
   return (
@@ -148,6 +155,7 @@ export function Layout({
               Marketworks Research &middot; SCO 185-187, First Floor,
               Sector 9-C, Madhya Marg, Chandigarh, India
             </Text>
+            {transactional ? null : (
             <Text
               style={{
                 margin: 0,
@@ -173,6 +181,7 @@ export function Layout({
               </Link>
               .
             </Text>
+            )}
           </Section>
         </Container>
       </Body>
