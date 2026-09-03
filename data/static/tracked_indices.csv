@@ -39,3 +39,7 @@ instrument_token,exchange_token,tradingsymbol,name,exchange,category,description
 294153,1149,MCXSILVDEX,MCXSILVDEX,MCX,commodity,MCX Silver index
 264969,1035,INDIA VIX,INDIA VIX,NSE,volatility,India VIX implied-volatility index (feeds insight-engine stress + regime)
 269065,1051,NIFTY GS 10YR,NIFTY GS 10YR,NSE,rates,Indian 10y govt-securities index (feeds insight-engine cross-asset india_10y)
+271625,1061,NIFTY50 EQL WGT,NIFTY50 EQL WGT,NSE,broad_market,"Nifty 50 Equal Weight - same 50 constituents, 2% each (reel 4 EW-vs-cap comparison)"
+271881,1062,NIFTY100 EQL WGT,NIFTY100 EQL WGT,NSE,broad_market,Nifty 100 Equal Weight (reel 4 EW-vs-cap comparison)
+409097,1598,NIFTY500 EQUAL WEIGHT,NIFTY500 EQUAL WEIGHT,NSE,broad_market,"Nifty 500 Equal Weight (reel 4 EW-vs-cap comparison; short history, from Dec 2024)"
+290313,1134,NIFTY TOTAL MKT,NIFTY TOTAL MKT,NSE,broad_market,"Nifty Total Market - 750 stocks, the widest published universe (reel 1 context)"

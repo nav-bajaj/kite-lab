@@ -7,7 +7,7 @@ import {
   Text,
 } from "react-email";
 
-import { color, font } from "./theme";
+import { color, font, NO_TRACK } from "./theme";
 
 /**
  * Reusable email blocks — the pieces a welcome mail, a product update and a
@@ -169,6 +169,7 @@ export function Button({ href, children }: { href: string; children: string }) {
   return (
     <Section style={{ margin: "4px 0 24px" }}>
       <Link
+        {...NO_TRACK}
         href={href}
         style={{
           display: "inline-block",
@@ -232,6 +233,7 @@ export function ArticleRow({
       {href ? (
         <Text style={{ margin: 0 }}>
           <Link
+            {...NO_TRACK}
             href={href}
             style={{
               fontFamily: font.sans,
