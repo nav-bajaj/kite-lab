@@ -16,10 +16,23 @@ import { Eyebrow, H1, P } from "./_components/blocks";
  * transactional: a login code carries no unsubscribe link. You cannot
  * unsubscribe from your own sign-in, and offering it would be a way to
  * lose someone their account access.
+ *
+ * SUBJECT LINE (set in the Supabase dashboard, not here):
+ *     {{ .Token }} is your Marketworks sign-in code
+ * The code leads so it survives notification truncation. This is a
+ * deliberate convenience-over-secrecy trade: the code becomes readable
+ * from a lock screen, against a large reduction in friction. Acceptable
+ * because the code is single-use and expires in 10 minutes. Revisit if
+ * the product ever guards something more sensitive than a research
+ * dashboard.
+ *
+ * No copy button: email clients strip JavaScript, so one cannot work.
+ * The code is selectable text near the word "code", which is what iOS
+ * and macOS one-time-code autofill keys off — faster than a button.
  */
 export default function SigninCode() {
   return (
-    <Layout preview="Your Marketworks sign-in code" transactional>
+    <Layout preview="This code expires in 10 minutes." transactional>
       <Eyebrow>Sign in</Eyebrow>
       <H1>Your sign-in code</H1>
 
