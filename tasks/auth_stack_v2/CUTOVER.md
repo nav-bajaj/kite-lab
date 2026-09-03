@@ -115,9 +115,13 @@ Production project ref: `jhvkfokskanbaiipvcqu`
 | anon key sanity | PASS. `role=anon`, ref matches, expires 2035. HS256 on the anon key is expected — it is a static project key, not a user session token; the ES256 requirement applies to session tokens, which is what the backend verifies. |
 | B2 — auth settings | **PASS.** google=true, email=true, signups open, `mailer_autoconfirm=false` (OTP genuinely required). phone=false, correct — SMS is Phase 5. |
 | B4 — captcha active | **PASS**, but early. A tokenless OTP request returns `captcha_failed`. |
-| B3 — SMTP smoke | **BLOCKED.** Captcha was enabled before this ran (A10 says captcha goes last precisely because it blocks curl smoke tests). |
+| B3 — SMTP smoke | **PASS** (2026-09-03). Captcha toggled off briefly; OTP request returned 200 in 4s and the code arrived in the founder's inbox, correctly rendered. Captcha re-enabled after. The 4s round trip is consistent with a real connect/STARTTLS/auth/send — a bad credential fails fast, a bad host hangs. |
 
-**B3 is the one gap and it matters.** SES SMTP itself is proven — the
+**Stage B is COMPLETE.** All four checks pass; the branded sign-in
+template is pasted and verified in a real inbox. Remaining blockers are
+Stage C (env vars) and Stage A0 (the site-gate reconciliation).
+
+*Historical note on why B3 mattered:* SES SMTP itself is proven — the
 email_channel welcome mail sends through those same credentials. What is
 NOT proven is the SMTP block entered into the Supabase dashboard, which
 is a separate copy of host/port/user/password. A typo there means nobody
