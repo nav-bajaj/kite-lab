@@ -48,6 +48,11 @@ os.environ.setdefault("DISABLE_AUTH", "false")
 from app.main import app  # noqa: E402
 from app import auth as auth_module  # noqa: E402
 from app.config import get_settings  # noqa: E402
+from tests.endpoint_inventory import (  # noqa: E402
+    ADMIN_ENDPOINTS,
+    CLIENT_READ_ENDPOINTS,
+    PUBLIC_ENDPOINTS,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -202,77 +207,9 @@ def test_client() -> TestClient:
 # ---------------------------------------------------------------------------
 
 
-ADMIN_ENDPOINTS: list[tuple[str, str]] = [
-    # jobs.py
-    ("GET", "/api/jobs"),
-    ("POST", "/api/jobs"),
-    ("GET", "/api/jobs/nonexistent-job"),
-    ("GET", "/api/jobs/nonexistent-job/logs"),
-    ("POST", "/api/jobs/nonexistent-job/cancel"),
-    # schedule.py
-    ("GET", "/api/schedule"),
-    ("POST", "/api/schedule"),
-    ("DELETE", "/api/schedule/nonexistent"),
-    ("POST", "/api/schedule/nonexistent/run"),
-    ("GET", "/api/schedule/defaults"),
-    # sync.py
-    ("POST", "/api/sync"),
-    ("POST", "/api/sync/all"),
-    # positions.py (mutations only)
-    ("POST", "/api/positions/sync"),
-    ("POST", "/api/positions/sync-from-csv"),
-    # system.py
-    ("POST", "/api/system/headless-login"),
-    # insights.py
-    ("POST", "/api/insights/cache/clear"),
-    # freshness.py
-    ("GET", "/api/freshness"),
-    # options_worker.py
-    ("GET", "/api/options/worker-status"),
-    ("GET", "/api/options/live-analytics"),
-]
 
-_U = "?universe=l6_v2"
 
-CLIENT_READ_ENDPOINTS: list[tuple[str, str]] = [
-    # portfolio.py
-    ("GET", f"/api/portfolio{_U}"),
-    ("GET", f"/api/portfolio/holdings{_U}"),
-    ("GET", f"/api/portfolio/allocation{_U}"),
-    # metrics.py
-    ("GET", f"/api/metrics{_U}"),
-    ("GET", f"/api/metrics/equity-curve{_U}"),
-    ("GET", f"/api/metrics/monthly-returns{_U}"),
-    # trades.py
-    ("GET", f"/api/trades{_U}"),
-    ("GET", f"/api/trades/summary{_U}"),
-    ("GET", f"/api/trades/recent{_U}"),
-    ("GET", f"/api/trades/export{_U}"),
-    # rebalance.py
-    ("GET", f"/api/rebalance/summary{_U}"),
-    ("GET", f"/api/rebalance/preview{_U}"),
-    ("GET", f"/api/rebalance/orders{_U}"),
-    ("GET", f"/api/rebalance/orders/export{_U}"),
-    ("GET", f"/api/rebalance/history{_U}"),
-    ("GET", f"/api/rebalance/upcoming{_U}"),
-    # positions.py reads
-    ("GET", f"/api/positions{_U}"),
-    ("GET", f"/api/positions/holdings{_U}"),
-    ("GET", f"/api/positions/quotes{_U}"),
-    # auth_routes.py
-    ("GET", "/api/auth/me"),
-    ("GET", "/api/auth/verify"),
-]
 
-PUBLIC_ENDPOINTS: list[tuple[str, str]] = [
-    ("GET", "/api/health"),
-    ("GET", "/api/positions/market-status"),
-    ("GET", "/api/system/status"),
-    ("GET", "/api/system/token"),
-    ("GET", "/api/system/database"),
-    ("GET", "/api/system/sync"),
-    ("GET", "/api/system/login-url"),
-]
 
 
 # ---------------------------------------------------------------------------
@@ -513,3 +450,43 @@ def test_wrong_audience_returns_401(test_client, ec_keypair):
         "/api/portfolio", headers={"Authorization": f"Bearer {token}"}
     )
     assert resp.status_code == 401
+
+
+# ---------------------------------------------------------------------------
+# PRIVATE_MODE against Supabase tokens (site_gate R-028)
+# ---------------------------------------------------------------------------
+#
+# test_private_mode.py covers the lockdown using Clerk-shaped tokens, which
+# survive as a legacy issuer. Supabase is the provider production will
+# actually use and it carries the role at a DIFFERENT claim path
+# (app_metadata.role, not metadata.role), so the lockdown is asserted here
+# too — otherwise the primary path is untested.
+
+
+def test_private_mode_refuses_supabase_client_token(test_client, client_token):
+    settings = get_settings()
+    settings.private_mode = True
+    try:
+        resp = test_client.get(
+            "/api/portfolio?universe=l6_v2",
+            headers={"Authorization": f"Bearer {client_token}"},
+        )
+        assert resp.status_code == 403, (
+            f"got {resp.status_code}; a client-role Supabase token must be "
+            "refused while PRIVATE_MODE is on"
+        )
+    finally:
+        settings.private_mode = False
+
+
+def test_private_mode_allows_supabase_admin_token(test_client, admin_token):
+    settings = get_settings()
+    settings.private_mode = True
+    try:
+        resp = test_client.get(
+            "/api/portfolio?universe=l6_v2",
+            headers={"Authorization": f"Bearer {admin_token}"},
+        )
+        assert resp.status_code not in (401, 403)
+    finally:
+        settings.private_mode = False

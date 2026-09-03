@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { INSIGHTS_ACCESS } from "@/lib/flags";
+import { siteMode, isGateOpenPath } from "@/lib/site-mode";
 
 // Public routes — no auth required. Anything not matched here (and not in
 // `config.matcher` exclusions below) requires a signed-in Supabase session.
@@ -16,6 +17,14 @@ const PUBLIC_EXACT = new Set([
   "/privacy",
   "/disclaimer",
   "/portfolios",
+  // Email consent pages and the metadata route. These must appear here AND
+  // satisfy isGateOpenPath — the two lists answer different questions:
+  // this one is "does it need a session", that one is "is it visible while
+  // gated". Clearing only one leaves the links broken, which is how these
+  // pages failed the first time.
+  "/unsubscribe",
+  "/confirm",
+  "/robots.txt",
 ]);
 const PUBLIC_PREFIXES = ["/sign-in", "/sign-up", "/library"];
 
@@ -52,7 +61,7 @@ export async function middleware(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      // R-029 rolling inactivity window — see src/lib/supabase/client.ts.
+      // R-032 rolling inactivity window — see src/lib/supabase/client.ts.
       cookieOptions: { maxAge: 30 * 24 * 60 * 60 },
       cookies: {
         getAll() {
@@ -89,6 +98,21 @@ export async function middleware(request: NextRequest) {
     response.cookies.getAll().forEach((c) => redirect.cookies.set(c));
     return redirect;
   };
+
+  // Under-development gate (tasks/site_gate). While
+  // SITE_MODE=under_development everything except isGateOpenPath is
+  // invisible unless the session's app_metadata.role is admin. Non-admins —
+  // signed-in users included — and anonymous visitors are bounced to "/",
+  // never to /sign-in, so the gate does not advertise that a sign-in
+  // exists: an unknown path and a real one behave identically.
+  //
+  // This runs FIRST so it wins over the insights and public-route logic
+  // below. The backend enforces the same lockdown independently via
+  // PRIVATE_MODE, which is not redundant: /library and /portfolios are
+  // prerendered, so for those routes this middleware is the only layer.
+  if (siteMode() === "under_development" && !isGateOpenPath(path)) {
+    if (role !== "admin") return redirectTo("/");
+  }
 
   if (isInsightsRoute(path)) {
     if (INSIGHTS_ACCESS === "off") return redirectTo("/dashboard");

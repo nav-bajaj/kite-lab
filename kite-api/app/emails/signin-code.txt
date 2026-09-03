@@ -1,0 +1,17 @@
+marketworks
+
+ 
+
+Sign in
+
+Your sign-in code
+
+Enter this code to finish signing in to Marketworks.
+
+{{ .Token }}
+
+It expires in 10 minutes. If you didn’t ask to sign in, you can ignore this email — nobody can use the code without it.
+
+Marketworks publishes educational research on Indian equities. Nothing in this email is investment advice or a recommendation to buy or sell any security. Markets carry risk; past behaviour is not a guarantee of future results.
+
+Marketworks Research · SCO 185-187, First Floor, Sector 9-C, Madhya Marg, Chandigarh, India

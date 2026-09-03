@@ -1,0 +1,18 @@
+name: email_channel
+status: in-progress
+opened: 2026-08-26
+closed: null
+related_commits:
+  - b126489   # SMTP 2587 + ses:no-track (the two seed-test fixes)
+  - 46732fb   # admin list management
+  - db7ec9c   # Phase 1+2 merge: schema, send path, consent, design system
+supersedes: []
+depends_on:
+  - site_gate
+register_rows: []
+notes: >
+  Welcome mail, list management and the pre-launch newsletter for the
+  waitlist shipped by site_gate. Phase 0 founder decisions block Phase 2.
+  Phase 4 (newsletter) must not start before Phase 3 (bounce/complaint
+  handling) — blasting from a young sending reputation without it is how
+  a domain gets burned.

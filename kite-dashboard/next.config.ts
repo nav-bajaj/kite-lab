@@ -51,7 +51,7 @@ const clerkOrigins =
   "https://clerk.marketworks.in https://*.clerk.accounts.dev https://*.accounts.dev https://*.clerk.com";
 const turnstileOrigin = "https://challenges.cloudflare.com";
 
-// Supabase Auth (auth_stack_v2, register row R-027): the project origin
+// Supabase Auth (auth_stack_v2, register row R-030): the project origin
 // serves /auth/v1/* (token, otp, authorize, user). Exact single origin
 // derived from the env var — no wildcard. connect-src only: supabase-js
 // is bundled (no CDN script), OAuth is a top-level redirect (not a frame
@@ -103,6 +103,16 @@ const securityHeaders = [
   // third-party widgets that need to be cross-origin-accessible.
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
   { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
+  // Site gate (tasks/site_gate): while under development, tell crawlers to
+  // DROP every page from their index. Pairs with robots.ts deliberately
+  // keeping the site crawlable — a blanket robots Disallow would stop
+  // crawlers from ever re-visiting the previously-indexed /library and
+  // /portfolios pages and observing this header / the redirects, freezing
+  // the old index entries in place. Evaluated at build; env flips are
+  // always redeploys on Vercel.
+  ...(process.env.SITE_MODE === "under_development"
+    ? [{ key: "X-Robots-Tag", value: "noindex, nofollow" }]
+    : []),
 ];
 
 const nextConfig: NextConfig = {

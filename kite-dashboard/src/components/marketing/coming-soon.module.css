@@ -1,0 +1,367 @@
+/*
+ * Under-development page, design language v2 (single-green system).
+ * Tokens copied verbatim from marketworks-design/design-language-guide-v2.html
+ * — scoped to this page only; the rest of the app stays on the old system
+ * until the planned site-wide design update.
+ *
+ * LIGHT ONLY, deliberately. The guide's dark tokens are not wired up here:
+ * this page has no theme toggle, so a visitor on a dark-mode device would be
+ * shown a variant nobody chose and nobody reviewed. It is the one public
+ * face of the brand while the site is gated, so it renders identically for
+ * everyone. Restore the dark set when the page rejoins the themed app.
+ */
+
+.page {
+  --bg: #ffffff;
+  --bg-soft: #f4f7f5;
+  --card: #ffffff;
+  --line: #e3e8e5;
+  --line-strong: #c9d2cc;
+  --ink: #141a17;
+  --grey: #5c6663;
+  --grey-soft: #79837f;
+  --green: #0b7e52;
+  --green-vivid: #14a468;
+  --green-tint: #dff4e8;
+  --green-deep: #0a3b28;
+  --green-on-deep: #bfebd8;
+  --done-fg: #0a3b28;
+  --shadow: 0 10px 30px -12px rgba(20, 26, 23, 0.14);
+  --sans: var(--font-outfit), system-ui, -apple-system, sans-serif;
+  --serif: var(--cs-serif), Georgia, serif;
+  --mono: var(--cs-mono), ui-monospace, SFMono-Regular, monospace;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Light only — see the note above the token block. Also pins UA-rendered
+     chrome (the email input, autofill, scrollbars) to light on devices set
+     to dark, which the token variables alone would not do. */
+  color-scheme: light;
+
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15.5px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+/* Dot texture — guide .tex-dots, inverted mask per founder note: visible at
+   the edges, fading out toward the center where the content sits. */
+.dots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: var(--green-vivid);
+  opacity: 0.2;
+  background-image: radial-gradient(currentColor 1.4px, transparent 1.5px);
+  background-size: 18px 18px;
+  -webkit-mask-image: radial-gradient(
+    75% 60% at 50% 42%,
+    transparent 32%,
+    #000 100%
+  );
+  mask-image: radial-gradient(75% 60% at 50% 42%, transparent 32%, #000 100%);
+}
+
+/* ── header: centered wordmark, brand green, serif ── */
+.top {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  padding: 40px 24px 0;
+}
+/* guide .wordmark: sans, semibold, tight tracking, brand green */
+.wordmark {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 28px;
+  letter-spacing: -0.015em;
+  color: var(--green);
+}
+
+/* ── hero ── */
+.main {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 24px 72px;
+}
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+.h1 {
+  margin-top: 20px;
+  font-family: var(--serif);
+  font-weight: 400;
+  /* founder: heading stays on ONE line at every viewport — vw-driven size
+     keeps it inside the padding instead of wrapping */
+  font-size: clamp(21px, 6.6vw, 54px);
+  line-height: 1.14;
+  white-space: nowrap;
+  color: var(--ink);
+}
+.lede {
+  margin-top: 20px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--grey);
+  max-width: 46ch;
+  text-wrap: balance;
+}
+
+/* ── email band — guide §06: near-white field edge to edge, hairline top
+   and bottom ── */
+.band {
+  background: var(--bg-soft);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 52px 24px 56px;
+}
+.bandIn {
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.bandKicker {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--grey);
+}
+.bandKicker u {
+  color: var(--green);
+  text-decoration: none;
+}
+.bandTitle {
+  margin-top: 12px;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(21px, 2.6vw, 26px);
+  line-height: 1.25;
+  color: var(--ink);
+}
+.bandSub {
+  margin-top: 8px;
+  font-size: 14.5px;
+  color: var(--grey);
+  max-width: 44ch;
+  text-wrap: balance;
+}
+.privacy {
+  margin-top: 16px;
+  font-size: 12.5px;
+  color: var(--grey-soft);
+}
+.privacy a {
+  color: var(--grey);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.privacy a:hover {
+  color: var(--green);
+}
+
+/* ── the form: pill input + green pill button; stacks on mobile ── */
+.form {
+  margin-top: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+  max-width: 460px;
+}
+.input {
+  flex: 1;
+  min-width: 0;
+  height: 52px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line-strong);
+  background: var(--card);
+  padding: 0 22px;
+  font-family: var(--sans);
+  font-size: 16px; /* >=16px keeps iOS from zooming the field */
+  color: var(--ink);
+  transition: border-color 0.2s var(--ease);
+}
+.input::placeholder {
+  color: var(--grey-soft);
+}
+.input:hover {
+  border-color: var(--green);
+}
+.input:focus {
+  outline: 2px solid var(--green-vivid);
+  outline-offset: 2px;
+  border-color: var(--green);
+}
+.submit {
+  flex-shrink: 0;
+  height: 52px;
+  border: 1.5px solid transparent;
+  border-radius: 999px;
+  background: var(--green);
+  color: var(--bg);
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 15px;
+  padding: 0 26px;
+  cursor: pointer;
+  transition: filter 0.2s var(--ease);
+}
+.submit:hover {
+  filter: brightness(1.07);
+}
+.submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+@media (max-width: 560px) {
+  .form {
+    flex-direction: column;
+    align-items: center;
+  }
+  .input {
+    /* in the column layout flex:1 would size the input on the vertical
+       axis and squash it — go block-level instead */
+    flex: none;
+    width: 100%;
+  }
+  .submit {
+    /* founder note: keep the button intrinsic-width like desktop, centered
+       under the full-width field */
+    width: auto;
+    min-width: 178px;
+  }
+}
+
+/* success / error states — --done-fg flips with the theme because the deep
+   green is unreadable on the dark tint */
+.done {
+  margin-top: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid var(--green-vivid);
+  background: var(--green-tint);
+  color: var(--done-fg, var(--green-deep));
+  border-radius: 999px;
+  padding: 12px 22px;
+  font-size: 14.5px;
+  font-weight: 500;
+}
+.error {
+  flex-basis: 100%;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--grey);
+  text-align: center;
+}
+
+/* ── footer — the one deep-green drench, as a thin edge-to-edge band:
+   hatch texture, links, ghost wordmark, mono base row ── */
+.foot {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  background: var(--green-deep);
+  color: var(--green-on-deep);
+}
+.hatch {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: var(--green-on-deep);
+  opacity: 0.14;
+  background-image: repeating-linear-gradient(
+    45deg,
+    currentColor 0 1px,
+    transparent 1px 7px
+  );
+  -webkit-mask-image: radial-gradient(
+    120% 100% at 85% 12%,
+    #000 8%,
+    transparent 74%
+  );
+  mask-image: radial-gradient(120% 100% at 85% 12%, #000 8%, transparent 74%);
+}
+.footIn {
+  position: relative;
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 26px 24px 16px;
+}
+.footLinks {
+  display: flex;
+  gap: 26px;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+.footLinks a {
+  color: var(--green-on-deep);
+  text-decoration: none;
+}
+.footLinks a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.giant {
+  margin-top: 18px;
+  align-self: stretch;
+  text-align: center;
+  user-select: none;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: clamp(34px, 6.5vw, 76px);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  color: color-mix(in srgb, var(--green-on-deep) 16%, transparent);
+}
+.footBase {
+  margin-top: 14px;
+  padding-top: 13px;
+  align-self: stretch;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid color-mix(in srgb, var(--green-on-deep) 16%, transparent);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: color-mix(in srgb, var(--green-on-deep) 55%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page *,
+  .page *::before,
+  .page *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}

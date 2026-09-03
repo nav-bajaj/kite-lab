@@ -1,5 +1,8 @@
+import { gatedRobots } from "@/lib/site-mode";
+
 export const metadata = {
   title: "Terms of Service — Marketworks",
+  ...gatedRobots(),
 };
 
 export default function TermsPage() {

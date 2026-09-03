@@ -32,6 +32,8 @@ from app.models.models import (
     Rebalance,
     Signal,
     Job,
+    User,
+    WaitlistSignup,
 )
 
 target_metadata = Base.metadata

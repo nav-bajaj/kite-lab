@@ -1,5 +1,8 @@
+import { gatedRobots } from "@/lib/site-mode";
+
 export const metadata = {
   title: "Privacy Policy — Marketworks",
+  ...gatedRobots(),
 };
 
 export default function PrivacyPage() {

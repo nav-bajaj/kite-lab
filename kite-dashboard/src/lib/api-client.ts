@@ -530,6 +530,50 @@ export async function getFreshnessReport() {
   return apiFetch<FreshnessReport>("/api/freshness");
 }
 
+// Launch waitlist (admin-only). Mirrors the payload from
+// kite-api/app/api/waitlist.py. Only "confirmed" rows are mailable.
+export type WaitlistStatus =
+  | "pending"
+  | "confirmed"
+  | "unsubscribed"
+  | "bounced"
+  | "complained";
+
+export interface WaitlistSignup {
+  email: string;
+  source: string;
+  status: WaitlistStatus;
+  created_at: string | null;
+  confirmed_at: string | null;
+  unsubscribed_at: string | null;
+  welcome_sent_at: string | null;
+}
+
+export interface WaitlistReport {
+  count: number;
+  mailable: number;
+  by_status: Record<WaitlistStatus, number>;
+  signups: WaitlistSignup[];
+}
+
+export async function getWaitlist() {
+  return apiFetch<WaitlistReport>("/api/waitlist");
+}
+
+/** Admin CSV export. Fetched (not linked) because the endpoint needs the
+ *  bearer token, which a plain <a href> cannot carry. Resolves the token
+ *  the same way apiFetch does: async provider first, global as fallback. */
+export async function fetchWaitlistCsv(): Promise<Blob> {
+  const authToken = tokenProvider ? await tokenProvider() : globalAuthToken;
+  const resp = await fetch(`${API_BASE_URL}/api/waitlist/export.csv`, {
+    headers: authToken ? { Authorization: `Bearer ${authToken}` } : undefined,
+  });
+  if (!resp.ok) {
+    throw new ApiError(`Export failed (${resp.status})`, resp.status);
+  }
+  return resp.blob();
+}
+
 // Options data worker heartbeat (admin-only). Mirrors the payload written by
 // kite-api/app/workers/options/worker.py health_snapshot() into
 // options_worker_health (see app/services/worker_health_store.py).

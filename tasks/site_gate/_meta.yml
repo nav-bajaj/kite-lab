@@ -1,0 +1,17 @@
+name: site_gate
+status: shipped
+opened: 2026-08-26
+closed: 2026-08-26
+related_commits:
+  - 5ab23cf   # --no-ff merge into beta_gtm_mvp (the deploy)
+  - 025de6a   # gate + waitlist + PRIVATE_MODE lockdown
+  - 99d7b98   # security-review notes: deindex fix, waitlist ceiling, no-store
+  - c6b7dad   # robots.txt reachability fix (found in local verification)
+  - 11b9551   # coming-soon restyled to design language v2
+  - b8ba0a4   # final founder copy
+supersedes: []
+depends_on:
+  - client_portal
+register_rows:
+  - R-027
+  - R-028
