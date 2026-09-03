@@ -190,7 +190,7 @@ in the window anyway):
 - [ ] D5 Client journey: second account (email OTP) sees the 4
       client portfolios, is bounced off /admin, cannot query an
       admin universe via API.
-- [ ] D6 Confirm a `users` row exists for both accounts (lazy
+- [x] D6 Confirm a `users` row exists for both accounts (lazy
       provisioning proof, Railway PG or via admin panel logs).
 
 ## Stage D verification log — 2026-09-03
@@ -230,6 +230,51 @@ markers are in the JS chunks. Check the chunks, not the document.
 **D4 is now the blocking step.** The gate reads `app_metadata.role`, and
 a fresh Supabase account has no role — so the founder currently sees the
 coming-soon page like everyone else. This is expected, not a fault.
+
+## Stage D5/D6 log — 2026-09-03
+
+**D6 — lazy provisioning PASSES.** One `users` row exists after the
+founder's first sign-in:
+
+    id 1 | sub c3bbb4c6-…(uuid) | provider=supabase
+    first_seen 2026-09-03 12:38 UTC (18:08 IST) | last_seen 12:57 UTC
+
+`provider=supabase` and a UUID `sub` rather than a Clerk `user_…` id are
+the proof that the Supabase path provisioned it, not a leftover row. The
+first_seen timestamp matches the founder's first sign-in exactly.
+
+**D5 — NOT RUN.** It needs a second, client-role account, and creating
+one requires the service-role key. Deferred to the founder. Until it
+runs, "a client cannot query an admin universe" is verified only by the
+backend test suite, not against production.
+
+## ⚠ Production is running on the scratch Supabase project
+
+`supabase projects list` returns exactly one project:
+
+    ref jhvkfokskanbaiipvcqu | name "navthinks"
+    region ap-southeast-1 (Singapore) | created 2025-09-15
+
+That is the project this runbook records as production — and it is the
+same ref `scripts/e2e-smoke.sh` hardcoded on 2026-08-11 as the *scratch*
+project, under the comment "never point this at the production project
+ref". Stage A1 (new project, ap-south-1 Mumbai, Pro plan) was never done;
+the spike project was promoted in place.
+
+Consequences, in order of severity:
+
+1. **Plan tier is unverified.** A1 specified Pro because the free tier
+   pauses on inactivity, and a paused project means nobody can sign in.
+   Confirm the tier in the dashboard.
+2. **`npm run test:e2e` pointed a user-mutating suite at the live auth
+   store.** Fixed: the runner now refuses the production ref unless
+   `ALLOW_PROD_E2E=yes-i-mean-production` is set. Note that no separate
+   scratch project exists any more, so the suite has nowhere safe to run
+   until one is created.
+3. Region is Singapore, not Mumbai. Minor added latency on auth calls.
+4. Any accounts left over from the August spike are now in the live auth
+   store. Worth auditing — the app-side `users` table has only the one
+   row, so nobody else has actually reached the product.
 
 ## Stage E — after cutover
 
