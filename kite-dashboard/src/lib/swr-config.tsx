@@ -3,8 +3,8 @@
 import { SWRConfig } from "swr";
 import type { Cache } from "swr";
 import { ReactNode, useEffect, useMemo } from "react";
-import { useAuth } from "@clerk/nextjs";
 import { toast } from "sonner";
+import { useSupabaseAuth } from "@/contexts/supabase-auth-context";
 import { ApiError } from "./api-client";
 
 interface SWRProviderProps {
@@ -13,9 +13,10 @@ interface SWRProviderProps {
 
 // localStorage namespace for the persisted SWR cache. Bump the version
 // suffix to invalidate every persisted cache after a breaking change.
-const CACHE_PREFIX = "mw-swr-cache:v1:";
+// v2: Supabase migration — retires every Clerk-userId-keyed blob.
+const CACHE_PREFIX = "mw-swr-cache:v2:";
 
-// Build a localStorage-backed SWR cache provider scoped to a single Clerk
+// Build a localStorage-backed SWR cache provider scoped to a single
 // user. Persisting the cache lets a returning user see their last
 // portfolio/charts instantly, then revalidate. The cache is namespaced by
 // userId and purged on sign-out / user-switch (see SWRProvider) so one
@@ -56,7 +57,9 @@ function makeLocalStorageProvider(userId: string) {
 }
 
 export function SWRProvider({ children }: SWRProviderProps) {
-  const { userId, isLoaded } = useAuth();
+  // isLoaded is load-bearing: the purge below must not run before the
+  // session resolves, or a returning user's cache is nuked on cold load.
+  const { userId, isLoaded } = useSupabaseAuth();
 
   // Purge persisted caches that don't belong to the current user. Runs on
   // sign-out (userId null → remove all) and user-switch (remove others).
@@ -96,7 +99,7 @@ export function SWRProvider({ children }: SWRProviderProps) {
           if (error instanceof ApiError) {
             if (error.status === 401) {
               // Distinguish the Zerodha broker token (live prices) from the
-              // Clerk login session — they fail independently.
+              // login session — they fail independently.
               const isBrokerToken = /zerodha|broker|access token/i.test(
                 error.message
               );

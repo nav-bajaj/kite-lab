@@ -1,7 +1,7 @@
 """
 Waitlist endpoint behaviour (tasks/site_gate).
 
-POST /api/waitlist is public by design (R-029): validation, dedupe,
+POST /api/waitlist is public by design (R-027): validation, dedupe,
 honeypot, and rate limiting. GET /api/waitlist is admin-only.
 
 Auth plumbing (fake Clerk JWKS + locally-signed RS256 tokens) reuses the
@@ -133,16 +133,32 @@ def jwks_dict(rsa_keypair):
 
 @pytest.fixture(autouse=True)
 def patch_jwks(jwks_dict, monkeypatch):
-    auth_module._JWKS_CACHE["keys"] = jwks_dict
-    auth_module._JWKS_CACHE["fetched_at"] = time.time()
+    """Serve the local RSA JWKS from cache so no test touches the network.
+
+    Supports both cache shapes: the single-slot one this suite was written
+    against, and the per-URL `_JWKS_CACHES` the Supabase migration
+    introduced. These tokens are Clerk-shaped and Clerk survives as a
+    legacy issuer, so they still verify after the migration.
+    """
+    now = time.time()
+    if hasattr(auth_module, "_JWKS_CACHES"):
+        auth_module._JWKS_CACHES[
+            os.environ["CLERK_JWKS_URL"]
+        ] = {"keys": jwks_dict, "fetched_at": now}
+    else:
+        auth_module._JWKS_CACHE["keys"] = jwks_dict
+        auth_module._JWKS_CACHE["fetched_at"] = now
 
     def _no_network(*_args, **_kwargs):
         raise AssertionError("Test attempted a real JWKS fetch")
 
     monkeypatch.setattr("httpx.get", _no_network)
     yield
-    auth_module._JWKS_CACHE["keys"] = None
-    auth_module._JWKS_CACHE["fetched_at"] = 0.0
+    if hasattr(auth_module, "_JWKS_CACHES"):
+        auth_module._JWKS_CACHES.pop(os.environ["CLERK_JWKS_URL"], None)
+    else:
+        auth_module._JWKS_CACHE["keys"] = None
+        auth_module._JWKS_CACHE["fetched_at"] = 0.0
 
 
 def _make_token(rsa_keypair, role: str) -> str:

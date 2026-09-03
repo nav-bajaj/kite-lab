@@ -6,7 +6,7 @@ endpoints, and the normally-public insights/indices readers require an
 admin token. Health, system bootstrap, market-status, and the waitlist
 POST stay open.
 
-Reuses the endpoint inventories from test_clerk_authz so this suite
+Reuses the shared endpoint inventory so this suite
 tracks the real surface automatically.
 """
 
@@ -36,7 +36,7 @@ os.environ.setdefault("DISABLE_AUTH", "false")
 from app.main import app  # noqa: E402
 from app import auth as auth_module  # noqa: E402
 from app.config import get_settings  # noqa: E402
-from tests.test_clerk_authz import (  # noqa: E402
+from tests.endpoint_inventory import (  # noqa: E402
     ADMIN_ENDPOINTS,
     CLIENT_READ_ENDPOINTS,
     PUBLIC_ENDPOINTS,
@@ -92,16 +92,32 @@ def jwks_dict(rsa_keypair):
 
 @pytest.fixture(autouse=True)
 def patch_jwks(jwks_dict, monkeypatch):
-    auth_module._JWKS_CACHE["keys"] = jwks_dict
-    auth_module._JWKS_CACHE["fetched_at"] = time.time()
+    """Serve the local RSA JWKS from cache so no test touches the network.
+
+    Supports both cache shapes: the single-slot one this suite was written
+    against, and the per-URL `_JWKS_CACHES` the Supabase migration
+    introduced. These tokens are Clerk-shaped and Clerk survives as a
+    legacy issuer, so they still verify after the migration.
+    """
+    now = time.time()
+    if hasattr(auth_module, "_JWKS_CACHES"):
+        auth_module._JWKS_CACHES[
+            os.environ["CLERK_JWKS_URL"]
+        ] = {"keys": jwks_dict, "fetched_at": now}
+    else:
+        auth_module._JWKS_CACHE["keys"] = jwks_dict
+        auth_module._JWKS_CACHE["fetched_at"] = now
 
     def _no_network(*_args, **_kwargs):
         raise AssertionError("Test attempted a real JWKS fetch")
 
     monkeypatch.setattr("httpx.get", _no_network)
     yield
-    auth_module._JWKS_CACHE["keys"] = None
-    auth_module._JWKS_CACHE["fetched_at"] = 0.0
+    if hasattr(auth_module, "_JWKS_CACHES"):
+        auth_module._JWKS_CACHES.pop(os.environ["CLERK_JWKS_URL"], None)
+    else:
+        auth_module._JWKS_CACHE["keys"] = None
+        auth_module._JWKS_CACHE["fetched_at"] = 0.0
 
 
 def _make_token(rsa_keypair, role: str) -> str:
@@ -253,3 +269,4 @@ def test_validate_token_string_passes_admin_token(rsa_keypair, private_mode_on):
     token = _make_token(rsa_keypair, "admin")
     user = auth_module.validate_token_string(token)
     assert user["role"] == "admin"
+

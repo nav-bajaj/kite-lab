@@ -32,6 +32,7 @@ from app.models.models import (
     Rebalance,
     Signal,
     Job,
+    User,
     WaitlistSignup,
 )
 

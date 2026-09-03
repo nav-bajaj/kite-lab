@@ -1,133 +1,138 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
 import { INSIGHTS_ACCESS } from "@/lib/flags";
-import { siteMode, PUBLIC_WHEN_GATED } from "@/lib/site-mode";
+import { siteMode, isGateOpenPath } from "@/lib/site-mode";
 
-// Public routes — no auth required. Anything not in this list (and not in
-// `config.matcher` exclusions below) requires a signed-in Clerk session.
+// Public routes — no auth required. Anything not matched here (and not in
+// `config.matcher` exclusions below) requires a signed-in Supabase session.
 //
 // `/` is the public marketing landing page (the authenticated dashboard
-// moved to `/dashboard`). Unauthenticated visitors see the landing; signed-in
-// users also land on `/` post-auth (ClerkProvider fallback redirects in
-// src/app/layout.tsx) and navigate to `/dashboard` themselves.
-const isPublicRoute = createRouteMatcher([
+// lives at `/dashboard`). `/auth/callback` must stay public — it is the
+// OAuth code-exchange hop, hit before a session exists. `/sign-up` is a
+// real page (same SignInCard, beta CTA copy).
+const PUBLIC_EXACT = new Set([
   "/",
-  "/sign-in(.*)",
-  "/sign-up(.*)",
+  "/auth/callback",
   "/terms",
   "/privacy",
   "/disclaimer",
-  "/library(.*)",
   "/portfolios",
-  // Metadata route (src/app/robots.ts). Its .txt extension is not in the
-  // matcher's static-asset exclusions, so without this entry auth.protect()
-  // 404s crawlers.
-  "/robots.txt",
-  // Email consent pages. NOTE these must appear in BOTH lists: this one
-  // (which controls Clerk's auth.protect()) and PUBLIC_WHEN_GATED in
-  // src/lib/site-mode.ts (which controls the under-development gate).
-  // Clearing only the gate leaves auth.protect() returning 404, which is
-  // how these pages broke the first time.
+  // Email consent pages and the metadata route. These must appear here AND
+  // satisfy isGateOpenPath — the two lists answer different questions:
+  // this one is "does it need a session", that one is "is it visible while
+  // gated". Clearing only one leaves the links broken, which is how these
+  // pages failed the first time.
   "/unsubscribe",
   "/confirm",
+  "/robots.txt",
 ]);
+const PUBLIC_PREFIXES = ["/sign-in", "/sign-up", "/library"];
 
-// Insight engine pages: behind Clerk login but available to ALL signed-in
-// users including free tier — no paid-subscription / admin gate. Acquisition
-// flow becomes: visitor → free signup → /insights → optional upgrade.
-// (Listed for clarity; no explicit matcher needed since these pages are
-// neither in isPublicRoute nor in isAdminRoute, so the default auth.protect()
-// gate applies and that's exactly what we want.)
+const atOrUnder = (path: string, base: string) =>
+  path === base || path.startsWith(base + "/");
 
-// Admin-only routes. Checked against publicMetadata.role exposed via the
-// session token's `metadata` claim (configured in Clerk dashboard).
-const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
+const isPublicRoute = (path: string) =>
+  PUBLIC_EXACT.has(path) ||
+  PUBLIC_PREFIXES.some((base) => atOrUnder(path, base));
 
-// Insights surface access is a tri-state (see src/lib/flags.ts):
-//   off   → bounce /insights* to /dashboard (data-provisioning launch gate).
-//   admin → require an admin-role session, mirroring isAdminRoute below;
-//           non-admins bounce to /dashboard.
-//   all   → any signed-in user (the default auth.protect() gate applies).
-const isInsightsRoute = createRouteMatcher(["/insights(.*)"]);
+// Admin-only routes. Role comes from the JWT's `app_metadata.role` claim
+// (server-controlled; set via the Supabase admin API). This edge check is
+// UX-routing only — the FastAPI backend independently verifies the token
+// and enforces the real gates (require_admin, R-022).
+const isAdminRoute = (path: string) => atOrUnder(path, "/admin");
 
-// Under-development gate (tasks/site_gate): routes that stay reachable while
-// SITE_MODE=under_development. Everything else is admin-only.
-const isGateOpenRoute = createRouteMatcher(PUBLIC_WHEN_GATED);
+// Insights tri-state (src/lib/flags.ts): off → bounce to /dashboard;
+// admin → signed-in + admin role; all → any signed-in user.
+const isInsightsRoute = (path: string) => atOrUnder(path, "/insights");
 
-function roleFromClaims(sessionClaims: unknown): string | undefined {
-  return (sessionClaims as { metadata?: { role?: string } } | null)?.metadata
-    ?.role;
+function roleFromClaims(claims: Record<string, unknown> | null): string {
+  const meta = (claims as { app_metadata?: { role?: string } } | null)
+    ?.app_metadata;
+  return meta?.role === "admin" ? "admin" : "client";
 }
 
-// Production hardening: pin the token's `azp` (authorized party) claim to our
-// own origins so a session token minted for a different site can't be replayed
-// against this app. Preview/Vercel deploys are added via
-// CLERK_AUTHORIZED_PARTIES (comma-separated) so they don't 401 under auth.
-const authorizedParties = [
-  "https://marketworks.in",
-  "https://www.marketworks.in",
-  ...(process.env.CLERK_AUTHORIZED_PARTIES?.split(",")
-    .map((s) => s.trim())
-    .filter(Boolean) ?? []),
-];
+export async function middleware(request: NextRequest) {
+  // The response we'll return on pass-through. Session-refresh cookies from
+  // Supabase get written onto whichever response actually goes out, so a
+  // refreshed token is never dropped — including on redirects.
+  let response = NextResponse.next({ request });
 
-export default clerkMiddleware(
-  async (auth, req) => {
-    // Under-development gate: while SITE_MODE=under_development everything
-    // except PUBLIC_WHEN_GATED is invisible unless the session's
-    // publicMetadata.role is admin. Non-admins — signed-in beta users
-    // included — and anonymous visitors are bounced to "/" (never to
-    // /sign-in, so the gate does not advertise that a sign-in exists; an
-    // unknown path and a real one behave identically). This block runs
-    // first so it wins over the insights/public-route logic below; the
-    // backend enforces the same lockdown independently via PRIVATE_MODE.
-    if (siteMode() === "under_development" && !isGateOpenRoute(req)) {
-      const { sessionClaims } = await auth();
-      if (roleFromClaims(sessionClaims) !== "admin") {
-        const url = req.nextUrl.clone();
-        url.pathname = "/";
-        url.search = "";
-        return NextResponse.redirect(url);
-      }
-    }
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      // R-032 rolling inactivity window — see src/lib/supabase/client.ts.
+      cookieOptions: { maxAge: 30 * 24 * 60 * 60 },
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value),
+          );
+          response = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options),
+          );
+        },
+      },
+    },
+  );
 
-    if (isInsightsRoute(req)) {
-      if (INSIGHTS_ACCESS === "off") {
-        const url = req.nextUrl.clone();
-        url.pathname = "/dashboard";
-        return NextResponse.redirect(url);
-      }
-      if (INSIGHTS_ACCESS === "admin") {
-        // Signed-in enforcement first (throws to sign-in when absent), then the
-        // admin-role check — same shape as isAdminRoute below.
-        await auth.protect();
-        const { sessionClaims } = await auth();
-        if (roleFromClaims(sessionClaims) !== "admin") {
-          const url = req.nextUrl.clone();
-          url.pathname = "/dashboard";
-          return NextResponse.redirect(url);
-        }
-      }
-    }
+  // getClaims verifies the JWT locally against the project JWKS (ES256 —
+  // asymmetric signing keys), refreshing the session first if needed. No
+  // per-request network round-trip on the happy path.
+  const { data } = await supabase.auth.getClaims();
+  const claims = data?.claims ?? null;
+  const isAuthed = claims !== null;
+  const role = roleFromClaims(claims);
+  const path = request.nextUrl.pathname;
 
-    if (!isPublicRoute(req)) {
-      await auth.protect();
-    }
+  const redirectTo = (pathname: string) => {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname;
+    url.search = "";
+    const redirect = NextResponse.redirect(url);
+    // Carry any refreshed session cookies onto the redirect.
+    response.cookies.getAll().forEach((c) => redirect.cookies.set(c));
+    return redirect;
+  };
 
-    if (isAdminRoute(req)) {
-      const { sessionClaims } = await auth();
-      const role = roleFromClaims(sessionClaims);
-      if (role !== "admin") {
-        // Not an admin → push them back to the dashboard root rather than
-        // throwing a 404. Clerk's auth.protect() above already enforced auth.
-        const url = req.nextUrl.clone();
-        url.pathname = "/";
-        return NextResponse.redirect(url);
-      }
+  // Under-development gate (tasks/site_gate). While
+  // SITE_MODE=under_development everything except isGateOpenPath is
+  // invisible unless the session's app_metadata.role is admin. Non-admins —
+  // signed-in users included — and anonymous visitors are bounced to "/",
+  // never to /sign-in, so the gate does not advertise that a sign-in
+  // exists: an unknown path and a real one behave identically.
+  //
+  // This runs FIRST so it wins over the insights and public-route logic
+  // below. The backend enforces the same lockdown independently via
+  // PRIVATE_MODE, which is not redundant: /library and /portfolios are
+  // prerendered, so for those routes this middleware is the only layer.
+  if (siteMode() === "under_development" && !isGateOpenPath(path)) {
+    if (role !== "admin") return redirectTo("/");
+  }
+
+  if (isInsightsRoute(path)) {
+    if (INSIGHTS_ACCESS === "off") return redirectTo("/dashboard");
+    if (INSIGHTS_ACCESS === "admin") {
+      if (!isAuthed) return redirectTo("/sign-in");
+      if (role !== "admin") return redirectTo("/dashboard");
     }
-  },
-  { authorizedParties },
-);
+  }
+
+  if (!isPublicRoute(path) && !isAuthed) {
+    return redirectTo("/sign-in");
+  }
+
+  if (isAdminRoute(path) && role !== "admin") {
+    // Authed non-admin → back to the marketing root rather than a 404.
+    return redirectTo("/");
+  }
+
+  return response;
+}
 
 export const config = {
   matcher: [

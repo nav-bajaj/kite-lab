@@ -6,14 +6,16 @@ import { PaletteSync } from "@/components/shared/palette-sync";
 import { Toaster } from "@/components/ui/sonner";
 import { UniverseProvider } from "@/contexts/universe-context";
 import { ApiAuthProvider } from "@/contexts/api-auth-context";
+import { SupabaseAuthProvider } from "@/contexts/supabase-auth-context";
 import { SWRProvider } from "@/lib/swr-config";
 
-// Note: <ClerkProvider> lives in src/app/layout.tsx wrapping <html>.
-// This file only carries the app-internal providers that depend on
-// Clerk's session being already established.
+// SupabaseAuthProvider owns the session subscription and MUST sit above
+// every provider that reads it (ApiAuthProvider, SWRProvider,
+// UniverseProvider, PaletteSync).
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ApiAuthProvider>
+    <SupabaseAuthProvider>
+      <ApiAuthProvider>
       {/* Palette system (DESIGN.md §2.6): next-themes stamps BOTH the class
           and data-palette attributes. Palette sheets select on
           [data-palette]; `midnight` maps to the `dark` class so the legacy
@@ -33,6 +35,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         </SWRProvider>
         <Toaster />
       </ThemeProvider>
-    </ApiAuthProvider>
+      </ApiAuthProvider>
+    </SupabaseAuthProvider>
   );
 }

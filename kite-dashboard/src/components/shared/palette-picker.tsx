@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import { useTheme } from "next-themes";
-import { useUser } from "@clerk/nextjs";
+import { useSupabaseAuth } from "@/contexts/supabase-auth-context";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Check, Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,12 +20,12 @@ import { PALETTES, type PaletteName } from "@/lib/palettes";
  * Palette picker — replaces the old light/dark toggle. Six swatches in the
  * canonical order (Mint · Ocean · Amber · Coral · Charcoal · Midnight);
  * Midnight is the dark theme. Selection applies instantly via next-themes
- * and roams across devices via Clerk unsafeMetadata (best-effort write —
+ * and roams across devices via Supabase user_metadata (best-effort write —
  * the UI never blocks on it).
  */
 export function PalettePicker() {
   const { theme, resolvedTheme, setTheme } = useTheme();
-  const { user } = useUser();
+  const { isSignedIn } = useSupabaseAuth();
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
 
@@ -35,11 +36,13 @@ export function PalettePicker() {
 
   const pick = (name: PaletteName) => {
     setTheme(name);
-    // Roam the preference. unsafeMetadata is a user-writable UI preference;
+    // Roam the preference. user_metadata is a user-writable UI preference;
     // it is validated on read (PaletteSync) and never trusted server-side.
-    void user
-      ?.update({ unsafeMetadata: { ...user.unsafeMetadata, palette: name } })
-      .catch(() => {});
+    if (isSignedIn) {
+      void getSupabaseBrowserClient()
+        .auth.updateUser({ data: { palette: name } })
+        .catch(() => {});
+    }
   };
 
   return (

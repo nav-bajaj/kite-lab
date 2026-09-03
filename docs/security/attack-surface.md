@@ -54,7 +54,7 @@ Base URL: `https://kite-lab-production.up.railway.app`
 
 | Method | Path | Service | Rationale |
 |---|---|---|---|
-| GET | `/api/insights/*` (~18 read-only routes: reading, stress, breadth, sectors, watchlists, concentration, cross-asset, subgroups, regime, calendar/*, screener, stocks/{symbol}, movers) | app/insights engines | Derived market analytics for the public-content acquisition surface — no client PII, portfolio, or secret data in any code path. Frontend access gated by Clerk middleware + `NEXT_PUBLIC_INSIGHTS_ACCESS`; backend read-only public, same class as market-status. The only mutating insights route (`POST /api/insights/cache/clear`) is `require_admin` and covered in `test_clerk_authz.py`. |
+| GET | `/api/insights/*` (~18 read-only routes: reading, stress, breadth, sectors, watchlists, concentration, cross-asset, subgroups, regime, calendar/*, screener, stocks/{symbol}, movers) | app/insights engines | Derived market analytics for the public-content acquisition surface — no client PII, portfolio, or secret data in any code path. Frontend access gated by Supabase-session middleware + `NEXT_PUBLIC_INSIGHTS_ACCESS`; backend read-only public, same class as market-status. The only mutating insights route (`POST /api/insights/cache/clear`) is `require_admin` and covered in `test_supabase_authz.py`. |
 
 ### Rate-limited
 

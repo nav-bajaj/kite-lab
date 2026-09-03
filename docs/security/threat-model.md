@@ -16,10 +16,10 @@ Ranked by blast radius (worst-case impact if compromised):
 |---|---|---|---|
 | A1 | Zerodha API key + secret + TOTP secret | `.env` on dev machines, Railway env | Place arbitrary trades on user's real-money account |
 | A2 | Zerodha `access_token.txt` + `session.json` | Disk (0600), `/data` volume on Railway | Same as A1, but 24h TTL |
-| A3 | `JWT_SECRET` (HS256) | Railway env, dev `.env` | Forge any session as the whitelisted user → all backend APIs |
-| A4 | `NEXTAUTH_SECRET` | Vercel env | Forge dashboard sessions → call all `/api/*` (still bounded by JWT) |
+| A3 | Supabase `service_role` key | Supabase dashboard (never deployed to app infra; never `NEXT_PUBLIC_*`) | Full auth-store admin: mint/modify users, set `app_metadata.role=admin` → all backend client+admin APIs (not direct trading authority) |
+| A4 | SES SMTP credentials (+ AWS account) | Supabase dashboard SMTP config, AWS console | Send arbitrary mail as marketworks.in (phishing/OTP interception at the mail layer); no session forgery |
 | A5 | `DATABASE_URL` (Postgres) | Railway env | Read/write all trade history; data exfil; account takeover via auth tables |
-| A6 | Google OAuth client secret | Vercel env | Impersonate the OAuth flow → mint sessions for whitelisted email |
+| A6 | Google OAuth client secret | Supabase dashboard (provider config), Google Cloud console | Impersonate the OAuth flow → mint sessions (bounded: role defaults to client) |
 | A7 | Google Drive OAuth token | `~/.config/kite-lab/gdrive_token.json` (laptop, Mac mini) | Read/write everything in `My Drive/kite-lab-backups/` |
 | A8 | User PII + trade history in Postgres | Railway managed Postgres | Privacy harm; financial history disclosure |
 | A9 | The trading authority itself | Logical — sum of A1, A2, A3 | Real-money loss |
@@ -51,12 +51,12 @@ unlocked dev machines.
 ┌──────────────────────┐         ┌──────────────────────┐
 │  browser (Vercel)    │ ───────►│  Vercel edge / SSR    │
 └──────────────────────┘  TB2    └──────────────────────┘
-       │ TB3: NextAuth + Bearer JWT
+       │ TB3: Supabase session + Bearer ES256 JWT
        ▼
 ┌──────────────────────────────────────────────────────┐
 │  Railway FastAPI (kite-api)                          │
 │   ├── Pydantic validation                            │
-│   ├── ALLOWED_EMAILS / JWT verify                    │
+│   ├── JWKS ES256 verify (iss + aud pinned)           │
 │   ├── rate limiter (slowapi)                         │
 │   └── security headers (HSTS, X-Frame-Options, …)    │
 └──────────────────────────────────────────────────────┘
@@ -84,20 +84,20 @@ unlocked dev machines.
 
 ### TB2 — browser ↔ Vercel SSR/edge
 
-- **Spoofing:** NextAuth session cookie (SameSite + HttpOnly).
-- **Tampering:** CSP enforces script provenance (R-006: not yet active; this branch closes it).
-- **Information disclosure:** No secrets in `NEXT_PUBLIC_*`. JWT held in-memory in React module-level var (`api-client.ts`), passed via Authorization header.
+- **Spoofing:** Supabase session cookies, SameSite=Lax and **JS-readable by design** (`httpOnly:false` — @supabase/ssr's browser client reads the session from `document.cookie`; R-029). Middleware refreshes + verifies claims LOCALLY against the project JWKS (`getClaims`, no unverified session reads server-side). Consequence: XSS yields the refresh token, not just a short-lived access token — R-021's accepted `'unsafe-inline'`/`'unsafe-eval'` residual carries more impact than under Clerk. Cookie lifetime is a rolling 30-day inactivity window (default was 400 days) — founder ease-of-use decision 2026-08-11, R-029.
+- **Tampering:** CSP enforces script provenance (R-006 active; Supabase origin scoped to connect-src only, R-027).
+- **Information disclosure:** No secrets in `NEXT_PUBLIC_*` (anon key is public by design; `service_role` never leaves the dashboard). Access token also mirrored in-memory in a React module-level var (`api-client.ts`) for the Authorization header + SSE URLs.
 - **DoS:** Vercel rate limiting + slowapi downstream.
 - **Elevation:** front-end has no privileged operations; all enforcement is backend.
 
 ### TB3 — Vercel ↔ Railway API (Bearer JWT)
 
-- **Spoofing:** JWT signed HS256 with `JWT_SECRET` from Railway env. Issued by `/api/auth/token` after NextAuth session verification + ALLOWED_EMAILS check.
+- **Spoofing:** ES256 JWT minted only by Supabase Auth; backend verifies signature via the project JWKS with issuer pinned, `aud="authenticated"` REQUIRED, and ES256 as the sole accepted alg (alg-confusion pinned by spec tests). No signing secret exists on our infrastructure to steal — asymmetric by design.
 - **Tampering:** JWT signature.
 - **Information disclosure:** SSE stream `/api/positions/stream` accepts token as query param (EventSource API limit) — token visible in browser history and HTTP referer. **R-005**.
 - **DoS:** slowapi 60 req/min global, 5 req/min on `/api/auth/token`.
 - **Repudiation:** Audit logger captures POST/PUT/DELETE with request ID + IP. No log shipping; logs ephemeral on Railway (R-009-adjacent).
-- **Elevation:** ALLOWED_EMAILS whitelist enforced at JWT issuance; backend re-checks on every request via `get_current_user` dependency.
+- **Elevation:** role read exclusively from server-controlled `app_metadata.role` (client-editable `user_metadata` and PostgREST's native `role` claim are never consulted — SI-1). Open sign-up mints client-role sessions only; `require_admin` + `check_universe_access` re-verified on every request (`test_supabase_authz.py`, 294 tests).
 
 ### TB4 — Railway API ↔ Postgres
 

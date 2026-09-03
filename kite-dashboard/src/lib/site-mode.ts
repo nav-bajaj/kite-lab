@@ -29,23 +29,38 @@ export function gatedRobots(): { robots?: { index: boolean; follow: boolean } } 
 }
 
 // Routes that stay reachable while gated. Everything else redirects to "/"
-// for non-admin visitors. To open /library later, add "/library(.*)" here —
-// one line, nothing else changes.
-export const PUBLIC_WHEN_GATED = [
-  "/", // coming-soon page (admins see the real landing)
+// for non-admin visitors.
+//
+// Matching lives HERE rather than in the middleware because it must not
+// depend on any auth library's route matcher — the gate outlived Clerk and
+// should outlive whatever comes next. To open /library later, add it to
+// GATED_PREFIXES: one line, nothing else changes.
+const GATED_EXACT = new Set([
+  "/",            // coming-soon page (admins see the real landing)
   "/terms",
   "/privacy",
   "/disclaimer",
-  "/sign-in(.*)", // includes /sign-in/factor-one, /sign-in/sso-callback
   // .txt is not in the middleware matcher's static-asset exclusions, so
-  // robots.txt must be allowlisted explicitly — crawlers need it reachable
-  // for the deindexing strategy (see robots.ts) to work.
+  // robots.txt needs an explicit entry — crawlers must reach it for the
+  // deindexing strategy (see robots.ts) to work.
   "/robots.txt",
-  // Email consent pages. Their only credential is the token in the URL, and
+  // Email consent pages. Their only credential is the token in the URL and
   // they MUST stay reachable while gated — otherwise every unsubscribe link
   // in every email redirects to "/", which is a compliance failure rather
-  // than just a broken link. /confirm is inert under single opt-in but is
-  // allowlisted now so flipping that flag needs no other change.
+  // than merely a broken link. /confirm is inert under single opt-in but is
+  // listed now so flipping that flag needs no other change.
   "/unsubscribe",
   "/confirm",
+]);
+
+const GATED_PREFIXES = [
+  "/sign-in",     // includes /sign-in/factor-one, sso-callback, etc.
+  "/auth",        // OAuth code-exchange hop; hit before a session exists
 ];
+
+export function isGateOpenPath(path: string): boolean {
+  return (
+    GATED_EXACT.has(path) ||
+    GATED_PREFIXES.some((b) => path === b || path.startsWith(b + "/"))
+  );
+}

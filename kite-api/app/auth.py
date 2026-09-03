@@ -1,15 +1,23 @@
 """
-Clerk session-token verification.
+Session-token verification — Supabase Auth (primary) + Clerk (until the
+auth_stack_v2 Phase 4 cutover removes it).
 
-Verifies Clerk-issued JWTs against the project's JWKS endpoint. Exposes
-the same ``get_current_user`` interface the route layer has always
-depended on, so swapping from the legacy NextAuth HS256 path is a
-zero-touch change for endpoint signatures.
+Verification is issuer-routed: the token's (unverified) ``iss`` selects
+which fully-pinned path verifies it. Each path has its own JWKS URL,
+allowed algorithm, audience policy, and role-claim location; a token
+whose issuer matches neither configured provider is rejected outright.
 
-Also exposes ``require_admin``: a FastAPI dependency that 403s any
-caller whose ``publicMetadata.role`` (surfaced via the ``metadata``
-session-token claim configured in the Clerk dashboard) is not
-``"admin"``.
+  Supabase  ES256, aud="authenticated" enforced, role from the
+            server-controlled ``app_metadata.role`` claim. The
+            client-editable ``user_metadata`` and PostgREST's native
+            ``role`` claim NEVER influence authz (SI-1 in
+            tasks/auth_stack_v2/PLAN.md).
+  Clerk     RS256, no aud (Clerk session tokens carry none), role from
+            the ``metadata`` claim (publicMetadata via dashboard
+            mapping).
+
+Exposes the same ``get_current_user`` dict shape the route layer has
+always depended on: {sub, role, metadata, claims, source}.
 """
 
 import time
@@ -49,51 +57,48 @@ class ForbiddenError(HTTPException):
 
 
 # ---------------------------------------------------------------------------
-# JWKS cache
+# JWKS cache — one entry per JWKS URL (two providers during transition)
 # ---------------------------------------------------------------------------
 #
-# Clerk's JWKS rotates rarely. We cache for an hour. On a `kid` miss we
-# force a re-fetch once before giving up — covers the rotation case.
+# Signing keys rotate rarely. Cache for an hour per URL; on a `kid` miss
+# force one re-fetch before giving up — covers the rotation case. On a
+# fetch failure prefer a stale cache over a hard 401 so a transient
+# provider-side blip doesn't take the whole API down.
 
 _JWKS_CACHE_TTL_SECONDS = 3600
-_JWKS_CACHE: dict[str, Any] = {"keys": None, "fetched_at": 0.0}
+_JWKS_CACHES: dict[str, dict[str, Any]] = {}
 
 
-def _fetch_jwks(force: bool = False) -> dict:
-    """Fetch (and cache) the Clerk JWKS."""
-    settings = get_settings()
+def _fetch_jwks(url: str, force: bool = False) -> dict:
+    """Fetch (and cache) the JWKS document at ``url``."""
+    if not url:
+        raise AuthError("Auth JWKS URL is not configured on the server")
+
     now = time.time()
-    cached_keys = _JWKS_CACHE["keys"]
-    cached_at = _JWKS_CACHE["fetched_at"]
+    entry = _JWKS_CACHES.get(url)
 
     if (
         not force
-        and cached_keys is not None
-        and now - cached_at < _JWKS_CACHE_TTL_SECONDS
+        and entry is not None
+        and entry["keys"] is not None
+        and now - entry["fetched_at"] < _JWKS_CACHE_TTL_SECONDS
     ):
-        return cached_keys
-
-    if not settings.clerk_jwks_url:
-        raise AuthError("CLERK_JWKS_URL is not configured on the server")
+        return entry["keys"]
 
     try:
-        resp = httpx.get(settings.clerk_jwks_url, timeout=5.0)
+        resp = httpx.get(url, timeout=5.0)
         resp.raise_for_status()
         keys = resp.json()
     except Exception as exc:
-        # If the upstream fetch fails but we have a stale cache, prefer that
-        # over a hard 401 — better to keep serving than to take the whole
-        # API down on a transient Clerk-side blip.
-        if cached_keys is not None:
-            return cached_keys
-        raise AuthError(f"Unable to fetch Clerk JWKS: {exc}")
+        if entry is not None and entry["keys"] is not None:
+            return entry["keys"]
+        raise AuthError(f"Unable to fetch JWKS: {exc}")
 
-    _JWKS_CACHE["keys"] = keys
-    _JWKS_CACHE["fetched_at"] = now
+    _JWKS_CACHES[url] = {"keys": keys, "fetched_at": now}
     return keys
 
 
-def _find_signing_key(token: str) -> dict:
+def _find_signing_key(token: str, jwks_url: str) -> dict:
     """Locate the JWK matching the token's ``kid`` header."""
     try:
         headers = jwt.get_unverified_header(token)
@@ -104,53 +109,125 @@ def _find_signing_key(token: str) -> dict:
     if not kid:
         raise AuthError("Token header missing kid")
 
-    # First look in the cache; on miss, force a refresh and try once more.
     for force in (False, True):
-        jwks = _fetch_jwks(force=force)
+        jwks = _fetch_jwks(jwks_url, force=force)
         for key in jwks.get("keys", []):
             if key.get("kid") == kid:
                 return key
-    raise AuthError("Unable to find Clerk signing key (kid not in JWKS)")
+    raise AuthError("Unable to find signing key (kid not in JWKS)")
 
 
 # ---------------------------------------------------------------------------
-# Token decode + role extraction
+# Issuer routing + per-provider decode
 # ---------------------------------------------------------------------------
 
 
-def decode_token(token: str) -> dict:
-    """Verify a Clerk session JWT and return its payload."""
-    settings = get_settings()
-
-    if not settings.clerk_jwks_url or not settings.clerk_issuer:
-        raise AuthError("Clerk auth is not configured on the server")
-
+def _token_issuer(token: str) -> str:
     try:
-        key = _find_signing_key(token)
-        payload = jwt.decode(
+        return jwt.get_unverified_claims(token).get("iss") or ""
+    except JWTError as exc:
+        raise AuthError(f"Malformed token: {exc}")
+
+
+def _decode_supabase(token: str) -> dict:
+    """Verify a Supabase access token. ES256 only (the project's
+    promoted signing key), issuer pinned, aud enforced."""
+    settings = get_settings()
+    key = _find_signing_key(token, settings.supabase_jwks_url)
+    try:
+        return jwt.decode(
             token,
             key,
-            algorithms=["RS256"],
-            issuer=settings.clerk_issuer,
-            options={
-                # Clerk session tokens don't carry an `aud` claim by default
-                "verify_aud": False,
-            },
+            algorithms=["ES256"],
+            issuer=settings.supabase_issuer,
+            audience="authenticated",
+            # python-jose only checks aud when the claim exists — require
+            # it, else a token with no aud at all would verify.
+            options={"require_aud": True},
         )
-        return payload
     except JWTError:
         raise AuthError("Invalid or expired token")
 
 
-def _extract_role(payload: dict) -> str:
-    """Pull ``role`` from the Clerk ``publicMetadata`` claim. Defaults to
-    ``"client"`` if missing/unknown — defense in depth so a bad role string
-    can never accidentally land us as ``"admin"``."""
-    metadata = payload.get("metadata") or {}
+def _decode_clerk(token: str) -> dict:
+    """Verify a Clerk session JWT. RS256 only, issuer pinned; Clerk
+    session tokens carry no aud claim."""
+    settings = get_settings()
+    key = _find_signing_key(token, settings.clerk_jwks_url)
+    try:
+        return jwt.decode(
+            token,
+            key,
+            algorithms=["RS256"],
+            issuer=settings.clerk_issuer,
+            options={"verify_aud": False},
+        )
+    except JWTError:
+        raise AuthError("Invalid or expired token")
+
+
+def decode_token(token: str) -> tuple[dict, str]:
+    """Verify a session JWT; return ``(payload, provider)`` where
+    provider is ``"supabase"`` or ``"clerk"``.
+
+    The unverified ``iss`` only ROUTES; the selected path then verifies
+    signature + issuer + expiry (+ audience on Supabase), so a lying
+    ``iss`` fails inside the path it routed to.
+    """
+    settings = get_settings()
+    issuer = _token_issuer(token)
+
+    if settings.supabase_issuer and issuer == settings.supabase_issuer:
+        return _decode_supabase(token), "supabase"
+    if settings.clerk_issuer and issuer == settings.clerk_issuer:
+        return _decode_clerk(token), "clerk"
+
+    raise AuthError("Token issuer not recognized")
+
+
+def _extract_role(payload: dict, provider: str) -> str:
+    """Pull the app role from the provider's server-controlled claim.
+    Defaults to ``"client"`` on anything missing/unknown — defense in
+    depth so a bad role string can never accidentally land as admin.
+
+    Supabase: ``app_metadata.role`` ONLY. ``user_metadata`` is
+    end-user-editable and PostgREST's native ``role`` claim is
+    infrastructure plumbing — neither is consulted (SI-1).
+    Clerk: ``metadata.role`` (publicMetadata session-claim mapping).
+    """
+    if provider == "supabase":
+        metadata = payload.get("app_metadata") or {}
+    else:
+        metadata = payload.get("metadata") or {}
     role = metadata.get("role")
     if role in ("admin", "client"):
         return role
     return "client"
+
+
+def _user_dict(payload: dict, provider: str, source: str) -> dict:
+    sub = payload.get("sub")
+    if not sub:
+        raise AuthError("Token missing sub claim")
+    if provider == "supabase":
+        metadata = payload.get("app_metadata") or {}
+    else:
+        metadata = payload.get("metadata") or {}
+    return {
+        "sub": sub,
+        "role": _extract_role(payload, provider),
+        "metadata": metadata,
+        "claims": payload,
+        "source": source,
+    }
+
+
+def _provision(user: dict) -> None:
+    """Lazy user-row upsert (B1.7). Fail-open inside the service — a DB
+    problem must never turn into a 401/403."""
+    from app.services.user_service import provision_user
+
+    provision_user(user)
 
 
 def _enforce_private_mode(role: str) -> None:
@@ -175,7 +252,7 @@ def _enforce_private_mode(role: str) -> None:
 def get_current_user(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
 ) -> dict:
-    """Validate the Clerk session token; raise on failure.
+    """Validate the session token; raise on failure.
 
     Returns a dict with: sub, role, metadata, claims, source.
     """
@@ -196,22 +273,13 @@ def get_current_user(
     if credentials is None:
         raise AuthError("Missing authentication token")
 
-    payload = decode_token(credentials.credentials)
-
-    sub = payload.get("sub")
-    if not sub:
-        raise AuthError("Token missing sub claim")
-
-    role = _extract_role(payload)
-    _enforce_private_mode(role)
-
-    return {
-        "sub": sub,
-        "role": role,
-        "metadata": payload.get("metadata") or {},
-        "claims": payload,
-        "source": "clerk",
-    }
+    payload, provider = decode_token(credentials.credentials)
+    user = _user_dict(payload, provider, source=provider)
+    # Site-gate lockdown before provisioning: a token we are about to refuse
+    # should not create or touch a user row.
+    _enforce_private_mode(user["role"])
+    _provision(user)
+    return user
 
 
 def get_optional_user(
@@ -234,7 +302,7 @@ def require_admin(user: dict = Depends(get_current_user)) -> dict:
 
     Any other role (including the default ``"client"``) gets a 403.
     Use this on every mutation / admin / engine endpoint. Inventory:
-    see ``tasks/client_portal/TASKS.md``.
+    see ``tests/test_supabase_authz.py``.
     """
     if user.get("role") != "admin":
         raise ForbiddenError("Admin role required")
@@ -319,16 +387,8 @@ def validate_token_string(token: str) -> dict:
     """
     if not token:
         raise AuthError("Missing authentication token")
-    payload = decode_token(token)
-    sub = payload.get("sub")
-    if not sub:
-        raise AuthError("Token missing sub claim")
-    role = _extract_role(payload)
-    _enforce_private_mode(role)
-    return {
-        "sub": sub,
-        "role": role,
-        "metadata": payload.get("metadata") or {},
-        "claims": payload,
-        "source": "clerk_query_param",
-    }
+    payload, provider = decode_token(token)
+    user = _user_dict(payload, provider, source=f"{provider}_query_param")
+    _enforce_private_mode(user["role"])
+    _provision(user)
+    return user

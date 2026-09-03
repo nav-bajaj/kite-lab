@@ -9,7 +9,7 @@ import {
   useMemo,
   ReactNode,
 } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useSupabaseAuth } from "@/contexts/supabase-auth-context";
 import { UniverseId, Universe } from "@/lib/types";
 import {
   UNIVERSES,
@@ -37,17 +37,12 @@ interface UniverseContextValue {
 const UniverseContext = createContext<UniverseContextValue | null>(null);
 
 export function UniverseProvider({ children }: { children: ReactNode }) {
-  const { user, isLoaded } = useUser();
+  // Role from the Supabase JWT's app_metadata (cosmetic filter only —
+  // the backend enforces the real universe gate, R-022). Admins see all
+  // 7 universes; everyone else gets the 4-product client surface.
+  const { role, isLoaded } = useSupabaseAuth();
   const [universeId, setUniverseId] = useState<UniverseId>(DEFAULT_UNIVERSE);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Role from Clerk publicMetadata. Admins see all 7 universes; everyone
-  // else (signed-in clients OR signed-out visitors who hit a page that
-  // shouldn't normally render) gets the 4-product client surface.
-  const role = useMemo(() => {
-    const meta = user?.publicMetadata as { role?: string } | undefined;
-    return meta?.role === "admin" ? "admin" : "client";
-  }, [user]);
 
   const visibleUniverseIds = useMemo(
     () => getVisibleUniverseIds(role),
