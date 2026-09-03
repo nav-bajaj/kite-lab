@@ -46,19 +46,19 @@ is auth-agnostic and ports unchanged.
 
 ## Stage A0 — reconcile the branches (🤖, BEFORE anything else)
 
-- [ ] A0.1 Land the `email_channel` branch on `beta_gtm_mvp` first, so
+- [x] A0.1 Land the `email_channel` branch on `beta_gtm_mvp` first, so
       this reconciliation happens once rather than twice.
-- [ ] A0.2 In a worktree, merge `beta_gtm_mvp` → `auth_stack_v2`.
-- [ ] A0.3 Resolve `middleware.ts` by porting the site gate onto the
+- [x] A0.2 In a worktree, merge `beta_gtm_mvp` → `auth_stack_v2`.
+- [x] A0.3 Resolve `middleware.ts` by porting the site gate onto the
       Supabase middleware. **The gate must survive.**
-- [ ] A0.4 Resolve `page.tsx` keeping the ComingSoon/LandingPage switch.
-- [ ] A0.5 Keep `PRIVATE_MODE` and the waitlist table from production;
+- [x] A0.4 Resolve `page.tsx` keeping the ComingSoon/LandingPage switch.
+- [x] A0.5 Keep `PRIVATE_MODE` and the waitlist table from production;
       keep the Supabase auth from this branch. `require_admin` exists
       in both, so the waitlist endpoints port unchanged.
-- [ ] A0.6 Retire `test_clerk_authz.py` in favour of the Supabase authz
+- [x] A0.6 Retire `test_clerk_authz.py` in favour of the Supabase authz
       suite, moving the waitlist/consent endpoint inventories across so
       no endpoint loses coverage.
-- [ ] A0.7 Verify with the gate ON: anonymous sees only the
+- [x] A0.7 Verify with the gate ON: anonymous sees only the
       under-development page; admin sees the full site; the API refuses
       non-admin tokens. Then `pytest` + `npm run build` clean.
 
@@ -140,9 +140,9 @@ a sign-in email should reach a human.
 
 ## Stage B — remote verification (🤖, after A9)
 
-- [ ] B1 JWKS: exactly one ES256 key served.
-- [ ] B2 `/auth/v1/settings`: google=true, email=true, signups open.
-- [ ] B3 SMTP smoke: OTP request to founder address -> mail arrives
+- [x] B1 JWKS: exactly one ES256 key served.
+- [x] B2 `/auth/v1/settings`: google=true, email=true, signups open.
+- [x] B3 SMTP smoke: OTP request to founder address -> mail arrives
       (pre-captcha, so curl works). Then founder does A10; B4 re-curl
       confirms `captcha_failed` on a tokenless request.
 
@@ -150,26 +150,26 @@ a sign-in email should reach a human.
 
 Vercel -> kite-dashboard project -> Settings -> Environment Variables
 (Production scope):
-- [ ] `NEXT_PUBLIC_SUPABASE_URL` = `https://<prod-ref>.supabase.co`
-- [ ] `NEXT_PUBLIC_SUPABASE_ANON_KEY` = prod anon key
-- [ ] `NEXT_PUBLIC_TURNSTILE_SITE_KEY` = `0x4AAAAAAENNy-QEJvBLRJJ2`
-- [ ] `NEXT_PUBLIC_SITE_URL` = `https://marketworks.in`
+- [x] `NEXT_PUBLIC_SUPABASE_URL` = `https://<prod-ref>.supabase.co`
+- [x] `NEXT_PUBLIC_SUPABASE_ANON_KEY` = prod anon key
+- [x] `NEXT_PUBLIC_TURNSTILE_SITE_KEY` = `0x4AAAAAAENNy-QEJvBLRJJ2`
+- [x] `NEXT_PUBLIC_SITE_URL` = `https://marketworks.in`
 - Leave the Clerk vars in place (harmless; removed at C4.5).
 
 Railway -> kite-lab service -> Variables (NOTE: saving triggers a
 redeploy of the CURRENT code — old code ignores these vars, but do it
 in the window anyway):
-- [ ] `SUPABASE_JWKS_URL` =
+- [x] `SUPABASE_JWKS_URL` =
       `https://<prod-ref>.supabase.co/auth/v1/.well-known/jwks.json`
-- [ ] `SUPABASE_ISSUER` = `https://<prod-ref>.supabase.co/auth/v1`
+- [x] `SUPABASE_ISSUER` = `https://<prod-ref>.supabase.co/auth/v1`
 
 ## Stage D — merge, push, verify (🤖 merge + checks; 👤 approves push)
 
-- [ ] D1 Merge `auth_stack_v2` -> `beta_gtm_mvp` with `--no-ff`.
-- [ ] D2 Push (deploys BOTH services; Railway entrypoint runs
+- [x] D1 Merge `auth_stack_v2` -> `beta_gtm_mvp` with `--no-ff`.
+- [x] D2 Push (deploys BOTH services; Railway entrypoint runs
       `alembic upgrade head` -> creates the `users` table, migration
       0006, idempotent).
-- [ ] D3 Verify live **with the gate still up**: marketworks.in shows
+- [x] D3 Verify live **with the gate still up**: marketworks.in shows
       the under-development page to an anonymous visitor (NOT the
       product); `/library`, `/portfolios`, `/dashboard`, `/insights`
       all 307 to `/`; `/sign-in` shows the new card + Turnstile;
@@ -192,6 +192,44 @@ in the window anyway):
       admin universe via API.
 - [ ] D6 Confirm a `users` row exists for both accounts (lazy
       provisioning proof, Railway PG or via admin panel logs).
+
+## Stage D verification log — 2026-09-03
+
+Merged `354cc37`, pushed 17:48 IST (outside the market-hours freeze and
+outside the 15:55–17:30 EOD window). The A0 reconciliation meant the
+merge carried no conflict resolution.
+
+**Railway.** Migrations reached a single head on the first boot, which is
+what the merge revision was for:
+
+    Running upgrade 0005 -> 0006, Add users table
+    Running upgrade 0006, 0007_waitlist_consent -> 0008_merge
+
+`/api/health` returns `database: connected`.
+
+**D3 — the gate survived.** This was the failure mode the runbook was
+written around, so it was checked directly rather than inferred:
+
+| Check | Result |
+|---|---|
+| `/` to an anonymous visitor | Coming-soon page. Zero references to any portfolio name, `/portfolios` or `/library`. |
+| False "SEBI Registered" string anywhere on `/` | Absent. |
+| `/portfolios` `/library` `/dashboard` `/insights` `/admin` `/account` `/sign-up` | All **307 → `/`**. |
+| `/` `/terms` `/privacy` `/disclaimer` `/sign-in` `/unsubscribe` `/confirm` `/robots.txt` | All 200. |
+| `/sign-in` | Serves the Supabase `SignInCard`. Supabase client in one chunk, Turnstile + Google in another, **zero Clerk strings in any of the six chunks the page loads**. |
+| CSP | Carries the Supabase project origin and `challenges.cloudflare.com`. Clerk origins still present — they come out at E3. |
+| `PRIVATE_MODE`, anonymous | `/api/portfolio` 401, `/api/insights/reading` 401, `/api/indices/returns` 401. |
+| `/api/health` anonymous | 200, as intended. |
+| `POST /api/waitlist` | 200 — the one public write still works, so the coming-soon form is not collateral damage. |
+
+*Note on reading these checks:* the sign-in page's server HTML contains
+none of the Supabase/Turnstile markers, because `SignInCard` is a client
+component. Grepping the served HTML alone reads as a broken page; the
+markers are in the JS chunks. Check the chunks, not the document.
+
+**D4 is now the blocking step.** The gate reads `app_metadata.role`, and
+a fresh Supabase account has no role — so the founder currently sees the
+coming-soon page like everyone else. This is expected, not a fault.
 
 ## Stage E — after cutover
 
