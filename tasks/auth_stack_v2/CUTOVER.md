@@ -187,7 +187,7 @@ in the window anyway):
       '{"role":"admin"}' where email = '<founder google email>';`
       then sign out/in (fresh token carries the claim). Verify /admin
       loads and /api/freshness responds.
-- [ ] D5 Client journey: second account (email OTP) sees the 4
+- [~] D5 Client journey: second account (email OTP) sees the 4
       client portfolios, is bounced off /admin, cannot query an
       admin universe via API.
 - [x] D6 Confirm a `users` row exists for both accounts (lazy
@@ -286,6 +286,45 @@ Consequences, in order of severity:
 4. Any accounts left over from the August spike are now in the live auth
    store. Worth auditing — the app-side `users` table has only the one
    row, so nobody else has actually reached the product.
+
+## Live auth-store audit — 2026-09-04
+
+Six accounts exist in the production auth store. Five predate the
+cutover, because production IS the promoted spike project.
+
+| email | role | created | note |
+|---|---|---|---|
+| dev@navthinks.com | null | 2025-10-21 | spike, unused since creation |
+| mail@navthinks.com | **admin** | 2025-10-21 | the intended founder admin |
+| navdeep.bajajtravels@gmail.com | **admin** | 2026-08-10 | admin granted during the AUGUST SPIKE |
+| navdeep@marketworks.in | null | 2026-08-10 | spike; correctly bounced by the gate |
+| e2e-client@marketworks.test | client | 2026-08-11 | **E2E test fixture, live in production** |
+| marketworks.in@gmail.com | null | 2026-09-03 | created during the cutover window |
+
+**The finding is the mechanism, not the blast radius.** The second admin
+is the founder's own account, so nothing was exposed. But it was granted
+in a throwaway spike context on 2026-08-10, and promoting that project to
+production silently promoted the privilege grant with it. Anything else
+granted during the spike would have carried over the same way — this
+audit is the only thing that would have surfaced it.
+
+`e2e-client@marketworks.test` is the Playwright fixture. It is not
+remotely usable (its domain receives no mail, and the suite drove it via
+the admin API), but it should not exist in a production auth store. The
+E2E runner guard added on 2026-09-03 is what stops it being recreated.
+
+**D5 — the testable half PASSES.** An authenticated non-admin
+(navdeep@marketworks.in) was bounced to the coming-soon page and never
+reached the API, so it was never provisioned. That is the first proof the
+gate handles an authenticated non-admin; every prior check covered only
+anonymous visitors. The rest of D5 — that a client sees the 4 client
+portfolios, and the check_universe_access matrix — remains UNTESTABLE
+while the gate is up, because PRIVATE_MODE 403s clients before universe
+access is ever evaluated. **Re-run D5 in full at ungating.**
+
+A Clerk session was also still in use at 2026-09-04 05:36 UTC (users row
+id=2, no email recorded). Expected — the legacy issuer is deliberately
+retained — but that person is logged out when E3 removes Clerk.
 
 ## Stage E — after cutover
 
