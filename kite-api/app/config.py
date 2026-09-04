@@ -21,18 +21,12 @@ class Settings(BaseSettings):
     supabase_jwks_url: str = ""
     supabase_issuer: str = ""
 
-    # Authentication — Clerk (retired at auth_stack_v2 Phase 4 cutover;
-    # verification path kept alongside Supabase until then)
-    clerk_jwks_url: str = ""
-    clerk_issuer: str = ""
-    clerk_secret_key: str = ""  # For Clerk Backend API calls (unused)
-
-    # Legacy authentication settings (kept during transition; the NextAuth
-    # HS256 path was retired in the Clerk migration. Safe to remove once
-    # we're sure no code path references them.)
+    # Legacy authentication settings. The NextAuth HS256 path was retired
+    # in the Clerk migration and Clerk itself at E3. Kept only because
+    # they are still referenced by config consumers; nothing in the auth
+    # path reads them.
     jwt_secret: str = "change-me-in-production"
     jwt_algorithm: str = "HS256"
-    allowed_emails: str = ""  # Comma-separated list (legacy whitelist; unused with Clerk)
 
     # Kite API (optional - for live data fetch)
     kite_api_key: str = ""

@@ -6,9 +6,9 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 let globalAuthToken: string | null = null;
 
 // Optional async resolver registered by ApiAuthContext. When present it
-// returns a guaranteed-fresh token (Clerk's getToken() caches internally
-// and only hits the network near expiry), so requests never ride on a
-// stale or not-yet-populated globalAuthToken. The global slot stays as a
+// returns a guaranteed-fresh token (supabase-js caches the session and
+// only refreshes near expiry), so requests never ride on a stale or
+// not-yet-populated globalAuthToken. The global slot stays as a
 // synchronous fallback for any non-React caller.
 let tokenProvider: (() => Promise<string | null>) | null = null;
 
@@ -29,7 +29,7 @@ export function getGlobalAuthToken(): string | null {
 
 /**
  * Register (or clear) the async token resolver. Called by ApiAuthContext
- * once Clerk is loaded and signed in.
+ * once the Supabase session is loaded and signed in.
  */
 export function setTokenProvider(
   provider: (() => Promise<string | null>) | null

@@ -4,8 +4,8 @@ Waitlist endpoint behaviour (tasks/site_gate).
 POST /api/waitlist is public by design (R-027): validation, dedupe,
 honeypot, and rate limiting. GET /api/waitlist is admin-only.
 
-Auth plumbing (fake Clerk JWKS + locally-signed RS256 tokens) reuses the
-pattern from test_clerk_authz. The DB is a per-module sqlite file with
+Auth plumbing (fake Supabase JWKS + locally-signed ES256 tokens) comes
+from tests/supabase_token.py. The DB is a per-module sqlite file with
 only the waitlist table created (the full metadata contains Postgres
 JSONB columns sqlite can't compile).
 """
@@ -18,19 +18,23 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 
 import pytest
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
 from fastapi.testclient import TestClient
 from jose import jwt as jose_jwt
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-TEST_ISSUER = "https://test.clerk.accounts.dev"
-TEST_KID = "test-key-id"
+from tests.supabase_token import (  # noqa: E402
+    TEST_SUPABASE_ISSUER,
+    TEST_SUPABASE_JWKS_URL,
+    clear_jwks,
+    generate_keypair,
+    install_jwks,
+    make_token,
+)
 
-os.environ.setdefault("CLERK_JWKS_URL", f"{TEST_ISSUER}/.well-known/jwks.json")
-os.environ.setdefault("CLERK_ISSUER", TEST_ISSUER)
+os.environ.setdefault("SUPABASE_JWKS_URL", TEST_SUPABASE_JWKS_URL)
+os.environ.setdefault("SUPABASE_ISSUER", TEST_SUPABASE_ISSUER)
 os.environ.setdefault("ALLOWED_ORIGINS", "http://localhost:3000")
 os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
 os.environ.setdefault("DEBUG", "false")
@@ -98,86 +102,21 @@ def _count(db_sessionmaker) -> int:
 
 
 # ---------------------------------------------------------------------------
-# Auth fixtures (same pattern as test_clerk_authz)
+# Auth fixtures — shared Supabase token plumbing (tests/supabase_token.py)
 # ---------------------------------------------------------------------------
 
 
 @pytest.fixture(scope="module")
-def rsa_keypair():
-    return rsa.generate_private_key(public_exponent=65537, key_size=2048)
-
-
-@pytest.fixture(scope="module")
-def jwks_dict(rsa_keypair):
-    import base64
-
-    public_numbers = rsa_keypair.public_key().public_numbers()
-
-    def b64url_uint(n: int) -> str:
-        b = n.to_bytes((n.bit_length() + 7) // 8, byteorder="big")
-        return base64.urlsafe_b64encode(b).rstrip(b"=").decode("ascii")
-
-    return {
-        "keys": [
-            {
-                "kty": "RSA",
-                "use": "sig",
-                "alg": "RS256",
-                "kid": TEST_KID,
-                "n": b64url_uint(public_numbers.n),
-                "e": b64url_uint(public_numbers.e),
-            }
-        ]
-    }
+def keypair():
+    return generate_keypair()
 
 
 @pytest.fixture(autouse=True)
-def patch_jwks(jwks_dict, monkeypatch):
-    """Serve the local RSA JWKS from cache so no test touches the network.
-
-    Supports both cache shapes: the single-slot one this suite was written
-    against, and the per-URL `_JWKS_CACHES` the Supabase migration
-    introduced. These tokens are Clerk-shaped and Clerk survives as a
-    legacy issuer, so they still verify after the migration.
-    """
-    now = time.time()
-    if hasattr(auth_module, "_JWKS_CACHES"):
-        auth_module._JWKS_CACHES[
-            os.environ["CLERK_JWKS_URL"]
-        ] = {"keys": jwks_dict, "fetched_at": now}
-    else:
-        auth_module._JWKS_CACHE["keys"] = jwks_dict
-        auth_module._JWKS_CACHE["fetched_at"] = now
-
-    def _no_network(*_args, **_kwargs):
-        raise AssertionError("Test attempted a real JWKS fetch")
-
-    monkeypatch.setattr("httpx.get", _no_network)
+def patch_jwks(keypair, monkeypatch):
+    """Serve the local EC JWKS from cache so no test touches the network."""
+    install_jwks(auth_module, keypair, monkeypatch)
     yield
-    if hasattr(auth_module, "_JWKS_CACHES"):
-        auth_module._JWKS_CACHES.pop(os.environ["CLERK_JWKS_URL"], None)
-    else:
-        auth_module._JWKS_CACHE["keys"] = None
-        auth_module._JWKS_CACHE["fetched_at"] = 0.0
-
-
-def _make_token(rsa_keypair, role: str) -> str:
-    private_pem = rsa_keypair.private_bytes(
-        encoding=serialization.Encoding.PEM,
-        format=serialization.PrivateFormat.PKCS8,
-        encryption_algorithm=serialization.NoEncryption(),
-    ).decode()
-    now = datetime.now(tz=timezone.utc)
-    claims: dict[str, Any] = {
-        "sub": f"user_test_{role}",
-        "iss": TEST_ISSUER,
-        "iat": int(now.timestamp()),
-        "exp": int((now + timedelta(hours=1)).timestamp()),
-        "metadata": {"role": role},
-    }
-    return jose_jwt.encode(
-        claims, private_pem, algorithm="RS256", headers={"kid": TEST_KID}
-    )
+    clear_jwks(auth_module)
 
 
 @pytest.fixture
@@ -298,17 +237,17 @@ def test_get_requires_auth(test_client):
     assert test_client.get("/api/waitlist").status_code == 401
 
 
-def test_get_rejects_client_role(test_client, rsa_keypair):
-    token = _make_token(rsa_keypair, "client")
+def test_get_rejects_client_role(test_client, keypair):
+    token = make_token(keypair, "client")
     resp = test_client.get(
         "/api/waitlist", headers={"Authorization": f"Bearer {token}"}
     )
     assert resp.status_code == 403
 
 
-def test_get_returns_signups_for_admin(test_client, rsa_keypair):
+def test_get_returns_signups_for_admin(test_client, keypair):
     test_client.post("/api/waitlist", json={"email": "person@example.com"})
-    token = _make_token(rsa_keypair, "admin")
+    token = make_token(keypair, "admin")
     resp = test_client.get(
         "/api/waitlist", headers={"Authorization": f"Bearer {token}"}
     )
@@ -374,7 +313,7 @@ def test_unsubscribe_tokens_are_unique_per_signup(test_client, db_sessionmaker):
     assert len(set(tokens)) == 5
 
 
-def test_status_breakdown_and_mailable_count(test_client, rsa_keypair, db_sessionmaker):
+def test_status_breakdown_and_mailable_count(test_client, keypair, db_sessionmaker):
     """`mailable` counts only confirmed rows — the number that matters
     before any send."""
     for i in range(3):
@@ -389,7 +328,7 @@ def test_status_breakdown_and_mailable_count(test_client, rsa_keypair, db_sessio
     finally:
         db.close()
 
-    token = _make_token(rsa_keypair, "admin")
+    token = make_token(keypair, "admin")
     body = test_client.get(
         "/api/waitlist", headers={"Authorization": f"Bearer {token}"}
     ).json()
@@ -405,20 +344,20 @@ def test_status_breakdown_and_mailable_count(test_client, rsa_keypair, db_sessio
 # ---------------------------------------------------------------------------
 
 
-def test_export_requires_admin(test_client, rsa_keypair):
+def test_export_requires_admin(test_client, keypair):
     assert test_client.get("/api/waitlist/export.csv").status_code == 401
-    client = _make_token(rsa_keypair, "client")
+    client = make_token(keypair, "client")
     resp = test_client.get(
         "/api/waitlist/export.csv", headers={"Authorization": f"Bearer {client}"}
     )
     assert resp.status_code == 403
 
 
-def test_export_returns_csv_without_tokens(test_client, rsa_keypair):
+def test_export_returns_csv_without_tokens(test_client, keypair):
     """Tokens are live credentials for confirm/unsubscribe links — they
     must never leave the DB in a spreadsheet."""
     test_client.post("/api/waitlist", json={"email": "person@example.com"})
-    token = _make_token(rsa_keypair, "admin")
+    token = make_token(keypair, "admin")
     resp = test_client.get(
         "/api/waitlist/export.csv", headers={"Authorization": f"Bearer {token}"}
     )
@@ -551,12 +490,12 @@ def test_signup_still_succeeds_when_send_fails(db_sessionmaker, monkeypatch, tes
 # ---------------------------------------------------------------------------
 
 
-def _admin(rsa_keypair):
-    return {"Authorization": f"Bearer {_make_token(rsa_keypair, 'admin')}"}
+def _admin(keypair):
+    return {"Authorization": f"Bearer {make_token(keypair, 'admin')}"}
 
 
-def test_admin_endpoints_reject_non_admin(test_client, rsa_keypair):
-    client = {"Authorization": f"Bearer {_make_token(rsa_keypair, 'client')}"}
+def test_admin_endpoints_reject_non_admin(test_client, keypair):
+    client = {"Authorization": f"Bearer {make_token(keypair, 'client')}"}
     for method, path in [
         ("delete", "/api/waitlist?email=a@b.co"),
         ("post", "/api/waitlist/promote"),
@@ -566,20 +505,20 @@ def test_admin_endpoints_reject_non_admin(test_client, rsa_keypair):
         assert getattr(test_client, method)(path, headers=client).status_code == 403
 
 
-def test_delete_removes_the_row(test_client, rsa_keypair, db_sessionmaker):
+def test_delete_removes_the_row(test_client, keypair, db_sessionmaker):
     test_client.post("/api/waitlist", json={"email": "gone@example.com"})
     resp = test_client.delete(
-        "/api/waitlist?email=gone@example.com", headers=_admin(rsa_keypair)
+        "/api/waitlist?email=gone@example.com", headers=_admin(keypair)
     )
     assert resp.status_code == 200
     assert _count(db_sessionmaker) == 0
     # missing row is a 404, not a silent success
     assert test_client.delete(
-        "/api/waitlist?email=gone@example.com", headers=_admin(rsa_keypair)
+        "/api/waitlist?email=gone@example.com", headers=_admin(keypair)
     ).status_code == 404
 
 
-def test_promote_makes_pending_rows_mailable(test_client, rsa_keypair, db_sessionmaker):
+def test_promote_makes_pending_rows_mailable(test_client, keypair, db_sessionmaker):
     """Mirrors the real situation after migration 0007: rows backfilled to
     'pending' under single opt-in, so mailable reads 0."""
     test_client.post("/api/waitlist", json={"email": "backfilled@example.com"})
@@ -590,7 +529,7 @@ def test_promote_makes_pending_rows_mailable(test_client, rsa_keypair, db_sessio
     finally:
         db.close()
 
-    resp = test_client.post("/api/waitlist/promote", headers=_admin(rsa_keypair))
+    resp = test_client.post("/api/waitlist/promote", headers=_admin(keypair))
     assert resp.status_code == 200
     assert resp.json()["count"] == 1
 
@@ -600,7 +539,7 @@ def test_promote_makes_pending_rows_mailable(test_client, rsa_keypair, db_sessio
     assert row.unsubscribe_token
 
 
-def test_promote_refuses_under_double_opt_in(test_client, rsa_keypair, db_sessionmaker):
+def test_promote_refuses_under_double_opt_in(test_client, keypair, db_sessionmaker):
     """Under double opt-in 'pending' means they never clicked — promoting
     would fabricate consent."""
     test_client.post("/api/waitlist", json={"email": "unconfirmed@example.com"})
@@ -614,14 +553,14 @@ def test_promote_refuses_under_double_opt_in(test_client, rsa_keypair, db_sessio
     settings = get_settings()
     settings.waitlist_double_opt_in = True
     try:
-        resp = test_client.post("/api/waitlist/promote", headers=_admin(rsa_keypair))
+        resp = test_client.post("/api/waitlist/promote", headers=_admin(keypair))
         assert resp.status_code == 409
         assert _row(db_sessionmaker).status == "pending"  # untouched
     finally:
         settings.waitlist_double_opt_in = False
 
 
-def test_send_welcome_refuses_unmailable_status(test_client, rsa_keypair, db_sessionmaker):
+def test_send_welcome_refuses_unmailable_status(test_client, keypair, db_sessionmaker):
     test_client.post("/api/waitlist", json={"email": "left@example.com"})
     db = db_sessionmaker()
     try:
@@ -630,15 +569,15 @@ def test_send_welcome_refuses_unmailable_status(test_client, rsa_keypair, db_ses
     finally:
         db.close()
     resp = test_client.post(
-        "/api/waitlist/send-welcome?email=left@example.com", headers=_admin(rsa_keypair)
+        "/api/waitlist/send-welcome?email=left@example.com", headers=_admin(keypair)
     )
     assert resp.status_code == 409  # never mail someone who left
 
 
-def test_send_welcome_queues_for_a_confirmed_row(test_client, rsa_keypair):
+def test_send_welcome_queues_for_a_confirmed_row(test_client, keypair):
     test_client.post("/api/waitlist", json={"email": "seed@example.com"})
     resp = test_client.post(
-        "/api/waitlist/send-welcome?email=seed@example.com", headers=_admin(rsa_keypair)
+        "/api/waitlist/send-welcome?email=seed@example.com", headers=_admin(keypair)
     )
     assert resp.status_code == 200
     assert resp.json()["status"] == "queued"

@@ -74,8 +74,8 @@ export function UniverseProvider({ children }: { children: ReactNode }) {
 
   // If the role changes (e.g. an admin signs in / out) and the currently
   // selected universe is no longer visible to them, fall back to the
-  // default. Runs once Clerk's user state is loaded so we don't bounce on
-  // first paint before role is known.
+  // default. Runs once the Supabase session has loaded so we don't bounce
+  // on first paint before role is known.
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!isLoaded) return;

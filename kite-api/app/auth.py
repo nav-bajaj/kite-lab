@@ -1,20 +1,14 @@
 """
-Session-token verification — Supabase Auth (primary) + Clerk (until the
-auth_stack_v2 Phase 4 cutover removes it).
-
-Verification is issuer-routed: the token's (unverified) ``iss`` selects
-which fully-pinned path verifies it. Each path has its own JWKS URL,
-allowed algorithm, audience policy, and role-claim location; a token
-whose issuer matches neither configured provider is rejected outright.
+Session-token verification — Supabase Auth.
 
   Supabase  ES256, aud="authenticated" enforced, role from the
             server-controlled ``app_metadata.role`` claim. The
             client-editable ``user_metadata`` and PostgREST's native
             ``role`` claim NEVER influence authz (SI-1 in
             tasks/auth_stack_v2/PLAN.md).
-  Clerk     RS256, no aud (Clerk session tokens carry none), role from
-            the ``metadata`` claim (publicMetadata via dashboard
-            mapping).
+
+Clerk verification was removed at auth_stack_v2 E3 (2026-09-04) after the
+cutover soak. Tokens from any other issuer are rejected outright.
 
 Exposes the same ``get_current_user`` dict shape the route layer has
 always depended on: {sub, role, metadata, claims, source}.
@@ -149,38 +143,23 @@ def _decode_supabase(token: str) -> dict:
         raise AuthError("Invalid or expired token")
 
 
-def _decode_clerk(token: str) -> dict:
-    """Verify a Clerk session JWT. RS256 only, issuer pinned; Clerk
-    session tokens carry no aud claim."""
-    settings = get_settings()
-    key = _find_signing_key(token, settings.clerk_jwks_url)
-    try:
-        return jwt.decode(
-            token,
-            key,
-            algorithms=["RS256"],
-            issuer=settings.clerk_issuer,
-            options={"verify_aud": False},
-        )
-    except JWTError:
-        raise AuthError("Invalid or expired token")
-
-
 def decode_token(token: str) -> tuple[dict, str]:
-    """Verify a session JWT; return ``(payload, provider)`` where
-    provider is ``"supabase"`` or ``"clerk"``.
+    """Verify a session JWT; return ``(payload, "supabase")``.
 
     The unverified ``iss`` only ROUTES; the selected path then verifies
-    signature + issuer + expiry (+ audience on Supabase), so a lying
-    ``iss`` fails inside the path it routed to.
+    signature + issuer + expiry + audience, so a lying ``iss`` fails
+    inside the path it routed to.
+
+    The tuple keeps its shape, and the provider is still threaded through
+    ``_user_dict``, because the users table records which provider
+    created a row — rows written during the Clerk era stay labelled
+    ``clerk`` and must not be rewritten.
     """
     settings = get_settings()
     issuer = _token_issuer(token)
 
     if settings.supabase_issuer and issuer == settings.supabase_issuer:
         return _decode_supabase(token), "supabase"
-    if settings.clerk_issuer and issuer == settings.clerk_issuer:
-        return _decode_clerk(token), "clerk"
 
     raise AuthError("Token issuer not recognized")
 
@@ -190,15 +169,11 @@ def _extract_role(payload: dict, provider: str) -> str:
     Defaults to ``"client"`` on anything missing/unknown — defense in
     depth so a bad role string can never accidentally land as admin.
 
-    Supabase: ``app_metadata.role`` ONLY. ``user_metadata`` is
-    end-user-editable and PostgREST's native ``role`` claim is
-    infrastructure plumbing — neither is consulted (SI-1).
-    Clerk: ``metadata.role`` (publicMetadata session-claim mapping).
+    ``app_metadata.role`` ONLY. ``user_metadata`` is end-user-editable
+    and PostgREST's native ``role`` claim is infrastructure plumbing —
+    neither is ever consulted (SI-1).
     """
-    if provider == "supabase":
-        metadata = payload.get("app_metadata") or {}
-    else:
-        metadata = payload.get("metadata") or {}
+    metadata = payload.get("app_metadata") or {}
     role = metadata.get("role")
     if role in ("admin", "client"):
         return role

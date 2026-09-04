@@ -333,9 +333,28 @@ retained — but that person is logged out when E3 removes Clerk.
 - [ ] E2 Monitor launch week: SES sending stats (bounces/complaints),
       Supabase auth logs, Railway logs for `user provisioning
       skipped` warnings.
-- [ ] E3 (C4.5, ~1 week soak) Cleanup commit: remove Clerk CSP
-      origins + clerk_* config fields + test_clerk_authz.py + Clerk
-      env vars from Vercel; register row for the CSP narrowing; THEN
-      delete the Clerk application.
+- [x] E3 **DONE in code 2026-09-04** (brought forward: the soak existed
+      only to avoid force-logging-out a live Clerk session, and the
+      founder confirmed the one remaining session was disposable).
+      Removed: `_decode_clerk` + dual-issuer routing in `auth.py`,
+      the `clerk_*` settings, and `clerkOrigins` from all four CSP
+      directives. `test_clerk_authz.py` was already gone. Register row
+      **R-033** records the narrowing; R-024 marked superseded.
+
+      *The path was NOT dead code.* `test_private_mode.py` and
+      `test_waitlist.py` both authenticated with Clerk-shaped RS256
+      tokens — 62 tests broke the moment the path was removed. Both
+      migrated to Supabase ES256 tokens through new shared plumbing at
+      `tests/supabase_token.py`, which is where that fixture should have
+      lived all along. Suite back to 1041 passed / 3 pre-existing
+      insights failures — no regressions.
+      `test_clerk_issuer_is_no_longer_accepted` is the standing guard.
+
+- [ ] E3.1 **FOUNDER, after this deploys:** delete `CLERK_ISSUER`,
+      `CLERK_JWKS_URL`, `CLERK_SECRET_KEY` from Railway and the Clerk
+      vars from Vercel, then delete the Clerk application. The code
+      ignores them (`extra = "ignore"`), so nothing breaks either way —
+      but `CLERK_SECRET_KEY` is a live `sk_live_` credential and stays
+      live until the Clerk app is deleted.
 - [ ] E4 If Supabase Pro exposes Sessions time-box/inactivity
       settings: leave off or set >=30d (matches the cookie window).

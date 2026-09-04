@@ -1,10 +1,9 @@
 """
 Authorization gate for the Supabase migration (auth_stack_v2, B1.2).
 
-Port of ``test_clerk_authz.py`` — same endpoint inventories, same gate
+Successor to ``test_clerk_authz.py`` — same endpoint inventories, same gate
 semantics, tokens now Supabase-shaped (ES256, aud=authenticated, role in
-``app_metadata``). The Clerk harness stays green alongside until the
-Phase 4 cutover removes the Clerk verification path; this file is the
+``app_metadata``). Clerk verification was removed at E3; this file is the
 permanent successor.
 
 Additions over the straight port:
@@ -38,8 +37,6 @@ TEST_KID = "sb-authz-key-id"
 
 os.environ.setdefault("SUPABASE_JWKS_URL", TEST_SUPABASE_JWKS_URL)
 os.environ.setdefault("SUPABASE_ISSUER", TEST_SUPABASE_ISSUER)
-os.environ.setdefault("CLERK_JWKS_URL", TEST_CLERK_JWKS_URL)
-os.environ.setdefault("CLERK_ISSUER", TEST_CLERK_ISSUER)
 os.environ.setdefault("ALLOWED_ORIGINS", "http://localhost:3000")
 os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
 os.environ.setdefault("DEBUG", "false")
@@ -100,18 +97,14 @@ def fresh_settings():
 
 @pytest.fixture(autouse=True)
 def patch_jwks(jwks_dict, monkeypatch):
-    """Install the local EC JWKS for the Supabase URL and an EMPTY key
-    set for the Clerk URL (so cross-issuer tokens fail with a kid miss,
-    served from cache — never the network). Supports both the legacy
+    """Install the local EC JWKS for the Supabase URL, served from cache
+    so a test never reaches the network. Supports both the legacy
     single-slot cache (pre-B1.3, for the witnessed-red run) and the
     per-URL cache the rewrite introduces."""
     now = time.time()
     if hasattr(auth_module, "_JWKS_CACHES"):
         auth_module._JWKS_CACHES[TEST_SUPABASE_JWKS_URL] = {
             "keys": jwks_dict, "fetched_at": now,
-        }
-        auth_module._JWKS_CACHES[TEST_CLERK_JWKS_URL] = {
-            "keys": {"keys": []}, "fetched_at": now,
         }
     else:  # legacy single cache — red run only
         auth_module._JWKS_CACHE["keys"] = jwks_dict
@@ -433,10 +426,15 @@ def test_wrong_issuer_returns_401(test_client, ec_keypair):
     assert resp.status_code == 401
 
 
-def test_supabase_key_with_clerk_issuer_returns_401(test_client, ec_keypair):
-    """A token signed with the Supabase project key but claiming the
-    Clerk issuer must fail on the Clerk path (kid not in Clerk JWKS) —
-    never verify cross-issuer."""
+def test_clerk_issuer_is_no_longer_accepted(test_client, ec_keypair):
+    """E3 regression guard: Clerk verification was REMOVED (2026-09-04).
+
+    Before E3 this asserted a cross-issuer token failed because the kid
+    was missing from the Clerk JWKS. Now it must fail earlier and harder
+    — the issuer is not recognised at all, so there is no Clerk path to
+    route to. If Clerk verification were ever reinstated by accident,
+    this admin-role token would start being honoured and this test is
+    what catches it."""
     token = _make_token(ec_keypair, role="admin", iss=TEST_CLERK_ISSUER)
     resp = test_client.get(
         "/api/portfolio", headers={"Authorization": f"Bearer {token}"}
@@ -456,10 +454,9 @@ def test_wrong_audience_returns_401(test_client, ec_keypair):
 # PRIVATE_MODE against Supabase tokens (site_gate R-028)
 # ---------------------------------------------------------------------------
 #
-# test_private_mode.py covers the lockdown using Clerk-shaped tokens, which
-# survive as a legacy issuer. Supabase is the provider production will
-# actually use and it carries the role at a DIFFERENT claim path
-# (app_metadata.role, not metadata.role), so the lockdown is asserted here
+# test_private_mode.py covers the lockdown independently. Both suites now
+# use Supabase-shaped tokens (shared plumbing in tests/supabase_token.py),
+# so the lockdown is asserted here
 # too — otherwise the primary path is untested.
 
 

@@ -18,11 +18,8 @@ once these are in place, which is the intent.
 """
 import os
 
-TEST_CLERK_ISSUER = "https://test.clerk.accounts.dev"
 TEST_SUPABASE_ISSUER = "https://testproject.supabase.co/auth/v1"
 
-os.environ.setdefault("CLERK_ISSUER", TEST_CLERK_ISSUER)
-os.environ.setdefault("CLERK_JWKS_URL", f"{TEST_CLERK_ISSUER}/.well-known/jwks.json")
 os.environ.setdefault("SUPABASE_ISSUER", TEST_SUPABASE_ISSUER)
 os.environ.setdefault(
     "SUPABASE_JWKS_URL", f"{TEST_SUPABASE_ISSUER}/.well-known/jwks.json"

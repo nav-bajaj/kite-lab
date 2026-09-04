@@ -18,16 +18,20 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 
 import pytest
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
 from fastapi.testclient import TestClient
 from jose import jwt as jose_jwt
 
-TEST_ISSUER = "https://test.clerk.accounts.dev"
-TEST_KID = "test-key-id"
+from tests.supabase_token import (  # noqa: E402
+    TEST_SUPABASE_ISSUER,
+    TEST_SUPABASE_JWKS_URL,
+    clear_jwks,
+    generate_keypair,
+    install_jwks,
+    make_token,
+)
 
-os.environ.setdefault("CLERK_JWKS_URL", f"{TEST_ISSUER}/.well-known/jwks.json")
-os.environ.setdefault("CLERK_ISSUER", TEST_ISSUER)
+os.environ.setdefault("SUPABASE_JWKS_URL", TEST_SUPABASE_JWKS_URL)
+os.environ.setdefault("SUPABASE_ISSUER", TEST_SUPABASE_ISSUER)
 os.environ.setdefault("ALLOWED_ORIGINS", "http://localhost:3000")
 os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
 os.environ.setdefault("DEBUG", "false")
@@ -62,91 +66,26 @@ def private_mode_on():
 
 
 @pytest.fixture(scope="module")
-def rsa_keypair():
-    return rsa.generate_private_key(public_exponent=65537, key_size=2048)
-
-
-@pytest.fixture(scope="module")
-def jwks_dict(rsa_keypair):
-    import base64
-
-    public_numbers = rsa_keypair.public_key().public_numbers()
-
-    def b64url_uint(n: int) -> str:
-        b = n.to_bytes((n.bit_length() + 7) // 8, byteorder="big")
-        return base64.urlsafe_b64encode(b).rstrip(b"=").decode("ascii")
-
-    return {
-        "keys": [
-            {
-                "kty": "RSA",
-                "use": "sig",
-                "alg": "RS256",
-                "kid": TEST_KID,
-                "n": b64url_uint(public_numbers.n),
-                "e": b64url_uint(public_numbers.e),
-            }
-        ]
-    }
+def keypair():
+    return generate_keypair()
 
 
 @pytest.fixture(autouse=True)
-def patch_jwks(jwks_dict, monkeypatch):
-    """Serve the local RSA JWKS from cache so no test touches the network.
-
-    Supports both cache shapes: the single-slot one this suite was written
-    against, and the per-URL `_JWKS_CACHES` the Supabase migration
-    introduced. These tokens are Clerk-shaped and Clerk survives as a
-    legacy issuer, so they still verify after the migration.
-    """
-    now = time.time()
-    if hasattr(auth_module, "_JWKS_CACHES"):
-        auth_module._JWKS_CACHES[
-            os.environ["CLERK_JWKS_URL"]
-        ] = {"keys": jwks_dict, "fetched_at": now}
-    else:
-        auth_module._JWKS_CACHE["keys"] = jwks_dict
-        auth_module._JWKS_CACHE["fetched_at"] = now
-
-    def _no_network(*_args, **_kwargs):
-        raise AssertionError("Test attempted a real JWKS fetch")
-
-    monkeypatch.setattr("httpx.get", _no_network)
+def patch_jwks(keypair, monkeypatch):
+    """Serve the local EC JWKS from cache so no test touches the network."""
+    install_jwks(auth_module, keypair, monkeypatch)
     yield
-    if hasattr(auth_module, "_JWKS_CACHES"):
-        auth_module._JWKS_CACHES.pop(os.environ["CLERK_JWKS_URL"], None)
-    else:
-        auth_module._JWKS_CACHE["keys"] = None
-        auth_module._JWKS_CACHE["fetched_at"] = 0.0
-
-
-def _make_token(rsa_keypair, role: str) -> str:
-    private_pem = rsa_keypair.private_bytes(
-        encoding=serialization.Encoding.PEM,
-        format=serialization.PrivateFormat.PKCS8,
-        encryption_algorithm=serialization.NoEncryption(),
-    ).decode()
-    now = datetime.now(tz=timezone.utc)
-    claims: dict[str, Any] = {
-        "sub": f"user_test_{role}",
-        "iss": TEST_ISSUER,
-        "iat": int(now.timestamp()),
-        "exp": int((now + timedelta(hours=1)).timestamp()),
-        "metadata": {"role": role},
-    }
-    return jose_jwt.encode(
-        claims, private_pem, algorithm="RS256", headers={"kid": TEST_KID}
-    )
+    clear_jwks(auth_module)
 
 
 @pytest.fixture
-def client_token(rsa_keypair) -> str:
-    return _make_token(rsa_keypair, "client")
+def client_token(keypair) -> str:
+    return make_token(keypair, "client")
 
 
 @pytest.fixture
-def admin_token(rsa_keypair) -> str:
-    return _make_token(rsa_keypair, "admin")
+def admin_token(keypair) -> str:
+    return make_token(keypair, "admin")
 
 
 @pytest.fixture
@@ -259,14 +198,14 @@ def test_bootstrap_endpoints_stay_open(test_client, method, path):
 # ---------------------------------------------------------------------------
 
 
-def test_validate_token_string_rejects_client_token(rsa_keypair, private_mode_on):
-    token = _make_token(rsa_keypair, "client")
+def test_validate_token_string_rejects_client_token(keypair, private_mode_on):
+    token = make_token(keypair, "client")
     with pytest.raises(auth_module.ForbiddenError):
         auth_module.validate_token_string(token)
 
 
-def test_validate_token_string_passes_admin_token(rsa_keypair, private_mode_on):
-    token = _make_token(rsa_keypair, "admin")
+def test_validate_token_string_passes_admin_token(keypair, private_mode_on):
+    token = make_token(keypair, "admin")
     user = auth_module.validate_token_string(token)
     assert user["role"] == "admin"
 
