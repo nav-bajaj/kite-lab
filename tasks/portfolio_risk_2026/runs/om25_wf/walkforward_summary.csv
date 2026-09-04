@@ -1,0 +1,5 @@
+config,cagr_pct,sharpe,max_dd_pct,calmar,ulcer,pct_days_dd_gt_20,pct_12m_neg,worst_12m,median_12m
+WALK-FORWARD (re-picked yearly),31.28,1.78,-25.8,1.21,7.46,0.6,13.8,-10.9,23.7
+FIXED ROC31/c3 @75 (in-sample pick),34.19,1.93,-25.7,1.33,7.26,0.5,11.8,-10.7,26.1
+"production OM25 (stop20, no overlay)",35.06,1.67,-34.8,1.01,9.85,4.3,16.2,-19.1,25.6
+"no stop, no overlay",37.72,1.71,-35.9,1.05,9.05,3.7,12.4,-19.9,27.0

@@ -1,0 +1,15 @@
+name: portfolio_risk_2026
+status: shipped
+opened: 2026-09-04
+closed: 2026-09-04
+related_commits: []
+supersedes: []
+depends_on:
+  - MM-tuning
+  - oos_retune_2026
+register_rows: []
+summary: >
+  Drawdown and ride-quality study across all four production portfolios.
+  Started as an exit-buffer test on L6 v2, became a regime-overlay
+  investigation, and produced (a) a candidate configuration for OM25 v3 and
+  (b) a production-reporting audit. No production code was changed.

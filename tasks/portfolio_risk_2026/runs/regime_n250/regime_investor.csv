@@ -1,0 +1,4 @@
+arm,bear_pct,max_dd_pct,avg_dd_pct,pct_days_underwater,pct_days_dd_gt_10,pct_days_dd_gt_20,longest_uw_days,median_uw_days,n_uw_episodes,ulcer_index,pct_12m_negative,median_12m
+ma_NIFTY_100,26.6,-16.3,-5.9,85.7,21.7,0.0,767,4,73,7.54,13.2,23.6
+ma_NIFTY_500,25.6,-19.6,-7.0,84.7,34.1,0.0,767,4,76,9.18,13.1,26.3
+ma_NIFTY_LARGEMID250,23.1,-15.5,-5.5,84.0,19.4,0.0,674,4,75,7.24,13.7,28.2
