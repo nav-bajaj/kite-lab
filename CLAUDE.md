@@ -68,6 +68,27 @@ script, or removed `.md`. Don't push to that branch.
 | Project-wide security audit | `/security-audit` skill (`.claude/skills/security-audit/`) |
 | Review a diff against the threat model | `security-reviewer` subagent (`.claude/agents/security-reviewer.md`) |
 
+## Push freeze
+
+`beta_gtm_mvp` is the production branch: pushing it redeploys Vercel AND
+the Railway `kite-lab` API, and Railway restarts the service even for a
+docs-only commit. **Do not push it 09:00-17:30 IST on a weekday.**
+
+The window ends at 17:30, not 15:30. The options workers keep running
+after the close, and the EOD proposal + daily pipeline run into the
+evening behind them, so the end of the trading session is not the end of
+the freeze. Weekends are fine.
+
+Enforced by `tools/git/push-freeze-check.sh`, wired in as `pre-push`.
+Install it after a fresh clone:
+
+    ln -sf ../../tools/git/push-freeze-check.sh .git/hooks/pre-push
+
+Override only when genuinely urgent: `ALLOW_PUSH_IN_FREEZE=yes git push`.
+**Re-read the clock immediately before pushing** — a reading taken
+earlier in a session goes stale, which is how the freeze has been broken
+twice.
+
 ## Don't-do list
 
 - Don't add `scripts/<one_off>.py` — research probes go in `tasks/<name>/`.
