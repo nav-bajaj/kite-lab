@@ -1,0 +1,60 @@
+{
+  "horizon_days": 63,
+  "start": "2021-01-01",
+  "n_rebalance_dates": 148,
+  "by_decile": {
+    "1": {
+      "median_price": 63,
+      "fwd_pct": 9.63
+    },
+    "2": {
+      "median_price": 145,
+      "fwd_pct": 9.06
+    },
+    "3": {
+      "median_price": 268,
+      "fwd_pct": 7.46
+    },
+    "4": {
+      "median_price": 467,
+      "fwd_pct": 6.44
+    },
+    "5": {
+      "median_price": 666,
+      "fwd_pct": 6.67
+    },
+    "6": {
+      "median_price": 903,
+      "fwd_pct": 6.05
+    },
+    "7": {
+      "median_price": 1246,
+      "fwd_pct": 3.89
+    },
+    "8": {
+      "median_price": 1920,
+      "fwd_pct": 5.7
+    },
+    "9": {
+      "median_price": 3252,
+      "fwd_pct": 5.41
+    },
+    "10": {
+      "median_price": 6514,
+      "fwd_pct": 3.67
+    }
+  },
+  "spread_pp": 5.96,
+  "spread_by_year_pp": {
+    "2021": 3.16,
+    "2022": 13.08,
+    "2023": 18.79,
+    "2024": -4.1,
+    "2025": 2.69,
+    "2026": -3.63
+  },
+  "years_reversed": [
+    2024,
+    2026
+  ]
+}

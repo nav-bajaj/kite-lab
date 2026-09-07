@@ -1,0 +1,347 @@
+{
+  "universe": {
+    "n": 534,
+    "median": 819,
+    "p90": 4488,
+    "p95": 8010,
+    "p99": 33640,
+    "max": 132665,
+    "most_expensive": [
+      [
+        "MRF",
+        132665
+      ],
+      [
+        "BOSCHLTD",
+        48200
+      ],
+      [
+        "HONAUT",
+        36700
+      ],
+      [
+        "PAGEIND",
+        35480
+      ],
+      [
+        "POWERINDIA",
+        34190
+      ],
+      [
+        "3MINDIA",
+        33640
+      ],
+      [
+        "ABBOTINDIA",
+        26230
+      ],
+      [
+        "SHREECEM",
+        24280
+      ],
+      [
+        "NEULANDLAB",
+        23301
+      ],
+      [
+        "PTCIL",
+        20629
+      ]
+    ]
+  },
+  "cost_drag": {
+    "Quality Momentum (OM25)": {
+      "sell_events_per_yr": 69,
+      "sell_turnover_pct": 231,
+      "fixed_rs_per_yr": 1099,
+      "variable_pct": 0.28,
+      "by_capital": {
+        "100000": 1.38,
+        "200000": 0.83,
+        "300000": 0.65,
+        "500000": 0.5,
+        "750000": 0.43,
+        "1000000": 0.39,
+        "2000000": 0.34
+      }
+    },
+    "Trend Leaders (TL25)": {
+      "sell_events_per_yr": 162,
+      "sell_turnover_pct": 594,
+      "fixed_rs_per_yr": 2581,
+      "variable_pct": 0.73,
+      "by_capital": {
+        "100000": 3.31,
+        "200000": 2.02,
+        "300000": 1.59,
+        "500000": 1.25,
+        "750000": 1.07,
+        "1000000": 0.99,
+        "2000000": 0.86
+      }
+    },
+    "Core Momentum (L6)": {
+      "sell_events_per_yr": 185,
+      "sell_turnover_pct": 680,
+      "fixed_rs_per_yr": 2947,
+      "variable_pct": 0.84,
+      "by_capital": {
+        "100000": 3.78,
+        "200000": 2.31,
+        "300000": 1.82,
+        "500000": 1.43,
+        "750000": 1.23,
+        "1000000": 1.13,
+        "2000000": 0.98
+      }
+    },
+    "Defensive Blend (COMBO)": {
+      "sell_events_per_yr": 202,
+      "sell_turnover_pct": 470,
+      "fixed_rs_per_yr": 3218,
+      "variable_pct": 0.58,
+      "by_capital": {
+        "100000": 3.8,
+        "200000": 2.19,
+        "300000": 1.65,
+        "500000": 1.22,
+        "750000": 1.01,
+        "1000000": 0.9,
+        "2000000": 0.74
+      }
+    }
+  },
+  "replication": {
+    "Quality Momentum (OM25)": {
+      "100000": {
+        "unbuyable": 5,
+        "cash_pct": 28.2,
+        "rms_wt_err_pct": 46.8
+      },
+      "200000": {
+        "unbuyable": 3,
+        "cash_pct": 19.4,
+        "rms_wt_err_pct": 37.4
+      },
+      "300000": {
+        "unbuyable": 2,
+        "cash_pct": 14.1,
+        "rms_wt_err_pct": 30.1
+      },
+      "500000": {
+        "unbuyable": 1,
+        "cash_pct": 8.4,
+        "rms_wt_err_pct": 21.4
+      },
+      "750000": {
+        "unbuyable": 1,
+        "cash_pct": 7.9,
+        "rms_wt_err_pct": 22.2
+      },
+      "1000000": {
+        "unbuyable": 0,
+        "cash_pct": 3.3,
+        "rms_wt_err_pct": 5.6
+      },
+      "2000000": {
+        "unbuyable": 0,
+        "cash_pct": 2.4,
+        "rms_wt_err_pct": 4.9
+      }
+    },
+    "Trend Leaders (TL25)": {
+      "100000": {
+        "unbuyable": 4,
+        "cash_pct": 32.2,
+        "rms_wt_err_pct": 47.3
+      },
+      "200000": {
+        "unbuyable": 3,
+        "cash_pct": 23.6,
+        "rms_wt_err_pct": 40.3
+      },
+      "300000": {
+        "unbuyable": 2,
+        "cash_pct": 17.1,
+        "rms_wt_err_pct": 32.2
+      },
+      "500000": {
+        "unbuyable": 1,
+        "cash_pct": 10.0,
+        "rms_wt_err_pct": 22.8
+      },
+      "750000": {
+        "unbuyable": 0,
+        "cash_pct": 3.9,
+        "rms_wt_err_pct": 7.5
+      },
+      "1000000": {
+        "unbuyable": 0,
+        "cash_pct": 5.5,
+        "rms_wt_err_pct": 12.1
+      },
+      "2000000": {
+        "unbuyable": 0,
+        "cash_pct": 2.4,
+        "rms_wt_err_pct": 5.4
+      }
+    },
+    "Core Momentum (L6)": {
+      "100000": {
+        "unbuyable": 6,
+        "cash_pct": 38.0,
+        "rms_wt_err_pct": 53.3
+      },
+      "200000": {
+        "unbuyable": 3,
+        "cash_pct": 25.8,
+        "rms_wt_err_pct": 39.8
+      },
+      "300000": {
+        "unbuyable": 2,
+        "cash_pct": 16.9,
+        "rms_wt_err_pct": 31.0
+      },
+      "500000": {
+        "unbuyable": 1,
+        "cash_pct": 11.0,
+        "rms_wt_err_pct": 23.6
+      },
+      "750000": {
+        "unbuyable": 0,
+        "cash_pct": 7.5,
+        "rms_wt_err_pct": 12.9
+      },
+      "1000000": {
+        "unbuyable": 0,
+        "cash_pct": 5.5,
+        "rms_wt_err_pct": 10.9
+      },
+      "2000000": {
+        "unbuyable": 0,
+        "cash_pct": 2.8,
+        "rms_wt_err_pct": 5.5
+      }
+    },
+    "Defensive Blend (COMBO)": {
+      "100000": {
+        "unbuyable": 1,
+        "cash_pct": 18.2,
+        "rms_wt_err_pct": 28.6
+      },
+      "200000": {
+        "unbuyable": 1,
+        "cash_pct": 12.8,
+        "rms_wt_err_pct": 23.8
+      },
+      "300000": {
+        "unbuyable": 1,
+        "cash_pct": 9.8,
+        "rms_wt_err_pct": 22.1
+      },
+      "500000": {
+        "unbuyable": 0,
+        "cash_pct": 3.6,
+        "rms_wt_err_pct": 6.1
+      },
+      "750000": {
+        "unbuyable": 0,
+        "cash_pct": 4.5,
+        "rms_wt_err_pct": 10.2
+      },
+      "1000000": {
+        "unbuyable": 0,
+        "cash_pct": 2.1,
+        "rms_wt_err_pct": 4.5
+      },
+      "2000000": {
+        "unbuyable": 0,
+        "cash_pct": 1.6,
+        "rms_wt_err_pct": 4.1
+      }
+    }
+  },
+  "granularity": {
+    "100000": {
+      "position": 4000,
+      "ge1": 88.8,
+      "ge5": 49.4,
+      "ge10": 29.2,
+      "ge20": 14.6
+    },
+    "200000": {
+      "position": 8000,
+      "ge1": 94.9,
+      "ge5": 70.2,
+      "ge10": 49.4,
+      "ge20": 29.2
+    },
+    "300000": {
+      "position": 12000,
+      "ge1": 97.0,
+      "ge5": 81.1,
+      "ge10": 59.2,
+      "ge20": 41.9
+    },
+    "500000": {
+      "position": 20000,
+      "ge1": 98.1,
+      "ge5": 88.8,
+      "ge10": 77.7,
+      "ge20": 55.1
+    },
+    "750000": {
+      "position": 30000,
+      "ge1": 98.9,
+      "ge5": 93.8,
+      "ge10": 84.3,
+      "ge20": 68.0
+    },
+    "1000000": {
+      "position": 40000,
+      "ge1": 99.6,
+      "ge5": 94.9,
+      "ge10": 88.8,
+      "ge20": 77.7
+    },
+    "2000000": {
+      "position": 80000,
+      "ge1": 99.8,
+      "ge5": 97.6,
+      "ge10": 94.9,
+      "ge20": 88.8
+    }
+  },
+  "sip": {
+    "5000": {
+      "ge1": 91.6,
+      "ge3": 71.5,
+      "ge10": 35.6
+    },
+    "10000": {
+      "ge1": 96.1,
+      "ge3": 86.3,
+      "ge10": 55.1
+    },
+    "15000": {
+      "ge1": 97.6,
+      "ge3": 91.6,
+      "ge10": 68.0
+    },
+    "25000": {
+      "ge1": 98.7,
+      "ge3": 95.5,
+      "ge10": 81.6
+    },
+    "40000": {
+      "ge1": 99.6,
+      "ge3": 97.2,
+      "ge10": 88.8
+    },
+    "50000": {
+      "ge1": 99.8,
+      "ge3": 97.6,
+      "ge10": 91.6
+    }
+  }
+}

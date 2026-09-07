@@ -1,0 +1,21 @@
+name: minimum_capital_2026
+status: in-progress
+opened: 2026-09-06
+closed: null
+related_commits: []
+supersedes: []
+depends_on:
+  - universe_membership
+  - portfolio_risk_2026
+register_rows: []
+summary: >
+  What capital a client needs to follow the momentum portfolios, and what
+  lumpsum + SIP to suggest. Answer: Rs 5L minimum / Rs 10L recommended,
+  Rs 10k floor / Rs 25k monthly SIP — Rs 1-5L is structurally broken
+  because a 1/25 position cannot buy a Rs 34,000 share. That produced a
+  follow-on study of a Rs 4,000 per-share entry cap across OM25 v3, L6 v2
+  and COMBO Defensive, which would cut the minimum ticket to ~Rs 2L: free
+  for COMBO (+0.18pp) and OM25 (+0.72pp), but -1.35pp CAGR and 4pp worse
+  drawdown for L6. Random-exclusion placebos show the cap carries no
+  price information beyond an in-sample low-price size tilt that reversed
+  in 2024 and 2026. No production code changed; adoption decision open.

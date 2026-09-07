@@ -1,0 +1,72 @@
+{
+  "l6_baseline": {
+    "start": "2020-07-10",
+    "end": "2026-08-21",
+    "years": 6.11,
+    "end_value": 12065048.87,
+    "cagr_pct": 50.28,
+    "sharpe_rf5": 1.76,
+    "vol_pct": 25.8,
+    "max_dd_pct": -29.92,
+    "n_buys": 1180,
+    "n_sells": 1151
+  },
+  "l6_cap": {
+    "start": "2020-07-10",
+    "end": "2026-08-21",
+    "years": 6.11,
+    "end_value": 11415650.95,
+    "cagr_pct": 48.93,
+    "sharpe_rf5": 1.71,
+    "vol_pct": 25.76,
+    "max_dd_pct": -33.88,
+    "n_buys": 1163,
+    "n_sells": 1135
+  },
+  "combo_baseline": {
+    "start": "2020-07-20",
+    "end": "2026-08-21",
+    "years": 6.09,
+    "end_value": 9852039.15,
+    "cagr_pct": 45.63,
+    "sharpe_rf5": 2.01,
+    "vol_pct": 20.21,
+    "max_dd_pct": -16.36,
+    "n_buys": 700,
+    "n_sells": 1270
+  },
+  "combo_cap": {
+    "start": "2020-07-20",
+    "end": "2026-08-21",
+    "years": 6.09,
+    "end_value": 9929537.84,
+    "cagr_pct": 45.81,
+    "sharpe_rf5": 2.04,
+    "vol_pct": 20.04,
+    "max_dd_pct": -14.71,
+    "n_buys": 697,
+    "n_sells": 1314
+  },
+  "l6_placebo": {
+    "n_blocked": 82,
+    "n_seeds": 30,
+    "mean": 46.87,
+    "sd": 2.77,
+    "min": 40.76,
+    "max": 51.72,
+    "p5": 42.26,
+    "p50": 47.07,
+    "p95": 50.68
+  },
+  "combo_placebo": {
+    "n_blocked": 80,
+    "n_seeds": 30,
+    "mean": 42.39,
+    "sd": 2.27,
+    "min": 37.55,
+    "max": 45.63,
+    "p5": 37.83,
+    "p50": 42.31,
+    "p95": 45.4
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "baseline": {
+    "start": "2021-01-04",
+    "end": "2026-08-21",
+    "years": 5.63,
+    "end_value": 7279213.57,
+    "cagr_pct": 42.31,
+    "sharpe_rf5": 1.7,
+    "vol_pct": 21.95,
+    "max_dd_pct": -25.32,
+    "n_buys": 469,
+    "n_sells": 431
+  },
+  "cap1000": {
+    "start": "2021-01-04",
+    "end": "2026-08-21",
+    "years": 5.63,
+    "end_value": 8072266.86,
+    "cagr_pct": 44.95,
+    "sharpe_rf5": 1.76,
+    "vol_pct": 22.74,
+    "max_dd_pct": -22.48,
+    "n_buys": 345,
+    "n_sells": 321
+  },
+  "cap2000": {
+    "start": "2021-01-04",
+    "end": "2026-08-21",
+    "years": 5.63,
+    "end_value": 8977277.56,
+    "cagr_pct": 47.71,
+    "sharpe_rf5": 1.91,
+    "vol_pct": 22.36,
+    "max_dd_pct": -23.51,
+    "n_buys": 386,
+    "n_sells": 361
+  },
+  "cap3000": {
+    "start": "2021-01-04",
+    "end": "2026-08-21",
+    "years": 5.63,
+    "end_value": 8107132.02,
+    "cagr_pct": 45.06,
+    "sharpe_rf5": 1.81,
+    "vol_pct": 22.16,
+    "max_dd_pct": -24.16,
+    "n_buys": 415,
+    "n_sells": 387
+  },
+  "cap4000": {
+    "start": "2021-01-04",
+    "end": "2026-08-21",
+    "years": 5.63,
+    "end_value": 7488991.8,
+    "cagr_pct": 43.03,
+    "sharpe_rf5": 1.73,
+    "vol_pct": 21.99,
+    "max_dd_pct": -27.03,
+    "n_buys": 431,
+    "n_sells": 401
+  },
+  "cap6000": {
+    "start": "2021-01-04",
+    "end": "2026-08-21",
+    "years": 5.63,
+    "end_value": 7072733.09,
+    "cagr_pct": 41.58,
+    "sharpe_rf5": 1.67,
+    "vol_pct": 21.93,
+    "max_dd_pct": -26.21,
+    "n_buys": 455,
+    "n_sells": 421
+  },
+  "cap8000": {
+    "start": "2021-01-04",
+    "end": "2026-08-21",
+    "years": 5.63,
+    "end_value": 7359111.07,
+    "cagr_pct": 42.58,
+    "sharpe_rf5": 1.71,
+    "vol_pct": 21.93,
+    "max_dd_pct": -24.69,
+    "n_buys": 460,
+    "n_sells": 424
+  },
+  "cap12000": {
+    "start": "2021-01-04",
+    "end": "2026-08-21",
+    "years": 5.63,
+    "end_value": 7369483.4,
+    "cagr_pct": 42.62,
+    "sharpe_rf5": 1.72,
+    "vol_pct": 21.9,
+    "max_dd_pct": -24.81,
+    "n_buys": 461,
+    "n_sells": 424
+  }
+}

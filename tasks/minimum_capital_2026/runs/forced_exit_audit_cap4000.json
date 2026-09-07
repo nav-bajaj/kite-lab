@@ -1,0 +1,71 @@
+{
+  "cap": 4000.0,
+  "arms": {
+    "OM25 cap": {
+      "n_crossed": 15,
+      "n_round_trips": 401,
+      "median_days": 80.0,
+      "mean_days": 111.13333333333334,
+      "max_days": 381,
+      "pct_exit_within_21d": 0.0,
+      "pnl_above_cap": 249956.94,
+      "total_realised_pnl": 5830448.07,
+      "pnl_above_pct_of_total": 4.29
+    },
+    "OM25 baseline": {
+      "n_crossed": 67,
+      "n_round_trips": 431,
+      "median_days": 60.0,
+      "mean_days": 86.6268656716418,
+      "max_days": 381,
+      "pct_exit_within_21d": 16.4,
+      "pnl_above_cap": 249982.22,
+      "total_realised_pnl": 5734987.68,
+      "pnl_above_pct_of_total": 4.36
+    },
+    "L6 cap": {
+      "n_crossed": 13,
+      "n_round_trips": 1135,
+      "median_days": 31.0,
+      "mean_days": 38.07692307692308,
+      "max_days": 128,
+      "pct_exit_within_21d": 30.8,
+      "pnl_above_cap": -68720.16,
+      "total_realised_pnl": 10264307.05,
+      "pnl_above_pct_of_total": -0.67
+    },
+    "L6 baseline": {
+      "n_crossed": 94,
+      "n_round_trips": 1151,
+      "median_days": 21.0,
+      "mean_days": 37.92553191489362,
+      "max_days": 266,
+      "pct_exit_within_21d": 57.4,
+      "pnl_above_cap": 557887.52,
+      "total_realised_pnl": 10883214.56,
+      "pnl_above_pct_of_total": 5.13
+    },
+    "COMBO cap": {
+      "n_crossed": 17,
+      "n_round_trips": 1314,
+      "median_days": 6.0,
+      "mean_days": 17.529411764705884,
+      "max_days": 84,
+      "pct_exit_within_21d": 70.6,
+      "pnl_above_cap": -112825.04,
+      "total_realised_pnl": 9198242.24,
+      "pnl_above_pct_of_total": -1.23
+    },
+    "COMBO baseline": {
+      "n_crossed": 92,
+      "n_round_trips": 1270,
+      "median_days": 23.0,
+      "mean_days": 45.48913043478261,
+      "max_days": 210,
+      "pct_exit_within_21d": 47.8,
+      "pnl_above_cap": 300500.56,
+      "total_realised_pnl": 9104875.23,
+      "pnl_above_pct_of_total": 3.3
+    }
+  }
+}
