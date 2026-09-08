@@ -211,15 +211,44 @@ point-in-time universe**; from 2016 the Nifty 50 and Nifty 100 do. What still
 binds before that is name-to-symbol resolution for companies delisted long
 ago, not missing price history.
 
-### One caveat before stitching
+### The adjustment picture, corrected
 
-The two feeds do not agree on dividend adjustment. GDF quoted INFY a constant
-~2.165% above the Kite panel across a contiguous 14-day window in mid-2026 —
-the signature of a dividend applied on one side only. `scripts/apply_corporate
-_actions.py` handles splits, bonuses and demergers, not dividends, so it will
-not reconcile this. The two backfill directories are therefore kept apart and
-must not be blindly concatenated; the 41 GDF series are the ones to treat with
-care, and only for dates near their corporate actions.
+An earlier version of this file read the INFY gap as "GDF unadjusted, Kite
+panel adjusted". That was wrong, and the truth matters more.
+
+Comparing the STORED panel against a FRESH Kite fetch of the same dates:
+
+| Symbol | fresh Kite / stored panel | days differing |
+|---|---|---|
+| ONGC | 0.9770 before 2026-01-19, 1.0000 after | 510 / 668 |
+| INFY | 0.9788 before 2026-05-29, 1.0000 after | 591 / 668 |
+| ITC | 0.9535 → 0.9735 → 1.0000 | 576 / 668 |
+| COALINDIA | 1.0000 throughout | 1 / 668 |
+
+Kite's API back-adjusts its history for dividends, so a *fresh* pull is a
+total-return series. Our stored panel is not: rows are written once and never
+re-adjusted, so it is effectively a **raw price series** — and GDF, also raw,
+agrees with it almost everywhere. The two feeds are not really in conflict.
+
+What is in conflict is the stored panel with itself. `history_utils` re-fetches
+the last **15 days** on every daily run (`lookback_days = 15`) and overwrites
+them. When a large dividend goes ex, that re-fetch pulls *adjusted* values for
+the pre-ex-date rows inside the window and writes them over the raw ones. The
+result is a short band of dividend-adjusted prices embedded in an otherwise
+raw series, with an artificial jump at each edge. INFY carries exactly such a
+band, 2026-05-12 to 2026-06-09, around its 2026-06-10 ex-date.
+
+This is a production data issue, not something this task introduced, and it is
+almost certainly the mechanism behind the retro-applied drift seen in
+`om25_published_numbers_drift`. It is written up here because the backfill made
+it visible; fixing it is out of scope for this task.
+
+Two smaller things the same comparison surfaced: single-day bad prints in the
+stored panel (INFY 2026-05-27 sits ~2% above both neighbours and above GDF;
+CASTROLIND has a similar spike in July 2026), and the fact that the 41
+GDF-sourced series are raw — which is the *same* basis as the bulk of the
+stored panel, so they are more consistent with it than a fresh Kite pull would
+be.
 
 ## What the smaller indices needed on top
 
