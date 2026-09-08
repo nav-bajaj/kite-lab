@@ -1,0 +1,714 @@
+[
+ {
+  "file": "ind_prs20082020",
+  "pub": "2020-08-20",
+  "title": "Revision in criteria and replacements in Indices",
+  "eff": "2020-09-25",
+  "nx": 4,
+  "ni": 4,
+  "excluded": [
+   [
+    "NHPC Ltd.",
+    "NHPC"
+   ],
+   [
+    "Page Industries Ltd.",
+    "PAGEIND"
+   ],
+   [
+    "Shriram Transport Finance Co. Ltd.",
+    "SRTRANSFIN"
+   ],
+   [
+    "Zee Entertainment Enterprises Ltd.",
+    "ZEEL"
+   ]
+  ],
+  "included": [
+   [
+    "Adani Green Energy Ltd.",
+    "ADANIGREEN"
+   ],
+   [
+    "Alkem Laboratories Ltd.",
+    "ALKEM"
+   ],
+   [
+    "Larsen & Toubro Infotech Ltd.",
+    "LTI"
+   ],
+   [
+    "Tata Consumer Products Ltd.",
+    "TATACONSUM"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs23022021",
+  "pub": "2021-02-23",
+  "title": "Replacements in Indices w.e.f. March 31, 2021",
+  "eff": "2021-03-31",
+  "nx": 6,
+  "ni": 6,
+  "excluded": [
+   [
+    "Bank of Baroda",
+    "BANKBARODA"
+   ],
+   [
+    "Container Corporation of India Ltd.",
+    "CONCOR"
+   ],
+   [
+    "General Insurance Corporation of India",
+    "GICRE"
+   ],
+   [
+    "Hindustan Zinc Ltd.",
+    "HINDZINC"
+   ],
+   [
+    "Oracle Financial Services Software Ltd.",
+    "OFSS"
+   ],
+   [
+    "Power Finance Corporation Ltd.",
+    "PFC"
+   ]
+  ],
+  "included": [
+   [
+    "Adani Enterprises Ltd.",
+    "ADANIENT"
+   ],
+   [
+    "Apollo Hospitals Enterprise Ltd.",
+    "APOLLOHOSP"
+   ],
+   [
+    "Jubilant Foodworks Ltd.",
+    "JUBLFOOD"
+   ],
+   [
+    "MRF Ltd.",
+    "MRF"
+   ],
+   [
+    "Vedanta Ltd.",
+    "VEDL"
+   ],
+   [
+    "Yes Bank Ltd.",
+    "YESBANK"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs15062021",
+  "pub": "2021-06-15",
+  "title": "Replacements in Indices w.e.f. June 30, 2021",
+  "eff": "2021-06-30",
+  "nx": 1,
+  "ni": 1,
+  "excluded": [
+   [
+    "Motherson Sumi Systems Ltd.",
+    "MOTHERSUMI"
+   ]
+  ],
+  "included": [
+   [
+    "Gland Pharma Ltd.",
+    "GLAND"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs24022022_1",
+  "pub": "2022-02-24",
+  "title": "Revision in criteria and replacements in indices",
+  "eff": "2022-03-31",
+  "nx": 5,
+  "ni": 5,
+  "excluded": [
+   [
+    "Aurobindo Pharma Ltd.",
+    "AUROPHARMA"
+   ],
+   [
+    "Hindustan Petroleum Corporation Ltd.",
+    "HINDPETRO"
+   ],
+   [
+    "Indraprastha Gas Ltd.",
+    "IGL"
+   ],
+   [
+    "Jindal Steel & Power Ltd.",
+    "JINDALSTEL"
+   ],
+   [
+    "Yes Bank Ltd.",
+    "YESBANK"
+   ]
+  ],
+  "included": [
+   [
+    "FSN E-Commerce Ventures Ltd.",
+    "NYKAA"
+   ],
+   [
+    "MindTree Ltd.",
+    "MINDTREE"
+   ],
+   [
+    "One 97 Communications Ltd.",
+    "PAYTM"
+   ],
+   [
+    "SRF Ltd.",
+    "SRF"
+   ],
+   [
+    "Zomato Ltd.",
+    "ZOMATO"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs11072022",
+  "pub": "2022-07-11",
+  "title": "Replacements in indices w.e.f. August 08, 2022",
+  "eff": "2022-08-08",
+  "nx": 2,
+  "ni": 2,
+  "excluded": [
+   [
+    "NMDC Ltd.",
+    "NMDC"
+   ],
+   [
+    "Piramal Enterprises Ltd.",
+    "PEL"
+   ]
+  ],
+  "included": [
+   [
+    "Life Insurance Corporation of India",
+    "LICI"
+   ],
+   [
+    "Tata Power Co. Ltd.",
+    "TATAPOWER"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs01092022",
+  "pub": "2022-09-01",
+  "title": "Replacements in indices w.e.f. September 30, 2022",
+  "eff": "2022-09-30",
+  "nx": 6,
+  "ni": 6,
+  "excluded": [
+   [
+    "Jubilant Foodworks Ltd.",
+    "JUBLFOOD"
+   ],
+   [
+    "Lupin Ltd.",
+    "LUPIN"
+   ],
+   [
+    "MindTree Ltd.",
+    "MINDTREE"
+   ],
+   [
+    "Punjab National Bank",
+    "PNB"
+   ],
+   [
+    "Steel Authority of India Ltd.",
+    "SAIL"
+   ],
+   [
+    "Zydus Lifesciences Ltd.",
+    "ZYDUSLIFE"
+   ]
+  ],
+  "included": [
+   [
+    "Adani Total Gas Ltd.",
+    "ATGL"
+   ],
+   [
+    "Bharat Electronics Ltd.",
+    "BEL"
+   ],
+   [
+    "Hindustan Aeronautics Ltd.",
+    "HAL"
+   ],
+   [
+    "Indian Railway Catering and Tourism Corporation Ltd.",
+    "IRCTC"
+   ],
+   [
+    "MphasiS Ltd.",
+    "MPHASIS"
+   ],
+   [
+    "Samvardhana Motherson International Ltd.",
+    "MOTHERSON"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs17022023_1",
+  "pub": "2023-02-17",
+  "title": "Replacements in indices w.e.f March 31, 2023",
+  "eff": "2023-03-31",
+  "nx": 5,
+  "ni": 5,
+  "excluded": [
+   [
+    "Bandhan Bank Ltd.",
+    "BANDHANBNK"
+   ],
+   [
+    "Biocon Ltd.",
+    "BIOCON"
+   ],
+   [
+    "Gland Pharma Ltd.",
+    "GLAND"
+   ],
+   [
+    "MphasiS Ltd.",
+    "MPHASIS"
+   ],
+   [
+    "One 97 Communications Ltd.",
+    "PAYTM"
+   ]
+  ],
+  "included": [
+   [
+    "ABB India Ltd.",
+    "ABB"
+   ],
+   [
+    "Adani Wilmar Ltd.",
+    "AWL"
+   ],
+   [
+    "Canara Bank",
+    "CANBK"
+   ],
+   [
+    "Page Industries Ltd.",
+    "PAGEIND"
+   ],
+   [
+    "Varun Beverages Ltd.",
+    "VBL"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs04072023",
+  "pub": "2023-07-04",
+  "title": "Replacement in indices w.e.f. July 13, 2023",
+  "eff": "2023-07-13",
+  "nx": 1,
+  "ni": 1,
+  "excluded": [
+   [
+    "Housing Development Finance Corporation Ltd.",
+    "HDFC"
+   ]
+  ],
+  "included": [
+   [
+    "Jindal Steel & Power Ltd.",
+    "JINDALSTEL"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs17082023",
+  "pub": "2023-08-17",
+  "title": "Replacements in indices and revision in criteria",
+  "eff": "2023-09-29",
+  "nx": 5,
+  "ni": 6,
+  "excluded": [
+   [
+    "ACC Ltd.",
+    "ACC"
+   ],
+   [
+    "FSN E-Commerce Ventures Ltd.",
+    "NYKAA"
+   ],
+   [
+    "HDFC Asset Management Company Ltd.",
+    "HDFCAMC"
+   ],
+   [
+    "Indus Towers Ltd.",
+    "INDUSTOWER"
+   ],
+   [
+    "Page Industries Ltd.",
+    "PAGEIND"
+   ]
+  ],
+  "included": [
+   [
+    "Punjab National Bank",
+    "PNB"
+   ],
+   [
+    "Shriram Finance Ltd.",
+    "SHRIRAMFIN"
+   ],
+   [
+    "Trent Ltd.",
+    "TRENT"
+   ],
+   [
+    "TVS Motor Company Ltd.",
+    "TVSMOTOR"
+   ],
+   [
+    "Zydus Lifesciences Ltd.",
+    "ZYDUSLIFE"
+   ],
+   [
+    "Tata Motors Ltd. DVR",
+    "TATAMTRDVR"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs28022024",
+  "pub": "2024-02-28",
+  "title": "Replacements in indices w.e.f. March 28, 2024",
+  "eff": "2024-03-28",
+  "nx": 5,
+  "ni": 5,
+  "excluded": [
+   [
+    "Adani Wilmar Ltd.",
+    "AWL"
+   ],
+   [
+    "Muthoot Finance Ltd.",
+    "MUTHOOTFIN"
+   ],
+   [
+    "PI Industries Ltd.",
+    "PIIND"
+   ],
+   [
+    "Procter & Gamble Hygiene & Health Care Ltd.",
+    "PGHH"
+   ],
+   [
+    "UPL Ltd.",
+    "UPL"
+   ]
+  ],
+  "included": [
+   [
+    "Adani Power Ltd.",
+    "ADANIPOWER"
+   ],
+   [
+    "Indian Railway Finance Corporation Ltd.",
+    "IRFC"
+   ],
+   [
+    "Jio Financial Services Ltd.",
+    "JIOFIN"
+   ],
+   [
+    "Power Finance Corporation Ltd.",
+    "PFC"
+   ],
+   [
+    "REC Ltd.",
+    "RECLTD"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs23082024",
+  "pub": "2024-08-23",
+  "title": "Replacements in indices and revision in criteria w.e.f. September 30, 2024",
+  "eff": "2024-09-30",
+  "nx": 5,
+  "ni": 5,
+  "excluded": [
+   [
+    "Berger Paints India Ltd.",
+    "BERGEPAINT"
+   ],
+   [
+    "Colgate Palmolive (India) Ltd.",
+    "COLPAL"
+   ],
+   [
+    "Marico Ltd.",
+    "MARICO"
+   ],
+   [
+    "SBI Cards and Payment Services Ltd.",
+    "SBICARD"
+   ],
+   [
+    "SRF Ltd.",
+    "SRF"
+   ]
+  ],
+  "included": [
+   [
+    "Bharat Heavy Electricals Ltd.",
+    "BHEL"
+   ],
+   [
+    "JSW Energy Ltd.",
+    "JSWENERGY"
+   ],
+   [
+    "Macrotech Developers Ltd.",
+    "LODHA"
+   ],
+   [
+    "NHPC Ltd.",
+    "NHPC"
+   ],
+   [
+    "Union Bank of India",
+    "UNIONBANK"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs21022025",
+  "pub": "2025-02-21",
+  "title": "Replacements in indices w.e.f. March 28, 2025",
+  "eff": "2025-03-28",
+  "nx": 5,
+  "ni": 5,
+  "excluded": [
+   [
+    "Adani Total Gas Ltd.",
+    "ATGL"
+   ],
+   [
+    "Bharat Heavy Electricals Ltd.",
+    "BHEL"
+   ],
+   [
+    "Indian Railway Catering and Tourism Corporation Ltd.",
+    "IRCTC"
+   ],
+   [
+    "NHPC Ltd.",
+    "NHPC"
+   ],
+   [
+    "Union Bank of India",
+    "UNIONBANK"
+   ]
+  ],
+  "included": [
+   [
+    "Bajaj Housing Finance Ltd.",
+    "BAJAJHFL"
+   ],
+   [
+    "CG Power and Industrial Solutions Ltd.",
+    "CGPOWER"
+   ],
+   [
+    "Hyundai Motor India Ltd.",
+    "HYUNDAI"
+   ],
+   [
+    "Indian Hotels Co. Ltd.",
+    "INDHOTEL"
+   ],
+   [
+    "Swiggy Ltd.",
+    "SWIGGY"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs22082025",
+  "pub": "2025-08-22",
+  "title": "Replacements in indices w.e.f. September 30, 2025",
+  "eff": "2025-09-30",
+  "nx": 5,
+  "ni": 5,
+  "excluded": [
+   [
+    "Dabur India Ltd.",
+    "DABUR"
+   ],
+   [
+    "Hero MotoCorp Ltd.",
+    "HEROMOTOCO"
+   ],
+   [
+    "ICICI Prudential Life Insurance Company Ltd.",
+    "ICICIPRULI"
+   ],
+   [
+    "IndusInd Bank Ltd.",
+    "INDUSINDBK"
+   ],
+   [
+    "Swiggy Ltd.",
+    "SWIGGY"
+   ]
+  ],
+  "included": [
+   [
+    "Hindustan Zinc Ltd.",
+    "HINDZINC"
+   ],
+   [
+    "Max Healthcare Institute Ltd.",
+    "MAXHEALTH"
+   ],
+   [
+    "Mazagoan Dock Shipbuilders Ltd.",
+    "MAZDOCK"
+   ],
+   [
+    "Siemens Energy India Ltd.",
+    "ENRIN"
+   ],
+   [
+    "Solar Industries India Ltd.",
+    "SOLARINDS"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs23022026",
+  "pub": "2026-02-23",
+  "title": "Replacements in indices w.e.f. March 30, 2026",
+  "eff": "2026-03-30",
+  "nx": 6,
+  "ni": 6,
+  "excluded": [
+   [
+    "Bajaj Housing Finance Ltd.",
+    "BAJAJHFL"
+   ],
+   [
+    "Havells India Ltd.",
+    "HAVELLS"
+   ],
+   [
+    "ICICI Lombard General Insurance Company Ltd.",
+    "ICICIGI"
+   ],
+   [
+    "Info Edge (India) Ltd.",
+    "NAUKRI"
+   ],
+   [
+    "JSW Energy Ltd.",
+    "JSWENERGY"
+   ],
+   [
+    "Life Insurance Corporation of India",
+    "LICI"
+   ]
+  ],
+  "included": [
+   [
+    "Cummins India Ltd.",
+    "CUMMINSIND"
+   ],
+   [
+    "HDFC Asset Management Company Ltd.",
+    "HDFCAMC"
+   ],
+   [
+    "Muthoot Finance Ltd.",
+    "MUTHOOTFIN"
+   ],
+   [
+    "Tata Capital Ltd.",
+    "TATACAP"
+   ],
+   [
+    "Tata Motors Ltd.",
+    "TMCV"
+   ],
+   [
+    "Union Bank of India",
+    "UNIONBANK"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs10082026",
+  "pub": "2026-08-10",
+  "title": "Replacements in indices w.e.f. September 30, 2026",
+  "eff": "2026-09-30",
+  "nx": 5,
+  "ni": 5,
+  "excluded": [
+   [
+    "Indian Hotels Co. Ltd.",
+    "INDHOTEL"
+   ],
+   [
+    "Lodha Developers Ltd.",
+    "LODHA"
+   ],
+   [
+    "REC Ltd.",
+    "RECLTD"
+   ],
+   [
+    "Shree Cement Ltd.",
+    "SHREECEM"
+   ],
+   [
+    "United Spirits Ltd.",
+    "UNITDSPR"
+   ]
+  ],
+  "included": [
+   [
+    "BSE Ltd.",
+    "BSE"
+   ],
+   [
+    "Hitachi Energy India Ltd.",
+    "POWERINDIA"
+   ],
+   [
+    "Polycab India Ltd.",
+    "POLYCAB"
+   ],
+   [
+    "Vedanta Aluminium Metal Ltd.",
+    "VAML"
+   ],
+   [
+    "Vodafone Idea Ltd.",
+    "IDEA"
+   ]
+  ]
+ }
+]

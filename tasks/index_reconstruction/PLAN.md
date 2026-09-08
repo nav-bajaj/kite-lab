@@ -16,8 +16,9 @@ the Nifty 500 going back to the index's inception in 1998.
 
 | Period | Source | Has symbols? |
 |---|---|---|
-| 1998-08-01 .. 2020-09-14 | NSE `IndexInclExcl` export (2,495 rows, founder-supplied) | no, company names only |
-| 2020-09-14 .. today | NSE press releases at niftyindices.com (PDF) | yes, name **and** symbol |
+| 1996-09 .. 2020-09 | NSE `IndexInclExcl` workbook, one sheet per index (founder-supplied) | no, company names only |
+| 2020-09 .. today | NSE press releases at niftyindices.com (PDF) | yes, name **and** symbol |
+| 2022-03-31 | NSE index factsheets (founder-supplied) — an independent CHECKPOINT, not an input | yes, symbols |
 
 The join is the reason this is tractable: the modern half prints NSE
 symbols next to company names, which is what pins ~1,200 historical
@@ -33,15 +34,24 @@ company names onto tradeable tickers.
 
 ## Acceptance test
 
-Replaying every event forward from the 1998 seed must reproduce the current
-`ind_nifty500list.csv` **exactly** — no missing names, no extras. The index
-holds a fixed 500 constituents, so the count is a continuous check along the
-whole chain, not just at the endpoint.
+Three independent checks, all of which must hold:
+
+1. The constituent count is a continuous invariant — each index holds a fixed
+   size, so any mis-joined rename or dropped event shows up immediately.
+2. Replaying forward must reproduce today's published constituent list exactly.
+3. The reconstruction must match NSE's March 2022 factsheets, a document
+   neither source feeds, which tests the chain mid-way rather than only at
+   its endpoint.
+
+Only the Nifty 500 sheet opens with a seed. The other three start mid-stream,
+so their membership at the first event has to be DERIVED by un-applying every
+event backwards from today; the derived seed landing exactly on the index size
+is itself a check.
 
 ## Scope boundary
 
-- Nifty 500 only. Nifty 50/100/250 use the same press releases and can reuse
-  this pipeline, but are not built here.
+- Four indices: Nifty 500, Nifty 50, Nifty 100 and Nifty LargeMidcap 250
+  (= Nifty 100 + Nifty Midcap 150, the repo's `nifty250` universe).
 - Does **not** overwrite `data/static/nse500_membership.csv`. Swapping real
   history into the production universe changes every published backtest
   number; that is a founder decision, not a side effect of this task.

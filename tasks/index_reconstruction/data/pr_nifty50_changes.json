@@ -1,0 +1,234 @@
+[
+ {
+  "file": "ind_prs20082020",
+  "pub": "2020-08-20",
+  "title": "Revision in criteria and replacements in Indices",
+  "eff": "2020-09-25",
+  "nx": 2,
+  "ni": 2,
+  "excluded": [
+   [
+    "Bharti Infratel Ltd.",
+    "INFRATEL"
+   ],
+   [
+    "Zee Entertainment Enterprises Ltd.",
+    "ZEEL"
+   ]
+  ],
+  "included": [
+   [
+    "Divi's Laboratories Ltd.",
+    "DIVISLAB"
+   ],
+   [
+    "SBI Life Insurance Company Ltd.",
+    "SBILIFE"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs23022021",
+  "pub": "2021-02-23",
+  "title": "Replacements in Indices w.e.f. March 31, 2021",
+  "eff": "2021-03-31",
+  "nx": 1,
+  "ni": 1,
+  "excluded": [
+   [
+    "GAIL (India) Ltd.",
+    "GAIL"
+   ]
+  ],
+  "included": [
+   [
+    "Tata Consumer Products Ltd.",
+    "TATACONSUM"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs24022022_1",
+  "pub": "2022-02-24",
+  "title": "Revision in criteria and replacements in indices",
+  "eff": "2022-03-31",
+  "nx": 1,
+  "ni": 1,
+  "excluded": [
+   [
+    "Indian Oil Corporation Ltd.",
+    "IOC"
+   ]
+  ],
+  "included": [
+   [
+    "Apollo Hospitals Enterprise Ltd.",
+    "APOLLOHOSP"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs01092022",
+  "pub": "2022-09-01",
+  "title": "Replacements in indices w.e.f. September 30, 2022",
+  "eff": "2022-09-30",
+  "nx": 1,
+  "ni": 1,
+  "excluded": [
+   [
+    "Shree Cement Ltd.",
+    "SHREECEM"
+   ]
+  ],
+  "included": [
+   [
+    "Adani Enterprises Ltd.",
+    "ADANIENT"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs04072023",
+  "pub": "2023-07-04",
+  "title": "Replacement in indices w.e.f. July 13, 2023",
+  "eff": "2023-07-13",
+  "nx": 1,
+  "ni": 1,
+  "excluded": [
+   [
+    "Housing Development Finance Corporation Ltd.",
+    "HDFC"
+   ]
+  ],
+  "included": [
+   [
+    "LTIMindtree Ltd.",
+    "LTIM"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs28022024",
+  "pub": "2024-02-28",
+  "title": "Replacements in indices w.e.f. March 28, 2024",
+  "eff": "2024-03-28",
+  "nx": 1,
+  "ni": 1,
+  "excluded": [
+   [
+    "UPL Ltd.",
+    "UPL"
+   ]
+  ],
+  "included": [
+   [
+    "Shriram Finance Ltd.",
+    "SHRIRAMFIN"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs23082024",
+  "pub": "2024-08-23",
+  "title": "Replacements in indices and revision in criteria w.e.f. September 30, 2024",
+  "eff": "2024-09-30",
+  "nx": 2,
+  "ni": 2,
+  "excluded": [
+   [
+    "Divi's Laboratories Ltd.",
+    "DIVISLAB"
+   ],
+   [
+    "LTIMindtree Ltd.",
+    "LTIM"
+   ]
+  ],
+  "included": [
+   [
+    "Bharat Electronics Ltd.",
+    "BEL"
+   ],
+   [
+    "Trent Ltd.",
+    "TRENT"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs21022025",
+  "pub": "2025-02-21",
+  "title": "Replacements in indices w.e.f. March 28, 2025",
+  "eff": "2025-03-28",
+  "nx": 2,
+  "ni": 2,
+  "excluded": [
+   [
+    "Bharat Petroleum Corporation Ltd.",
+    "BPCL"
+   ],
+   [
+    "Britannia Industries Ltd.",
+    "BRITANNIA"
+   ]
+  ],
+  "included": [
+   [
+    "Jio Financial Services Ltd.",
+    "JIOFIN"
+   ],
+   [
+    "Zomato Ltd.",
+    "ZOMATO"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs22082025",
+  "pub": "2025-08-22",
+  "title": "Replacements in indices w.e.f. September 30, 2025",
+  "eff": "2025-09-30",
+  "nx": 2,
+  "ni": 2,
+  "excluded": [
+   [
+    "Hero MotoCorp Ltd.",
+    "HEROMOTOCO"
+   ],
+   [
+    "IndusInd Bank Ltd.",
+    "INDUSINDBK"
+   ]
+  ],
+  "included": [
+   [
+    "InterGlobe Aviation Ltd.",
+    "INDIGO"
+   ],
+   [
+    "Max Healthcare Institute Ltd.",
+    "MAXHEALTH"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs10082026",
+  "pub": "2026-08-10",
+  "title": "Replacements in indices w.e.f. September 30, 2026",
+  "eff": "2026-09-30",
+  "nx": 1,
+  "ni": 1,
+  "excluded": [
+   [
+    "Wipro Ltd.",
+    "WIPRO"
+   ]
+  ],
+  "included": [
+   [
+    "BSE Ltd.",
+    "BSE"
+   ]
+  ]
+ }
+]

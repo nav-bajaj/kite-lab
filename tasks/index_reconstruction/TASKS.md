@@ -48,4 +48,11 @@
       only to test whether GDF carries history for the 7 delisted symbols.
 - [ ] Residual 491 companies unresolved, mostly pre-2010 delistings absent
       from every live instrument master. Needs a historical symbol master.
-- [ ] Same pipeline for Nifty 50 / 100 / Midcap 150 (sources already local).
+- [x] Same pipeline for Nifty 50 / 100 / LargeMidcap 250 — all three derived
+      backwards from today's list, seeds exact, validated on the March 2022
+      factsheets with zero extras
+- [ ] Nifty Midcap 150 on its own (LargeMidcap 250 minus Nifty 100 gives it
+      indirectly; a direct build would need its own sheet, absent from the
+      workbook)
+- [ ] 3 companies unresolvable to a ticker (HDFC, MINDTREE, ISEC) — merged or
+      delisted with no successor to key a price file on

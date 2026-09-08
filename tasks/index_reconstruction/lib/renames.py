@@ -137,3 +137,54 @@ SURVIVOR_IDENTITY = {
     "Welspun India Ltd.": "WELSPUNLIV",
     "Zomato Ltd.": "ETERNAL",
 }
+
+
+# Pre-2020 names from the Nifty 50 / 100 / LargeMidcap 250 sheets. These
+# indices go back further than the Nifty 500 export and use NSE's older
+# spellings, so they need renames the Nifty 500 chain never encountered.
+# Keys are the name as the OLDER event spells it; values the later name the
+# same company appears under.
+LEGACY_RENAMES = {
+    "Bharti Tele-Ventures Ltd.": "Bharti Airtel Ltd.",
+    "Digital Equipment (india) Ltd.": "Digital Globalsoft Ltd.",
+    "East India Hotels Ltd": "EIH Ltd.",
+    "Gas Authority of India Limited": "GAIL (India) Ltd.",
+    "Glaxo (India) Ltd.": "Glaxosmithkline Pharmaceuticals Ltd.",
+    "Hero Honda Motors Limited": "Hero MotoCorp Ltd.",
+    "Idea Cellular Ltd": "Idea Cellular Ltd.",
+    "Infosys Technologies Limited": "Infosys Ltd.",
+    "Infrastructure Development Finance Company Limited": "IDFC Ltd.",
+    "Infrastructure Development Finance Co. Ltd.": "IDFC Ltd.",
+    "Maruti Udyog Limited": "Maruti Suzuki India Ltd.",
+    "Mundra Port and Special Economic Zone Ltd.":
+        "Adani Ports and Special Economic Zone Ltd.",
+    "Novartis India Ltd": "Novartis India Ltd.",
+    "Reckitt & Colman India Ltd.": "Reckitt Benckiser (India) Ltd",
+    "Sesa Goa Limited": "Sesa Sterlite Ltd.",
+    "Sesa Goa Ltd.": "Sesa Sterlite Ltd.",
+    "Smithkline Beecham Consumer Healthcare Ltd.":
+        "GlaxoSmithkline Consumer Healthcare Ltd.",
+    "United Phosphorus Ltd.": "UPL Ltd.",
+    "Videsh Sanchar Nigam Ltd.": "Tata Communications Ltd.",
+    "Zee Telefilms Ltd": "Zee Entertainment Enterprises Ltd.",
+}
+
+# Renames found while reconstructing the smaller indices.
+LEGACY_RENAMES.update({
+    "Macrotech Developers Ltd.": "Lodha Developers Ltd.",
+    "Adani Wilmar Ltd.": "AWL Agri Business Ltd.",
+    "IDFC Ltd": "IDFC Ltd.",
+})
+LEGACY_RENAMES["Patni Computer Systems Ltd"] = "Patni Computer Systems Ltd."
+
+# Companies whose historical index membership predates a merger or rename
+# that the current constituent files no longer show. Mapped to the ticker
+# whose price history a backtest would actually read.
+SURVIVOR_IDENTITY.update({
+    "Hero Honda Motors Limited": "HEROMOTOCO",
+    "Procter & Gamble Hygiene & Health Care Ltd.": "PGHH",
+    "Gujarat State Petronet Ltd.": "GSPL",
+    "Alembic Pharmaceuticals Ltd.": "APLLTD",
+    "Piramal Enterprises Ltd.": "PIRAMALFIN",
+    "Gujarat Gas Ltd.": "GUJGASLTD",
+})

@@ -56,7 +56,12 @@ def windows():
                 rec = open_spell.pop(n, None)
                 if rec is None:
                     continue
-                if e["symbol"] and not rec["symbol"]:
+                if e["symbol"]:
+                    # the exclusion names the LATER vintage of the ticker, so
+                    # it wins over the one recorded at inclusion. Burger King
+                    # India entered as BURGERKING and left as Restaurant
+                    # Brands Asia / RBA, which is the symbol its price file
+                    # is keyed on today.
                     rec["symbol"] = e["symbol"]
                 rec["to"] = d
                 rec["src_out"] = e["src"]

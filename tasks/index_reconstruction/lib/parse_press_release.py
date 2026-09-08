@@ -1,4 +1,4 @@
-"""Extract Nifty 500 constituent changes from an NSE press-release text dump.
+"""Extract one index's constituent changes from an NSE press-release text dump.
 
 Layout of the releases (pdftotext -layout) is stable across 2020-2026:
 
@@ -41,23 +41,28 @@ def effective_date(text: str):
     return _coerce(m.group(1)) if m else None
 
 
-def _is_target_header(line: str) -> bool:
-    """True only for the Nifty 500 itself.
+DEFAULT_INDEX = "NIFTY 500"
+
+
+def _is_target_header(line: str, index_name: str = DEFAULT_INDEX) -> bool:
+    """True only for the target index itself.
 
     Case and inner spacing vary across years ("Nifty 500" in 2022+, "NIFTY 500"
     in 2021), so both are normalised away. The comparison stays an equality
-    test rather than a prefix match because "Nifty500 Shariah", "Nifty 500
-    Value 50" and "Nifty Smallcap 500" are separate indices.
+    test rather than a prefix match because the archive is full of indices
+    whose names merely start the same way - "Nifty500 Shariah", "Nifty 500
+    Value 50" and "Nifty Smallcap 500" are all different from "Nifty 500",
+    and "Nifty Alpha 50" / "Nifty Midcap 50" from "Nifty 50".
     """
     m = SECTION_HDR.match(line)
     if not m:
         return False
-    name = re.sub(r"\s+", " ", m.group(2)).strip().rstrip(":").upper()
-    return name == "NIFTY 500"
+    name = re.sub(r"\s+", " ", m.group(2)).strip().rstrip(":*").upper()
+    return name == index_name.upper()
 
 
-def nifty500_sections(text: str) -> list[tuple[int, list[str]]]:
-    """Every Nifty 500 section, as (start_line_index, lines).
+def index_sections(text: str, index_name: str = DEFAULT_INDEX):
+    """Every section for `index_name`, as (start_line_index, lines).
 
     A release can carry more than one: the August 2020 release, for example,
     has a "NIFTY 500" eligibility-criteria table near the top and the actual
@@ -67,7 +72,8 @@ def nifty500_sections(text: str) -> list[tuple[int, list[str]]]:
     rows because they have no included/excluded cue.
     """
     lines = text.splitlines()
-    starts = [i for i, ln in enumerate(lines) if _is_target_header(ln)]
+    starts = [i for i, ln in enumerate(lines)
+              if _is_target_header(ln, index_name)]
     out = []
     for st in starts:
         body = []
@@ -147,10 +153,10 @@ def _unwrap(lines: list[str]) -> list[str]:
     return out
 
 
-def parse_changes(text: str) -> dict:
+def parse_changes(text: str, index_name: str = DEFAULT_INDEX) -> dict:
     """-> {"excluded": [(name, symbol)], "included": [...], "effective": date}"""
     res = {"excluded": [], "included": [], "effective": None}
-    for start, sec in nifty500_sections(text):
+    for start, sec in index_sections(text, index_name):
         bucket = None
         found = {"excluded": [], "included": []}
         for ln in _unwrap(sec):

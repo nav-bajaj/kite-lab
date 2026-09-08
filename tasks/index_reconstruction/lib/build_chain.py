@@ -119,8 +119,8 @@ def build(extra_renames=None, stop=None):
                     problems.append((d, "exclusion-of-nonmember", e["name"]))
                     continue
                 # carry the symbol the press release gave us onto the record
-                if e["symbol"] and not members[n]["symbol"]:
-                    members[n]["symbol"] = e["symbol"]
+                if e["symbol"]:
+                    members[n]["symbol"] = e["symbol"]   # later vintage wins
                 del members[n]
         timeline.append((d, len(members)))
     return members, timeline, problems

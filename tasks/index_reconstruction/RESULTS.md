@@ -1,7 +1,37 @@
 # Results
 
-Status: reconstruction complete and validated. Not yet adopted into the
+Status: four indices reconstructed and validated. Not yet adopted into the
 production universe — see the open founder decision at the bottom.
+
+## All four indices, validated three ways
+
+| Index | Span | Events | Today | Mar-2022 factsheet |
+|---|---|---|---|---|
+| Nifty 500 | 1998-08 .. today | 3,199 | 500/500 exact | **501/501 exact** |
+| Nifty 50 | 1996-09 .. today | 222 | 50/50 exact | 50, 49 resolved |
+| Nifty 100 | 2003-03 .. today | 459 | 100/100 exact | 100, 99 resolved |
+| Nifty LargeMidcap 250 | 2005-09 .. today | 1,049 | 250/250 exact | 250, 247 resolved |
+
+In every case the reconstruction has **zero extra constituents** against the
+factsheet. The handful not resolved are companies merged away since — HDFC
+into HDFC Bank, MindTree into LTIMindtree, ICICI Securities delisted — which
+have no tradeable successor to key a price file on. The membership itself is
+exact; only the ticker is unavailable.
+
+The March 2022 factsheets matter because NSE published them independently of
+both the event export and the press releases. Matching them tests the chain
+in the middle, not just at the endpoint where it was fitted.
+
+## The three smaller indices had to be run backwards
+
+Only the Nifty 500 sheet opens with a seed (all 500 names on 1998-08-01). The
+Nifty 50 / 100 / LargeMidcap 250 sheets start mid-stream with balanced
+replacements and never state who was in the index at that moment, so their
+membership had to be derived by un-applying every event backwards from
+today's published list — the approach originally suggested. Each derived seed
+lands exactly on the index size (50, 100, 250) with no unapplicable event in
+either direction, which is a strong check in itself: a single missing or
+mis-joined event would leave the seed off by one.
 
 ## Headline
 
@@ -90,10 +120,22 @@ wrong from 2020 onward.
 | `data/nse500_membership_reconstructed.csv` | 1,214 | membership windows in the repo's existing schema |
 | `data/unresolved_symbols.csv` | 635 | spells whose company could not be mapped to a symbol |
 | `data/pr_nifty500_changes.json` | 39 | parsed press releases, for audit |
+| `data/nifty50_membership_reconstructed.csv` | 125 | Nifty 50 windows (161 spells, 36 unresolved) |
+| `data/nifty100_membership_reconstructed.csv` | 280 | Nifty 100 windows (335 spells, 55 unresolved) |
+| `data/nifty250_membership_reconstructed.csv` | 624 | LargeMidcap 250 windows (775 spells, 151 unresolved) |
 | `data/pr_text/` | 128 | extracted release text (PDFs are gitignored, refetchable) |
 
-Rerun with `python3 lib/fetch_press_releases.py && python3 lib/emit_membership.py`,
-check with `python3 lib/validate.py`.
+Rebuild:
+
+```
+python3 lib/fetch_press_releases.py     # download PDFs (gitignored)
+python3 lib/extract_text.py             # fails loudly on a scan
+python3 lib/parse_all_indices.py        # all four indices
+python3 lib/emit_membership.py          # Nifty 500
+python3 lib/emit_indices.py             # Nifty 50 / 100 / LargeMidcap 250
+python3 lib/validate.py                 # Nifty 500 checks
+python3 lib/validate_indices.py         # the other three
+```
 
 ## Symbol coverage, and what it takes to close it
 
@@ -155,6 +197,41 @@ the real risk). Whether GDF serves history for delisted scrips is therefore
 still unverified; it only matters for those 7 symbols plus whatever remains
 of the 491 companies that no live instrument master carries — overwhelmingly
 pre-2010 delistings.
+
+## What the smaller indices needed on top
+
+- **A scanned press release.** `ind_prs23082021.pdf` is a 29-page scan with no
+  text layer: `pdftotext` returned 29 bytes and the parser silently saw
+  nothing, dropping the whole September 2021 review. Its Nifty 500 side turned
+  out to be superseded (the 15 September release restates it with Gillette's
+  exclusion dropped, which is why the Nifty 500 chain still validated), but
+  its Nifty 100 changes existed nowhere else. Read off the rendered pages and
+  recorded in `lib/scanned_releases.py`. `lib/extract_text.py` now fails
+  loudly on an empty extraction instead of writing it and moving on.
+- **Nifty 100 = Nifty 50 + Nifty Next 50.** That release announces the Nifty
+  100 review only as a *Nifty Next 50* section. Five companies (Abbott India,
+  Alkem, MRF, Petronet LNG, United Breweries) looked like missing exclusions
+  until that structure was recognised.
+- **Per-index revocations and substitutions.** The March 2024 notice revoked
+  IREDA's LargeMidcap 250 inclusion and put **BSE Ltd. in its place**; the
+  September 2024 notice revoked Central Bank of India's inclusion. Missing
+  either leaves the index one short.
+- **Older NSE spellings.** These sheets reach back to 1996 and use names the
+  Nifty 500 export never had — Hero Honda Motors, Maruti Udyog, Videsh Sanchar
+  Nigam, Gas Authority of India. Event names are now canonicalised up front
+  rather than resolved by trying both lookup directions at each step.
+
+## A correction the factsheet caught
+
+The March 2022 check found a real error in the Nifty 500 file: Burger King
+India was carried under `BURGERKING`, the ticker it was *included* under,
+after it renamed to Restaurant Brands Asia and moved to `RBA` — which is the
+symbol its price file is actually keyed on, and which we already hold. A spell
+now takes the symbol from its **exclusion** (the later vintage) rather than
+its inclusion.
+
+This is exactly the kind of error an endpoint-only test cannot see, since the
+company had already left the index by today.
 
 ## Not done deliberately
 

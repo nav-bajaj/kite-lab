@@ -69,8 +69,21 @@ def instrument_map():
     return out
 
 
+CURRENT_FILES = [
+    "data/raw/ind_nifty500list_2026-09-08.csv",
+    "data/raw/ind_nifty50list_2026-09-08.csv",
+    "data/raw/ind_nifty100list_2026-09-08.csv",
+    "data/raw/ind_niftylargemidcap250list_2026-09-08.csv",
+]
+
+
 def current_maps():
-    rows = list(csv.DictReader(open(CURRENT, encoding="utf-8-sig")))
+    rows = []
+    for f in CURRENT_FILES:
+        try:
+            rows += list(csv.DictReader(open(f, encoding="utf-8-sig")))
+        except OSError:
+            continue
     by_name = {r["Company Name"].strip(): r["Symbol"].strip() for r in rows}
     by_norm = {_norm(n): s for n, s in by_name.items()}
     return by_name, by_norm

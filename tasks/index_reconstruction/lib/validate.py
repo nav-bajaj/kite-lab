@@ -71,17 +71,44 @@ def main() -> int:
     if got != want:
         fails.append(f"missing={sorted(want - got)[:5]} extra={sorted(got - want)[:5]}")
 
-    # 5. symbol coverage by year - reported, not enforced; resolution decays
-    #    going back because companies that left pre-2020 were never printed
-    #    with a symbol and many are delisted
-    by_name, by_norm = rs.current_maps()
-    by_instr = rs.instrument_map()
-    print("[5] symbol coverage:")
+    # 5. symbol coverage by year - reported, not enforced.
+    #
+    #    Measured from the EMITTED FILE, not from a point-in-time replay.
+    #    NSE prints a long-tenured member's symbol only on the release that
+    #    finally removes it, so a replay stopped mid-spell has not seen it yet
+    #    and understates coverage - J.B. Chemicals sat in the index from 1998
+    #    to 2026 and only acquired JBCHEPHARM on its exclusion. The spell in
+    #    the emitted file carries the symbol for its whole life, which is what
+    #    a backtest actually reads.
+    import backfill_symbols as bs
+    have = bs.price_symbols()
+    print("[5] coverage (from the emitted membership file):")
+    print(f"      {'as of':10s} {'index':>6s} {'symbol':>7s} {'+prices':>8s}")
     for y in (2010, 2016, 2020, 2023, 2026):
-        mem, _, _ = build_chain.build(stop=datetime.date(y, 6, 30))
-        k = sum(1 for n, r in mem.items()
-                if rs.resolve(n, r["symbol"], by_name, by_norm, by_instr))
-        print(f"      {y}: {k}/{len(mem)} ({k / len(mem) * 100:.0f}%)")
+        d = datetime.date(y, 6, 30)
+        mem, _, _ = build_chain.build(stop=d)
+        got = members_asof(df, d)
+        px = {s for s in got if s in have}
+        print(f"      {d}  {len(mem):6d} {len(got):7d} {len(px):8d}")
+
+    # 6. the March 2022 factsheet: an independent NSE document that neither
+    #    source feeds, so matching it tests the replay mid-chain rather than
+    #    only at its endpoint
+    from parse_factsheet import symbols
+    from ticker_vintage import to_today
+    fs = "/Users/navdeep/Downloads/indices_dataMar2022/NIFTY_500_Mar2022.pdf"
+    try:
+        # the factsheet lists 501 lines because Tata Motors' DVR share
+        # class traded as its own line; the reconstruction carries it too
+        want22 = {to_today(s) for s in symbols(fs)}
+        got22 = members_asof(df, datetime.date(2022, 3, 31))
+        extra, miss = sorted(got22 - want22), sorted(want22 - got22)
+        print(f"[6] Mar-2022 factsheet: {len(want22)} vs reconstruction {len(got22)}")
+        print(f"      extra={extra}  missing={miss}")
+        if extra or miss:
+            fails.append(f"Mar-2022 mismatch extra={extra[:5]} missing={miss[:5]}")
+    except Exception as e:
+        print(f"[6] factsheet check skipped: {e}")
 
     print()
     if fails:
