@@ -40,8 +40,12 @@
 
 - [ ] Founder call: adopt real history in `data/static/nse500_membership.csv`?
       It will move every published backtest number.
-- [ ] Symbol resolution for pre-2020 exits (currently 74% at 2016). Needs a
-      historical NSE symbol master; the Kite dump only covers live scrips.
-- [ ] Price history for reconstructed ex-members — without it a survivorship-
-      free backtest is still not possible before ~2020.
+- [x] Second-pass symbol resolution via BSE dump rows + rename chasing
+      (+103 companies; 2016 coverage 74% -> 79%, 2010 64% -> 72%)
+- [ ] Fetch the 186 still-listed symbols in `data/price_backfill_targets.csv`
+      via Kite. Takes 2020 backtestable coverage 385/501 -> ~432/501.
+- [ ] 👤 Renew `GDF_API_KEY` — it is expired ("Key Expired." on auth). Needed
+      only to test whether GDF carries history for the 7 delisted symbols.
+- [ ] Residual 491 companies unresolved, mostly pre-2010 delistings absent
+      from every live instrument master. Needs a historical symbol master.
 - [ ] Same pipeline for Nifty 50 / 100 / Midcap 150 (sources already local).

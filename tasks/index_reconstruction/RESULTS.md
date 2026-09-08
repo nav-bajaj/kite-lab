@@ -95,27 +95,66 @@ wrong from 2020 onward.
 Rerun with `python3 lib/fetch_press_releases.py && python3 lib/emit_membership.py`,
 check with `python3 lib/validate.py`.
 
-## Limitation: symbol coverage decays going back
+## Symbol coverage, and what it takes to close it
 
-The membership *events* are complete to 1998. The *symbol* mapping is not.
+The membership *events* are complete to 1998. The *symbol* mapping is not:
 NSE only began printing symbols alongside company names in the press-release
-era, so a company that left the index before ~2020 and is not in today's list
-has no symbol from these sources. The Kite instruments dump recovers those
-still listed; the rest are delisted or merged.
+era, so a company that left before ~2020 and is not in today's list has to be
+identified some other way.
 
-| As of | Members | Symbol resolved |
-|---|---|---|
-| 2010-06-30 | 500 | 322 (64%) |
-| 2016-06-30 | 501 | 369 (74%) |
-| 2020-06-30 | 501 | 420 (84%) |
-| 2023-06-30 | 501 | 466 (93%) |
-| 2026-06-30 | 500 | 499 (100%) |
+A second resolution pass recovered 103 more companies, from two sources:
 
-So this file supports point-in-time universes well from roughly 2022, and
-partially before that. It does **not** by itself make pre-2020 backtests
-survivorship-free, because the unresolved names also have no price history
-in `nse500_data/`. That gap is now measured rather than assumed — which is
-the difference from where this started.
+- **The BSE rows of the Kite instruments dump.** The first pass read only NSE
+  cash rows, where Kite truncates names to ~25 characters
+  ("NETWORK18 MEDIA & INV"). BSE carries the full name, which is what makes a
+  match possible at all.
+- **Chasing renames forward.** Where a spell closed under an old name, walking
+  `renames.py` forward reaches a name today's list does know — that is how
+  Sesa Sterlite resolves to VEDL and Prism Cement to PRSMJOHNSN.
+
+Token matching here had to be tightened before it could be trusted. A first
+cut that allowed short prefixes and treated "Corporation" as a noise word
+mapped **Corporation Bank onto Indian Bank**, **Dena Bank onto D B Corp** and
+**Mandhana Industries onto MAN Industries** — all scoring a perfect 1.0. The
+rule now requires abbreviations of 4+ characters and full coverage on both
+sides. That cost roughly 17 true matches to remove 5 wrong ones, which is the
+right trade for a file that feeds backtests. Accepted mappings are frozen in
+`lib/backfill_map.py` with the dump name each was matched against, and every
+membership row records how its symbol was resolved.
+
+| As of | Members | Symbol known | **Also has price data** |
+|---|---|---|---|
+| 2010-06-30 | 500 | 358 (72%) | 251 (50%) |
+| 2016-06-30 | 501 | 394 (79%) | 311 (62%) |
+| 2020-06-30 | 501 | 432 (86%) | 385 (77%) |
+| 2022-06-30 | 501 | 456 (91%) | 415 (83%) |
+| 2024-06-30 | 501 | 479 (96%) | 463 (92%) |
+| 2026-06-30 | 500 | 499 (100%) | 499 (100%) |
+
+The third column is the one that governs whether a survivorship-free backtest
+is actually possible, and it is the gap worth closing.
+
+## The price backfill is mostly a Kite job, not a GDF one
+
+`data/price_backfill_targets.csv` lists the 194 symbols that are now
+identified but have no daily file on disk. The useful surprise:
+
+| | Count |
+|---|---|
+| still live on NSE — Kite can fetch history directly | 186 |
+| BSE-listed only | 1 |
+| genuinely delisted (BURGERKING, TATACOFFEE, PEL, INFIBEAM, MAHINDCIE, TATASTLLP, GLS) | 7 |
+
+So 96% of the backfill needs no special vendor. Fetching those 186 would take
+2020 coverage from 385/501 to ~432/501 and 2016 from 311 to ~394.
+
+**GDF could not be tested: the API key in `.env` has expired** — the feed
+answers `AuthenticateResult: Key Expired.` Nothing was disrupted (the session
+never opened, and the key is single-session so a live probe would have been
+the real risk). Whether GDF serves history for delisted scrips is therefore
+still unverified; it only matters for those 7 symbols plus whatever remains
+of the 491 companies that no live instrument master carries — overwhelmingly
+pre-2010 delistings.
 
 ## Not done deliberately
 

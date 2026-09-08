@@ -83,8 +83,10 @@ def main() -> None:
 
     resolved = unresolved = 0
     rows, missing = [], []
+    srcs = collections.Counter()
     for rec in spells:
-        sym = rs.resolve(rec["name"], rec["symbol"], by_name, by_norm, by_instr)
+        sym, src = rs.resolve_with_source(rec["name"], rec["symbol"],
+                                          by_name, by_norm, by_instr)
         if sym is None:
             unresolved += 1
             missing.append([rec["name"], rec["from"], rec["to"] or ""])
@@ -92,7 +94,9 @@ def main() -> None:
         if sym.startswith("DUMMY"):
             continue          # zero-price demerger placeholder, not tradeable
         resolved += 1
-        rows.append([sym, rec["from"], rec["to"] or "", rec["name"]])
+        srcs[src] += 1
+        rows.append([sym, rec["from"], rec["to"] or "",
+                     f'{rec["name"]} [{src}]'])
 
     rows.sort(key=lambda r: (r[0], r[1]))
     with open(OUT_MEMBERSHIP, "w", newline="") as fh:
@@ -110,6 +114,8 @@ def main() -> None:
     print(f"membership spells : {len(spells)}")
     print(f"  symbol resolved : {resolved}")
     print(f"  unresolved      : {unresolved}")
+    for k, v in srcs.most_common():
+        print(f"      {k:16s} {v}")
 
 
 if __name__ == "__main__":
