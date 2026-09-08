@@ -42,10 +42,14 @@
       It will move every published backtest number.
 - [x] Second-pass symbol resolution via BSE dump rows + rename chasing
       (+103 companies; 2016 coverage 74% -> 79%, 2010 64% -> 72%)
-- [ ] Fetch the 186 still-listed symbols in `data/price_backfill_targets.csv`
-      via Kite. Takes 2020 backtestable coverage 385/501 -> ~432/501.
-- [ ] 👤 Renew `GDF_API_KEY` — it is expired ("Key Expired." on auth). Needed
-      only to test whether GDF carries history for the 7 delisted symbols.
+- [x] 👤 GDF key renewed 2026-09-08; confirmed working and confirmed to serve
+      DELISTED history, which Kite cannot
+- [x] Price backfill done: 316 symbols via Kite, 41 via GDF. Every identified
+      symbol across all four indices now has a price file
+- [ ] 👤 Decide whether to stitch the backfill into `nse500_data_merged`. The
+      GDF series use a different dividend-adjustment convention (see RESULTS)
+- [ ] 16 symbols returned no data from either feed (pre-2010 delistings, some
+      REITs); listed in `data/price_backfill_targets.csv`
 - [ ] Residual 491 companies unresolved, mostly pre-2010 delistings absent
       from every live instrument master. Needs a historical symbol master.
 - [x] Same pipeline for Nifty 50 / 100 / LargeMidcap 250 — all three derived

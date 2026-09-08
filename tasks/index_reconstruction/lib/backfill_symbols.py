@@ -30,6 +30,9 @@ PRICE_DIRS = [
     "/Users/navdeep/kite-lab/nse500_data",
     "/Users/navdeep/kite-lab/nse500_data_merged",
     "/Users/navdeep/Documents/stock_data/nse500_data_full",
+    # ex-member backfill fetched for this task
+    "/Users/navdeep/kite-lab/nse500_data_backfill",
+    "/Users/navdeep/kite-lab/nse500_data_backfill_gdf",
 ]
 # Deliberately short. "Corporation" and "India" are NOT dropped: stripping
 # them turns "Corporation Bank" into "Bank" and "Indian Bank" into "Bank",

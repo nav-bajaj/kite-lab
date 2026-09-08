@@ -176,27 +176,50 @@ membership row records how its symbol was resolved.
 The third column is the one that governs whether a survivorship-free backtest
 is actually possible, and it is the gap worth closing.
 
-## The price backfill is mostly a Kite job, not a GDF one
+## The price backfill is done
 
-`data/price_backfill_targets.csv` lists the 194 symbols that are now
-identified but have no daily file on disk. The useful surprise:
+The founder renewed the GDF key on 2026-09-08 and it authenticates. Both
+feeds were then used, split by what each can actually serve:
 
-| | Count |
-|---|---|
-| still live on NSE — Kite can fetch history directly | 186 |
-| BSE-listed only | 1 |
-| genuinely delisted (BURGERKING, TATACOFFEE, PEL, INFIBEAM, MAHINDCIE, TATASTLLP, GLS) | 7 |
+| Feed | Symbols | Why |
+|---|---|---|
+| Kite | 316 | still listed on NSE; same feed the existing panel was built from, so the adjustment convention matches. Serves day candles back to 2010. |
+| GDF | 41 | delisted or BSE-only. Kite's historical API needs an instrument token, which exists only for live instruments, so dead scrips are invisible to it. GDF serves them to their delisting date from a 2009 floor. |
 
-So 96% of the backfill needs no special vendor. Fetching those 186 would take
-2020 coverage from 385/501 to ~432/501 and 2016 from 311 to ~394.
+GDF turned out to carry delisted history properly — Allahabad Bank to its
+2020 merger, Tata Coffee to 2024, Tata Motors' DVR line to its 2024
+cancellation. Sixteen symbols returned nothing even from GDF: pre-2010
+delistings and a few REITs.
 
-**GDF could not be tested: the API key in `.env` has expired** — the feed
-answers `AuthenticateResult: Key Expired.` Nothing was disrupted (the session
-never opened, and the key is single-session so a live probe would have been
-the real risk). Whether GDF serves history for delisted scrips is therefore
-still unverified; it only matters for those 7 symbols plus whatever remains
-of the 491 companies that no live instrument master carries — overwhelmingly
-pre-2010 delistings.
+Written to `nse500_data_backfill/` (Kite) and `nse500_data_backfill_gdf/`
+(GDF), both gitignored. **Nothing under `nse500_data/` was touched.**
+
+### Result: every identified symbol now has prices
+
+| Index | 2010 | 2016 | 2020 | 2023 | 2026 |
+|---|---|---|---|---|---|
+| Nifty 500 | 374/500 | 432/500 | 501/500* | 501/500* | 500/500 |
+| Nifty 50 | 44/50 | 50/50 | 50/50 | 50/50 | 50/50 |
+| Nifty 100 | 85/100 | 98/100 | 100/100 | 100/100 | 100/100 |
+| LargeMidcap 250 | 198/250 | 230/250 | 250/250 | 250/250 | 250/250 |
+
+\* includes the Tata Motors DVR second line.
+
+Symbols-with-prices now equals symbols-identified at every date, so the price
+gap is closed. **From 2020 all four indices support a fully survivorship-free
+point-in-time universe**; from 2016 the Nifty 50 and Nifty 100 do. What still
+binds before that is name-to-symbol resolution for companies delisted long
+ago, not missing price history.
+
+### One caveat before stitching
+
+The two feeds do not agree on dividend adjustment. GDF quoted INFY a constant
+~2.165% above the Kite panel across a contiguous 14-day window in mid-2026 —
+the signature of a dividend applied on one side only. `scripts/apply_corporate
+_actions.py` handles splits, bonuses and demergers, not dividends, so it will
+not reconcile this. The two backfill directories are therefore kept apart and
+must not be blindly concatenated; the 41 GDF series are the ones to treat with
+care, and only for dates near their corporate actions.
 
 ## What the smaller indices needed on top
 
