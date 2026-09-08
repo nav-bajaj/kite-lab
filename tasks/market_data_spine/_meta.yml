@@ -1,0 +1,10 @@
+name: market_data_spine
+status: planned
+opened: 2026-09-08
+closed: null
+related_commits: []
+supersedes: []
+depends_on:
+  - index_reconstruction
+  - universe_membership
+register_rows: []

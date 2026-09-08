@@ -36,6 +36,13 @@
 - [x] `nse500_membership_reconstructed.csv` (1,214 windows, repo schema)
 - [x] `unresolved_symbols.csv` (635 spells, mostly delisted pre-2020)
 
+## Handed to `tasks/market_data_spine/`
+
+The follow-on work — day-to-day data source, corporate-action system, master
+historical file, portfolio re-runs on the dated universe, the immutable ledger
+and the standing membership procedure — is planned there. `CONTEXT.md` in that
+folder carries the full findings from this branch.
+
 ## Open / deferred 👤
 
 - [ ] Founder call: adopt real history in `data/static/nse500_membership.csv`?
