@@ -177,3 +177,17 @@ both sides have the event.
 adjusted by the measured ex-date drop, treating the spin-off as a
 distribution to the holder. Without it a holder's return through a
 demerger is booked as a crash that did not happen.
+
+## Phase 5 — QA (2026-09-10) — GATE MET
+
+`qa/report.md`, from `lib/qa_report.py`:
+
+- Calendar: 1,326 files, zero non-midnight, duplicate or off-calendar dates.
+- Stale tails: zero files end early without a `delisted_on` flag (290 carry one).
+- Identity overlaps: zero (after the equity-ISIN filter and the bad edge removed).
+- Bad prints: 4,437 one-day spike-and-revert rows with no corporate action
+  within three days. Kite shows the same move on 2,399 — real circuit-limit
+  moves on small caps, not prints. **79 are one-sided and are the quarantine
+  list** (`qa/bad_prints.csv`, `kite_agrees == False`). 1,959 are on names
+  with no second feed; flagged, not masked — a ±8% reversal is ordinary for
+  a small cap and masking on suspicion would remove real data.
