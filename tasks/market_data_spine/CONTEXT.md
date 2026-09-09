@@ -179,3 +179,55 @@ contradicted a decision already made and has been corrected — see D-3.
 - Fuzzy name matching proposes, it never decides. A permissive matcher mapped
   Corporation Bank onto Indian Bank and Dena Bank onto D B Corp, each at a
   perfect score.
+
+## 6. Feed probes, 2026-09-10
+
+All run from this machine with the credentials in `.env`. Reproduce from the
+scratch commands recorded in the session; to be moved into `lib/` in Phase 1.
+
+| Probe | Result |
+|---|---|
+| Kite day candles, RELIANCE from 1990 | 6,637 rows, **2000-01-03** → 2026-09-09 |
+| Kite day candles, ONGC | 5,843 rows, 2003-01-01 → |
+| Kite adjustment, ONGC fresh ÷ stored panel, Oct-2025 → Mar-2026 | 0.9769-0.9771 on every day before 2026-01-19, exactly 1.0000 after. Proportional, single factor per ex-date, jitter is tick rounding |
+| NSE bhavcopy, legacy `cm04JAN2016bhav.csv.zip` | 200, columns `SYMBOL,SERIES,OPEN,HIGH,LOW,CLOSE,LAST,PREVCLOSE,TOTTRDQTY,TOTTRDVAL,TIMESTAMP,TOTALTRADES,ISIN` |
+| NSE bhavcopy, legacy `cm03JAN2005bhav.csv.zip` | 200, same minus `TOTALTRADES,ISIN` — ISIN starts somewhere 2005-2016 |
+| NSE bhavcopy, UDiFF `BhavCopy_NSE_CM_0_0_0_20250103_F_0000.csv.zip` | 200, carries `ISIN`, `TckrSymb`, `FinInstrmNm` (company name) |
+| NSE CA API, `index=equities&from_date=01-01-2020&to_date=31-12-2020` | 200, 2,208 rows; fields `symbol, isin, comp, series, faceVal, exDate, recDate, subject`. Subjects seen: Dividend, Interim Dividend, Face Value Split, Bonus, Demerger, Buyback, AGM, Interest Payment. Needs a cookie from the landing page first |
+| GDF `GetHistory`, ALBK | 2,776 rows, 2009-01-01 → 2020-03-19 (its merger) |
+| GDF `GetHistory`, RELIANCE | 4,381 rows, 2009-01-01 → 2026-09-09 |
+| Kite instruments vs all-ever members (4 indices, 1,025 symbols) | 924 NSE, 64 BSE-only, **37 on neither** → GDF |
+
+Samco's bhavcopy mirror was not needed; the NSE archive answered directly.
+
+## 7. Interim survivorship-free baselines, 2026-09-09
+
+Computed on an interim panel assembled in a scratch directory
+(`nse500_data_merged` + both backfill dirs + the Documents mirror, dates
+normalised, 1,117 symbols) with the reconstructed membership. **Superseded
+by Phase 6 once the master store exists**; kept because they are the reason
+this program was opened. Slippage 20 bps unless marked gross.
+
+| Run | Window | CAGR | Sharpe (rf 5%) | MaxDD |
+|---|---|---|---|---|
+| L6 v2, production panel, today's 500 | 2020-01 → 2026-09 | 50.35% | 1.76 | −29.9% |
+| L6 v2, interim panel, today's 500 backdated | 2020-01 → | 46.93% | 1.58 | −37.8% |
+| L6 v2, interim panel, **real membership** | 2020-01 → | 25.56% | 0.78 | −40.8% |
+| L6 v2, interim panel, **real membership** | 2018-01 → | 18.20% | 0.53 | −48.9% |
+| OM25 v3, interim panel, today's 250 backdated | 2018-01 → | 31.58% | 1.26 | −35.0% |
+| OM25 v3, interim panel, **real membership** | 2018-01 → | 17.20% | 0.58 | −37.1% |
+
+Mechanism, measured: in the backdated-universe L6 run, 49% of 2023 trades
+and 25% of 2024 trades were in stocks not actually in the NSE 500 on their
+entry date; those trades averaged +17% and +27% net against +7% and +3% for
+legitimate ones. The bias is look-ahead inclusion of future entrants, not
+only delisted losers.
+
+Against Wright Momentum's published grid (Oct-2020 → Aug-2026, 71 months,
+their numbers exclude costs, ours gross to match): Wright 31.15% CAGR /
+−21.7% monthly MaxDD; OM25 v3 real-membership 31.01% / −22.1%; L6 v2
+real-membership 29.24% / −32.7%. OM25 matches the competitor on both axes;
+L6 matches on return and loses on risk.
+
+Min-hold sweep on L6 v2 (8/12/15/21/30/45 days) moved CAGR by under 1.5pp on
+every panel; 15 was the local minimum on all three. Non-lever.

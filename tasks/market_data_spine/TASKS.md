@@ -1,69 +1,121 @@
 # Tasks
 
-Ordered per `PLAN.md`. 👤 marks a founder decision.
+Ordered per PLAN.md. Owners: 👤 founder · 🤖 agent. Each phase ends at a gate;
+the next does not start until the gate is met and recorded in RESULTS.md.
 
-## Prerequisites — owned by `tasks/adjusted_price_series/` 🔗
+## Phase 0 — scaffold and probes ✅ 2026-09-10
 
-Not duplicated here. That task covers freezing the pre-flip panel, the
-price-data contract, sealing the three leaks (15-day refetch, the CSV-delete
-recovery path, and a volume reset silently re-fetching six years as
-total-return), narrowing `apply_corporate_actions.py` so it does not
-double-adjust, and the enforcement that makes it stick.
+- [x] Kite token live; day candles verified to 2000-01-03; adjustment method
+      verified proportional (ONGC 0.977 → 1.000 at 2026-01-19)
+- [x] NSE bhavcopy archive downloads directly, legacy and UDiFF formats
+- [x] NSE corporate-actions API returns a full year per call
+- [x] GDF authenticates, floors 2009-01-01, serves delisted history
+- [x] Coverage: 1,025 all-ever symbols → 924 Kite NSE, 64 Kite BSE, 37 GDF
+- [x] Founder decisions D-6..D-10 recorded; program consolidated
+- [ ] Commit the two untracked folders this program depends on
+      (`adjusted_price_series`, `panel_drift_audit_2026`) onto this branch
 
-- [ ] 🔗 Blocked on its Phase 2 (seal the leaks) before phase 3 below is
-      meaningful — a master file built on a leaking panel inherits the leak
-- [ ] Contribute this branch's evidence to it: five observed restatements, and
-      fresh-vs-stored Kite comparisons showing 510-591 of 668 days already
-      differ, which suggests the flip is not purely prospective
+## Phase 1 — symbol master 🤖
 
-## Phase 1 — master historical data file 🤖
+- [ ] Bhavcopy fetcher: every trading day 2005 → today, legacy format to its
+      cutover and UDiFF after; polite rate, resumable, cached under
+      `data/master/raw/bhavcopy/` (gitignored)
+- [ ] Find the first bhavcopy year carrying ISIN; before it, symbol only
+- [ ] CA-API fetcher: every calendar year 2005 → today → `raw/nse_ca/`
+- [ ] Build `symbol_master.csv`: ISIN-keyed, symbol validity windows from
+      bhavcopy, company names from CA filings and UDiFF; encode the 62 known
+      renames from `index_reconstruction/lib/renames.py` as checks, not inputs
+- [ ] Resolve the 530 names in `index_reconstruction/data/unresolved_symbols.csv`
+      through the master; record how each resolved, or why it did not
+- [ ] **Gate:** for each of the four indices, at every event date from
+      2016-01-01, ≥ 98% of members resolve to a symbol with a bhavcopy row on
+      that date. Residuals listed by name with the reason.
 
-- [ ] One file, all-ever members across the four indices, raw prices, source
-      tagged
-- [ ] Stitch rule for the 41 GDF-sourced series, per D-1
-- [ ] Coverage report by index and date; the 16 symbols no feed carries stay
-      listed as known gaps
-- [ ] Becomes the single input to backtests; nothing reads the loose
-      directories afterwards
+## Phase 2 — point-in-time membership files 🤖
 
-## Phase 2 — portfolios on the dated universe 🤖
+- [ ] Emit `data/master/membership/{nse500,nifty50,nifty100,nifty250}.csv`
+      in the `symbol,effective_from,effective_to,note` schema from the
+      reconstruction + Phase 1 symbols. Production `data/static/*` untouched
+- [ ] Re-run `index_reconstruction/lib/validate.py` and `validate_indices.py`
+      against the new files: today exact, Mar-2022 factsheets exact
+- [ ] **Gate:** validators pass; coverage table by index × year committed to
+      RESULTS.md
 
-- [ ] Re-run OM25 v3, TL25 v3, L6 v2, COMBO over the reconstructed membership
-      and master price file
-- [ ] Attribute every difference against today's published numbers to a cause:
-      universe, price source, or corporate action. An unattributed difference
-      is a bug, not a result
-- [ ] 👤 Decide whether to restate the published track record or run forward
-      from the lock dates (D-3 open item)
+## Phase 3 — fresh price pull 🤖
 
-## Phase 3 — the immutable ledger 🤖
+- [ ] Kite pull, adjusted, 2000-01-01 → today, NSE first then BSE fallback,
+      for every symbol in the master Kite can resolve; 3 req/s, resumable;
+      `prices/kite/`. Record pull date per file in `manifest.json`
+- [ ] GDF pull, raw, 2009-01-01 → last trade, for the 37 delisted;
+      `prices/gdf/`; mark `delisted_on` = last served date (D-9: exit at LTP)
+- [ ] Symbols neither feed serves: listed in `qa/no_feed.csv` with their
+      membership spells, so the coverage gate can count them honestly
+- [ ] **Gate:** every symbol in the master has a file or a `no_feed` row;
+      coverage by index × date ≥ 98% from 2016, ≥ 99% from 2020
 
-- [ ] Append-only ledger from each strategy's lock date (D-4): L6 and COMBO
-      2026-05-14, OM25 and TL25 2026-06-06. Start dates already established —
-      no re-derivation, no downloads
-- [ ] Per rebalance: holdings, weights, prices used, input hash
-- [ ] 👤 OM25 and TL25 have no stored run between their 2026-06-06 lock and
-      2026-07-10. Decide whether those five weeks are reconstructed and marked
-      as such, or the ledger simply begins at the first contemporaneous run
-- [ ] Published performance derives from the ledger, never from a re-run (D-5)
-- [ ] Wire `lib/audit_immutability.py --strict` into the daily pipeline so a
-      restatement fails loudly instead of being found months later
+## Phase 4 — corporate-actions table 🤖
 
-## Phase 4 — standing membership procedure 🤖👤
+- [ ] Parse `raw/nse_ca/` into `corporate_actions.csv`: dividend (amount),
+      split (old/new face value), bonus (ratio), rights (ratio, price),
+      demerger, buyback; ISIN-keyed; drop AGM/interest rows into a side file
+- [ ] Verify Kite's convention on ≥ 20 events across all types: compute
+      expected factor from the CA row, compare to Kite's fresh÷bhavcopy ratio
+      step. Record the formula Kite uses per event type, including whether it
+      adjusts demergers (VEDL 2026-04-30 is the test case)
+- [ ] Apply the same factors to the 37 GDF series → `prices/adjusted/`; Kite
+      series copied through unchanged
+- [ ] Reconcile `corporate_actions_fix/inventory.csv` (99 flagged jumps): each
+      is either matched to a CA row or logged as a bad print for Phase 5
+- [ ] **Gate:** raw bhavcopy × cumulative factors reproduces Kite adjusted
+      within tick rounding on a 50-symbol sample spanning 2005-2026; every
+      mismatch explained
 
-- [ ] Membership refresh: NSE publishes replacements weeks ahead of the
-      effective date. Poll the press-release archive, parse, stage the diff for
-      review, apply on the effective date
-- [ ] Watch for the failure modes that already bit: renames logged under the
-      exit name, revocations, scanned PDFs with no text layer, Nifty 100
-      changes announced only as Nifty Next 50
-- [ ] Runbook in `docs/` and a scheduled check that the universe files agree
-      with NSE's current published constituents
-- [ ] Corporate-action intake stays with `adjusted_price_series`; this covers
-      membership only
+## Phase 5 — QA and cleanup 🤖
 
-## Done
+- [ ] Calendar: every date normalised to midnight; duplicate days collapsed;
+      the panel calendar is the NSE trading calendar derived from bhavcopy,
+      not the union of file dates
+- [ ] Cross-feed: for each symbol, Kite÷bhavcopy ratio must be piecewise
+      constant with steps only at CA ex-dates. Any other step is a bad print
+      on one side; quarantine the row, never delete it
+- [ ] Stale tails: a file whose last date precedes the calendar end without a
+      `delisted_on` is an error, not a forward-fill
+- [ ] Known cases handled explicitly: Tata Motors DVR second line,
+      `DUMMY*` placeholders, the 16 no-feed symbols, INFY 2026-05-27,
+      CASTROLIND July 2026
+- [ ] **Gate:** `qa/report.md` shows zero unexplained steps, zero stale tails,
+      zero phantom rows; quarantine log committed
 
-- [x] Ledger start dates established empirically (`lib/audit_immutability.py`)
-- [x] Data-source decision (D-1) and adjustment model (D-2, D-3) recorded
-- [x] Full branch findings written up (`CONTEXT.md`)
+## Phase 6 — master loader and re-baseline 🤖👤
+
+- [ ] `data_pipeline/master_loader.py`: one function returns close/trade
+      panels + membership fn from `data/master/`, with the snapshot date it
+      read. Production loaders untouched
+- [ ] Run OM25 v3, TL25 v3, L6 v2, COMBO at current parameters, 2016-01-01 →
+      today, on the master. Compare against (a) today's published numbers and
+      (b) the interim survivorship-free runs in CONTEXT.md §7
+- [ ] Attribute every difference: universe / price basis (total vs price
+      return) / corporate action / data fix. Unattributed = bug
+- [ ] 👤 Review the re-baseline; decide the restatement framing
+- [ ] **Gate:** RESULTS.md carries the four baselines with attribution; the
+      OM25 retune task can open
+
+## Phase 7 — standing procedure 🤖
+
+- [ ] Daily: Kite append for live symbols; on any CA ex-date for a symbol,
+      full re-pull of that symbol into a new dated snapshot (D-6)
+- [ ] Weekly: CA-API poll → new rows into `corporate_actions.csv`; bhavcopy
+      append; symbol-master diff (renames, new ISINs, delistings → D-9)
+- [ ] Membership: poll the press-release archive, stage the diff, apply on
+      the effective date — with the failure modes from CONTEXT.md §1 as tests
+- [ ] `lib/audit_immutability.py --strict` adapted to the snapshot model and
+      run against the store
+- [ ] Runbook in `docs/market_data_spine.md`
+
+## Parked (not lost)
+
+- `adjusted_price_series` Phase 2-3 (seal the production panel's leaks): the
+  research series no longer depends on it; production is off-limits by D-8.
+  Reopen if production is ever moved onto this store
+- The immutable published-decisions ledger (old Phase 3 here): unchanged in
+  intent, deferred until the re-baseline settles what "published" means

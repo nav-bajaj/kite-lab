@@ -1,90 +1,124 @@
-# Market data spine
+# Market data spine — one program
 
 ## Why
 
-`index_reconstruction` produced a correct point-in-time universe and the price
-history to go with it, and in doing so established that the price panel itself
-cannot support what the platform is about to promise. Three findings force this
-work (evidence in `CONTEXT.md`):
+The survivorship-free tests run on 2026-09-09 (CONTEXT.md §7) put the
+published numbers where they actually stand: L6 v2 at ~18% CAGR from 2018
+rather than ~50%, OM25 v3 at ~30% rather than ~46%. Every strategy was tuned
+and every published figure computed on a universe that could not lose a
+member, with a price panel that mixes three adjustment conventions and has
+been restated in production five times. Nothing can be retuned until the data
+underneath it is right, and the pre-registration window is the only time the
+foundations can move without a client noticing.
 
-1. **Refetching Kite is not idempotent.** Its API back-adjusts for dividends,
-   so 510-591 of 668 days change on a re-pull.
-2. **The stored panel is inconsistent with itself.** The 15-day refetch cuts
-   bands of dividend-adjusted prices into an otherwise raw series.
-3. **Published rebalances have already been restated** — five times, each
-   inside that 15-day window, one of them cascading a −2.44% price revision
-   into four other position sizes. This is leak 1 in
-   `adjusted_price_series/PLAN.md` firing in production, with evidence.
-
-None of this matters much while the numbers are internal. All of it matters the
-moment they are not. The pre-registration window is the only time these
-foundations can be changed, so they get changed now.
-
-The end state: a portfolio decision made on a given day can be reproduced
-exactly, forever, from data as it was known that day — while the research
-series stays free to be corrected.
+This folder is the single program for that. It absorbs
+`tasks/adjusted_price_series/` and `tasks/corporate_actions_fix/`; their
+findings are carried here and their folders marked absorbed. Founder
+decisions taken 2026-09-10 are in DECISIONS.md D-6 to D-10 and override
+anything earlier that conflicts.
 
 ## Outcome
 
-1. A master historical data file that is the single input to backtests.
-2. All four production portfolios re-run over the dated universe and that file,
-   with every difference against today's published numbers attributed to a
-   cause.
-3. An append-only ledger of every rebalance since each strategy's lock date,
-   and a check that fails if a recorded entry ever changes.
-4. A standing procedure so index membership stays correct without anyone
-   remembering to do it.
+A master stock database, built fresh, that a backtest can be pointed at and
+trusted:
 
-## Decisions already taken
+1. **Symbol master** — every company that was ever in the Nifty 50 / 100 /
+   LargeMidcap 250 / 500, keyed by ISIN, with its symbol history, so a 2014
+   delisting resolves to a ticker as reliably as a 2026 member.
+2. **Point-in-time membership** for the four indices, in the loader's schema,
+   as NEW files. Production `data/static/*_membership.csv` is not touched.
+3. **Prices, pulled fresh**: Kite's adjusted series from 2000 for everything
+   Kite lists (988 of 1,025 symbols), GDF from 2009 for the 37 delisted, every
+   row source-tagged, at least 2016-2026 complete for all four indices.
+4. **A corporate-actions table** from NSE's own filings, 2005 onward, used to
+   bring the GDF series onto Kite's convention, to cross-check Kite, and to
+   keep the store correct going forward.
+5. **Cleaned**: one calendar, no phantom rows, bad prints quarantined,
+   delisted names ended at last traded price, every gap named.
+6. **Re-baselined**: all four production portfolios run at their CURRENT
+   parameters on this data, with every difference against today's published
+   number attributed to universe, price basis or corporate action.
 
-See `DECISIONS.md`. In short: Kite is the day-to-day source and GDF the
-supplement for delisted history Kite structurally cannot serve (D-1); the store
-holds raw rows append-only (D-2); the panel is **price-return, ex-dividend** —
-the founder's call, owned by `adjusted_price_series` (D-3); the ledger starts
-at each strategy's own lock date (D-4); nothing published is ever recomputed
-(D-5).
+Then, and only then, OM25 gets retuned — as a separate task.
 
-## What belongs here, and what does not
+## What changed on 2026-09-10 (founder decisions)
 
-`tasks/adjusted_price_series/` already owns the price store and the corporate
-actions — it was opened the same day with the founder's ex-dividend call, and
-its plan is further along than anything drafted here. It covers freezing the
-pre-flip panel, writing the price-data contract, sealing the three leaks that
-let dividend-adjusted rows into the panel, and the enforcement that makes the
-contract stick.
+- **Total return, not price return.** Kite's adjusted series is the basis.
+  This reverses D-3. Consequence: dividends are in the curve, published
+  numbers move up by roughly the dividend yield, and an ex-date rewrites a
+  symbol's whole prior history by design — so the store is versioned by pull
+  date, not append-only. D-6.
+- **Fresh from scratch.** Nothing in the master store is copied from
+  `nse500_data*` or the backfill directories. Those stay as they are for
+  production and become a cross-check only. D-7.
+- **New membership files.** Production reads nothing from this program until
+  a later, explicit decision. D-8.
+- **Delisting at LTP.** A delisted position exits at its last traded price,
+  no haircut. D-9.
+- **One program.** This folder. D-10.
 
-**This folder does not duplicate that.** Price history and corporate actions
-are prerequisites, tracked here as dependencies and nothing more.
+## Sources, verified 2026-09-10 (CONTEXT.md §6)
 
-What is genuinely this folder's:
+| Need | Source | Verified |
+|---|---|---|
+| Prices, live instruments | Kite historical API, day candles, adjusted | RELIANCE 2000-01-03 → today; ONGC adjustment ratio flat 0.977 pre-ex, 1.000 post |
+| Prices, delisted | GDF `GetHistory`, raw | floors 2009-01-01; ALBK served to 2020-03-19 |
+| Symbol ↔ ISIN by day | NSE bhavcopy archive, direct download | legacy `cmDDMMMYYYYbhav.csv.zip` (ISIN column present by 2016, absent in 2005 — find the first year); UDiFF `BhavCopy_NSE_CM_0_0_0_YYYYMMDD_F_0000.csv.zip` from 2024 carries ISIN + company name |
+| Corporate actions + company names | NSE `api/corporates-corporateActions`, cookie from the landing page | full calendar year per call; 2,208 rows for 2020 incl. dividend, split, bonus, demerger, buyback, AGM |
+| Membership events | done — `tasks/index_reconstruction/` | exact today and Mar-2022 |
 
-1. **Master historical data file** — one input to backtests, covering all-ever
-   members across the four reconstructed indices, source-tagged. Depends on
-   the price store being settled.
-2. **Portfolios on the dated universe** — the first real test of the whole
-   stack together, and the moment any published number moves.
-3. **The immutable ledger** — start dates already established (D-4), no
-   re-derivation and no downloads needed.
-4. **Standing membership procedure** — `adjusted_price_series` handles
-   corporate actions; nothing yet keeps index membership correct going forward,
-   and that is the half this branch just proved is hard.
+Not needed after all: Samco bhavcopy mirror, Playwright. Kept in reserve if
+NSE starts throttling.
+
+## Architecture
+
+```
+data/master/                       (gitignored except manifests + small tables)
+  symbol_master.csv                isin, symbol, valid_from, valid_to, name, source
+  membership/{nse500,nifty50,nifty100,nifty250}.csv     loader schema, PIT
+  corporate_actions.csv            isin, symbol, ex_date, type, ratio/amount, source
+  prices/kite/<SYMBOL>.csv         adjusted, as pulled, + pull_date in manifest
+  prices/gdf/<SYMBOL>.csv          raw as served
+  prices/adjusted/<SYMBOL>.csv     ONE basis: kite as-is; gdf x CA factors
+  manifest.json                    per file: source, first, last, rows, sha256, pulled_at, delisted_on
+  qa/                              coverage by index x date, quarantine log, cross-feed report
+```
+
+A backtest reads `prices/adjusted/` + `membership/` through one loader.
+Nothing reads the loose directories afterwards.
+
+**Why a raw layer still exists under a total-return decision.** Kite is the
+basis, but Kite cannot serve the 37 delisted names and cannot be audited
+against itself. Bhavcopy closes are what actually traded; the CA table is
+what NSE announced. Raw × factors must reproduce Kite's adjusted series to
+the tick — where it does not, one of the three is wrong and the QA phase says
+which. That reconciliation is also the only way the 37 GDF series land on the
+same basis as the other 988.
+
+**Versioning.** A dividend ex-date rewrites every prior row for that symbol.
+The store keeps each pull under its date; a backtest records which snapshot
+it read. Immutability is per snapshot, not per row — see D-6.
 
 ## Scope boundary
 
-- Does not change any strategy logic. If a published number moves, it must be
-  attributable to data, and that attribution is part of the deliverable.
-- Does not touch `nse500_data/` until phase 1 defines the replacement; the
-  backfill directories stay separate meanwhile.
-- Does not merge to `beta_gtm_mvp`. This branch is 39 commits behind it and
-  production reads none of this yet.
-- Options data is out of scope.
+- Does not modify `nse500_data*`, `data/static/*`, `history_utils.py`,
+  `apply_corporate_actions.py`, the daily pipeline, or anything the dashboard
+  reads. The leak-sealing planned in `adjusted_price_series` is parked — it
+  protected a price-return convention that no longer applies to research,
+  and production is off-limits by D-8.
+- Does not change strategy logic or parameters. Re-baselining is at current
+  settings; the retune is `tasks/om25_retune_sf/` (not yet opened).
+- Does not merge to `beta_gtm_mvp`.
+- Options and cross-asset data out of scope.
 
 ## Critical files
 
-- `tasks/index_reconstruction/` — the membership and price reconstruction
-- `scripts/history_utils.py` — `lookback_days = 15`, the refetch that rewrites
-- `scripts/apply_corporate_actions.py`, `data/corporate_actions.json` — the
-  event system to be built out (one row today)
-- `scripts/universe_membership.py`, `data/static/*_membership.csv` — the
-  effective-dated universe the reconstruction feeds
-- `lib/audit_immutability.py` — the regression that catches restatements
+- `tasks/index_reconstruction/` — membership events, resolvers, validators
+- `data_pipeline/gdf_client.py`, `scripts/history_utils.py` (read-only here:
+  `init_kite_client`, `fetch_history`, `resolve_instrument_token`)
+- `data/instruments_full.csv` — Kite instrument dump (NSE + BSE, no ISIN)
+- `tasks/adjusted_price_series/manifest_pre_flip.csv` — hash of the
+  production panel as of 2026-09-08, the cross-check baseline
+- `tasks/corporate_actions_fix/inventory.csv` — 99 suspected events to
+  reconcile against the CA table
+- `lib/audit_immutability.py` — the drift regression, reused on the store

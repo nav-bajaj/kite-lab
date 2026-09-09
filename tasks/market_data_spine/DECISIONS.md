@@ -117,3 +117,61 @@ restatement silently rewrites the past. Five such restatements have already
 happened. Freezing the decision separates "what we told clients" from "what our
 research series currently says", which is the distinction a regulator cares
 about and the only one that survives a data correction.
+
+---
+
+## 2026-09-10 — founder decisions that revise the above
+
+## D-6 — Total return. Kite's adjusted series is the basis. (Reverses D-3.)
+
+**Decision (founder).** Use Kite's fully adjusted history — dividends, splits,
+bonus, rights — as the research price basis. The price-return / ex-dividend
+stance in D-3 no longer applies to research data.
+
+**Consequences.**
+- Published backtest numbers move up by roughly the dividend yield once
+  re-based. Client copy that says "ex-dividend" is withdrawn, not amended.
+- An ex-date rewrites a symbol's entire prior history. Append-only (D-2) is
+  therefore replaced by **versioned snapshots**: each pull is stored under its
+  date, and a backtest records the snapshot it read. Reproducibility is per
+  snapshot.
+- Delisted names Kite cannot serve are brought onto the same basis by
+  applying NSE-filed corporate actions to GDF's raw series (Phase 4). Kite's
+  formula is measured, not assumed.
+
+## D-7 — Fresh from scratch.
+
+**Decision (founder).** The master store is built by pulling every series
+anew. Nothing is copied from `nse500_data`, `nse500_data_merged`, the backfill
+directories or the Documents mirrors. Those remain exactly as they are for
+production and are used only as a cross-check.
+
+## D-8 — Production is not touched.
+
+**Decision (founder).** New membership files, new price store, new loader.
+`data/static/*_membership.csv`, `nse500_data*`, `history_utils.py`,
+`apply_corporate_actions.py`, the daily pipeline and everything the dashboard
+reads stay as they are. Moving production onto the master store is a later,
+separate decision.
+
+## D-9 — Delisting at last traded price.
+
+**Decision (founder).** A position in a stock that delists exits at the last
+price the feed served, on that date, with no haircut. The store records
+`delisted_on` per symbol; the engine treats it as a forced exit, not a
+forward-fill. This is optimistic for bankruptcies and exact for mergers with
+cash consideration; it is recorded as the convention and labelled in results.
+
+## D-10 — One program.
+
+**Decision (founder).** `adjusted_price_series` and `corporate_actions_fix`
+are absorbed into this folder. Their findings are carried in CONTEXT.md and
+TASKS.md; their folders are marked absorbed and left in place for the record.
+
+## D-1, revised — Kite is the source for history too.
+
+D-1 made Kite the day-to-day source and GDF the supplement. Verified
+2026-09-10: Kite serves day candles from 2000-01-03 for live instruments, so
+it is also the history source. GDF's role narrows to the 37 symbols with no
+Kite instrument. D-2's "store raw" survives as the reconciliation layer
+(bhavcopy closes × CA factors must reproduce Kite), not as the basis.
