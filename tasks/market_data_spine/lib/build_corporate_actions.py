@@ -21,7 +21,8 @@ before the table is trusted to adjust anything.
 """
 from __future__ import annotations
 
-import glob, json, re
+import glob, json, os, re
+import numpy as np
 import pandas as pd
 
 REPO = "/Users/navdeep/kite-lab"
@@ -29,11 +30,17 @@ RAW = f"{REPO}/data/master/raw/nse_ca"
 OUT = f"{REPO}/data/master/corporate_actions.csv"
 
 NUM = r"(\d+(?:\.\d+)?)"
+# NSE's older filings are abbreviated and run together: "Fv Splt Frm Rs 10 To Re 1",
+# "Fv Spl-Rs10tore1/Bon-1:1", "Agm/Div-Rs10+Gld Jub-Rs10". Every pattern below
+# tolerates missing spaces and the short forms Splt/Spl/Frm/Bon/Div.
 RE_PCT = re.compile(r"dividend[^%\d]*?" + NUM + r"\s*%", re.I)
 RE_AMT = re.compile(r"(?:rs|re|₹)\.?\s*" + NUM + r"\s*/?-?\s*(?:per|pr)\s*(?:share|sh|eq)", re.I)
-RE_AMT2 = re.compile(r"dividend[\s\-:/]*(?:final|interim|special)?[\s\-:/]*(?:rs|re)\.?[\s\-:]*" + NUM, re.I)
-RE_BONUS = re.compile(r"bonus\s*[-:]?\s*(\d+)\s*:\s*(\d+)", re.I)
-RE_SPLIT = re.compile(r"(?:from|split)\s*(?:rs|re)\.?\s*" + NUM + r"\s*/?-?\s*(?:per\s*share)?\s*(?:to)\s*(?:rs|re)\.?\s*" + NUM, re.I)
+RE_AMT2 = re.compile(r"div(?:idend)?[\s\-:/]*(?:final|interim|special|int|fin)?[\s\-:/]*(?:rs|re)\.?[\s\-:]*" + NUM, re.I)
+RE_AMT3 = re.compile(r"(?:^|[/+ ])(?:[a-z ]{0,14})?(?:div|dividend)[^\d]{0,12}?" + NUM + r"(?!\s*%)(?!\s*:)", re.I)
+RE_BONUS = re.compile(r"bon(?:us)?\s*[-:]?\s*(\d+)\s*:\s*(\d+)", re.I)
+RE_SPLIT = re.compile(r"(?:fr(?:o)?m|spl(?:i)?t|sub[- ]?div(?:ision)?)[\s\-:]*(?:rs|re)?\.?\s*" + NUM
+                      + r"\s*/?-?\s*(?:per\s*share)?\s*(?:to|-)\s*(?:rs|re)?\.?\s*" + NUM, re.I)
+RE_SPLIT2 = re.compile(r"(?:rs|re)\.?\s*" + NUM + r"\s*to\s*(?:rs|re)\.?\s*" + NUM, re.I)
 RE_RIGHTS = re.compile(r"rights?\s*[-:]?\s*(\d+)\s*:\s*(\d+)(?:\s*@?\s*premium\s*(?:of\s*)?(?:rs|re)\.?\s*" + NUM + r")?", re.I)
 
 
@@ -47,8 +54,8 @@ def parse(subject: str, face_val: str):
     if m:
         a, b = int(m.group(1)), int(m.group(2))
         events.append(("bonus", round(b / (a + b), 8), f"{a}:{b}"))
-    m = RE_SPLIT.search(s)
-    if m and ("split" in low or "sub" in low or "consolidat" in low or "from" in low):
+    m = RE_SPLIT.search(s) or (RE_SPLIT2.search(s) if re.search(r"spl|sub[- ]?div|consolidat|fv|face", low) else None)
+    if m and re.search(r"spl|sub[- ]?div|consolidat|fv|face|frm|from", low):
         x, y = float(m.group(1)), float(m.group(2))
         if x > 0 and y > 0 and x != y:
             events.append(("split" if y < x else "consolidation", round(y / x, 8), f"{x:g}->{y:g}"))
@@ -63,6 +70,9 @@ def parse(subject: str, face_val: str):
             amt += float(x); found = True
         if not found:
             for x in RE_AMT2.findall(s):
+                amt += float(x); found = True
+        if not found and "%" not in low:
+            for x in RE_AMT3.findall(s):
                 amt += float(x); found = True
         if not found:
             try:
@@ -97,6 +107,16 @@ def main():
                              r.get("series"), r.get("subject", "").strip()[:160]))
     df = pd.DataFrame(rows, columns=["isin", "symbol", "ex_date", "type", "factor_or_amount", "detail", "face_val",
                                      "series", "subject"])
+    df["source"] = "nse-filing"
+    obs_path = f"{REPO}/data/master/qa/observed_events.csv"
+    if os.path.exists(obs_path):
+        o = pd.read_csv(obs_path, parse_dates=["ex_date"])
+        o = o[o["clean_ratio"].notna() | (o["factor"] < 0.6)]
+        typ = np.where(o["factor"] > 1, "consolidation", "split")     # share-count event; bonus vs split is immaterial to the factor
+        obs = pd.DataFrame({"isin": None, "symbol": o["symbol"], "ex_date": o["ex_date"].dt.date, "type": typ,
+                            "factor_or_amount": o["clean_ratio"].fillna(o["factor"]), "detail": "observed:" + o["source"],
+                            "face_val": None, "series": None, "subject": "", "source": o["source"]})
+        df = pd.concat([df, obs], ignore_index=True)
     df = df.drop_duplicates(["isin", "ex_date", "type", "factor_or_amount", "detail"]).sort_values(["ex_date", "symbol"])
     df.to_csv(OUT, index=False)
     print(f"filings read: {n_in:,}  ->  price-relevant events: {len(df):,}")

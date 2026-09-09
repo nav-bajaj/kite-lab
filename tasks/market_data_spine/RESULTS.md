@@ -135,3 +135,45 @@ history. Both candidate bases are built from the bhavcopy raw layer and
 the filings table, applied on read; Kite is the cross-check for whatever
 it covers. Founder's call between total-return (A) and price-return (B)
 requested 2026-09-10; both views will be emitted.
+
+## Phase 4 — corporate actions and adjusted views (2026-09-10) — gate restated, pending founder
+
+**Table.** `corporate_actions.csv`, 25,643 events: 23,370 dividends (8
+unparsed), 723 bonuses, 987 splits and 97 consolidations (of which 121 are
+Kite-observed and 91 raw-observed, source-tagged, listed in
+`qa/observed_events.csv`), 350 rights (factor needs the cum price; 28 have
+no stated price and are logged, not applied), 110 demergers (measured from
+the raw ex-date drop; 70 applied, 13 ignored as <5%). NSE's filings feed is
+incomplete for share-count events and its older phrasing is abbreviated
+("Fv Splt Frm Rs 10 To Re 1", "Fv Spl-Rs10tore1/Bon-1:1"); the parser
+handles both, and the observed sources fill what the feed lacks.
+
+**Views.** `prices/adjusted_pr/` (splits, bonus, rights, demergers) and
+`prices/adjusted_tr/` (the same plus cash dividends), for all 1,326 series,
+each row carrying its cumulative factor.
+
+**Against Kite, 993 companies, 2006-2026, our price-return view:** 68.9%
+within 2% throughout, 76.9% within 5%. Residual by primary cause:
+
+| Cause | Companies | Nature |
+|---|---|---|
+| demerger | 60 | Kite adjusts some, not others; we adjust all by the measured drop |
+| Kite recent dividend | 59 | Kite patches some dividends from ~2023; sporadic, not a policy |
+| small unexplained (<15%) | 67 | sporadic Kite adjustments pre-2023, bad prints on one side |
+| formula at an event | 68 | our factor and Kite's differ at a filed/observed event; each needs a look |
+| no filing either side | 33 | a step Kite applied with nothing in the filings or the raw series |
+| rights | 17 | Kite's ex-rights convention differs from the theoretical factor |
+
+Kite is not a clean yardstick: it is price-return with partial, inconsistent
+dividend and demerger adjustments. Tick-level reproduction is therefore not
+a gate a correct series can pass. Proposed restatement, put to the founder:
+every series carries `kite_agreement` (within-2pct / within-5pct /
+disagrees), its maximum deviation since 2006 and the disagreement classes
+in `prices/bhavcopy_manifest.json`; the residual stays classified and
+visible. Kite's split and bonus factors match ours to the tick wherever
+both sides have the event.
+
+**Demerger convention (applied, stated):** the parent's history is
+adjusted by the measured ex-date drop, treating the spin-off as a
+distribution to the holder. Without it a holder's return through a
+demerger is booked as a crash that did not happen.

@@ -1,0 +1,2575 @@
+{
+ "AANJANEYA": {
+  "first": "2011-05-27",
+  "last": "2015-05-21",
+  "rows": 937,
+  "traded_as": [
+   "AANJANEYA",
+   "DRDATSONS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "5c3aea77f12f30aa88750fb7bcd176f1abaff5466f6ee6b929480c7b7dcd4411"
+ },
+ "ABGSHIP": {
+  "first": "2009-01-01",
+  "last": "2017-01-23",
+  "rows": 1997,
+  "traded_as": [
+   "ABGSHIP"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "820356eee276844c452129b640409e5b989aeb277e102e780bfaf715a02ef8a2"
+ },
+ "ABIRLANUVO": {
+  "first": "2009-01-01",
+  "last": "2017-07-04",
+  "rows": 2106,
+  "traded_as": [
+   "ABIRLANUVO",
+   "INDRAYON"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "ac534670876d148dd55cc6d7187df92665b7feddf9b33298ec839181d5a49d9f"
+ },
+ "ADLABSFILM": {
+  "first": "2009-01-01",
+  "last": "2014-04-28",
+  "rows": 1206,
+  "traded_as": [
+   "ADLABSFILM",
+   "RELMEDIA"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "29caae866506d1206e6125b0fb289f4bdf90362b750d028b6f48af5a0f7a64ef"
+ },
+ "ADVANTA": {
+  "first": "2009-01-01",
+  "last": "2016-07-29",
+  "rows": 1848,
+  "traded_as": [
+   "ADVANTA"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "babc705a504227d57304ba27a40ddb1a6f309aade4d26967a60a31024adf36df"
+ },
+ "AFTEK": {
+  "first": "2009-01-01",
+  "last": "2014-05-22",
+  "rows": 1132,
+  "traded_as": [
+   "AFTEK",
+   "AFTEKINFO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "6976174fab50d6624cc4ccb8556e93a4360695a9a12fa2fb7a83dccd209830a2"
+ },
+ "AFTEKINFO": {
+  "first": "2009-01-01",
+  "last": "2014-05-22",
+  "rows": 1132,
+  "traded_as": [
+   "AFTEK",
+   "AFTEKINFO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "6976174fab50d6624cc4ccb8556e93a4360695a9a12fa2fb7a83dccd209830a2"
+ },
+ "AGEEGOLD": {
+  "first": "2013-03-01",
+  "last": "2020-11-23",
+  "rows": 1695,
+  "traded_as": [
+   "AGEEGOLD",
+   "SHIRPUR-G"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "0de0e71ed571eb37e96ed2d0e40f09df7ca836eb2e7b7d0ac95d8fc040aecc45"
+ },
+ "AGRODUTCH": {
+  "first": "2009-01-01",
+  "last": "2016-09-26",
+  "rows": 1560,
+  "traded_as": [
+   "AGRODUTCH"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e7e8298a8d59ce82925fc867b8547766ab6650990ffe6a14313025a42eece90d"
+ },
+ "AHMEDELEC": {
+  "rows": 0
+ },
+ "ALBK": {
+  "first": "2009-01-01",
+  "last": "2020-03-19",
+  "rows": 2776,
+  "traded_as": [
+   "ALBK"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e0fea1a37c2673721068a6610c4dfcd81a1af4bf72c11f46e790d5760c35ce93"
+ },
+ "ALFALAVAL": {
+  "first": "2009-01-01",
+  "last": "2012-04-11",
+  "rows": 809,
+  "traded_as": [
+   "ALFALAVAL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "543ba3ed57eb4cf74d508dcc859179512a78e0a1df2622476ef9d60128f1d7e8"
+ },
+ "AMTEKAUTO": {
+  "first": "2009-01-01",
+  "last": "2018-03-28",
+  "rows": 2230,
+  "traded_as": [
+   "AMTEKAUTO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "1735f046c95f4203ef05fb496e06295feb1c5fa37f1fff53f2fcf5c8db57133c"
+ },
+ "AMTEKINDIA": {
+  "first": "2009-01-01",
+  "last": "2020-10-20",
+  "rows": 2489,
+  "traded_as": [
+   "AMTEKINDIA",
+   "CASTEXTECH"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "fc148d7e3dfb60a1779bcfac798eb954dd5ff82ae225a832fd586a0d109aa683"
+ },
+ "ANDHRABANK": {
+  "first": "2009-01-01",
+  "last": "2020-03-19",
+  "rows": 2776,
+  "traded_as": [
+   "ANDHRABANK"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "7096d23d386d14581cd1406aadd83496ee83006411008ff93fd4b6d656300130"
+ },
+ "ARSSINFRA": {
+  "first": "2010-03-03",
+  "last": "2022-05-24",
+  "rows": 2510,
+  "traded_as": [
+   "ARSSINFRA",
+   "GML"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "ae9dce2d57df1df606803a8d56dbf20819b0132412db97353b4952130bb956be"
+ },
+ "ASIANELEC": {
+  "first": "2009-01-01",
+  "last": "2013-10-24",
+  "rows": 769,
+  "traded_as": [
+   "ASIANELEC"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "fd72fb5702687a394ac9ccd315c07a21eac7d80fb5208af47408d4091b634469"
+ },
+ "ASSAMCO": {
+  "first": "2009-01-01",
+  "last": "2019-02-27",
+  "rows": 2291,
+  "traded_as": [
+   "ASSAMCO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "44bf6dd39bf710b4173ef65bd27d4b0f4426004160bd78485a8d955e5141ec86"
+ },
+ "ATCOM": {
+  "rows": 0
+ },
+ "AZTECSOFT": {
+  "first": "2009-01-01",
+  "last": "2009-06-22",
+  "rows": 92,
+  "traded_as": [
+   "AZTEC",
+   "AZTECSOFT"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "d37e0c27ec0c0eb3378dded01e93944f21681d4e70c5e74e91f0caab41e9cdb5"
+ },
+ "BALLARPUR": {
+  "first": "2009-01-01",
+  "last": "2020-11-27",
+  "rows": 2788,
+  "traded_as": [
+   "BALLARPUR"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "c8aa1b3a799b84957541aa850c498a1cdbc9e38df0598363be2b4f81a771527f"
+ },
+ "BANKPUNJAB": {
+  "rows": 0
+ },
+ "BANKRAJAS": {
+  "first": "2009-01-01",
+  "last": "2010-08-23",
+  "rows": 403,
+  "traded_as": [
+   "BANKRAJAS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e12ea6465a6aac78e42afe0d79773d5d22b106dd172cc04db980524f030b2b8c"
+ },
+ "BGFL": {
+  "rows": 0
+ },
+ "BHARATFIN": {
+  "first": "2010-08-16",
+  "last": "2019-07-02",
+  "rows": 2140,
+  "traded_as": [
+   "BHARATFIN",
+   "SKSMICRO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "19441145d00a33057db79bdf13bec4625a3ca5403b273a5b6d9adf8ef873b781"
+ },
+ "BHUSANSTL": {
+  "first": "2009-01-01",
+  "last": "2021-08-05",
+  "rows": 3061,
+  "traded_as": [
+   "BHUSANSTL",
+   "TATASTLBSL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "c31d846568703eae8206dfaf691a642d080033ec5ba8a6bf516152c0ab7c0f2c"
+ },
+ "BILVYAPAR": {
+  "first": "2025-09-15",
+  "last": "2025-11-25",
+  "rows": 49,
+  "traded_as": [
+   "BILVYAPAR"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "d0a551255b89daa05f47b29e77d0249a4648ae5cf30f97cb5653499286f8ad65"
+ },
+ "BINANICEM": {
+  "first": "2009-01-01",
+  "last": "2026-09-09",
+  "rows": 4352,
+  "traded_as": [
+   "BINANICEM",
+   "DHANUKA"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e65560b545d1aaf6a24ca8b61a523bdf68ec7344d63995ca659a1f515f16cbf4"
+ },
+ "BINANIIND": {
+  "first": "2009-01-01",
+  "last": "2025-04-17",
+  "rows": 2646,
+  "traded_as": [
+   "BINANIIND"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "70f5f58bf926f155b9f93b6859f1d32a29996fbe7de7e751d100842b2c2347c5"
+ },
+ "BIRLAPOWER": {
+  "first": "2009-01-01",
+  "last": "2013-08-22",
+  "rows": 940,
+  "traded_as": [
+   "BIRLAPOWER"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "7ca811b68d6f78dc5b6f59d7a4ffd90784278eeccd0d44bdc72ea41714123add"
+ },
+ "BLOWPLAST": {
+  "rows": 0
+ },
+ "BLUESTINFO": {
+  "first": "2009-01-01",
+  "last": "2016-06-01",
+  "rows": 1779,
+  "traded_as": [
+   "BLUESTINFO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "1c451ff1d045c4c89abfa0c4c5eebcd0b88db31858e83eb45e245da911902103"
+ },
+ "BONGAIREFN": {
+  "first": "2009-01-01",
+  "last": "2009-04-20",
+  "rows": 69,
+  "traded_as": [
+   "BONGAIREFN"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "17ba96b22901676aaa0238db0eef29c67bde927156fa539338e47b65580866eb"
+ },
+ "BOSCHCHASY": {
+  "rows": 0
+ },
+ "BPLENGG": {
+  "rows": 0
+ },
+ "BRFL": {
+  "first": "2009-01-01",
+  "last": "2022-04-01",
+  "rows": 2806,
+  "traded_as": [
+   "BRFL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "11a1620d87d903c16a57aa6ddf16eaa11dec720a8450189904a6b341243751e0"
+ },
+ "CAIRN": {
+  "first": "2009-01-01",
+  "last": "2017-04-25",
+  "rows": 2058,
+  "traded_as": [
+   "CAIRN"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "bfa74f90fe209d3747bfdf80df97fe5685c136b927ed9cb99e366aa13102633d"
+ },
+ "CAPF": {
+  "first": "2009-01-01",
+  "last": "2018-12-27",
+  "rows": 2400,
+  "traded_as": [
+   "CAPF",
+   "FCH"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "0bb288e9cb540e7207d53547d868638e6339d70ba08b2c666b1778044823f10e"
+ },
+ "CAROLINFO": {
+  "first": "2009-01-01",
+  "last": "2012-03-09",
+  "rows": 713,
+  "traded_as": [
+   "CAROLINFO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "56e429a8686e64606aef3811b0366a94d06947041301c5d29fb0f9a9f2782c00"
+ },
+ "CASTEXTECH": {
+  "first": "2009-01-01",
+  "last": "2020-10-20",
+  "rows": 2489,
+  "traded_as": [
+   "AMTEKINDIA",
+   "CASTEXTECH"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "fc148d7e3dfb60a1779bcfac798eb954dd5ff82ae225a832fd586a0d109aa683"
+ },
+ "CENBNK": {
+  "rows": 0
+ },
+ "CENTBOP": {
+  "rows": 0
+ },
+ "CHETTINAD": {
+  "first": "2009-01-02",
+  "last": "2013-05-30",
+  "rows": 1052,
+  "traded_as": [
+   "CHETTINAD"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "314f206981b44861de8f376f58ed4373d270fdecfcf974c651872b1197fa7446"
+ },
+ "CIPL": {
+  "rows": 0
+ },
+ "CLARIANT": {
+  "rows": 0
+ },
+ "CMC": {
+  "first": "2009-01-01",
+  "last": "2015-09-29",
+  "rows": 1672,
+  "traded_as": [
+   "CMC"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "af17acd9e1de1c8f78aeed82bfcbadc5b2b751141cb34de04a2ec276e80b6be1"
+ },
+ "COCHINREFN": {
+  "rows": 0
+ },
+ "COLGATE": {
+  "first": "2009-01-01",
+  "last": "2026-09-09",
+  "rows": 4381,
+  "traded_as": [
+   "COLGATE",
+   "COLPAL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "b44205691d38352faa7b71f1a7205c0c600ba86a461ccfcfc80956f2fcbda126"
+ },
+ "CONSCOFFEE": {
+  "first": "2009-01-01",
+  "last": "2024-01-12",
+  "rows": 3724,
+  "traded_as": [
+   "CONSCOFFEE",
+   "TATACOFFEE"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "bd43b3777f175c2433c631c1cbfc67dafb5c68fa8e992c805f3eead43843c18b"
+ },
+ "CONSOFINVT": {
+  "first": "2009-01-01",
+  "last": "2026-07-22",
+  "rows": 3940,
+  "traded_as": [
+   "CONSOFINVT"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "bebdaef52fbf04e01497d933fec09c23323f4dc75ef0b94ce92cecbcd325693c"
+ },
+ "COREEDUTEC": {
+  "first": "2009-01-01",
+  "last": "2015-09-24",
+  "rows": 1624,
+  "traded_as": [
+   "COREEDUTEC",
+   "COREPROTEC"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e130738ff59df033cc9fd6ef3d7d7d65915d1a73e55b1e502e5ce5edc426639d"
+ },
+ "COREPROTEC": {
+  "first": "2009-01-01",
+  "last": "2015-09-24",
+  "rows": 1624,
+  "traded_as": [
+   "COREEDUTEC",
+   "COREPROTEC"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e130738ff59df033cc9fd6ef3d7d7d65915d1a73e55b1e502e5ce5edc426639d"
+ },
+ "CORPBANK": {
+  "first": "2009-01-01",
+  "last": "2020-03-19",
+  "rows": 2776,
+  "traded_as": [
+   "CORPBANK"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "22e67963d14196afee053a959c4964e3c224cc894270ee51f7525836ea4c2eb2"
+ },
+ "COX&KINGS": {
+  "first": "2009-12-11",
+  "last": "2019-12-24",
+  "rows": 2476,
+  "traded_as": [
+   "COX&KINGS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "8afb718d1d85a9e6e2bb51fcb76150e27e4640695c3711951c6cc0bc54afac2b"
+ },
+ "CRESTANI": {
+  "first": "2009-01-01",
+  "last": "2014-05-22",
+  "rows": 996,
+  "traded_as": [
+   "CRESTANI",
+   "CRESTCOMM"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "bb7b35b0c8b66aa94639b43db89b61f458c43f98f25bb706631d40b52ff429ad"
+ },
+ "CRESTCOMM": {
+  "first": "2009-01-01",
+  "last": "2014-05-22",
+  "rows": 996,
+  "traded_as": [
+   "CRESTANI",
+   "CRESTCOMM"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "bb7b35b0c8b66aa94639b43db89b61f458c43f98f25bb706631d40b52ff429ad"
+ },
+ "DABURPHARM": {
+  "first": "2009-01-01",
+  "last": "2014-01-02",
+  "rows": 1243,
+  "traded_as": [
+   "DABURPHARM",
+   "FKONCO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "8633d3bd38adb771821887c9a704f08555c2d5443eb22dbb6f2fd3734a39b255"
+ },
+ "DCHL": {
+  "first": "2009-01-01",
+  "last": "2012-11-22",
+  "rows": 967,
+  "traded_as": [
+   "DCHL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "623a3963acd53b859899eb9cf2796d152fadc276e2b88acee78e99fad5d21515"
+ },
+ "DENABANK": {
+  "first": "2009-01-01",
+  "last": "2019-03-07",
+  "rows": 2522,
+  "traded_as": [
+   "DENABANK"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "695e0e94f84eb834bf45491559d2271c066255c573392ff62f41e07c62ef0d0d"
+ },
+ "DENSO": {
+  "first": "2010-06-30",
+  "last": "2013-10-28",
+  "rows": 719,
+  "traded_as": [
+   "DENSO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "78201009a059749d0b5c7903c7edbe83ad41c471da89c15a80378d8ddea3c6cb"
+ },
+ "DEWANHOUS": {
+  "first": "2009-01-01",
+  "last": "2021-06-11",
+  "rows": 3081,
+  "traded_as": [
+   "DEWANHOUS",
+   "DHFL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "5f0c960f0be58d8b54f0aeeae750dff01a04590537be7c053d4f9f59e8e1f474"
+ },
+ "DHANI": {
+  "first": "2009-01-01",
+  "last": "2025-10-27",
+  "rows": 3917,
+  "traded_as": [
+   "DHANI",
+   "IBSEC",
+   "IBVENTURES"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "4d4706e5373de47307f261e972211a35c14e75d0497cd975c7142cbf1844eaac"
+ },
+ "DHFL": {
+  "first": "2009-01-01",
+  "last": "2021-06-11",
+  "rows": 3081,
+  "traded_as": [
+   "DEWANHOUS",
+   "DHFL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "5f0c960f0be58d8b54f0aeeae750dff01a04590537be7c053d4f9f59e8e1f474"
+ },
+ "DISHMAN": {
+  "first": "2009-01-01",
+  "last": "2017-05-29",
+  "rows": 2081,
+  "traded_as": [
+   "DISHMAN"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "56692a551a7bcf9cb79f1ea6c869ecbe87a22fb3ee87bd5d136feb2b81021db2"
+ },
+ "DRDATSONS": {
+  "first": "2011-05-27",
+  "last": "2015-05-21",
+  "rows": 937,
+  "traded_as": [
+   "AANJANEYA",
+   "DRDATSONS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "5c3aea77f12f30aa88750fb7bcd176f1abaff5466f6ee6b929480c7b7dcd4411"
+ },
+ "EDUCOMP": {
+  "first": "2009-01-01",
+  "last": "2017-09-22",
+  "rows": 2037,
+  "traded_as": [
+   "EDUCOMP"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "0dff3f3d9478cb951ed86070d65f22136b104daf99475d68c95f318e4aae9aba"
+ },
+ "ELDERPHARM": {
+  "first": "2009-01-01",
+  "last": "2015-11-20",
+  "rows": 1645,
+  "traded_as": [
+   "ELDERPHARM"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "917f1bb71427fcb9265e64c1f03c033c8738484680396e5c7fabaa3d646ae95e"
+ },
+ "EQUITAS": {
+  "first": "2016-04-21",
+  "last": "2023-02-02",
+  "rows": 1685,
+  "traded_as": [
+   "EQUITAS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e063e0419ca7565e2a9d950da5f11ef4d1c514864873d19e72ed0cc52dd72129"
+ },
+ "ERACONS": {
+  "first": "2009-01-01",
+  "last": "2015-12-24",
+  "rows": 1659,
+  "traded_as": [
+   "ERACONS",
+   "ERAINFRA"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "f394753579ec72fa1bdc56b0045d86ca4f44959b9bf90314233182f28d8758cf"
+ },
+ "ERAINFRA": {
+  "first": "2009-01-01",
+  "last": "2015-12-24",
+  "rows": 1659,
+  "traded_as": [
+   "ERACONS",
+   "ERAINFRA"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "f394753579ec72fa1bdc56b0045d86ca4f44959b9bf90314233182f28d8758cf"
+ },
+ "EROSMEDIA": {
+  "first": "2010-10-06",
+  "last": "2024-10-24",
+  "rows": 3306,
+  "traded_as": [
+   "EROSMEDIA"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "81814aa4c545e0d4abaae4e9a433667d1bf60a6e2f431f57be0068e11d21197b"
+ },
+ "ESSAROIL": {
+  "first": "2009-01-01",
+  "last": "2016-02-09",
+  "rows": 1750,
+  "traded_as": [
+   "ESSAROIL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "c9ffafb58d715fd26346418bcbb0ae63aeabe94e0220d2bf69a5dd4dadf7745c"
+ },
+ "ESSARPORTS": {
+  "first": "2009-01-01",
+  "last": "2015-12-23",
+  "rows": 1637,
+  "traded_as": [
+   "ESSARPORTS",
+   "ESSARSHIP"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "2b6caa620cdb6fd180b94c20441b55d66a1a0df7bf667b7a85a5354e7ca2b704"
+ },
+ "ESSDEE": {
+  "first": "2009-01-01",
+  "last": "2019-05-27",
+  "rows": 2182,
+  "traded_as": [
+   "ESSDEE"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "bf14b9508e0965bdbd2a0ad5bf8101311278a0d4ec439eb50802600e6ffa6390"
+ },
+ "EXCELCROP": {
+  "first": "2009-01-01",
+  "last": "2019-08-28",
+  "rows": 2462,
+  "traded_as": [
+   "EXCELCROP"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "750f9909353af81dfd669dc50cd55aa259143bceec7db393e1c70a53743b1ca9"
+ },
+ "FCH": {
+  "first": "2009-01-01",
+  "last": "2018-12-27",
+  "rows": 2400,
+  "traded_as": [
+   "CAPF",
+   "FCH"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "0bb288e9cb540e7207d53547d868638e6339d70ba08b2c666b1778044823f10e"
+ },
+ "FCONSUMER": {
+  "first": "2013-07-18",
+  "last": "2024-05-15",
+  "rows": 2375,
+  "traded_as": [
+   "FCEL",
+   "FCONSUMER",
+   "FVIL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "accc292d793896575dea479ddc120da083e2918cfab6ae02acddd422878bbc42"
+ },
+ "FIRSTLEASE": {
+  "first": "2009-01-01",
+  "last": "2013-12-09",
+  "rows": 1226,
+  "traded_as": [
+   "FIRSTLEASE"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "71f839f97f37f050bd1943c156468d85430a07a5eb434426490963eaf5c6a911"
+ },
+ "FKONCO": {
+  "first": "2009-01-01",
+  "last": "2014-01-02",
+  "rows": 1243,
+  "traded_as": [
+   "DABURPHARM",
+   "FKONCO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "8633d3bd38adb771821887c9a704f08555c2d5443eb22dbb6f2fd3734a39b255"
+ },
+ "FLEXCHEM": {
+  "rows": 0
+ },
+ "FRETAIL": {
+  "first": "2016-09-14",
+  "last": "2022-07-22",
+  "rows": 1442,
+  "traded_as": [
+   "FRETAIL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "cae371d11440021b62a23dbc1c73bc329c654b5ccbb39da686bc0cee755e1ed1"
+ },
+ "FSS": {
+  "rows": 0
+ },
+ "GAMMNINFRA": {
+  "first": "2009-01-01",
+  "last": "2023-01-20",
+  "rows": 3151,
+  "traded_as": [
+   "AJRINFRA",
+   "GAMMNINFRA"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "8284dd40e97283a49430bd7e489c6974a0e5a6fd0ed0bac26820965517b6d350"
+ },
+ "GAMMONIND": {
+  "first": "2009-01-01",
+  "last": "2017-09-22",
+  "rows": 2104,
+  "traded_as": [
+   "GAMMONIND"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "c0321815866c55a33bde809f4d581c579df79840b06e605d8ee5f57a2bc8c8cc"
+ },
+ "GARDENSILK": {
+  "first": "2009-01-01",
+  "last": "2021-01-25",
+  "rows": 2739,
+  "traded_as": [
+   "GARDENSILK"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "16424079ff48297dc7753d3497052a0bc462e2e07edd551048b269c5c032e88b"
+ },
+ "GATI": {
+  "first": "2009-01-01",
+  "last": "2025-11-11",
+  "rows": 4149,
+  "traded_as": [
+   "ACLGATI",
+   "GATI"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "b86772997b08ce60205619949511393c05963fb44ce3d9390d8ba49bfd0f3b99"
+ },
+ "GEODESIC": {
+  "first": "2009-01-01",
+  "last": "2013-12-09",
+  "rows": 1194,
+  "traded_as": [
+   "GEODESIC",
+   "GEOINFO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "0106efcc054be73bee38ec55423b73fee72df3897730d68339475b1b8eeac9f0"
+ },
+ "GEOINFO": {
+  "first": "2009-01-01",
+  "last": "2013-12-09",
+  "rows": 1194,
+  "traded_as": [
+   "GEODESIC",
+   "GEOINFO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "0106efcc054be73bee38ec55423b73fee72df3897730d68339475b1b8eeac9f0"
+ },
+ "GEOMETRIC": {
+  "first": "2009-01-01",
+  "last": "2017-03-10",
+  "rows": 2009,
+  "traded_as": [
+   "GEOMETRIC"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "f9b86af8a3e0d5a6b14cee958d815565586c7ff1dafc0a99590691134c063947"
+ },
+ "GEORGWILIM": {
+  "rows": 0
+ },
+ "GITANJALI": {
+  "first": "2009-01-01",
+  "last": "2018-04-26",
+  "rows": 2308,
+  "traded_as": [
+   "GITANJALI"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "7381fc26b44125c7aa2775c3348ba89a24ba6504caa65ce39dc76a5ec9a57a83"
+ },
+ "GLOBOFFS": {
+  "first": "2009-01-01",
+  "last": "2021-03-12",
+  "rows": 2610,
+  "traded_as": [
+   "GARWOFFS",
+   "GLOBOFFS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "c912652544e2ec1ae09fcfd53440f47dc325c9e6d6c9357fa78cb8421e7fdd99"
+ },
+ "GODAVRFERT": {
+  "first": "2009-01-01",
+  "last": "2026-09-09",
+  "rows": 4273,
+  "traded_as": [
+   "GODAVRFERT",
+   "KNRCON"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "77c9fb01c606a3b098aea74de37a1768ef8a7cd0e468d53ced2ab8ac5b7c7fa4"
+ },
+ "GRUH": {
+  "first": "2009-01-01",
+  "last": "2019-10-15",
+  "rows": 2665,
+  "traded_as": [
+   "GRUH"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "957ed45e9fa619261b251a973d96ae378768cffdf3692c7c51e28f99c3f81911"
+ },
+ "GSKCONS": {
+  "first": "2009-01-01",
+  "last": "2020-04-15",
+  "rows": 2791,
+  "traded_as": [
+   "GSKCONS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e929c366f846ea4d46b5809a61909971e5d9d4065d54f9faab0b109ba6ccf9ff"
+ },
+ "GSPL": {
+  "first": "2009-01-01",
+  "last": "2026-05-11",
+  "rows": 4296,
+  "traded_as": [
+   "GSPL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "6283356f390722ca778634d0bc8b32767c2e1fe86e464b31f2b0b1f476d6d246"
+ },
+ "GTOFFSHORE": {
+  "first": "2009-01-01",
+  "last": "2017-06-21",
+  "rows": 2098,
+  "traded_as": [
+   "GTOFFSHORE"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "c7a8ee4d3a4bd33cc0bc1e41af1fa11051ebcf2f558c9b934eaaf7d8bb2170f4"
+ },
+ "GUJNRECOKE": {
+  "first": "2009-01-01",
+  "last": "2018-02-09",
+  "rows": 2189,
+  "traded_as": [
+   "GUJNRECOKE"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "71292ff4574297c0ef1cea01c9fff8bce79ec514f527674b2f07ef07a2df46e2"
+ },
+ "GUJRATGAS": {
+  "first": "2009-01-01",
+  "last": "2015-05-26",
+  "rows": 1584,
+  "traded_as": [
+   "GUJRATGAS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "5390f8792c5600fbcfa37619655b147142588024b558231df10267314f5fe07c"
+ },
+ "HDFC": {
+  "first": "2009-01-01",
+  "last": "2023-07-12",
+  "rows": 3597,
+  "traded_as": [
+   "HDFC"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "239cbc266d5fa944ccf3865b8dd73205d6d63cd1ff82aa700bf39d36c3e33f78"
+ },
+ "HEXAWARE": {
+  "first": "2009-01-01",
+  "last": "2020-10-30",
+  "rows": 2930,
+  "traded_as": [
+   "HEXAWARE"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "2a7604cbee87c4fc9657cca7fbf4f46c6291d3af3611822ae268342a1281f821"
+ },
+ "HIMACHLFUT": {
+  "first": "2009-01-01",
+  "last": "2026-09-02",
+  "rows": 4153,
+  "traded_as": [
+   "HFCL",
+   "HIMACHLFUT"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "a73e5e70a2e1259d4d8f2b0b528b9266e86253e7df9cf4956d23bd1ee00633b5"
+ },
+ "HINVDIR": {
+  "first": "2009-01-01",
+  "last": "2010-07-07",
+  "rows": 369,
+  "traded_as": [
+   "HINVDIR",
+   "INVSTSMART"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "9d77aa91b81cbce164fb6b9c6ed7e1d8ce2a43cf16d3573c98c6291c236becff"
+ },
+ "HUGHESSOFT": {
+  "rows": 0
+ },
+ "IBP": {
+  "rows": 0
+ },
+ "IBSEC": {
+  "first": "2009-01-01",
+  "last": "2025-10-27",
+  "rows": 3917,
+  "traded_as": [
+   "DHANI",
+   "IBSEC",
+   "IBVENTURES"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "4d4706e5373de47307f261e972211a35c14e75d0497cd975c7142cbf1844eaac"
+ },
+ "IBVENTURES": {
+  "first": "2009-01-01",
+  "last": "2025-10-27",
+  "rows": 3917,
+  "traded_as": [
+   "DHANI",
+   "IBSEC",
+   "IBVENTURES"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "4d4706e5373de47307f261e972211a35c14e75d0497cd975c7142cbf1844eaac"
+ },
+ "ICSA": {
+  "first": "2009-01-01",
+  "last": "2018-01-03",
+  "rows": 2102,
+  "traded_as": [
+   "ICSA"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "35a61e57882c5e5394e5be87cb54c93d2659e6da448a33657234b05fc79df1a0"
+ },
+ "IDFC": {
+  "first": "2009-01-01",
+  "last": "2024-10-09",
+  "rows": 3906,
+  "traded_as": [
+   "IDFC"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "c3baf366480ccc525e629a3f6782911afa16e14747f9475a28260bee74701f84"
+ },
+ "IGFLFERT": {
+  "first": "2009-01-01",
+  "last": "2026-09-09",
+  "rows": 4372,
+  "traded_as": [
+   "IGFLFERT",
+   "KKCL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "eb75a4aea55958f474ffaedf00beee8c17abfd8ba29add90702c54d614fb2955"
+ },
+ "IGS": {
+  "rows": 0
+ },
+ "INDGYPSUM": {
+  "rows": 0
+ },
+ "INDIABULLS": {
+  "first": "2009-01-01",
+  "last": "2013-03-18",
+  "rows": 1047,
+  "traded_as": [
+   "INDIABULLS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "d6807217634da5e2115dadb1ce1e3d6865fee7618859b7269114f9abf7bc0194"
+ },
+ "INDRAYON": {
+  "first": "2009-01-01",
+  "last": "2017-07-04",
+  "rows": 2106,
+  "traded_as": [
+   "ABIRLANUVO",
+   "INDRAYON"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "ac534670876d148dd55cc6d7187df92665b7feddf9b33298ec839181d5a49d9f"
+ },
+ "INFINITE": {
+  "first": "2010-02-03",
+  "last": "2018-12-13",
+  "rows": 2147,
+  "traded_as": [
+   "INFINITE"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "06ac63981b383f5e75d20df9e3b9fa7c2e44e256f9c916a7553757a5535aa274"
+ },
+ "INGVYSYABK": {
+  "first": "2009-01-01",
+  "last": "2015-04-15",
+  "rows": 1556,
+  "traded_as": [
+   "INGVYSYABK",
+   "VYSYABANK"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "14ed7f297f200e18f6aae33ab05767320c3b5221e4eab4d229c80a212f013fde"
+ },
+ "INNOIND": {
+  "first": "2011-05-13",
+  "last": "2015-09-24",
+  "rows": 959,
+  "traded_as": [
+   "INNOIND"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "7cc6ff09524dac6ccdf98fc12682133f7e65e9d4a089ca53cc446bd1df2d6ed4"
+ },
+ "INOXLEISUR": {
+  "first": "2009-01-01",
+  "last": "2023-02-16",
+  "rows": 3468,
+  "traded_as": [
+   "INOXLEISUR"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "dfcd57f1c145369460c8b722bd7555b3308aeefa305fed2c4df16385b3caca4e"
+ },
+ "INVSTSMART": {
+  "first": "2009-01-01",
+  "last": "2010-07-07",
+  "rows": 369,
+  "traded_as": [
+   "HINVDIR",
+   "INVSTSMART"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "9d77aa91b81cbce164fb6b9c6ed7e1d8ce2a43cf16d3573c98c6291c236becff"
+ },
+ "IPCL": {
+  "rows": 0
+ },
+ "ISEC": {
+  "first": "2018-04-04",
+  "last": "2025-03-21",
+  "rows": 1727,
+  "traded_as": [
+   "ISEC"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "ed83c3073a1a61be184a67fb4dbf01666852409e6a250f9961bf680b1bae1bdf"
+ },
+ "ISPATIND": {
+  "first": "2009-01-01",
+  "last": "2013-06-10",
+  "rows": 1103,
+  "traded_as": [
+   "ISPATIND",
+   "JSWISPAT"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "190e86c7ab80e655edff6bbb98f6710abf95b4db68aa2cd7839f2641862ae5e9"
+ },
+ "IVRCLINFRA": {
+  "first": "2009-01-01",
+  "last": "2019-06-06",
+  "rows": 2492,
+  "traded_as": [
+   "IVRCLINFRA"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "55e4f33185de71e63b77042a95d5d9393413813961f3839b7997d7c06c043dd1"
+ },
+ "JAINSTUDIO": {
+  "first": "2009-01-01",
+  "last": "2012-08-17",
+  "rows": 624,
+  "traded_as": [
+   "JAINSTUDIO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "7d7dd63d24c2a487aa612e72706727dd5d03f8f654302f7e703629cfae9be127"
+ },
+ "JBCHEPHARM": {
+  "first": "2009-01-01",
+  "last": "2026-07-16",
+  "rows": 4341,
+  "traded_as": [
+   "JBCHEPHARM"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "1880be89a1b35b6ac76f5c66074185908cf184a363a5947211ab41595b5394a2"
+ },
+ "JBFIND": {
+  "first": "2009-01-01",
+  "last": "2023-01-20",
+  "rows": 2979,
+  "traded_as": [
+   "JBFIND"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "00bdf633ed86f9e162b99be5a7ee2a58b8d0a9fd229429531348ed24ffc015b6"
+ },
+ "JETAIRWAYS": {
+  "first": "2009-01-01",
+  "last": "2019-06-27",
+  "rows": 2596,
+  "traded_as": [
+   "JETAIRWAYS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "42863ca3d84cef009fb524a856abe27525a3566da87521b18b7072b098b80705"
+ },
+ "JINDALIRON": {
+  "rows": 0
+ },
+ "JMTAUTOLTD": {
+  "first": "2009-01-09",
+  "last": "2021-10-22",
+  "rows": 2597,
+  "traded_as": [
+   "JMTAUTOLTD"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "60c750db9f565640be01fcc38e5f60ecd7f4ba6f096e6618bf348a33841b9f16"
+ },
+ "JPASSOCIAT": {
+  "first": "2009-01-01",
+  "last": "2024-06-05",
+  "rows": 3755,
+  "traded_as": [
+   "JPASSOCIAT"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "490efc5789267939348257e012e6ee8856d66c0f474a0fb999d3f7a6aeb46172"
+ },
+ "JPINFRATEC": {
+  "first": "2010-05-21",
+  "last": "2022-05-24",
+  "rows": 2723,
+  "traded_as": [
+   "JPINFRATEC"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "7e49046451f7e05ee9c00c368cb40ab39e3d6358e2b265423d5693fc8af6fe60"
+ },
+ "JSLHISAR": {
+  "first": "2016-02-11",
+  "last": "2023-03-08",
+  "rows": 1752,
+  "traded_as": [
+   "JSLHISAR"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "089fa62c920a78368ca0507da202ca420e0587081050defcc8a6a177772041ab"
+ },
+ "JSWISPAT": {
+  "first": "2009-01-01",
+  "last": "2013-06-10",
+  "rows": 1103,
+  "traded_as": [
+   "ISPATIND",
+   "JSWISPAT"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "190e86c7ab80e655edff6bbb98f6710abf95b4db68aa2cd7839f2641862ae5e9"
+ },
+ "KALYANBRAK": {
+  "rows": 0
+ },
+ "KEMROCK": {
+  "first": "2009-06-16",
+  "last": "2016-05-20",
+  "rows": 1449,
+  "traded_as": [
+   "KEMROCK"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "996713c8fce59048f4cdaeca44126f7419d4aabec0a30ea3060a540b927c1840"
+ },
+ "KGL": {
+  "first": "2009-01-01",
+  "last": "2017-07-19",
+  "rows": 1930,
+  "traded_as": [
+   "KGL",
+   "KNL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "c0535100e13383a9bcb2fcbc9e834182959b1a7c7a33e563b593e6a90ab3a4d1"
+ },
+ "KINETICMOT": {
+  "first": "2009-01-01",
+  "last": "2013-03-21",
+  "rows": 964,
+  "traded_as": [
+   "KINETICMOT"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "ae6a0ef0a67d54f1de4aa15682092cf2ab4bd29b0de2109434e828f9206bc30e"
+ },
+ "KITPLYIND": {
+  "first": "2009-01-01",
+  "last": "2013-06-20",
+  "rows": 796,
+  "traded_as": [
+   "KITPLYIND"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e0b55d2d182ea5cf2995dde8d85ec0950a3f1bc087c001f9d297ce1613d6ff73"
+ },
+ "KOPDRUGS": {
+  "first": "2009-01-01",
+  "last": "2013-08-12",
+  "rows": 715,
+  "traded_as": [
+   "KOPDRUGS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "0fa14c288a623c09944f1cec05042405325372cb28109ba1794b6d433e18749d"
+ },
+ "KOUTONS": {
+  "first": "2009-01-01",
+  "last": "2013-09-16",
+  "rows": 1060,
+  "traded_as": [
+   "KOUTONS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "3042b7f34c1a075e029571dad758e6dd80a7c1e12e55c37bc38af9c21277c8c3"
+ },
+ "KSK": {
+  "first": "2009-01-01",
+  "last": "2020-11-27",
+  "rows": 2542,
+  "traded_as": [
+   "KSK"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "c150bac0c52aa37bae24f8177b6cfdf4a0581f3236fa20713b145310b90c067b"
+ },
+ "KSOILS": {
+  "first": "2009-01-01",
+  "last": "2013-06-20",
+  "rows": 1068,
+  "traded_as": [
+   "KSOILS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "0071c2cb83c1894aa57324697ddb03cd05c2c78b5931e85e8399a864be39cce6"
+ },
+ "KWALITY": {
+  "first": "2010-01-08",
+  "last": "2021-02-23",
+  "rows": 2531,
+  "traded_as": [
+   "KWALITY"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e52f803114c454565abb77ac8fff1bfdea62064c77756beab1e73b9e720bfc9f"
+ },
+ "LAKSHMIEFL": {
+  "first": "2009-01-01",
+  "last": "2018-08-16",
+  "rows": 2302,
+  "traded_as": [
+   "LAKSHMIEFL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "d8d109fae825fd206053a4e90d12de5f76714993566fc605a69ebd15e12ce9dd"
+ },
+ "LAKSHVILAS": {
+  "first": "2009-01-01",
+  "last": "2020-11-25",
+  "rows": 2947,
+  "traded_as": [
+   "LAKSHVILAS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "313b7fbf5bce0b451c7a5c3328728bcca481a39474fe93ffb6cd6319955ac00e"
+ },
+ "LITL": {
+  "first": "2009-01-01",
+  "last": "2018-09-12",
+  "rows": 2213,
+  "traded_as": [
+   "LITL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "21a6ca2a79d547ecd4ef884ba8a82644378e06f72ebbcca305ac960622f1a2f6"
+ },
+ "LML": {
+  "first": "2009-01-01",
+  "last": "2018-05-14",
+  "rows": 2280,
+  "traded_as": [
+   "LML"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "f6fb99d1bfbe69469d4556fdae326593a1737f06b4a1311d350ae4b429b05b00"
+ },
+ "MAARSOFTW": {
+  "first": "2009-01-01",
+  "last": "2009-04-17",
+  "rows": 68,
+  "traded_as": [
+   "MAARSOFTW"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "14f1b6904a2a7414479f55b7aa3843ddc6c03c2f610b3671fac41e4f70a8dcc1"
+ },
+ "MAHINDUGIN": {
+  "first": "2009-01-01",
+  "last": "2014-12-22",
+  "rows": 1333,
+  "traded_as": [
+   "MAHINDUGIN"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e20802c4eaeded22931914ec4525a1154afe9ce85322b524753d14c438520920"
+ },
+ "MANDHANA": {
+  "first": "2010-05-19",
+  "last": "2019-02-13",
+  "rows": 1914,
+  "traded_as": [
+   "MANDHANA"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "2f1506eb46fe4f774554534346f30aa1ba645626ecf42d63d4ffa8ea698594d7"
+ },
+ "MANGCHEFER": {
+  "first": "2009-01-01",
+  "last": "2025-10-30",
+  "rows": 4168,
+  "traded_as": [
+   "MANGCHEFER"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "fca6291bce9150259aa2bc41acc9b5feea602349ec2022eb3c202f5da22370fb"
+ },
+ "MANPASAND": {
+  "first": "2015-07-09",
+  "last": "2019-09-23",
+  "rows": 1039,
+  "traded_as": [
+   "MANPASAND"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "2e79fa70ef1edaa490365dc627cc5c836f2ffa40c9c046a9739271cf836b4f87"
+ },
+ "MATRIXLABS": {
+  "first": "2009-01-01",
+  "last": "2009-08-13",
+  "rows": 150,
+  "traded_as": [
+   "MATRIXLABS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "10fc1aef6733131b89bd0218d18378524eda898bdfcb2b4d7061946e75304062"
+ },
+ "MELSTAR": {
+  "first": "2009-01-01",
+  "last": "2017-05-05",
+  "rows": 1115,
+  "traded_as": [
+   "MELSTAR"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "88f63b87ec74cc09d41f405a54ad188b0c8c541da7884f9ef9a9859a97ab0044"
+ },
+ "MERCATOR": {
+  "first": "2009-01-01",
+  "last": "2022-05-24",
+  "rows": 2898,
+  "traded_as": [
+   "MERCATOR",
+   "MLL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "f973f82a286958a158612ad3ff3a734b17e3ba17972e8a5dfd9d36df2bc9cc97"
+ },
+ "METALFORGE": {
+  "first": "2009-01-01",
+  "last": "2021-02-24",
+  "rows": 2663,
+  "traded_as": [
+   "AHMEDFORGE",
+   "METALFORGE"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "54805d390e2e46c101c97577994ffc5ca1470b1e2aeaa9a94266c57f969bc1c7"
+ },
+ "MICRO": {
+  "first": "2009-01-01",
+  "last": "2010-04-05",
+  "rows": 304,
+  "traded_as": [
+   "MICRO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "cc16f38c5fbf7420c633c175f99d10efc0525cb149fad7152fac6021afa5ed8e"
+ },
+ "MINDTREE": {
+  "first": "2009-01-01",
+  "last": "2022-11-22",
+  "rows": 3440,
+  "traded_as": [
+   "MINDTREE"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "71a1a6ff6eb6c4d8be4052979ebaa5daa4f0afeb2431ccdfe2fe2c0b81fd6546"
+ },
+ "MLL": {
+  "first": "2009-01-01",
+  "last": "2022-05-24",
+  "rows": 2898,
+  "traded_as": [
+   "MERCATOR",
+   "MLL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "f973f82a286958a158612ad3ff3a734b17e3ba17972e8a5dfd9d36df2bc9cc97"
+ },
+ "MONNETISPA": {
+  "first": "2009-01-01",
+  "last": "2023-08-09",
+  "rows": 3431,
+  "traded_as": [
+   "AIONJSW",
+   "JSWISPL",
+   "MONNETISPA"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "61bb184eef36d60b675249ceb31ec1d6f6c436143ab01733a90fd6631083c718"
+ },
+ "MONSANTO": {
+  "first": "2009-01-01",
+  "last": "2019-09-26",
+  "rows": 2657,
+  "traded_as": [
+   "MONSANTO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "ad1f352ccdee85a6841401193247b0c37ba8c78d15da62545242ba6bdef5091d"
+ },
+ "MOSERBAER": {
+  "first": "2009-01-01",
+  "last": "2018-06-06",
+  "rows": 2145,
+  "traded_as": [
+   "MOSERBAER"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "4916f2b245db315471a7eed94565885084d39b13e5775032b8e600447dba1272"
+ },
+ "MVL": {
+  "first": "2009-01-01",
+  "last": "2019-08-16",
+  "rows": 2018,
+  "traded_as": [
+   "MVL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "817a8d654c52b735833c167ee2bbe58498351aa4204470b47b71e15a4d0b3251"
+ },
+ "MYSOREBANK": {
+  "first": "2009-07-28",
+  "last": "2017-03-15",
+  "rows": 1893,
+  "traded_as": [
+   "MYSOREBANK"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "16c729300bf586ca21cb45f781d5e96c18248ca24b27ae5a3dfec467be4fd8a0"
+ },
+ "NAGARFERT": {
+  "first": "2009-01-01",
+  "last": "2011-08-26",
+  "rows": 658,
+  "traded_as": [
+   "NAGARFERT"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "989e005a4ffcfdd511c924f4c4fddf31e27cbd058befd21440ce36bdaa61cf3b"
+ },
+ "NEPCMICON": {
+  "first": "2009-01-01",
+  "last": "2014-06-12",
+  "rows": 1172,
+  "traded_as": [
+   "NEPCMICON"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "fad96fe1e7e621035dbb51693469b3eb2b3287d575c95b8f74896f0ce9e925f1"
+ },
+ "NIRMA": {
+  "first": "2009-01-01",
+  "last": "2011-03-23",
+  "rows": 549,
+  "traded_as": [
+   "NIRMA"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "1252c05d1a63dde8870f805dc42db63adc631ab65db039fb253096e4f1be1bda"
+ },
+ "NITINFIRE": {
+  "first": "2009-01-01",
+  "last": "2019-08-28",
+  "rows": 2504,
+  "traded_as": [
+   "NITINFIRE"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "949369adc1055d80db99f9307af1a6328013f5fb67f563dab7af73810f4974a4"
+ },
+ "NOVAPETRO": {
+  "first": "2009-01-01",
+  "last": "2009-10-17",
+  "rows": 130,
+  "traded_as": [
+   "NOVAPETRO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "98692c6e7b18b7eea118cc1ee3880c4993dc72ae85f51ab5ee67e6ba0b7ba5cb"
+ },
+ "OCL": {
+  "first": "2009-01-01",
+  "last": "2018-10-24",
+  "rows": 2429,
+  "traded_as": [
+   "OCL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "c2fe15144969e409b408f22ea15a9972fb43b5af5c033c48820b77c88ae30aac"
+ },
+ "OENCONNECT": {
+  "rows": 0
+ },
+ "OPTOCIRCUI": {
+  "first": "2009-01-01",
+  "last": "2021-02-19",
+  "rows": 2768,
+  "traded_as": [
+   "OPTOCIRCUI"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "862248264461b26411672e029195619293423b06bf0526ba690a4d6262d1da19"
+ },
+ "ORBITCORP": {
+  "first": "2009-01-01",
+  "last": "2017-02-15",
+  "rows": 2007,
+  "traded_as": [
+   "ORBITCORP"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "8d9d60091ed4542cd64b839c467c0d0e0afff376f825edf1753391f8ef2d7c31"
+ },
+ "ORCHIDCHEM": {
+  "first": "2009-01-01",
+  "last": "2017-09-27",
+  "rows": 2125,
+  "traded_as": [
+   "ORCHIDCHEM",
+   "ORCHIDPHAR"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "0120453fe0eb1e7e2d7770ef908d743c6977334cf1b7533113cae19eb41bc21b"
+ },
+ "ORIENTBANK": {
+  "first": "2009-01-01",
+  "last": "2020-03-20",
+  "rows": 2777,
+  "traded_as": [
+   "ORIENTBANK"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "49a8c4014189de3bee3f97ac9884bd33ff01dbe12da4aa3faaa724126d801624"
+ },
+ "ORIENTINFO": {
+  "rows": 0
+ },
+ "PAREKHPLAT": {
+  "first": "2009-01-01",
+  "last": "2011-08-25",
+  "rows": 548,
+  "traded_as": [
+   "PAREKHPLAT"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e105574a35706ab5129ca86a703c52aa6ddf1eb6a339da362634122dc6371aa8"
+ },
+ "PATNI": {
+  "first": "2009-01-01",
+  "last": "2012-05-18",
+  "rows": 838,
+  "traded_as": [
+   "PATNI"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "1aa85e67f9342608ef5bc2ca67ba69b700dbc954400bb095ce85b094e11cc4e9"
+ },
+ "PENTACOMMU": {
+  "rows": 0
+ },
+ "PENTSFWARE": {
+  "rows": 0
+ },
+ "PHARMACIA": {
+  "rows": 0
+ },
+ "PIPAVAVDOC": {
+  "first": "2009-10-09",
+  "last": "2021-01-22",
+  "rows": 2600,
+  "traded_as": [
+   "PIPAVAVDOC",
+   "PIPAVAVYD",
+   "RDEL",
+   "RNAVAL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e78bbe9f4675f01702910633a29ac51dc503da877aac7421a280d2cdc28e2969"
+ },
+ "PIPAVAVYD": {
+  "first": "2009-10-09",
+  "last": "2021-01-22",
+  "rows": 2600,
+  "traded_as": [
+   "PIPAVAVDOC",
+   "PIPAVAVYD",
+   "RDEL",
+   "RNAVAL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e78bbe9f4675f01702910633a29ac51dc503da877aac7421a280d2cdc28e2969"
+ },
+ "POLARIS": {
+  "first": "2009-01-01",
+  "last": "2018-07-24",
+  "rows": 2360,
+  "traded_as": [
+   "POLARIS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "60c9f30edd777ba4b6bbad2a514cc67f707a4ab1d0b03651daac3e0abb31126c"
+ },
+ "PROVOGUE": {
+  "first": "2009-01-01",
+  "last": "2019-10-24",
+  "rows": 2428,
+  "traded_as": [
+   "PROVOGE",
+   "PROVOGUE"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "45affee555e4241db74b278216c0e41ce7c8c0aff9ef6995397bc336c8a3c6db"
+ },
+ "PSL": {
+  "first": "2009-01-01",
+  "last": "2020-08-17",
+  "rows": 2598,
+  "traded_as": [
+   "PSL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "0cc3b02097d8059ecf895d1312a4f9edd60f84177a3e1632c5d3c3723ebede15"
+ },
+ "PUNJABTRAC": {
+  "first": "2009-01-01",
+  "last": "2009-02-24",
+  "rows": 36,
+  "traded_as": [
+   "PUNJABTRAC"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "11b34202a3e49068b7453c9487692be9fdacadad1715728f53b1182734abf999"
+ },
+ "PUNJLLOYD": {
+  "first": "2009-01-01",
+  "last": "2019-09-23",
+  "rows": 2561,
+  "traded_as": [
+   "PUNJLLOYD"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "2d54c9903f97b877ab1e14d085fe0a3ebded5372fbeda603af92b9a1741d6af0"
+ },
+ "RAINCALCIN": {
+  "rows": 0
+ },
+ "RANBAXY": {
+  "first": "2009-01-01",
+  "last": "2015-04-01",
+  "rows": 1549,
+  "traded_as": [
+   "RANBAXY"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "f61017f0a1b384b0d4fd9c8bc2d20f50146f65ab4e75ba44374034b78c562860"
+ },
+ "RANEBRAKE": {
+  "first": "2009-01-01",
+  "last": "2026-09-09",
+  "rows": 4238,
+  "traded_as": [
+   "NAHARCAP",
+   "RANEBRAKE"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "005b370cb470e0e759c4d63e3120d95433e5759a98b1a377bf6a45c10916a384"
+ },
+ "RASOYPR": {
+  "first": "2011-12-12",
+  "last": "2017-08-07",
+  "rows": 1112,
+  "traded_as": [
+   "RASOYPR"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "dffe8313eb6b2af9c9b7e1e9a0c492cad6a1390b482a9e1e9ca49d8287f41818"
+ },
+ "REIAGRO": {
+  "rows": 0
+ },
+ "REIAGROLTD": {
+  "first": "2009-01-01",
+  "last": "2017-08-07",
+  "rows": 2078,
+  "traded_as": [
+   "REIAGROLTD"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "367592febdb94d2970e7522369e2f1c9d7b6812183a6c009c9f029c3cbb7fdf7"
+ },
+ "REISIXTEN": {
+  "first": "2009-04-27",
+  "last": "2016-11-07",
+  "rows": 1558,
+  "traded_as": [
+   "REISIXTEN"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "988874e6b94b04425ef6688d9cf17d44396b287997a504002d3fdcc6d41378fb"
+ },
+ "RELCAPITAL": {
+  "first": "2009-01-01",
+  "last": "2022-05-24",
+  "rows": 3156,
+  "traded_as": [
+   "RELCAPITAL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "86f996db45254fb58b2e7344d46ac9c27c752e6c66810db35e5fdf64ef5b1cac"
+ },
+ "RELMEDIA": {
+  "first": "2009-01-01",
+  "last": "2014-04-28",
+  "rows": 1206,
+  "traded_as": [
+   "ADLABSFILM",
+   "RELMEDIA"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "29caae866506d1206e6125b0fb289f4bdf90362b750d028b6f48af5a0f7a64ef"
+ },
+ "REVL": {
+  "rows": 0
+ },
+ "RNAVAL": {
+  "first": "2009-10-09",
+  "last": "2021-01-22",
+  "rows": 2600,
+  "traded_as": [
+   "PIPAVAVDOC",
+   "PIPAVAVYD",
+   "RDEL",
+   "RNAVAL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e78bbe9f4675f01702910633a29ac51dc503da877aac7421a280d2cdc28e2969"
+ },
+ "RNRL": {
+  "first": "2009-01-01",
+  "last": "2010-11-09",
+  "rows": 458,
+  "traded_as": [
+   "RNRL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "5daa4de025c74e72d13a2c67aa89c58c4d3e66ee706927e1b084ed72dcffaa14"
+ },
+ "ROLTA": {
+  "first": "2009-01-01",
+  "last": "2022-08-22",
+  "rows": 2945,
+  "traded_as": [
+   "ROLTA"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "3e5d92eb0da42855ab2b6950131b9c5e396f735e4a4ad4603b9c3607570b1a94"
+ },
+ "RPGCABLES": {
+  "first": "2009-03-02",
+  "last": "2010-04-15",
+  "rows": 223,
+  "traded_as": [
+   "RPGCABLES"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "fffbda8f3a5081fad14848eeafd033bd003e83b627678bf9aa24ae310a30f478"
+ },
+ "RPGLS": {
+  "first": "2009-01-01",
+  "last": "2026-09-09",
+  "rows": 1069,
+  "traded_as": [
+   "BRABOURNE",
+   "GKB",
+   "RPGLS",
+   "SEARLEIND"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "80d12ff923e3a2c62c2d360ddcb304aaf36b084c7dfc8ef2c6af982f4cbdcc31"
+ },
+ "RPGTELECOM": {
+  "rows": 0
+ },
+ "RPL": {
+  "first": "2009-01-01",
+  "last": "2009-09-24",
+  "rows": 179,
+  "traded_as": [
+   "RPL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "cbd46dd9b4479835153e3fea4550fa86a9609a6b35543f9a2e240998bd21d200"
+ },
+ "RUCHISOYA": {
+  "first": "2009-01-01",
+  "last": "2019-11-13",
+  "rows": 2597,
+  "traded_as": [
+   "RUCHISOYA"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "54826268f033ea6cebe9d41f955afb3306a9fe0bd225eab5be0b2097d78dda06"
+ },
+ "SAMTEL": {
+  "first": "2009-01-01",
+  "last": "2017-11-21",
+  "rows": 991,
+  "traded_as": [
+   "SAMTEL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "f54a303e25d81992e8675436333ae7114cd4996594e76f360864d9010af890ce"
+ },
+ "SATYAMCOMP": {
+  "first": "2009-01-01",
+  "last": "2013-07-03",
+  "rows": 1120,
+  "traded_as": [
+   "SATYAMCOMP"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "714ec73001e03de33a635acc6db9a67cb2638850f25d329ddfc49046e7463640"
+ },
+ "SB&TINTL": {
+  "first": "2009-01-01",
+  "last": "2012-10-19",
+  "rows": 757,
+  "traded_as": [
+   "SB&TINTL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "349ba3e606d4d9c3ad04c625444ce00b3a6d92d425fad21932149e79bfe3f3ec"
+ },
+ "SBBJ": {
+  "first": "2009-07-21",
+  "last": "2017-03-15",
+  "rows": 1899,
+  "traded_as": [
+   "SBBJ"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "1ba42bd1f0bba55437e72babfa7051c735bcd938951640af3f81c12b88286ae3"
+ },
+ "SBT": {
+  "first": "2009-09-16",
+  "last": "2017-03-15",
+  "rows": 1858,
+  "traded_as": [
+   "SBT"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "0f3386cd2120da3c1a3516af87876257325742fe7726dd78b57c93e49737275a"
+ },
+ "SEARLEIND": {
+  "first": "2009-01-01",
+  "last": "2026-09-09",
+  "rows": 1069,
+  "traded_as": [
+   "BRABOURNE",
+   "GKB",
+   "RPGLS",
+   "SEARLEIND"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "80d12ff923e3a2c62c2d360ddcb304aaf36b084c7dfc8ef2c6af982f4cbdcc31"
+ },
+ "SEINVEST": {
+  "first": "2009-06-16",
+  "last": "2011-10-03",
+  "rows": 575,
+  "traded_as": [
+   "SEINVEST"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "c8fdabd7853b2dbbb40e8f6caf957e096e4890bc862c58ff54e60a4fd40ef6aa"
+ },
+ "SFCL": {
+  "first": "2013-11-07",
+  "last": "2017-03-30",
+  "rows": 767,
+  "traded_as": [
+   "SFCL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "cf3cffd5eb95277b46c16b8669638c894ce297c2c787be1bd13d132d0e807727"
+ },
+ "SHASUNCHEM": {
+  "first": "2009-01-01",
+  "last": "2015-11-17",
+  "rows": 1477,
+  "traded_as": [
+   "SHASUNCHEM",
+   "SHASUNPHAR"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "f3e3c2984bf561f3d0101cbe62e21b3003520689791e1db55c87c2357998e508"
+ },
+ "SHASUNPHAR": {
+  "first": "2009-01-01",
+  "last": "2015-11-17",
+  "rows": 1477,
+  "traded_as": [
+   "SHASUNCHEM",
+   "SHASUNPHAR"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "f3e3c2984bf561f3d0101cbe62e21b3003520689791e1db55c87c2357998e508"
+ },
+ "SHILPI": {
+  "first": "2011-04-08",
+  "last": "2018-08-16",
+  "rows": 1673,
+  "traded_as": [
+   "SHILPI"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e5cd6593defaa00a93498667287f98f6503527f68a575d981c04ecf1e27ca4a0"
+ },
+ "SHLAKSHMI": {
+  "first": "2009-01-01",
+  "last": "2015-07-10",
+  "rows": 1382,
+  "traded_as": [
+   "SHLAKSHMI"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "975665b088b9d3b3f5519ad5b7f8e35e913a04b5bdab3acf79b7c9a919c8d380"
+ },
+ "SHREEASHTA": {
+  "first": "2009-01-01",
+  "last": "2014-06-19",
+  "rows": 1085,
+  "traded_as": [
+   "SHREEASHTA"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "1053f40896f8e93907cb5afb991b2b1879c61febdffd227c700c3e59a000844a"
+ },
+ "SHRENUJ": {
+  "first": "2009-01-01",
+  "last": "2017-01-23",
+  "rows": 1972,
+  "traded_as": [
+   "SHRENUJ"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "d78b063920e07368103c7590d17c4e7843706feda5eddf8def82caba63d67238"
+ },
+ "SHRIRAMCIT": {
+  "first": "2009-01-02",
+  "last": "2022-11-28",
+  "rows": 3437,
+  "traded_as": [
+   "SHRIRAMCIT"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "ede1289ba5132c66ad6c427c0368748d4cd4a97c74748d5fc189f7414313c1e4"
+ },
+ "SINTEX": {
+  "first": "2009-01-01",
+  "last": "2022-03-21",
+  "rows": 2952,
+  "traded_as": [
+   "SINTEX"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "07841fea355f061b1a2ceaad503cd4ef862349afb697e8f55a32898b5a3294fe"
+ },
+ "SIRPAPER": {
+  "first": "2009-01-01",
+  "last": "2015-07-10",
+  "rows": 1259,
+  "traded_as": [
+   "SIRPAPER"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "94934e34c788de80d0ad2e8cb81183e8d4fa80c84a0b52e864dc37c738ded215"
+ },
+ "SKSMICRO": {
+  "first": "2010-08-16",
+  "last": "2019-07-02",
+  "rows": 2140,
+  "traded_as": [
+   "BHARATFIN",
+   "SKSMICRO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "19441145d00a33057db79bdf13bec4625a3ca5403b273a5b6d9adf8ef873b781"
+ },
+ "SKUMARSYNF": {
+  "first": "2009-01-01",
+  "last": "2015-03-30",
+  "rows": 1401,
+  "traded_as": [
+   "SKUMARSYNF"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "5895d86b88fdb6ad2e5fc4c226a5444e38e83d6752bad93badf943df4c1ad60b"
+ },
+ "SNOWCEMIND": {
+  "rows": 0
+ },
+ "SPICETELE": {
+  "first": "2009-01-01",
+  "last": "2010-03-10",
+  "rows": 289,
+  "traded_as": [
+   "SPICETELE"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "2fefe0d236f7606a15c38b40735dc44561ed9e2e26698304cb8e9b188f0cff9e"
+ },
+ "SPTL": {
+  "first": "2017-08-23",
+  "last": "2023-03-02",
+  "rows": 1049,
+  "traded_as": [
+   "SPTL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "0c2813a6e5c0f7770340b8e521d6897d35f593c1593d79be95481846cab1ce2c"
+ },
+ "SQRDSFWARE": {
+  "rows": 0
+ },
+ "SREINFRA": {
+  "first": "2009-01-01",
+  "last": "2022-05-24",
+  "rows": 3227,
+  "traded_as": [
+   "SREINFRA",
+   "SREINTFIN"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "4a8ff521fd95418a9f05c7641c4bbb406d96cb0b96caf32ca11a1532027fc013"
+ },
+ "SREINTFIN": {
+  "first": "2009-01-01",
+  "last": "2022-05-24",
+  "rows": 3227,
+  "traded_as": [
+   "SREINFRA",
+   "SREINTFIN"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "4a8ff521fd95418a9f05c7641c4bbb406d96cb0b96caf32ca11a1532027fc013"
+ },
+ "SRIPIPES": {
+  "first": "2009-01-01",
+  "last": "2022-01-12",
+  "rows": 3153,
+  "traded_as": [
+   "LANCOIN",
+   "SRIPIPES"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "4705c4aba60e1a0e9d164c7f75f4b98edc04da94ab2a14e097b7b8e8ad01c7b4"
+ },
+ "STER": {
+  "first": "2009-01-01",
+  "last": "2013-08-26",
+  "rows": 1156,
+  "traded_as": [
+   "STER"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "2c82f2de6c1cc550247fb8057f23982eb433fb130395a49505cb175e13663cb1"
+ },
+ "STERLINBIO": {
+  "first": "2009-01-01",
+  "last": "2018-02-21",
+  "rows": 2079,
+  "traded_as": [
+   "STERLINBIO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "3d3e8dee2b19f42b50068274868d696934d683581e86f8ebe204d77c85912100"
+ },
+ "SUPPETRO": {
+  "first": "2009-01-01",
+  "last": "2026-09-09",
+  "rows": 4206,
+  "traded_as": [
+   "SPLPETRO",
+   "SUPPETRO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "ba629231bca968eecec29cff8a34729cfb06044f4df9fe4798839f785eafa737"
+ },
+ "SYNDIBANK": {
+  "first": "2009-01-01",
+  "last": "2020-03-19",
+  "rows": 2776,
+  "traded_as": [
+   "SYNDIBANK"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "7b6e8debe108e00bc4d3d5166715150cefb6ee028d483492e56b6a3965650170"
+ },
+ "TATACOFFEE": {
+  "first": "2009-01-01",
+  "last": "2024-01-12",
+  "rows": 3724,
+  "traded_as": [
+   "CONSCOFFEE",
+   "TATACOFFEE"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "bd43b3777f175c2433c631c1cbfc67dafb5c68fa8e992c805f3eead43843c18b"
+ },
+ "TATAFIN": {
+  "rows": 0
+ },
+ "TATAMETALI": {
+  "first": "2009-01-01",
+  "last": "2024-02-05",
+  "rows": 3590,
+  "traded_as": [
+   "TATAMETALI"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e5ad0e3baac985da040ca953603b79691fd961ce88391e6f136cd9edbe175f3b"
+ },
+ "TATAMTRDVR": {
+  "first": "2009-01-06",
+  "last": "2024-08-29",
+  "rows": 3824,
+  "traded_as": [
+   "TATAMTRDVR"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "294bf339cc5fd87c60fcd4b2c922b62261dd132932d6dea3c60f278f404ff363"
+ },
+ "TATASPONGE": {
+  "first": "2009-01-01",
+  "last": "2023-11-16",
+  "rows": 3619,
+  "traded_as": [
+   "TATASPONGE",
+   "TATASTLLP"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "f7e62d866841fe5d51d04922381debd58d0390e198f95c4cfc5fc3e228e82213"
+ },
+ "TATASTLBSL": {
+  "first": "2009-01-01",
+  "last": "2021-08-05",
+  "rows": 3061,
+  "traded_as": [
+   "BHUSANSTL",
+   "TATASTLBSL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "c31d846568703eae8206dfaf691a642d080033ec5ba8a6bf516152c0ab7c0f2c"
+ },
+ "TATASTLLP": {
+  "first": "2009-01-01",
+  "last": "2023-11-16",
+  "rows": 3619,
+  "traded_as": [
+   "TATASPONGE",
+   "TATASTLLP"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "f7e62d866841fe5d51d04922381debd58d0390e198f95c4cfc5fc3e228e82213"
+ },
+ "TATAVASHIS": {
+  "rows": 0
+ },
+ "TCNSBRANDS": {
+  "first": "2018-07-30",
+  "last": "2024-09-02",
+  "rows": 1507,
+  "traded_as": [
+   "TCNSBRANDS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "64e52b061c973ad48e9230c20e619df3432a57103535de9405706083673d9bd9"
+ },
+ "TECHNO": {
+  "first": "2010-11-25",
+  "last": "2018-08-07",
+  "rows": 1912,
+  "traded_as": [
+   "TECHNO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "8e7952ac40ac81e3c780816fc18bd1ba791007f0906b5462530cbbb4d9c9b2a3"
+ },
+ "THIRUSUGAR": {
+  "first": "2009-01-01",
+  "last": "2019-05-27",
+  "rows": 2211,
+  "traded_as": [
+   "THIRUSUGAR"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "c101d5aed7edf71abf0b61b0c7cf6e526acc5642256e33c9de8b8700597fb398"
+ },
+ "TINPLATE": {
+  "first": "2009-01-01",
+  "last": "2024-01-18",
+  "rows": 3613,
+  "traded_as": [
+   "TINPLATE"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "516c01be533c6d7c97e987f72d21957bc42262e266ec2055f3c12d3a61fb013b"
+ },
+ "TODAYS": {
+  "first": "2009-01-01",
+  "last": "2018-02-06",
+  "rows": 1477,
+  "traded_as": [
+   "TODAYS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "ab0e1a9040adcbc04d98fc6bb807ff27e771ab0242d0b9c358f433194ea10c7d"
+ },
+ "TORRENTAEC": {
+  "rows": 0
+ },
+ "TUBEINVEST": {
+  "first": "2009-01-01",
+  "last": "2026-09-09",
+  "rows": 4349,
+  "traded_as": [
+   "CHOLAHLDNG",
+   "TIFIN",
+   "TUBEINVEST"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "f828bbc942ab168b18ab1e659469c7d550a9d8f6ab81abf69b9a90f361026d34"
+ },
+ "TULIP": {
+  "first": "2009-01-01",
+  "last": "2014-07-08",
+  "rows": 1272,
+  "traded_as": [
+   "TULIP"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "5a27144f016e62fe98ec475495ea7099646a9aa6a72dd2acf9dce622c0da6b71"
+ },
+ "TV-18": {
+  "first": "2009-01-01",
+  "last": "2011-06-20",
+  "rows": 610,
+  "traded_as": [
+   "TV-18"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "81bffbba2356a7b5b9adc37d9011527414c4d3c62a25759289c4df53cbf2bd29"
+ },
+ "TV18": {
+  "rows": 0
+ },
+ "TV18BRDCST": {
+  "first": "2009-01-01",
+  "last": "2026-09-09",
+  "rows": 4299,
+  "traded_as": [
+   "EMULTIMQ",
+   "GBN",
+   "IBN18",
+   "TV18BRDCST"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e4a6e51f5bb7d756816aa825471a02a75a79bcf85b8f33c90b700ed5f0099d24"
+ },
+ "UBHOLDINGS": {
+  "first": "2009-01-01",
+  "last": "2017-05-19",
+  "rows": 2047,
+  "traded_as": [
+   "UBHOLDINGS"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "f94325ba5cca559ee4599ea3b846522e27ecd8821088ee659016df5089fd8a77"
+ },
+ "UJJIVAN": {
+  "first": "2016-05-10",
+  "last": "2024-05-02",
+  "rows": 1978,
+  "traded_as": [
+   "UJJIVAN"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "7d51b1cc8fa81063c43e54047ab5f495c9cbfc2944f3b9a2ac6fb3241c958c52"
+ },
+ "UNITEDBNK": {
+  "first": "2010-03-18",
+  "last": "2020-03-20",
+  "rows": 2483,
+  "traded_as": [
+   "UNITEDBNK"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "fa338947bdb23ea427f8dcf4f4ad9ed1ac1c968f3ae39854f910fb018b40e4c5"
+ },
+ "UNITY": {
+  "first": "2009-01-01",
+  "last": "2018-08-29",
+  "rows": 2323,
+  "traded_as": [
+   "UNITY"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "9d900bec430829f07690d332c75ec54c0ca72dd3f96df22fe9a37d4cf4564f57"
+ },
+ "UNIWESTBNK": {
+  "first": "2009-01-01",
+  "last": "2026-09-09",
+  "rows": 4381,
+  "traded_as": [
+   "DCB",
+   "DCBBANK",
+   "UNIWESTBNK"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "b659defb018ee5639c737dc0f81fa35de98f47bb8ef0090aa8e107e8b7cc25ae"
+ },
+ "UTTAMSTL": {
+  "first": "2009-01-01",
+  "last": "2022-05-24",
+  "rows": 2956,
+  "traded_as": [
+   "UTTAMSTL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "cb67898437c3cfb19fb869b10e71c77348f647257a489193701d369748314b53"
+ },
+ "VALUEIND": {
+  "first": "2009-01-01",
+  "last": "2017-12-06",
+  "rows": 2165,
+  "traded_as": [
+   "VALUEIND",
+   "VDOCONAPPL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "1175cf727daf4e44362ecf9686f794eab9784422b46684f77c2d724b0af22475"
+ },
+ "VARUNSHIP": {
+  "first": "2009-01-01",
+  "last": "2015-07-10",
+  "rows": 1538,
+  "traded_as": [
+   "VARUNSHIP"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "e6aac7c87e16613f12b0f4945ac0d31e365a80ccc5a676af7b0c51e791832f27"
+ },
+ "VDOCONAPPL": {
+  "first": "2009-01-01",
+  "last": "2017-12-06",
+  "rows": 2165,
+  "traded_as": [
+   "VALUEIND",
+   "VDOCONAPPL"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "1175cf727daf4e44362ecf9686f794eab9784422b46684f77c2d724b0af22475"
+ },
+ "VDOCONINTL": {
+  "rows": 0
+ },
+ "VIDEOIND": {
+  "first": "2009-01-01",
+  "last": "2018-05-21",
+  "rows": 2324,
+  "traded_as": [
+   "VIDEOIND"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "9768f69f7631c043e0d2aa47363f67340711cdbc92f0f6091a9d66c01435e22b"
+ },
+ "VIJAYABANK": {
+  "first": "2009-01-01",
+  "last": "2019-03-07",
+  "rows": 2522,
+  "traded_as": [
+   "VIJAYABANK"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "0d7d110258bc369a5bff5443a722c3e1f84785336002fdf52f2b62d131d154be"
+ },
+ "VISHALEXPO": {
+  "first": "2009-01-01",
+  "last": "2009-11-13",
+  "rows": 124,
+  "traded_as": [
+   "VISHALEXPO"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "d0b2eb2147d3b61fcb93c05c6a1038e1aad346d9524c509b8988b57688a6951e"
+ },
+ "VISUALSOFT": {
+  "rows": 0
+ },
+ "VYSYABANK": {
+  "first": "2009-01-01",
+  "last": "2015-04-15",
+  "rows": 1556,
+  "traded_as": [
+   "INGVYSYABK",
+   "VYSYABANK"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "14ed7f297f200e18f6aae33ab05767320c3b5221e4eab4d229c80a212f013fde"
+ },
+ "WELLWININD": {
+  "rows": 0
+ },
+ "WYETH": {
+  "first": "2009-01-01",
+  "last": "2014-12-09",
+  "rows": 1470,
+  "traded_as": [
+   "WYETH",
+   "WYETHLEDE"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "799c2249e93f90f60fc8423060f4d67952f00b994e33a92abbb26c753de8d29b"
+ },
+ "WYETHLEDE": {
+  "first": "2009-01-01",
+  "last": "2014-12-09",
+  "rows": 1470,
+  "traded_as": [
+   "WYETH",
+   "WYETHLEDE"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "799c2249e93f90f60fc8423060f4d67952f00b994e33a92abbb26c753de8d29b"
+ },
+ "YOKOGAWA": {
+  "rows": 0
+ },
+ "ZANDUPHARM": {
+  "first": "2009-01-01",
+  "last": "2018-05-23",
+  "rows": 2201,
+  "traded_as": [
+   "ZANDUPHARM",
+   "ZANDUREALT"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "8840cabd71ac9760ec81e819527400735c5cdd585cf2825b195a1d2372503ca7"
+ },
+ "ZENITHCOMP": {
+  "first": "2009-01-01",
+  "last": "2016-03-10",
+  "rows": 1382,
+  "traded_as": [
+   "ZENITHCOMP"
+  ],
+  "basis": "gdf-raw",
+  "sha256": "7b761b1281c68fcec4224cf0246c41daada4d5c13d27e056218eccdc65e6a765"
+ }
+}

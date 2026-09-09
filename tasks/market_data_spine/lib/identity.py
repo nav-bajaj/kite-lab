@@ -36,7 +36,8 @@ HAND_RENAMES = [
     ("SHYAMTELE", "SHYAMTEL", "2006-07-25"),
     ("RAMANEWSPR", "RAMANEWS", "2006-07-21"),
     ("CHEMPLAST", "CHEMPLASTS", "2021-08-24"),  # delisted 2012, re-IPO 2021 as Chemplast Sanmar; same business, see note
-    ("MAX", "MAXIND", "2016-02-26"),            # Max India demerger 2016; MAX became Max Financial (MFSL), MAXIND new line
+    # NOT ("MAX","MAXIND"): MAX became MFSL in 2016 (NSE master has it); MAXIND is a new line.
+    # Encoding that edge merged two live companies and interleaved their rows.
 ]
 
 # membership symbol -> [(before_date, historical symbol)]; the member before
@@ -97,6 +98,21 @@ class Identity:
             union(a.index[-1], b.index[0]); self.n_edges += 1
         self.comp = [find(i) for i in range(n)]
         w["company"] = self.comp
+        # audit: two different tickers of one company trading on the same days
+        # means a wrong merge (a reused symbol, a bad edge); log, do not hide
+        self.overlaps = []
+        for c, g in w.groupby("company"):
+            if g["symbol"].nunique() < 2:
+                continue
+            g = g.sort_values("first_seen")
+            for i in range(1, len(g)):
+                prev = g.iloc[:i]
+                cur = g.iloc[i]
+                ov = prev[(prev["last_seen"] - cur["first_seen"]).dt.days > 5]
+                ov = ov[ov["symbol"] != cur["symbol"]]
+                for o in ov.itertuples():
+                    self.overlaps.append((o.symbol, cur["symbol"], str(max(o.first_seen, cur["first_seen"]).date()),
+                                          str(min(o.last_seen, cur["last_seen"]).date())))
         self.by_company = {c: g for c, g in w.groupby("company")}
         self.company_of_symbol = {}
         for r in w.itertuples():
