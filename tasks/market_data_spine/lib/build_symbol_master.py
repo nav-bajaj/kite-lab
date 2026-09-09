@@ -100,6 +100,12 @@ def load_bhavcopy() -> tuple[pd.DataFrame, pd.DataFrame]:
             print(f"  bhavcopy {i+1}/{len(files)}", flush=True)
     eq = pd.concat(frames, ignore_index=True)
     eq["isin"] = eq["isin"].where(eq["isin"].notna() & (eq["isin"].astype(str).str.len() == 12), None)
+    # equity only: INE (ordinary) and IN9 (DVR lines); INF are fund/ETF units and
+    # must never join an equity's identity (an ETF's first PREVCLOSE once matched
+    # TV18 Broadcast's last close by coincidence)
+    fund = eq["isin"].notna() & ~eq["isin"].astype(str).str.startswith(("INE", "IN9"))
+    print(f"    dropping {int(fund.sum()):,} fund/ETF rows ({eq.loc[fund, 'symbol'].nunique()} symbols)")
+    eq = eq[~fund]
     names = pd.concat(udiff_names, ignore_index=True) if udiff_names else pd.DataFrame(columns=["date", "isin", "name"])
     return eq, names
 

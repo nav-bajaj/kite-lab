@@ -200,3 +200,13 @@ names: Kite adjusted, from 2000, is the basis.
 ≥ 95% of the index size resolved and traded on every event date from
 2006-01-01, ≥ 98% from 2016-01-01. The retune's in-sample window can then
 be 2006-2015 with 2016-2026 out of sample.
+
+## D-6, note added 2026-09-10 — the mechanism is under revision
+
+Measured the same day: Kite dividend-adjusts only from about late 2023
+(RESULTS.md, Phase 3). The decision's intent — a total-return basis — is
+unaffected; its mechanism — Kite's series as the basis — is not achievable
+for history. Proposed replacement: bhavcopy raw × NSE-filed factors,
+applied on read, for every symbol; Kite becomes the cross-check. Whether
+the default view is total-return or price-return is the founder's call,
+pending. Nothing published derives from either yet.

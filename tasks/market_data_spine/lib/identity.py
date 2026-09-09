@@ -49,6 +49,9 @@ LINE_OVERRIDES = {
     "FLUOROCHEM": [("2019-10-16", "GUJFLUORO")],    # pre-demerger Gujarat Fluorochemicals = GFLLIMITED line
     "GATEWAY":    [("2022-03-22", "GDL")],          # Gateway Distriparks, new ISIN on the 2022 merger
     "MAXIND":     [("2016-02-26", "MAX")],          # pre-2016 Max India = the MAX line
+    "GUJGASLTD":  [("2015-09-15", "GUJRATGAS")],    # old Gujarat Gas (INE374A01029) merged into GSPC Distribution; new line listed 2015-09-15
+    "GUJENERGY":  [("2015-09-15", "GUJRATGAS")],    # same company, renamed Gujarat Energy 2026-07
+    "DALBHARAT":  [("2019-01-22", "DALMIABHA")],    # old Dalmia Bharat merged into Odisha Cement, relisted 2019 as DALBHARAT (INE00R701025)
 }
 
 

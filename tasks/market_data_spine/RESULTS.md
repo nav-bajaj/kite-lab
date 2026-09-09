@@ -90,3 +90,48 @@ The shortfall below index size on early dates is the unresolved residue
 (Phase 1); the +1 is the Tata Motors DVR line. `lib/validate.py` from the
 reconstruction re-run against these files: today exact, 2022 factsheets
 exact (the canonical-symbol mapping does not change membership, only keys).
+
+## Phase 3 — fresh price pull (2026-09-10) — GATE MET, basis decision reopened
+
+**Kite pull.** 1,318 targets: 966 Kite NSE, 75 Kite BSE, 277 on neither.
+1,041 series pulled, 2000→2026-09-09, zero errors, 35.9 min; four
+duplicate-date rows (two candles for one day) normalised away. Manifest
+with per-file hash and pull time in `prices/kite_manifest.json`.
+
+**Bhavcopy raw layer.** 1,326 company series exported from the archive,
+keyed by canonical symbol and chained through the identity layer (INFY's
+file opens 2005 as INFOSYSTCH; COLPAL's as COLGATE), EQ series preferred.
+290 carry `delisted_on` (D-9). Fund/ETF units (INF ISINs, 515 symbols)
+were dropped from the archive after one joined an equity's identity on a
+PREVCLOSE coincidence. Two more line overrides from evidence: Gujarat Gas
+(new line listed 2015-09-15) and Dalmia Bharat (relisted 2019-01-22).
+
+**GDF second opinion** for the non-Kite names: running.
+
+**Gate, membership against price files, minimum per year:**
+
+| | Nifty 50 | Nifty 100 | LargeMidcap 250 | Nifty 500 |
+|---|---|---|---|---|
+| 2006-2009 | 98-100 | 99-100 | 98.0-98.8 | 98.0-98.6 |
+| 2010-2015 | 98-100 | 99-100 | 98.4-100 | 98.4-99.4 |
+| 2016-2019 | 100 | 100 (+DVR) | 100 | 98.6-99.6 |
+| 2020-2026 | 100 | 100 | 100 | 99.8-100 |
+
+Met: ≥95% from 2006 (worst 98.0), ≥98% from 2016 (worst 98.6), ≥99% from
+2020 (worst 99.8).
+
+### Finding: Kite's series is dividend-adjusted only from ~2024
+
+kite ÷ bhavcopy per year on long-history payers: COALINDIA flat at 0.9309
+for 2010-2023 despite 1-3 dividends every year, stepping only in 2024,
+2025, 2026; ACC exactly 1.000 for 2005-2023 with a dividend every year;
+ABB's only step is its 2007 1:5 split. Kite's history is price-return
+(splits, bonus) until roughly late 2023 and total-return after — a basis
+seam inside the feed. Its split and bonus factors match NSE's filings to
+the tick (31 events, 100% within 0.2%).
+
+Consequence: "Kite adjusted as the basis" (D-6) is not available for
+history. Both candidate bases are built from the bhavcopy raw layer and
+the filings table, applied on read; Kite is the cross-check for whatever
+it covers. Founder's call between total-return (A) and price-return (B)
+requested 2026-09-10; both views will be emitted.
