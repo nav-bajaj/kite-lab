@@ -1,0 +1,5 @@
+basis,signal,n_symbols,start,end,years,cagr_pct,vol_pct,sharpe,sortino,max_dd_pct,calmar,n_buys,buys_per_year,win_rate_pct,avg_win_pct,avg_loss_pct,median_hold_days,exit_mix,pct_gt_100,bench_cagr_pct,alpha_cagr_pp
+"survivorship-free (recon, 854 syms)",TL25v3,854,2017-01-09,2026-08-21,9.61,22.66,21.93,1.03,1.17,-40.5,0.56,1388,144.4,45.7,21.09,-8.72,56,"{'rank': 1113, 'stop': 181}",1.55,13.95,8.7
+"survivorship-free (recon, 854 syms)",S2_D,854,2017-01-09,2026-08-21,9.61,20.05,19.99,1.0,1.14,-30.69,0.65,1756,182.7,42.0,14.65,-6.34,28,{'rank': 1708},0.59,13.95,6.09
+snapshot (production membership),TL25v3,517,2017-01-09,2026-08-21,9.61,37.64,22.57,1.67,1.92,-40.77,0.92,1314,136.7,47.9,26.77,-8.75,56,"{'rank': 1075, 'stop': 189}",2.93,13.95,23.69
+snapshot (production membership),S2_D,517,2017-01-09,2026-08-21,9.61,35.29,21.12,1.67,1.91,-27.51,1.28,1704,177.3,43.7,18.31,-6.39,28,{'rank': 1664},1.32,13.95,21.34

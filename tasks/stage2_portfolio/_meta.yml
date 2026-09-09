@@ -1,0 +1,10 @@
+name: stage2_portfolio
+status: shipped
+opened: 2026-09-09
+closed: 2026-09-09  # addendum same day: founder spec (variant E)
+related_commits: []
+supersedes: []
+depends_on:
+  - index_reconstruction
+  - universe_membership
+  - vcp_l6_study
