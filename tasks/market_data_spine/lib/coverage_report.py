@@ -9,8 +9,10 @@ counts against coverage rather than vanishing.
 """
 from __future__ import annotations
 
-import sys
+import os, sys
 import pandas as pd
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from identity import Identity
 
 REPO = "/Users/navdeep/kite-lab"
 RECON = f"{REPO}/tasks/index_reconstruction/data"
@@ -24,35 +26,17 @@ def main(start="2016-01-01"):
     eq = pd.read_parquet(f"{OUT}/bhavcopy_eq.parquet", columns=["date", "symbol"])
     traded = set(zip(eq["date"].dt.date, eq["symbol"]))
     days = sorted(set(eq["date"].dt.date))
-    # symbol -> ISINs it ever carried; ISIN -> (symbol, window) so a member listed
-    # under today's ticker is found under the ticker it traded as on the day
-    win = pd.read_csv(f"{OUT}/symbol_master.csv", parse_dates=["first_seen", "last_seen"])
-    isins_of = win.groupby("symbol")["isin"].agg(set).to_dict()
-    wins_of = {k: list(zip(g["symbol"], g["first_seen"].dt.date, g["last_seen"].dt.date))
-               for k, g in win.groupby("isin")}
+    ident = Identity()
+    print(f"identity: {ident.w['company'].nunique():,} companies over {len(ident.w):,} windows, {ident.n_edges} rename edges joined")
 
-    def traded_on(sym: str, td) -> bool:
+    def traded_on(sym: str, td, d) -> bool:
+        sym = Identity.override(sym, d)
         if (td, sym) in traded:
             return True
-        # two hops: today's ticker -> its ISINs -> tickers under them -> THEIR
-        # ISINs (a face-value split changes the ISIN, not the symbol)
-        seen_isin, seen_sym, frontier = set(), {sym}, {sym}
-        for _ in range(2):
-            new = set()
-            for s1 in frontier:
-                for isin in isins_of.get(s1, ()):
-                    if isin in seen_isin or isin.startswith("SYM:"):
-                        continue
-                    seen_isin.add(isin)
-                    for s2, a, b in wins_of.get(isin, ()):
-                        if a <= td <= b and (td, s2) in traded:
-                            return True
-                        if s2 not in seen_sym:
-                            seen_sym.add(s2); new.add(s2)
-            frontier = new
-        return False
+        return any((td, s2) in traded for s2 in ident.symbols_on(sym, d))
+
     res = pd.read_csv(f"{OUT}/resolution.csv", parse_dates=["spell_from", "spell_to", "symbol_from", "symbol_to"])
-    res = res[res["symbol"].notna() & res["method"].str.replace("+isin-set", "", regex=False).isin(["norm-exact", "token-exact", "manual-isin", "manual-symbol", "namechange-master"])]
+    res = res[res["symbol"].notna() & res["method"].str.replace("+isin-set", "", regex=False).str.replace("+symbol-chain", "", regex=False).isin(["norm-exact", "token-exact", "manual-isin", "manual-symbol", "namechange-master"])]
     rows = []
     for idx, fn in FILES.items():
         m = pd.read_csv(f"{RECON}/{fn}", parse_dates=["effective_from", "effective_to"])
@@ -71,7 +55,7 @@ def main(start="2016-01-01"):
             for name, g in extra.groupby("company_name"):               # leftovers: keyed by company
                 members.setdefault(f"name:{name}", set()).update(g["symbol"])
             n_res = len(members)
-            n_trd = sum(any(traded_on(s, td) for s in ss) for ss in members.values())
+            n_trd = sum(any(traded_on(s, td, d) for s in ss) for ss in members.values())
             rows.append((idx, d.date(), SIZE[idx], n_res, n_trd, round(100 * n_trd / SIZE[idx], 1)))
     df = pd.DataFrame(rows, columns=["index", "date", "size", "resolved", "traded_that_day", "coverage_pct"])
     df.to_csv(f"{OUT}/qa_coverage.csv", index=False)

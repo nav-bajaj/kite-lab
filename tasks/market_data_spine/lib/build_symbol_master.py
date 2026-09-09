@@ -318,7 +318,7 @@ def resolve_names(names: pd.DataFrame, windows: pd.DataFrame, name_masters: pd.D
         if name in BY_NAME:
             cands, method = {BY_NAME[name]}, "manual-isin"
         elif name in SYMBOL_HINTS:
-            hit = windows[windows["symbol"].isin(SYMBOL_HINTS[name]) & ~windows["isin"].str.startswith("SYM:")
+            hit = windows[windows["symbol"].isin(SYMBOL_HINTS[name])
                           & (windows["first_seen"] <= d1) & (windows["last_seen"] >= d0)]
             cands, method = set(hit["isin"]), "manual-symbol"
         else:
@@ -352,6 +352,17 @@ def resolve_names(names: pd.DataFrame, windows: pd.DataFrame, name_masters: pd.D
             continue
         isin = cands[0]
         w = windows[windows["isin"].isin(cands) & (windows["first_seen"] <= d1) & (windows["last_seen"] >= d0)]
+        if w.empty:
+            # a face-value change issues a new ISIN under the same symbol; follow the
+            # symbol(s) the filings and bhavcopy attach to these ISINs into the spell
+            syms = set(windows.loc[windows["isin"].isin(cands), "symbol"])
+            for i in cands:
+                for sy in names.loc[names["isin"] == i, "symbols"].dropna():
+                    syms |= set(str(sy).split("|"))
+            syms.discard(""); syms.discard("nan")
+            w = windows[windows["symbol"].isin(syms) & (windows["first_seen"] <= d1) & (windows["last_seen"] >= d0)]
+            if not w.empty:
+                method = method + "+symbol-chain"
         if w.empty:
             # ISIN known but never traded under any symbol in the spell (pre-2005 spells)
             wl = windows[windows["isin"].isin(cands)]
@@ -405,7 +416,7 @@ def main():
     res.to_csv(f"{OUT}/resolution.csv", index=False)
     summ = res.groupby(["index", "method"]).size().unstack(fill_value=0)
     print(summ.to_string())
-    ok = res[res["method"].str.replace("+isin-set", "", regex=False).isin(["norm-exact", "token-exact", "manual-isin", "manual-symbol", "namechange-master"])]
+    ok = res[res["method"].str.replace("+isin-set", "", regex=False).str.replace("+symbol-chain", "", regex=False).isin(["norm-exact", "token-exact", "manual-isin", "manual-symbol", "namechange-master"])]
     print(f"    resolved to a traded symbol: {ok.groupby('index')['company_name'].nunique().to_dict()}")
 
 

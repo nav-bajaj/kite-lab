@@ -1,6 +1,6 @@
 # Results
 
-## Phase 1 — symbol master (2026-09-10, gate not yet met for 2006-2007)
+## Phase 1 — symbol master (2026-09-10) — GATE MET
 
 Inputs fetched, all from NSE directly, zero errors:
 
@@ -31,27 +31,40 @@ that failed, not by design:
    an expected-symbol hint that the bhavcopy had to confirm. One hint bound
    to the wrong company (`RPGLIFE` for Summit Securities) and was removed.
 
+6. Renames that coincide with a face-value change give the old and new
+   ticker DIFFERENT ISINs (`COLGATE` INE259A01014 → `COLPAL` INE259A01022),
+   so ISIN alone cannot join them. `lib/identity.py` builds company
+   identity as connected components over trading windows joined by shared
+   ISIN **and** dated rename edges (NSE master + PREVCLOSE detector + 16
+   hand edges): 5,197 companies over 6,001 windows, 1,379 edges joined.
+7. Six restructurings where the reconstruction attached a historical member
+   to the wrong listed line (the 2006 "Bajaj Auto" is today's BAJAJHLDNG,
+   not the 2008 spin-off BAJAJ-AUTO; likewise TIINDIA/TUBEINVEST,
+   KPITTECH/KPIT, FLUOROCHEM/GUJFLUORO, GATEWAY/GDL, PIRAMALFIN/PEL,
+   MAXIND/MAX) are `LINE_OVERRIDES` in the same file, dated.
+
 Coverage, minimum over event dates, counting each member once against the
-index's fixed size:
+index's fixed size, after the identity layer:
 
 | Year | Nifty 50 | Nifty 100 | LargeMidcap 250 | Nifty 500 |
 |---|---|---|---|---|
-| 2006 | 96.0 | 95.0 | **92.4** | **92.4** |
-| 2007 | 98.0 | 96.0 | **93.2** | **94.0** |
-| 2008 | 100 | 98.0 | 96.4 | 95.6 |
-| 2010 | 100 | 100 | 98.4 | 96.2 |
-| 2013 | 100 | 100 | 98.4 | 97.2 |
-| 2016 | 100 | 99.0 | 98.4 | **97.8** |
-| 2019 | 100 | 99.0 | 98.8 | 98.6 |
-| 2020+ | 100 | 99-100 | 99.6-100 | 99.8-100 |
+| 2006 | 100 | 100 | 98.0 | 98.2 |
+| 2007 | 100 | 100 | 98.0 | 98.4 |
+| 2008-2015 | 100 | 100 | 98.8-100 | 98.6-100 |
+| 2016-2019 | 100 | 100 (101 = DVR line) | 100 | 100 |
+| 2020-2026 | 100 | 100 | 100 | 99.8-100 |
 
-Gate status: **2020-2026 ≥ 99% met. 2016-2019 ≥ 98% missed by one name
-(Nifty 500, 2016: 97.8). 2006-2015 ≥ 95% missed in 2006-2007 on the two
-broad indices.** The residue with spells in 2006 or later is 42 names (22
-Nifty 500, 14 LargeMidcap 250, 4 Nifty 100, 2 Nifty 50), listed in
-`qa_unresolved_2006plus.csv`. Automatic routes are exhausted; each needs
-a hand search with evidence, and some will be genuinely unresolvable
-(delisted 2006-2010 under a name no NSE master still carries).
+**Gate status: met.** ≥95% from 2006 (worst 98.0), ≥98% from 2016 (worst
+100), ≥99% from 2020 (worst 99.8). Before the identity layer the same
+numbers read 93.6 / 94.8 for 2006 — the last five points were renames
+whose ISIN changed at the same time, invisible to an ISIN join.
+
+Residue with spells in 2006 or later, 8 names, left unresolved with
+reasons in `qa_unresolved_2006plus.csv`: Pudumjee Pulp & Paper, Styrolution
+ABS (pre-2009 name chain), Summit Securities -Old, Alstom India (LM250
+2005-2013; ambiguous between Alstom Projects and Areva T&D lines), Merck
+(one spell 2005-09 → 2006-03), Ballarpur and Essar Ports (ISIN known, no
+traded window inside the spell). None is in the index after 2014.
 
 An earlier version of the gate over-counted: a company resolved to two
 ISINs (face-value change) was counted twice, which showed the Nifty 500 at

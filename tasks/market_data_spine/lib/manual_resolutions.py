@@ -52,6 +52,22 @@ BY_NAME = {
     "Bajaj Corp Ltd.":                                 "INE933K01021",  # Bajaj Consumer Care Limited / BAJAJCON
     "Jyothy Laboratories Ltd.":                        "INE668F01031",  # Jyothy Labs Limited / JYOTHYLAB
     "Videsh Sanchar Nigam Ltd.":                       "INE151A01013",  # Tata Communications Limited / TATACOMM
+    # second pass, 2026-09-10, from the 42-name residue
+    "Polaris Software Lab Ltd.":                       "INE763A01023",  # POLARIS CONSULTING & SERVICES / POLARIS, bhav 2005-2018
+    "Bombay Dyeing & Manufacturing Co. Ltd.":          "INE032A01015",  # Bombay Dyeing & Mfg Company / BOMDYEING
+    "Castrol (India) Ltd.-Old":                        "INE172A01019",  # Castrol India Limited / CASTROL, pre-2014 ISIN
+    "DCM Shriram Consolidated Ltd.":                   "INE499A01024",  # DCM Shriram Limited / DCMSRMCONS bhav 2005-2014
+    "Essar Ports Ltd.":                                "INE282A01016",  # Essar Shipping Ports & Logistics / ESSARSHIP, renamed Essar Ports 2010
+    "Essar Steel Ltd.":                                "INE127A01021",  # Essar Steel Limited / ESTL filings 2005-2007
+    "Future Consumer Enterprise Ltd.":                 "INE220J01017",  # Future Ventures India / FUTUREVENT bhav 2011-2013
+    "Hinduja Ventures Ltd.":                           "INE353A01015",  # Hinduja TMT Limited / HTMT, renamed 2007
+    "Narmada Chematur Petrochemicals Ltd.":            "INE693B01012",  # Narmada Chematur Petrochem / NARMDCHEMA, merged into GNFC 2007
+    "Sona Koyo Steering Systems Ltd.":                 "INE643A01035",  # SONASTEER bhav 2005-2018 (JTEKT India later)
+    "Sri Adhikari Brothers Television Network Ltd.":   "INE416A01028",  # Sri Adhikari Brothers TV / SRIADIKARI
+    "Sujana Towers Ltd.-old":                          "INE333I01010",  # Sujana Tower Limited / SUJANATOW
+    "UTV Software Communication Ltd.":                 "INE507B01022",  # UTV Software Communications / UTVSOF bhav 2005-2012
+    "Tata Tea Limited":                                "INE192A01025",  # Tata Consumer Products (was Tata Tea, Tata Global) / TATACONSUM
+    "Gruh Finance Ltd.":                               "INE580B01029",  # Gruh Finance / GRUH bhav 2012-2019 (post-split ISIN)
 }
 
 # name -> expected NSE symbol(s) during the spell; resolved via bhavcopy ISIN
@@ -103,4 +119,16 @@ SYMBOL_HINTS = {
     "Gujarat Gas Co. Ltd.":                            ["GUJRATGAS", "GUJGAS", "GUJGASLTD"],
     "Essar Steel Ltd.":                                ["ESSARSTEEL"],
     "Eicher Ltd.":                                     ["EICHERLTD", "EICHERMOT"],
+    # second pass
+    "Aventis Pharma Ltd.":                             ["AVENTIS"],                       # bhav 2005-2012, now SANOFI
+    "Piramal Healthcare Ltd.":                         ["NICOLASPIR", "NICHOLASPIR", "PIRHEALTH", "PEL"],
+    "Alstom India Ltd.":                               ["ALSTOMPROJ", "ALSTOMIND"],       # Alstom Projects India, renamed 2012
+    "Corporation Bank":                                ["CORPBANK"],                      # merged into Union Bank 2020
+    "Future Retail Ltd.":                              ["PANTALOONR", "FRL", "FRETAIL"],  # Pantaloon Retail -> FRL 2013 -> new FRETAIL 2016
+    "Lakshmi Machine Works Ltd.":                      ["LAXMIMACH"],
+    "Merck Ltd.":                                      ["MERCK"],                         # now Procter & Gamble Health
+    "Sundaram Clayton Ltd.- OLD":                      ["SUNDRMCLAY", "SUNCLAYTON"],
+    "S.E. Investments Ltd.":                           ["SEINV", "SEINVEST", "PAISALO"],  # renamed Paisalo Digital
+    "Styrolution ABS (India) Ltd.":                    ["BAYERABS", "LANXESSABS", "INEOSABS", "STYABS"],
+    "Pudumjee Pulp & Paper Mills Ltd.":                ["PUDUMJEEPU", "PUDUMJEE"],
 }
