@@ -191,3 +191,49 @@ demerger is booked as a crash that did not happen.
   list** (`qa/bad_prints.csv`, `kite_agrees == False`). 1,959 are on names
   with no second feed; flagged, not masked — a ±8% reversal is ordinary for
   a small cap and masking on suspicion would remove real data.
+
+## Phase 6 — re-baseline at current parameters on the master store (2026-09-10)
+
+All four production portfolios, parameters untouched, on the point-in-time
+membership and the master price views, 2006-01-01 → 2026-08-21 (benchmark
+and regime index from Kite's own Nifty index history, 2003 →). Slippage 20
+bps as in production. Runs under the session scratch `rebase/`; summary in
+`qa/rebaseline_summary.csv`.
+
+| Portfolio | View | 2006→ CAGR / Sharpe / MaxDD | 2016→ | 2020→ | **Production, 2020→ (today's universe)** |
+|---|---|---|---|---|---|
+| Quality Momentum (OM25 v3) | PR | 14.8 / 0.45 / −64.9 | 19.7 / 0.73 / −40.8 | **26.4 / 0.97 / −34.8** | 42.3 / 1.69 / −25.3 |
+| | TR | 16.2 / 0.51 / −64.3 | 20.1 / 0.74 / −38.6 | 25.9 / 0.94 / −35.2 | |
+| Trend Leaders (TL25 v3) | PR | 16.4 / 0.55 / −61.9 | 16.0 / 0.52 / −44.8 | **20.2 / 0.66 / −37.3** | 38.0 / 1.46 / −31.0 |
+| | TR | 18.4 / 0.64 / −61.5 | 17.0 / 0.57 / −45.6 | 21.3 / 0.71 / −36.4 | |
+| Core Momentum (L6 v2) | PR | 19.2 / 0.54 / −76.2 | 20.2 / 0.61 / −52.2 | **27.8 / 0.86 / −43.6** | 50.5 / 1.76 / −29.9 |
+| | TR | 21.0 / 0.61 / −75.5 | 22.0 / 0.69 / −50.0 | 30.2 / 0.95 / −39.7 | |
+| Defensive Blend (COMBO) | PR | 12.2 / 0.37 / −40.2 | 9.7 / 0.27 / −40.2 | **15.0 / 0.55 / −24.6** | 45.6 / 2.01 / −16.4 |
+| | TR | 12.9 / 0.40 / −38.5 | 10.6 / 0.32 / −37.4 | 16.0 / 0.61 / −24.6 | |
+
+**Attribution of the 2020→ gap against production** (PR view):
+
+- Universe — point-in-time membership instead of today's list backdated —
+  is the bulk: OM25 −16pp, TL25 −18pp, L6 −23pp, COMBO −31pp of CAGR. It
+  agrees with the interim survivorship-free runs of 2026-09-09 (OM25 25.6%,
+  L6 25.6% on that panel) to within the panel difference.
+- Price basis — total return adds 0.5-2.4pp of CAGR over price return,
+  the dividend yield of what these books hold. It does not change ranking.
+- Panel — master (bhavcopy raw × filings) versus the production Kite panel:
+  small; both are price-return over this window.
+- Nothing else. No strategy logic changed.
+
+**Calendar-year returns, PR view** (in `qa/rebaseline_summary.csv`):
+2008 is −62 / −57 / −71 / −33 for OM25 / TL25 / L6 / COMBO; 2011 −27 /
+−14 / −16 / −11; 2018 −18 / −18 / −20 / −25; 2025 −3 / −20 / −24 / −1.
+
+**Diagnostic for the retune, not fixed here (scope):** OM25 carries a 20%
+drawdown stop and a regime tilt, yet its 2006→ maximum drawdown is −65%,
+almost all of it 2008. Either the stop whipsaws through a 60% index
+decline (exit, re-enter on the bull flag, exit again) or the 200-DMA NaN
+behaviour recorded in the ledger disables it early in the series. COMBO's
+regime overlay does what it should (−40% vs −62 to −76% for the momentum
+books). The retune should look at the stop before anything else.
+
+**Standing:** these are the numbers the platform owns today at current
+parameters. Every published figure sits above them by the universe effect.
