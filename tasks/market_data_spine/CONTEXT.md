@@ -200,6 +200,18 @@ scratch commands recorded in the session; to be moved into `lib/` in Phase 1.
 
 Samco's bhavcopy mirror was not needed; the NSE archive answered directly.
 
+Depth probes, same day:
+
+| Source | Earliest served | Note |
+|---|---|---|
+| NSE bhavcopy | 1995-01-03 (1994 → 404) | 259 symbols that day, 1,189 by 2000 |
+| NSE CA filings | 1995 (81 rows) | **thin before 2005**: 2000-2004 carry 70-218 rows/yr; 2005 has 829, 2006 1,156, 2020 2,208 |
+| Kite day candles | 2000-01-03 | live instruments only |
+| GDF | 2009-01-01 | serves delisted |
+
+The filings' thinness, not price availability, sets the honest floor — hence
+D-11 (2006).
+
 ## 7. Interim survivorship-free baselines, 2026-09-09
 
 Computed on an interim panel assembled in a scratch directory

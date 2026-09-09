@@ -29,7 +29,7 @@ trusted:
    as NEW files. Production `data/static/*_membership.csv` is not touched.
 3. **Prices, pulled fresh**: Kite's adjusted series from 2000 for everything
    Kite lists (988 of 1,025 symbols), GDF from 2009 for the 37 delisted, every
-   row source-tagged, at least 2016-2026 complete for all four indices.
+   row source-tagged. **2006-2026, twenty years**, for all four indices (D-11); 2005 fetched as lookback run-in.
 4. **A corporate-actions table** from NSE's own filings, 2005 onward, used to
    bring the GDF series onto Kite's convention, to cross-check Kite, and to
    keep the store correct going forward.
@@ -62,7 +62,7 @@ Then, and only then, OM25 gets retuned — as a separate task.
 | Need | Source | Verified |
 |---|---|---|
 | Prices, live instruments | Kite historical API, day candles, adjusted | RELIANCE 2000-01-03 → today; ONGC adjustment ratio flat 0.977 pre-ex, 1.000 post |
-| Prices, delisted | GDF `GetHistory`, raw | floors 2009-01-01; ALBK served to 2020-03-19 |
+| Prices, delisted | NSE bhavcopy raw × CA factors (D-11); GDF `GetHistory` as second opinion | bhavcopy serves every symbol from 1995; GDF floors 2009-01-01, ALBK served to 2020-03-19 |
 | Symbol ↔ ISIN by day | NSE bhavcopy archive, direct download | legacy `cmDDMMMYYYYbhav.csv.zip` (ISIN column present by 2016, absent in 2005 — find the first year); UDiFF `BhavCopy_NSE_CM_0_0_0_YYYYMMDD_F_0000.csv.zip` from 2024 carries ISIN + company name |
 | Corporate actions + company names | NSE `api/corporates-corporateActions`, cookie from the landing page | full calendar year per call; 2,208 rows for 2020 incl. dividend, split, bonus, demerger, buyback, AGM |
 | Membership events | done — `tasks/index_reconstruction/` | exact today and Mar-2022 |
@@ -78,8 +78,9 @@ data/master/                       (gitignored except manifests + small tables)
   membership/{nse500,nifty50,nifty100,nifty250}.csv     loader schema, PIT
   corporate_actions.csv            isin, symbol, ex_date, type, ratio/amount, source
   prices/kite/<SYMBOL>.csv         adjusted, as pulled, + pull_date in manifest
-  prices/gdf/<SYMBOL>.csv          raw as served
-  prices/adjusted/<SYMBOL>.csv     ONE basis: kite as-is; gdf x CA factors
+  prices/bhavcopy/<SYMBOL>.csv     raw, from the daily archive (every symbol, 2005 ->)
+  prices/gdf/<SYMBOL>.csv          raw as served, cross-check only
+  prices/adjusted/<SYMBOL>.csv     ONE basis: kite as-is; bhavcopy x CA factors for the rest
   manifest.json                    per file: source, first, last, rows, sha256, pulled_at, delisted_on
   qa/                              coverage by index x date, quarantine log, cross-feed report
 ```

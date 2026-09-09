@@ -175,3 +175,28 @@ D-1 made Kite the day-to-day source and GDF the supplement. Verified
 it is also the history source. GDF's role narrows to the 37 symbols with no
 Kite instrument. D-2's "store raw" survives as the reconciliation layer
 (bhavcopy closes × CA factors must reproduce Kite), not as the basis.
+
+## D-11 — The database begins 2006-01-01. (Founder, 2026-09-10.)
+
+**Decision.** Twenty years, 2006 to today, for all four indices. 2005 is
+fetched as run-in so a 252-day lookback is fully populated on the first
+signal date of 2006. Nothing before 2005 is fetched or promised.
+
+**Why 2006 and not earlier.** Depth probes (CONTEXT.md §6) showed prices
+reach 1995 (bhavcopy) and 2000 (Kite adjusted), but NSE's corporate-action
+filings are thin before 2005 — 70-218 rows a year against 829 in 2005 and
+~2,200 today. A delisted name's series can only be adjusted from that
+table, so before 2005 a missed bonus or split becomes a false crash that a
+momentum rank would trade. 2006 keeps the whole panel inside the dense era.
+
+**Consequence for sources.** GDF floors at 2009, so for 2005-2009 the
+delisted names must come from the bhavcopy anyway. The bhavcopy therefore
+becomes the price source for every symbol Kite cannot serve, across the
+whole span, adjusted by the CA table; GDF is retained only as an
+independent second opinion on those series. D-1 (revised) stands for live
+names: Kite adjusted, from 2000, is the basis.
+
+**Consequence for gates.** Coverage is measured from 2006, not 2016:
+≥ 95% of the index size resolved and traded on every event date from
+2006-01-01, ≥ 98% from 2016-01-01. The retune's in-sample window can then
+be 2006-2015 with 2016-2026 out of sample.

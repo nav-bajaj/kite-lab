@@ -27,9 +27,10 @@ the next does not start until the gate is met and recorded in RESULTS.md.
       renames from `index_reconstruction/lib/renames.py` as checks, not inputs
 - [ ] Resolve the 530 names in `index_reconstruction/data/unresolved_symbols.csv`
       through the master; record how each resolved, or why it did not
-- [ ] **Gate:** for each of the four indices, at every event date from
-      2016-01-01, ≥ 98% of members resolve to a symbol with a bhavcopy row on
-      that date. Residuals listed by name with the reason.
+- [ ] **Gate (D-11):** for each of the four indices, at every event date,
+      members resolved to a symbol with a bhavcopy row that day: ≥ 95% of
+      index size from 2006-01-01, ≥ 98% from 2016-01-01. Residuals listed
+      by name with the reason.
 
 ## Phase 2 — point-in-time membership files 🤖
 
@@ -46,12 +47,15 @@ the next does not start until the gate is met and recorded in RESULTS.md.
 - [ ] Kite pull, adjusted, 2000-01-01 → today, NSE first then BSE fallback,
       for every symbol in the master Kite can resolve; 3 req/s, resumable;
       `prices/kite/`. Record pull date per file in `manifest.json`
-- [ ] GDF pull, raw, 2009-01-01 → last trade, for the 37 delisted;
-      `prices/gdf/`; mark `delisted_on` = last served date (D-9: exit at LTP)
+- [ ] Bhavcopy series for every symbol Kite cannot serve, 2005 → last trade,
+      from the archive already fetched; `prices/bhavcopy/`; `delisted_on` =
+      last traded date (D-9: exit at LTP)
+- [ ] GDF pull, raw, 2009 → last trade, for the same symbols, as a second
+      opinion only; `prices/gdf/`
 - [ ] Symbols neither feed serves: listed in `qa/no_feed.csv` with their
       membership spells, so the coverage gate can count them honestly
 - [ ] **Gate:** every symbol in the master has a file or a `no_feed` row;
-      coverage by index × date ≥ 98% from 2016, ≥ 99% from 2020
+      coverage by index × date ≥ 95% from 2006, ≥ 98% from 2016, ≥ 99% from 2020
 
 ## Phase 4 — corporate-actions table 🤖
 
@@ -62,8 +66,9 @@ the next does not start until the gate is met and recorded in RESULTS.md.
       expected factor from the CA row, compare to Kite's fresh÷bhavcopy ratio
       step. Record the formula Kite uses per event type, including whether it
       adjusts demergers (VEDL 2026-04-30 is the test case)
-- [ ] Apply the same factors to the 37 GDF series → `prices/adjusted/`; Kite
-      series copied through unchanged
+- [ ] Apply the same factors to the bhavcopy series of every non-Kite symbol
+      → `prices/adjusted/`; Kite series copied through unchanged; GDF
+      compared, never used as the basis
 - [ ] Reconcile `corporate_actions_fix/inventory.csv` (99 flagged jumps): each
       is either matched to a CA row or logged as a bad print for Phase 5
 - [ ] **Gate:** raw bhavcopy × cumulative factors reproduces Kite adjusted
@@ -91,7 +96,7 @@ the next does not start until the gate is met and recorded in RESULTS.md.
 - [ ] `data_pipeline/master_loader.py`: one function returns close/trade
       panels + membership fn from `data/master/`, with the snapshot date it
       read. Production loaders untouched
-- [ ] Run OM25 v3, TL25 v3, L6 v2, COMBO at current parameters, 2016-01-01 →
+- [ ] Run OM25 v3, TL25 v3, L6 v2, COMBO at current parameters, 2006-01-01 →
       today, on the master. Compare against (a) today's published numbers and
       (b) the interim survivorship-free runs in CONTEXT.md §7
 - [ ] Attribute every difference: universe / price basis (total vs price
