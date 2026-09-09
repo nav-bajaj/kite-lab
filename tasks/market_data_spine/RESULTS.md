@@ -69,3 +69,24 @@ traded window inside the spell). None is in the index after 2014.
 An earlier version of the gate over-counted: a company resolved to two
 ISINs (face-value change) was counted twice, which showed the Nifty 500 at
 101-102% in 2008-2015. Corrected to count each member once.
+
+## Phase 2 — point-in-time membership files (2026-09-10) — GATE MET
+
+`data/master/membership/{nse500,nifty50,nifty100,nifty250}.csv`, loader
+schema, keyed by each company's canonical symbol (the ticker it trades
+under most recently, which is also the price-file key). Built from the
+reconstruction plus Phase 1's resolved leftovers, with the seven line
+overrides applied by splitting spells at the cutover. Production
+`data/static/*_membership.csv` untouched (D-8).
+
+| Index | Rows | Symbols | Event dates 2006→ | Members, min-max |
+|---|---|---|---|---|
+| Nifty 500 | 1,633 | 1,258 | 268 | 493-501 |
+| LargeMidcap 250 | 773 | 597 | 75 | 246-251 |
+| Nifty 100 | 321 | 239 | 74 | 99-101 |
+| Nifty 50 | 139 | 123 | 46 | 49-51 |
+
+The shortfall below index size on early dates is the unresolved residue
+(Phase 1); the +1 is the Tata Motors DVR line. `lib/validate.py` from the
+reconstruction re-run against these files: today exact, 2022 factsheets
+exact (the canonical-symbol mapping does not change membership, only keys).
