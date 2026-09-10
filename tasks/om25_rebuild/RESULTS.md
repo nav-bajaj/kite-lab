@@ -60,3 +60,35 @@ buffer 20, monthly, lookback 252, fully invested. Sharpe 0.66 (LM 250) /
 0.63 (N 500) raw; deflated for 100 trials, below zero. **G1 fails for
 every configuration the brief allows.** The block is structural — 2008 —
 not parametric; the exposure overlay is the only remaining lever.
+
+## Constraints after §3 (founder, 2026-09-10)
+
+Overlay back in scope; return filter as a switch; **≤ 25 positions**;
+**lookback ≤ 12 months**. §3c re-picked under the cap: 25 / buffer 20,
+monthly on LM 250 (0.62), biweekly on N 500 (0.48).
+
+## §3e — exposure overlay (196 trials) — IS 2006-2015
+
+ROC regime (N ∈ {15, 21, 31, 42} × confirm ∈ {2, 3, 5}) driving gross
+exposure in bear ∈ {75, 50, 25, 0%}, entries skipped in bear (engine
+default), on one-regime CR / 25 / 20, return filter on and off.
+
+| Universe, cadence | No overlay | Best overlay cell | Cells ≥ 0.9 raw |
+|---|---|---|---|
+| LM 250, monthly | 17.4% / 0.62 / −67.4% | ROC42/c5, 75%: 16.2% / 0.69 / −54.3% | 0 / 48 |
+| N 500, biweekly | 14.1% / 0.48 / −67.8% | **ROC15/c3, 0%: 15.6% / 0.89 / −20.4%** | 0 / 48 (0.89 is the max) |
+
+Full exit in bear is the best setting on N 500 and the worst on LM 250:
+a monthly book that exits cannot re-enter until the next monthly date and
+misses the 2009-type recovery. §3f (interrupted by a full disk; reruns
+from the registry) tests LM 250 at biweekly and weekly, and both
+universes with immediate redeployment when exposure rises.
+
+Return filter: on for LM 250 (0.62 vs 0.54), immaterial on N 500. Kept on.
+
+Deflation corrected to the published form (observed cross-trial variance
+of IS Sharpe) before any gate is judged; the earlier fixed-variance form
+overstated the expected maximum for ~300 near-identical cells.
+
+**Open with the founder:** how G6 (≤ 8 parameters) counts with the overlay
+— everything searched (10), tuned values only (8), or a raised cap.
