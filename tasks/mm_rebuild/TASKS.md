@@ -18,6 +18,7 @@ Proposed as OM25's gate set after its 2026-09-10 rulings.
 ## §1 — score × lookback × universe 🤖
 - [x] abs / vol-adjusted × 126 / 189 / 252 × Nifty 250 / NSE 500, monthly, 25 / 20, IS 2010-2015 — DONE 2026-09-10: vol-adjusted wins every cell; N250 12m 0.96, N500 6m 1.05
 
-## §2 — mechanics 🤖
+## §2 — mechanics 🤖 — DONE 2026-09-10: 25 / 20 / monthly holds on both universes (72 trials)
 ## §3 — filters and devices, one at a time 🤖👤
+- [x] a. skip-month ADOPTED (21)  b. positive-only no-op  c. trailing stop not adopted (refit candidate)  d. ROC tilt loses everywhere  e. overlay not adopted — DONE 2026-09-10
 ## §4 — OOS and walk-forward, opened once 🤖👤
