@@ -31,10 +31,10 @@ DEFAULTS = dict(universe="nifty250", score="5050", regimes=1, roc_n=31, confirm=
                 # smoke-test-only switches, never searched
                 legacy_updown_rule=False, max_weight=1.0, trailing_stop=0.0, regime_kind="roc", ma_window=100,
                 # §3j momentum-strength regime (regime_kind="strength"); confirm days reuse `confirm`
-                str_kind="breadth", str_len=252, str_thresh=0.5, str_mode="abs")
+                mom_quantile=0.0, str_kind="breadth", str_len=252, str_thresh=0.5, str_mode="abs")
 # Keys added after the registry started. They are left out of the id while at their default so every
 # earlier config keeps its id (and its completed run); a non-default value changes the id as usual.
-_ID_OPTIONAL = {"str_kind", "str_len", "str_thresh", "str_mode"}
+_ID_OPTIONAL = {"str_kind", "str_len", "str_thresh", "str_mode", "mom_quantile"}
 SCORE_W = {"uc": (1.0, 0.0), "cr": (0.0, 1.0), "5050": (0.5, 0.5)}
 
 _cache = {}
@@ -103,7 +103,7 @@ def run_candidate(**overrides):
     w_uc, w_cr = SCORE_W[cfg["score"]]
     score_fn = make_capture_score(returns_uni, reg, w_uc_bull=w_uc, w_cr_bull=w_cr, w_uc_bear=0.0, w_cr_bear=1.0,
                                   return_filter=cfg["return_filter"], lookback=cfg["lookback"], min_obs=cfg["min_obs"],
-                                  candidate_fn=candidate_fn, legacy_updown_rule=cfg["legacy_updown_rule"])
+                                  candidate_fn=candidate_fn, legacy_updown_rule=cfg["legacy_updown_rule"], mom_quantile=cfg["mom_quantile"])
     weekly = fridays(cal); weekly = weekly[(weekly >= start) & (weekly <= end)]
     entry_all = {"biweekly": biweekly_fridays, "weekly": fridays, "monthly": monthly_first_trading_day}[cfg["cadence"]](cal)
     entries = entry_all[(entry_all >= start) & (entry_all <= end)]

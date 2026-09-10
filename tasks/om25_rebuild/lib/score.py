@@ -24,7 +24,9 @@ import pandas as pd
 def make_capture_score(returns_universe: pd.DataFrame, regime_panel: pd.Series | None, *,
                        w_uc_bull: float, w_cr_bull: float, w_uc_bear: float = 0.0, w_cr_bear: float = 1.0,
                        return_filter: bool = True, lookback: int = 252, min_obs: int = 220,
-                       candidate_fn=None, legacy_updown_rule: bool = False):
+                       candidate_fn=None, legacy_updown_rule: bool = False, mom_quantile: float = 0.0):
+    """mom_quantile > 0 (founder, 2026-09-10): restrict eligibility to the top `mom_quantile` share of stocks by window
+    total return before the capture ratios are ranked, e.g. 0.25 = top quartile of momentum over the same lookback."""
     def score_fn(signal_date, **_):
         if signal_date not in returns_universe.index:
             return pd.Series(dtype=float)
@@ -55,6 +57,11 @@ def make_capture_score(returns_universe: pd.DataFrame, regime_panel: pd.Series |
         if legacy_updown_rule:
             elig &= (window.notna() & up.values[:, None]).sum() >= 50
             elig &= (window.notna() & dn.values[:, None]).sum() >= 50
+        if mom_quantile > 0:
+            tot = ((1 + window.fillna(0)).prod() - 1)[elig.values]
+            if len(tot) == 0:
+                return pd.Series(dtype=float)
+            elig &= (((1 + window.fillna(0)).prod() - 1) >= tot.quantile(1 - mom_quantile))
         cols = window.columns[elig.values]
         if len(cols) == 0:
             return pd.Series(dtype=float)

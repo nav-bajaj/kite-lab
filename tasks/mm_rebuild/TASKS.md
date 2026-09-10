@@ -1,6 +1,6 @@
 # Tasks — MM rebuild
 
-## §0 — pre-committed pass criteria — PROPOSED 2026-09-10, awaiting the founder's signature
+## §0 — pre-committed pass criteria — SIGNED by the founder 2026-09-10, frozen
 
 Proposed as OM25's gate set after its 2026-09-10 rulings.
 

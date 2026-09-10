@@ -33,3 +33,22 @@ close of §3.
 
 Note: §1 ran on the founder's explicit instruction before the gates were
 signed; the gate values were proposed before the run and are unchanged.
+
+## §5a — momentum-quantile eligibility (4 trials) — IS 2010-2015, labelled post-OOS
+
+Founder's idea 2026-09-10: rank the capture ratios only within the top
+quantile of stocks by trailing return over the same lookback, instead of
+the whole eligible book. `mom_quantile` switch in the score (default off;
+run ids unchanged). Monthly, CR, 25 / 20, return filter on.
+
+| Pool | Nifty 250, 12m | NSE 500, 6m |
+|---|---|---|
+| Whole book (return filter only) | **23.7% / 1.50 / −17.0%**, hit 65% | 27.9% / 1.53 / −21.0%, hit 56% |
+| Top half by momentum | 23.9% / 1.43 / −19.3%, hit 60% | 28.4% / 1.50 / −22.8%, hit 53% |
+| Top quartile by momentum | 17.2% / 0.77 / −25.9%, hit 47% | 27.6% / 1.28 / −28.0%, hit 49% |
+
+The top half is neutral; the top quartile hurts, badly on Nifty 250
+(−0.73 of Sharpe, hit rate from 65% to 47%). The capture ratio already
+prefers stocks that went up; forcing the pool to the fastest quartile
+swaps its steady-participation names for high-beta ones with more
+turnover and worse exits. Not adopted. Registered under phase 5a.
