@@ -5,7 +5,11 @@ import numpy as np, pandas as pd
 
 def make_momentum_score(returns_universe: pd.DataFrame, *, kind: str = "abs", lookback: int = 126, min_obs: int = 110,
                         skip: int = 0, vol_floor: float = 0.05, positive_only: bool = False, candidate_fn=None, cr_quantile: float = 0.0,
-                        volume_panel: pd.DataFrame | None = None, vol_kick: str = "none", vol_k: float = 0.0):
+                        volume_panel: pd.DataFrame | None = None, vol_kick: str = "none", vol_k: float = 0.0,
+                        core_mask: pd.DataFrame | None = None, universe_cap: int = 0, turnover_floor: float = 0.0):
+    """Universe hypotheses (Wright review, 2026-09-10): `universe_cap` = N keeps the core members (Nifty 250, `core_mask`) plus the
+    (N - core count) most liquid others by mean rupee turnover over the window — a point-in-time 'top N' proxy. `turnover_floor` = rupees
+    per day: median turnover over the window must reach it. Both use turnover up to the signal date's close only."""
     """Extra kinds (founder 2026-09-10): 'blend' = mean percentile rank of vol-adjusted momentum at 63 / 126 / 252 sessions (skip applied);
     'slope' = annualised exponential-regression slope x R^2 over the window (Clenow); 'high52' = close / window high, i.e. proximity to the high.
     Volume kicker: score percentile + vol_k x volume percentile, where 'surge' = mean rupee turnover over the last 21 sessions / over the window,
@@ -23,6 +27,15 @@ def make_momentum_score(returns_universe: pd.DataFrame, *, kind: str = "abs", lo
             cands = candidate_fn(signal_date)
             window = window[[c for c in window.columns if c in cands]]
         elig = window.notna().sum() >= min_obs
+        if (universe_cap or turnover_floor) and volume_panel is not None:
+            tw = volume_panel.iloc[idx - lookback - skip + 1: idx - skip + 1].reindex(columns=window.columns)
+            if turnover_floor:
+                elig &= (tw.median() >= turnover_floor).values
+            if universe_cap and core_mask is not None:
+                core = core_mask.loc[signal_date].reindex(window.columns).fillna(False).values & elig.values
+                k = max(0, universe_cap - int(core.sum()))
+                others = tw.mean().where(elig.values & ~core).nlargest(k).index
+                elig &= (core | window.columns.isin(others))
         if cr_quantile > 0:   # founder 2026-09-10: momentum ranked only within the top share of names by capture ratio over the same window
             we = window.loc[:, elig.values]; market = we.mean(axis=1); up, dn = market > 0, market < 0
             mu_up, mu_dn = market[up].mean(), market[dn].mean()

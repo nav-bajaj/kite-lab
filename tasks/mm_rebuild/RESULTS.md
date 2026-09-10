@@ -484,3 +484,54 @@ Caveats: post-OOS design, 70 cells looked at in §8-8b; the 2024-25
 unwind is unchanged (−25 to −27 in every cell); N and the regime were
 searched on the same window they are judged on. What is not in doubt is
 the mechanism's sign across a 4 × 4 × 2 grid.
+
+## §9 — Wright-review hypotheses 1 and 2 (11 trials) — post-OOS
+
+From `WRIGHT_REVIEW.md`: (1) their universe is "the top 300" with a
+traded-volume minimum, not NSE 500; (2) their one printed sizing rule is
+mean-variance weights with a 10% name cap. Tested as: a point-in-time
+top-300 (Nifty 250 members plus the 50 most liquid others by trailing
+rupee turnover), rupee-turnover floors of 2 and 5 crore a day (median
+over the window), and inverse-volatility sizing (63-day, weights
+proportional to 1/vol over the intended book, capped at 10%, existing
+positions drift as in the equal-weight engine). Sizing runs through a
+copy of the engine with one additive hook (`lib/_engine_iv.py`);
+byte-identity with the production engine at equal weight is verified in
+`phase9`. No sector cap: the store has no sector data. Vol for sizing
+uses returns to the signal date; the entry executes the next session.
+
+| Cell | IS Sharpe | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Wright window | Up / down capture | Legs | Trades/yr |
+|---|---|---|---|---|---|---|---|
+| N500 base | 1.06 | 21.7% / 0.78 / -34% | 0.57 / 1.51 / 0.37 | 21.1% / 0.74 / -34% | 1.09 / 1.37 | 158 / -5 / 143 / -29 / 9 | 175 |
+| N500 floor 2cr/day | 0.56 | 22.0% / 0.79 / -34% | 0.62 / 1.50 / 0.37 | 20.9% / 0.73 / -34% | 1.08 / 1.37 | 158 / -5 / 143 / -29 / 9 | 170 |
+| N500 floor 5cr/day | 0.26 | 19.8% / 0.68 / -34% | 0.40 / 1.40 / 0.37 | 21.3% / 0.76 / -33% | 1.09 / 1.36 | 153 / -10 / 140 / -29 / 11 | 158 |
+| top-300 (6m) | 0.72 | 17.5% / 0.60 / -36% | 0.13 / 1.28 / 0.47 | 22.3% / 0.81 / -29% | 1.11 / 1.32 | 149 / -11 / 135 / -28 / 16 | 157 |
+| top-300 (12m) | 0.54 | 20.2% / 0.71 / -45% | 0.17 / 0.91 / 1.07 | 30.2% / 1.14 / -30% | 1.17 / 1.11 | 116 / -8 / 165 / -27 / 54 | 90 |
+| top-300 + floor 2cr | 0.61 | 18.5% / 0.63 / -37% | 0.26 / 1.27 / 0.47 | 21.8% / 0.79 / -29% | 1.09 / 1.32 | 149 / -11 / 135 / -28 / 16 | 157 |
+| N500 inv-vol cap 10% | 1.11 | 22.0% / 0.86 / -30% | 0.67 / 1.61 / 0.42 | 22.3% / 0.85 / -30% | 1.07 / 1.29 | 149 / -5 / 136 / -27 / 12 | 176 |
+| N500 inv-vol cap 10% + floor 2cr | 0.52 | 21.6% / 0.83 / -30% | 0.67 / 1.53 / 0.42 | 21.8% / 0.83 / -30% | 1.06 / 1.28 | 139 / -5 / 136 / -27 / 12 | 170 |
+| top-300 inv-vol cap 10% | 0.72 | 18.2% / 0.68 / -33% | 0.21 / 1.52 / 0.40 | 23.3% / 0.91 / -29% | 1.07 / 1.21 | 150 / -8 / 128 / -28 / 16 | 157 |
+| N250 base | 1.02 | 19.7% / 0.73 / -38% | 0.49 / 1.12 / 0.65 | 26.2% / 1.03 / -30% | 1.09 / 1.11 | 106 / 1 / 124 / -25 / 38 | 84 |
+| N250 inv-vol cap 10% | 1.14 | 19.3% / 0.78 / -34% | 0.55 / 1.12 / 0.71 | 25.0% / 1.05 / -26% | 1.01 / 0.99 | 99 / -3 / 131 / -25 / 34 | 83 |
+| N250 inv-vol cap 10% + concentrate 15 + stop | 1.18 | 21.0% / 0.95 / -26% | 0.40 / 1.48 / 1.04 | 30.2% / 1.42 / -26% | 1.03 / 0.77 | 112 / -2 / 147 / -25 / 39 | 135 |
+
+Read:
+1. **Universe is not the lever on NSE 500.** Turnover floors change
+   nothing (down-capture 1.36-1.37). Cutting to a top-300 at 6 months
+   loses OOS Sharpe (0.60) and keeps the down-capture (1.32); at 12
+   months it reproduces the Nifty 250 profile (down 1.11) with a −45%
+   OOS drawdown. The small-cap tail is where the upside lives too —
+   removing it removes both.
+2. **Inverse-vol sizing is the one device that improves NSE 500 while
+   keeping the upside**: OOS 0.78 → 0.86, drawdown −34 → −30, down-capture
+   1.37 → 1.29 with up-capture 1.07. Still short of G2, and the down
+   months stay above the index's.
+3. On Nifty 250, inverse-vol brings down-capture to 0.99 alone and, on top
+   of §8b's concentrate-15 + stop, to **0.77 with up-capture 1.03: OOS
+   21.0% / 0.95 / −26%, Wright window 30.2% / 1.42 / −26%, IS 1.18** — the
+   best MM cell on every risk measure, at a cost of 0.8pp of OOS CAGR
+   against the equal-weight version (21.8% / 0.93 / −28%).
+
+Net: Wright's structure, to the extent the pages reveal it, does not
+unlock NSE 500. Their universe is closer to our Nifty 250 book, and the
+sizing rule they printed helps our Nifty 250 book the way it should.

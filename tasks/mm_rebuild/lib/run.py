@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib, json, sys
 from pathlib import Path
 import pandas as pd
+import numpy as np
 HERE = Path(__file__).resolve().parent; TASK = HERE.parent
 import importlib.util
 OM_LIB = TASK.parent / "om25_rebuild" / "lib"; sys.path.insert(0, str(OM_LIB)); sys.path.insert(0, str(HERE))
@@ -12,8 +13,8 @@ import windows as W  # noqa: E402
 RUNS = TASK / "runs"; RUNS.mkdir(exist_ok=True); W.REG = RUNS / "registry.csv"
 DEFAULTS = dict(universe="nifty250", kind="abs", lookback=126, min_obs=110, skip=0, vol_floor=0.05, positive_only=False,
                 top_n=25, exit_buffer=20, cadence="monthly", exit_cadence="same", trailing_stop=0.0, max_weight=1.0, slippage=0.002,
-                min_hold_days=0, dyn_n_bear=0, dyn_mode="lever", vol_target=0.0, vol_window=21, str_kind="breadth_ma", str_len=200, str_thresh=0.3, str_mode="abs", cr_quantile=0.0, vol_kick="none", vol_k=0.0, regimes=1, bull_kind="abs", overlay=False, regime_kind="roc", roc_n=31, confirm=3, bear_exposure=1.0, reenter_on_flip=False, start="2010-01-01", end="2015-12-31")
-_ID_OPTIONAL = {"dyn_n_bear", "dyn_mode", "vol_target", "vol_window", "str_kind", "str_len", "str_thresh", "str_mode", "min_hold_days", "vol_kick", "vol_k", "cr_quantile", "regimes", "bull_kind", "overlay", "regime_kind", "roc_n", "confirm", "bear_exposure", "reenter_on_flip"}
+                min_hold_days=0, universe_cap=0, turnover_floor=0.0, sizing="equal", iv_window=63, dyn_n_bear=0, dyn_mode="lever", vol_target=0.0, vol_window=21, str_kind="breadth_ma", str_len=200, str_thresh=0.3, str_mode="abs", cr_quantile=0.0, vol_kick="none", vol_k=0.0, regimes=1, bull_kind="abs", overlay=False, regime_kind="roc", roc_n=31, confirm=3, bear_exposure=1.0, reenter_on_flip=False, start="2010-01-01", end="2015-12-31")
+_ID_OPTIONAL = {"universe_cap", "turnover_floor", "sizing", "iv_window", "dyn_n_bear", "dyn_mode", "vol_target", "vol_window", "str_kind", "str_len", "str_thresh", "str_mode", "min_hold_days", "vol_kick", "vol_k", "cr_quantile", "regimes", "bull_kind", "overlay", "regime_kind", "roc_n", "confirm", "bear_exposure", "reenter_on_flip"}
 
 
 _turn = {}
@@ -46,10 +47,15 @@ def run_candidate(**overrides):
     p = om.panels(); close, trade = p["close"], p["trade"]; cal = close.index
     universe, membership_fn, candidate_fn = om.resolve_universe(om.MEMBERSHIP[cfg["universe"]], om.MEMBERSHIP[cfg["universe"]])
     cols = [s for s in close.columns if s in universe]; returns_uni = close[cols].pct_change()
-    volume_panel = turnover_panel(cols) if cfg["vol_kick"] != "none" else None
+    volume_panel = turnover_panel(cols) if (cfg["vol_kick"] != "none" or cfg["universe_cap"] or cfg["turnover_floor"]) else None
+    core_mask = None
+    if cfg["universe_cap"]:
+        from regime import membership_mask
+        core_mask = membership_mask(om.MEMBERSHIP["nifty250"], close).reindex(columns=cols, fill_value=False)
     score_fn = make_momentum_score(returns_uni, kind=cfg["kind"], lookback=cfg["lookback"], min_obs=cfg["min_obs"], skip=cfg["skip"],
                                    vol_floor=cfg["vol_floor"], positive_only=cfg["positive_only"], candidate_fn=candidate_fn, cr_quantile=cfg["cr_quantile"],
-                                   volume_panel=volume_panel, vol_kick=cfg["vol_kick"], vol_k=cfg["vol_k"])
+                                   volume_panel=volume_panel, vol_kick=cfg["vol_kick"], vol_k=cfg["vol_k"],
+                                   core_mask=core_mask, universe_cap=cfg["universe_cap"], turnover_floor=cfg["turnover_floor"])
     start = pd.Timestamp(cfg["start"]); end = pd.Timestamp(cfg["end"]) if cfg["end"] else cal[-1]
     overlay_panel = None; roc = None
     if cfg["overlay"] or cfg["regimes"] == 2 or cfg["dyn_n_bear"]:
@@ -88,14 +94,30 @@ def run_candidate(**overrides):
     if cfg["overlay"] and cfg["reenter_on_flip"]:
         flips = overlay_panel.index[overlay_panel & ~overlay_panel.shift(1, fill_value=False)]; entries = entries.union(flips[(flips >= start) & (flips <= end)])
     cal_run = cal[cal <= end]
-    res = om.run_strategy(close_panel=close.loc[cal_run], trade_panel=trade.loc[cal_run], calendar=cal_run, benchmark_aligned=p["bench"].loc[cal_run],
+    size_weights = None
+    if cfg["sizing"] == "invvol":
+        # inverse-volatility weights over the intended book, capped at max_weight and renormalised; vol from returns up to the
+        # signal date (the entry executes the next session), so sizing never sees the entry day's return
+        ivol = 1.0 / returns_uni.rolling(cfg["iv_window"], min_periods=int(cfg["iv_window"] * 0.8)).std().replace(0, np.nan)
+        def size_weights(sd, symbols):
+            if sd is None or sd not in ivol.index: return None
+            v = ivol.loc[sd].reindex(symbols).dropna()
+            if v.empty: return None
+            w = v / v.sum()
+            for _ in range(5):
+                over = w > cfg["max_weight"]
+                if not over.any(): break
+                w[over] = cfg["max_weight"]; rest = w[~over]; w[~over] = rest / rest.sum() * (1 - cfg["max_weight"] * over.sum()) if rest.sum() > 0 else rest
+            return w.to_dict()
+    from _engine_iv import run_strategy as _run
+    res = _run(close_panel=close.loc[cal_run], trade_panel=trade.loc[cal_run], calendar=cal_run, benchmark_aligned=p["bench"].loc[cal_run],
                           entry_signal_dates=entries, weekly_signal_dates=weekly, signal_function=score_fn, signal_function_args={},
                           sma_200_panel=p["sma200"].loc[cal_run], atr_20_panel=p["atr20"].loc[cal_run],
                           top_n=cfg["top_n"], exit_buffer=cfg["exit_buffer"], max_weight=cfg["max_weight"], slippage=cfg["slippage"],
                           atr_mult=0.0, atr_min_floor=cfg["trailing_stop"], use_trailing_stop=cfg["trailing_stop"] > 0, use_dma_exit=False,
                           weekly_rank_check=(cfg["exit_cadence"] == "weekly"),
                           regime_panel=overlay_panel, bear_exposure=float(cfg["bear_exposure"]) if cfg["overlay"] else 0.0,
-                          membership_fn=membership_fn, min_hold_days=cfg["min_hold_days"], initial_capital=1_000_000)
+                          membership_fn=membership_fn, min_hold_days=cfg["min_hold_days"], size_weights=size_weights, initial_capital=1_000_000)
     out.mkdir(parents=True, exist_ok=True); json.dump(cfg, open(out / "config.json", "w"), indent=1)
     res["equity"].to_csv(out / "equity.csv", index=False); res["trades"].to_csv(out / "trades.csv", index=False)
     if "exits" in res: res["exits"].to_csv(out / "exits.csv", index=False)
