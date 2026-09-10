@@ -303,3 +303,63 @@ on return; every NSE 500 variant carries a −31 to −33% drawdown. None of
 the MM books beats the MidSmall 400 on risk-adjusted terms here, and the
 OM25 adaptive book (26.3% / −26.4%, 3Y 25.4%) remains ahead of all of
 them on the trailing three years.
+
+## §7 — capture analysis: is MM getting the upside? (no new trials)
+
+Monthly up- and down-capture against the MidSmall 400 (compound mean
+monthly return in the index's up months / down months, portfolio over
+index), plus leg returns over the index's actual bull and bear legs.
+
+**Wright's window, Oct-2020 → Aug-2026 (45 up months, 23 down):**
+
+| Book | Up-capture | Down-capture | Beats index in up / down months |
+|---|---|---|---|
+| MM §3, Nifty 250 | 1.09 | **1.11** | 51% / 52% |
+| MM §3, NSE 500 | 1.09 | **1.37** | 58% / 35% |
+| MM weekly §6, Nifty 250 | 1.08 | 1.07 | 53% / 48% |
+| L6 v2 rules, NSE 500 | 1.13 | 1.24 | 56% / 48% |
+| OM25 adaptive, Nifty 250 | 1.05 | 0.97 | 49% / 57% |
+| Wright (ex-costs) | 1.11 | **0.90** | 62% / 57% |
+
+**Leg returns, %:**
+
+| Book | Bull Apr-20 → Oct-21 | Bear Oct-21 → Jun-22 | Bull Jun-22 → Sep-24 | Bear Sep-24 → Feb-25 | Bull Feb-25 → Aug-26 | Calendar 2021 |
+|---|---|---|---|---|---|---|
+| MidSmall 400 | 132.0 | −12.4 | 124.3 | −22.0 | 27.4 | 51.3 |
+| MM §3, Nifty 250 | 105.7 | 0.6 | 124.2 | −25.4 | 37.8 | 56.8 |
+| MM §3, NSE 500 | 157.7 | −5.0 | 142.8 | −28.6 | 8.8 | 69.7 |
+| MM weekly §6, Nifty 250 | 143.1 | −14.6 | 131.4 | −18.4 | 17.6 | 63.2 |
+| L6 v2 rules, NSE 500 | 206.0 | −6.8 | 125.4 | −27.0 | 18.7 | 97.7 |
+| OM25 adaptive, Nifty 250 | 99.3 | −8.4 | 136.3 | −25.4 | 48.9 | 57.5 |
+| Wright | 104.1 | −3.4 | 143.8 | −20.5 | 30.2 | 91.4 |
+
+**Long run 2011 → today vs MidSmall 400:** MM §3 Nifty 250 0.94 up /
+0.66 down; NSE 500 1.08 / 0.80; OM25 adaptive 0.88 / 0.51. Vs NIFTY 500:
+MM Nifty 250 1.19 / 0.81, NSE 500 1.29 / 0.85, OM25 1.10 / 0.61.
+
+Read:
+1. **The upside is there.** Every MM variant captures 1.08-1.13 of the
+   index's up months on this window, the same as Wright's 1.11; over the
+   long run MM captures 1.2-1.3 of NIFTY 500's up months.
+2. **The problem is entirely the down months.** MM gives back 1.07-1.37
+   of the index's down months; Wright gives back 0.90, OM25 0.97. That
+   0.2-0.5 gap in down-capture is the whole difference in Sharpe. On the
+   long run MM's down-capture is fine (0.66-0.85); it is the 2022 and
+   Sep-24 → Feb-25 momentum unwinds that hurt — the book holds the
+   highest-beta leaders into the turn.
+3. **Wright's 91% is not bull-leg over-capture.** Over the full Apr-20 →
+   Oct-21 leg they made 104% against the index's 132% — less than the
+   index and less than every MM book. Their 2021 is timing inside the
+   leg (they lagged Oct-Dec 2020, 15.9% vs 21.4%). Where they actually
+   win is the two bears (−3.4 vs −12.4, −20.5 vs −22.0) and the 2022-24
+   bull (144 vs 124).
+4. L6 v2's rules made 206% on the first leg and 98% in 2021 — the weekly,
+   zero-buffer book is the best bull-leg capturer here — and gave it back
+   in both bears; that is the production story from 2020 in one row.
+
+The lever for MM is bear-month behaviour, not the score. Candidate
+devices, all previously tested only on 2010-2015: the 20% stop (§6 weekly
+already shows 1.07 vs 1.11), the ROC exposure overlay, and the 200-DMA
+breadth overlay from OM25 §3j. Any test now is post-OOS by construction
+and must be judged on both legs — the cost in the bull legs against the
+saving in the bears.
