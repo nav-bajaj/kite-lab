@@ -53,4 +53,17 @@ if __name__ == "__main__":
             cell("base", uni, cad)
         for (kind, L, mode, th), be, (uni, cad) in itertools.product(SETTINGS, [0.5, 0.0], UNIS):
             cell("grid", uni, cad, kind, L, mode, th, 3, be)
+    if stage == "refine":
+        # sensitivity around the accepted cells only: confirm days, partial exposure, threshold, re-entry on the flip
+        for uni, cad in UNIS:
+            for c in (2, 5):
+                cell("refine", uni, cad, "breadth_ma", 200, "abs", 0.3, c, 0.0)
+            cell("refine", uni, cad, "breadth_ma", 200, "abs", 0.3, 3, 0.25)
+            cell("refine", uni, cad, "breadth_ma", 200, "abs", 0.3, 3, 0.0, True)
+            for th in (0.25, 0.35):
+                cell("refine", uni, cad, "breadth_ma", 200, "abs", th, 3, 0.0)
+            cell("refine", uni, cad, "breadth_ma", 200, "pct", 0.15, 3, 0.0)
+            cell("refine", uni, cad, "breadth_ma", 100, "abs", 0.3, 3, 0.0, True)
+            for th in (1.3, 1.5):
+                cell("refine", uni, cad, "capture", 252, "abs", th, 3, 0.0)
     print("done", flush=True)

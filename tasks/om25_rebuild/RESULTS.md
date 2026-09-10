@@ -235,3 +235,24 @@ exits on a slower entry schedule are strictly worse — 1 to 5pp of CAGR
 and 0.04 to 0.31 of Sharpe, with more trades — because a rank-out on a
 Friday leaves cash idle until the next entry date. Decision: **monthly
 entry and exit on both universes**, the fewest trades of any cell (G7).
+
+## §3k — lookback re-check on the 2010 window (10 trials) — monthly, fully invested
+
+Founder asked for 6 months; 3 months added for shape. min_obs at 87%.
+
+| Lookback | Nifty 250 | NSE 500 |
+|---|---|---|
+| 63 (3m) | 12.6% / 0.52 / −31.5% | 24.6% / 1.23 / −24.7% |
+| 126 (6m) | 19.3% / 1.06 / −26.7% | 27.9% / 1.53 / −21.0% |
+| 189 (9m) | 22.0% / 1.35 / −20.8% | 27.2% / 1.56 / −18.5% |
+| **252 (12m)** | **23.7% / 1.50 / −17.0%** | 23.6% / 1.44 / −15.2% |
+| 378 (18m, over cap) | 24.1% / 1.52 / −16.9% | 25.6% / 1.65 / −16.7% |
+
+Nifty 250 is monotone in lookback: 6 months costs 4pp of CAGR, 0.44 of
+Sharpe and 10pp of drawdown; 252 is the right choice under the 12-month
+cap. NSE 500 has no plateau on this six-year window (Sharpe 1.44-1.65
+across 6-18 months, 252 the lowest) — the ordering flips between windows
+(§3d on 2006-2015 had 252-378 flat and 126 worse). Choosing a shorter
+lookback for NSE 500 alone on this evidence would be fitting a six-year
+window; 252 is kept on both, pre-chosen on the longer window, and the
+NSE 500 sensitivity is recorded as a caveat for the OOS read.
