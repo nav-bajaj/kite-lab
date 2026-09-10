@@ -284,3 +284,22 @@ times the trades and a hit rate under 50%. The pieces behave as they did
 individually (§2: weekly and wide buffers add trades without Sharpe; §3c:
 the stop helps only Nifty 250 monthly; §5: the minimum hold only matters
 when the buffer is gone). Not adopted.
+
+### Wright's window (Oct-2020 → Aug-2026, 71 months; theirs ex-costs, ours net)
+
+| | CAGR | Monthly MaxDD | 2026 YTD | 1Y | 3Y | Vol |
+|---|---|---|---|---|---|---|
+| Wright Momentum | 31.2% | −21.7% | 8.9% | 14.2% | 18.4% | 20.0% |
+| §6 weekly config, Nifty 250 | 25.2% | −18.5% | 0.5% | 8.9% | 17.2% | 20.7% |
+| §6 weekly config, NSE 500 | 23.9% | −30.9% | 6.2% | 11.2% | 9.0% | 23.7% |
+| §3 book, Nifty 250 | 26.2% | −25.9% | 4.9% | 8.9% | 24.0% | 21.7% |
+| §3 book, NSE 500 | 21.1% | −32.6% | −2.9% | 1.6% | 8.0% | 23.4% |
+| L6 v2 rules, NSE 500 | 25.2% | −32.0% | 6.5% | 10.8% | 10.5% | 25.0% |
+| MidSmall 400 | 23.6% | −22.0% | 3.0% | 8.2% | 14.9% | 18.1% |
+
+On this window the weekly Nifty 250 configuration is the one MM variant
+with a Wright-like risk profile (drawdown −18.5%, vol 20.7%), 6pp behind
+on return; every NSE 500 variant carries a −31 to −33% drawdown. None of
+the MM books beats the MidSmall 400 on risk-adjusted terms here, and the
+OM25 adaptive book (26.3% / −26.4%, 3Y 25.4%) remains ahead of all of
+them on the trailing three years.
