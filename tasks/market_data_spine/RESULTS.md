@@ -133,8 +133,8 @@ the tick (31 events, 100% within 0.2%).
 Consequence: "Kite adjusted as the basis" (D-6) is not available for
 history. Both candidate bases are built from the bhavcopy raw layer and
 the filings table, applied on read; Kite is the cross-check for whatever
-it covers. Founder's call between total-return (A) and price-return (B)
-requested 2026-09-10; both views will be emitted.
+it covers. Founder's call, 2026-09-10: **price return is the basis** (D-12); the
+total-return view is kept as a footnoted companion.
 
 ## Phase 4 — corporate actions and adjusted views (2026-09-10) — gate restated, pending founder
 

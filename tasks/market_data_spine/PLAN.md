@@ -43,11 +43,10 @@ Then, and only then, OM25 gets retuned — as a separate task.
 
 ## What changed on 2026-09-10 (founder decisions)
 
-- **Total return, not price return.** Kite's adjusted series is the basis.
-  This reverses D-3. Consequence: dividends are in the curve, published
-  numbers move up by roughly the dividend yield, and an ex-date rewrites a
-  symbol's whole prior history by design — so the store is versioned by pull
-  date, not append-only. D-6.
+- **Price return is the basis; total return is a companion** (D-12,
+  2026-09-10, after D-6's total-return call was found unachievable from
+  Kite). Splits, bonus, rights, demergers adjusted; dividends not. The
+  total-return view is emitted alongside and footnoted, never ranked on.
 - **Fresh from scratch.** Nothing in the master store is copied from
   `nse500_data*` or the backfill directories. Those stay as they are for
   production and become a cross-check only. D-7.

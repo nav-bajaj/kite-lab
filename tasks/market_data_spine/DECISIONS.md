@@ -210,3 +210,27 @@ for history. Proposed replacement: bhavcopy raw × NSE-filed factors,
 applied on read, for every symbol; Kite becomes the cross-check. Whether
 the default view is total-return or price-return is the founder's call,
 pending. Nothing published derives from either yet.
+
+## D-12 — Price return is the basis. Total return is a companion series. (Founder, 2026-09-10.)
+
+**Decision.** Signals, the re-baseline and the published record use the
+price-return view (`prices/adjusted_pr/`): splits, bonus, rights and
+demergers adjusted; cash dividends not. The total-return view
+(`prices/adjusted_tr/`) is kept and reported alongside as a footnote —
+"total return adds x pp; dividends are paid in cash and not assumed
+reinvested" — never as the basis. Rank and report on the same basis.
+
+**Why.** Measured across all four portfolios 2006-2026, total return adds
+0.5-2.4pp of CAGR and changes no ranking. What a published record needs
+is verifiability: the price-return series reconciles to the bhavcopy row
+by row and to Kite wherever Kite is clean, whereas a total-return series
+is entirely our construction from 23,370 filed dividends with no external
+check before 2023 (Kite is not total-return; see RESULTS.md Phase 3). It
+also matches live production's basis without touching production (D-8),
+rewrites history only on share-count events, and is the conservative
+claim for a SEBI-registered track record — realised investor returns are
+higher by the dividend yield, and dividends are taxed at slab since 2020.
+
+**Supersedes** D-6's basis choice; D-6's snapshot-versioning consequence is
+retained for the companion series. Restores the 2026-09-08 call (D-3) on
+better evidence.
