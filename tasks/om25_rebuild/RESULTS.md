@@ -514,3 +514,25 @@ adaptive book leads 2024 (48% vs 34%) and 2026 to date (16% vs 9%); 2022
 and 2025 flat for both. Monthly correlation 0.78. The 2021 gap is where
 the CAGR difference lives; the trailing three years favour the adaptive
 book.
+
+## §4c — the Nifty 250 monthly process on the NSE 500 universe (Wright's window)
+
+Same rules (monthly, lookback 252, 25 / 20, five-year yearly refit over
+the 36-config grid), universe swapped to NSE 500. Wright uses a 500-stock
+universe. Oct-2020 → Aug-2026, ours net of 20 bps.
+
+| | CAGR | Monthly MaxDD | 2026 YTD | 1Y | 2Y | 3Y | Corr w/ Wright |
+|---|---|---|---|---|---|---|---|
+| Wright Momentum (ex-costs) | 31.2% | −21.7% | 8.9% | 14.2% | 3.0% | 18.4% | — |
+| Adaptive on NSE 500, own refit | 20.6% | −22.0% | 7.0% | 11.2% | −0.2% | 13.3% | 0.82 |
+| Nifty 250's picks applied to NSE 500 | 26.3% | −30.2% | 23.4% | 22.3% | 5.6% | 18.7% | 0.85 |
+| Adaptive on Nifty 250 (§4b) | 26.3% | −26.4% | 16.0% | 18.0% | 4.7% | 25.4% | 0.78 |
+
+On NSE 500 the five-year refit never leaves capture ratio (it picks
+CR / 1 / 20 / stop from 2022 on) and lands at 20.6%, 6pp below the Nifty
+250 process and 10pp below Wright; full OOS 2016-26 17.7% / 0.73 / −37%.
+The Nifty 250 picks (50/50 with stop from 2024) applied to NSE 500 match
+the Nifty 250 CAGR and win 2026 outright (23% vs 9%) at a deeper
+drawdown. The universe is not what separates the book from Wright: the
+gap is 2021 (56-78% vs 91%) on either universe, and their bear-regime
+model and volatility screen are the likelier source.
