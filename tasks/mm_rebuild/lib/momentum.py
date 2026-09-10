@@ -4,7 +4,7 @@ import numpy as np, pandas as pd
 
 
 def make_momentum_score(returns_universe: pd.DataFrame, *, kind: str = "abs", lookback: int = 126, min_obs: int = 110,
-                        skip: int = 0, vol_floor: float = 0.05, positive_only: bool = False, candidate_fn=None):
+                        skip: int = 0, vol_floor: float = 0.05, positive_only: bool = False, candidate_fn=None, cr_quantile: float = 0.0):
     """kind='abs': trailing return over the window. kind='voladj': that return / annualised daily vol, vol floored (L6 v2's form).
     skip: sessions excluded at the end of the window (the classic 12-1 skips ~21). Eligibility: >= min_obs returns in the window."""
     def score_fn(signal_date, **_):
@@ -18,6 +18,14 @@ def make_momentum_score(returns_universe: pd.DataFrame, *, kind: str = "abs", lo
             cands = candidate_fn(signal_date)
             window = window[[c for c in window.columns if c in cands]]
         elig = window.notna().sum() >= min_obs
+        if cr_quantile > 0:   # founder 2026-09-10: momentum ranked only within the top share of names by capture ratio over the same window
+            we = window.loc[:, elig.values]; market = we.mean(axis=1); up, dn = market > 0, market < 0
+            mu_up, mu_dn = market[up].mean(), market[dn].mean()
+            if mu_up > 0 and mu_dn < 0:
+                uc = we[up].mean() / mu_up; dc = we[dn].mean() / mu_dn
+                cr = (uc / dc.where(dc > 0)).fillna(uc).dropna()
+                keep = cr[cr >= cr.quantile(1 - cr_quantile)].index
+                elig &= window.columns.isin(keep)
         w = window.loc[:, elig.values]
         if w.shape[1] == 0:
             return pd.Series(dtype=float)

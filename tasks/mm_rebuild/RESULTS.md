@@ -134,3 +134,22 @@ under the null 0.48; best raw 1.11 → deflated 0.63 (reported, not gated).
 Parameters: universe, lookback, skip, top-N, buffer, cadence, vol floor =
 7. **OOS not opened.** Awaiting the founder's instruction to open §4 with
 both universes, and the same walk-forward design as OM25 §4b.
+
+## §3f — capture-ratio pre-filter (4 trials) — IS 2010-2015, on the §3 base
+
+Founder's reverse of OM25 §5a: keep the top share of names by capture
+ratio over the same window, then rank vol-adjusted momentum within them.
+`cr_quantile` switch (default off; run ids unchanged).
+
+| Pool by capture ratio | Nifty 250, 12m | NSE 500, 6m |
+|---|---|---|
+| Whole book (base) | 20.5% / 1.02 / −21.7%, hit 57% | 23.6% / 1.06 / −26.6%, hit 55% |
+| Top half | 19.0% / 0.90 / −23.9% | 22.2% / 0.95 / −28.1% |
+| Top quartile | 22.5% / 1.16 / −21.3%, hit 58% | 22.7% / 0.96 / −28.9%, hit 51% |
+
+Not adopted. The response is non-monotone — the top half hurts on both
+universes and the top quartile helps on one — which is the shape of noise
+rather than a mechanism; a filter that works should improve as it
+tightens. The one gain (Nifty 250, +0.14) is a single cell on six years.
+Carried as a walk-forward refit candidate if the founder wants it counted
+there; otherwise closed.
