@@ -576,3 +576,63 @@ today, the 20th percentile of its history (median 9.8pp): capture ratio
 is in a weak patch and upside capture is carrying the book. Production
 OM25 v3 has run 50/50 in its bull state since inception, which is why
 its rules read 0.92 for 2023-26.
+
+## §4e — year by year, SIP, and a flat 25% tax (Nifty 250 adaptive process, chained from 2011)
+
+Benchmarks are price indices. Nifty 250 = NIFTY LARGEMIDCAP 250 from
+2020-01-02 (real index, `~/Documents/stock_data/indices_data`), spliced
+onto a 50/50 NIFTY 100 + NIFTY MIDCAP 150 proxy rebalanced quarterly
+before that (the index methodology; correlation 0.98 with the real
+index since 2020, CAGR within 0.5pp). 2026 = YTD to 2026-09-09.
+
+| Year | Portfolio | Nifty 250 | Nifty 500 |
+|---|---|---|---|
+| 2011 | −13.5% | −29.2% | −27.4% |
+| 2012 | 45.1% | 37.4% | 31.8% |
+| 2013 | 11.2% | 1.8% | 3.6% |
+| 2014 | 68.0% | 46.6% | 37.8% |
+| 2015 | 10.4% | 2.9% | −0.7% |
+| 2016 | 7.3% | 4.6% | 3.8% |
+| 2017 | 54.9% | 42.4% | 35.9% |
+| 2018 | 0.7% | −6.2% | −3.4% |
+| 2019 | 8.1% | 5.0% | 7.7% |
+| 2020 | 28.2% | 19.7% | 16.7% |
+| 2021 | 57.5% | 35.7% | 30.2% |
+| 2022 | −1.5% | 3.4% | 3.0% |
+| 2023 | 30.7% | 31.6% | 25.8% |
+| 2024 | 47.9% | 17.7% | 15.2% |
+| 2025 | 0.4% | 7.3% | 6.7% |
+| 2026 YTD | 15.1% | 0.1% | −3.8% |
+
+Beats Nifty 250 in 13 of 16 years, Nifty 500 in 14; the losses are 2022,
+2023 (by 1pp) and 2025 — flat or grinding years. Never worse than −13.5%
+in a calendar year against −29% for the indices in 2011.
+
+Tax: flat 25% on each financial year's positive gain at March 31, no
+loss carry-forward, for the portfolio (its turnover realises gains every
+year). For the indices the fair comparison is buy-and-hold taxed once at
+exit; the FY-taxed index is shown for symmetry.
+
+| CAGR | Portfolio | Nifty 250 | Nifty 500 |
+|---|---|---|---|
+| 2011-26 pre-tax | 21.4% | 12.2% | 10.3% |
+| 2011-26 post-tax | **16.1%** (FY) | 10.6% (exit) / 8.8% (FY) | 8.7% (exit) / 7.1% (FY) |
+| 2016-26 pre-tax | 21.6% | 14.2% | 12.3% |
+| 2016-26 post-tax | **16.5%** (FY) | 12.0% (exit) / 10.4% (FY) | 10.3% (exit) / 8.8% (FY) |
+
+The yearly tax costs the portfolio 5.1-5.3pp of CAGR; the index
+buy-and-hold loses 1.6-2.2pp to tax at exit. Post-tax the portfolio's
+lead over Nifty 250 narrows from 9.2pp to 5.5pp (2011-26).
+
+SIP of Rs 10,000 on the first trading day of each month:
+
+| SIP | Invested | Portfolio | Nifty 250 | Nifty 500 |
+|---|---|---|---|---|
+| from 2011, pre-tax | 18.9L | 140.6L (7.4x), XIRR 22.7% | 65.5L (3.5x), 14.5% | 53.2L (2.8x), 12.2% |
+| from 2011, post-tax | 18.9L | 85.6L (4.5x), 17.4% | 53.8L (2.8x), 12.3% | 44.6L (2.4x), 10.2% |
+| from 2016, pre-tax | 12.9L | 46.1L (3.6x), 22.4% | 29.2L (2.3x), 14.6% | 25.4L (2.0x), 12.2% |
+| from 2016, post-tax | 12.9L | 34.7L (2.7x), 17.6% | 25.1L (1.9x), 12.0% | 22.3L (1.7x), 9.9% |
+
+Portfolio SIP taxed 25% on each FY's gain of the accumulated pot; index
+SIP taxed 25% on the gain at exit. Post-tax, the portfolio SIP ends at
+1.6x the Nifty 250 SIP from 2011 and 1.4x from 2016.
