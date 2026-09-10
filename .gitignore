@@ -182,3 +182,4 @@ tasks/donchian_channel/runs/
 # Market data spine — fresh store (regenerable from the fetchers in tasks/market_data_spine/lib)
 data/master/raw/
 data/master/prices/
+data/master/panels/
