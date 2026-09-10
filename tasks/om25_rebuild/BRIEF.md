@@ -84,3 +84,15 @@ says "just the hysteresis"; the overlay is out of scope until said otherwise.
   not chosen.
 - Positive one-year-return eligibility filter: not decided; kept as a
   searchable switch, counted in the deflation.
+
+## Constraints added 2026-09-10 (founder, after §3)
+
+- Exposure overlay brought back into scope (§3e): the ROC regime drives
+  gross exposure in bear; the engine's regime_panel / bear_exposure path,
+  entries skipped in bear (engine default).
+- Return filter tested as a switch.
+- **Portfolio size ≤ 25 positions** — anything more is difficult to operate.
+  §3c's 40-name cell is out; 25 / buffer 20 is the pick.
+- **Lookback ≤ 12 months**; shorter is acceptable.
+- Cadences tested so far: biweekly (§3a, §3b) and monthly (§3c, §3d);
+  weekly not yet.

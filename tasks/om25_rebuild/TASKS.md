@@ -42,6 +42,7 @@ Owners: 👤 founder · 🤖 agent.
 - [ ] 3b regime: one vs two, ROC parameters (small grid) on 3a's winner
 - [ ] 3c top-N / exit buffer / cadence grid
 - [ ] 3d lookback / min_obs
+- [ ] 3e exposure overlay: ROC grid × bear exposure {75, 50, 25, 0} × return filter, both universes, ≤25 names
 - [ ] Deflate; record every run in RESULTS.md with its number
 
 ## §4 — OOS and walk-forward, opened once 🤖👤
