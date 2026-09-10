@@ -78,12 +78,22 @@ def deflated_sharpe(sr_annual: float, n_obs: int, n_trials: int, skew: float, ku
     return (sr - e_max) * math.sqrt(252), p
 
 
+def observed_sr_var() -> float:
+    """Variance of annual IS Sharpe across every registered trial — the V in
+    the deflated-Sharpe formula, measured rather than assumed."""
+    if not REG.exists():
+        return 0.25
+    v = pd.read_csv(REG)["is_sharpe"].astype(float).var()
+    return float(v) if v == v and v > 0 else 0.25
+
+
 def evaluate(cfg_dir, n_params: int, trials: int | None = None) -> dict:
     eq = equity(cfg_dir); out = {}
     for k, (a, b) in WINDOWS.items():
         out[k] = stats(eq, a, b)
     t = trials if trials is not None else max(n_trials(), 1)
-    hs, p = deflated_sharpe(out["IS"]["sharpe"], out["IS"]["n"], t, out["IS"].get("skew", 0), out["IS"].get("kurt", 3))
+    hs, p = deflated_sharpe(out["IS"]["sharpe"], out["IS"]["n"], t, out["IS"].get("skew", 0), out["IS"].get("kurt", 3),
+                            sr_var_annual=observed_sr_var())
     out["IS_deflated_sharpe"], out["IS_dsr_prob"], out["trials"] = hs, p, t
     out["gates"] = dict(G1=hs >= GATES["G1_is_sharpe_deflated"], G2=out["OOS"]["sharpe"] >= GATES["G2_oos_sharpe"],
                         G3=all(out[k]["sharpe"] >= GATES["G3_sub_sharpe"] for k in ("OOS_a", "OOS_b", "OOS_c")),
