@@ -6,7 +6,7 @@ Owners: 👤 founder · 🤖 agent.
 
 | # | Criterion | Value |
 |---|---|---|
-| G1 | IS Sharpe (rf 5%), 2006-2015, after deflation for candidates tried | ≥ 0.9 |
+| G1 | IS Sharpe (rf 5%), 2006-2015, after deflation for candidates tried | ≥ 0.9 → **≥ 0.8 raw, relaxed by the founder 2026-09-10 after the in-sample close at 616 trials** (deflated value reported alongside; at 616 trials with observed sd 0.21 the deflation is 0.66, so no deflated value can pass) |
 | G2 | OOS Sharpe, 2016-today | ≥ 0.9 |
 | G3 | OOS sub-window Sharpe, each of 2016-19 / 2020-22 / 2023-26 | ≥ 0.6 |
 | G4 | OOS maximum drawdown | no worse than −40% |

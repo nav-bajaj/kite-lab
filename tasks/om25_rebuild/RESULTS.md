@@ -159,3 +159,44 @@ cadence and re-entry cover the space, and the raw maximum never crossed
 0.9. The return gap is structural on this window: an overlay that survives
 2008 holds cash through it, and 2006-2015 on a price-return basis gave the
 index 10.9%. **OOS stays closed.** Decision for the founder — see chat.
+
+## Gate change (founder, 2026-09-10)
+
+G1 relaxed from 0.9 deflated to **0.8 raw**, deflated value reported
+alongside. Recorded in TASKS.md §0.
+
+## §3h — the same book started 2010-01-01 (122 trials) — window 2010-2015
+
+No crash, no recovery; the index did 7.8% over the window (15.5% over
+2006-2009). Fresh runs starting 2010 (not a window cut from the 2006
+path; the two agree to 0.6pp, so path dependence is nil). LM 250 monthly
+and N 500 biweekly: no overlay, the §3e overlay grid (48 cells each), and
+flip re-entry on the full-exit cells (12 each).
+
+| Universe, cadence | No overlay | Best overlay cell | Overlay cells beating no overlay |
+|---|---|---|---|
+| LM 250, monthly | **23.7% / 1.50 / −17.0%** | ROC21/c3, 75%: 18.7% / 1.45 / −12.8% | 0 / 48 |
+| N 500, biweekly | **22.7% / 1.35 / −15.5%** | ROC42/c2, 75%: 18.2% / 1.28 / −11.6% | 0 / 48 |
+
+The §3e winner (ROC15/c3, full exit) does 7.3% / 0.39 on LM 250 and
+12.8% / 0.94 on N 500 over this window. Mean overlay cost by bear
+exposure on LM 250: 75% → −5pp CAGR, 50% → −10pp, full exit → −15pp.
+Flip re-entry does not rescue the full-exit cells (best 1.01).
+
+Read: **the overlay's entire value is 2008.** In every other regime,
+including 2011 (index −25%; the fully invested book's worst drawdown here
+is −17%), it costs return and Sharpe. The fully invested book beats the
+index by 15-16pp a year on the muted window and clears both G1 at 0.8
+and G8 at 20% with room (the only two cells of 122 that clear both are
+the two no-overlay books). Deflation for this window: 122 trials, observed
+sd 0.30, E[max] 0.77, best raw 1.50 → deflated
+0.72; the relaxed gate is raw, so this is reported,
+not judged.
+
+**Decision for the founder, recorded when made:** the in-sample window
+was pre-committed as 2006-2015 and the book fails it; moving the window
+to 2010-2015 after seeing this is a choice to judge the book fully
+invested and accept a 2008-type drawdown as out of scope of the gates.
+That is defensible (the overlay is a separate risk policy, not part of
+the alpha) but it must be written down as such. 738 unique trials
+to date. OOS still closed.
