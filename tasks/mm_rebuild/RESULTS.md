@@ -363,3 +363,124 @@ already shows 1.07 vs 1.11), the ROC exposure overlay, and the 200-DMA
 breadth overlay from OM25 §3j. Any test now is post-OOS by construction
 and must be judged on both legs — the cost in the bull legs against the
 saving in the bears.
+
+## §8 — bear-month behaviour: every exposure device, judged by leg (26 trials) — post-OOS by construction
+
+Devices on the §3 base, both universes, runs 2010 → today. Regime for
+the ROC devices NIFTY 100 ROC31 / confirm 3; breadth = share of members
+above their 200-DMA < 30%, confirm 3; both confirmed then lagged one
+session. **Dynamic count** (founder): 25 names in bull, N in bear —
+"lever" keeps each name at 1/25 so gross exposure falls to N/25;
+"concentrate" lets the engine's 1/n sizing keep the book fully invested
+in N names. **Vol target**: exposure = min(1, target / trailing 21-day
+NIFTY 500 vol), set at Friday's close, applied from the next session.
+Look-ahead checked by rebuilding each series from data truncated the
+day before (`phase8` preamble; both checks pass). Capture = compound
+mean monthly return in the MidSmall 400's up / down months, over the
+index's. Legs in %, MidSmall 400: 132 / −12 / 124 / −22 / 27.
+
+**Nifty 250, 12m**
+| Device | IS Sharpe | OOS 2016-26 | Wright window | Up / down capture (Wright window) | Up / down (2011-26) | Legs: bull20-21 / bear21-22 / bull22-24 / bear24-25 / bull25-26 | Avg exposure |
+|---|---|---|---|---|---|---|---|
+| base | 1.02 | 19.7% / 0.73 / -38% | 26.2% / 1.03 / -30% | 1.09 / 1.11 | 0.94 / 0.66 | 106 / 1 / 124 / -25 / 38 | 99% |
+| stop 20% | 1.04 | 20.1% / 0.83 / -30% | 29.0% / 1.23 / -26% | 1.10 / 0.99 | 0.90 / 0.59 | 108 / -3 / 154 / -24 / 35 | 96% |
+| ROC overlay 50% | 0.89 | 14.5% / 0.76 / -19% | 19.1% / 1.04 / -19% | 0.67 / 0.47 | 0.58 / 0.32 | 68 / -5 / 124 / -15 / 7 | 66% |
+| ROC overlay 0% | 0.73 | 16.7% / 0.86 / -23% | 16.5% / 0.77 / -23% | 0.60 / 0.42 | 0.54 / 0.20 | 82 / -14 / 98 / -10 / 4 | 65% |
+| breadth overlay 50% | 1.06 | 16.1% / 0.66 / -30% | 23.7% / 1.04 / -20% | 0.92 / 0.86 | 0.78 / 0.52 | 84 / -4 / 131 / -19 / 16 | 87% |
+| breadth overlay 0% | 0.95 | 15.7% / 0.63 / -25% | 22.6% / 0.97 / -23% | 0.86 / 0.78 | 0.72 / 0.47 | 89 / -12 / 136 / -13 / 8 | 88% |
+| dyn N 18 lever (ROC) | 0.83 | 15.6% / 0.75 / -28% | 23.2% / 1.22 / -16% | 0.74 / 0.43 | 0.61 / 0.34 | 75 / -3 / 117 / -9 / 19 | 71% |
+| dyn N 15 lever (ROC) | 0.81 | 14.8% / 0.77 / -21% | 21.1% / 1.17 / -15% | 0.67 / 0.38 | 0.56 / 0.28 | 71 / -5 / 105 / -7 / 15 | 64% |
+| dyn N 15 concentrate (ROC) | 0.99 | 21.7% / 0.85 / -38% | 32.1% / 1.35 / -27% | 1.09 / 0.80 | 0.92 / 0.58 | 122 / 9 / 145 / -26 / 42 | 96% |
+| dyn N 15 lever (breadth) | 1.08 | 16.7% / 0.68 / -32% | 24.5% / 1.08 / -20% | 0.92 / 0.79 | 0.78 / 0.50 | 97 / -1 / 129 / -18 / 13 | 89% |
+| vol target 20% | 0.89 | 16.4% / 0.64 / -29% | 23.3% / 0.98 / -25% | 0.99 / 1.02 | 0.83 / 0.60 | 84 / -3 / 130 / -24 / 25 | 91% |
+| vol target 15% | 0.88 | 14.7% / 0.62 / -24% | 21.4% / 0.99 / -23% | 0.85 / 0.78 | 0.71 / 0.49 | 61 / 3 / 121 / -23 / 19 | 82% |
+| vol target 15% + stop 20% | 0.86 | 14.2% / 0.61 / -22% | 21.3% / 1.01 / -22% | 0.84 / 0.76 | 0.66 / 0.43 | 58 / 5 / 119 / -20 / 15 | 80% |
+
+**NSE 500, 6m**
+| Device | IS Sharpe | OOS 2016-26 | Wright window | Up / down capture (Wright window) | Up / down (2011-26) | Legs: bull20-21 / bear21-22 / bull22-24 / bear24-25 / bull25-26 | Avg exposure |
+|---|---|---|---|---|---|---|---|
+| base | 1.06 | 21.7% / 0.78 / -34% | 21.1% / 0.74 / -34% | 1.09 / 1.37 | 1.08 / 0.80 | 158 / -5 / 143 / -29 / 9 | 99% |
+| stop 20% | 0.90 | 17.7% / 0.63 / -35% | 20.3% / 0.74 / -35% | 1.05 / 1.34 | 1.01 / 0.83 | 158 / -3 / 124 / -29 / 7 | 96% |
+| ROC overlay 50% | 0.92 | 18.5% / 0.92 / -20% | 15.6% / 0.69 / -20% | 0.71 / 0.79 | 0.73 / 0.45 | 113 / -7 / 95 / -14 / -1 | 70% |
+| ROC overlay 0% | 0.63 | 16.7% / 0.80 / -25% | 11.9% / 0.44 / -25% | 0.57 / 0.66 | 0.61 / 0.34 | 110 / -16 / 77 / -7 / -8 | 65% |
+| breadth overlay 50% | 0.95 | 17.0% / 0.64 / -33% | 20.2% / 0.77 / -33% | 0.99 / 1.21 | 0.88 / 0.68 | 132 / -2 / 124 / -24 / -1 | 87% |
+| breadth overlay 0% | 0.87 | 15.8% / 0.59 / -33% | 19.7% / 0.75 / -33% | 0.94 / 1.12 | 0.83 / 0.65 | 120 / -1 / 122 / -21 / -7 | 84% |
+| dyn N 18 lever (ROC) | 0.91 | 17.2% / 0.81 / -25% | 18.5% / 0.86 / -25% | 0.72 / 0.65 | 0.69 / 0.41 | 140 / -6 / 75 / -4 / 1 | 68% |
+| dyn N 15 lever (ROC) | 0.83 | 16.8% / 0.82 / -23% | 18.1% / 0.86 / -23% | 0.69 / 0.61 | 0.64 / 0.37 | 136 / -5 / 68 / -3 / 1 | 64% |
+| dyn N 15 concentrate (ROC) | 0.98 | 19.7% / 0.70 / -35% | 19.9% / 0.70 / -29% | 1.01 / 1.29 | 1.03 / 0.81 | 142 / -6 / 125 / -25 / 12 | 95% |
+| dyn N 15 lever (breadth) | 0.85 | 15.3% / 0.55 / -33% | 18.5% / 0.68 / -33% | 0.94 / 1.20 | 0.84 / 0.68 | 130 / -0 / 110 / -23 / -5 | 85% |
+| vol target 20% | 1.04 | 17.8% / 0.65 / -34% | 19.1% / 0.70 / -34% | 1.02 / 1.31 | 0.97 / 0.74 | 123 / -8 / 133 / -28 / 4 | 91% |
+| vol target 15% | 0.83 | 17.7% / 0.72 / -28% | 20.8% / 0.90 / -28% | 0.89 / 0.92 | 0.80 / 0.58 | 101 / 9 / 100 / -26 / 7 | 80% |
+| vol target 15% + stop 20% | 0.73 | 15.8% / 0.65 / -28% | 20.6% / 0.93 / -28% | 0.86 / 0.87 | 0.74 / 0.56 | 102 / 14 / 89 / -24 / 4 | 77% |
+
+Read, Nifty 250:
+1. **Two devices cut down-capture without touching up-capture.** The 20%
+   stop: down 1.11 → 0.99, up unchanged, OOS 0.73 → 0.83, drawdown −38 →
+   −30, better on two of three bull legs. **Concentrating to 15 names in
+   bear** (fully invested): down 1.11 → 0.80, up 1.09 unchanged, OOS 0.85,
+   Wright-window 32.1% / 1.35 / −27%, and it wins every bull leg and the
+   2021-22 bear (+8.7 against the index's −12). In a bear the top 15 by
+   vol-adjusted momentum are the resilient leaders; ranks 16-25 are what
+   falls. It does nothing for the Sep-24 → Feb-25 unwind (−26).
+2. Every device that cuts *exposure* — ROC overlay, lever-down count,
+   vol targeting — cuts up-capture by as much as or more than
+   down-capture (up 0.60-0.85 against down 0.38-0.78) and loses 3-10pp of
+   CAGR on Wright's window. The lever-down count is the least bad of
+   them (Wright-window Sharpe 1.17-1.22, drawdown −15%) at 21-23% CAGR.
+3. Vol targeting on index vol does not help a stock-momentum book here:
+   up and down capture fall together.
+
+Read, NSE 500: nothing preserves the upside. The ROC 50% overlay is the
+one device that lifts OOS Sharpe above 0.9 (0.92, drawdown −20%) and it
+costs 5-6pp of CAGR on Wright's window (bull legs 113 / 95 / −1 against
+158 / 143 / 9). Concentration does not help on this universe (down 1.29).
+The NSE 500 book's bear problem is the universe's beta, not its tail.
+
+The Sep-24 → Feb-25 unwind (index −22) is not fixed by any device that
+keeps the upside; only the lever-down and ROC-exit variants avoid it
+(−3 to −10), by not being invested.
+
+Caveats: post-OOS; 13 devices × 2 universes looked at; the two Nifty 250
+winners are single cells until §8b checks their neighbours (N ∈ {12, 15,
+18, 20}, two ROC lengths, breadth regime, with and without the stop).
+
+## §8b — robustness of concentrate-in-bear (44 trials) — post-OOS
+
+Nifty 250: N in bear ∈ {12, 15, 18, 20} × regime ∈ {ROC31, ROC21, ROC42
+(confirm 3), breadth 200-DMA < 30%} × stop ∈ {off, 20%}. OOS Sharpe
+2016-26 (base 0.73):
+
+| N in bear | ROC31/c3 no stop / stop | ROC21/c3 no stop / stop | ROC42/c3 no stop / stop | breadth200<30% no stop / stop |
+|---|---|---|---|---|
+| 12 | 0.83 / **0.93** | 0.83 / **0.88** | 0.77 / **0.86** | 0.88 / **0.95** |
+| 15 | 0.85 / **0.93** | 0.83 / **0.87** | 0.79 / **0.84** | 0.85 / **0.91** |
+| 18 | 0.79 / **0.87** | 0.79 / **0.83** | 0.74 / **0.82** | 0.81 / **0.87** |
+| 20 | 0.79 / **0.89** | 0.80 / **0.85** | 0.72 / **0.83** | 0.80 / **0.87** |
+
+It is a plateau, not a spike: with the stop every one of the 16 cells is
+0.82-0.95, and 12-15 names in bear with ROC31 or breadth is the flat top.
+The stop adds 0.07-0.10 everywhere (its work is the 2020 crash: drawdown
+−38% → −28%); the regime choice matters little (ROC42 is the slow one).
+
+| Cell | IS | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Wright window | Up / down capture |
+|---|---|---|---|---|---|
+| N 12, breadth200<30%, stop 20% | 0.96 | 22.0% / 0.95 / -30% | 0.47 / 1.30 / 1.13 | 31.5% / 1.40 / -25% | 1.11 / 0.84 |
+| N 15, ROC31/c3, stop 20% | 1.06 | 21.8% / 0.93 / -28% | 0.34 / 1.59 / 0.95 | 32.1% / 1.41 / -27% | 1.10 / 0.84 |
+| N 12, ROC31/c3, stop 20% | 0.98 | 21.8% / 0.93 / -28% | 0.37 / 1.55 / 0.95 | 31.4% / 1.37 / -27% | 1.10 / 0.86 |
+| N 15, breadth200<30%, stop 20% | 1.06 | 21.3% / 0.91 / -30% | 0.41 / 1.29 / 1.08 | 31.0% / 1.37 / -25% | 1.09 / 0.84 |
+
+Every cell in that top group passes G2 (≥ 0.9), G4 (−28 to −30%) and G8
+(21-22%), and every cell fails G3 on 2016-2019 (0.3-0.5) — the window
+before any bear device matters, where momentum on Nifty 250 was simply
+weak (the §3 base does 0.49 there too). Capture on Wright's window 1.09-1.11
+up / 0.80-0.86 down, against Wright's 1.11 / 0.90; return 31-32% against
+their 31.2% (theirs gross), drawdown −27% against −22%.
+
+NSE 500 (12 cells): no help — down-capture stays 1.10-1.35, OOS
+0.65-0.79. Concentration removes a bad tail; NSE 500's problem is the
+whole book's beta.
+
+Caveats: post-OOS design, 70 cells looked at in §8-8b; the 2024-25
+unwind is unchanged (−25 to −27 in every cell); N and the regime were
+searched on the same window they are judged on. What is not in doubt is
+the mechanism's sign across a 4 × 4 × 2 grid.

@@ -12,8 +12,8 @@ import windows as W  # noqa: E402
 RUNS = TASK / "runs"; RUNS.mkdir(exist_ok=True); W.REG = RUNS / "registry.csv"
 DEFAULTS = dict(universe="nifty250", kind="abs", lookback=126, min_obs=110, skip=0, vol_floor=0.05, positive_only=False,
                 top_n=25, exit_buffer=20, cadence="monthly", exit_cadence="same", trailing_stop=0.0, max_weight=1.0, slippage=0.002,
-                min_hold_days=0, cr_quantile=0.0, vol_kick="none", vol_k=0.0, regimes=1, bull_kind="abs", overlay=False, regime_kind="roc", roc_n=31, confirm=3, bear_exposure=1.0, reenter_on_flip=False, start="2010-01-01", end="2015-12-31")
-_ID_OPTIONAL = {"min_hold_days", "vol_kick", "vol_k", "cr_quantile", "regimes", "bull_kind", "overlay", "regime_kind", "roc_n", "confirm", "bear_exposure", "reenter_on_flip"}
+                min_hold_days=0, dyn_n_bear=0, dyn_mode="lever", vol_target=0.0, vol_window=21, str_kind="breadth_ma", str_len=200, str_thresh=0.3, str_mode="abs", cr_quantile=0.0, vol_kick="none", vol_k=0.0, regimes=1, bull_kind="abs", overlay=False, regime_kind="roc", roc_n=31, confirm=3, bear_exposure=1.0, reenter_on_flip=False, start="2010-01-01", end="2015-12-31")
+_ID_OPTIONAL = {"dyn_n_bear", "dyn_mode", "vol_target", "vol_window", "str_kind", "str_len", "str_thresh", "str_mode", "min_hold_days", "vol_kick", "vol_k", "cr_quantile", "regimes", "bull_kind", "overlay", "regime_kind", "roc_n", "confirm", "bear_exposure", "reenter_on_flip"}
 
 
 _turn = {}
@@ -52,10 +52,29 @@ def run_candidate(**overrides):
                                    volume_panel=volume_panel, vol_kick=cfg["vol_kick"], vol_k=cfg["vol_k"])
     start = pd.Timestamp(cfg["start"]); end = pd.Timestamp(cfg["end"]) if cfg["end"] else cal[-1]
     overlay_panel = None; roc = None
-    if cfg["overlay"] or cfg["regimes"] == 2:
-        roc = om.roc_regime(om.REGIME_INDEX, cfg["roc_n"], cfg["confirm"], cal).astype(bool)
+    if cfg["overlay"] or cfg["regimes"] == 2 or cfg["dyn_n_bear"]:
+        # both series are confirmed then shifted one session inside their builders: the value at t is decided from closes <= t-1
+        roc = (om.roc_regime(om.REGIME_INDEX, cfg["roc_n"], cfg["confirm"], cal) if cfg["regime_kind"] == "roc"
+               else om.strength_series(cfg["universe"], cfg["str_kind"], cfg["str_len"], cfg["str_thresh"], cfg["str_mode"], cfg["confirm"], end)).reindex(cal).ffill().fillna(True).astype(bool)
     if cfg["overlay"]:
         overlay_panel = roc
+    if cfg["dyn_n_bear"]:
+        # founder 2026-09-10: hold top_n names in bull, dyn_n_bear in bear. 'lever': each name keeps its 1/top_n weight, so gross
+        # exposure falls to dyn_n_bear/top_n; 'concentrate': the engine's 1/n sizing keeps the book fully invested in fewer names.
+        base_fn = score_fn; nb = cfg["dyn_n_bear"] + cfg["exit_buffer"]
+        def score_fn(signal_date, **_):
+            sc = base_fn(signal_date)
+            return sc if bool(roc.get(signal_date, True)) else sc.nlargest(nb)
+        if cfg["dyn_mode"] == "lever":
+            overlay_panel = roc.astype(float).where(roc, cfg["dyn_n_bear"] / cfg["top_n"])
+    if cfg["vol_target"] > 0:
+        # exposure = min(1, target / realised vol of NIFTY 500 over the trailing window), set at Friday's close from returns <= that
+        # close and applied from the next session (shift(1) then ffill), so no session's exposure uses its own return
+        idx5 = pd.read_csv(om.MASTER / "benchmarks/NIFTY_500.csv", parse_dates=["date"]).set_index("date")["close"].sort_index()
+        rv = idx5.pct_change().rolling(cfg["vol_window"]).std() * (252 ** 0.5)
+        w = (cfg["vol_target"] / rv).clip(upper=1.0)
+        w = w[w.index.dayofweek == 4].reindex(cal).shift(1).ffill().fillna(1.0)
+        overlay_panel = w if overlay_panel is None else overlay_panel.astype(float).where(overlay_panel.astype(bool) if overlay_panel.dtype == bool else overlay_panel >= 1.0, overlay_panel.astype(float)).combine(w, min)
     if cfg["regimes"] == 2:   # §3d tilt: bull -> bull_kind score, bear -> the base kind
         bull_fn = make_momentum_score(returns_uni, kind=cfg["bull_kind"], lookback=cfg["lookback"], min_obs=cfg["min_obs"], skip=cfg["skip"],
                                       vol_floor=cfg["vol_floor"], positive_only=cfg["positive_only"], candidate_fn=candidate_fn)
