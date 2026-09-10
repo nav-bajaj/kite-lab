@@ -200,3 +200,38 @@ invested and accept a 2008-type drawdown as out of scope of the gates.
 That is defensible (the overlay is a separate risk policy, not part of
 the alpha) but it must be written down as such. 738 unique trials
 to date. OOS still closed.
+
+## Decisions after §3h (founder, 2026-09-10)
+
+In-sample window moved to **2010-01-01 → 2015-12-31**; the book is judged
+fully invested and 2008 is out of the gated window. An overlay is still
+required against a 2008-type event, but the ROC price-regime overlay is
+not it. The founder's proposal — an indicator of the strength of momentum
+across the index's stocks, cutting exposure when it weakens — is explored
+as §3j.
+
+## §3i — cadence grid from 2010 (10 trials) — window 2010-2015, fully invested
+
+Entry cadence × exit cadence ("same" = rank exits at the entry dates,
+"weekly" = rank exits every Friday via the engine's weekly rank check,
+which no earlier run used).
+
+| Universe | Entry / exit | CAGR | Sharpe | MaxDD | Trades |
+|---|---|---|---|---|---|
+| Nifty 250 | weekly / same | 23.6% | 1.49 | −17.4% | 2012 |
+| Nifty 250 | biweekly / same | 23.7% | 1.51 | −18.4% | 1712 |
+| Nifty 250 | biweekly / weekly | 23.2% | 1.51 | −17.7% | 1920 |
+| Nifty 250 | **monthly / same** | **23.7%** | **1.50** | **−17.0%** | **1434** |
+| Nifty 250 | monthly / weekly (extra) | 20.9% | 1.37 | −17.2% | 1807 |
+| NSE 500 | weekly / same | 22.9% | 1.35 | −16.9% | 2901 |
+| NSE 500 | biweekly / same | 22.7% | 1.35 | −15.5% | 2503 |
+| NSE 500 | biweekly / weekly | 21.7% | 1.31 | −16.6% | 2746 |
+| NSE 500 | **monthly / same** | **23.6%** | **1.44** | **−15.2%** | **2090** |
+| NSE 500 | monthly / weekly (extra) | 18.5% | 1.13 | −16.2% | 2553 |
+
+Entry cadence is a non-lever: weekly, biweekly and monthly are within
+0.02 Sharpe on Nifty 250, and monthly is best on NSE 500 by 0.09. Weekly
+exits on a slower entry schedule are strictly worse — 1 to 5pp of CAGR
+and 0.04 to 0.31 of Sharpe, with more trades — because a rank-out on a
+Friday leaves cash idle until the next entry date. Decision: **monthly
+entry and exit on both universes**, the fewest trades of any cell (G7).

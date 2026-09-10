@@ -60,3 +60,17 @@ Redeploy switch a no-op for full-exit books (documented); re-entry on the
 bull flip implemented in lib/run.py (`reenter_on_flip`) and worth +0.29 on
 LM 250 monthly. In-sample closed at 616 trials; G1 and G8 fail; OOS not
 opened. Awaiting the founder's decision.
+
+## Founder decisions 2026-09-10 (after §3h)
+- **In-sample window moved to 2010-01-01 → 2015-12-31.** 2008 and the 2009
+  recovery are out of the gated window; the book is judged fully invested.
+  The 2006-2015 result (fails G1/G8 for every configuration) stands on the
+  record as the reason.
+- An overlay is still required for "anything similar in future", but the
+  ROC exposure overlay is not it (costs 5-15pp a year outside 2008). The
+  founder's proposal: an indicator of the *strength of momentum* across
+  the index's stocks; when it declines or drops below a threshold, cut
+  exposure. Explored by an agent as §3j (brief in lib/BRIEF_3j.md).
+- Cadence grid from 2010 (§3i): weekly, biweekly entry+exit, biweekly
+  entry / weekly exit, monthly, on both universes.
+- G8 number still to be fixed by the founder (20% recorded).
