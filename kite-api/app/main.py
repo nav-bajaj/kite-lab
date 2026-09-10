@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from contextlib import asynccontextmanager
 
-from app.auth import require_admin_when_private
+from app.auth import require_gate_role_when_private
 from app.config import get_settings
 from app.services.market_service import warn_if_holiday_table_stale
 from app.api import health, auth_routes, portfolio, sync, metrics, trades, rebalance, jobs, system, schedule, positions, insights, indices, freshness, options_worker, waitlist
@@ -130,12 +130,12 @@ app.include_router(positions.router, tags=["positions"])
 # PRIVATE_MODE they require an admin token (site_gate lockdown, R-028).
 app.include_router(
     insights.router,
-    dependencies=[Depends(require_admin_when_private)],
+    dependencies=[Depends(require_gate_role_when_private)],
     tags=["insights"],
 )
 app.include_router(
     indices.router,
-    dependencies=[Depends(require_admin_when_private)],
+    dependencies=[Depends(require_gate_role_when_private)],
     tags=["indices"],
 )
 app.include_router(freshness.router, tags=["freshness"])  # admin-only ops intel

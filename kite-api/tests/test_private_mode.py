@@ -47,7 +47,7 @@ from tests.endpoint_inventory import (  # noqa: E402
 )
 
 # Normally-public data readers that must demand an admin token under
-# private mode (R-023 surface, gated via require_admin_when_private).
+# private mode (R-023 surface, gated via require_gate_role_when_private).
 PUBLIC_DATA_READERS = [
     ("GET", "/api/insights/reading"),
     ("GET", "/api/indices/returns"),
@@ -86,6 +86,11 @@ def client_token(keypair) -> str:
 @pytest.fixture
 def admin_token(keypair) -> str:
     return make_token(keypair, "admin")
+
+
+@pytest.fixture
+def preview_token(keypair) -> str:
+    return make_token(keypair, "preview")
 
 
 @pytest.fixture
@@ -141,6 +146,59 @@ def test_client_read_endpoints_pass_admin_token(
 
 
 # ---------------------------------------------------------------------------
+# Preview tokens pass the gate — and gain nothing else
+# ---------------------------------------------------------------------------
+#
+# The preview role exists so a named non-admin (a hiring candidate, a
+# design partner) can be shown the product while the site is gated,
+# without being handed the platform. These three tests are the whole
+# contract: the gate opens, the admin surface does not, and the universe
+# filter still treats them as a client.
+
+
+@pytest.mark.parametrize("method,path", CLIENT_READ_ENDPOINTS)
+def test_client_read_endpoints_pass_preview_token(
+    test_client, preview_token, method, path
+):
+    resp = test_client.request(
+        method, path, headers={"Authorization": f"Bearer {preview_token}"}
+    )
+    assert resp.status_code not in (401, 403), (
+        f"{method} {path} returned {resp.status_code} for a preview token under "
+        f"private mode; expected auth to pass. Body: {resp.text[:200]}"
+    )
+
+
+@pytest.mark.parametrize("method,path", ADMIN_ENDPOINTS)
+def test_admin_endpoints_still_reject_preview_token(
+    test_client, preview_token, method, path
+):
+    """Lifting the gate must not lift require_admin. Same 401-or-403
+    tolerance as the client case above (GET /api/jobs/{id}/logs answers
+    401 via get_optional_user); either way the caller is locked out."""
+    resp = test_client.request(
+        method, path, headers={"Authorization": f"Bearer {preview_token}"}
+    )
+    assert resp.status_code in (401, 403), (
+        f"{method} {path} returned {resp.status_code} for a preview token; "
+        f"expected the admin gate to hold."
+    )
+
+
+@pytest.mark.parametrize(
+    "admin_universe", ["nse500", "nifty100", "nifty250"]
+)
+def test_preview_token_still_blocked_on_admin_universes(
+    test_client, preview_token, admin_universe
+):
+    resp = test_client.get(
+        f"/api/portfolio?universe={admin_universe}",
+        headers={"Authorization": f"Bearer {preview_token}"},
+    )
+    assert resp.status_code == 403
+
+
+# ---------------------------------------------------------------------------
 # Normally-public data readers demand an admin token
 # ---------------------------------------------------------------------------
 
@@ -177,6 +235,22 @@ def test_public_data_readers_pass_admin_token(
     )
 
 
+@pytest.mark.parametrize("method,path", PUBLIC_DATA_READERS)
+def test_public_data_readers_pass_preview_token(
+    test_client, preview_token, method, path
+):
+    """These two routers are the insights surface and the benchmark series
+    the dashboard charts against. A preview holder who could load the page
+    but not its data would be looking at an empty product."""
+    resp = test_client.request(
+        method, path, headers={"Authorization": f"Bearer {preview_token}"}
+    )
+    assert resp.status_code not in (401, 403), (
+        f"{method} {path} returned {resp.status_code} for a preview token under "
+        f"private mode. Body: {resp.text[:200]}"
+    )
+
+
 # ---------------------------------------------------------------------------
 # Bootstrap surface stays open
 # ---------------------------------------------------------------------------
@@ -202,6 +276,12 @@ def test_validate_token_string_rejects_client_token(keypair, private_mode_on):
     token = make_token(keypair, "client")
     with pytest.raises(auth_module.ForbiddenError):
         auth_module.validate_token_string(token)
+
+
+def test_validate_token_string_passes_preview_token(keypair, private_mode_on):
+    token = make_token(keypair, "preview")
+    user = auth_module.validate_token_string(token)
+    assert user["role"] == "preview"
 
 
 def test_validate_token_string_passes_admin_token(keypair, private_mode_on):

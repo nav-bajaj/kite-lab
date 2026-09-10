@@ -24,6 +24,7 @@ import {
 import type { Session, User } from "@supabase/supabase-js";
 
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { parseRole, type AppRole } from "@/lib/roles";
 
 interface SupabaseAuthContextValue {
   session: Session | null;
@@ -33,8 +34,8 @@ interface SupabaseAuthContextValue {
   isSignedIn: boolean;
   /** Supabase user UUID, null when signed out. */
   userId: string | null;
-  /** "admin" | "client" — from app_metadata.role, cosmetic use only. */
-  role: "admin" | "client";
+  /** From app_metadata.role, cosmetic use only. See @/lib/roles. */
+  role: AppRole;
   signOut: () => Promise<void>;
 }
 
@@ -79,7 +80,7 @@ export function SupabaseAuthProvider({
       isLoaded,
       isSignedIn: session !== null,
       userId: user?.id ?? null,
-      role: metaRole === "admin" ? "admin" : "client",
+      role: parseRole(metaRole),
       signOut: async () => {
         await getSupabaseBrowserClient().auth.signOut();
         // Middleware bounces unauthenticated visitors off protected

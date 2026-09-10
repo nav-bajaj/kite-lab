@@ -29,7 +29,7 @@ export function Navbar() {
   // backend enforces the real admin gates.
   const { role } = useSupabaseAuth();
   const isAdmin = role === "admin";
-  const insightsItem = getInsightsNavItem(isAdmin);
+  const insightsItem = getInsightsNavItem(role);
   const insightsActive = pathname.startsWith("/insights");
 
   // eslint-disable-next-line security/detect-object-injection -- pathname is from Next's router (closed set of known route strings); pathNames is a module-level constant Record

@@ -2,6 +2,11 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { INSIGHTS_ACCESS } from "@/lib/flags";
 import { siteMode, isGateOpenPath } from "@/lib/site-mode";
+import {
+  canPassGate,
+  canSeeInsightsSandbox,
+  roleFromClaims,
+} from "@/lib/roles";
 
 // Public routes — no auth required. Anything not matched here (and not in
 // `config.matcher` exclusions below) requires a signed-in Supabase session.
@@ -39,17 +44,15 @@ const isPublicRoute = (path: string) =>
 // (server-controlled; set via the Supabase admin API). This edge check is
 // UX-routing only — the FastAPI backend independently verifies the token
 // and enforces the real gates (require_admin, R-022).
+//
+// Note this stays `=== "admin"` below: the preview role passes the site
+// gate but is never admin. See src/lib/roles.ts.
 const isAdminRoute = (path: string) => atOrUnder(path, "/admin");
 
 // Insights tri-state (src/lib/flags.ts): off → bounce to /dashboard;
-// admin → signed-in + admin role; all → any signed-in user.
+// admin → signed-in + canSeeInsightsSandbox; all → any signed-in user.
+// That predicate is deliberately NOT canPassGate — see @/lib/roles.
 const isInsightsRoute = (path: string) => atOrUnder(path, "/insights");
-
-function roleFromClaims(claims: Record<string, unknown> | null): string {
-  const meta = (claims as { app_metadata?: { role?: string } } | null)
-    ?.app_metadata;
-  return meta?.role === "admin" ? "admin" : "client";
-}
 
 export async function middleware(request: NextRequest) {
   // Canonicalise onto the apex host BEFORE anything else.
@@ -122,24 +125,25 @@ export async function middleware(request: NextRequest) {
 
   // Under-development gate (tasks/site_gate). While
   // SITE_MODE=under_development everything except isGateOpenPath is
-  // invisible unless the session's app_metadata.role is admin. Non-admins —
-  // signed-in users included — and anonymous visitors are bounced to "/",
-  // never to /sign-in, so the gate does not advertise that a sign-in
-  // exists: an unknown path and a real one behave identically.
+  // invisible unless the session carries a gate role — admin or preview,
+  // see src/lib/roles.ts. Everyone else (signed-in clients included) and
+  // anonymous visitors are bounced to "/", never to /sign-in, so the gate
+  // does not advertise that a sign-in exists: an unknown path and a real
+  // one behave identically.
   //
   // This runs FIRST so it wins over the insights and public-route logic
   // below. The backend enforces the same lockdown independently via
   // PRIVATE_MODE, which is not redundant: /library and /portfolios are
   // prerendered, so for those routes this middleware is the only layer.
   if (siteMode() === "under_development" && !isGateOpenPath(path)) {
-    if (role !== "admin") return redirectTo("/");
+    if (!canPassGate(role)) return redirectTo("/");
   }
 
   if (isInsightsRoute(path)) {
     if (INSIGHTS_ACCESS === "off") return redirectTo("/dashboard");
     if (INSIGHTS_ACCESS === "admin") {
       if (!isAuthed) return redirectTo("/sign-in");
-      if (role !== "admin") return redirectTo("/dashboard");
+      if (!canSeeInsightsSandbox(role)) return redirectTo("/dashboard");
     }
   }
 

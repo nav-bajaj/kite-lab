@@ -178,6 +178,11 @@ def admin_token(ec_keypair) -> str:
 
 
 @pytest.fixture
+def preview_token(ec_keypair) -> str:
+    return _make_token(ec_keypair, role="preview")
+
+
+@pytest.fixture
 def expired_token(ec_keypair) -> str:
     now = datetime.now(tz=timezone.utc)
     return _make_token(
@@ -252,6 +257,36 @@ def test_client_read_endpoint_passes_client_token(
     )
     assert resp.status_code not in (401, 403), (
         f"{method} {path} returned {resp.status_code} for a client-role token; "
+        f"expected the call to pass auth. Body: {resp.text[:200]}"
+    )
+
+
+@pytest.mark.parametrize("method,path", ADMIN_ENDPOINTS)
+def test_admin_endpoint_rejects_preview_token(
+    test_client, preview_token, method, path
+):
+    """The preview role lifts the site gate and NOTHING else. Every
+    admin/mutation endpoint must refuse it exactly as it refuses a client
+    (R-028). This is the assertion that keeps "let a candidate look around"
+    from quietly becoming "let a candidate run the pipeline"."""
+    resp = test_client.request(
+        method, path, headers={"Authorization": f"Bearer {preview_token}"}
+    )
+    assert resp.status_code == 403, (
+        f"{method} {path} returned {resp.status_code} for a preview-role token; "
+        f"expected 403. Body: {resp.text[:200]}"
+    )
+
+
+@pytest.mark.parametrize("method,path", CLIENT_READ_ENDPOINTS)
+def test_client_read_endpoint_passes_preview_token(
+    test_client, preview_token, method, path
+):
+    resp = test_client.request(
+        method, path, headers={"Authorization": f"Bearer {preview_token}"}
+    )
+    assert resp.status_code not in (401, 403), (
+        f"{method} {path} returned {resp.status_code} for a preview-role token; "
         f"expected the call to pass auth. Body: {resp.text[:200]}"
     )
 
@@ -408,6 +443,39 @@ def test_admin_token_passes_on_admin_universe(
     assert resp.status_code not in (401, 403), (
         f"GET {path}?universe={admin_universe} returned {resp.status_code} for "
         f"an admin token; expected auth to pass."
+    )
+
+
+@pytest.mark.parametrize("path", UNIVERSE_ENDPOINTS)
+@pytest.mark.parametrize("admin_universe", ADMIN_ONLY_UNIVERSES)
+def test_preview_token_blocked_on_admin_universe(
+    test_client, preview_token, path, admin_universe
+):
+    """R-022 still applies to preview. check_universe_access tests for
+    "admin" exactly, so a preview holder sees the 4 client products and
+    none of the legacy research universes."""
+    resp = test_client.get(
+        f"{path}?universe={admin_universe}",
+        headers={"Authorization": f"Bearer {preview_token}"},
+    )
+    assert resp.status_code == 403, (
+        f"GET {path}?universe={admin_universe} returned {resp.status_code} for "
+        f"a preview-role token; expected 403. Body: {resp.text[:200]}"
+    )
+
+
+@pytest.mark.parametrize("path", UNIVERSE_ENDPOINTS)
+@pytest.mark.parametrize("client_universe", CLIENT_VISIBLE_UNIVERSES)
+def test_preview_token_passes_on_client_universe(
+    test_client, preview_token, path, client_universe
+):
+    resp = test_client.get(
+        f"{path}?universe={client_universe}",
+        headers={"Authorization": f"Bearer {preview_token}"},
+    )
+    assert resp.status_code not in (401, 403), (
+        f"GET {path}?universe={client_universe} returned {resp.status_code} for "
+        f"a preview-role token; expected auth to pass."
     )
 
 

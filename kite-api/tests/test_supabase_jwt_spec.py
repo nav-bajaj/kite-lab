@@ -176,6 +176,15 @@ def test_admin_role_read_from_app_metadata(ec_keypair):
     assert user["role"] == "admin"
 
 
+def test_preview_role_read_from_app_metadata(ec_keypair):
+    """The hiring/demo role (R-028). It is a real app role, not an unknown
+    string that silently degrades to client — the site gate has to be able
+    to tell a preview holder apart from an ordinary beta user."""
+    token = _make_token(ec_keypair, app_metadata={"role": "preview"})
+    user = auth_module.validate_token_string(token)
+    assert user["role"] == "preview"
+
+
 def test_source_labels_supabase_query_param(ec_keypair):
     token = _make_token(ec_keypair)
     user = auth_module.validate_token_string(token)
