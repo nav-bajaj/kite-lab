@@ -4,7 +4,12 @@ import numpy as np, pandas as pd
 
 
 def make_momentum_score(returns_universe: pd.DataFrame, *, kind: str = "abs", lookback: int = 126, min_obs: int = 110,
-                        skip: int = 0, vol_floor: float = 0.05, positive_only: bool = False, candidate_fn=None, cr_quantile: float = 0.0):
+                        skip: int = 0, vol_floor: float = 0.05, positive_only: bool = False, candidate_fn=None, cr_quantile: float = 0.0,
+                        volume_panel: pd.DataFrame | None = None, vol_kick: str = "none", vol_k: float = 0.0):
+    """Extra kinds (founder 2026-09-10): 'blend' = mean percentile rank of vol-adjusted momentum at 63 / 126 / 252 sessions (skip applied);
+    'slope' = annualised exponential-regression slope x R^2 over the window (Clenow); 'high52' = close / window high, i.e. proximity to the high.
+    Volume kicker: score percentile + vol_k x volume percentile, where 'surge' = mean rupee turnover over the last 21 sessions / over the window,
+    'level' = mean rupee turnover over the window."""
     """kind='abs': trailing return over the window. kind='voladj': that return / annualised daily vol, vol floored (L6 v2's form).
     skip: sessions excluded at the end of the window (the classic 12-1 skips ~21). Eligibility: >= min_obs returns in the window."""
     def score_fn(signal_date, **_):
@@ -33,9 +38,29 @@ def make_momentum_score(returns_universe: pd.DataFrame, *, kind: str = "abs", lo
         if kind == "voladj":
             vol = (w.std() * np.sqrt(252)).clip(lower=vol_floor)
             score = mom / vol
+        elif kind == "blend":
+            parts = []
+            for L in (63, 126, 252):
+                if idx < L + skip: continue
+                wl = returns_universe.iloc[idx - L - skip + 1: idx - skip + 1][w.columns]
+                ml = (1 + wl.fillna(0)).prod() - 1; vl = (wl.std() * np.sqrt(252)).clip(lower=vol_floor)
+                parts.append((ml / vl).rank(pct=True))
+            score = pd.concat(parts, axis=1).mean(axis=1)
+        elif kind == "slope":
+            lp = np.log((1 + w.fillna(0)).cumprod()); x = np.arange(len(lp)); xm = x - x.mean()
+            beta = (lp.sub(lp.mean())).mul(xm, axis=0).sum() / (xm ** 2).sum()
+            resid = lp.sub(lp.mean()) - np.outer(xm, beta); r2 = 1 - (resid ** 2).sum() / (lp.sub(lp.mean()) ** 2).sum().replace(0, np.nan)
+            score = (np.exp(beta * 252) - 1) * r2
+        elif kind == "high52":
+            lvl = (1 + w.fillna(0)).cumprod(); score = lvl.iloc[-1] / lvl.max()
         else:
             score = mom
         if positive_only:
             score = score[mom > 0]
+        score = score.dropna()
+        if vol_kick != "none" and volume_panel is not None and vol_k > 0:
+            vw = volume_panel.iloc[idx - lookback - skip + 1: idx - skip + 1].reindex(columns=score.index)
+            v = (vw.tail(21).mean() / vw.mean()) if vol_kick == "surge" else vw.mean()
+            score = score.rank(pct=True) + vol_k * v.rank(pct=True)
         return score.dropna()
     return score_fn

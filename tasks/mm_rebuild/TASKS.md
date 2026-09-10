@@ -21,4 +21,5 @@ Proposed as OM25's gate set after its 2026-09-10 rulings.
 ## §2 — mechanics 🤖 — DONE 2026-09-10: 25 / 20 / monthly holds on both universes (72 trials)
 ## §3 — filters and devices, one at a time 🤖👤
 - [x] a. skip-month ADOPTED (21)  b. positive-only no-op  c. trailing stop not adopted (refit candidate)  d. ROC tilt loses everywhere  e. overlay not adopted — DONE 2026-09-10
-## §4 — OOS and walk-forward, opened once 🤖👤
+## §4 — OOS and walk-forward, opened once 🤖👤 — OPENED 2026-09-10 on the founder's instruction
+Candidates fixed before any 2016+ number: A Nifty 250 monthly 12m, B NSE 500 monthly 6m, both the §3 book (voladj, skip 21, 25/20, no stop). Walk-forward refit set per year: kind {abs, voladj, blend} × skip {0, 21} × buffer {10, 20} × stop {off, 20%} × capture-ratio top-quartile pre-filter {off, on}, trailing 5 and 10 years.

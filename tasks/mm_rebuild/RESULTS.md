@@ -153,3 +153,34 @@ rather than a mechanism; a filter that works should improve as it
 tightens. The one gain (Nifty 250, +0.14) is a single cell on six years.
 Carried as a walk-forward refit candidate if the founder wants it counted
 there; otherwise closed.
+
+## §3g — other momentum measures and a volume kicker (14 trials) — IS 2010-2015, on the §3 base
+
+Founder's question 2026-09-10. Kinds added to the score: **blend** (mean
+percentile rank of vol-adjusted momentum at 3 / 6 / 12 months), **slope**
+(annualised exponential-regression slope × R², Clenow), **52-week-high
+proximity** (close / window high). Volume kicker: score percentile +
+k × percentile of either the **surge** (last 21 sessions' rupee turnover
+over the window's) or the **level** (window rupee turnover). Turnover
+panel built from the master per-symbol files (`runs/turnover_panel.parquet`).
+
+| Score | Nifty 250, 12m | NSE 500, 6m |
+|---|---|---|
+| vol-adjusted (base) | **20.5% / 1.02 / −21.7%** | 23.6% / 1.06 / −26.6% |
+| absolute | 16.0% / 0.65 / −29.8% | 18.3% / 0.64 / −32.9% |
+| blend 3/6/12 | 19.4% / 0.94 / −28.8% | **24.8% / 1.15 / −27.7%** |
+| slope × R² | 13.4% / 0.51 / −26.9% | 21.8% / 0.83 / −30.0% |
+| 52-week-high proximity | 14.7% / 0.68 / −27.8% (249 trades/yr) | 13.0% / 0.51 / −29.1% (380) |
+| + volume surge, k 0.25 / 0.5 | 0.87 / 0.78 | 0.83 / 0.81 |
+| + turnover level, k 0.25 / 0.5 | 0.52 / 0.33 | 0.47 / 0.32 |
+
+Nothing beats single-horizon vol-adjusted momentum on both universes.
+The blend helps NSE 500 (+0.09) and hurts Nifty 250 (−0.08) — kept as a
+walk-forward refit candidate. Slope and 52-week-high are worse
+everywhere; the high-proximity score churns (it ranks everything near a
+high alike). **Volume does not help as a kicker**: a surge tilt costs
+0.15-0.25 of Sharpe, and a turnover-level tilt is destructive (−0.5 to
+−0.7) because it drags the book toward the largest names, and on these
+universes the momentum premium sits in the smaller ones. Volume may still
+have a place as a liquidity floor for capacity, which is a constraint, not
+a score; not tested here.
