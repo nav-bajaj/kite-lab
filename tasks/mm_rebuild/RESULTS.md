@@ -906,13 +906,13 @@ in-sample exercise on a held-back window, not another post-OOS cell.
 
 Trial count post-OOS §8-§14: 175 cells.
 
-## §11 — rebalance day of month (11 trials) — post-OOS
+## §15 — rebalance day of month (11 trials) — post-OOS
 
 Founder 2026-09-10: the 1st may be sub-optimal; test days closer to the
 15th-25th. `rebalance_day` added to both harnesses: the monthly signal is
 the first trading day on or after that calendar day (day 1 reproduces the
 engine's monthly dates exactly), execution the next session; the stop is
-checked on the same day (§10's one-action-day rhythm).
+checked on the same day (§10's one-action-day rhythm). Numbered §15 because §11-§14 were added in a parallel session (G5 walk-forward, Wright's Sharpe, stop level and satellite slots, the mid-small book).
 
 **MM stack, Nifty 250**
 | Signal on first trading day ≥ | IS 2010-15 | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Wright window | 2010-26 |
