@@ -212,7 +212,8 @@ def run_strategy(*,
                  regime_panel=None,         # optional pd.Series[date]->bool, True=bull
                  bear_exposure=0.0,          # gross exposure cap during bear (0..1)
                  min_hold_days=0,
-                 size_weights=None,          # MM §9: callable(signal_date, symbols) -> {sym: weight}; None = equal weight (byte-identical)            # if >0, block rank-exit while held<N days
+                 size_weights=None,
+                 top_n_fn=None,              # MM §9b: callable(signal_date) -> int; overrides top_n on that rebalance (exit rank = value + exit_buffer)          # MM §9: callable(signal_date, symbols) -> {sym: weight}; None = equal weight (byte-identical)            # if >0, block rank-exit while held<N days
                  bear_skips_entries=True,    # if True (default, preserves OM25 v3 behavior):
                                              # don't add new positions during bear regime.
                                              # if False: allow entries at bear-scaled size
@@ -661,8 +662,12 @@ def run_strategy(*,
             #     structure during bear, just at reduced gross exposure
             if is_bear and bear_skips_entries:
                 continue
-            entrants = [s for s in ranked[:top_n] if s not in holdings]
-            entrants = entrants[:max(0, top_n - len(holdings))]
+            _tn = top_n
+            if top_n_fn is not None:
+                _v = top_n_fn(entry_schedule.get(pd.Timestamp(date)))
+                if _v: _tn = int(_v)
+            entrants = [s for s in ranked[:_tn] if s not in holdings]
+            entrants = entrants[:max(0, _tn - len(holdings))]
             if entrants:
                 pv2 = cash
                 for sym, sh in holdings.items():

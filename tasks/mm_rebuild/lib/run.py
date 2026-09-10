@@ -13,8 +13,8 @@ import windows as W  # noqa: E402
 RUNS = TASK / "runs"; RUNS.mkdir(exist_ok=True); W.REG = RUNS / "registry.csv"
 DEFAULTS = dict(universe="nifty250", kind="abs", lookback=126, min_obs=110, skip=0, vol_floor=0.05, positive_only=False,
                 top_n=25, exit_buffer=20, cadence="monthly", exit_cadence="same", trailing_stop=0.0, max_weight=1.0, slippage=0.002,
-                min_hold_days=0, universe_cap=0, turnover_floor=0.0, sizing="equal", iv_window=63, dyn_n_bear=0, dyn_mode="lever", vol_target=0.0, vol_window=21, str_kind="breadth_ma", str_len=200, str_thresh=0.3, str_mode="abs", cr_quantile=0.0, vol_kick="none", vol_k=0.0, regimes=1, bull_kind="abs", overlay=False, regime_kind="roc", roc_n=31, confirm=3, bear_exposure=1.0, reenter_on_flip=False, start="2010-01-01", end="2015-12-31")
-_ID_OPTIONAL = {"universe_cap", "turnover_floor", "sizing", "iv_window", "dyn_n_bear", "dyn_mode", "vol_target", "vol_window", "str_kind", "str_len", "str_thresh", "str_mode", "min_hold_days", "vol_kick", "vol_k", "cr_quantile", "regimes", "bull_kind", "overlay", "regime_kind", "roc_n", "confirm", "bear_exposure", "reenter_on_flip"}
+                min_hold_days=0, universe_cap=0, turnover_floor=0.0, sizing="equal", iv_window=63, dyn_n_bear=0, dyn_mode="lever", bear_buffer=-1, vol_target=0.0, vol_window=21, str_kind="breadth_ma", str_len=200, str_thresh=0.3, str_mode="abs", cr_quantile=0.0, vol_kick="none", vol_k=0.0, regimes=1, bull_kind="abs", overlay=False, regime_kind="roc", roc_n=31, confirm=3, bear_exposure=1.0, reenter_on_flip=False, start="2010-01-01", end="2015-12-31")
+_ID_OPTIONAL = {"bear_buffer", "universe_cap", "turnover_floor", "sizing", "iv_window", "dyn_n_bear", "dyn_mode", "vol_target", "vol_window", "str_kind", "str_len", "str_thresh", "str_mode", "min_hold_days", "vol_kick", "vol_k", "cr_quantile", "regimes", "bull_kind", "overlay", "regime_kind", "roc_n", "confirm", "bear_exposure", "reenter_on_flip"}
 
 
 _turn = {}
@@ -67,12 +67,16 @@ def run_candidate(**overrides):
     if cfg["dyn_n_bear"]:
         # founder 2026-09-10: hold top_n names in bull, dyn_n_bear in bear. 'lever': each name keeps its 1/top_n weight, so gross
         # exposure falls to dyn_n_bear/top_n; 'concentrate': the engine's 1/n sizing keeps the book fully invested in fewer names.
-        base_fn = score_fn; nb = cfg["dyn_n_bear"] + cfg["exit_buffer"]
+        base_fn = score_fn; bb = cfg["exit_buffer"] if cfg["bear_buffer"] < 0 else cfg["bear_buffer"]; nb = cfg["dyn_n_bear"] + bb
+        _last = {}
         def score_fn(signal_date, **_):
-            sc = base_fn(signal_date)
+            sc = base_fn(signal_date); _last["rank"] = list(sc.index)
             return sc if bool(roc.get(signal_date, True)) else sc.nlargest(nb)
         if cfg["dyn_mode"] == "lever":
             overlay_panel = roc.astype(float).where(roc, cfg["dyn_n_bear"] / cfg["top_n"])
+        # NOTE (2026-09-10 audit): 'concentrate' as first run only tightened the exit rank in bear (the engine still fills toward top_n from
+        # the truncated list; §8-§9 runs held 17-25 names). 'hold' below is the founder's actual idea: in bear only the top dyn_n_bear ranks
+        # may be bought, so the book runs down to N names, fully invested through the engine's 1/n sizing; exits at rank N + bear_buffer.
     if cfg["vol_target"] > 0:
         # exposure = min(1, target / realised vol of NIFTY 500 over the trailing window), set at Friday's close from returns <= that
         # close and applied from the next session (shift(1) then ffill), so no session's exposure uses its own return
@@ -94,7 +98,13 @@ def run_candidate(**overrides):
     if cfg["overlay"] and cfg["reenter_on_flip"]:
         flips = overlay_panel.index[overlay_panel & ~overlay_panel.shift(1, fill_value=False)]; entries = entries.union(flips[(flips >= start) & (flips <= end)])
     cal_run = cal[cal <= end]
-    size_weights = None
+    size_weights = None; top_n_fn = None
+    if cfg["dyn_n_bear"] and cfg["dyn_mode"] == "hold":
+        # founder's idea, properly: in bear the engine may hold at most dyn_n_bear names (entries capped there, 1/n sizing on the smaller
+        # book); exits at rank dyn_n_bear + bear_buffer via the truncated list. Positions bought earlier at 1/25 are not topped up (the
+        # engine never resizes existing holdings), so the bear book can carry some cash; reported as 'invested'.
+        def top_n_fn(sd):
+            return cfg["top_n"] if sd is None or bool(roc.get(sd, True)) else cfg["dyn_n_bear"]
     if cfg["sizing"] == "invvol":
         # inverse-volatility weights over the intended book, capped at max_weight and renormalised; vol from returns up to the
         # signal date (the entry executes the next session), so sizing never sees the entry day's return
@@ -117,7 +127,7 @@ def run_candidate(**overrides):
                           atr_mult=0.0, atr_min_floor=cfg["trailing_stop"], use_trailing_stop=cfg["trailing_stop"] > 0, use_dma_exit=False,
                           weekly_rank_check=(cfg["exit_cadence"] == "weekly"),
                           regime_panel=overlay_panel, bear_exposure=float(cfg["bear_exposure"]) if cfg["overlay"] else 0.0,
-                          membership_fn=membership_fn, min_hold_days=cfg["min_hold_days"], size_weights=size_weights, initial_capital=1_000_000)
+                          membership_fn=membership_fn, min_hold_days=cfg["min_hold_days"], size_weights=size_weights, top_n_fn=top_n_fn, initial_capital=1_000_000)
     out.mkdir(parents=True, exist_ok=True); json.dump(cfg, open(out / "config.json", "w"), indent=1)
     res["equity"].to_csv(out / "equity.csv", index=False); res["trades"].to_csv(out / "trades.csv", index=False)
     if "exits" in res: res["exits"].to_csv(out / "exits.csv", index=False)

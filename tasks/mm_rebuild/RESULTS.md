@@ -535,3 +535,56 @@ Read:
 Net: Wright's structure, to the extent the pages reveal it, does not
 unlock NSE 500. Their universe is closer to our Nifty 250 book, and the
 sizing rule they printed helps our Nifty 250 book the way it should.
+
+## §9b — audit of the "concentrate" mechanism, and the founder's idea implemented properly (7 trials)
+
+**Correction to §8, §8b and §9.** Counting holdings on bear dates showed
+the runs labelled "concentrate 15" did not hold 15 names: the score list
+was cut to 15 + buffer = 35 in bear, but the engine still filled the book
+toward 25 from the top of that list, so what actually ran was **a
+tighter exit rank in bear (35 instead of 45)** with the book drifting to
+17-25 names (mean 20, 86-88% invested). The numbers stand; the label was
+wrong. Those cells are relabelled "tight exit in bear" here.
+
+The founder's idea — hold fewer names in bear, fully invested — needs a
+per-rebalance top-N, which the engine did not have. Added to the engine
+copy as an additive `top_n_fn` hook (entries capped at N in bear; exits
+at rank N + bear buffer through the truncated list). One limit remains:
+the engine never resizes an existing position, so names bought at 1/25
+in bull are not topped up to 1/15 in bear and the bear book carries some
+cash — reported as "invested". Nifty 250, 12m, skip 21, monthly, 20% stop;
+regime NIFTY 100 ROC31 / confirm 3, lagged.
+
+| Cell | IS | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Wright window | Up / down | Bear book | Trades/yr |
+|---|---|---|---|---|---|---|---|
+| A as run: bear exit rank 35 (tight exit), equal, stop | 1.06 | 21.8% / 0.93 / -28% | 0.34 / 1.59 / 0.95 | 32.1% / 1.41 / -27% | 1.10 / 0.84 | 20 names, 88% | 135 |
+| B as run + inv-vol 10% | 1.18 | 21.0% / 0.95 / -26% | 0.40 / 1.48 / 1.04 | 30.2% / 1.42 / -26% | 1.03 / 0.77 | 20 names, 86% | 135 |
+| C hold<=15 in bear, bear buffer 10, equal, stop | 0.84 | 25.0% / 0.86 / -24% | 0.21 / 2.17 / 0.45 | 40.2% / 1.29 / -23% | 1.03 / 0.24 | 12 names, 58% | 113 |
+| D hold<=15 in bear, bear buffer 20, equal, stop | 0.98 | 22.2% / 0.98 / -28% | 0.47 / 1.61 / 0.96 | 29.7% / 1.30 / -28% | 1.05 / 0.84 | 17 names, 78% | 116 |
+| E hold<=15, bear buffer 10, inv-vol 10%, stop | 0.95 | 21.6% / 1.02 / -28% | 0.49 / 1.61 / 1.02 | 28.1% / 1.30 / -28% | 0.98 / 0.75 | 15 names, 75% | 126 |
+| F hold<=18, bear buffer 10, inv-vol 10%, stop | 1.06 | 21.2% / 0.98 / -28% | 0.40 / 1.60 / 1.02 | 29.0% / 1.34 / -28% | 1.03 / 0.83 | 17 names, 80% | 127 |
+| G hold<=15, bear buffer 20, inv-vol 10%, stop | 1.14 | 21.9% / 1.03 / -27% | 0.50 / 1.66 / 1.01 | 29.1% / 1.35 / -27% | 1.01 / 0.78 | 17 names, 77% | 116 |
+
+**G — hold ≤ 15 in bear, bear buffer 20, inverse-vol 10% cap, 20% stop —
+is the best MM cell: OOS 21.9% / 1.03 / −27%, sub-windows 0.50 / 1.66 /
+1.01, IS 1.14, down-capture 0.78 with up-capture 1.01.** Passes G2, G4,
+G8; G3 fails on 2016-19 at 0.50, the closest any MM cell has come.
+
+## §9c — robustness of hold-N-in-bear (16 trials)
+
+N ∈ {12, 15, 18, 20} × bear buffer ∈ {10, 20} × regime ∈ {ROC31,
+breadth}, inverse-vol 10%, stop 20%. OOS Sharpe (base 0.73):
+
+| N in bear | ROC31 bb10 | ROC31 bb20 | breadth bb10 | breadth bb20 |
+|---|---|---|---|---|
+| 12 | 0.91 | 0.88 | 0.92 | 0.90 |
+| 15 | 1.02 | 1.03 | 1.03 | 0.97 |
+| 18 | 0.98 | 0.98 | 0.95 | 0.92 |
+| 20 | 0.95 | 0.97 | 0.94 | 0.88 |
+
+A plateau with its top at N = 15 (1.02-1.03 on three of four regime ×
+buffer settings); every cell is 0.88 or better. The regime choice and
+the bear buffer matter less than N.
+
+Trial count post-OOS across §8-§9c: 120 cells. The mechanism's sign is
+not in doubt; the exact N is the searched value.
