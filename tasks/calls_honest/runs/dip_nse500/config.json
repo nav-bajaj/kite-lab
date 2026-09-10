@@ -1,0 +1,13 @@
+{
+ "lookback": 126,
+ "vol_floor": 0.05,
+ "quartile": 0.75,
+ "exit_rank": 0.35,
+ "dip_ret": -0.05,
+ "dip_days": 5,
+ "cap": 25,
+ "ts": 0.2,
+ "slippage": 0.002,
+ "universe": "nse500",
+ "skipped_for_capacity": 34857
+}

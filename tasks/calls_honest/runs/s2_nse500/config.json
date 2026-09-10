@@ -1,0 +1,13 @@
+{
+ "variant": "E_rs_unext",
+ "top_n": 20,
+ "exit_buffer": 40,
+ "stop": 0.0,
+ "weight_mode": "drift",
+ "sector_cap": 0,
+ "hold_mode": "tiered",
+ "exit_confirm_weeks": 3,
+ "max_weight": 0.075,
+ "min_stage_age": 0,
+ "slippage": 0.002
+}
