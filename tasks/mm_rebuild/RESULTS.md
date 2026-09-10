@@ -628,3 +628,49 @@ names in other sectors.
 Trial count post-OOS §8-§9d: 128 cells. This is now a fully post-OOS
 design on Nifty 250; the evidence for each element is a plateau, not a
 cell, but the stack as a whole has never been judged on unseen data.
+
+## §10 — followability: rebalance cadence × stop-check cadence (9 trials) — post-OOS
+
+Founder's concern 2026-09-10: monthly rebalancing may be too inactive to
+keep subscribers engaged, and a daily exit check too active to follow.
+Audit first: **the stop was never checked daily.** The engine tracks each
+position's peak daily but tests the stop only at the weekly signal
+(Friday close) and sells the next session — 187 of the MM stack's 196
+stop exits fall on a Monday. The stop-check cadence is now a parameter
+(`stop_check`) in both harnesses. Cells: rebalance ∈ {monthly, biweekly,
+weekly} × stop check ∈ {weekly, biweekly, monthly}. Followability =
+distinct trading days with any order per month (2016-26), months with
+any order, median hold, share of exits by stop. OM25's row is its
+current adaptive pick (50/50, buffer 10, stop 20%) run as a fixed
+configuration, not the chained process.
+
+| Book | Rebalance / stop check | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Wright window | Up / down | Trades/yr | Action days/month | Median hold | Stop exits |
+|---|---|---|---|---|---|---|---|---|---|
+| MM stack N250 | monthly / weekly | 24.5% / 1.17 / -26% | 0.61 / 1.81 / 1.18 | 32.5% / 1.49 | 1.08 / 0.76 | 124 | 1.9 (max 6) | 91 | 29% |
+| MM stack N250 | monthly / biweekly | 24.3% / 1.16 / -27% | 0.68 / 1.79 / 1.10 | 32.1% / 1.46 | 1.07 / 0.75 | 121 | 1.7 (max 4) | 92 | 26% |
+| MM stack N250 | monthly / monthly | 25.7% / 1.18 / -26% | 0.71 / 1.73 / 1.18 | 33.9% / 1.50 | 1.09 / 0.73 | 118 | 1.0 (max 1) | 92 | 23% |
+| MM stack N250 | biweekly / weekly | 21.8% / 0.98 / -27% | 0.59 / 1.27 / 1.10 | 28.2% / 1.28 | 1.01 / 0.81 | 155 | 2.6 (max 5) | 70 | 25% |
+| MM stack N250 | biweekly / biweekly | 22.6% / 1.02 / -27% | 0.65 / 1.29 / 1.14 | 29.6% / 1.34 | 1.04 / 0.81 | 153 | 2.0 (max 3) | 70 | 22% |
+| MM stack N250 | weekly / weekly | 23.2% / 1.02 / -28% | 0.70 / 1.33 / 1.07 | 29.5% / 1.28 | 1.04 / 0.81 | 182 | 3.5 (max 5) | 56 | 20% |
+| OM25 current pick N250 | monthly / weekly | 22.2% / 0.82 / -36% | 0.20 / 1.31 / 1.03 | 34.9% / 1.34 | 1.32 / 1.14 | 138 | 2.2 (max 6) | 91 | 40% |
+| OM25 current pick N250 | monthly / biweekly | 21.9% / 0.79 / -37% | 0.23 / 1.33 / 0.91 | 34.1% / 1.29 | 1.29 / 1.12 | 132 | 1.8 (max 4) | 92 | 36% |
+| OM25 current pick N250 | biweekly / weekly | 20.7% / 0.71 / -44% | 0.15 / 1.11 / 0.90 | 34.4% / 1.26 | 1.33 / 1.20 | 166 | 2.7 (max 5) | 70 | 33% |
+| OM25 current pick N250 | biweekly / biweekly | 21.5% / 0.73 / -45% | 0.19 / 1.12 / 0.92 | 35.4% / 1.29 | 1.34 / 1.16 | 160 | 2.1 (max 3) | 70 | 31% |
+
+Read:
+1. **The simplest rhythm is also the best.** MM with everything on one day
+   a month — rebalance and stop check together on the first trading day —
+   is the top cell: 25.7% / 1.18 / −26%, every sub-window ≥ 0.71, and
+   exactly one action day per month, never more. Checking the stop weekly
+   or biweekly adds nothing (1.16-1.17) and adds action days.
+2. **Faster rebalancing costs performance on both books**: biweekly takes
+   MM from 1.17 to 0.98-1.02 and OM25 from 0.82 to 0.71-0.73 with the
+   drawdown from −36% to −44%; weekly MM is 1.02 at 3.5 action days a
+   month. Same non-lever as OM25 §3i and MM §2, now with the stop in.
+3. Engagement is therefore a product question, not a strategy one: the
+   book wants one order day a month. A weekly review that reports
+   rankings, distance to stops and regime state without trading is the
+   followable way to be present between rebalances.
+
+Adopted for MM: **monthly rebalance with the stop checked at the same
+monthly signal**, one action day. Recommended for OM25 likewise.

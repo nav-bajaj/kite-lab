@@ -679,3 +679,11 @@ weight). The full early construction tracks the real MidSmall 400 at
 Beats the index in 13 of 16 years; the misses are 2022, 2023 (−15pp, the
 small-cap year) and 2025. Monthly correlation 0.80, beta 0.67. Post-tax:
 portfolio 16.1% (FY tax) against the index taxed once at exit 11.3% (2011-26).
+
+## §5b — followability (see mm_rebuild §10)
+
+The stop was always a weekly check, never daily. For the current adaptive
+pick run as a fixed configuration: monthly rebalance / weekly stop 22.2% /
+0.82 / −36%; biweekly rebalance 0.71-0.73 with −44% drawdown. Monthly
+stays; a monthly stop check costs nothing on MM and is recommended here
+too so both books have one action day a month.
