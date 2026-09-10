@@ -494,3 +494,23 @@ is one look at a process, not a pre-registered test. It answers the
 founder's question — a periodically re-tuned Nifty 250 book would have
 held 0.9 through 2016-2026 — and it is the number to pre-commit against
 for the next window, not a number that was pre-committed.
+
+## Reference — against Wright Momentum's published grid (Oct-2020 → Aug-2026, 71 months)
+
+Their monthly grid (`~/Downloads/momentum_wright.pdf`, returns exclude
+costs); ours net of 20 bps slippage, monthly from daily equity. The
+adaptive book is the §4b Nifty 250 monthly five-year-refit chain.
+
+| | CAGR | Monthly MaxDD | 2026 YTD | 1Y | 2Y | 3Y | Vol |
+|---|---|---|---|---|---|---|---|
+| Wright Momentum | 31.2% | −21.7% | 8.9% | 14.2% | 3.0% | 18.4% | 20.0% |
+| Adaptive Nifty 250 monthly | 26.3% | −26.4% | 16.0% | 18.0% | 4.7% | 25.4% | 20.5% |
+| Production rules, honest store | 29.7% | −25.9% | 7.3% | 5.9% | 0.2% | 26.7% | 22.3% |
+| Static rebuild book | 19.6% | −25.5% | 3.7% | 3.6% | −4.7% | 12.7% | 19.6% |
+| NIFTY 100 | 14.4% | −16.4% | −5.4% | 0.9% | −2.0% | 9.5% | 14.5% |
+
+Calendar years: Wright leads 2021 (91% vs 58%) and 2023 (49% vs 31%); the
+adaptive book leads 2024 (48% vs 34%) and 2026 to date (16% vs 9%); 2022
+and 2025 flat for both. Monthly correlation 0.78. The 2021 gap is where
+the CAGR difference lives; the trailing three years favour the adaptive
+book.
