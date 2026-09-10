@@ -237,3 +237,44 @@ books). The retune should look at the stop before anything else.
 
 **Standing:** these are the numbers the platform owns today at current
 parameters. Every published figure sits above them by the universe effect.
+
+## Test: 2026 production vs reconstruction (2026-09-10)
+
+Prices for the 138 symbols production traded in 2026: median ratio
+reconstruction ÷ production **1.00000**; matched trades fill at identical
+prices (0.000% median). Where nothing happened to a stock, the two panels
+are the same series.
+
+Divergence was in the *signals*: top-25 sets on the same 2026 rebalance
+date overlapped only ~13/25 for OM25. Isolated by swapping one input at a
+time, OM25 from 2021:
+
+| Run | Panel | Universe | CAGR 2021→ | Top-25 common with production, 2026 |
+|---|---|---|---|---|
+| C | production | production (today's 250 backdated) | 41.5% | **25/25** |
+| A | **reconstruction** | production | 42.5% | **24/25** |
+| B | production | **reconstruction (point-in-time)** | 28.9% | 16/25 |
+| full | reconstruction | reconstruction, from 2006 | 24.8% (2020→) | 13/25 |
+
+Run C reproduces production (42.3%), so the engine path and index files are
+equivalent. **The panel changes nothing (A ≈ C). The universe changes
+everything (B): real membership takes 13pp of CAGR off and reshuffles a
+third of the top 25.** The extra three names between B and the full run
+are path dependence from the 2006 start and the exit buffer.
+
+Two defects surfaced and were fixed or attributed: 25 weekend special
+sessions (Budget Saturdays, Muhurat Sundays) were missing from the archive
+— the fetcher skipped weekends; fetched, archive now matches Kite's index
+calendar exactly at 5,380 sessions, and it lifted L6's 2026 trade agreement
+from 53% to 74% and TL25's from 68% to 82%. Production's own panel carries
+dividend patches from its 15-day refetch (CANBK, BANKINDIA at +3.3%) and a
+hand-entered VEDL demerger factor that differs from the measured drop by 6%.
+
+**Refreshed PR baselines after the calendar fix** (CAGR / Sharpe / MaxDD):
+OM25 2006→ 15.2 / 0.47 / −65.1, 2020→ 24.8 / 0.90 / −35.7; TL25 16.8 /
+0.57 / −61.9, 2020→ 20.6 / 0.68 / −36.6; L6 19.4 / 0.55 / −76.2, 2020→
+29.4 / 0.92 / −41.4; COMBO 12.8 / 0.40 / −39.9, 2020→ 16.3 / 0.63 / −22.6.
+
+**Founder, 2026-09-10: baseline accepted from 2020 onwards. The strategies
+will be built from scratch on this store rather than retuned — a portfolio
+tuned on a different universe has no baseline worth preserving.**

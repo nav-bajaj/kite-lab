@@ -234,3 +234,13 @@ higher by the dividend yield, and dividends are taxed at slab since 2020.
 **Supersedes** D-6's basis choice; D-6's snapshot-versioning consequence is
 retained for the companion series. Restores the 2026-09-08 call (D-3) on
 better evidence.
+
+## D-13 — Baseline accepted from 2020; strategies rebuilt from scratch. (Founder, 2026-09-10.)
+
+The Phase 6 re-baseline (price-return view, point-in-time membership) is
+accepted as the record from 2020 onwards. The production strategies were
+tuned on today's membership backdated, so their parameters carry no
+information worth preserving on the honest universe; rather than retune
+them, new strategies are built from scratch on this store with
+pre-committed gates. The existing four remain in production untouched
+(D-8) until a rebuilt strategy earns its place.

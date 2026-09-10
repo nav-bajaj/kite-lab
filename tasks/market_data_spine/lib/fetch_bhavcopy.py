@@ -6,7 +6,9 @@ Two formats over the span:
 
 UDiFF began in 2024 and the legacy file was withdrawn later that year, so
 2024 dates try both. A 404 on every candidate is a holiday and is recorded so
-the run is resumable without re-asking. Files are stored as fetched (zip);
+the run is resumable without re-asking. Weekends are requested as well:
+NSE holds special Saturday (Budget) and Sunday (Muhurat) sessions, and a
+row-based lookback counts them. Files are stored as fetched (zip);
 parsing happens in build_symbol_master.py.
 
 Polite by design: one request at a time, a fixed pause between them, and
@@ -73,9 +75,9 @@ def main():
     d, end = date.fromisoformat(a.start), date.fromisoformat(a.end)
     n_days = n_got = n_hol = n_err = n_skip = 0
     t0 = time.time()
+    # weekend sessions exist (Budget Saturdays, Muhurat Sundays); ask NSE for
+    # every weekend day too and let a 404 record the holiday
     while d <= end:
-        if d.weekday() >= 5:
-            d += timedelta(days=1); continue
         n_days += 1
         ymd = d.isoformat()
         ydir = os.path.join(a.out, str(d.year)); os.makedirs(ydir, exist_ok=True)
