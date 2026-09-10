@@ -977,3 +977,39 @@ the honest universe. Over the watched twelve months L6 made 6% with a
 400 5%. The 2x names are real (1 of 24 holdings above 2x, 3 above 1.5x,
 bought April-May 2026) and so are the 8 of 24 below their entry price;
 a momentum book always shows its winners.
+
+## §17 — full chained refit for MM, the OM25 §4b design (128 configs)
+
+Refit grid = every design choice made in §3-§9d as a binary: score
+{vol-adjusted, 3/6/12 blend} × skip {0, 21} × exit buffer {10, 20} ×
+stop {off, 20%} × sizing {equal, inverse-vol 10%} × bear rule {off,
+hold ≤15} × sector cap {off, 5} = 128 configurations, each run 2006 →
+today on Nifty 250 (12m, 25 names, monthly, one action day). Each January
+the configuration with the best trailing-window Sharpe is traded for the
+year. The adopted stack is one of the 128.
+
+| Process | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Wright window | Full chain | Config changes |
+|---|---|---|---|---|---|
+| 5y refit, chained 2011-> | 19.4% / 0.81 / -31% | 0.54 / 1.23 / 0.70 | 24.7% / 1.08 | 2011-26 18.3% / 0.79 / -31% | 10 |
+| 10y refit, chained 2016-> | 20.6% / 0.85 / -31% | 0.43 / 1.38 / 0.79 | 28.5% / 1.21 | 2016-26 20.6% / 0.85 / -31% | 7 |
+| 5y refit, chained 2016-> | 19.4% / 0.81 / -31% | 0.54 / 1.23 / 0.70 | 24.7% / 1.08 | 2016-26 19.4% / 0.81 / -31% | 7 |
+| Static adopted stack (reference) | 25.6% / 1.18 / −26% | 0.71 / 1.73 / 1.18 | 33.9% / 1.50 | | |
+
+The adopted stack is the hindsight-best single configuration on
+2016-26 and **rank 1 of 128**; the grid's OOS Sharpe runs 0.49 to 1.18
+with a median of 0.82. The hindsight-free process delivers 0.81-0.85 —
+the grid median, which is what selecting without the answer should
+produce — with a −31% drawdown and 7-10 configuration changes.
+
+Picks, 5-year refit: [[2011, 'blend/21/10/0.2/invvol/0/5'], [2012, 'blend/21/10/0.2/invvol/0/5'], [2013, 'blend/21/20/0.0/invvol/15/5'], [2014, 'voladj/21/20/0.2/invvol/15/0'], [2015, 'voladj/21/20/0.2/invvol/0/5'], [2016, 'voladj/21/20/0.2/invvol/0/5'], [2017, 'voladj/21/20/0.2/invvol/0/5'], [2018, 'voladj/21/20/0.2/invvol/15/5'], [2019, 'voladj/0/10/0.0/invvol/0/5'], [2020, 'voladj/0/10/0.0/invvol/0/5'], [2021, 'blend/21/20/0.0/invvol/15/5'], [2022, 'voladj/21/20/0.2/invvol/15/5'], [2023, 'blend/21/20/0.0/equal/15/5'], [2024, 'blend/21/20/0.0/invvol/15/5'], [2025, 'blend/21/20/0.0/invvol/15/5'], [2026, 'voladj/21/20/0.2/invvol/15/5']]
+Picks, 10-year refit: [[2016, 'blend/21/10/0.2/invvol/0/5'], [2017, 'blend/0/10/0.0/invvol/0/0'], [2018, 'blend/21/10/0.2/invvol/0/5'], [2019, 'voladj/0/10/0.0/invvol/0/5'], [2020, 'voladj/21/20/0.2/invvol/0/5'], [2021, 'voladj/21/20/0.2/invvol/15/5'], [2022, 'voladj/21/20/0.2/invvol/15/5'], [2023, 'voladj/21/20/0.2/invvol/15/5'], [2024, 'voladj/21/20/0.2/invvol/15/5'], [2025, 'blend/21/20/0.0/invvol/15/5'], [2026, 'voladj/21/20/0.2/invvol/15/5']]
+
+Read: **G5 fails at the process level** (gap 0.33-0.37 against 0.2) once
+the whole design is allowed to refit, not just the post-OOS elements
+(§11's 0.98 held the in-sample choices fixed). The realistic MM process
+number is **about 20% a year at Sharpe 0.8-0.85 with a −31% drawdown**,
+against OM25's chained 0.90 (§4b there). The two books are much closer at
+the process level than their static cells suggest: MM's static 1.18 is
+mostly selection on 2016-26. What survives selection is the direction of
+each element (every plateau in §8-§9d) and the one-action-day rhythm; the
+combined level does not.
