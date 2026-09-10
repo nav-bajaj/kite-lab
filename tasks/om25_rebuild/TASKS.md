@@ -48,7 +48,7 @@ Owners: 👤 founder · 🤖 agent.
 
 ## §4 — OOS and walk-forward, opened once 🤖👤
 
-- [ ] Surviving configuration per universe → OOS, sub-windows, walk-forward
+- [x] Surviving configuration per universe → OOS, sub-windows, walk-forward — DONE 2026-09-10, all five fail G2/G3/G8, pass G4/G5
 - [ ] 👤 Decide the universe and whether the book ships
 
 ## Done
@@ -74,3 +74,15 @@ opened. Awaiting the founder's decision.
 - Cadence grid from 2010 (§3i): weekly, biweekly entry+exit, biweekly
   entry / weekly exit, monthly, on both universes.
 - G8 number still to be fixed by the founder (20% recorded).
+
+## §4 opened — founder decisions 2026-09-10
+Both universes stay open. Lookback: 12 months on Nifty 250, **6 months on
+NSE 500** (founder choice on §3k; recorded as a choice, the window shows
+no plateau). Cadence: monthly and biweekly, entry and exit together.
+Candidates fixed before any 2016+ number was computed: A N250 monthly,
+B N250 biweekly, C N500 monthly, D N500 biweekly, all fully invested, and
+E = A with the §3j breadth overlay (200-DMA breadth < 0.30, confirm 3,
+full exit, flip re-entry) — included at the researcher's initiative so the
+overlay question is answered in the same single opening; the founder had
+not ruled on it. Walk-forward refits lookback only (63/126/189/252) on
+the trailing ten years, chained yearly 2016 → today. G8 stays at 20%.

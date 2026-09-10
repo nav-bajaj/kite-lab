@@ -393,3 +393,49 @@ history when 2008 began; the membership file's own reconstruction and the
 price-return basis (D-12) are shared with every section. Files:
 `lib/phase3j*.py`, `runs/3j_summary.csv` (one row per cell, both windows,
 run ids), `runs/3j_diag.csv`, `runs/3j.log`.
+
+## §4 — OOS, opened once (2026-09-10) — 2016-01-01 → 2026-09-09
+
+Five candidates fixed before any 2016+ statistic was computed (TASKS.md
+§4). Each is one run from 2010-01-01 to 2026-09-09; IS is the 2010-2015
+window of the same path. Walk-forward refits lookback only, from
+{63, 126, 189, 252}, on the trailing ten years, chained yearly. Turnover
+is gross notional traded over mean equity, per year, and trades per year.
+
+| Candidate | IS 2010-15 | **OOS 2016-26** | Sub-windows 16-19 / 20-22 / 23-26 | Walk-fwd Sharpe | CAGR 2010-26 | Turnover | Gates |
+|---|---|---|---|---|---|---|---|
+| A N250 monthly lb252 | 23.7% / 1.50 / -17.0% | 18.3% / 0.79 / -34.6% | 0.92 / 1.03 / 0.49 | 0.68 | 20.2% | 3.3x, 90/yr | G2 fail, G3 fail, G4 pass, G5 pass, G8 fail |
+| B N250 biweekly lb252 | 23.7% / 1.51 / -18.4% | 17.5% / 0.75 / -34.4% | 0.88 / 1.04 / 0.41 | 0.71 | 19.7% | 3.9x, 106/yr | G2 fail, G3 fail, G4 pass, G5 pass, G8 fail |
+| C N500 monthly lb126 | 27.9% / 1.53 / -21.0% | 17.0% / 0.68 / -35.6% | 0.51 / 1.17 / 0.40 | 0.65 | 20.9% | 9.4x, 246/yr | G2 fail, G3 fail, G4 pass, G5 pass, G8 fail |
+| D N500 biweekly lb126 | 25.5% / 1.36 / -24.7% | 18.5% / 0.75 / -36.5% | 0.33 / 1.29 / 0.67 | 0.76 | 21.0% | 12.8x, 335/yr | G2 fail, G3 fail, G4 pass, G5 pass, G8 fail |
+| E N250 monthly lb252 + breadth | 22.6% / 1.60 / -12.5% | 14.1% / 0.65 / -24.7% | 0.96 / 0.53 / 0.49 | 0.60 | 17.1% | 4.6x, 127/yr | G2 fail, G3 fail, G4 pass, G5 pass, G8 fail |
+
+Benchmark (NIFTY 100, price return): OOS 10.9% / 0.37 / −38%; sub-windows
+0.45 / 0.41 / 0.26; 2010-26 9.8%. The production OM25 rules reproduced on
+this same store (50/50 score, two regimes, 20% trailing stop, biweekly):
+OOS 18.6% / 0.68 / −40%; sub-windows 0.23 / 0.88 / 0.92.
+
+Walk-forward lookback picks by year (2016 → 2026): A [252, 126, 252, 252, 252, 252, 252, 252, 252, 252, 252], C
+[126, 126, 189, 189, 126, 126, 126, 126, 126, 126, 252]. The refit never chose below 126 for Nifty 250 and drifted
+between 126 and 252 for NSE 500; G5 passes everywhere, i.e. the static
+lookback is not the fragile part.
+
+**Every candidate fails G2 (OOS Sharpe ≥ 0.9), G3 (each sub-window ≥ 0.6)
+and G8 (OOS CAGR ≥ 20%); every candidate passes G4 and G5.** The decay
+from in-sample is 0.6-0.9 of Sharpe on every book. Two things drive it:
+2020 (−35% drawdown for the fully invested books, inside G4 but
+Sharpe-costly) and 2023-2026, where the rebuild does 0.4-0.5 against the
+production rules' 0.92 — the capture-ratio book, tuned on 2010-2015, has
+been the wrong score for the last three years while the old 50/50 tilt
+with a trailing stop has been the right one.
+
+The breadth overlay (E) did what it was built to do in 2020 (−24.7% vs
+−34.6%) and then missed the recovery: 2020-22 Sharpe 0.53 against 1.03
+fully invested, 4pp of OOS CAGR gone. The same failure the ROC overlay
+showed in 2009, on a different indicator.
+
+The NSE 500 books with the 6-month lookback turn over 9-13x a year
+(250-330 trades), three times the Nifty 250 books, for the same OOS
+Sharpe — flagged under G7.
+
+Deflation is not applied to OOS (one look). 1090 unique in-sample trials preceded it.
