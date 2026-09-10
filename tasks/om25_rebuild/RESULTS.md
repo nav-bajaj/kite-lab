@@ -636,3 +636,46 @@ SIP of Rs 10,000 on the first trading day of each month:
 Portfolio SIP taxed 25% on each FY's gain of the accumulated pot; index
 SIP taxed 25% on the gain at exit. Post-tax, the portfolio SIP ends at
 1.6x the Nifty 250 SIP from 2011 and 1.4x from 2016.
+
+## §4f — against a synthetic NIFTY MIDSMALLCAP 400
+
+The real index (Kite history) runs 2019-01-14 → 2026-05-08. Synthetic
+elsewhere: Midcap 150 (real, master store) and a small-cap leg, blended
+64/36 (the midcap weight fitted on the real index's 2019-26 daily
+returns), rebalanced quarterly. Small-cap leg after 2026-05: the real
+Smallcap 250. Before 2019: the point-in-time equal-weight basket of NSE
+500 members not in Nifty 250 from the master panel — the Smallcap 250's
+own definition — which tracks the real Smallcap 250 at 0.986 daily
+correlation over 2019-26, 1.6pp a year under it (equal weight versus cap
+weight). The full early construction tracks the real MidSmall 400 at
+0.984 daily correlation with 3.4% tracking error and matching CAGR (17.8% vs 17.9%). Series in `runs/midsmall400_synthetic.csv`.
+
+| Window | Portfolio | MidSmall 400 |
+|---|---|---|
+| 2011-26 | 21.4% / 0.97 / -35% | 13.0% / 0.45 / -51% |
+| 2016-26 | 21.6% / 0.90 / -35% | 14.9% / 0.55 / -51% |
+| 2019-26 (real index) | 23.1% / 0.90 / -35% | 17.9% / 0.70 / -40% |
+| Wright window Oct-20 → Aug-26 | 26.2% / 1.07 / -27% | 23.4% / 1.09 / -23% |
+
+| Year | Portfolio | MidSmall 400 | Excess |
+|---|---|---|---|
+| 2011 | -13.5% | -34.5% | +20.9pp |
+| 2012 | 45.1% | 41.3% | +3.8pp |
+| 2013 | 11.2% | -6.1% | +17.3pp |
+| 2014 | 68.0% | 62.5% | +5.5pp |
+| 2015 | 10.4% | 8.8% | +1.6pp |
+| 2016 | 7.3% | 2.8% | +4.6pp |
+| 2017 | 54.9% | 53.8% | +1.1pp |
+| 2018 | 0.7% | -19.9% | +20.5pp |
+| 2019 | 8.1% | -3.1% | +11.2pp |
+| 2020 | 28.2% | 24.6% | +3.6pp |
+| 2021 | 57.5% | 51.3% | +6.2pp |
+| 2022 | -1.5% | 0.9% | -2.4pp |
+| 2023 | 30.7% | 45.3% | -14.6pp |
+| 2024 | 47.9% | 24.7% | +23.1pp |
+| 2025 | 0.4% | 1.2% | -0.8pp |
+| 2026 | 15.1% | 3.0% | +12.2pp |
+
+Beats the index in 13 of 16 years; the misses are 2022, 2023 (−15pp, the
+small-cap year) and 2025. Monthly correlation 0.80, beta 0.67. Post-tax:
+portfolio 16.1% (FY tax) against the index taxed once at exit 11.3% (2011-26).
