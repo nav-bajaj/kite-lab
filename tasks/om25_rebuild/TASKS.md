@@ -18,10 +18,12 @@ Proposed 2026-09-10. Edit any number; once signed, frozen.
 
 ## §1 — retrieve the ROC regime test 🤖
 
-- [ ] Locate the prior thread's ROC regime test: index, lookback, threshold,
-      hysteresis, comparison, result (agent dispatched 2026-09-10)
-- [ ] Record the definition in BRIEF.md; if the definition is ambiguous,
-      👤 confirm before use
+- [x] Located: `tasks/portfolio_risk_2026/` on `beta_gtm_mvp`; definition
+      and result recorded in BRIEF.md (sign of N-session ROC of NIFTY 100,
+      confirm-days hysteresis, best cell 31/3 on the biased universe)
+- [ ] 👤 ROC search space: small grid around 31/3 (N ∈ {15, 21, 31, 42},
+      confirm ∈ {2, 3, 5}) or fixed at 31/3?
+- [ ] 👤 The exposure overlay from that thread: in or out of scope?
 
 ## §2 — harness 🤖
 

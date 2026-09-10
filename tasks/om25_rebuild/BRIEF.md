@@ -32,3 +32,41 @@ Master store only (`data/master/`): `panels/pr/` (price-return view),
 `membership/{nifty250,nse500}.csv`, `benchmarks/NIFTY_100.csv` (regime
 index, Kite, 2003→), `benchmarks/NIFTY_100_bench.csv`. Nothing reads
 `nse500_data*` or `data/static/`.
+
+## ROC regime — the prior test, retrieved 2026-09-10
+
+Source: `tasks/portfolio_risk_2026/` on branch `beta_gtm_mvp` (commit
+`af4a3cb`, 2026-09-04), worktree `.worktrees/beta_gtm`. Harness
+`regime_experiment.py`, results `RESULTS.md` §4-7, 12-15, verdicts `STATE.md`.
+
+**Definition tested** (`build_regime()`):
+
+    roc  = close / close.shift(N) - 1
+    raw  = roc > 0            (risk-on)     threshold zero throughout
+    regime = confirm(raw, confirm_days)      same sticky state machine as the
+                                             production MA: flips only after
+                                             `confirm_days` consecutive
+                                             opposite readings; lagged 1 day
+
+Grid: N in {10, 15, 21, 31, 42, 52, 63, 126, 252}, confirm in {1, 2, 3, 5, 8};
+index NIFTY 100 (from 2010), NIFTY 500 (from 2015), controls.
+
+**Result that matters here** — ROC as the *score tilt* on OM25, same index
+(NIFTY 100), 16.1 years 2010-07 → 2026-08, no overlay, stop off:
+ROC31/c3 33.57% CAGR / Sharpe 1.84 / MaxDD −34.5% vs MA100/c3 33.13% /
+1.79 / −36.0%. ROC31 beat MA on every metric in both stop settings.
+Recorded there as "the best-evidenced single change found anywhere in this
+task", conditional on no exposure overlay shipping. Lookbacks ≥ 63 were
+worse than nothing (ROC126 MaxDD −49%); confirm = 1 (no hysteresis) cost
+3-6pp CAGR everywhere; the ROC-52 dent shows single-cell precision
+exceeds the sample — read it as "about a month, with confirmation".
+
+**Why it is a hypothesis here, not a result.** That test ran on the
+survivorship-biased universe (today's members backdated) that D-13
+discarded, and on a window with two bear episodes. It is re-tested on the
+honest universe from 2006, which has five.
+
+**Also in that thread, NOT in this brief unless the founder adds it:** a
+separate *exposure overlay* (100% risk-on / 75% risk-off on NIFTY 100
+ROC31/c3) that cut OM25's drawdown to −23% at ~3.7pp of CAGR. The brief
+says "just the hysteresis"; the overlay is out of scope until said otherwise.
