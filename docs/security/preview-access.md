@@ -22,10 +22,13 @@ nothing else.
 | `/admin` | **no** | yes |
 | Any mutation / engine endpoint (jobs, schedule, sync, headless-login, cache-clear, waitlist read/export/promote) | **no** (403) | yes |
 
-The split lives in one predicate each side: `GATE_ROLES` in
-`kite-api/app/auth.py` and `canPassGate()` in
-`kite-dashboard/src/lib/roles.ts`. Everything else keeps testing
-`role == "admin"` exactly. `kite-api/tests/test_private_mode.py` and
+The split lives in `GATE_ROLES` in `kite-api/app/auth.py` and
+`canPassGate()` in `kite-dashboard/src/lib/roles.ts`. Everything else
+keeps testing `role == "admin"` exactly — with one deliberate exception:
+`/insights` visibility reads a third predicate, `canSeeInsightsSandbox()`,
+for the reason set out under "Launch dependency" below. Read that section
+before granting; it is the half of this design that a code change alone
+cannot carry. `kite-api/tests/test_private_mode.py` and
 `test_supabase_authz.py` assert both halves against the full endpoint
 inventory — a preview token passing an admin endpoint fails the suite.
 
