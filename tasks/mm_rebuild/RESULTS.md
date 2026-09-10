@@ -224,3 +224,41 @@ in-sample and out, on both universes, with deeper drawdowns (−34 to −38%
 against −35%) and twice the trades on NSE 500. Its one window of clear
 strength is 2020-2022 (1.12-1.51), the broad small-cap rally, where it
 beats OM25 (0.99-1.29).
+
+## §5 — production L6 v2 on the honest universe, and its structure as devices (12 trials)
+
+L6 v2's exact rules (6-month vol-adjusted momentum, no skip, top 24 with
+a 7.5% weight cap, exit buffer 0 with an 8-day minimum hold, weekly
+Thursday signal) run through this harness from 2010, both universes. The
+spine measured it on the same store as 27.8% / 0.86 / −43.6% from 2020;
+this reproduction gives 27.6% / 0.95 / −37% (execution-day mapping and
+panel vintage differ).
+
+| L6 v2 rules on | IS 2010-15 | OOS 2016-26 | 16-19 / 20-22 / 23-26 | 2020-26 | Trades/yr |
+|---|---|---|---|---|---|
+| NSE 500 (production universe) | 17.6% / 0.68 / −31% | 17.4% / 0.56 / −47% | **−0.15** / 1.56 / 0.42 | 27.6% / 0.95 / −37% | 449 |
+| Nifty 250 | 12.1% / 0.44 / −35% | 17.6% / 0.64 / −35% | 0.14 / 1.34 / 0.48 | 24.2% / 0.89 / −32% | 404 |
+| MM §3 book, NSE 500 (for reference) | 23.6% / 1.06 / −27% | 21.7% / 0.78 / −34% | 0.57 / 1.51 / 0.37 | | 181 |
+| MM §3 book, Nifty 250 | 20.5% / 1.02 / −22% | 19.7% / 0.73 / −38% | 0.49 / 1.12 / 0.65 | | 87 |
+
+The production rules lose to the rebuilt book on every window except
+2020-2022, with 2016-2019 negative on NSE 500 and two and a half times
+the trades. The published 50% from 2020 is the backdated universe; on the
+honest one L6 v2 is a 0.56 book over ten years.
+
+L6's structural elements as devices on the MM base, IS 2010-2015
+(labelled post-OOS):
+
+| Device | Nifty 250 | NSE 500 |
+|---|---|---|
+| Base | 20.5% / 1.02 / −21.7% | 23.6% / 1.06 / −26.6% |
+| 7.5% weight cap | identical (never binds at 25 names, monthly) | identical |
+| 8-day minimum hold, buffer 20 | identical (monthly exits are ≥ 20 days apart) | identical |
+| 8-day minimum hold, buffer 0 | 18.9% / 0.90 / −24.2%, 167 trades/yr | 21.0% / 0.91 / −27.7%, 258 |
+| Weekly Thursday signal, buffer 20 | 18.8% / 0.90 / −21.1% | 23.7% / 1.04 / −26.2% |
+| Full L6 structure with the MM score | 17.6% / 0.81 / −25.5%, 298 | 22.2% / 0.95 / −28.8%, 449 |
+
+Nothing in L6's structure helps: the cap and the minimum hold are no-ops
+on a monthly book with a buffer, and the weekly / zero-buffer design that
+needs them costs 0.1-0.2 of Sharpe and triples the trades. The cue from
+production is negative — the §2 mechanics already superseded it.

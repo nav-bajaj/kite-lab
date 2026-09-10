@@ -12,8 +12,8 @@ import windows as W  # noqa: E402
 RUNS = TASK / "runs"; RUNS.mkdir(exist_ok=True); W.REG = RUNS / "registry.csv"
 DEFAULTS = dict(universe="nifty250", kind="abs", lookback=126, min_obs=110, skip=0, vol_floor=0.05, positive_only=False,
                 top_n=25, exit_buffer=20, cadence="monthly", exit_cadence="same", trailing_stop=0.0, max_weight=1.0, slippage=0.002,
-                cr_quantile=0.0, vol_kick="none", vol_k=0.0, regimes=1, bull_kind="abs", overlay=False, regime_kind="roc", roc_n=31, confirm=3, bear_exposure=1.0, reenter_on_flip=False, start="2010-01-01", end="2015-12-31")
-_ID_OPTIONAL = {"vol_kick", "vol_k", "cr_quantile", "regimes", "bull_kind", "overlay", "regime_kind", "roc_n", "confirm", "bear_exposure", "reenter_on_flip"}
+                min_hold_days=0, cr_quantile=0.0, vol_kick="none", vol_k=0.0, regimes=1, bull_kind="abs", overlay=False, regime_kind="roc", roc_n=31, confirm=3, bear_exposure=1.0, reenter_on_flip=False, start="2010-01-01", end="2015-12-31")
+_ID_OPTIONAL = {"min_hold_days", "vol_kick", "vol_k", "cr_quantile", "regimes", "bull_kind", "overlay", "regime_kind", "roc_n", "confirm", "bear_exposure", "reenter_on_flip"}
 
 
 _turn = {}
@@ -63,7 +63,8 @@ def run_candidate(**overrides):
         def score_fn(signal_date, **_):
             return (bull_fn if bool(roc.get(signal_date, True)) else base_fn)(signal_date)
     weekly = om.fridays(cal); weekly = weekly[(weekly >= start) & (weekly <= end)]
-    entry_all = {"biweekly": om.biweekly_fridays, "weekly": om.fridays, "monthly": om.monthly_first_trading_day}[cfg["cadence"]](cal)
+    from scripts._clean_engine import thursdays as _thu
+    entry_all = {"biweekly": om.biweekly_fridays, "weekly": om.fridays, "weekly_thu": _thu, "monthly": om.monthly_first_trading_day}[cfg["cadence"]](cal)
     entries = entry_all[(entry_all >= start) & (entry_all <= end)]
     if cfg["overlay"] and cfg["reenter_on_flip"]:
         flips = overlay_panel.index[overlay_panel & ~overlay_panel.shift(1, fill_value=False)]; entries = entries.union(flips[(flips >= start) & (flips <= end)])
@@ -75,7 +76,7 @@ def run_candidate(**overrides):
                           atr_mult=0.0, atr_min_floor=cfg["trailing_stop"], use_trailing_stop=cfg["trailing_stop"] > 0, use_dma_exit=False,
                           weekly_rank_check=(cfg["exit_cadence"] == "weekly"),
                           regime_panel=overlay_panel, bear_exposure=float(cfg["bear_exposure"]) if cfg["overlay"] else 0.0,
-                          membership_fn=membership_fn, initial_capital=1_000_000)
+                          membership_fn=membership_fn, min_hold_days=cfg["min_hold_days"], initial_capital=1_000_000)
     out.mkdir(parents=True, exist_ok=True); json.dump(cfg, open(out / "config.json", "w"), indent=1)
     res["equity"].to_csv(out / "equity.csv", index=False); res["trades"].to_csv(out / "trades.csv", index=False)
     if "exits" in res: res["exits"].to_csv(out / "exits.csv", index=False)
