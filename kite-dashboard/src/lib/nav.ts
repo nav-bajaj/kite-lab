@@ -9,6 +9,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { INSIGHTS_ACCESS } from "@/lib/flags";
+import { canSeeInsightsSandbox, type AppRole } from "@/lib/roles";
 
 export interface NavItem {
   name: string;
@@ -39,11 +40,17 @@ export function getNavigation(isAdmin: boolean): NavItem[] {
 // The Insights entry, surfaced in the top header rather than the sidebar.
 // Visibility follows the tri-state access mode:
 //   all   → shown to everyone.
-//   admin → shown only to admins (the pre-public admin sandbox).
+//   admin → shown to whoever canSeeInsightsSandbox admits (admin +
+//           preview today) — the pre-public sandbox.
 //   off   → hidden entirely (the middleware also redirects the route).
-export function getInsightsNavItem(isAdmin: boolean): NavItem | null {
+//
+// Takes the role rather than an isAdmin boolean so this cannot drift from
+// the middleware's check on /insights — the two must agree, or the link
+// appears and then bounces (or exists and is never shown).
+export function getInsightsNavItem(role: AppRole): NavItem | null {
   const visible =
-    INSIGHTS_ACCESS === "all" || (INSIGHTS_ACCESS === "admin" && isAdmin);
+    INSIGHTS_ACCESS === "all" ||
+    (INSIGHTS_ACCESS === "admin" && canSeeInsightsSandbox(role));
   return visible
     ? { name: "Insights", href: "/insights", icon: LineChart }
     : null;

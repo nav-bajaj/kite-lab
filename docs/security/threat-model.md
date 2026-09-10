@@ -23,6 +23,7 @@ Ranked by blast radius (worst-case impact if compromised):
 | A7 | Google Drive OAuth token | `~/.config/kite-lab/gdrive_token.json` (laptop, Mac mini) | Read/write everything in `My Drive/kite-lab-backups/` |
 | A8 | User PII + trade history in Postgres | Railway managed Postgres | Privacy harm; financial history disclosure |
 | A9 | The trading authority itself | Logical — sum of A1, A2, A3 | Real-money loss |
+| A10 | Regulatory standing while the SEBI RA application is pending | Logical — what the site gate (R-028) withholds: the product surface, its performance figures, and any affirmative registration claim | Application prejudiced by pre-registration distribution of research to third parties. Added 2026-09-10: R-028 and R-034 had been citing A4 for want of a row that fit, which is how a footer rendering "SEBI Registered Research Analyst" to gate-passers stayed legible as a copy nit rather than an exposure of this asset |
 
 A1–A3 are the "crown jewels." Compromise of any of them yields direct
 trading authority. A4–A6 require chaining to reach trading authority.

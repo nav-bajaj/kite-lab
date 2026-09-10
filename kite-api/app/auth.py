@@ -175,7 +175,7 @@ def _extract_role(payload: dict, provider: str) -> str:
     """
     metadata = payload.get("app_metadata") or {}
     role = metadata.get("role")
-    if role in ("admin", "client"):
+    if role in ("admin", "client", "preview"):
         return role
     return "client"
 
@@ -205,15 +205,26 @@ def _provision(user: dict) -> None:
     provision_user(user)
 
 
+# Roles that may pass the site gate. "preview" is the demo role: it lifts
+# the under-development lockdown for one named person (a hiring candidate,
+# a design partner) and grants NOTHING else — require_admin and
+# check_universe_access below both still test for "admin" exactly, so a
+# preview holder gets precisely the client product surface.
+#
+# Passing the gate and operating the platform were the same predicate until
+# 2026-09-10; they are two different questions and are now asked separately.
+GATE_ROLES = frozenset({"admin", "preview"})
+
+
 def _enforce_private_mode(role: str) -> None:
-    """PRIVATE_MODE=true: only admin-role tokens may use protected endpoints.
+    """PRIVATE_MODE=true: only gate-role tokens may use protected endpoints.
 
     Site-gate lockdown (tasks/site_gate, risk register R-028): while the
     public site is behind the under-development page, existing beta users'
     still-valid tokens must not pull data — the frontend gate alone would
     leave the API reachable directly.
     """
-    if get_settings().private_mode and role != "admin":
+    if get_settings().private_mode and role not in GATE_ROLES:
         raise ForbiddenError(
             "Access is restricted while the service is in private mode"
         )
@@ -313,8 +324,9 @@ ADMIN_ONLY_UNIVERSES = frozenset({"nse500", "nifty100", "nifty250"})
 def check_universe_access(universe: str, user: dict) -> None:
     """Raise 403 if the caller doesn't have access to the universe.
 
-    Admin role: all universes. Client role: only the 4 production products
-    in ``CLIENT_VISIBLE_UNIVERSES``. Anything else from a non-admin caller
+    Admin role: all universes. Every other role — client and preview
+    alike — only the 4 production products in
+    ``CLIENT_VISIBLE_UNIVERSES``. Anything else from a non-admin caller
     is refused.
 
     Closes R-022 in ``docs/security/risk-register.md``.
@@ -327,26 +339,34 @@ def check_universe_access(universe: str, user: dict) -> None:
         )
 
 
-def require_admin_when_private(
+def require_gate_role_when_private(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
 ) -> None:
     """Router-level dependency for the intentionally-public data readers
     (insights, indices — R-023 surface).
 
+    Renamed from ``require_admin_when_private`` on 2026-09-10: it no
+    longer requires admin, and the mount site in ``main.py`` is where a
+    future dev reads the name. The site_gate task records (a closed task,
+    left as written) still use the old name.
+
     Normal operation: no-op, the routers stay anonymous. Under
-    PRIVATE_MODE=true they require a valid admin bearer token, so the
-    site-gate lockdown has no unauthenticated data holes.
+    PRIVATE_MODE=true they require a valid bearer token carrying a
+    GATE_ROLES role, so the site-gate lockdown has no unauthenticated
+    data holes.
     """
     if not get_settings().private_mode:
         return
     if credentials is None:
         raise AuthError("Missing authentication token")
     # get_current_user raises 401 on an invalid token and 403 on a
-    # non-admin role via _enforce_private_mode; the explicit check below
+    # non-gate role via _enforce_private_mode; the explicit check below
     # is belt-and-braces should the enforcement point ever move.
     user = get_current_user(credentials)
-    if user.get("role") != "admin":
-        raise ForbiddenError("Admin role required")
+    if user.get("role") not in GATE_ROLES:
+        raise ForbiddenError(
+            "Access is restricted while the service is in private mode"
+        )
 
 
 # Convenience aliases — back-compat with existing imports.

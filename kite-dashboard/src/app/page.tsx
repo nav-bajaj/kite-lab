@@ -1,6 +1,7 @@
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 
 import { siteMode } from "@/lib/site-mode";
+import { canPassGate, roleFromClaims } from "@/lib/roles";
 import { ComingSoon } from "@/components/marketing/coming-soon";
 import { LandingPage } from "@/components/marketing/landing-page";
 
@@ -33,11 +34,10 @@ export default async function Home() {
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims ?? null;
 
-  const role = (claims as { app_metadata?: { role?: string } } | null)
-    ?.app_metadata?.role;
+  const role = roleFromClaims(claims);
   const userId = (claims as { sub?: string } | null)?.sub ?? null;
 
-  if (siteMode() === "under_development" && role !== "admin") {
+  if (siteMode() === "under_development" && !canPassGate(role)) {
     return <ComingSoon />;
   }
   return <LandingPage userId={userId} />;

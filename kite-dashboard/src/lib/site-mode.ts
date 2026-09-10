@@ -12,6 +12,31 @@
  * SITE_MODE=under_development explicitly. Flipping the var still requires a
  * redeploy (Vercel env changes only apply to new builds).
  */
+// SITE_MODE is server-only AND siteMode() fails OPEN — unset reads as
+// "live". Failing open is right for a gate (a misconfigured deploy must not
+// lock everyone out of their own product) and wrong for the one other thing
+// this function now decides: whether FooterPanel prints "SEBI Registered
+// Research Analyst", a claim that is not true yet.
+//
+// Those two combine badly. One `"use client"` on any consumer pulls this
+// module into the client bundle, where Next inlines `process.env.SITE_MODE`
+// as undefined; `gated` silently becomes false and the claim comes back with
+// no error, no type failure and no failing test.
+//
+// So make that mistake loud. React's `server-only` package would turn it into
+// a build error, which is strictly better, but costs a dependency for a
+// hypothetical — this throws on first import in a browser instead, which
+// surfaces the moment any marketing page renders in dev. Server runtimes
+// (middleware, server components, prerender) have no `window` and never
+// reach it.
+if (typeof window !== "undefined") {
+  throw new Error(
+    "site-mode.ts is server-only: SITE_MODE is not exposed to the browser, " +
+      "so a client-side siteMode() would report 'live' and un-gate the " +
+      "pending-registration claim. Read it in a server component instead.",
+  );
+}
+
 export type SiteMode = "live" | "under_development";
 
 export function siteMode(): SiteMode {

@@ -200,9 +200,9 @@ export interface IndexReturns {
 
 export async function getIndexReturns() {
   // NOT skipAuth. /api/indices was public until site_gate mounted
-  // require_admin_when_private on it (R-028), and a tokenless call has
-  // 401'd ever since. Sending the token is correct in both modes: the
-  // backend ignores it when PRIVATE_MODE is off.
+  // require_gate_role_when_private on it (R-028), and a tokenless call
+  // has 401'd ever since. Sending the token is correct in both modes:
+  // the backend ignores it when PRIVATE_MODE is off.
   return apiFetch<IndexReturns>("/api/indices/returns");
 }
 
