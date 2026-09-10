@@ -256,3 +256,140 @@ across 6-18 months, 252 the lowest) — the ordering flips between windows
 lookback for NSE 500 alone on this evidence would be fitting a six-year
 window; 252 is kept on both, pre-chosen on the longer window, and the
 NSE 500 sensitivity is recorded as a caveat for the OOS read.
+
+## §3j — momentum-strength overlay (agent, 332 trials) — windows 2006-2009 and 2010-2015
+
+The founder's question: can an indicator of the strength of momentum across
+the index's stocks cut the 2008 drawdown at little cost on 2010-2015, where
+the ROC price regime could not (§3h)? Acceptance, fixed in
+`lib/BRIEF_3j.md` before any run: cost within ~2pp CAGR and ~0.10 Sharpe of
+the fully invested book on each universe over 2010-01-01 → 2015-12-31, and
+MaxDD no worse than about −40% on a fresh run 2006-02-01 → 2009-12-31
+without giving up the 2009 recovery. Both windows are before OOS; `end` was
+passed on every run so nothing after 2015-12-31 was simulated.
+
+Harness: `regime_kind="strength"` in `lib/run.py` (keys `str_kind`,
+`str_len`, `str_thresh`, `str_mode`; confirm days reuse `confirm`; the new
+keys are left out of the id at their defaults, so all 749 stored configs
+keep their ids — verified). Indicators in `lib/regime.py`, built from the
+harness close panel and a point-in-time membership mask, weak state =
+indicator below threshold, `_confirm` hysteresis, lagged one session.
+Threshold `abs` = a level; `pct` = the indicator's own expanding-window
+quantile (min 252 obs, data ≤ t). A truncation test (panel cut at
+2008-06-30 vs cut at 2015-12-31) reproduces every indicator and regime
+series exactly, so the panel-level lookahead traps are ruled out.
+
+Indicators (length L): **breadth** = fraction of members with a positive
+L-day return; **breadth_ma** = fraction above their L-day MA; **disp** =
+interquartile range of L-day returns; **factor** = trailing L-day return of
+the top-minus-bottom decile spread ranked by 12-1 momentum; **leaders** =
+top decile minus the equal-weight universe; **persist** = rank correlation
+of 12-1 momentum at t vs t−L; **capture** = 90th percentile of the
+harness's own capture ratio across members over L days (the book's entry
+boundary on Nifty 250); `_d` variants = the L-day change of the 252-day
+base. 172 engine-free threshold screens (`runs/3j_diag.csv`: weak-day share
+in the crash and in 2010-2015) picked 35 settings; each ran at 50% and 0%
+exposure in the weak state on Nifty 250 monthly and NSE 500 biweekly, both
+windows (140 cells), then 20 refinement cells around the survivors and 4
+cross-cadence cells. 166 cells, 332 runs, every run registered as 3j (the
+2006-2009 companion runs carry blank IS stats: they have no 2010-2015
+path). Fully invested: Nifty 250 monthly 23.7% / 1.50 / −17.0% on
+2010-2015 and 7.5% / 0.09 / −67.4% on 2006-2009; NSE 500 biweekly
+22.7% / 1.35 / −15.5% and 0.5% / −0.18 / −67.8%.
+
+Best cell per indicator (full exit in the weak state unless noted; "cost"
+= 2010-2015, "pre" = 2006-02-01 → 2009-12-31; weak = share of days cut):
+
+| Universe | Indicator, setting | cost | pre | weak cost / pre | bands |
+|---|---|---|---|---|---|
+| LM 250 m | breadth_ma 200 < 0.30, c3 | 22.2% / 1.57 / −11.8% | 16.7% / 0.54 / −34.8% | 15% / 28% | **both** |
+| LM 250 m | same, re-entry on the flip | 22.6% / 1.60 / −12.5% | 18.7% / 0.63 / −35.4% | 15% / 28% | **both** |
+| LM 250 m | breadth_ma 200 < exp. 10th pct | 23.7% / 1.50 / −17.0% | 21.8% / 0.74 / −38.7% | 0% / 19% | both, never fires 2010-15 |
+| LM 250 m | breadth 126 < exp. 10th pct | 22.7% / 1.43 / −17.0% | 19.1% / 0.61 / −40.9% | 0.4% / 23% | cost only (−40.9) |
+| LM 250 m | capture 252 < 1.4 | 23.7% / 1.50 / −17.0% | 8.3% / 0.18 / −33.8% | 0% / 54% | both, recovery lost |
+| LM 250 m | disp 252 < exp. 20th pct | 16.2% / 1.02 / −15.7% | 14.5% / 0.43 / −41.8% | 23% / 34% | neither |
+| LM 250 m | factor 63 < 0 | 12.8% / 0.70 / −17.8% | 7.9% / 0.17 / −30.1% | 23% / 46% | protection only |
+| LM 250 m | leaders 63 < 0 | 8.6% / 0.34 / −19.2% | 12.4% / 0.44 / −30.3% | 23% / 50% | protection only |
+| LM 250 m | persist 63 < exp. 20th pct | 14.6% / 0.86 / −16.5% | 9.7% / 0.22 / −40.8% | 15% / 22% | neither |
+| LM 250 m | breadth_d 21 < exp. 10th pct | 21.9% / 1.46 / −17.8% | 13.1% / 0.34 / −49.8% | 7% / 9% | cost only |
+| N 500 bw | breadth_ma 200 < exp. 10th pct | 22.7% / 1.35 / −15.5% | 21.1% / 0.77 / −34.3% | 0% / 23% | both, never fires 2010-15 |
+| N 500 bw | breadth_ma 200 < 0.30, c3 | 16.3% / 0.97 / −14.0% | 18.2% / 0.67 / −32.8% | 18% / 32% | protection only (−6.4pp) |
+| N 500 bw | breadth_ma 100 < 0.30 | 18.3% / 1.18 / −16.8% | 25.3% / 1.12 / −24.5% | 22% / 35% | protection only (−4.4pp) |
+| N 500 bw | breadth 126 < exp. 10th pct | 21.9% / 1.30 / −15.5% | 15.7% / 0.51 / −42.1% | 1% / 27% | cost only |
+| N 500 bw | capture 252 < exp. 10th pct | 22.7% / 1.35 / −15.5% | 14.5% / 0.48 / −33.2% | 0% / 37% | both, never fires 2010-15 |
+| N 500 bw | disp 252 < exp. 20th pct | 17.0% / 0.99 / −15.5% | 17.8% / 0.63 / −40.4% | 17% / 36% | neither |
+| N 500 bw | factor 63 < 0 | 8.9% / 0.33 / −15.4% | 10.6% / 0.31 / −45.2% | 21% / 40% | neither |
+| N 500 bw | leaders 42 < −0.02 | 16.3% / 0.98 / −15.7% | 13.4% / 0.54 / −30.8% | 16% / 35% | protection only |
+| N 500 bw | persist 63 < exp. 30th pct | 16.7% / 0.96 / −15.9% | 8.7% / 0.18 / −35.4% | 17% / 26% | protection only |
+| N 500 bw | breadth_d 63 < −0.10 | 16.5% / 1.11 / −14.2% | 11.9% / 0.34 / −34.6% | 32% / 37% | protection only |
+
+Fourteen of 166 cells meet both bands; all are breadth-above-MA or the
+capture ratio. Three things about them:
+
+1. **The only family that does the job is breadth above the 200-DMA.** The
+   accepted cell (< 0.30, confirm 3, full exit) on Nifty 250 monthly exits
+   2008-03-12 → 04-25, 05-14 → 05-20 and 05-28 → 2009-04-17, i.e. it
+   misses the first −25% of January 2008, holds cash through the rest, and
+   is back five weeks after the March 2009 low. On 2010-2015 it cuts in
+   2011 (Feb–Apr, May–Jun, Aug–Nov, Nov–Jan 2012) and mid-2013 (Jun–Sep);
+   the fully invested book's worst drawdown there was −17%, so those cuts
+   cost 1.5pp of CAGR and buy 5pp of MaxDD. Confirm 2 and 5 are within
+   0.1pp; flip re-entry (§3g) adds 0.4pp on the cost window and 2pp on the
+   recovery. 25% or 50% exposure instead of 0% is worse on both windows
+   (pre MaxDD −37.5% / −43.1%).
+2. **Acceptance is one threshold notch wide and universe-dependent.** On
+   Nifty 250: 0.25 gives −46.8% in the pre window (fails protection), 0.35
+   costs 3.6pp (fails cost). On NSE 500 biweekly the same 0.30 cell costs
+   6.4pp (16.3% / 0.97); 0.25, 0.35, 0.40, confirm 2/5, 25%/50% exposure and
+   flip re-entry all cost 4.4-6.9pp. The cross-cadence cells put it on the
+   universe, not the cadence: NSE 500 monthly costs 6.9pp (16.7% / 1.04 vs
+   23.6% / 1.44), Nifty 250 biweekly 3.2pp (20.5% / 1.44 vs 23.7% / 1.51).
+   The NSE 500 book loses more when it steps out in 2011 and 2013 with the
+   same weak-day share (18% vs 15%).
+3. **The cells that pass on both universes never fire after 2008.** The
+   expanding 10th percentile (breadth_ma 200, capture 252) and capture
+   < 1.4 read weak on 0.0% of 2010-2015 days: once 2008 is in the history
+   the bar is "as bad as 2008", so the zero cost is by construction, and
+   the 2008 detection is a first-event effect (in early 2008 the history
+   was 2006-2007 only). One notch up, the 15th percentile, costs 3.1pp on
+   Nifty 250 (20.5% / 1.31) and 2.3pp on NSE 500 (20.3% / 1.21). The
+   capture < 1.4 cells also give up the 2009 recovery (pre CAGR 8.3% /
+   5.6%, weak 54% / 46% of pre-window days); capture < 1.3 gives −51.4% /
+   −45.6%.
+
+**Verdict: acceptance is met by the letter and not robustly.** A
+200-DMA-breadth overlay at 0.30 with full exit passes both bands on Nifty
+250 monthly and fails the cost band on NSE 500 at every setting tried; the
+only cells that pass on both universes are thresholds that 2010-2015 never
+reaches. Nothing here is a calibrated "momentum is weakening" reading: the
+factor's own return, the leaders' relative return, rank persistence,
+dispersion and the capture-ratio level or slope all cost 4-15pp of CAGR on
+2010-2015 wherever they protect 2008, because each of them also reads weak
+for 15-25% of 2010-2015 (2011 and 2013 look like momentum failing on every
+one of them, and the fully invested book came through both at −17%). The
+protection in 2008 comes from breadth collapsing, which is a price regime
+on the constituents rather than on the index — a cousin of §3e's ROC
+overlay with a better 2008 entry (breadth crossed 0.30 in March 2008; the
+ROC cells' whipsaws were the cost in §3h).
+
+Deflation for this phase: 332 trials, observed sd of the 2010-2015 Sharpe
+0.288, E[max] 0.84, best raw 1.65 (breadth_ma 100 < exp. 20th pct at 50%,
+Nifty 250: 21.8% / 1.60), deflated 0.81. Registry: 1090 unique ids.
+
+Parameter count if adopted: length 200, threshold 0.30, confirm 3 on top of
+the base book's 7 = 10 = G6, before counting the exposure level (0%) and
+the threshold mode as switches.
+
+What did not work: every indicator except 200-DMA breadth; partial
+exposure (worse than full exit in every accepted family); shorter breadth
+windows (63/126-day return breadth protects to −41% to −47% at best); the
+slope variants (weak 7-32% of the cost window for −35% to −50%
+protection); any absolute breadth threshold on NSE 500.
+
+Caveats: the choice of the 35 grid settings used the crash window's
+weak-day share (disclosed above; the trials count covers the grid, not the
+172 screens); the expanding-percentile thresholds had 1.3-2.3 years of
+history when 2008 began; the membership file's own reconstruction and the
+price-return basis (D-12) are shared with every section. Files:
+`lib/phase3j*.py`, `runs/3j_summary.csv` (one row per cell, both windows,
+run ids), `runs/3j_diag.csv`, `runs/3j.log`.
