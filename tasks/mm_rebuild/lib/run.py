@@ -13,8 +13,8 @@ import windows as W  # noqa: E402
 RUNS = TASK / "runs"; RUNS.mkdir(exist_ok=True); W.REG = RUNS / "registry.csv"
 DEFAULTS = dict(universe="nifty250", kind="abs", lookback=126, min_obs=110, skip=0, vol_floor=0.05, positive_only=False,
                 top_n=25, exit_buffer=20, cadence="monthly", exit_cadence="same", trailing_stop=0.0, max_weight=1.0, slippage=0.002,
-                min_hold_days=0, universe_cap=0, turnover_floor=0.0, sizing="equal", iv_window=63, dyn_n_bear=0, dyn_mode="lever", bear_buffer=-1, vol_target=0.0, vol_window=21, str_kind="breadth_ma", str_len=200, str_thresh=0.3, str_mode="abs", cr_quantile=0.0, vol_kick="none", vol_k=0.0, regimes=1, bull_kind="abs", overlay=False, regime_kind="roc", roc_n=31, confirm=3, bear_exposure=1.0, reenter_on_flip=False, start="2010-01-01", end="2015-12-31")
-_ID_OPTIONAL = {"bear_buffer", "universe_cap", "turnover_floor", "sizing", "iv_window", "dyn_n_bear", "dyn_mode", "vol_target", "vol_window", "str_kind", "str_len", "str_thresh", "str_mode", "min_hold_days", "vol_kick", "vol_k", "cr_quantile", "regimes", "bull_kind", "overlay", "regime_kind", "roc_n", "confirm", "bear_exposure", "reenter_on_flip"}
+                min_hold_days=0, sector_cap=0, universe_cap=0, turnover_floor=0.0, sizing="equal", iv_window=63, dyn_n_bear=0, dyn_mode="lever", bear_buffer=-1, vol_target=0.0, vol_window=21, str_kind="breadth_ma", str_len=200, str_thresh=0.3, str_mode="abs", cr_quantile=0.0, vol_kick="none", vol_k=0.0, regimes=1, bull_kind="abs", overlay=False, regime_kind="roc", roc_n=31, confirm=3, bear_exposure=1.0, reenter_on_flip=False, start="2010-01-01", end="2015-12-31")
+_ID_OPTIONAL = {"sector_cap", "bear_buffer", "universe_cap", "turnover_floor", "sizing", "iv_window", "dyn_n_bear", "dyn_mode", "vol_target", "vol_window", "str_kind", "str_len", "str_thresh", "str_mode", "min_hold_days", "vol_kick", "vol_k", "cr_quantile", "regimes", "bull_kind", "overlay", "regime_kind", "roc_n", "confirm", "bear_exposure", "reenter_on_flip"}
 
 
 _turn = {}
@@ -119,6 +119,14 @@ def run_candidate(**overrides):
                 if not over.any(): break
                 w[over] = cfg["max_weight"]; rest = w[~over]; w[~over] = rest / rest.sum() * (1 - cfg["max_weight"] * over.sum()) if rest.sum() > 0 else rest
             return w.to_dict()
+    sector_of = None
+    if cfg["sector_cap"]:
+        # sector per symbol, point-in-time by snapshot window where the archives allow; priority current scheme > 2014-20 > 2006-13 > Zerodha,
+        # all mapped to NSE's current 21 sectors (sector/scheme_map.csv). Unlabelled names (13% of all-ever) are unconstrained.
+        lk = pd.read_csv(HERE.parent / "sector/sector_v2_lookup.csv", parse_dates=["as_of_first", "as_of"])
+        sector_of = {}
+        for sym, g in lk.groupby("symbol"):
+            g = g.sort_values(["pri", "as_of"], ascending=[True, False]); sector_of[sym] = g.sector_v2.iloc[0]
     from _engine_iv import run_strategy as _run
     res = _run(close_panel=close.loc[cal_run], trade_panel=trade.loc[cal_run], calendar=cal_run, benchmark_aligned=p["bench"].loc[cal_run],
                           entry_signal_dates=entries, weekly_signal_dates=weekly, signal_function=score_fn, signal_function_args={},
@@ -127,7 +135,7 @@ def run_candidate(**overrides):
                           atr_mult=0.0, atr_min_floor=cfg["trailing_stop"], use_trailing_stop=cfg["trailing_stop"] > 0, use_dma_exit=False,
                           weekly_rank_check=(cfg["exit_cadence"] == "weekly"),
                           regime_panel=overlay_panel, bear_exposure=float(cfg["bear_exposure"]) if cfg["overlay"] else 0.0,
-                          membership_fn=membership_fn, min_hold_days=cfg["min_hold_days"], size_weights=size_weights, top_n_fn=top_n_fn, initial_capital=1_000_000)
+                          membership_fn=membership_fn, min_hold_days=cfg["min_hold_days"], size_weights=size_weights, top_n_fn=top_n_fn, sector_of=sector_of, sector_cap=cfg["sector_cap"] or None, initial_capital=1_000_000)
     out.mkdir(parents=True, exist_ok=True); json.dump(cfg, open(out / "config.json", "w"), indent=1)
     res["equity"].to_csv(out / "equity.csv", index=False); res["trades"].to_csv(out / "trades.csv", index=False)
     if "exits" in res: res["exits"].to_csv(out / "exits.csv", index=False)

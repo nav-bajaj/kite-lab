@@ -588,3 +588,43 @@ the bear buffer matter less than N.
 
 Trial count post-OOS across §8-§9c: 120 cells. The mechanism's sign is
 not in doubt; the exact N is the searched value.
+
+## §9d — sector cap (8 trials) — post-OOS
+
+Sector data: NSE's own Industry labels from 26 archived constituent
+lists (`sector/`, 87% of all-ever members; three schemes over time mapped
+to the current 21 sectors in `sector/scheme_map.csv`; 13% of names,
+mostly pre-2007 or in archive gaps, are unlabelled and unconstrained —
+1% of the book's buys). Cap = maximum names per sector at entry (a name
+whose sector is full is skipped; holdings are never sold for the cap),
+via an additive `sector_cap` hook in the engine copy. Uncapped, the
+Nifty 250 book's buys were 18% Financial Services and 12% Healthcare.
+
+| Cell | IS | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Wright window | Up / down |
+|---|---|---|---|---|---|
+| N250 G (no sector cap) | 1.14 | 21.9% / 1.03 / -27% | 0.50 / 1.66 / 1.01 | 29.1% / 1.35 / -27% | 1.01 / 0.78 |
+| N250 G + sector cap 4 (16%) | 1.06 | 24.2% / 1.15 / -26% | 0.73 / 1.74 / 1.07 | 30.5% / 1.36 / -26% | 1.02 / 0.73 |
+| N250 G + sector cap 5 (20%) | 1.09 | 24.5% / 1.17 / -26% | 0.61 / 1.81 / 1.18 | 32.5% / 1.49 / -26% | 1.08 / 0.76 |
+| N250 G + sector cap 6 (24%) | 1.13 | 23.8% / 1.12 / -27% | 0.63 / 1.70 / 1.12 | 31.1% / 1.40 / -27% | 1.05 / 0.78 |
+| N500 inv-vol (no cap) | 1.11 | 22.0% / 0.86 / -30% | 0.67 / 1.61 / 0.42 | 22.3% / 0.85 / -30% | 1.07 / 1.29 |
+| N500 inv-vol + sector cap 4 | 1.06 | 19.7% / 0.76 / -34% | 0.54 / 1.50 / 0.33 | 20.7% / 0.81 / -31% | 1.01 / 1.23 |
+| N500 inv-vol + sector cap 6 | 1.09 | 20.4% / 0.79 / -33% | 0.54 / 1.51 / 0.41 | 21.7% / 0.84 / -30% | 1.02 / 1.21 |
+| N500 base + sector cap 4 | 0.96 | 19.3% / 0.69 / -35% | 0.45 / 1.42 / 0.28 | 19.0% / 0.68 / -34% | 1.02 / 1.33 |
+
+**On Nifty 250 the sector cap is the missing piece.** With 4-6 names per
+sector on top of §9b's cell G the book lifts to OOS 1.12-1.17 and, for the
+first time, clears 2016-2019 (0.61-0.73), so **G + cap 5 passes every
+gate: G2 1.17, G3 0.61 / 1.81 / 1.18, G4 −26%, G8 24.5%**; on Wright's
+window 32.5% / 1.49 / −26% with up-capture 1.08 and down-capture 0.76,
+against their 31.2% / 1.11 / 0.90. A plateau across the three caps
+(1.12-1.17). The mechanism is the one Wright printed: limiting a
+momentum book's habit of stacking one sector at the top of a cycle,
+which is where 2016-19 (financials) hurt.
+
+On NSE 500 the cap costs 0.07-0.10 of Sharpe: the momentum there is
+sector-concentrated by nature and the cap trades it for lower-ranked
+names in other sectors.
+
+Trial count post-OOS §8-§9d: 128 cells. This is now a fully post-OOS
+design on Nifty 250; the evidence for each element is a plateau, not a
+cell, but the stack as a whole has never been judged on unseen data.

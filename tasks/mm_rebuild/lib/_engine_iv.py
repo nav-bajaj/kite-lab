@@ -213,7 +213,9 @@ def run_strategy(*,
                  bear_exposure=0.0,          # gross exposure cap during bear (0..1)
                  min_hold_days=0,
                  size_weights=None,
-                 top_n_fn=None,              # MM §9b: callable(signal_date) -> int; overrides top_n on that rebalance (exit rank = value + exit_buffer)          # MM §9: callable(signal_date, symbols) -> {sym: weight}; None = equal weight (byte-identical)            # if >0, block rank-exit while held<N days
+                 top_n_fn=None,
+                 sector_of=None,             # MM §9d: {symbol: sector}; with sector_cap, entrants are skipped once a sector holds sector_cap names
+                 sector_cap=None,              # MM §9b: callable(signal_date) -> int; overrides top_n on that rebalance (exit rank = value + exit_buffer)          # MM §9: callable(signal_date, symbols) -> {sym: weight}; None = equal weight (byte-identical)            # if >0, block rank-exit while held<N days
                  bear_skips_entries=True,    # if True (default, preserves OM25 v3 behavior):
                                              # don't add new positions during bear regime.
                                              # if False: allow entries at bear-scaled size
@@ -667,6 +669,17 @@ def run_strategy(*,
                 _v = top_n_fn(entry_schedule.get(pd.Timestamp(date)))
                 if _v: _tn = int(_v)
             entrants = [s for s in ranked[:_tn] if s not in holdings]
+            if sector_of is not None and sector_cap:
+                _cnt = {}
+                for _h in holdings:
+                    _sec = sector_of.get(_h); _cnt[_sec] = _cnt.get(_sec, 0) + 1
+                _kept = []
+                for _s in entrants:
+                    _sec = sector_of.get(_s)
+                    if _sec is not None and _cnt.get(_sec, 0) >= sector_cap:
+                        continue
+                    _kept.append(_s); _cnt[_sec] = _cnt.get(_sec, 0) + 1
+                entrants = _kept
             entrants = entrants[:max(0, _tn - len(holdings))]
             if entrants:
                 pv2 = cash
