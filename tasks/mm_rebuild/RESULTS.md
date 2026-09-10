@@ -184,3 +184,43 @@ high alike). **Volume does not help as a kicker**: a surge tilt costs
 universes the momentum premium sits in the smaller ones. Volume may still
 have a place as a liquidity floor for capacity, which is a constraint, not
 a score; not tested here.
+
+## §4 — OOS, opened once (2026-09-10) — 2016-01-01 → 2026-09-09
+
+Two candidates fixed before any 2016+ statistic: the §3 book on each
+universe. One run each from 2010-01-01 to today; IS is the 2010-2015
+window of the same path. Walk-forward: yearly refit on trailing 5 and 10
+years over kind {abs, voladj, blend} × skip {0, 21} × buffer {10, 20} ×
+stop {off, 20%} × capture-ratio top-quartile pre-filter {off, on} = 48
+configurations per universe, each run 2006-02-01 → today. 186 unique
+in-sample trials preceded the opening.
+
+| Candidate | IS 2010-15 | OOS 2016-26 | Sub-windows 16-19 / 20-22 / 23-26 | Walk-fwd 5y | Walk-fwd 10y | Trades/yr | Gates (static) |
+|---|---|---|---|---|---|---|---|
+| A N250 monthly 12m | 20.5% / 1.02 | **19.7% / 0.73 / -37.9%** | 0.49 / 1.12 / 0.65 | 19.2% / 0.75 / -37.0% | 20.9% / 0.83 / -38.5% | 87 | G2 fail, G3 fail, G4 pass, G5 pass, G8 fail |
+| B N500 monthly 6m | 23.6% / 1.06 | **21.7% / 0.78 / -33.6%** | 0.57 / 1.51 / 0.37 | 17.9% / 0.59 / -39.3% | 17.9% / 0.61 / -37.2% | 181 | G2 fail, G3 fail, G4 pass, G5 pass, G8 pass |
+
+Hindsight-best single configuration on the whole OOS: Nifty 250 —
+vol-adjusted, skip 21, buffer 20, **20% stop, capture-ratio pre-filter
+on**: 22.8% / 0.98; NSE 500 — the static book itself (0.78; nothing in
+the 48 beats it).
+
+Walk-forward picks 2016 → 2026, ten-year window (kind/skip/buffer/stop/CR):
+A [(2016, 'blend/21/20/0.2/0.0'), (2017, 'blend/0/10/0.2/0.0'), (2018, 'voladj/21/20/0.2/0.25'), (2019, 'voladj/21/20/0.2/0.25'), (2020, 'voladj/21/20/0.0/0.25'), (2021, 'voladj/21/20/0.2/0.25'), (2022, 'voladj/21/20/0.2/0.25'), (2023, 'voladj/21/20/0.2/0.25'), (2024, 'blend/21/20/0.2/0.25'), (2025, 'voladj/21/20/0.2/0.25'), (2026, 'voladj/21/20/0.2/0.25')]
+B [(2016, 'voladj/21/10/0.0/0.0'), (2017, 'blend/0/20/0.2/0.25'), (2018, 'blend/0/20/0.2/0.25'), (2019, 'blend/0/20/0.0/0.25'), (2020, 'voladj/21/20/0.0/0.0'), (2021, 'voladj/21/20/0.0/0.0'), (2022, 'blend/0/20/0.2/0.25'), (2023, 'blend/0/20/0.0/0.25'), (2024, 'voladj/21/20/0.0/0.0'), (2025, 'voladj/21/20/0.0/0.0'), (2026, 'voladj/21/20/0.0/0.0')]
+
+**Both candidates fail G2 (OOS Sharpe 0.73 and 0.78 against 0.9) and G3
+(2016-2019 at 0.49 and 0.57; NSE 500 also 2023-26 at 0.37). Both pass G4
+and G5. G8: NSE 500 passes (21.7%), Nifty 250 misses by 0.3pp (19.7%; 20.0%
+over 2010-26).** The adaptive process helps Nifty 250 (ten-year refit
+0.83, adding the stop from 2021 and the capture-ratio filter from 2025)
+and hurts NSE 500 (0.59-0.61; the five-year window chases absolute
+momentum in 2024-25 and loses). No MM process meets the gates.
+
+Against OM25 on the same windows: OM25's static book did 0.79 / 0.75 and
+its adaptive process 0.90; MM's are 0.73 / 0.78 static and 0.83 adaptive.
+The momentum book is 0.1-0.3 of Sharpe behind the capture-ratio book
+in-sample and out, on both universes, with deeper drawdowns (−34 to −38%
+against −35%) and twice the trades on NSE 500. Its one window of clear
+strength is 2020-2022 (1.12-1.51), the broad small-cap rally, where it
+beats OM25 (0.99-1.29).

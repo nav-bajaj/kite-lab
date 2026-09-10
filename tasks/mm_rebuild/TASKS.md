@@ -23,3 +23,5 @@ Proposed as OM25's gate set after its 2026-09-10 rulings.
 - [x] a. skip-month ADOPTED (21)  b. positive-only no-op  c. trailing stop not adopted (refit candidate)  d. ROC tilt loses everywhere  e. overlay not adopted — DONE 2026-09-10
 ## §4 — OOS and walk-forward, opened once 🤖👤 — OPENED 2026-09-10 on the founder's instruction
 Candidates fixed before any 2016+ number: A Nifty 250 monthly 12m, B NSE 500 monthly 6m, both the §3 book (voladj, skip 21, 25/20, no stop). Walk-forward refit set per year: kind {abs, voladj, blend} × skip {0, 21} × buffer {10, 20} × stop {off, 20%} × capture-ratio top-quartile pre-filter {off, on}, trailing 5 and 10 years.
+
+- [x] §4 OOS run 2026-09-10: both candidates fail G2/G3, pass G4/G5; Nifty 250 adaptive 10y 0.83. Founder decision pending.
