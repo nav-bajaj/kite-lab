@@ -70,3 +70,17 @@ honest universe from 2006, which has five.
 separate *exposure overlay* (100% risk-on / 75% risk-off on NIFTY 100
 ROC31/c3) that cut OM25's drawdown to −23% at ~3.7pp of CAGR. The brief
 says "just the hysteresis"; the overlay is out of scope until said otherwise.
+
+## Decisions 2026-09-10 (founder)
+
+- Gates G1-G7 in TASKS.md §0 **signed as proposed**; frozen.
+- "Just the hysteresis" confirmed: no per-stock stop, no portfolio drawdown
+  stop. The regime confirmation hysteresis is the only risk control.
+- ROC regime search: N ∈ {15, 21, 31, 42} × confirm ∈ {2, 3, 5} on NIFTY 100;
+  ROC is the regime mechanic. Exposure overlay deferred to a later step.
+- Market for up/down days: **(b)** equal-weight mean of the signal-date
+  members' returns across the trailing window — the existing construction.
+  (a) point-in-time-by-day and (c) the published index were offered and
+  not chosen.
+- Positive one-year-return eligibility filter: not decided; kept as a
+  searchable switch, counted in the deflation.

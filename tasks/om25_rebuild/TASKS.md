@@ -2,9 +2,7 @@
 
 Owners: 👤 founder · 🤖 agent.
 
-## §0 — pre-committed pass criteria 👤 (UNSIGNED — no search run until signed)
-
-Proposed 2026-09-10. Edit any number; once signed, frozen.
+## §0 — pre-committed pass criteria — SIGNED 2026-09-10, frozen
 
 | # | Criterion | Value |
 |---|---|---|
@@ -21,9 +19,9 @@ Proposed 2026-09-10. Edit any number; once signed, frozen.
 - [x] Located: `tasks/portfolio_risk_2026/` on `beta_gtm_mvp`; definition
       and result recorded in BRIEF.md (sign of N-session ROC of NIFTY 100,
       confirm-days hysteresis, best cell 31/3 on the biased universe)
-- [ ] 👤 ROC search space: small grid around 31/3 (N ∈ {15, 21, 31, 42},
-      confirm ∈ {2, 3, 5}) or fixed at 31/3?
-- [ ] 👤 The exposure overlay from that thread: in or out of scope?
+- [x] 👤 ROC grid N ∈ {15, 21, 31, 42} × confirm ∈ {2, 3, 5}
+- [x] 👤 Exposure overlay: later, out of scope here
+- [x] 👤 Market for up/down days: (b) equal-weight signal-date members over the window
 
 ## §2 — harness 🤖
 
