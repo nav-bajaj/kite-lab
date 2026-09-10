@@ -13,8 +13,8 @@ import windows as W  # noqa: E402
 RUNS = TASK / "runs"; RUNS.mkdir(exist_ok=True); W.REG = RUNS / "registry.csv"
 DEFAULTS = dict(universe="nifty250", kind="abs", lookback=126, min_obs=110, skip=0, vol_floor=0.05, positive_only=False,
                 top_n=25, exit_buffer=20, cadence="monthly", exit_cadence="same", trailing_stop=0.0, max_weight=1.0, slippage=0.002,
-                min_hold_days=0, stop_check="weekly", sector_cap=0, universe_cap=0, turnover_floor=0.0, sizing="equal", iv_window=63, dyn_n_bear=0, dyn_mode="lever", bear_buffer=-1, vol_target=0.0, vol_window=21, str_kind="breadth_ma", str_len=200, str_thresh=0.3, str_mode="abs", cr_quantile=0.0, vol_kick="none", vol_k=0.0, regimes=1, bull_kind="abs", overlay=False, regime_kind="roc", roc_n=31, confirm=3, bear_exposure=1.0, reenter_on_flip=False, start="2010-01-01", end="2015-12-31")
-_ID_OPTIONAL = {"stop_check", "sector_cap", "bear_buffer", "universe_cap", "turnover_floor", "sizing", "iv_window", "dyn_n_bear", "dyn_mode", "vol_target", "vol_window", "str_kind", "str_len", "str_thresh", "str_mode", "min_hold_days", "vol_kick", "vol_k", "cr_quantile", "regimes", "bull_kind", "overlay", "regime_kind", "roc_n", "confirm", "bear_exposure", "reenter_on_flip"}
+                min_hold_days=0, stop_check="weekly", rebalance_day=1, sector_cap=0, satellite_slots=0, universe_cap=0, turnover_floor=0.0, sizing="equal", iv_window=63, dyn_n_bear=0, dyn_mode="lever", bear_buffer=-1, vol_target=0.0, vol_window=21, str_kind="breadth_ma", str_len=200, str_thresh=0.3, str_mode="abs", cr_quantile=0.0, vol_kick="none", vol_k=0.0, regimes=1, bull_kind="abs", overlay=False, regime_kind="roc", roc_n=31, confirm=3, bear_exposure=1.0, reenter_on_flip=False, start="2010-01-01", end="2015-12-31")
+_ID_OPTIONAL = {"stop_check", "rebalance_day", "sector_cap", "satellite_slots", "bear_buffer", "universe_cap", "turnover_floor", "sizing", "iv_window", "dyn_n_bear", "dyn_mode", "vol_target", "vol_window", "str_kind", "str_len", "str_thresh", "str_mode", "min_hold_days", "vol_kick", "vol_k", "cr_quantile", "regimes", "bull_kind", "overlay", "regime_kind", "roc_n", "confirm", "bear_exposure", "reenter_on_flip"}
 
 
 _turn = {}
@@ -35,6 +35,15 @@ def turnover_panel(cols):
     return _turn["p"].reindex(columns=cols)
 
 
+def monthly_on_or_after(cal, day):
+    """First trading day of each month on or after calendar day `day` (day=1 reproduces the engine's monthly_first_trading_day)."""
+    out = []
+    for (y, m), grp in pd.Series(cal, index=cal).groupby([cal.year, cal.month]):
+        hit = grp[grp.index.day >= day]
+        if len(hit): out.append(hit.index[0])
+    return pd.DatetimeIndex(out)
+
+
 def cfg_id(cfg: dict) -> str:
     core = {k: v for k, v in cfg.items() if not (k in _ID_OPTIONAL and v == DEFAULTS[k])}
     return hashlib.md5(json.dumps(core, sort_keys=True).encode()).hexdigest()[:10]
@@ -49,13 +58,33 @@ def run_candidate(**overrides):
     cols = [s for s in close.columns if s in universe]; returns_uni = close[cols].pct_change()
     volume_panel = turnover_panel(cols) if (cfg["vol_kick"] != "none" or cfg["universe_cap"] or cfg["turnover_floor"]) else None
     core_mask = None
-    if cfg["universe_cap"]:
+    if cfg["universe_cap"] or cfg["satellite_slots"]:
         from regime import membership_mask
         core_mask = membership_mask(om.MEMBERSHIP["nifty250"], close).reindex(columns=cols, fill_value=False)
     score_fn = make_momentum_score(returns_uni, kind=cfg["kind"], lookback=cfg["lookback"], min_obs=cfg["min_obs"], skip=cfg["skip"],
                                    vol_floor=cfg["vol_floor"], positive_only=cfg["positive_only"], candidate_fn=candidate_fn, cr_quantile=cfg["cr_quantile"],
                                    volume_panel=volume_panel, vol_kick=cfg["vol_kick"], vol_k=cfg["vol_k"],
                                    core_mask=core_mask, universe_cap=cfg["universe_cap"], turnover_floor=cfg["turnover_floor"])
+    if cfg["satellite_slots"]:
+        # founder 2026-09-10: keep the majority of the book in the Nifty 250 core and reserve K slots for the
+        # strongest names outside it (the 251-500 band). Implemented as a synthetic ranking so the engine's
+        # nlargest(top_n + exit_buffer) yields exactly (top_n - K) core then K satellite; the exit buffer is
+        # split between the two sleeves in proportion. Satellite names sit at the BOTTOM of the top-N block,
+        # so a bear truncation (dyn_n_bear) cuts them first.
+        _base_mc = score_fn; _K = cfg["satellite_slots"]; _TN = cfg["top_n"]; _EB = cfg["exit_buffer"]
+        _ncore = _TN - _K; _bc = int(round(_EB * _ncore / _TN)); _bt = _EB - _bc
+        def score_fn(signal_date, **_):
+            sc = _base_mc(signal_date)
+            if sc.empty:
+                return sc
+            is_core = core_mask.loc[signal_date].reindex(sc.index).fillna(False).astype(bool)
+            if _K >= _TN:   # satellite_slots == top_n means a PURE non-core book: drop the core entirely
+                t = sc[~is_core.values].sort_values(ascending=False)
+                return pd.Series(np.linspace(1.0, 0.0, len(t)), index=t.index)
+            c = sc[is_core.values].sort_values(ascending=False); t = sc[~is_core.values].sort_values(ascending=False)
+            order = list(c.index[:_ncore]) + list(t.index[:_K]) + list(c.index[_ncore:_ncore + _bc]) + list(t.index[_K:_K + _bt])
+            seen = set(order); order += [x for x in sc.sort_values(ascending=False).index if x not in seen]
+            return pd.Series(np.linspace(1.0, 0.0, len(order)), index=order)
     start = pd.Timestamp(cfg["start"]); end = pd.Timestamp(cfg["end"]) if cfg["end"] else cal[-1]
     overlay_panel = None; roc = None
     if cfg["overlay"] or cfg["regimes"] == 2 or cfg["dyn_n_bear"]:
@@ -92,9 +121,10 @@ def run_candidate(**overrides):
         def score_fn(signal_date, **_):
             return (bull_fn if bool(roc.get(signal_date, True)) else base_fn)(signal_date)
     # the stop (and any weekly rank check) is evaluated only on these signal dates and executed the next session
-    weekly = {"weekly": om.fridays, "biweekly": om.biweekly_fridays, "monthly": om.monthly_first_trading_day}[cfg["stop_check"]](cal); weekly = weekly[(weekly >= start) & (weekly <= end)]
+    _mon = (lambda c: monthly_on_or_after(c, cfg["rebalance_day"])) if cfg["rebalance_day"] != 1 else om.monthly_first_trading_day
+    weekly = {"weekly": om.fridays, "biweekly": om.biweekly_fridays, "monthly": _mon}[cfg["stop_check"]](cal); weekly = weekly[(weekly >= start) & (weekly <= end)]
     from scripts._clean_engine import thursdays as _thu
-    entry_all = {"biweekly": om.biweekly_fridays, "weekly": om.fridays, "weekly_thu": _thu, "monthly": om.monthly_first_trading_day}[cfg["cadence"]](cal)
+    entry_all = {"biweekly": om.biweekly_fridays, "weekly": om.fridays, "weekly_thu": _thu, "monthly": _mon}[cfg["cadence"]](cal)
     entries = entry_all[(entry_all >= start) & (entry_all <= end)]
     if cfg["overlay"] and cfg["reenter_on_flip"]:
         flips = overlay_panel.index[overlay_panel & ~overlay_panel.shift(1, fill_value=False)]; entries = entries.union(flips[(flips >= start) & (flips <= end)])

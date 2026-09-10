@@ -674,3 +674,274 @@ Read:
 
 Adopted for MM: **monthly rebalance with the stop checked at the same
 monthly signal**, one action day. Recommended for OM25 likewise.
+
+## §11 — G5 walk-forward for the adopted stack (32 trials) — post-OOS
+
+G5 asks whether a process that refits the stack's **post-OOS** choices each
+January, seeing only trailing data, lands within 0.2 Sharpe of the static
+pick. Refit grid: `dyn_n_bear` {12,15,18,20} × `bear_buffer` {10,20} ×
+`sector_cap` {0,4,5,6} = 32 cells. Everything decided in-sample (universe,
+score, lookback, skip, top-N, buffer, cadence) and everything structural
+(monthly stop check, 20% stop, inverse-vol 10%, ROC31/c3) held fixed.
+
+| | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Gap vs static | Config changes |
+|---|---|---|---|---|
+| Static (the adopted cell) | 25.7% / **1.18** / −26% | 0.71 / 1.73 / 1.18 | — | — |
+| Walk-forward, trailing 5y | 22.4% / **0.98** / −29% | 0.66 / 1.15 / 1.14 | **0.200** | 5 |
+| Walk-forward, trailing 3y | 22.0% / **0.97** / −29% | 0.55 / 1.31 / 1.07 | **0.215** | 8 |
+
+**G5 is met on the 5-year refit at exactly the threshold (0.200) and missed
+on the 3-year refit (0.215).** Calling that a pass would be reading a gate to
+three decimals; the honest statement is that the stack sits on the line.
+
+The more informative number is the cross-section. **The adopted cell is rank
+1 of all 32** on OOS Sharpe; the grid runs 0.88 to 1.18 with median 1.04 and
+standard deviation 0.071. The walk-forward result (0.97-0.98) sits just below
+the grid median — which is what selecting without hindsight should produce.
+
+Deflating the OOS Sharpe for the post-OOS search (Bailey-López de Prado, with
+the observed cross-trial Sharpe variance of 0.041):
+
+| Deflated against | Deflated Sharpe |
+|---|---|
+| the 32 cells of this refit grid | 0.76 |
+| the ~128 post-OOS cells of §8-§10 | 0.66 |
+| all 345 registered MM trials | 0.59 |
+
+**So the stack's realistic expectation is a band, not 1.18:** 1.18 is the
+selection-window maximum, 1.04 the plateau centre, 0.98 what a hindsight-free
+process delivered, and 0.6-0.8 what deflation implies. For planning, the
+walk-forward number is the one to use — roughly **22% CAGR at Sharpe ~1.0**.
+
+## §12 — Wright's Sharpe, the last three years, and the medium-term hold (no new trials)
+
+### Wright Momentum's Sharpe
+
+Computed from their printed month-on-month grid (M-PDF p2, 71 months
+Oct-2020 → Aug-2026), with every row on the same basis: monthly returns,
+rf 5%, annualised **monthly** volatility, month-end drawdown. Theirs is gross
+of costs and fees; ours are net of 20 bps each way.
+
+| Book | CAGR | Vol | **Sharpe** | Sortino | Max DD | Calmar | Positive months |
+|---|---|---|---|---|---|---|---|
+| **Wright Momentum (published, gross)** | 31.2% | 20.0% | **1.31** | 2.28 | −21.7% | 1.43 | 66% |
+| **MM stack, Nifty 250 (net)** | 33.9% | 19.8% | **1.46** | 2.48 | −26.5% | 1.28 | 69% |
+| OM25 current pick, Nifty 250 (net) | 34.5% | 24.2% | 1.22 | 1.88 | −27.7% | 1.25 | 66% |
+| L6 v2 rules, Nifty 250 (net) | 24.2% | 21.9% | 0.88 | 1.38 | −22.0% | 1.10 | 69% |
+| L6 v2 rules, NSE 500 (net) | 25.2% | 25.0% | 0.81 | 1.23 | −32.0% | 0.79 | 68% |
+| MidSmall 400 (synthetic) | 23.6% | 18.1% | 1.03 | 1.62 | −22.0% | 1.07 | 63% |
+| Nifty 500 | 16.8% | 14.9% | 0.79 | 1.29 | −18.0% | 0.94 | 65% |
+
+**Wright's Sharpe on this window is 1.31.** The MM stack beats it on Sharpe
+(1.46), Sortino and CAGR while being net rather than gross — and loses on
+drawdown, −26.5% against −21.7%, which is where their edge has always been.
+Note the convention: on daily volatility the MM stack's Sharpe over the same
+window is 1.50, not 1.46. Wright publish no Sharpe for this window; 1.31 is
+computed here, not quoted.
+
+### The last three years (2023-01-01 → 2026-09-09)
+
+| Book | CAGR | Vol | Sharpe | Max DD | Calmar | Total |
+|---|---|---|---|---|---|---|
+| **MM stack, Nifty 250** | **27.3%** | 18.9% | **1.18** | −26.5% | 1.03 | 143% |
+| OM25 current pick, Nifty 250 | 25.7% | 23.1% | 0.90 | −28.1% | 0.91 | 132% |
+| MidSmall 400 (synthetic) | 18.8% | 16.0% | 0.86 | −22.8% | 0.83 | 89% |
+| L6 v2 rules, Nifty 250 | 14.3% | 19.3% | 0.48 | −23.5% | 0.61 | 64% |
+| L6 v2 rules, NSE 500 *(production)* | 13.7% | 20.7% | 0.42 | −35.3% | 0.39 | 61% |
+| Nifty 500 | 11.2% | 13.5% | 0.46 | −18.8% | 0.59 | 48% |
+
+**The new book is well ahead of both old ones, and the production book is the
+worst of the set.** L6 v2 on its own production universe has returned 13.7% a
+year over three years on honest data — behind the MidSmall 400 (18.8%) at
+nearly twice its drawdown. That is a live-product finding, not a research one.
+
+### Why medium-term trades lose money
+
+MM stack, all 896 closed trades 2010-26:
+
+| Holding period | Share | Avg P&L | Median | Win rate | Stop share | Total P&L contribution |
+|---|---|---|---|---|---|---|
+| 0-30 days | 10.7% | **−3.3%** | −3.2% | 37% | 9% | −316 |
+| 31-60 days | 16.5% | **−1.6%** | −2.9% | 39% | 11% | −236 |
+| 61-120 days | 29.1% | **−2.0%** | −4.5% | 40% | 23% | −530 |
+| 121-250 days | 29.0% | +10.0% | +4.6% | 59% | 31% | +2,592 |
+| 251+ days | 14.6% | **+60.4%** | +40.7% | **95%** | 32% | +7,915 |
+
+The founder's observation is right but understates it: **every bucket under
+four months is negative, and they are 56% of all trades.** The book earns
+everything from the 44% that survive past 120 days, and almost all of it from
+the 15% that pass a year.
+
+Splitting each bucket by exit reason first suggested the stop was the cause —
+in 61-120 days rank exits average **+1.0%** (n=202) while stop exits average
+**−12.5%** (n=59). §13A tests that directly and finds it is not the cause.
+
+## §13 — the stop, and multi-cap slots (10 trials) — post-OOS
+
+### A. Stop level, including off
+
+| Stop | IS | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Last 3y | Up / down | Mid-hold avg | Trades/yr |
+|---|---|---|---|---|---|---|---|
+| **off** | 1.12 | 24.5% / 1.11 / −27% | 0.43 / 1.72 / 1.24 | **28.2% / 1.24** | 1.07 / **0.65** | −1.6% | **100** |
+| 15% | 1.11 | 24.4% / 1.11 / −27% | 0.67 / 1.80 / 1.00 | 24.2% / 1.00 | 1.10 / 0.85 | −1.4% | 136 |
+| **20% (adopted)** | 1.10 | **25.7% / 1.18 / −26%** | 0.71 / 1.73 / 1.18 | 27.3% / 1.18 | 1.09 / 0.73 | −1.9% | 118 |
+| 25% | 1.12 | 24.8% / 1.13 / −26% | 0.61 / 1.65 / 1.19 | 27.4% / 1.19 | 1.09 / 0.73 | −1.4% | 110 |
+| 30% | 1.16 | 24.2% / 1.09 / −26% | 0.52 / 1.63 / 1.18 | 27.2% / 1.18 | 1.06 / 0.72 | −2.0% | 105 |
+
+Two findings, and the second is the important one.
+
+1. **The stop is a flat plateau, 1.09 to 1.18, and 20% is its top.** Removing
+   the stop entirely costs 0.07 of Sharpe, *improves* the last three years
+   (28.2% / 1.24 against 27.3% / 1.18), gives the best down-capture in the
+   table (0.65) and cuts turnover from 118 to 100 trades a year. Its cost is
+   2016-19, which falls from 0.71 to 0.43 — the stop is buying one sub-window.
+2. **The stop is not what makes medium-term trades lose.** With no stop at all
+   the 31-120 day buckets still average −1.6%, against −1.9% with the 20%
+   stop. Removing the stop does not move those positions into profit; it moves
+   them into later buckets or later rank exits at similar P&L.
+
+So the medium-term loss is structural to momentum on this universe, not a
+device artefact. A rule that cut it would have to act on state observable at
+60-90 days, and every eventual 251+ winner (95% win rate, +60% average) passes
+through that window first. That is the constraint any fix has to clear.
+
+### B. Multi-cap slots — reserve K of 25 for the 251-500 band
+
+Implemented as a slot quota, not a universe change: the panel is the NSE 500
+with a point-in-time Nifty 250 core mask; each rebalance takes the top
+(25 − K) core names and the top K names from outside the core, with the exit
+buffer split between the two sleeves in proportion. Satellites sit at the
+bottom of the top-25 block, so a bear truncation cuts them first.
+
+| Cell | IS | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Last 3y | Up / down | Mid-hold avg |
+|---|---|---|---|---|---|---|
+| **Nifty 250 only (adopted)** | 1.10 | **25.7% / 1.18 / −26%** | 0.71 / 1.73 / 1.18 | **27.3% / 1.18** | 1.09 / **0.73** | −1.9% |
+| NSE 500 panel, no quota | 1.06 | 22.3% / 0.91 / −36% | 0.49 / 1.68 / 0.72 | 19.9% / 0.72 | 1.10 / 1.19 | −1.5% |
+| 22 core + 3 satellite | 0.97 | 21.5% / 0.96 / −27% | 0.44 / 1.49 / 1.01 | 23.1% / 1.01 | 1.04 / 0.83 | −3.5% |
+| 20 core + 5 satellite | 0.92 | 20.5% / 0.89 / −30% | 0.40 / 1.47 / 0.86 | 20.4% / 0.86 | 1.01 / 0.87 | −3.3% |
+| 17 core + 8 satellite | 0.99 | 20.4% / 0.89 / −32% | 0.39 / 1.45 / 0.89 | 20.9% / 0.89 | 1.02 / 0.86 | −3.0% |
+
+**The idea does not work in this form, and the response is monotone: more
+satellite is worse on every measure.** Against the adopted book, three
+satellite slots cost 4.2pp of CAGR, 0.22 of Sharpe and 4.2pp of last-three-year
+return; eight cost 5.3pp and 0.29.
+
+The premise does not hold either. **Up-capture falls when satellites are added
+(1.09 → 1.04 / 1.01 / 1.02), and down-capture worsens (0.73 → 0.83-0.87).**
+§7 already showed NSE 500 and Nifty 250 have the *same* up-capture, 1.09 both;
+NSE 500's problem was never upside, it was down-capture at 1.37. Momentum
+selected from the 251-500 band is not the same thing as that band's upside.
+
+One thing the quota does achieve: it is a better way to hold NSE 500 exposure
+than simply running the NSE 500 book — at K=3 the drawdown improves from −36%
+to −27% and the last three years from 19.9% to 23.1%. If a multi-cap product
+is wanted for its own sake, the quota is the right mechanism. It is not an
+alpha improvement over the Nifty 250 book.
+
+Not adopted. Trial count post-OOS §8-§13: 170 cells.
+
+## §14 — the mid-small universe as a book (5 trials) — post-OOS
+
+**Answering a founder question, 2026-09-10: no strategy had ever been run on
+a mid-small universe.** The MidSmall 400 has appeared in this repo only as a
+*benchmark* (om25_rebuild §4f). The harness carries membership for four
+universes only — Nifty 50 / 100 / LargeMidcap 250 / NSE 500
+(`data/master/membership/`) — and `tasks/index_reconstruction` rebuilt those
+four and deliberately not Midcap 150 or Smallcap 250. MM §1's universe grid
+was Nifty 250 × NSE 500; §9's universe hypotheses (top-300, turnover floors)
+all *narrowed* the panel. Nothing has gone the other way.
+
+Universe here is the point-in-time complement: **NSE 500 members not in the
+Nifty 250** at each signal date. That is exactly the construction §4f used for
+the synthetic index before 2019, where it tracked the real Smallcap 250 at
+0.986 daily correlation. It is a proxy for NIFTY MIDSMALLCAP 400, not the
+index itself — the real Midcap 150 / Smallcap 250 membership does not exist in
+the store. Capture is measured against the MidSmall 400, which is this book's
+benchmark rather than the Nifty 250.
+
+| Cell | IS | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Last 3y | Up / down vs MS400 | Trades/yr |
+|---|---|---|---|---|---|---|
+| Nifty 250 (adopted stack) *[control]* | 1.10 | **25.7% / 1.18 / −26%** | **0.71** / 1.73 / 1.18 | 27.3% / 1.18 / −26% | 1.09 / **0.73** | 118 |
+| NSE 500 whole panel *[control]* | 1.06 | 22.3% / 0.91 / −36% | 0.49 / 1.68 / 0.72 | 19.9% / 0.72 / −36% | 1.10 / 1.19 | 144 |
+| **Mid-small, 12m lookback** | **1.18** | 24.8% / 0.99 / **−35%** | **0.27** / 1.73 / 1.04 | 25.8% / 1.04 / −30% | **1.16** / 1.06 | 137 |
+| Mid-small, 6m lookback | **1.49** | 19.5% / 0.73 / −30% | 0.34 / 1.37 / 0.59 | 16.2% / 0.59 / −24% | 0.80 / 0.86 | 174 |
+| Mid-small, 12m, no bear rule, no stop | 1.03 | 21.6% / 0.80 / −43% | 0.34 / 1.25 / 0.85 | 22.3% / 0.85 / −30% | 1.10 / 1.16 | 96 |
+| *Benchmark: MidSmall 400* | — | *14.9% / 0.55 / −51%* | — | *18.5%* | — | — |
+| *Benchmark: Nifty 500* | — | *12.1% / 0.44 / −38%* | — | *11.2%* | — | — |
+
+**Verdict: the upside premise is real and the book still does not clear the
+Nifty 250 one.** Three readings:
+
+1. **Mid-small has the highest up-capture we have measured — 1.16**, against
+   1.09 for the Nifty 250 book and 1.10 for the whole NSE 500. This is the
+   first evidence in the task that supports the founder's instinct about
+   upside outside the large-mid band. §13B appeared to refute it, but that
+   test *diluted* a core book with satellites, which removed core names; a
+   pure mid-small book is a different question and answers differently.
+2. **It gives the upside back on the downside and in 2016-19.** Down-capture
+   1.06 against the core book's 0.73, drawdown −35% against −26%, and 2016-19
+   at **0.27** — a clear G3 failure, worse than any Nifty 250 cell in the
+   task. Net of that, OOS Sharpe is 0.99 against 1.18.
+3. **Alpha over its own benchmark is slightly lower, not higher.** The
+   mid-small book beats the MidSmall 400 by 9.9pp a year (24.8% vs 14.9%);
+   the core book beats the Nifty 250 by 11.7pp (25.7% vs 14.0%). So it is not
+   a bigger cushion — it is a similar cushion carried at more risk.
+
+Two secondary findings:
+
+- **The 6m lookback is the clearest overfit in the task.** It posts the best
+  in-sample Sharpe of anything run (1.49) and the second-worst out-of-sample
+  (0.73), with up-capture collapsing to 0.80. §1 preferred 6m on NSE 500; on
+  the mid-small band that preference does not survive contact with 2016-26.
+- **The risk devices matter more here than on the core.** Removing the bear
+  rule and the stop takes the drawdown from −35% to −43% and the medium-hold
+  average from −1.7% to −4.7%, a much larger swing than the same removal
+  causes on the Nifty 250 book (§13A).
+
+Not adopted. The open thread, not claimed: the bear rule, sector cap and stop
+were all tuned on the Nifty 250 book. A down-capture device fitted to the
+mid-small band is the one untried route to the "bigger cushion" — this book
+has the raw upside and no risk control fitted to it. That would be a fresh
+in-sample exercise on a held-back window, not another post-OOS cell.
+
+Trial count post-OOS §8-§14: 175 cells.
+
+## §11 — rebalance day of month (11 trials) — post-OOS
+
+Founder 2026-09-10: the 1st may be sub-optimal; test days closer to the
+15th-25th. `rebalance_day` added to both harnesses: the monthly signal is
+the first trading day on or after that calendar day (day 1 reproduces the
+engine's monthly dates exactly), execution the next session; the stop is
+checked on the same day (§10's one-action-day rhythm).
+
+**MM stack, Nifty 250**
+| Signal on first trading day ≥ | IS 2010-15 | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Wright window | 2010-26 |
+|---|---|---|---|---|---|
+| 1 | 20.0% / 1.10 | 25.7% / 1.18 / -26% | 0.71 / 1.73 / 1.18 | 33.9% / 1.50 | 23.6% / 1.15 |
+| 5 | 18.3% / 0.97 | 21.9% / 0.97 / -28% | 0.25 / 1.77 / 0.98 | 31.0% / 1.34 | 20.6% / 0.96 |
+| 10 | 16.6% / 0.89 | 21.5% / 0.92 / -33% | 0.41 / 1.51 / 0.91 | 27.6% / 1.15 | 19.7% / 0.90 |
+| 15 | 16.9% / 0.89 | 22.8% / 1.01 / -33% | 0.42 / 1.52 / 1.12 | 31.8% / 1.43 | 20.7% / 0.97 |
+| 20 | 17.3% / 0.91 | 23.4% / 1.07 / -31% | 0.47 / 1.61 / 1.16 | 31.9% / 1.48 | 21.2% / 1.01 |
+| 25 | 17.4% / 0.94 | 21.5% / 0.96 / -31% | 0.56 / 1.24 / 1.08 | 27.4% / 1.20 | 20.0% / 0.95 |
+
+**OM25 current pick, Nifty 250** (monthly stop check; with the weekly
+check this configuration is 0.82 — §10)
+| Signal on first trading day ≥ | IS 2010-15 | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Wright window | 2010-26 |
+|---|---|---|---|---|---|
+| 1 | 12.4% / 0.38 | 20.8% / 0.69 / -46% | 0.31 / 0.95 / 0.84 | 32.5% / 1.17 | 17.8% / 0.59 |
+| 5 | 13.4% / 0.43 | 19.8% / 0.65 / -45% | 0.29 / 0.89 / 0.77 | 31.5% / 1.12 | 17.6% / 0.58 |
+| 10 | 13.1% / 0.42 | 21.4% / 0.72 / -45% | 0.27 / 1.06 / 0.87 | 32.6% / 1.17 | 18.4% / 0.62 |
+| 15 | 12.8% / 0.40 | 18.9% / 0.62 / -44% | 0.19 / 1.00 / 0.69 | 29.2% / 1.04 | 16.7% / 0.55 |
+| 20 | 12.8% / 0.40 | 19.8% / 0.66 / -49% | 0.11 / 0.96 / 0.91 | 33.1% / 1.20 | 17.3% / 0.57 |
+| 25 | 15.8% / 0.55 | 18.3% / 0.58 / -48% | 0.16 / 0.88 / 0.71 | 29.7% / 1.05 | 17.4% / 0.57 |
+
+Read: for MM the first trading day is the best day in every window,
+including the 2010-2015 window where nothing was tuned for it (1.10
+against 0.89-0.97), and the best of the later days (the 20th, 1.07)
+is 0.11 behind out of sample. The one caveat is that the stack's other
+elements were all searched with day-1 rebalancing, so day 1 has had
+130 cells of implicit selection; the in-sample gap says the preference
+is real, the size of it is probably flattered. For OM25 the day effect
+is noise (0.58-0.72, no ordering), and the monthly stop check costs it
+0.1 of Sharpe and 10pp of drawdown against the weekly check (§10) — OM25
+keeps the weekly stop review. **Day 1 stays for both books.**

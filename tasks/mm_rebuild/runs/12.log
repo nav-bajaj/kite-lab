@@ -1,0 +1,82 @@
+====================================================================================================
+1. WRIGHT MOMENTUM'S SHARPE  (Oct-2020 to Aug-2026, from the printed month-on-month grid, M-PDF p2)
+   All rows on the SAME basis: monthly returns, rf 5%, annualised monthly vol, month-end drawdown.
+   Wright is gross of costs and fees; our books are net of 20 bps each way.
+====================================================================================================
+                                     months   cagr    vol  sharpe  sortino  maxdd  calmar   best  worst    pos
+book                                                                                                          
+Wright Momentum (published, gross)       71  31.15  19.95    1.31     2.28 -21.73    1.43  17.20 -10.60  66.20
+MM stack (Nifty 250) (net)               71  33.94  19.81    1.46     2.48 -26.49    1.28  14.13 -11.75  69.01
+OM25 current pick (Nifty 250) (net)      71  34.50  24.20    1.22     1.88 -27.68    1.25  17.10 -15.41  66.20
+L6 v2 rules (NSE 500) (net)              71  25.15  24.96    0.81     1.23 -31.96    0.79  19.34 -16.79  67.61
+L6 v2 rules (Nifty 250) (net)            71  24.23  21.88    0.88     1.38 -21.96    1.10  18.79 -14.43  69.01
+MidSmall 400 (synthetic)                 71  23.57  18.09    1.03     1.62 -22.02    1.07  14.50 -11.31  63.38
+Nifty 500                                71  16.83  14.90    0.79     1.29 -18.00    0.94  11.87 -11.39  64.79
+
+NOTE: our project convention elsewhere is Sharpe on DAILY volatility, which is not the same number.
+  MM stack (Nifty 250): daily-vol Sharpe 1.50 vs monthly-vol Sharpe 1.46
+
+====================================================================================================
+2. THE LAST THREE YEARS  (2023-01-01 to 2026-09-09) — new book against the old ones, honest store, all net of 20 bps
+====================================================================================================
+
+--- last 3 years (2023-01-01 to 2026-09-09) ---
+                                cagr    vol  sharpe  sortino  maxdd  calmar   total
+book                                                                               
+MM stack (Nifty 250)           27.31  18.90    1.18     1.43 -26.49    1.03  143.43
+OM25 current pick (Nifty 250)  25.70  23.09    0.90     1.03 -28.11    0.91  132.30
+L6 v2 rules (NSE 500)          13.73  20.74    0.42     0.49 -35.28    0.39   60.65
+L6 v2 rules (Nifty 250)        14.33  19.30    0.48     0.57 -23.54    0.61   63.81
+MidSmall 400 (synthetic)       18.82  16.01    0.86     0.96 -22.77    0.83   88.81
+Nifty 500                      11.20  13.48    0.46     0.58 -18.84    0.59   47.90
+
+--- 2016-26 for reference (2016-01-01 to 2026-09-09) ---
+                                cagr    vol  sharpe  sortino  maxdd  calmar    total
+book                                                                                
+MM stack (Nifty 250)           25.66  17.48    1.18     1.49 -26.49    0.97  1048.70
+OM25 current pick (Nifty 250)  20.66  22.14    0.71     0.84 -44.27    0.47   644.14
+L6 v2 rules (NSE 500)          17.43  22.00    0.56     0.66 -46.90    0.37   456.95
+L6 v2 rules (Nifty 250)        17.57  19.52    0.64     0.77 -35.49    0.49   463.89
+MidSmall 400 (synthetic)       14.89  17.84    0.55     0.62 -51.28    0.29   341.05
+Nifty 500                      12.13  16.11    0.44     0.52 -38.30    0.32   239.95
+
+====================================================================================================
+3. THE MEDIUM-TERM HOLD PROBLEM — MM stack, why 61-120 day trades average negative
+====================================================================================================
+
+By holding bucket (all exits, 2010-26):
+           n  share   avg   med   win  stop_share
+bucket                                           
+0-30      96   10.7  -3.3  -3.2  36.5         9.4
+31-60    148   16.5  -1.6  -2.9  38.5        10.8
+61-120   261   29.1  -2.0  -4.5  39.5        22.6
+121-250  260   29.0  10.0   4.6  58.5        31.2
+251+     131   14.6  60.4  40.7  94.7        32.1
+
+Split by exit reason inside each bucket — avg P&L %, and n:
+         rank exit avg  stop exit avg  rank exit size  stop exit size
+bucket                                                               
+0-30              -1.6          -20.1              87               9
+31-60              1.3          -25.8             132              16
+61-120             1.0          -12.5             202              59
+121-250           13.3            2.7             179              81
+251+              59.9           61.6              89              42
+
+Contribution to total P&L (sum of pnl_pct, a rough proxy — positions are not equal-sized):
+bucket
+0-30       -316.0
+31-60      -236.0
+61-120     -530.0
+121-250    2592.0
+251+       7915.0
+
+Same table restricted to 2016-26:
+           n   avg   med   win  stop_share
+bucket                                    
+0-30      68  -3.7  -3.4  38.2        13.2
+31-60    115  -1.3  -3.0  38.3        11.3
+61-120   186  -1.9  -5.0  39.2        24.2
+121-250  177  12.7   8.2  63.3        32.8
+251+      78  58.8  40.5  94.9        37.2
+
+done

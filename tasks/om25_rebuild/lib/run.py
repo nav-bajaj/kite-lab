@@ -31,10 +31,10 @@ DEFAULTS = dict(universe="nifty250", score="5050", regimes=1, roc_n=31, confirm=
                 # smoke-test-only switches, never searched
                 legacy_updown_rule=False, max_weight=1.0, trailing_stop=0.0, regime_kind="roc", ma_window=100,
                 # §3j momentum-strength regime (regime_kind="strength"); confirm days reuse `confirm`
-                mom_quantile=0.0, stop_check="weekly", str_kind="breadth", str_len=252, str_thresh=0.5, str_mode="abs")
+                mom_quantile=0.0, stop_check="weekly", rebalance_day=1, str_kind="breadth", str_len=252, str_thresh=0.5, str_mode="abs")
 # Keys added after the registry started. They are left out of the id while at their default so every
 # earlier config keeps its id (and its completed run); a non-default value changes the id as usual.
-_ID_OPTIONAL = {"str_kind", "str_len", "str_thresh", "str_mode", "mom_quantile", "stop_check"}
+_ID_OPTIONAL = {"str_kind", "str_len", "str_thresh", "str_mode", "mom_quantile", "stop_check", "rebalance_day"}
 SCORE_W = {"uc": (1.0, 0.0), "cr": (0.0, 1.0), "5050": (0.5, 0.5)}
 
 _cache = {}
@@ -48,6 +48,15 @@ def panels():
         _cache["sma200"] = close.rolling(200, min_periods=200).mean()
         _cache["atr20"] = close.pct_change().rolling(20).std()
     return _cache
+
+
+def monthly_on_or_after(cal, day):
+    """First trading day of each month on or after calendar day `day` (day=1 reproduces the engine's monthly_first_trading_day)."""
+    out = []
+    for (y, m), grp in pd.Series(cal, index=cal).groupby([cal.year, cal.month]):
+        hit = grp[grp.index.day >= day]
+        if len(hit): out.append(hit.index[0])
+    return pd.DatetimeIndex(out)
 
 
 def cfg_id(cfg: dict) -> str:
@@ -104,8 +113,9 @@ def run_candidate(**overrides):
     score_fn = make_capture_score(returns_uni, reg, w_uc_bull=w_uc, w_cr_bull=w_cr, w_uc_bear=0.0, w_cr_bear=1.0,
                                   return_filter=cfg["return_filter"], lookback=cfg["lookback"], min_obs=cfg["min_obs"],
                                   candidate_fn=candidate_fn, legacy_updown_rule=cfg["legacy_updown_rule"], mom_quantile=cfg["mom_quantile"])
-    weekly = {"weekly": fridays, "biweekly": biweekly_fridays, "monthly": monthly_first_trading_day}[cfg["stop_check"]](cal); weekly = weekly[(weekly >= start) & (weekly <= end)]
-    entry_all = {"biweekly": biweekly_fridays, "weekly": fridays, "monthly": monthly_first_trading_day}[cfg["cadence"]](cal)
+    _mon = (lambda c: monthly_on_or_after(c, cfg["rebalance_day"])) if cfg["rebalance_day"] != 1 else monthly_first_trading_day
+    weekly = {"weekly": fridays, "biweekly": biweekly_fridays, "monthly": _mon}[cfg["stop_check"]](cal); weekly = weekly[(weekly >= start) & (weekly <= end)]
+    entry_all = {"biweekly": biweekly_fridays, "weekly": fridays, "monthly": _mon}[cfg["cadence"]](cal)
     entries = entry_all[(entry_all >= start) & (entry_all <= end)]
     if cfg["overlay"] and cfg["reenter_on_flip"]:
         # A fully exited book otherwise waits for the next cadence date; re-enter on the day the regime turns bull.

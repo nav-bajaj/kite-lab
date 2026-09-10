@@ -687,3 +687,9 @@ pick run as a fixed configuration: monthly rebalance / weekly stop 22.2% /
 0.82 / −36%; biweekly rebalance 0.71-0.73 with −44% drawdown. Monthly
 stays; a monthly stop check costs nothing on MM and is recommended here
 too so both books have one action day a month.
+
+## §5c — rebalance day (see mm_rebuild §11)
+
+Days 1 / 5 / 10 / 15 / 20 / 25 with a monthly stop check: OOS 0.69 / 0.65 /
+0.72 / 0.62 / 0.66 / 0.58, no ordering. Day 1 stays; the weekly stop check
+stays (0.82 vs 0.69 with a monthly check, §10).
