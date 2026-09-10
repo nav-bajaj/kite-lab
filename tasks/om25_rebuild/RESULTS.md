@@ -536,3 +536,43 @@ the Nifty 250 CAGR and win 2026 outright (23% vs 9%) at a deeper
 drawdown. The universe is not what separates the book from Wright: the
 gap is 2021 (56-78% vs 91%) on either universe, and their bear-regime
 model and volatility screen are the likelier source.
+
+## §4d — the Nifty 250-fitted process over the long run, and what is working in 2024-2026
+
+Chained from 2011 (each year's configuration chosen on the trailing five
+years, so 2011-2015 is also forward for the process; the grid and the
+window were chosen in §4b with 2016-2026 known).
+
+| Process | 2011-26 | 2011-15 | 2016-26 | 2016-19 | 2020-22 | 2023-26 |
+|---|---|---|---|---|---|---|
+| Nifty 250 fitted, traded on Nifty 250 | **21.4% / 0.97 / −35%** | 21.0 / 1.28 | 21.6 / 0.90 | 16.2 / 0.88 | 25.8 / 0.99 | 24.3 / 0.91 |
+| Nifty 250 fitted, traded on NSE 500 | 20.3% / 0.86 / −37% | 19.3 / 1.13 | 21.0 / 0.81 | 12.6 / 0.50 | 33.8 / 1.34 | 20.6 / 0.69 |
+| NSE 500 fitted, traded on NSE 500 | 17.2% / 0.72 / −37% | 16.4 / 0.72 | 17.7 / 0.73 | 12.2 / 0.46 | 27.9 / 1.06 | 15.9 / 0.72 |
+| NIFTY 100 | 9.4% / 0.27 / −38% | 6.0 / 0.06 | 10.9 / 0.37 | 10.9 / 0.45 | 14.2 / 0.41 | 8.3 / 0.26 |
+
+The Nifty 250-fitted process transfers to NSE 500 (0.86 over fifteen
+years) and beats fitting on NSE 500 itself (0.72) — the NSE 500 refit
+never finds the score switch. Nifty 250 remains the better home for the
+book on every window except 2020-2022, where the broader universe's
+small-cap rally paid.
+
+**Attribution of 2024-2026 on Nifty 250 monthly** (fixed configurations,
+CAGR / Sharpe / MaxDD; index 4.4% / −0.04):
+
+| Configuration | 2024-26 | 2016-23 |
+|---|---|---|
+| Capture ratio, buffer 20, no stop (static book) | 8.3% / 0.20 / −27% | 21.8% / 1.00 / −35% |
+| + 20% trailing stop | 8.6% / 0.22 / −26% | 22.1% / 1.14 / −27% |
+| 50/50 score, buffer 20, stop | 22.3% / 0.74 / −25% | 19.7% / 0.74 / −40% |
+| 50/50, buffer 10, stop (the picks) | 22.6% / 0.74 / −26% | 21.9% / 0.85 / −36% |
+| Upside capture only, buffer 10, stop | 22.5% / 0.67 / −33% | 14.7% / 0.42 / −55% |
+
+The whole of the recent edge is the score: everything with upside
+capture in it does 22% in 2024-26, everything on capture ratio alone
+does 8%; the stop and the buffer add nothing in this window. The
+reverse held in 2016-2023 (capture ratio 1.00, 50/50 0.74). The static
+capture-ratio book's rolling three-year excess over the index is 3.9pp
+today, the 20th percentile of its history (median 9.8pp): capture ratio
+is in a weak patch and upside capture is carrying the book. Production
+OM25 v3 has run 50/50 in its bull state since inception, which is why
+its rules read 0.92 for 2023-26.
