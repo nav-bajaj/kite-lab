@@ -47,7 +47,9 @@ def register(cfg: dict, cfg_id: str, st_is: dict, phase: str):
 
 
 def n_trials() -> int:
-    return sum(1 for _ in open(REG)) - 1 if REG.exists() else 0
+    if not REG.exists():
+        return 0
+    return len(set(r["id"] for r in csv.DictReader(open(REG))))   # a rerun after an interrupt must not double-count
 
 
 def _phi_inv(p):   # Acklam's approximation, enough for N in the hundreds

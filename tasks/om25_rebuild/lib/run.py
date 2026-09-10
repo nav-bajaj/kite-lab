@@ -49,8 +49,23 @@ def cfg_id(cfg: dict) -> str:
     return hashlib.md5(json.dumps(cfg, sort_keys=True).encode()).hexdigest()[:10]
 
 
+def _complete(out, end):
+    """A run written before a disk-full interrupt may be truncated; trust it only if equity reaches the run end."""
+    eq = out / "equity.csv"
+    if not eq.exists() or not (out / "config.json").exists():
+        return False
+    try:
+        last = pd.read_csv(eq).iloc[-1, 0]
+        return pd.Timestamp(last) >= pd.Timestamp(end) - pd.Timedelta(days=7)
+    except Exception:
+        return False
+
+
 def run_candidate(**overrides):
     cfg = {**DEFAULTS, **overrides}
+    out = RUNS / cfg_id(cfg)
+    if _complete(out, cfg["end"] or panels()["close"].index[-1]):
+        return cfg, {"equity": pd.read_csv(out / "equity.csv"), "trades": pd.read_csv(out / "trades.csv"), "reused": True}
     p = panels(); close, trade = p["close"], p["trade"]; cal = close.index
     universe, membership_fn, candidate_fn = resolve_universe(MEMBERSHIP[cfg["universe"]], MEMBERSHIP[cfg["universe"]])
     cols = [s for s in close.columns if s in universe]

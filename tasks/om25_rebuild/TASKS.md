@@ -11,8 +11,9 @@ Owners: 👤 founder · 🤖 agent.
 | G3 | OOS sub-window Sharpe, each of 2016-19 / 2020-22 / 2023-26 | ≥ 0.6 |
 | G4 | OOS maximum drawdown | no worse than −40% |
 | G5 | Walk-forward Sharpe within this of the static OOS Sharpe | 0.2 |
-| G6 | Parameter count, all-in (score weights, regime, N, buffer, cadence, lookback) | ≤ 8 |
+| G6 | Parameter count, all-in (score weights, regime, N, buffer, cadence, lookback, overlay ROC N, confirm, bear exposure, redeploy) | ≤ 10 (raised from 8 by the founder 2026-09-10 to admit the overlay; counts everything searched) |
 | G7 | Turnover reported; no gate, but a candidate that wins only on turnover-blind metrics is flagged |  |
+| G8 | Minimum return (added by the founder 2026-09-10: "20-25% range"). Recorded at the floor of the range pending the founder's number. CAGR over OOS 2016-today and over 2006-today; IS CAGR reported against the benchmark (10.9% price return 2006-2015) but not gated, because a 2008-in-window decade floor is an index-relative question | ≥ 20% |
 
 ## §1 — retrieve the ROC regime test 🤖
 

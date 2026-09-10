@@ -90,5 +90,14 @@ Deflation corrected to the published form (observed cross-trial variance
 of IS Sharpe) before any gate is judged; the earlier fixed-variance form
 overstated the expected maximum for ~300 near-identical cells.
 
-**Open with the founder:** how G6 (≤ 8 parameters) counts with the overlay
-— everything searched (10), tuned values only (8), or a raised cap.
+**Founder rulings 2026-09-10:** G6 raised to ≤ 10, counting everything
+searched. **G8 added — a minimum return**: the founder wants 20-25%;
+recorded at 20% (OOS and full span) until the founder fixes the number.
+
+Context for G8, in-sample 2006-2015 on the price-return basis: the
+benchmark did 10.9%; across 315 trials one cell reaches 20% (a fully
+invested §3d cell, 20.9% / 0.86 / −69%) and none reach 25%; the overlay
+cells that fix the drawdown sit at 14-16%, i.e. 3-5pp over the index with
+the cash they hold in bear markets. Sharpe alone would have let a 15%
+book through; the floor rules that out unless §3f's redeployment recovers
+the return the overlay gives up.
