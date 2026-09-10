@@ -262,3 +262,25 @@ Nothing in L6's structure helps: the cap and the minimum hold are no-ops
 on a monthly book with a buffer, and the weekly / zero-buffer design that
 needs them costs 0.1-0.2 of Sharpe and triples the trades. The cue from
 production is negative — the §2 mechanics already superseded it.
+
+## §6 — founder's weekly configuration (4 trials) — labelled post-OOS
+
+6-month momentum, no skip, weekly (Friday signal) rebalance, 8-day
+minimum hold, 25 stocks, exit buffer 25, 20% trailing stop. Run
+2010 → today; IS and OOS reported together because OOS is open.
+
+| | IS 2010-15 | OOS 2016-26 | 16-19 / 20-22 / 23-26 | 2010-26 | Trades/yr, hit, stop exits |
+|---|---|---|---|---|---|
+| Nifty 250, vol-adjusted | 16.0% / 0.70 / −32% | 18.8% / 0.71 / −35% | 0.35 / 1.20 / 0.60 | 17.7% / 0.70 / −35% | 186, 47%, 17% |
+| Nifty 250, absolute | 10.3% / 0.29 / −37% | 19.7% / 0.70 / −36% | 0.26 / 1.35 / 0.55 | 16.3% / 0.56 / −37% | 191, 47%, 23% |
+| NSE 500, vol-adjusted | 23.5% / 1.03 / −29% | 17.5% / 0.58 / −40% | 0.18 / 1.23 / 0.38 | 19.7% / 0.72 / −40% | 239, 46%, 21% |
+| NSE 500, absolute | 21.5% / 0.77 / −32% | 19.0% / 0.58 / −46% | 0.14 / 1.27 / 0.44 | 20.0% / 0.65 / −46% | 239, 46%, 31% |
+| §3 book, Nifty 250 (monthly, skip 21, buffer 20, no stop) | 20.5% / 1.02 / −22% | 19.7% / 0.73 / −38% | 0.49 / 1.12 / 0.65 | 20.0% | 87, 57% |
+| §3 book, NSE 500 | 23.6% / 1.06 / −27% | 21.7% / 0.78 / −34% | 0.57 / 1.51 / 0.37 | 22.4% | 181, 55% |
+
+Below the §3 book on both universes in both windows: −0.3 of Sharpe
+in-sample on Nifty 250, −0.2 out-of-sample on NSE 500, with two to three
+times the trades and a hit rate under 50%. The pieces behave as they did
+individually (§2: weekly and wide buffers add trades without Sharpe; §3c:
+the stop helps only Nifty 250 monthly; §5: the minimum hold only matters
+when the buffer is gone). Not adopted.
