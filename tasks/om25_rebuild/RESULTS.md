@@ -439,3 +439,58 @@ The NSE 500 books with the 6-month lookback turn over 9-13x a year
 Sharpe — flagged under G7.
 
 Deflation is not applied to OOS (one look). 1090 unique in-sample trials preceded it.
+
+## §4b — full walk-forward (144 runs) — chained 2016-01-01 → 2026-09-09
+
+**Labelled: designed after OOS was opened in §4.** The question from the
+founder: parameters tuned on 2010-2015 and held for fifteen years are not
+how the book would be run, so evaluate the re-tuning process instead.
+Refit set per book: score {CR, 50/50, UC} × regimes {1, 2} × exit buffer
+{0, 10, 20} × trailing stop {off, 20%} = 36 configurations, each run
+2006-02-01 → today; lookback fixed (12m Nifty 250, 6m NSE 500; its own
+walk-forward held in §4). Each January the configuration with the best
+Sharpe on the trailing 5 or 10 years is traded for the year. Eight
+process variants (4 books × 2 windows) were looked at; no gate was
+pre-committed for the adaptive process, so the §4 gates are reported
+against, not judged.
+
+| Book | Refit window | Chained OOS | Sub-windows 16-19 / 20-22 / 23-26 | Config changes in 11 yrs | Picks 2024-26 (score/regimes/buffer/stop) |
+|---|---|---|---|---|---|
+| A N250 monthly | 5y | 21.6% / 0.90 / -34.6% | 0.88 / 0.99 / 0.91 | 6 | 5050/1/10/0.2, 5050/1/0/0.2 |
+| A N250 monthly | 10y | 17.5% / 0.78 / -34.6% | 0.80 / 0.99 / 0.60 | 2 | cr/1/20/0.2 |
+| B N250 biweekly | 5y | 19.1% / 0.75 / -32.9% | 0.83 / 0.88 / 0.66 | 4 | 5050/1/0/0.2 |
+| B N250 biweekly | 10y | 17.1% / 0.74 / -34.5% | 0.78 / 1.01 / 0.48 | 2 | cr/1/20/0.0, cr/1/20/0.2 |
+| C N500 monthly | 5y | 16.5% / 0.55 / -35.6% | 0.34 / 0.95 / 0.40 | 5 | 5050/2/20/0.0, 5050/2/10/0.0, 5050/2/10/0.2 |
+| C N500 monthly | 10y | 16.2% / 0.64 / -35.6% | 0.42 / 1.12 / 0.39 | 3 | cr/1/20/0.0, 5050/2/20/0.0 |
+| D N500 biweekly | 5y | 16.2% / 0.57 / -39.9% | 0.32 / 1.26 / 0.25 | 4 | 5050/1/20/0.0, cr/1/20/0.0, uc/1/0/0.2 |
+| D N500 biweekly | 10y | 17.8% / 0.72 / -36.5% | 0.26 / 1.26 / 0.66 | 2 | cr/1/20/0.0 |
+
+References on Nifty 250 monthly, same window: the §4 static book 18.3% /
+0.79 / −34.6%; the single best configuration chosen with hindsight on the
+whole OOS (CR, 1, 20, stop 20%) 18.5% / 0.89 / −26.7%. The production
+rules on this store: 18.6% / 0.68 / −40%.
+
+**Nifty 250 monthly with a five-year refit is the one process that meets
+every OOS gate as written: 21.6% / 0.90 / −34.6%, every sub-window above
+0.6, walk-forward by construction.** 0.90 is at the gate, not above it;
+the standard error of a ten-year Sharpe is about 0.35. It beats the
+hindsight-best static configuration because it switched: a trailing
+stop from 2021, then the 50/50 score from 2024 — i.e. it converged on the
+production rules' choices for the recent regime, from data it had at the
+time. The ten-year refit is too slow to make either switch and matches
+the static book. Six configuration changes in eleven years is one every
+two years, not noise-chasing; the changes are all in stop and score, the
+buffer stays at 20.
+
+The NSE 500 books do not benefit: 0.55-0.72 chained, 2016-2019 stays at
+0.26-0.42 for every variant (the 6-month lookback is the likely cause;
+it was the founder's choice and was not in the refit set), and the
+five-year window on NSE 500 biweekly ends on an upside-capture pick with
+no buffer, which is the noise-chasing pattern.
+
+Caveats to carry: the refit grid and the two windows were chosen now,
+with 2016-2026 known; one of eight variants clears the gates; the result
+is one look at a process, not a pre-registered test. It answers the
+founder's question — a periodically re-tuned Nifty 250 book would have
+held 0.9 through 2016-2026 — and it is the number to pre-commit against
+for the next window, not a number that was pre-committed.

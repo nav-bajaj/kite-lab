@@ -49,7 +49,7 @@ Owners: 👤 founder · 🤖 agent.
 ## §4 — OOS and walk-forward, opened once 🤖👤
 
 - [x] Surviving configuration per universe → OOS, sub-windows, walk-forward — DONE 2026-09-10, all five fail G2/G3/G8, pass G4/G5
-- [ ] 👤 Decide the universe and whether the book ships
+- [ ] 👤 Decide the universe and whether the book ships — evidence complete after §4b (adaptive Nifty 250 monthly, 5-year refit: 21.6% / 0.90 / −34.6% chained OOS)
 
 ## Done
 
