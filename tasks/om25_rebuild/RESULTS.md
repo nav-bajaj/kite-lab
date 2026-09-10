@@ -39,3 +39,24 @@ and 2008 is −62% to −68% for any fully invested book. Under "just the
 hysteresis" the regime cannot change exposure, so §3c/§3d cannot close
 that gap. Put to the founder 2026-09-10: bring the exposure overlay into
 scope, or record the gate failure.
+
+## §3c — mechanics grid (36 trials) — IS 2006-2015, one-regime CR
+
+top-N ∈ {15, 25, 40} × exit buffer ∈ {0, 10, 20} × cadence ∈ {biweekly,
+monthly}. **Top 40 / buffer 20** is best on both universes (LM 250 Sharpe
+0.66 monthly, 0.64 biweekly; N 500 0.63 / 0.62); monthly ≈ biweekly with
+lower turnover. Drawdowns unchanged, −63% to −68%.
+
+## §3d — lookback (10 trials) — IS 2006-2015, CR / one regime / 40 / 20 / monthly
+
+lookback ∈ {126, 189, 252, 378, 504} with min_obs at 87% of it. Flat
+plateau at 252-378 on LM 250 (0.66-0.67); 126 and 504 worse. 252 kept —
+the plateau, not the peak.
+
+## Standing after §3 — 100 trials
+
+Best in-sample configuration: capture ratio, one regime, top 40, exit
+buffer 20, monthly, lookback 252, fully invested. Sharpe 0.66 (LM 250) /
+0.63 (N 500) raw; deflated for 100 trials, below zero. **G1 fails for
+every configuration the brief allows.** The block is structural — 2008 —
+not parametric; the exposure overlay is the only remaining lever.
