@@ -26,24 +26,24 @@ Owners: 👤 founder · 🤖 agent.
 
 ## §2 — harness 🤖
 
-- [ ] `lib/score.py`: UC, CR, blend — per the OM25 v3 construction minus the
+- [x] `lib/score.py`: UC, CR, blend — per the OM25 v3 construction minus the  (DONE)
       50-up/50-down rule; positive-return filter kept as a switch
-- [ ] `lib/regime.py`: ROC of the regime index with confirmation hysteresis;
+- [x] `lib/regime.py`: ROC of the regime index with confirmation hysteresis;  (DONE)
       "one regime" = the panel is ignored
-- [ ] `lib/run.py`: one candidate → equity/trades/exits on the master store,
+- [x] `lib/run.py`: one candidate → equity/trades/exits on the master store,  (DONE)
       via `_clean_engine.run_strategy`, no weight cap, no stops
-- [ ] `lib/windows.py`: IS / OOS / sub-windows / walk-forward evaluator,
+- [x] `lib/windows.py`: IS / OOS / sub-windows / walk-forward evaluator,  (DONE)
       pass-criteria check, candidate counter for deflation
-- [ ] Smoke test: the old OM25 v3 configuration reproduces
+- [x] Smoke test: the old OM25 v3 configuration reproduces  (DONE (reproduces Phase 6 to 0.1pp))
       market_data_spine's Phase 6 number when its constraints are re-enabled
 
 ## §3 — build, IS only 🤖
 
-- [ ] 3a score × universe (6 runs)
-- [ ] 3b regime: one vs two, ROC parameters (small grid) on 3a's winner
-- [ ] 3c top-N / exit buffer / cadence grid
-- [ ] 3d lookback / min_obs
-- [ ] 3e exposure overlay: ROC grid × bear exposure {75, 50, 25, 0} × return filter, both universes, ≤25 names
+- [x] 3a score × universe (6 runs)  (DONE — capture ratio)
+- [x] 3b regime: one vs two, ROC parameters (small grid) on 3a's winner  (DONE — one regime)
+- [x] 3c top-N / exit buffer / cadence grid  (DONE — 25 / 20 / monthly)
+- [x] 3d lookback / min_obs  (DONE — 252)
+- [x] 3e exposure overlay: ROC grid × bear exposure {75, 50, 25, 0} × return filter, both universes, ≤25 names  (DONE — ROC overlay rejected after §3h)
 - [ ] Deflate; record every run in RESULTS.md with its number
 
 ## §4 — OOS and walk-forward, opened once 🤖👤
