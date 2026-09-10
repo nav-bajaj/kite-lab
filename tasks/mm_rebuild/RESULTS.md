@@ -945,3 +945,35 @@ is real, the size of it is probably flattered. For OM25 the day effect
 is noise (0.58-0.72, no ordering), and the monthly stop check costs it
 0.1 of Sharpe and 10pp of drawdown against the weekly check (§10) — OM25
 keeps the weekly stop review. **Day 1 stays for both books.**
+
+## §16 — reconciling the lived experience of production L6 v2 (no new trials)
+
+Founder 2026-09-10: the NSE 500 data over the past year was current, L6
+v2 has looked fine, is up over the last couple of months and holds some
+2x names — how to square that with 13.7% a year on the honest store.
+Series cut at 2026-08-21, the production file's last date.
+
+| | 2024 | 2025 | 2026 YTD | Last 3m | Last 6m | Last 12m | MaxDD 2025-26 |
+|---|---|---|---|---|---|---|---|
+| L6 v2 production file (own panel) | 44.6% | −11.9% | 6.7% | 3.7% | 7.1% | 6.2% | −26.8% |
+| L6 v2 rules on the honest store | 17.4% | −17.0% | 4.6% | 3.9% | 3.0% | 5.3% | −29.6% |
+| MM stack, Nifty 250 | 38.0% | 14.0% | 7.3% | 7.5% | 9.0% | 11.9% | −22.2% |
+| OM25 current pick, Nifty 250 | 42.0% | −1.4% | 16.9% | 3.4% | 12.7% | 12.3% | −24.9% |
+| MidSmall 400 | 24.1% | 1.2% | 3.0% | 0.0% | 5.6% | 4.6% | −19.5% |
+| Nifty 500 | 14.9% | 6.7% | −1.4% | 4.1% | 0.2% | 1.7% | −14.8% |
+
+Production file against the honest reproduction, by year: 2021 149% vs
+98%, 2022 13% vs −7%, 2023 109% vs 53%, 2024 47% vs 18%, **2025 −12% vs
+−17%, 2026 7% vs 5%**; daily correlation 0.94-0.95 in 2025-26.
+
+Read: both things are true. **In the period the founder actually watched
+the production file and the honest store agree** — the universe was
+current, there was no survivorship to remove, and the book did −12% then
++7%, a 27% drawdown and a partial recovery; the last three months are
++3.7%. **The spectacular numbers belong to the backfilled years** (2021,
+2023, 2024), where the file is 30-56pp a year above the same rules on
+the honest universe. Over the watched twelve months L6 made 6% with a
+27% drawdown; the MM stack made 12% with a 22% drawdown and the MidSmall
+400 5%. The 2x names are real (1 of 24 holdings above 2x, 3 above 1.5x,
+bought April-May 2026) and so are the 8 of 24 below their entry price;
+a momentum book always shows its winners.
