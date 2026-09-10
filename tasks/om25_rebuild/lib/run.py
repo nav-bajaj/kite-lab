@@ -25,7 +25,7 @@ BENCH = MASTER / "benchmarks/NIFTY_100_bench.csv"
 MEMBERSHIP = {"nifty250": MASTER / "membership/nifty250.csv", "nse500": MASTER / "membership/nse500.csv"}
 RUNS = Path(__file__).resolve().parent.parent / "runs"
 
-DEFAULTS = dict(universe="nifty250", score="5050", regimes=1, roc_n=31, confirm=3, overlay=False, bear_exposure=1.0, redeploy=False,
+DEFAULTS = dict(universe="nifty250", score="5050", regimes=1, roc_n=31, confirm=3, overlay=False, bear_exposure=1.0, redeploy=False, reenter_on_flip=False,
                 top_n=25, exit_buffer=20, cadence="biweekly", lookback=252, min_obs=220,
                 return_filter=True, start="2006-01-01", end=None, slippage=0.002,
                 # smoke-test-only switches, never searched
@@ -82,6 +82,11 @@ def run_candidate(**overrides):
     weekly = fridays(cal); weekly = weekly[(weekly >= start) & (weekly <= end)]
     entry_all = {"biweekly": biweekly_fridays, "weekly": fridays, "monthly": monthly_first_trading_day}[cfg["cadence"]](cal)
     entries = entry_all[(entry_all >= start) & (entry_all <= end)]
+    if cfg["overlay"] and cfg["reenter_on_flip"]:
+        # A fully exited book otherwise waits for the next cadence date; re-enter on the day the regime turns bull.
+        bull = roc.astype(bool)
+        flips = bull.index[bull & ~bull.shift(1, fill_value=False)]
+        entries = entries.union(flips[(flips >= start) & (flips <= end)])
     res = run_strategy(close_panel=close, trade_panel=trade, calendar=cal, benchmark_aligned=p["bench"],
                        entry_signal_dates=entries, weekly_signal_dates=weekly,
                        signal_function=score_fn, signal_function_args={},

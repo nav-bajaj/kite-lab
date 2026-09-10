@@ -101,3 +101,61 @@ cells that fix the drawdown sit at 14-16%, i.e. 3-5pp over the index with
 the cash they hold in bear markets. Sharpe alone would have let a 15%
 book through; the floor rules that out unless §3f's redeployment recovers
 the return the overlay gives up.
+
+## §3f — cadence and redeployment (252 trials) — IS 2006-2015
+
+LM 250 at biweekly and weekly, N 500 at weekly, and both with the engine's
+`regime_redeploy_on_increase` switch, over the ROC grid × bear exposure
+∈ {50, 25, 0%}.
+
+| Universe, cadence | Best cell | vs §3e |
+|---|---|---|
+| LM 250, biweekly | ROC31/c2, 50%: 14.0% / 0.72 / −40.3% | monthly best 0.69 / −54% |
+| LM 250, weekly | ROC42/c2, 0%: 15.3% / 0.75 / −44.0% | |
+| N 500, weekly | ROC42/c2, 0%: 15.6% / 0.80 / −36.8% | biweekly best 0.89 / −20% |
+
+Faster cadence helps LM 250 by 0.03-0.06 and hurts N 500 (weekly 0.80 <
+biweekly 0.89): more re-entries are more whipsaws. **The redeploy switch
+was a no-op for every full-exit cell** — the engine only tops up positions
+the book still holds, and a book at 0% has none (equity paths identical to
+§3e to the last rupee; those 36 registry rows are duplicate outcomes). With
+partial exposure it topped up into recoveries that reversed: drawdowns
+7-9pp worse on average, Sharpe 0.04-0.17 lower. Dropped.
+
+## §3g — re-entry on the bull flip (72 trials) — IS 2006-2015
+
+The mechanism the founder actually asked for: a fully exited book re-enters
+on the day the regime turns bull instead of waiting for the next cadence
+date (an extra entry date; no engine change). ROC grid × bear ∈ {0, 25%}
+on LM 250 monthly and biweekly, N 500 biweekly.
+
+| Cell class | Mean effect of flip re-entry vs §3e | Best cell |
+|---|---|---|
+| LM 250 monthly, full exit | **+0.29 Sharpe, +4.1pp CAGR, +1.7pp MaxDD** | ROC42/c3: 14.0% / 0.64 / −43% |
+| LM 250 biweekly, full exit | +0.07, +1.2pp | ROC42/c3: 14.9% / 0.70 / −42% |
+| N 500 biweekly, full exit | +0.01, +0.4pp | ROC42/c2: 15.7% / 0.80 / −37% |
+| partial exposure, any | ≈ 0 or slightly negative | |
+
+The hypothesis was right mechanically — the monthly book's problem was the
+missed re-entry, and fixing it is worth 0.3 Sharpe — and it does not close
+the gap: the repaired monthly book lands at 0.64, and on N 500 biweekly the
+best flip cell (0.80) is below the best cadence-only cell (0.89).
+
+## Standing after §3 — 616 unique trials, in-sample closed
+
+Best cell anywhere: **N 500, biweekly, CR, one regime, 25 / 20, lookback
+252, return filter on, ROC15/c3 overlay, full exit in bear:
+15.6% / 0.89 / −20.4%.**
+
+| Gate | Requirement | Best achieved | |
+|---|---|---|---|
+| G1 | deflated IS Sharpe ≥ 0.9 | 0.89 raw; E[max under null] for 616 trials at observed sd 0.21 = 0.66; **deflated 0.24** | fails |
+| G8 | CAGR ≥ 20% | 16.2% best of any overlay cell (benchmark 10.9%) | fails |
+| G4 (preview, IS) | MaxDD ≥ −40% | −20% | would pass |
+
+Nothing the brief allows passes in-sample. The Sharpe gap is not
+parametric: 616 trials across score, regime, mechanics, lookback, overlay,
+cadence and re-entry cover the space, and the raw maximum never crossed
+0.9. The return gap is structural on this window: an overlay that survives
+2008 holds cash through it, and 2006-2015 on a price-return basis gave the
+index 10.9%. **OOS stays closed.** Decision for the founder — see chat.

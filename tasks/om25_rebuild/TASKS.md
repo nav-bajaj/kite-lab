@@ -54,3 +54,9 @@ Owners: 👤 founder · 🤖 agent.
 ## Done
 
 - [x] Task opened with the founder's constraints verbatim (BRIEF.md)
+
+## §3f/§3g — cadence, redeploy, re-entry on flip — DONE 2026-09-10
+Redeploy switch a no-op for full-exit books (documented); re-entry on the
+bull flip implemented in lib/run.py (`reenter_on_flip`) and worth +0.29 on
+LM 250 monthly. In-sample closed at 616 trials; G1 and G8 fail; OOS not
+opened. Awaiting the founder's decision.
