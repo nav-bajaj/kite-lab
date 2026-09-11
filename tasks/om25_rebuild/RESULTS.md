@@ -693,3 +693,16 @@ too so both books have one action day a month.
 Days 1 / 5 / 10 / 15 / 20 / 25 with a monthly stop check: OOS 0.69 / 0.65 /
 0.72 / 0.62 / 0.66 / 0.58, no ordering. Day 1 stays; the weekly stop check
 stays (0.82 vs 0.69 with a monthly check, §10).
+
+### Correction to §4f (2026-09-11)
+
+The synthetic MidSmall 400 was flat after 2026-05-08: the splice took the
+real index's last date after forward-filling it, so the Midcap 150 +
+Smallcap 250 leg never applied. Rebuilt with the real Smallcap 250 to
+2026-08-21 and the point-in-time small-cap basket after it (0 flat days).
+Effect: 2011-26 13.0 → 13.1%; Wright window 23.4 → 24.2% / 1.09 → 1.13;
+2026 YTD 2.7 → 7.7%; last three years 18.5 → 19.4%. Every book's Wright-
+window capture ratio moves by ≤ 0.02 except the OM25 2026 pick's
+down-capture (1.14 → 1.20, three extra index months); no conclusion in
+§4f, mm_rebuild §7-§9d or §16 changes, but the "MidSmall 400 2026 YTD
+3.0%" figure in §16 reads 7.7%.

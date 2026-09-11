@@ -1102,3 +1102,11 @@ The founder chose not to switch rules. Rationale from §17-§17c: with a
 reverted both times; its one durable move (the bear rule, April 2020)
 is already in the stack; a change replaces ~38% of the book. Definition
 and forward gate recorded in TASKS.md.
+
+### Note 2026-09-11 — MidSmall 400 series corrected
+
+See om25_rebuild §4f correction: the synthetic index was flat after
+2026-05-08. Rebuilt; Wright-window capture for the adopted stack is now
+1.10 / 0.73 (was 1.08 / 0.76), the §3 bases and L6 unchanged to ±0.01,
+the OM25 2026 pick 1.31 / 1.20. §16's MidSmall 400 2026 YTD is 7.7%, not
+3.0%; its last-12-month figure is 8.8%, not 4.6%. Conclusions unchanged.
