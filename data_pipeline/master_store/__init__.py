@@ -5,4 +5,4 @@ import os
 from pathlib import Path
 
 ROOT = os.environ.get("KITE_LAB_ROOT", str(Path(__file__).resolve().parents[2]))
-MASTER = f"{ROOT}/data/master"
+MASTER = os.environ.get("MASTER_STORE_DIR", f"{ROOT}/data/master")   # on Railway: /data/master (the persistent volume)

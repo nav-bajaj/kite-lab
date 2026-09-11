@@ -14,7 +14,7 @@ import argparse, json, os, subprocess, sys, time
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
-ROOT = Path(os.environ.get("KITE_LAB_ROOT", Path(__file__).resolve().parents[1])); MASTER = ROOT / "data/master"; QA = MASTER / "qa"
+ROOT = Path(os.environ.get("KITE_LAB_ROOT", Path(__file__).resolve().parents[1])); MASTER = Path(os.environ.get("MASTER_STORE_DIR", ROOT / "data/master")); QA = MASTER / "qa"
 PY = sys.executable
 
 
@@ -23,7 +23,7 @@ def step(name, mod, args=(), dry=False, timings=None):
     print(f"\n=== {name}: {' '.join(cmd[2:])}", flush=True)
     if dry:
         return True
-    t0 = time.time(); r = subprocess.run(cmd, cwd=ROOT, env={**os.environ, "KITE_LAB_ROOT": str(ROOT)})
+    t0 = time.time(); r = subprocess.run(cmd, cwd=ROOT, env={**os.environ, "KITE_LAB_ROOT": str(ROOT), "MASTER_STORE_DIR": str(MASTER)})
     if timings is not None: timings.append((name, time.time() - t0, r.returncode))
     print(f"    -> {'ok' if r.returncode == 0 else 'FAILED'} in {time.time()-t0:.0f}s", flush=True)
     return r.returncode == 0
