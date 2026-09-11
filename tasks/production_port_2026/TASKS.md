@@ -120,7 +120,10 @@ runner (`tasks/mm_rebuild/lib/run.py`) keeps its own sizing / regime wiring — 
       legacy corporate-action pass (`adjust_open_positions_for_corporate_actions`) was not scoped by universe
       and could have re-adjusted store rows that are already adjusted at source — it now excludes
       `STORE_BACKED_UNIVERSES`. Pre-existing unrelated failures in `kite-api/tests`: three insights tests on
-      live local data.
+      live local data. Verified after the 66a3c62 deploy: all 25 positions in each book carry live last prices.
+      The nightly was also run by hand (02:13 IST, job `master_store_refresh`): 10 steps ok, Kite 0 of 1,045
+      errored; gate flagged on the standing list (30 unexplained Kite steps / 30 d, 15 stale tails, 8 bad
+      prints with no Kite disagreement) — for the Monday morning review.
 
 ## P3 — DB, API and dashboard 🤖👤 [prod]
 - [ ] Universe IDs (never renamed once in DB rows) — **proposal**: `mm_v1` and `om25_v4`;
