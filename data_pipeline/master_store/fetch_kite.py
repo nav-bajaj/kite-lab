@@ -36,7 +36,11 @@ def build_targets() -> pd.DataFrame:
     win = win[~win["isin"].str.startswith("SYM:")]
     syms = set()
     for f in ["nse500", "nifty50", "nifty100", "nifty250"]:
-        syms |= set(pd.read_csv(f"{RECON}/{f}_membership_reconstructed.csv")["symbol"])
+        recon = f"{RECON}/{f}_membership_reconstructed.csv"
+        # the reconstruction files live only on the research machine; in production the store's own point-in-time
+        # membership files carry the same canonical symbols (P1, 2026-09-11)
+        src = recon if os.path.exists(recon) else f"{MASTER}/membership/{f}.csv"
+        syms |= set(pd.read_csv(src)["symbol"])
     res = pd.read_csv(f"{MASTER}/resolution.csv")
     syms |= set(res["symbol"].dropna())
     # symbol -> ISINs -> every symbol under those ISINs -> the latest-traded one
