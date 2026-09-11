@@ -91,9 +91,8 @@ class PositionsService:
 
         Returns dict of symbol -> (last_price, prev_close)
         """
-        settings = get_settings()
-        universe_config = UNIVERSES.get(universe, UNIVERSES["nse500"])
-        data_dir = settings.data_dir / universe_config["data_dir"]
+        from app.config import price_dir
+        data_dir = price_dir(universe)
 
         prices = {}
         for symbol in symbols:

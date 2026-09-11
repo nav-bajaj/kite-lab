@@ -61,3 +61,14 @@ def test_monthly_cadence_projection():
     hist = expected_cadence_history(today=date(2026, 9, 12), anchor_exec=date(2026, 9, 2), cadence_key="monthly_first", lookback_count=3)
     assert [s for s, _ in hist] == [date(2026, 9, 1), date(2026, 8, 3), date(2026, 7, 1)]
     assert all(e > s for s, e in hist)
+
+
+def test_store_backed_price_dir(monkeypatch, tmp_path):
+    from app.config import price_dir, STORE_BACKED_UNIVERSES, settings
+    assert set(STORE_BACKED_UNIVERSES) == set(BOOKS)
+    monkeypatch.setenv("MASTER_STORE_DIR", str(tmp_path / "master"))
+    for b in BOOKS:
+        assert price_dir(b) == tmp_path / "master" / "panels" / "pr"
+    assert price_dir("l6_v2") == settings.data_dir / "nse500_data"
+    monkeypatch.delenv("MASTER_STORE_DIR")
+    assert price_dir("mm_v1") == settings.data_dir / "data" / "master" / "panels" / "pr"
