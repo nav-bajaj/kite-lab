@@ -52,3 +52,5 @@ and the same forward gate as MM (rolling 3-year Sharpe ≥ 0.6, drawdown
 ≥ −40%, from 2026-10-01). Expectation: about 20% a year at Sharpe ~0.9,
 drawdown around −30% (the process band). The om25_rebuild §4b yearly
 refit and its 2026 pick are retired. Biweekly rebalancing rejected (§22b).
+
+Founder 2026-09-11: blend weight fixed at 50/50; two books (MM, OM25) for now, no combined book.

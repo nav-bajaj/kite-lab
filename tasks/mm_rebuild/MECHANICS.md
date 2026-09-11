@@ -29,7 +29,7 @@ neither is in production.
 | Element | Rule |
 |---|---|
 | Universe | NIFTY LARGEMIDCAP 250, point-in-time membership |
-| Score | rank blend: 40-50% vol-adjusted momentum (252 sessions ending 21 before the signal, / annualised vol, floor 5%) + 50-60% capture ratio (upside vs downside participation over the same 252 sessions, positive window return required); weight fixed at 50/50 unless the founder prefers 40/60 (§21: plateau 40-60) |
+| Score | rank blend: 40-50% vol-adjusted momentum (252 sessions ending 21 before the signal, / annualised vol, floor 5%) + 50-60% capture ratio (upside vs downside participation over the same 252 sessions, positive window return required); **weight fixed at 50/50** (founder 2026-09-11; §21: plateau 40-60) |
 | Eligibility | ≥ 220 priced sessions in the window |
 | Signal / execution | close of the first trading day of each month; next-session execution |
 | Book | up to 25 names; entrants by rank from the top 45; exit below rank 45; after a bear the book rebuilds as positions exit; no trimming |
@@ -39,7 +39,7 @@ neither is in production.
 | Stop | 20% trailing from peak, checked at the monthly signal, executed next session |
 | Rhythm | **one order day a month** |
 | Parameters | 10 (as MM plus the blend weight) — G6 ≤ 10 |
-| Record | static 2016-26: 24.9% / 1.21 / −29% (50/50) or 23.3% / 1.16 / −26% (40/60); Wright window 34.3% / 1.65, up-capture 1.09 / down 0.70; single-book process (§22) 19.8% / 0.93 / −30% — plan on the process band |
+| Record | static 2016-26: 24.9% / 1.21 / −29%; Wright window 34.3% / 1.65, up-capture 1.09 / down 0.70; single-book process (§22) 19.8% / 0.93 / −30% — plan on the process band |
 | Monitoring and forward gate | as MM: quarterly §22 grid on trailing ten years, 0.10 margin, founder sign-off; rolling 3-year Sharpe ≥ 0.6, drawdown ≥ −40%, judged quarterly from 2026-10-01 |
 | Retired | the yearly refit process of om25_rebuild §4b and its 2026 pick (50/50 UC+CR, buffer 10, weekly stop: 0.82, up 1.29 / down 1.14) |
 
