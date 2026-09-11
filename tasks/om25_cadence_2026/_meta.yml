@@ -1,0 +1,16 @@
+name: om25_cadence_2026
+status: shipped
+opened: 2026-09-08
+closed: 2026-09-08
+related_commits: []
+supersedes: []
+depends_on:
+  - oos_retune_2026
+  - tax_study
+  - universe_membership
+register_rows: []
+findings:
+  - "Weekly entry on Nifty 250 beats bi-weekly by 1.08pp CAGR pre-tax, 0.51pp post-tax — inside noise. No production change."
+  - "NSE 500 still fails the -45% DD gate at bi-weekly (-47.75%) under the full regime-tilted v3 stack; the tilt did not rescue it."
+  - "NSE 500 monthly is the best risk-adjusted arm in the matrix (Sharpe 1.62, PASS). Flagged, not proposed."
+  - "BLOCKER-CLASS: published OM25 v3 OOS figures (44.78% CAGR / 1.86 Sharpe) no longer reproduce on the current price panel; same config now backtests to ~35%. ~6.3pp is retro-applied corporate actions, ~2.4pp is effective-dated membership."

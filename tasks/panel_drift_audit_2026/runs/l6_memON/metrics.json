@@ -1,0 +1,27 @@
+{
+  "config": {
+    "start": "2009-09-01",
+    "end": null,
+    "top_n": 24,
+    "lookback_months": 6,
+    "skip_days": 0,
+    "vol_floor": 0.05,
+    "vol_power": 1.0,
+    "min_hold_days": 8,
+    "max_weight": 0.075,
+    "slippage": 0.002,
+    "initial_capital": 1000000,
+    "shared_state_file": null
+  },
+  "result": {
+    "start": "2009-09-04",
+    "end": "2026-08-21",
+    "years": 16.96,
+    "cagr_pct": 38.09,
+    "sharpe_rf5": 1.52,
+    "vol_pct": 21.71,
+    "max_dd_pct": -37.04,
+    "n_buys": 3469,
+    "n_sells": 3441
+  }
+}

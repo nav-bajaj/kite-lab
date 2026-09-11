@@ -1,0 +1,9 @@
+index,company_name,spell_from,spell_to,isin,symbol,symbol_from,symbol_to,method,candidates
+nse500,Ballarpur Industries Ltd.,1998-08-01,2008-02-29,INE294A01037,BALLARPUR,,,isin-only,
+nse500,Pudumjee Pulp & Paper Mills Ltd.,1998-08-01,2007-09-24,,,,,unresolved,
+nse500,Styrolution ABS (India) Ltd.,1998-08-01,2009-03-27,,,,,unresolved,
+nse500,Summit Securities Ltd.- Old,1998-08-01,2009-03-27,,,,,unresolved,
+nifty250,Alstom India Ltd.,2005-09-25,2013-04-01,,,,,unresolved,
+nifty250,Ballarpur Industries Ltd.,2005-09-25,2007-09-24,INE294A01037,BALLARPUR,,,isin-only,
+nifty250,Essar Ports Ltd.,2012-09-28,2014-09-19,INE282A01016,ESSARSHIP,,,isin-only,
+nifty250,Merck Ltd.,2005-09-25,2006-03-02,,,,,unresolved,

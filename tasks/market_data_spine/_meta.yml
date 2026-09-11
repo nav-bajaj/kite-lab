@@ -1,0 +1,12 @@
+name: market_data_spine
+status: active
+opened: 2026-09-08
+closed: null
+related_commits: []
+supersedes:
+  - adjusted_price_series
+  - corporate_actions_fix
+depends_on:
+  - index_reconstruction
+  - universe_membership
+register_rows: []

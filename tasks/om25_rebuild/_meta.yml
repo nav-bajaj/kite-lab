@@ -1,0 +1,38 @@
+name: om25_rebuild
+status: shipped
+opened: 2026-09-10
+closed: 2026-09-11
+related_commits:
+  - fe9c31a
+  - b61e844
+  - 7c6fafb
+  - b180878
+  - 9193e0d
+  - 136ccf4
+  - 6ca3eec
+  - b22d79d
+  - c10c830
+  - cd6a3c1
+  - 7461029
+  - f199267
+  - ab58cd0
+  - a30989c
+  - f0fc57e
+  - 0f8da93
+  - 1a1d9d6
+  - a435780
+  - a417f5d
+  - ef6e00a
+  - 02cb0b0
+  - f963e86
+  - 88b9888
+  - e513b32
+  - dca7487
+  - aec19d6
+  - 47866f9
+  - 5744201
+supersedes: []
+depends_on:
+  - market_data_spine
+  - index_reconstruction
+register_rows: []

@@ -1,0 +1,9 @@
+name: adjusted_price_series
+status: absorbed  # into market_data_spine, 2026-09-10 (D-10); Phase 0 freeze stands, Phases 2-3 parked
+opened: 2026-09-08
+closed: null
+related_commits: []
+supersedes: []
+depends_on:
+  - corporate_actions_fix
+register_rows: []

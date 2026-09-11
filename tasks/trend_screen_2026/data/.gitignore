@@ -1,0 +1,4 @@
+# Derived data. All of it regenerates from ../lib/ against data/master/.
+# Large intermediates stay out of the repo; the small result tables that are
+# actually cited in TASKS.md are force-added.
+*.parquet
