@@ -13,8 +13,8 @@ import windows as W  # noqa: E402
 RUNS = TASK / "runs"; RUNS.mkdir(exist_ok=True); W.REG = RUNS / "registry.csv"
 DEFAULTS = dict(universe="nifty250", kind="abs", lookback=126, min_obs=110, skip=0, vol_floor=0.05, positive_only=False,
                 top_n=25, exit_buffer=20, cadence="monthly", exit_cadence="same", trailing_stop=0.0, max_weight=1.0, slippage=0.002,
-                min_hold_days=0, fill_from_buffer=False, trim_to_target=0.0, stop_check="weekly", rebalance_day=1, sector_cap=0, satellite_slots=0, universe_cap=0, turnover_floor=0.0, sizing="equal", iv_window=63, dyn_n_bear=0, dyn_mode="lever", bear_buffer=-1, vol_target=0.0, vol_window=21, str_kind="breadth_ma", str_len=200, str_thresh=0.3, str_mode="abs", cr_quantile=0.0, vol_kick="none", vol_k=0.0, regimes=1, bull_kind="abs", overlay=False, regime_kind="roc", roc_n=31, confirm=3, bear_exposure=1.0, reenter_on_flip=False, start="2010-01-01", end="2015-12-31")
-_ID_OPTIONAL = {"trim_to_target", "fill_from_buffer", "stop_check", "rebalance_day", "sector_cap", "satellite_slots", "bear_buffer", "universe_cap", "turnover_floor", "sizing", "iv_window", "dyn_n_bear", "dyn_mode", "vol_target", "vol_window", "str_kind", "str_len", "str_thresh", "str_mode", "min_hold_days", "vol_kick", "vol_k", "cr_quantile", "regimes", "bull_kind", "overlay", "regime_kind", "roc_n", "confirm", "bear_exposure", "reenter_on_flip"}
+                min_hold_days=0, fill_from_buffer=False, trim_to_target=0.0, stop_check="weekly", rebalance_day=1, sector_cap=0, satellite_slots=0, universe_cap=0, turnover_floor=0.0, sizing="equal", iv_window=63, dyn_n_bear=0, dyn_mode="lever", bear_buffer=-1, vol_target=0.0, vol_window=21, str_kind="breadth_ma", str_len=200, str_thresh=0.3, str_mode="abs", mix_w=0.5, cr_quantile=0.0, vol_kick="none", vol_k=0.0, regimes=1, bull_kind="abs", overlay=False, regime_kind="roc", roc_n=31, confirm=3, bear_exposure=1.0, reenter_on_flip=False, start="2010-01-01", end="2015-12-31")
+_ID_OPTIONAL = {"mix_w", "trim_to_target", "fill_from_buffer", "stop_check", "rebalance_day", "sector_cap", "satellite_slots", "bear_buffer", "universe_cap", "turnover_floor", "sizing", "iv_window", "dyn_n_bear", "dyn_mode", "vol_target", "vol_window", "str_kind", "str_len", "str_thresh", "str_mode", "min_hold_days", "vol_kick", "vol_k", "cr_quantile", "regimes", "bull_kind", "overlay", "regime_kind", "roc_n", "confirm", "bear_exposure", "reenter_on_flip"}
 
 
 _turn = {}
@@ -61,11 +61,24 @@ def run_candidate(**overrides):
     if cfg["universe_cap"] or cfg["satellite_slots"]:
         from regime import membership_mask
         core_mask = membership_mask(om.MEMBERSHIP["nifty250"], close).reindex(columns=cols, fill_value=False)
-    if cfg["kind"] in ("cr", "5050", "uc"):   # OM25's capture-statistics scores (om25_rebuild/lib/score.py), one regime, return filter on
-        from score import make_capture_score
-        w_uc, w_cr = {"uc": (1.0, 0.0), "cr": (0.0, 1.0), "5050": (0.5, 0.5)}[cfg["kind"]]
-        score_fn = make_capture_score(returns_uni, None, w_uc_bull=w_uc, w_cr_bull=w_cr, return_filter=True, lookback=cfg["lookback"], min_obs=cfg["min_obs"], candidate_fn=candidate_fn)
-    else:
+    def build_score(kind):
+        if kind in ("cr", "5050", "uc"):   # OM25's capture-statistics scores (om25_rebuild/lib/score.py), one regime, return filter on
+            from score import make_capture_score
+            w_uc, w_cr = {"uc": (1.0, 0.0), "cr": (0.0, 1.0), "5050": (0.5, 0.5)}[kind]
+            return make_capture_score(returns_uni, None, w_uc_bull=w_uc, w_cr_bull=w_cr, return_filter=True, lookback=cfg["lookback"], min_obs=cfg["min_obs"], candidate_fn=candidate_fn)
+        if kind.startswith("mix"):          # 2026-09-11: rank blend of vol-adjusted momentum (weight mix_w) and capture ratio (1 - mix_w)
+            fm = build_score("voladj"); fc = build_score("cr"); w = cfg["mix_w"]
+            def mix(signal_date, **_):
+                a = fm(signal_date); b = fc(signal_date); i = a.index.intersection(b.index)
+                if len(i) == 0: return pd.Series(dtype=float)
+                return w * a[i].rank(pct=True) + (1 - w) * b[i].rank(pct=True)
+            return mix
+        return make_momentum_score(returns_uni, kind=kind, lookback=cfg["lookback"], min_obs=cfg["min_obs"], skip=cfg["skip"],
+                                   vol_floor=cfg["vol_floor"], positive_only=cfg["positive_only"], candidate_fn=candidate_fn, cr_quantile=cfg["cr_quantile"],
+                                   volume_panel=volume_panel, vol_kick=cfg["vol_kick"], vol_k=cfg["vol_k"],
+                                   core_mask=core_mask, universe_cap=cfg["universe_cap"], turnover_floor=cfg["turnover_floor"])
+    score_fn = build_score(cfg["kind"])
+    if False:
       score_fn = make_momentum_score(returns_uni, kind=cfg["kind"], lookback=cfg["lookback"], min_obs=cfg["min_obs"], skip=cfg["skip"],
                                      vol_floor=cfg["vol_floor"], positive_only=cfg["positive_only"], candidate_fn=candidate_fn, cr_quantile=cfg["cr_quantile"],
                                      volume_panel=volume_panel, vol_kick=cfg["vol_kick"], vol_k=cfg["vol_k"],
@@ -101,10 +114,10 @@ def run_candidate(**overrides):
     if cfg["dyn_n_bear"]:
         # founder 2026-09-10: hold top_n names in bull, dyn_n_bear in bear. 'lever': each name keeps its 1/top_n weight, so gross
         # exposure falls to dyn_n_bear/top_n; 'concentrate': the engine's 1/n sizing keeps the book fully invested in fewer names.
-        base_fn = score_fn; bb = cfg["exit_buffer"] if cfg["bear_buffer"] < 0 else cfg["bear_buffer"]; nb = cfg["dyn_n_bear"] + bb
+        _dyn_base = score_fn; bb = cfg["exit_buffer"] if cfg["bear_buffer"] < 0 else cfg["bear_buffer"]; nb = cfg["dyn_n_bear"] + bb
         _last = {}
         def score_fn(signal_date, **_):
-            sc = base_fn(signal_date); _last["rank"] = list(sc.index)
+            sc = _dyn_base(signal_date); _last["rank"] = list(sc.index)
             return sc if bool(roc.get(signal_date, True)) else sc.nlargest(nb)
         if cfg["dyn_mode"] == "lever":
             overlay_panel = roc.astype(float).where(roc, cfg["dyn_n_bear"] / cfg["top_n"])
@@ -120,11 +133,9 @@ def run_candidate(**overrides):
         w = w[w.index.dayofweek == 4].reindex(cal).shift(1).ffill().fillna(1.0)
         overlay_panel = w if overlay_panel is None else overlay_panel.astype(float).where(overlay_panel.astype(bool) if overlay_panel.dtype == bool else overlay_panel >= 1.0, overlay_panel.astype(float)).combine(w, min)
     if cfg["regimes"] == 2:   # §3d tilt: bull -> bull_kind score, bear -> the base kind
-        bull_fn = make_momentum_score(returns_uni, kind=cfg["bull_kind"], lookback=cfg["lookback"], min_obs=cfg["min_obs"], skip=cfg["skip"],
-                                      vol_floor=cfg["vol_floor"], positive_only=cfg["positive_only"], candidate_fn=candidate_fn)
-        base_fn = score_fn
+        bull_fn = build_score(cfg["bull_kind"]); _tilt_base = score_fn
         def score_fn(signal_date, **_):
-            return (bull_fn if bool(roc.get(signal_date, True)) else base_fn)(signal_date)
+            return (bull_fn if bool(roc.get(signal_date, True)) else _tilt_base)(signal_date)
     # the stop (and any weekly rank check) is evaluated only on these signal dates and executed the next session
     _mon = (lambda c: monthly_on_or_after(c, cfg["rebalance_day"])) if cfg["rebalance_day"] != 1 else om.monthly_first_trading_day
     weekly = {"weekly": om.fridays, "biweekly": om.biweekly_fridays, "monthly": _mon}[cfg["stop_check"]](cal); weekly = weekly[(weekly >= start) & (weekly <= end)]
@@ -141,12 +152,13 @@ def run_candidate(**overrides):
         # engine never resizes existing holdings), so the bear book can carry some cash; reported as 'invested'.
         def top_n_fn(sd):
             return cfg["top_n"] if sd is None or bool(roc.get(sd, True)) else cfg["dyn_n_bear"]
-    if cfg["sizing"] == "invvol":
+    if cfg["sizing"] in ("invvol", "invvol_bear"):
         # inverse-volatility weights over the intended book, capped at max_weight and renormalised; vol from returns up to the
         # signal date (the entry executes the next session), so sizing never sees the entry day's return
         ivol = 1.0 / returns_uni.rolling(cfg["iv_window"], min_periods=int(cfg["iv_window"] * 0.8)).std().replace(0, np.nan)
         def size_weights(sd, symbols):
             if sd is None or sd not in ivol.index: return None
+            if cfg["sizing"] == "invvol_bear" and (roc is None or bool(roc.get(sd, True))): return None   # equal weight in bull
             v = ivol.loc[sd].reindex(symbols).dropna()
             if v.empty: return None
             w = v / v.sum()

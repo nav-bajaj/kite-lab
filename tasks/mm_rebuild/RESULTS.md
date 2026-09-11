@@ -1252,3 +1252,60 @@ Proposal for the founder: fix OM25 as **CR + the MM stack** (static, one
 action day a month), retiring the yearly refit, and offer the two books
 as the aggressive (MM, vol-adjusted momentum) and defensive (OM25,
 capture ratio) versions of the same process.
+
+## §21 — shaping capture: blended scores, regime-switched scores, regime-switched sizing (16 trials) — post-OOS
+
+Founder's target: up-capture above 1 with the down-capture kept low.
+All cells on the full stack (Nifty 250, 25 names, buffer 20, monthly,
+one action day, sector cap 5, hold ≤ 15 in bear, 20% stop, fill from
+buffer). **mix w** = rank blend, w × vol-adjusted-momentum percentile +
+(1 − w) × capture-ratio percentile, both over 252 sessions (momentum
+with the 21-session skip). **inv-vol bear / equal bull** = inverse-vol
+sizing only when the regime is bear, equal weight otherwise. Regime
+score = one score in bull, capture ratio in bear.
+
+| Cell | IS | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Wright window | Up / down (Wright window) | Up / down (2011-26) |
+|---|---|---|---|---|---|---|
+| CR, inv-vol (OM25 proposed) | 1.48 | 20.1% / 1.05 / -27% | 0.89 / 1.24 / 1.06 | 24.3% / 1.32 / -20% | 0.83 / 0.60 | 0.72 / 0.33 |
+| CR, equal weight | 1.49 | 19.8% / 0.99 / -29% | 0.76 / 1.27 / 0.96 | 24.6% / 1.26 / -22% | 0.87 / 0.68 | 0.75 / 0.36 |
+| CR, inv-vol bear / equal bull | 1.52 | 20.0% / 1.02 / -28% | 0.80 / 1.29 / 1.00 | 24.7% / 1.31 / -20% | 0.85 / 0.63 | 0.74 / 0.34 |
+| mix 25% mom / 75% CR, inv-vol | 1.61 | 20.0% / 1.00 / -26% | 0.75 / 1.31 / 0.99 | 25.4% / 1.30 / -24% | 0.92 / 0.75 | 0.76 / 0.35 |
+| mix 40 / 60, inv-vol | 1.54 | 23.3% / 1.16 / -26% | 0.77 / 1.31 / 1.42 | 30.9% / 1.54 / -23% | 1.03 / 0.72 | 0.82 / 0.36 |
+| mix 50 / 50, inv-vol | 1.32 | 24.9% / 1.21 / -29% | 0.66 / 1.40 / 1.57 | 34.3% / 1.65 / -23% | 1.09 / 0.70 | 0.85 / 0.39 |
+| mix 60 / 40, inv-vol | 1.38 | 23.6% / 1.09 / -29% | 0.55 / 1.36 / 1.35 | 32.2% / 1.46 / -23% | 1.09 / 0.81 | 0.86 / 0.42 |
+| mix 75% mom / 25% CR, inv-vol | 1.20 | 22.6% / 1.04 / -29% | 0.45 / 1.36 / 1.30 | 30.7% / 1.41 / -25% | 1.05 / 0.77 | 0.85 / 0.45 |
+| mix 50 / 50, inv-vol bear / equal bull | 1.26 | 24.9% / 1.17 / -31% | 0.50 / 1.45 / 1.57 | 35.8% / 1.68 / -23% | 1.13 / 0.72 | 0.88 / 0.43 |
+| mix 50 / 50, equal | 1.22 | 25.1% / 1.14 / -32% | 0.55 / 1.40 / 1.47 | 35.4% / 1.58 / -24% | 1.16 / 0.81 | 0.90 / 0.46 |
+| regime score: bull voladj / bear CR, inv-vol | 1.20 | 21.3% / 1.04 / -23% | 0.52 / 1.31 / 1.31 | 28.4% / 1.40 / -20% | 1.00 / 0.78 | 0.79 / 0.40 |
+| regime score: bull voladj / bear CR, inv-vol bear / equal bull | 1.10 | 21.1% / 1.00 / -23% | 0.39 / 1.35 / 1.29 | 29.3% / 1.41 / -20% | 1.03 / 0.81 | 0.80 / 0.43 |
+| regime score: bull 50/50 / bear CR, inv-vol | 0.60 | 20.3% / 0.88 / -35% | 0.22 / 1.29 / 1.19 | 29.9% / 1.37 / -21% | 1.01 / 0.72 | 0.83 / 0.55 |
+| regime score: bull mix50 / bear CR, inv-vol | 1.40 | 21.1% / 1.07 / -24% | 0.57 / 1.21 / 1.45 | 27.9% / 1.45 / -19% | 0.93 / 0.64 | 0.75 / 0.34 |
+| MM stack (voladj, inv-vol) | 1.12 | 25.2% / 1.15 / -27% | 0.69 / 1.73 / 1.10 | 32.9% / 1.44 / -27% | 1.10 / 0.77 | 0.89 / 0.45 |
+| MM stack, inv-vol bear / equal bull | 1.05 | 24.7% / 1.09 / -27% | 0.52 / 1.75 / 1.09 | 33.9% / 1.45 / -27% | 1.13 / 0.80 | 0.90 / 0.48 |
+
+Read:
+1. **The blended score does it.** 40-50% momentum / 60-50% capture
+   ratio with inverse-vol sizing: up-capture 1.03-1.09 with down-capture
+   0.70-0.72 on Wright's window (0.82-0.85 / 0.36-0.39 since 2011), OOS
+   1.16-1.21 with every sub-window above 0.6, Wright-window Sharpe
+   1.54-1.65 against Wright's own 1.31. **mix 50/50: 24.9% / 1.21 /
+   −29%, sub-windows 0.66 / 1.40 / 1.57; mix 40/60: 23.3% / 1.16 / −26%,
+   0.77 / 1.31 / 1.42.** A plateau from 40 to 60 (1.09-1.21); 25 and 75
+   fall away on one side each. Blending the scores inside one book beats
+   blending the two books (§20: 1.16, up 0.97).
+2. Regime-switched scores do not beat the blend (1.00-1.07) and
+   regime-switched sizing adds up-capture only by adding down-capture
+   (mix 50/50: 1.13 / 0.72 at −31%). Equal weight likewise.
+3. Where the blend's edge sits: 2023-26 (1.42-1.57, both scores' strong
+   years) and the down months, where the capture-ratio half keeps the
+   book out of the names that fall. Its cost against the MM stack is
+   2020-22 (1.31-1.40 against 1.73) — the pure-momentum rally.
+
+Caveat: post-OOS; §21 adds 16 cells (registry 510 unique). The blend
+weight is a plateau and the two scores were each chosen in-sample, so
+the mechanism is defensible; the level (1.21) carries the same selection
+premium as every other top cell here — plan on the process band.
+
+**Proposal:** one book, the blended score on the stack (mix 40-50), as
+the successor to both MM and OM25; or keep MM as the aggressive
+version and make the blend the OM25 successor. Founder's call.
