@@ -1,0 +1,1194 @@
+
+=== Bhavcopy: fetch missing sessions: data_pipeline.master_store.fetch_bhavcopy --start 2026-08-22
+/Users/navdeep/kite-lab/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+done: fetched 0 holidays 7 errors 0 skipped 14
+    -> ok in 3s
+
+=== Bhavcopy: symbol master + parquet: data_pipeline.master_store.build_symbol_master
+[1] bhavcopy ...
+  bhavcopy 500/5380
+  bhavcopy 1000/5380
+  bhavcopy 1500/5380
+  bhavcopy 2000/5380
+  bhavcopy 2500/5380
+  bhavcopy 3000/5380
+  bhavcopy 3500/5380
+  bhavcopy 4000/5380
+  bhavcopy 4500/5380
+  bhavcopy 5000/5380
+    dropping 383,525 fund/ETF rows (515 symbols)
+    8,565,752 equity rows, 2005-01-03 -> 2026-09-09, 5380 days, ISIN present on 78% of rows
+    first bhavcopy day with ISIN: 2011-06-22
+[2] filing names + symbol sightings ...
+    42,427 symbol sightings in filings, 2000-01-03 -> 2026-09-10
+[3] symbol windows ...
+    rename detector: 558 PREVCLOSE-matched renames, 41 not in NSE's master
+    symbol-change master: 1099 renames, 711 pre-ISIN blocks chained
+    5,438 (isin, symbol) windows; 4,853 ISINs; 41 symbol-only (never joined to an ISIN)
+[4] names ...
+    7,487 (isin, name) pairs over 5,476 ISINs, 2000-01-03 -> 2026-09-10
+[5] resolve reconstruction leftovers ...
+method    isin-only  manual-isin  manual-isin+symbol-chain  manual-symbol  manual-symbol+isin-set  namechange-master  norm-exact  norm-exact+isin-set  norm-exact+symbol-chain  token-exact  unresolved
+index                                                                                                                                                                                                  
+nifty100          8            3                         1              4                       0                  3          30                    0                        0            2           8
+nifty250          3           28                         1             14                       2                  2         104                    4                        0            2           3
+nifty50           5            1                         1              0                       0                  0          11                    0                        0            1          17
+nse500           90           50                         1             50                       8                  6         224                    3                        6            2         137
+    resolved to a traded symbol: {'nifty100': 38, 'nifty250': 119, 'nifty50': 14, 'nse500': 274}
+    -> ok in 32s
+
+=== Bhavcopy: per-symbol raw series: data_pipeline.master_store.export_bhavcopy_series
+  extra_targets.csv: +1193 symbols beyond the index-member list
+  200/2533
+  400/2533
+  600/2533
+  800/2533
+  1000/2533
+  1200/2533
+  1400/2533
+  1600/2533
+  1800/2533
+  2000/2533
+  2200/2533
+  2400/2533
+written 2519, no rows 14, flagged delisted 560; archive end 2026-09-09
+    -> ok in 45s
+
+=== Corporate actions: NSE filings (this year): data_pipeline.master_store.fetch_nse_ca --start-year 2026
+/Users/navdeep/kite-lab/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+2026Q3: 927 rows
+done: 927 rows
+    -> ok in 4s
+
+=== Corporate actions: table: data_pipeline.master_store.build_corporate_actions
+filings read: 42,514  ->  price-relevant events: 25,584
+                   n  unparsed       first        last
+type                                                  
+bonus            724         0  2000-04-26  2026-09-11
+consolidation     38         0  2006-10-27  2025-06-25
+demerger         110       110  2000-09-27  2026-09-07
+dividend       23456         8  2000-02-16  2026-09-11
+rights           350       350  2005-08-17  2026-08-28
+split            906         0  2005-01-13  2026-09-04
+
+unparsed dividend subjects, sample:
+Annual General Meeting/ Dividend - Re 0.0 Per S...
+Annual General Meeting/Dividend - Re 0..30 Per ...
+                     Dividend - Rs 0 .70 Per Share
+   Annual General Meeting/Dividend - Rs  Per Share
+     Annual General Meeting/Dividend - Rs  Per Sh/
+    -> ok in 2s
+
+=== Corporate actions: observed events: data_pipeline.master_store.derive_observed_events
+                     n  symbols
+source                         
+bhavcopy-observed  565      126
+kite-observed      121      103
+factor distribution (kite-observed): {0.5: 18, 0.2: 17, 0.1: 9, 0.9090909090909091: 8, 0.8181818181818182: 6, 0.6666666666666666: 4, 0.9: 4, 0.4: 3}
+    -> ok in 13s
+
+=== Kite: append last sessions: data_pipeline.master_store.fetch_kite --since-days 20
+/Users/navdeep/kite-lab/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+targets: 1329 (967 NSE, 75 BSE, 287 not on Kite)
+  ERR 20MICRONS (NSE): Incorrect `api_key` or `access_token`.
+  ERR 360ONE (NSE): Incorrect `api_key` or `access_token`.
+  ERR 3IINFOLTD (BSE): Incorrect `api_key` or `access_token`.
+  ERR 3MINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR 63MOONS (NSE): Incorrect `api_key` or `access_token`.
+  ERR SECURKLOUD (NSE): Incorrect `api_key` or `access_token`.
+  ERR AADHARHFC (NSE): Incorrect `api_key` or `access_token`.
+  ERR AARTIDRUGS (NSE): Incorrect `api_key` or `access_token`.
+  ERR AARTIIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR AAVAS (NSE): Incorrect `api_key` or `access_token`.
+  ERR ABAN (BSE): Incorrect `api_key` or `access_token`.
+  ERR ABB (NSE): Incorrect `api_key` or `access_token`.
+  ERR ABBOTINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR ABCAPITAL (NSE): Incorrect `api_key` or `access_token`.
+  ERR ABDL (NSE): Incorrect `api_key` or `access_token`.
+  ERR ABFRL (NSE): Incorrect `api_key` or `access_token`.
+  ERR ABLBL (NSE): Incorrect `api_key` or `access_token`.
+  ERR ABREL (NSE): Incorrect `api_key` or `access_token`.
+  ERR ABSLAMC (NSE): Incorrect `api_key` or `access_token`.
+  ERR ACC (NSE): Incorrect `api_key` or `access_token`.
+  ERR ACE (NSE): Incorrect `api_key` or `access_token`.
+  ERR ACI (NSE): Incorrect `api_key` or `access_token`.
+  ERR ACMESOLAR (NSE): Incorrect `api_key` or `access_token`.
+  ERR ACUTAAS (NSE): Incorrect `api_key` or `access_token`.
+  ERR ADANIENSOL (NSE): Incorrect `api_key` or `access_token`.
+  ERR ADANIENT (NSE): Incorrect `api_key` or `access_token`.
+  ERR ADANIGREEN (NSE): Incorrect `api_key` or `access_token`.
+  ERR ADANIPORTS (NSE): Incorrect `api_key` or `access_token`.
+  ERR ADANIPOWER (NSE): Incorrect `api_key` or `access_token`.
+  ERR IMAGICAA (NSE): Incorrect `api_key` or `access_token`.
+  ERR ADOR (NSE): Incorrect `api_key` or `access_token`.
+  ERR ADSL (NSE): Incorrect `api_key` or `access_token`.
+  ERR ADVENZYMES (NSE): Incorrect `api_key` or `access_token`.
+  ERR AEGISLOG (NSE): Incorrect `api_key` or `access_token`.
+  ERR AEGISVOPAK (NSE): Incorrect `api_key` or `access_token`.
+  ERR AETHER (NSE): Incorrect `api_key` or `access_token`.
+  ERR AFCONS (NSE): Incorrect `api_key` or `access_token`.
+  ERR AFFLE (NSE): Incorrect `api_key` or `access_token`.
+  ERR AGARWALEYE (NSE): Incorrect `api_key` or `access_token`.
+  ERR BBOX (NSE): Incorrect `api_key` or `access_token`.
+  ERR AHLUCONT (NSE): Incorrect `api_key` or `access_token`.
+  ERR AIAENG (NSE): Incorrect `api_key` or `access_token`.
+  ERR AIIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR AJANTPHARM (NSE): Incorrect `api_key` or `access_token`.
+  ERR AKSHOPTFBR (BSE): Incorrect `api_key` or `access_token`.
+  ERR AKUMS (NSE): Incorrect `api_key` or `access_token`.
+  ERR ALEMBICLTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR ALIVUS (NSE): Incorrect `api_key` or `access_token`.
+  ERR ALKEM (NSE): Incorrect `api_key` or `access_token`.
+  ERR ALKYLAMINE (NSE): Incorrect `api_key` or `access_token`.
+  ERR ALLCARGO (NSE): Incorrect `api_key` or `access_token`.
+  ERR ALOKINDS (NSE): Incorrect `api_key` or `access_token`.
+  ERR AMBER (NSE): Incorrect `api_key` or `access_token`.
+  ERR AMBUJACEM (NSE): Incorrect `api_key` or `access_token`.
+  ERR ANANDRATHI (NSE): Incorrect `api_key` or `access_token`.
+  ERR ANANTRAJ (NSE): Incorrect `api_key` or `access_token`.
+  ERR ANDHRSUGAR (NSE): Incorrect `api_key` or `access_token`.
+  ERR ANGELONE (NSE): Incorrect `api_key` or `access_token`.
+  ERR ANSALAPI (BSE): Incorrect `api_key` or `access_token`.
+  ERR ANTHEM (NSE): Incorrect `api_key` or `access_token`.
+  ERR ANURAS (NSE): Incorrect `api_key` or `access_token`.
+  ERR APARINDS (NSE): Incorrect `api_key` or `access_token`.
+  ERR APLAPOLLO (NSE): Incorrect `api_key` or `access_token`.
+  ERR APLLTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR APOLLOHOSP (NSE): Incorrect `api_key` or `access_token`.
+  ERR APOLLOTYRE (NSE): Incorrect `api_key` or `access_token`.
+  ERR APTECHT (BSE): Incorrect `api_key` or `access_token`.
+  ERR APTUS (NSE): Incorrect `api_key` or `access_token`.
+  ERR ARCHIES (NSE): Incorrect `api_key` or `access_token`.
+  ERR ARE&M (NSE): Incorrect `api_key` or `access_token`.
+  ERR ARSHIYA (BSE): Incorrect `api_key` or `access_token`.
+  ERR ARVIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR ARVINDFASN (NSE): Incorrect `api_key` or `access_token`.
+  ERR ASAHIINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR ASHIANA (NSE): Incorrect `api_key` or `access_token`.
+  ERR ASHIMASYN (NSE): Incorrect `api_key` or `access_token`.
+  ERR ASHOKA (NSE): Incorrect `api_key` or `access_token`.
+  ERR ASHOKLEY (NSE): Incorrect `api_key` or `access_token`.
+  ERR ASIANHOTNR (NSE): Incorrect `api_key` or `access_token`.
+  ERR ASIANPAINT (NSE): Incorrect `api_key` or `access_token`.
+  ERR ASTERDM (NSE): Incorrect `api_key` or `access_token`.
+  ERR ASTRAZEN (NSE): Incorrect `api_key` or `access_token`.
+  ERR ASTRAL (NSE): Incorrect `api_key` or `access_token`.
+  ERR SUNDROP (NSE): Incorrect `api_key` or `access_token`.
+  ERR ATGL (NSE): Incorrect `api_key` or `access_token`.
+  ERR ATHERENERG (NSE): Incorrect `api_key` or `access_token`.
+  ERR ATLASCYCLE (NSE): Incorrect `api_key` or `access_token`.
+  ERR ATUL (NSE): Incorrect `api_key` or `access_token`.
+  ERR ATVPR (BSE): Incorrect `api_key` or `access_token`.
+  ERR AUBANK (NSE): Incorrect `api_key` or `access_token`.
+  ERR AUROPHARMA (NSE): Incorrect `api_key` or `access_token`.
+  ERR AUTOAXLES (NSE): Incorrect `api_key` or `access_token`.
+  ERR AUTOIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR AVANTIFEED (NSE): Incorrect `api_key` or `access_token`.
+  ERR SANOFI (NSE): Incorrect `api_key` or `access_token`.
+  ERR AWL (NSE): Incorrect `api_key` or `access_token`.
+  ERR AXISBANK (NSE): Incorrect `api_key` or `access_token`.
+  ERR AZAD (NSE): Incorrect `api_key` or `access_token`.
+  ERR AZTEC (BSE): Incorrect `api_key` or `access_token`.
+  ERR BAGMANE (BSE): Incorrect `api_key` or `access_token`.
+  ERR BAJAJ-AUTO (NSE): Incorrect `api_key` or `access_token`.
+  ERR BAJAJCON (NSE): Incorrect `api_key` or `access_token`.
+  ERR BAJAJELEC (NSE): Incorrect `api_key` or `access_token`.
+  ERR BAJAJFINSV (NSE): Incorrect `api_key` or `access_token`.
+  ERR BAJAJHFL (NSE): Incorrect `api_key` or `access_token`.
+  ERR BAJAJHIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR BAJAJHLDNG (NSE): Incorrect `api_key` or `access_token`.
+  ERR BAJFINANCE (NSE): Incorrect `api_key` or `access_token`.
+  ERR BALAJITELE (NSE): Incorrect `api_key` or `access_token`.
+  ERR BALAMINES (NSE): Incorrect `api_key` or `access_token`.
+  ERR BALKRISIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR BALMLAWRIE (NSE): Incorrect `api_key` or `access_token`.
+  ERR BALRAMCHIN (NSE): Incorrect `api_key` or `access_token`.
+  ERR BANARISUG (NSE): Incorrect `api_key` or `access_token`.
+  ERR BANCOINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR BANDHANBNK (NSE): Incorrect `api_key` or `access_token`.
+  ERR BANKBARODA (NSE): Incorrect `api_key` or `access_token`.
+  ERR BANKINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR BARODARY (BSE): Incorrect `api_key` or `access_token`.
+  ERR BASF (NSE): Incorrect `api_key` or `access_token`.
+  ERR BATAINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR BAYERCROP (NSE): Incorrect `api_key` or `access_token`.
+  ERR BBL (NSE): Incorrect `api_key` or `access_token`.
+  ERR BBTC (NSE): Incorrect `api_key` or `access_token`.
+  ERR BCG (NSE): Incorrect `api_key` or `access_token`.
+  ERR BDL (NSE): Incorrect `api_key` or `access_token`.
+  ERR BEL (NSE): Incorrect `api_key` or `access_token`.
+  ERR BELRISE (NSE): Incorrect `api_key` or `access_token`.
+  ERR BEML (NSE): Incorrect `api_key` or `access_token`.
+  ERR BEPL (NSE): Incorrect `api_key` or `access_token`.
+  ERR BERGEPAINT (NSE): Incorrect `api_key` or `access_token`.
+  ERR BFUTILITIE (NSE): Incorrect `api_key` or `access_token`.
+  ERR BGRENERGY (BSE): Incorrect `api_key` or `access_token`.
+  ERR BHARATCOAL (NSE): Incorrect `api_key` or `access_token`.
+  ERR BHARATFORG (NSE): Incorrect `api_key` or `access_token`.
+  ERR BHARATRAS (NSE): Incorrect `api_key` or `access_token`.
+  ERR BHARTIARTL (NSE): Incorrect `api_key` or `access_token`.
+  ERR BHARTIHEXA (NSE): Incorrect `api_key` or `access_token`.
+  ERR BHEL (NSE): Incorrect `api_key` or `access_token`.
+  ERR BIKAJI (NSE): Incorrect `api_key` or `access_token`.
+  ERR OSWALGREEN (NSE): Incorrect `api_key` or `access_token`.
+  ERR BIOCON (NSE): Incorrect `api_key` or `access_token`.
+  ERR BIRET (BSE): Incorrect `api_key` or `access_token`.
+  ERR BIRLACORPN (NSE): Incorrect `api_key` or `access_token`.
+  ERR BIRLACABLE (NSE): Incorrect `api_key` or `access_token`.
+  ERR BLISSGVS (BSE): Incorrect `api_key` or `access_token`.
+  ERR BLKASHYAP (NSE): Incorrect `api_key` or `access_token`.
+  ERR BLS (NSE): Incorrect `api_key` or `access_token`.
+  ERR BLUEDART (NSE): Incorrect `api_key` or `access_token`.
+  ERR BLUEJET (NSE): Incorrect `api_key` or `access_token`.
+  ERR BLUESTARCO (NSE): Incorrect `api_key` or `access_token`.
+  ERR BOMDYEING (NSE): Incorrect `api_key` or `access_token`.
+  ERR BORORENEW (NSE): Incorrect `api_key` or `access_token`.
+  ERR BOSCHLTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR BPCL (NSE): Incorrect `api_key` or `access_token`.
+  ERR BPL (NSE): Incorrect `api_key` or `access_token`.
+  ERR BRIGADE (NSE): Incorrect `api_key` or `access_token`.
+  ERR BRITANNIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR BSE (NSE): Incorrect `api_key` or `access_token`.
+  ERR BSL (NSE): Incorrect `api_key` or `access_token`.
+  ERR BSOFT (NSE): Incorrect `api_key` or `access_token`.
+  ERR CAMLINFINE (NSE): Incorrect `api_key` or `access_token`.
+  ERR CAMPUS (NSE): Incorrect `api_key` or `access_token`.
+  ERR CAMS (NSE): Incorrect `api_key` or `access_token`.
+  ERR CANBK (NSE): Incorrect `api_key` or `access_token`.
+  ERR CANFINHOME (NSE): Incorrect `api_key` or `access_token`.
+  ERR CANHLIFE (NSE): Incorrect `api_key` or `access_token`.
+  ERR CAPLIPOINT (NSE): Incorrect `api_key` or `access_token`.
+  ERR CAPRIHANS (BSE): Incorrect `api_key` or `access_token`.
+  ERR CARBORUNIV (NSE): Incorrect `api_key` or `access_token`.
+  ERR CARERATING (NSE): Incorrect `api_key` or `access_token`.
+  ERR CARTRADE (NSE): Incorrect `api_key` or `access_token`.
+  ERR CASTROLIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR CCL (NSE): Incorrect `api_key` or `access_token`.
+  ERR CDSL (NSE): Incorrect `api_key` or `access_token`.
+  ERR CEATLTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR CELLO (NSE): Incorrect `api_key` or `access_token`.
+  ERR CEMPRO (NSE): Incorrect `api_key` or `access_token`.
+  ERR CENTENKA (NSE): Incorrect `api_key` or `access_token`.
+  ERR CENTRALBK (NSE): Incorrect `api_key` or `access_token`.
+  ERR CENTURYPLY (NSE): Incorrect `api_key` or `access_token`.
+  ERR CERA (NSE): Incorrect `api_key` or `access_token`.
+  ERR CESC (NSE): Incorrect `api_key` or `access_token`.
+  ERR CGCL (NSE): Incorrect `api_key` or `access_token`.
+  ERR CGPOWER (NSE): Incorrect `api_key` or `access_token`.
+  ERR CHALET (NSE): Incorrect `api_key` or `access_token`.
+  ERR CHAMBLFERT (NSE): Incorrect `api_key` or `access_token`.
+  ERR CHEMPLASTS (NSE): Incorrect `api_key` or `access_token`.
+  ERR CHENNPETRO (NSE): Incorrect `api_key` or `access_token`.
+  ERR CHOICEIN (NSE): Incorrect `api_key` or `access_token`.
+  ERR CHOLAFIN (NSE): Incorrect `api_key` or `access_token`.
+  ERR CHOLAHLDNG (NSE): Incorrect `api_key` or `access_token`.
+  ERR CHOWGULSTM (BSE): Incorrect `api_key` or `access_token`.
+  ERR CIEINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR CINEVISTA (NSE): Incorrect `api_key` or `access_token`.
+  ERR CIPLA (NSE): Incorrect `api_key` or `access_token`.
+  ERR CLEAN (NSE): Incorrect `api_key` or `access_token`.
+  ERR CLEANMAX (NSE): Incorrect `api_key` or `access_token`.
+  ERR SUDARCOLOR (NSE): Incorrect `api_key` or `access_token`.
+  ERR CMPDI (NSE): Incorrect `api_key` or `access_token`.
+  ERR COALINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR COCHINSHIP (NSE): Incorrect `api_key` or `access_token`.
+  ERR COFFEEDAY (NSE): Incorrect `api_key` or `access_token`.
+  ERR COFORGE (NSE): Incorrect `api_key` or `access_token`.
+  ERR COHANCE (NSE): Incorrect `api_key` or `access_token`.
+  ERR COLPAL (NSE): Incorrect `api_key` or `access_token`.
+  ERR CONCOR (NSE): Incorrect `api_key` or `access_token`.
+  ERR CONCORDBIO (NSE): Incorrect `api_key` or `access_token`.
+  ERR COROMANDEL (NSE): Incorrect `api_key` or `access_token`.
+  ERR COSMOFIRST (NSE): Incorrect `api_key` or `access_token`.
+  ERR CPPLUS (NSE): Incorrect `api_key` or `access_token`.
+  ERR CRAFTSMAN (NSE): Incorrect `api_key` or `access_token`.
+  ERR CREATIVEYE (NSE): Incorrect `api_key` or `access_token`.
+  ERR CREDITACC (NSE): Incorrect `api_key` or `access_token`.
+  ERR CRISIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR CROMPTON (NSE): Incorrect `api_key` or `access_token`.
+  ERR CSBBANK (NSE): Incorrect `api_key` or `access_token`.
+  ERR CUB (NSE): Incorrect `api_key` or `access_token`.
+  ERR CUMMINSIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR CUPID (NSE): Incorrect `api_key` or `access_token`.
+  ERR CYBERTECH (BSE): Incorrect `api_key` or `access_token`.
+  ERR CYIENT (NSE): Incorrect `api_key` or `access_token`.
+  ERR SMARTLINK (BSE): Incorrect `api_key` or `access_token`.
+  ERR DABUR (NSE): Incorrect `api_key` or `access_token`.
+  ERR DALBHARAT (NSE): Incorrect `api_key` or `access_token`.
+  ERR DALMIASUG (NSE): Incorrect `api_key` or `access_token`.
+  ERR DATAPATTNS (NSE): Incorrect `api_key` or `access_token`.
+  ERR DBCORP (NSE): Incorrect `api_key` or `access_token`.
+  ERR DBL (NSE): Incorrect `api_key` or `access_token`.
+  ERR DBREALTY (NSE): Incorrect `api_key` or `access_token`.
+  ERR DCAL (NSE): Incorrect `api_key` or `access_token`.
+  ERR DCBBANK (NSE): Incorrect `api_key` or `access_token`.
+  ERR DCMSHRIRAM (NSE): Incorrect `api_key` or `access_token`.
+  ERR DCW (NSE): Incorrect `api_key` or `access_token`.
+  ERR DEEPAKFERT (NSE): Incorrect `api_key` or `access_token`.
+  ERR DEEPAKNTR (NSE): Incorrect `api_key` or `access_token`.
+  ERR DELHIVERY (NSE): Incorrect `api_key` or `access_token`.
+  ERR DELTACORP (NSE): Incorrect `api_key` or `access_token`.
+  ERR DEN (NSE): Incorrect `api_key` or `access_token`.
+  ERR DEVYANI (NSE): Incorrect `api_key` or `access_token`.
+  ERR DHAMPURSUG (NSE): Incorrect `api_key` or `access_token`.
+  ERR DHANBANK (NSE): Incorrect `api_key` or `access_token`.
+  ERR DHANUKA (NSE): Incorrect `api_key` or `access_token`.
+  ERR DICIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR DIGJAMLMTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR DISHTV (NSE): Incorrect `api_key` or `access_token`.
+  ERR DIVISLAB (NSE): Incorrect `api_key` or `access_token`.
+  ERR DIXON (NSE): Incorrect `api_key` or `access_token`.
+  ERR DLF (NSE): Incorrect `api_key` or `access_token`.
+  ERR DMART (NSE): Incorrect `api_key` or `access_token`.
+  ERR DOMS (NSE): Incorrect `api_key` or `access_token`.
+  ERR DONEAR (NSE): Incorrect `api_key` or `access_token`.
+  ERR DREDGECORP (NSE): Incorrect `api_key` or `access_token`.
+  ERR DRREDDY (NSE): Incorrect `api_key` or `access_token`.
+  ERR DSKULKARNI (BSE): Incorrect `api_key` or `access_token`.
+  ERR DWARKESH (NSE): Incorrect `api_key` or `access_token`.
+  ERR DYNAMATECH (NSE): Incorrect `api_key` or `access_token`.
+  ERR EASEMYTRIP (NSE): Incorrect `api_key` or `access_token`.
+  ERR ECLERX (NSE): Incorrect `api_key` or `access_token`.
+  ERR EDELWEISS (NSE): Incorrect `api_key` or `access_token`.
+  ERR EICHERMOT (NSE): Incorrect `api_key` or `access_token`.
+  ERR EIDPARRY (NSE): Incorrect `api_key` or `access_token`.
+  ERR EIHOTEL (NSE): Incorrect `api_key` or `access_token`.
+  ERR EKC (NSE): Incorrect `api_key` or `access_token`.
+  ERR ELECON (NSE): Incorrect `api_key` or `access_token`.
+  ERR ELECTCAST (NSE): Incorrect `api_key` or `access_token`.
+  ERR ELGIEQUIP (NSE): Incorrect `api_key` or `access_token`.
+  ERR ELGIRUBCO (NSE): Incorrect `api_key` or `access_token`.
+  ERR EMAMILTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR EMBASSY (BSE): Incorrect `api_key` or `access_token`.
+  ERR EMCURE (NSE): Incorrect `api_key` or `access_token`.
+  ERR EMMVEE (NSE): Incorrect `api_key` or `access_token`.
+  ERR ENDURANCE (NSE): Incorrect `api_key` or `access_token`.
+  ERR ENGINERSIN (NSE): Incorrect `api_key` or `access_token`.
+  ERR ENIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR ENRIN (NSE): Incorrect `api_key` or `access_token`.
+  ERR EPIGRAL (NSE): Incorrect `api_key` or `access_token`.
+  ERR EPL (NSE): Incorrect `api_key` or `access_token`.
+  ERR EQUITASBNK (NSE): Incorrect `api_key` or `access_token`.
+  ERR ERIS (NSE): Incorrect `api_key` or `access_token`.
+  ERR ESABINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR ESCORTS (NSE): Incorrect `api_key` or `access_token`.
+  ERR ETERNAL (NSE): Incorrect `api_key` or `access_token`.
+  ERR EVEREADY (NSE): Incorrect `api_key` or `access_token`.
+  ERR EVERESTIND (BSE): Incorrect `api_key` or `access_token`.
+  ERR EXIDEIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR FACT (NSE): Incorrect `api_key` or `access_token`.
+  ERR FDC (NSE): Incorrect `api_key` or `access_token`.
+  ERR FEDERALBNK (NSE): Incorrect `api_key` or `access_token`.
+  ERR FGP (BSE): Incorrect `api_key` or `access_token`.
+  ERR FINCABLES (NSE): Incorrect `api_key` or `access_token`.
+  ERR FINEORG (NSE): Incorrect `api_key` or `access_token`.
+  ERR FINPIPE (NSE): Incorrect `api_key` or `access_token`.
+  ERR FIRSTCRY (NSE): Incorrect `api_key` or `access_token`.
+  ERR FIVESTAR (NSE): Incorrect `api_key` or `access_token`.
+  ERR FLEXITUFF (BSE): Incorrect `api_key` or `access_token`.
+  ERR FLFL (BSE): Incorrect `api_key` or `access_token`.
+  ERR FLUOROCHEM (NSE): Incorrect `api_key` or `access_token`.
+  ERR FMGOETZE (NSE): Incorrect `api_key` or `access_token`.
+  ERR FORCEMOT (NSE): Incorrect `api_key` or `access_token`.
+  ERR FORTIS (NSE): Incorrect `api_key` or `access_token`.
+  ERR FOSECOIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR FRACTAL (NSE): Incorrect `api_key` or `access_token`.
+  ERR FEL (BSE): Incorrect `api_key` or `access_token`.
+  ERR FSL (NSE): Incorrect `api_key` or `access_token`.
+  ERR GABRIEL (NSE): Incorrect `api_key` or `access_token`.
+  ERR GAEL (NSE): Incorrect `api_key` or `access_token`.
+  ERR GAIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR GALAXYSURF (NSE): Incorrect `api_key` or `access_token`.
+  ERR GALLANTT (NSE): Incorrect `api_key` or `access_token`.
+  ERR GANESHBE (BSE): Incorrect `api_key` or `access_token`.
+  ERR GARFIBRES (NSE): Incorrect `api_key` or `access_token`.
+  ERR GATEWAY (NSE): Incorrect `api_key` or `access_token`.
+  ERR GAYAPROJ (NSE): Incorrect `api_key` or `access_token`.
+  ERR GEOJITFSL (NSE): Incorrect `api_key` or `access_token`.
+  ERR GVPIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR GESHIP (NSE): Incorrect `api_key` or `access_token`.
+  ERR GVT&D (NSE): Incorrect `api_key` or `access_token`.
+  ERR GHCL (NSE): Incorrect `api_key` or `access_token`.
+  ERR GICRE (NSE): Incorrect `api_key` or `access_token`.
+  ERR GILLETTE (NSE): Incorrect `api_key` or `access_token`.
+  ERR GIPCL (NSE): Incorrect `api_key` or `access_token`.
+  ERR GLAND (NSE): Incorrect `api_key` or `access_token`.
+  ERR GLAXO (NSE): Incorrect `api_key` or `access_token`.
+  ERR GLENMARK (NSE): Incorrect `api_key` or `access_token`.
+  ERR GLFL (NSE): Incorrect `api_key` or `access_token`.
+  ERR GMDCLTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR GMMPFAUDLR (NSE): Incorrect `api_key` or `access_token`.
+  ERR GMRAIRPORT (NSE): Incorrect `api_key` or `access_token`.
+  ERR GNFC (NSE): Incorrect `api_key` or `access_token`.
+  ERR GOCOLORS (NSE): Incorrect `api_key` or `access_token`.
+  ERR GODFRYPHLP (NSE): Incorrect `api_key` or `access_token`.
+  ERR GODIGIT (NSE): Incorrect `api_key` or `access_token`.
+  ERR GODREJAGRO (NSE): Incorrect `api_key` or `access_token`.
+  ERR GODREJCP (NSE): Incorrect `api_key` or `access_token`.
+  ERR GODREJIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR GODREJPROP (NSE): Incorrect `api_key` or `access_token`.
+  ERR GOKEX (NSE): Incorrect `api_key` or `access_token`.
+  ERR GOLDENTOBC (BSE): Incorrect `api_key` or `access_token`.
+  ERR GOODRICKE (BSE): Incorrect `api_key` or `access_token`.
+  ERR GOODYEAR (NSE): Incorrect `api_key` or `access_token`.
+  ERR GPIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR GPPL (NSE): Incorrect `api_key` or `access_token`.
+  ERR GRANULES (NSE): Incorrect `api_key` or `access_token`.
+  ERR GRAPHITE (NSE): Incorrect `api_key` or `access_token`.
+  ERR GRASIM (NSE): Incorrect `api_key` or `access_token`.
+  ERR GRAVITA (NSE): Incorrect `api_key` or `access_token`.
+  ERR GREAVESCOT (NSE): Incorrect `api_key` or `access_token`.
+  ERR GREENPANEL (NSE): Incorrect `api_key` or `access_token`.
+  ERR GREENPLY (NSE): Incorrect `api_key` or `access_token`.
+  ERR GRINDWELL (NSE): Incorrect `api_key` or `access_token`.
+  ERR GRINFRA (NSE): Incorrect `api_key` or `access_token`.
+  ERR GROWW (NSE): Incorrect `api_key` or `access_token`.
+  ERR GRSE (NSE): Incorrect `api_key` or `access_token`.
+  ERR GSFC (NSE): Incorrect `api_key` or `access_token`.
+  ERR GTL (NSE): Incorrect `api_key` or `access_token`.
+  ERR GTLINFRA (NSE): Incorrect `api_key` or `access_token`.
+  ERR GTNINDS (BSE): Incorrect `api_key` or `access_token`.
+  ERR GUJALKALI (NSE): Incorrect `api_key` or `access_token`.
+  ERR GUJENERGY (NSE): Incorrect `api_key` or `access_token`.
+  ERR GULFOILLUB (NSE): Incorrect `api_key` or `access_token`.
+  ERR GVKPIL (BSE): Incorrect `api_key` or `access_token`.
+  ERR HAL (NSE): Incorrect `api_key` or `access_token`.
+  ERR HAPPSTMNDS (NSE): Incorrect `api_key` or `access_token`.
+  ERR HAPPYFORGE (NSE): Incorrect `api_key` or `access_token`.
+  ERR HARRMALAYA (NSE): Incorrect `api_key` or `access_token`.
+  ERR HATHWAY (NSE): Incorrect `api_key` or `access_token`.
+  ERR HATSUN (NSE): Incorrect `api_key` or `access_token`.
+  ERR HAVELLS (NSE): Incorrect `api_key` or `access_token`.
+  ERR HBLENGINE (NSE): Incorrect `api_key` or `access_token`.
+  ERR HCC (NSE): Incorrect `api_key` or `access_token`.
+  ERR HCL-INSYS (NSE): Incorrect `api_key` or `access_token`.
+  ERR HCLTECH (NSE): Incorrect `api_key` or `access_token`.
+  ERR HDBFS (NSE): Incorrect `api_key` or `access_token`.
+  ERR HDFCAMC (NSE): Incorrect `api_key` or `access_token`.
+  ERR HDFCBANK (NSE): Incorrect `api_key` or `access_token`.
+  ERR HDFCLIFE (NSE): Incorrect `api_key` or `access_token`.
+  ERR HDIL (BSE): Incorrect `api_key` or `access_token`.
+  ERR HEG (BSE): Incorrect `api_key` or `access_token`.
+  ERR HEIDELBERG (NSE): Incorrect `api_key` or `access_token`.
+  ERR HEMIPROP (NSE): Incorrect `api_key` or `access_token`.
+  ERR HERITGFOOD (NSE): Incorrect `api_key` or `access_token`.
+  ERR HEROMOTOCO (NSE): Incorrect `api_key` or `access_token`.
+  ERR HEXT (NSE): Incorrect `api_key` or `access_token`.
+  ERR HFCL (BSE): Incorrect `api_key` or `access_token`.
+  ERR HGS (NSE): Incorrect `api_key` or `access_token`.
+  ERR HIKAL (NSE): Incorrect `api_key` or `access_token`.
+  ERR HIMATSEIDE (NSE): Incorrect `api_key` or `access_token`.
+  ERR HINDALCO (NSE): Incorrect `api_key` or `access_token`.
+  ERR HINDCOPPER (NSE): Incorrect `api_key` or `access_token`.
+  ERR HINDMOTORS (BSE): Incorrect `api_key` or `access_token`.
+  ERR HINDOILEXP (NSE): Incorrect `api_key` or `access_token`.
+  ERR HINDPETRO (NSE): Incorrect `api_key` or `access_token`.
+  ERR AGI (NSE): Incorrect `api_key` or `access_token`.
+  ERR HINDUNILVR (NSE): Incorrect `api_key` or `access_token`.
+  ERR HINDZINC (NSE): Incorrect `api_key` or `access_token`.
+  ERR BOSCH-HCIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR HLEGLAS (NSE): Incorrect `api_key` or `access_token`.
+  ERR HMT (BSE): Incorrect `api_key` or `access_token`.
+  ERR HMVL (BSE): Incorrect `api_key` or `access_token`.
+  ERR HOCL (BSE): Incorrect `api_key` or `access_token`.
+  ERR HOMEFIRST (NSE): Incorrect `api_key` or `access_token`.
+  ERR HONASA (NSE): Incorrect `api_key` or `access_token`.
+  ERR HONAUT (NSE): Incorrect `api_key` or `access_token`.
+  ERR HONDAPOWER (NSE): Incorrect `api_key` or `access_token`.
+  ERR PGIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR HLVLTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR HSCL (NSE): Incorrect `api_key` or `access_token`.
+  ERR HSIL (BSE): Incorrect `api_key` or `access_token`.
+  ERR HTMEDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR HUBTOWN (NSE): Incorrect `api_key` or `access_token`.
+  ERR HUDCO (NSE): Incorrect `api_key` or `access_token`.
+  ERR HUHTAMAKI (NSE): Incorrect `api_key` or `access_token`.
+  ERR HYUNDAI (NSE): Incorrect `api_key` or `access_token`.
+  ERR EMBDL (NSE): Incorrect `api_key` or `access_token`.
+  ERR IBULLSLTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR ICICIAMC (NSE): Incorrect `api_key` or `access_token`.
+  ERR ICICIBANK (NSE): Incorrect `api_key` or `access_token`.
+  ERR ICICIGI (NSE): Incorrect `api_key` or `access_token`.
+  ERR ICICIPRULI (NSE): Incorrect `api_key` or `access_token`.
+  ERR ICIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR ICRA (NSE): Incorrect `api_key` or `access_token`.
+  ERR IDBI (NSE): Incorrect `api_key` or `access_token`.
+  ERR IDEA (NSE): Incorrect `api_key` or `access_token`.
+  ERR IDFCFIRSTB (NSE): Incorrect `api_key` or `access_token`.
+  ERR IEX (NSE): Incorrect `api_key` or `access_token`.
+  ERR IFBIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR IFCI (NSE): Incorrect `api_key` or `access_token`.
+  ERR IGARASHI (NSE): Incorrect `api_key` or `access_token`.
+  ERR IGIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR IGL (NSE): Incorrect `api_key` or `access_token`.
+  ERR IGPL (NSE): Incorrect `api_key` or `access_token`.
+  ERR IIFL (NSE): Incorrect `api_key` or `access_token`.
+  ERR IKS (NSE): Incorrect `api_key` or `access_token`.
+  ERR IL&FSENGG (BSE): Incorrect `api_key` or `access_token`.
+  ERR IL&FSTRANS (BSE): Incorrect `api_key` or `access_token`.
+  ERR IMFA (NSE): Incorrect `api_key` or `access_token`.
+  ERR INDGN (NSE): Incorrect `api_key` or `access_token`.
+  ERR INDHOTEL (NSE): Incorrect `api_key` or `access_token`.
+  ERR INDIACEM (NSE): Incorrect `api_key` or `access_token`.
+  ERR INDIAGLYCO (BSE): Incorrect `api_key` or `access_token`.
+  ERR INDIAMART (NSE): Incorrect `api_key` or `access_token`.
+  ERR INDIANB (NSE): Incorrect `api_key` or `access_token`.
+  ERR INDIANCARD (NSE): Incorrect `api_key` or `access_token`.
+  ERR INDIGO (NSE): Incorrect `api_key` or `access_token`.
+  ERR INDIGOPNTS (NSE): Incorrect `api_key` or `access_token`.
+  ERR INDNIPPON (NSE): Incorrect `api_key` or `access_token`.
+  ERR INDOCO (NSE): Incorrect `api_key` or `access_token`.
+  ERR INDORAMA (NSE): Incorrect `api_key` or `access_token`.
+  ERR INDOSTAR (NSE): Incorrect `api_key` or `access_token`.
+  ERR INDRAMEDCO (NSE): Incorrect `api_key` or `access_token`.
+  ERR INDSWFTLAB (NSE): Incorrect `api_key` or `access_token`.
+  ERR INDUSINDBK (NSE): Incorrect `api_key` or `access_token`.
+  ERR INDUSTOWER (NSE): Incorrect `api_key` or `access_token`.
+  ERR STYRENIX (NSE): Incorrect `api_key` or `access_token`.
+  ERR CCAVENUE (NSE): Incorrect `api_key` or `access_token`.
+  ERR INFOMEDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR INFY (NSE): Incorrect `api_key` or `access_token`.
+  ERR INGERRAND (NSE): Incorrect `api_key` or `access_token`.
+  ERR INOXINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR INOXWIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR INTELLECT (NSE): Incorrect `api_key` or `access_token`.
+  ERR IOB (NSE): Incorrect `api_key` or `access_token`.
+  ERR IOC (NSE): Incorrect `api_key` or `access_token`.
+  ERR IOLCP (NSE): Incorrect `api_key` or `access_token`.
+  ERR IONEXCHANG (NSE): Incorrect `api_key` or `access_token`.
+  ERR ANDHRAPAP (NSE): Incorrect `api_key` or `access_token`.
+  ERR IPCALAB (NSE): Incorrect `api_key` or `access_token`.
+  ERR IPRINGLTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR IRB (NSE): Incorrect `api_key` or `access_token`.
+  ERR IRCON (NSE): Incorrect `api_key` or `access_token`.
+  ERR IRCTC (NSE): Incorrect `api_key` or `access_token`.
+  ERR IREDA (NSE): Incorrect `api_key` or `access_token`.
+  ERR IRFC (NSE): Incorrect `api_key` or `access_token`.
+  ERR ITC (NSE): Incorrect `api_key` or `access_token`.
+  ERR ITCHOTELS (NSE): Incorrect `api_key` or `access_token`.
+  ERR ITDC (NSE): Incorrect `api_key` or `access_token`.
+  ERR ITHL (BSE): Incorrect `api_key` or `access_token`.
+  ERR ITI (NSE): Incorrect `api_key` or `access_token`.
+  ERR J&KBANK (NSE): Incorrect `api_key` or `access_token`.
+  ERR JAGRAN (NSE): Incorrect `api_key` or `access_token`.
+  ERR JAGSNPHARM (NSE): Incorrect `api_key` or `access_token`.
+  ERR JAIBALAJI (NSE): Incorrect `api_key` or `access_token`.
+  ERR JAICORPLTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR JAINREC (NSE): Incorrect `api_key` or `access_token`.
+  ERR JAMNAAUTO (NSE): Incorrect `api_key` or `access_token`.
+  ERR JAYSREETEA (NSE): Incorrect `api_key` or `access_token`.
+  ERR JBMA (NSE): Incorrect `api_key` or `access_token`.
+  ERR JINDALPHOT (NSE): Incorrect `api_key` or `access_token`.
+  ERR JINDALPOLY (NSE): Incorrect `api_key` or `access_token`.
+  ERR JINDALSAW (NSE): Incorrect `api_key` or `access_token`.
+  ERR JINDALSTEL (NSE): Incorrect `api_key` or `access_token`.
+  ERR JINDWORLD (NSE): Incorrect `api_key` or `access_token`.
+  ERR JIOFIN (NSE): Incorrect `api_key` or `access_token`.
+  ERR JISLJALEQS (NSE): Incorrect `api_key` or `access_token`.
+  ERR JKCEMENT (NSE): Incorrect `api_key` or `access_token`.
+  ERR JKIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR JKLAKSHMI (NSE): Incorrect `api_key` or `access_token`.
+  ERR JKPAPER (NSE): Incorrect `api_key` or `access_token`.
+  ERR JKTYRE (NSE): Incorrect `api_key` or `access_token`.
+  ERR JMFINANCIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR JPPOWER (NSE): Incorrect `api_key` or `access_token`.
+  ERR JSL (NSE): Incorrect `api_key` or `access_token`.
+  ERR JSWCEMENT (NSE): Incorrect `api_key` or `access_token`.
+  ERR JSWDULUX (NSE): Incorrect `api_key` or `access_token`.
+  ERR JSWENERGY (NSE): Incorrect `api_key` or `access_token`.
+  ERR JSWHL (NSE): Incorrect `api_key` or `access_token`.
+  ERR JSWINFRA (NSE): Incorrect `api_key` or `access_token`.
+  ERR JSWSTEEL (NSE): Incorrect `api_key` or `access_token`.
+  ERR JTEKTINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR JUBLPHARMA (NSE): Incorrect `api_key` or `access_token`.
+  ERR JUBLFOOD (NSE): Incorrect `api_key` or `access_token`.
+  ERR JUBLINGREA (NSE): Incorrect `api_key` or `access_token`.
+  ERR JUSTDIAL (NSE): Incorrect `api_key` or `access_token`.
+  ERR JWL (NSE): Incorrect `api_key` or `access_token`.
+  ERR JYOTHYLAB (NSE): Incorrect `api_key` or `access_token`.
+  ERR JYOTICNC (NSE): Incorrect `api_key` or `access_token`.
+  ERR JYOTISTRUC (NSE): Incorrect `api_key` or `access_token`.
+  ERR KAJARIACER (NSE): Incorrect `api_key` or `access_token`.
+  ERR KAKATCEM (NSE): Incorrect `api_key` or `access_token`.
+  ERR ACCELYA (NSE): Incorrect `api_key` or `access_token`.
+  ERR KALYANKJIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR KANSAINER (NSE): Incorrect `api_key` or `access_token`.
+  ERR KARURVYSYA (NSE): Incorrect `api_key` or `access_token`.
+  ERR KAYNES (NSE): Incorrect `api_key` or `access_token`.
+  ERR KCP (NSE): Incorrect `api_key` or `access_token`.
+  ERR KEC (NSE): Incorrect `api_key` or `access_token`.
+  ERR KEI (NSE): Incorrect `api_key` or `access_token`.
+  ERR KENNAMET (NSE): Incorrect `api_key` or `access_token`.
+  ERR KESORAMIND (BSE): Incorrect `api_key` or `access_token`.
+  ERR KFINTECH (NSE): Incorrect `api_key` or `access_token`.
+  ERR KIMS (NSE): Incorrect `api_key` or `access_token`.
+  ERR KINETICENG (BSE): Incorrect `api_key` or `access_token`.
+  ERR KIOCL (NSE): Incorrect `api_key` or `access_token`.
+  ERR KIRLFER (NSE): Incorrect `api_key` or `access_token`.
+  ERR KIRLOSBROS (NSE): Incorrect `api_key` or `access_token`.
+  ERR KIRLOSENG (NSE): Incorrect `api_key` or `access_token`.
+  ERR KIRLOSIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR KITEX (NSE): Incorrect `api_key` or `access_token`.
+  ERR KKCL (NSE): Incorrect `api_key` or `access_token`.
+  ERR KNRCON (NSE): Incorrect `api_key` or `access_token`.
+  ERR KOHINOOR (NSE): Incorrect `api_key` or `access_token`.
+  ERR KOLTEPATIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR KOPRAN (NSE): Incorrect `api_key` or `access_token`.
+  ERR KOTAKBANK (NSE): Incorrect `api_key` or `access_token`.
+  ERR KOTHARIPRO (NSE): Incorrect `api_key` or `access_token`.
+  ERR KPIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR KPITTECH (NSE): Incorrect `api_key` or `access_token`.
+  ERR KPRMILL (NSE): Incorrect `api_key` or `access_token`.
+  ERR KRBL (NSE): Incorrect `api_key` or `access_token`.
+  ERR KSB (NSE): Incorrect `api_key` or `access_token`.
+  ERR KSCL (NSE): Incorrect `api_key` or `access_token`.
+  ERR KSL (NSE): Incorrect `api_key` or `access_token`.
+  ERR KTKBANK (NSE): Incorrect `api_key` or `access_token`.
+  ERR LALPATHLAB (NSE): Incorrect `api_key` or `access_token`.
+  ERR LAOPALA (NSE): Incorrect `api_key` or `access_token`.
+  ERR LATENTVIEW (NSE): Incorrect `api_key` or `access_token`.
+  ERR LAURUSLABS (NSE): Incorrect `api_key` or `access_token`.
+  ERR LMW (NSE): Incorrect `api_key` or `access_token`.
+  ERR LEMONTREE (NSE): Incorrect `api_key` or `access_token`.
+  ERR LENSKART (NSE): Incorrect `api_key` or `access_token`.
+  ERR LGBBROSLTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR LGEINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR LICHSGFIN (NSE): Incorrect `api_key` or `access_token`.
+  ERR LICI (NSE): Incorrect `api_key` or `access_token`.
+  ERR LINDEINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR LLOYDSME (NSE): Incorrect `api_key` or `access_token`.
+  ERR LODHA (NSE): Incorrect `api_key` or `access_token`.
+  ERR LOVABLE (NSE): Incorrect `api_key` or `access_token`.
+  ERR LT (NSE): Incorrect `api_key` or `access_token`.
+  ERR LTF (NSE): Incorrect `api_key` or `access_token`.
+  ERR LTFOODS (NSE): Incorrect `api_key` or `access_token`.
+  ERR LTM (NSE): Incorrect `api_key` or `access_token`.
+  ERR LTTS (NSE): Incorrect `api_key` or `access_token`.
+  ERR LUMAXIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR LUPIN (NSE): Incorrect `api_key` or `access_token`.
+  ERR LUXIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR LXCHEM (NSE): Incorrect `api_key` or `access_token`.
+  ERR M&M (NSE): Incorrect `api_key` or `access_token`.
+  ERR M&MFIN (NSE): Incorrect `api_key` or `access_token`.
+  ERR MADRASFERT (NSE): Incorrect `api_key` or `access_token`.
+  ERR MAFATIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR POONAWALLA (NSE): Incorrect `api_key` or `access_token`.
+  ERR MAHABANK (NSE): Incorrect `api_key` or `access_token`.
+  ERR MAHLIFE (NSE): Incorrect `api_key` or `access_token`.
+  ERR MAHLOG (NSE): Incorrect `api_key` or `access_token`.
+  ERR MAHSCOOTER (NSE): Incorrect `api_key` or `access_token`.
+  ERR MAHSEAMLES (NSE): Incorrect `api_key` or `access_token`.
+  ERR MANALIPETC (NSE): Incorrect `api_key` or `access_token`.
+  ERR MANAPPURAM (NSE): Incorrect `api_key` or `access_token`.
+  ERR MANGLMCEM (NSE): Incorrect `api_key` or `access_token`.
+  ERR MANINDS (NSE): Incorrect `api_key` or `access_token`.
+  ERR MANINFRA (NSE): Incorrect `api_key` or `access_token`.
+  ERR MANKIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR MANYAVAR (NSE): Incorrect `api_key` or `access_token`.
+  ERR MAPMYINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR MARALOVER (NSE): Incorrect `api_key` or `access_token`.
+  ERR MARICO (NSE): Incorrect `api_key` or `access_token`.
+  ERR MARKSANS (NSE): Incorrect `api_key` or `access_token`.
+  ERR MARUTI (NSE): Incorrect `api_key` or `access_token`.
+  ERR MASFIN (NSE): Incorrect `api_key` or `access_token`.
+  ERR MASTEK (NSE): Incorrect `api_key` or `access_token`.
+  ERR MAXHEALTH (NSE): Incorrect `api_key` or `access_token`.
+  ERR MAXIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR MAYURUNIQ (NSE): Incorrect `api_key` or `access_token`.
+  ERR MAZDOCK (NSE): Incorrect `api_key` or `access_token`.
+  ERR MBLINFRA (NSE): Incorrect `api_key` or `access_token`.
+  ERR MCLEODRUSS (NSE): Incorrect `api_key` or `access_token`.
+  ERR MCX (NSE): Incorrect `api_key` or `access_token`.
+  ERR MEDANTA (NSE): Incorrect `api_key` or `access_token`.
+  ERR MEDPLUS (NSE): Incorrect `api_key` or `access_token`.
+  ERR MEESHO (NSE): Incorrect `api_key` or `access_token`.
+  ERR METROBRAND (NSE): Incorrect `api_key` or `access_token`.
+  ERR METROPOLIS (NSE): Incorrect `api_key` or `access_token`.
+  ERR MFSL (NSE): Incorrect `api_key` or `access_token`.
+  ERR MGL (NSE): Incorrect `api_key` or `access_token`.
+  ERR MHRIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR MIDHANI (NSE): Incorrect `api_key` or `access_token`.
+  ERR MINDACORP (NSE): Incorrect `api_key` or `access_token`.
+  ERR ONIDA (NSE): Incorrect `api_key` or `access_token`.
+  ERR MIRZAINT (NSE): Incorrect `api_key` or `access_token`.
+  ERR MMTC (NSE): Incorrect `api_key` or `access_token`.
+  ERR MODIRUBBER (NSE): Incorrect `api_key` or `access_token`.
+  ERR MODTHREAD (NSE): Incorrect `api_key` or `access_token`.
+  ERR MOIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR MOREPENLAB (NSE): Incorrect `api_key` or `access_token`.
+  ERR MOTHERSON (NSE): Incorrect `api_key` or `access_token`.
+  ERR MOTILALOFS (NSE): Incorrect `api_key` or `access_token`.
+  ERR MPHASIS (NSE): Incorrect `api_key` or `access_token`.
+  ERR MPSLTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR MRF (NSE): Incorrect `api_key` or `access_token`.
+  ERR UMIYA-MRO (NSE): Incorrect `api_key` or `access_token`.
+  ERR MRPL (NSE): Incorrect `api_key` or `access_token`.
+  ERR MSUMI (NSE): Incorrect `api_key` or `access_token`.
+  ERR MTARTECH (BSE): Incorrect `api_key` or `access_token`.
+  ERR MTEDUCARE (BSE): Incorrect `api_key` or `access_token`.
+  ERR MTNL (NSE): Incorrect `api_key` or `access_token`.
+  ERR MUKTAARTS (BSE): Incorrect `api_key` or `access_token`.
+  ERR MUNJALAU (NSE): Incorrect `api_key` or `access_token`.
+  ERR MUNJALSHOW (NSE): Incorrect `api_key` or `access_token`.
+  ERR MUTHOOTFIN (NSE): Incorrect `api_key` or `access_token`.
+  ERR NAHARINDUS (NSE): Incorrect `api_key` or `access_token`.
+  ERR NAHARPOLY (NSE): Incorrect `api_key` or `access_token`.
+  ERR NAHARSPING (NSE): Incorrect `api_key` or `access_token`.
+  ERR NAM-INDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR NATCOPHARM (NSE): Incorrect `api_key` or `access_token`.
+  ERR NATIONALUM (NSE): Incorrect `api_key` or `access_token`.
+  ERR NAUKRI (NSE): Incorrect `api_key` or `access_token`.
+  ERR NAVA (NSE): Incorrect `api_key` or `access_token`.
+  ERR NAVINFLUOR (NSE): Incorrect `api_key` or `access_token`.
+  ERR NAVKARCORP (NSE): Incorrect `api_key` or `access_token`.
+  ERR NAVNETEDUL (NSE): Incorrect `api_key` or `access_token`.
+  ERR NAZARA (NSE): Incorrect `api_key` or `access_token`.
+  ERR NBCC (NSE): Incorrect `api_key` or `access_token`.
+  ERR NCC (NSE): Incorrect `api_key` or `access_token`.
+  ERR NDTV (NSE): Incorrect `api_key` or `access_token`.
+  ERR NELCO (NSE): Incorrect `api_key` or `access_token`.
+  ERR NESCO (NSE): Incorrect `api_key` or `access_token`.
+  ERR NESTLEIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR NETWEB (NSE): Incorrect `api_key` or `access_token`.
+  ERR NETWORK18 (NSE): Incorrect `api_key` or `access_token`.
+  ERR NEULANDLAB (NSE): Incorrect `api_key` or `access_token`.
+  ERR NEWGEN (NSE): Incorrect `api_key` or `access_token`.
+  ERR NEXTMEDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR NFL (NSE): Incorrect `api_key` or `access_token`.
+  ERR NH (NSE): Incorrect `api_key` or `access_token`.
+  ERR NHPC (NSE): Incorrect `api_key` or `access_token`.
+  ERR NIACL (NSE): Incorrect `api_key` or `access_token`.
+  ERR NIITLTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR NILKAMAL (NSE): Incorrect `api_key` or `access_token`.
+  ERR NIVABUPA (NSE): Incorrect `api_key` or `access_token`.
+  ERR NLCINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR NMDC (NSE): Incorrect `api_key` or `access_token`.
+  ERR NOCIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR NOIDATOLL (NSE): Incorrect `api_key` or `access_token`.
+  ERR NOVARTIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR NPL (BSE): Incorrect `api_key` or `access_token`.
+  ERR NRBBEARING (NSE): Incorrect `api_key` or `access_token`.
+  ERR NSLNISP (NSE): Incorrect `api_key` or `access_token`.
+  ERR NTPC (NSE): Incorrect `api_key` or `access_token`.
+  ERR NTPCGREEN (NSE): Incorrect `api_key` or `access_token`.
+  ERR NUVAMA (NSE): Incorrect `api_key` or `access_token`.
+  ERR NUVOCO (NSE): Incorrect `api_key` or `access_token`.
+  ERR NYKAA (NSE): Incorrect `api_key` or `access_token`.
+  ERR OBEROIRLTY (NSE): Incorrect `api_key` or `access_token`.
+  ERR OFSS (NSE): Incorrect `api_key` or `access_token`.
+  ERR OIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR OILCOUNTUB (BSE): Incorrect `api_key` or `access_token`.
+  ERR OLAELEC (NSE): Incorrect `api_key` or `access_token`.
+  ERR OLECTRA (NSE): Incorrect `api_key` or `access_token`.
+  ERR OMAXAUTO (NSE): Incorrect `api_key` or `access_token`.
+  ERR OMAXE (NSE): Incorrect `api_key` or `access_token`.
+  ERR ONELIFECAP (BSE): Incorrect `api_key` or `access_token`.
+  ERR ONESOURCE (NSE): Incorrect `api_key` or `access_token`.
+  ERR ONGC (NSE): Incorrect `api_key` or `access_token`.
+  ERR ONMOBILE (BSE): Incorrect `api_key` or `access_token`.
+  ERR ONWARDTEC (NSE): Incorrect `api_key` or `access_token`.
+  ERR ORCHPHARMA (NSE): Incorrect `api_key` or `access_token`.
+  ERR ORIENTCEM (NSE): Incorrect `api_key` or `access_token`.
+  ERR ORIENTELEC (NSE): Incorrect `api_key` or `access_token`.
+  ERR ORIENTHOT (NSE): Incorrect `api_key` or `access_token`.
+  ERR ORIENTPPR (NSE): Incorrect `api_key` or `access_token`.
+  ERR ORISSAMINE (NSE): Incorrect `api_key` or `access_token`.
+  ERR OSWALAGRO (NSE): Incorrect `api_key` or `access_token`.
+  ERR PAGEIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR PANACEABIO (NSE): Incorrect `api_key` or `access_token`.
+  ERR PARADEEP (NSE): Incorrect `api_key` or `access_token`.
+  ERR PARAGMILK (NSE): Incorrect `api_key` or `access_token`.
+  ERR PARSVNATH (BSE): Incorrect `api_key` or `access_token`.
+  ERR PATANJALI (NSE): Incorrect `api_key` or `access_token`.
+  ERR PATELENG (NSE): Incorrect `api_key` or `access_token`.
+  ERR PATSPINLTD (BSE): Incorrect `api_key` or `access_token`.
+  ERR PAYTM (NSE): Incorrect `api_key` or `access_token`.
+  ERR PCBL (NSE): Incorrect `api_key` or `access_token`.
+  ERR PCJEWELLER (NSE): Incorrect `api_key` or `access_token`.
+  ERR PENIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR PENINLAND (NSE): Incorrect `api_key` or `access_token`.
+  ERR PERSISTENT (NSE): Incorrect `api_key` or `access_token`.
+  ERR PETRONET (NSE): Incorrect `api_key` or `access_token`.
+  ERR PFC (NSE): Incorrect `api_key` or `access_token`.
+  ERR PFIZER (NSE): Incorrect `api_key` or `access_token`.
+  ERR PFOCUS (NSE): Incorrect `api_key` or `access_token`.
+  ERR PFS (NSE): Incorrect `api_key` or `access_token`.
+  ERR PGEL (NSE): Incorrect `api_key` or `access_token`.
+  ERR PGHH (NSE): Incorrect `api_key` or `access_token`.
+  ERR PGHL (NSE): Incorrect `api_key` or `access_token`.
+  ERR PHOENIXLTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR PHOENXINTL (NSE): Incorrect `api_key` or `access_token`.
+  ERR PIDILITIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR PIIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR PINELABS (NSE): Incorrect `api_key` or `access_token`.
+  ERR PIRAMALFIN (NSE): Incorrect `api_key` or `access_token`.
+  ERR PNB (NSE): Incorrect `api_key` or `access_token`.
+  ERR PNBGILTS (NSE): Incorrect `api_key` or `access_token`.
+  ERR PNBHOUSING (NSE): Incorrect `api_key` or `access_token`.
+  ERR PNC (NSE): Incorrect `api_key` or `access_token`.
+  ERR PNCINFRA (NSE): Incorrect `api_key` or `access_token`.
+  ERR POLICYBZR (NSE): Incorrect `api_key` or `access_token`.
+  ERR POLYCAB (NSE): Incorrect `api_key` or `access_token`.
+  ERR POLYMED (NSE): Incorrect `api_key` or `access_token`.
+  ERR POLYPLEX (NSE): Incorrect `api_key` or `access_token`.
+  ERR POWERGRID (NSE): Incorrect `api_key` or `access_token`.
+  ERR POWERINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR PPLPHARMA (NSE): Incorrect `api_key` or `access_token`.
+  ERR PRAJIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR PRAKASH (NSE): Incorrect `api_key` or `access_token`.
+  ERR PREMIER (BSE): Incorrect `api_key` or `access_token`.
+  ERR PREMIERENE (NSE): Incorrect `api_key` or `access_token`.
+  ERR PRESTIGE (NSE): Incorrect `api_key` or `access_token`.
+  ERR FELDVR (BSE): Incorrect `api_key` or `access_token`.
+  ERR PRICOLLTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR PRIMESECU (NSE): Incorrect `api_key` or `access_token`.
+  ERR PRINCEPIPE (NSE): Incorrect `api_key` or `access_token`.
+  ERR PRIVISCL (NSE): Incorrect `api_key` or `access_token`.
+  ERR PRSMJOHNSN (NSE): Incorrect `api_key` or `access_token`.
+  ERR PSPPROJECT (NSE): Incorrect `api_key` or `access_token`.
+  ERR PTC (NSE): Incorrect `api_key` or `access_token`.
+  ERR PTCIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR PUNJABCHEM (NSE): Incorrect `api_key` or `access_token`.
+  ERR PUNJCOMMU (BSE): Incorrect `api_key` or `access_token`.
+  ERR PURVA (NSE): Incorrect `api_key` or `access_token`.
+  ERR PVP (NSE): Incorrect `api_key` or `access_token`.
+  ERR PVRINOX (NSE): Incorrect `api_key` or `access_token`.
+  ERR PWL (NSE): Incorrect `api_key` or `access_token`.
+  ERR QUESS (NSE): Incorrect `api_key` or `access_token`.
+  ERR RADICO (NSE): Incorrect `api_key` or `access_token`.
+  ERR RAILTEL (NSE): Incorrect `api_key` or `access_token`.
+  ERR RAIN (NSE): Incorrect `api_key` or `access_token`.
+  ERR RAINBOW (NSE): Incorrect `api_key` or `access_token`.
+  ERR RAJESHEXPO (BSE): Incorrect `api_key` or `access_token`.
+  ERR RAJTV (NSE): Incorrect `api_key` or `access_token`.
+  ERR RALLIS (NSE): Incorrect `api_key` or `access_token`.
+  ERR RAMANEWS (NSE): Incorrect `api_key` or `access_token`.
+  ERR RAMCOCEM (NSE): Incorrect `api_key` or `access_token`.
+  ERR RAMCOIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR RAMCOSYS (NSE): Incorrect `api_key` or `access_token`.
+  ERR RAMKY (NSE): Incorrect `api_key` or `access_token`.
+  ERR RATNAMANI (NSE): Incorrect `api_key` or `access_token`.
+  ERR RAYMOND (NSE): Incorrect `api_key` or `access_token`.
+  ERR RAYMONDLSL (NSE): Incorrect `api_key` or `access_token`.
+  ERR RBA (NSE): Incorrect `api_key` or `access_token`.
+  ERR RBLBANK (NSE): Incorrect `api_key` or `access_token`.
+  ERR RCF (NSE): Incorrect `api_key` or `access_token`.
+  ERR RCOM (BSE): Incorrect `api_key` or `access_token`.
+  ERR RDEL (BSE): Incorrect `api_key` or `access_token`.
+  ERR RECLTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR REDINGTON (NSE): Incorrect `api_key` or `access_token`.
+  ERR REGENCERAM (NSE): Incorrect `api_key` or `access_token`.
+  ERR RELAXO (NSE): Incorrect `api_key` or `access_token`.
+  ERR RELIANCE (NSE): Incorrect `api_key` or `access_token`.
+  ERR RELIGARE (NSE): Incorrect `api_key` or `access_token`.
+  ERR RELINFRA (BSE): Incorrect `api_key` or `access_token`.
+  ERR RENUKA (NSE): Incorrect `api_key` or `access_token`.
+  ERR REPCOHOME (NSE): Incorrect `api_key` or `access_token`.
+  ERR RESPONIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR RHFL (BSE): Incorrect `api_key` or `access_token`.
+  ERR RHIM (NSE): Incorrect `api_key` or `access_token`.
+  ERR RICOAUTO (NSE): Incorrect `api_key` or `access_token`.
+  ERR RIIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR RITES (NSE): Incorrect `api_key` or `access_token`.
+  ERR RKFORGE (NSE): Incorrect `api_key` or `access_token`.
+  ERR ROSSARI (NSE): Incorrect `api_key` or `access_token`.
+  ERR ROUTE (NSE): Incorrect `api_key` or `access_token`.
+  ERR RPOWER (NSE): Incorrect `api_key` or `access_token`.
+  ERR RRKABEL (NSE): Incorrect `api_key` or `access_token`.
+  ERR RSSOFTWARE (NSE): Incorrect `api_key` or `access_token`.
+  ERR RSWM (BSE): Incorrect `api_key` or `access_token`.
+  ERR RTNINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR RTNPOWER (NSE): Incorrect `api_key` or `access_token`.
+  ERR RUBICON (NSE): Incorrect `api_key` or `access_token`.
+  ERR RUPA (NSE): Incorrect `api_key` or `access_token`.
+  ERR RUSTOMJEE (NSE): Incorrect `api_key` or `access_token`.
+  ERR RVNL (NSE): Incorrect `api_key` or `access_token`.
+  ERR SADBHAV (NSE): Incorrect `api_key` or `access_token`.
+  ERR SADBHIN (BSE): Incorrect `api_key` or `access_token`.
+  ERR SAFARI (NSE): Incorrect `api_key` or `access_token`.
+  ERR SAGILITY (NSE): Incorrect `api_key` or `access_token`.
+  ERR SAIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR SAILIFE (NSE): Incorrect `api_key` or `access_token`.
+  ERR SAKHTISUG (NSE): Incorrect `api_key` or `access_token`.
+  ERR SALORAINTL (BSE): Incorrect `api_key` or `access_token`.
+  ERR SAMMAANCAP (NSE): Incorrect `api_key` or `access_token`.
+  ERR SANDESH (NSE): Incorrect `api_key` or `access_token`.
+  ERR SANSERA (NSE): Incorrect `api_key` or `access_token`.
+  ERR SAPPHIRE (NSE): Incorrect `api_key` or `access_token`.
+  ERR SARDAEN (NSE): Incorrect `api_key` or `access_token`.
+  ERR SAREGAMA (NSE): Incorrect `api_key` or `access_token`.
+  ERR SAURASHCEM (NSE): Incorrect `api_key` or `access_token`.
+  ERR SBFC (NSE): Incorrect `api_key` or `access_token`.
+  ERR SBICARD (NSE): Incorrect `api_key` or `access_token`.
+  ERR SBILIFE (NSE): Incorrect `api_key` or `access_token`.
+  ERR SBIN (NSE): Incorrect `api_key` or `access_token`.
+  ERR SCHAEFFLER (NSE): Incorrect `api_key` or `access_token`.
+  ERR SCHNEIDER (NSE): Incorrect `api_key` or `access_token`.
+  ERR SCI (NSE): Incorrect `api_key` or `access_token`.
+  ERR SEAMECLTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR PAISALO (NSE): Incorrect `api_key` or `access_token`.
+  ERR VIYASH (NSE): Incorrect `api_key` or `access_token`.
+  ERR SESHAPAPER (NSE): Incorrect `api_key` or `access_token`.
+  ERR SFL (NSE): Incorrect `api_key` or `access_token`.
+  ERR SHANKARA (NSE): Incorrect `api_key` or `access_token`.
+  ERR SHANTIGEAR (NSE): Incorrect `api_key` or `access_token`.
+  ERR SHARDACROP (NSE): Incorrect `api_key` or `access_token`.
+  ERR SHILPAMED (NSE): Incorrect `api_key` or `access_token`.
+  ERR SHK (NSE): Incorrect `api_key` or `access_token`.
+  ERR SHOPERSTOP (NSE): Incorrect `api_key` or `access_token`.
+  ERR SHREECEM (NSE): Incorrect `api_key` or `access_token`.
+  ERR SHREERAMA (NSE): Incorrect `api_key` or `access_token`.
+  ERR SHRIPISTON (NSE): Incorrect `api_key` or `access_token`.
+  ERR SHRIRAMFIN (NSE): Incorrect `api_key` or `access_token`.
+  ERR SHYAMMETL (NSE): Incorrect `api_key` or `access_token`.
+  ERR SHYAMTEL (NSE): Incorrect `api_key` or `access_token`.
+  ERR SIEMENS (NSE): Incorrect `api_key` or `access_token`.
+  ERR SIGNATURE (NSE): Incorrect `api_key` or `access_token`.
+  ERR SIMPLEXINF (NSE): Incorrect `api_key` or `access_token`.
+  ERR SIS (NSE): Incorrect `api_key` or `access_token`.
+  ERR SITINET (BSE): Incorrect `api_key` or `access_token`.
+  ERR SJVN (NSE): Incorrect `api_key` or `access_token`.
+  ERR SKFINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR SMLMAH (NSE): Incorrect `api_key` or `access_token`.
+  ERR SNOWMAN (NSE): Incorrect `api_key` or `access_token`.
+  ERR SOBHA (NSE): Incorrect `api_key` or `access_token`.
+  ERR SOLARA (NSE): Incorrect `api_key` or `access_token`.
+  ERR SOLARINDS (NSE): Incorrect `api_key` or `access_token`.
+  ERR SOMANYCERA (NSE): Incorrect `api_key` or `access_token`.
+  ERR SONACOMS (NSE): Incorrect `api_key` or `access_token`.
+  ERR SONATSOFTW (NSE): Incorrect `api_key` or `access_token`.
+  ERR SOUTHBANK (NSE): Incorrect `api_key` or `access_token`.
+  ERR SPANDANA (NSE): Incorrect `api_key` or `access_token`.
+  ERR SPARC (NSE): Incorrect `api_key` or `access_token`.
+  ERR SPIC (NSE): Incorrect `api_key` or `access_token`.
+  ERR SPICEJET (BSE): Incorrect `api_key` or `access_token`.
+  ERR SPLPETRO (NSE): Incorrect `api_key` or `access_token`.
+  ERR SPSL (BSE): Incorrect `api_key` or `access_token`.
+  ERR SRF (NSE): Incorrect `api_key` or `access_token`.
+  ERR STAR (NSE): Incorrect `api_key` or `access_token`.
+  ERR STARCEMENT (NSE): Incorrect `api_key` or `access_token`.
+  ERR STARHEALTH (NSE): Incorrect `api_key` or `access_token`.
+  ERR STCINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR STLTECH (BSE): Incorrect `api_key` or `access_token`.
+  ERR SUBROS (NSE): Incorrect `api_key` or `access_token`.
+  ERR SUDARSCHEM (NSE): Incorrect `api_key` or `access_token`.
+  ERR SUMICHEM (NSE): Incorrect `api_key` or `access_token`.
+  ERR SUNCLAY (NSE): Incorrect `api_key` or `access_token`.
+  ERR TVSHLTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR SUNDARMFIN (NSE): Incorrect `api_key` or `access_token`.
+  ERR SUNDRMBRAK (BSE): Incorrect `api_key` or `access_token`.
+  ERR SUNDRMFAST (NSE): Incorrect `api_key` or `access_token`.
+  ERR SUNPHARMA (NSE): Incorrect `api_key` or `access_token`.
+  ERR SUNTECK (NSE): Incorrect `api_key` or `access_token`.
+  ERR SUNTV (NSE): Incorrect `api_key` or `access_token`.
+  ERR SUPRAJIT (NSE): Incorrect `api_key` or `access_token`.
+  ERR SUPREMEIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR SUPREMEINF (NSE): Incorrect `api_key` or `access_token`.
+  ERR SURYALAXMI (NSE): Incorrect `api_key` or `access_token`.
+  ERR SURYAROSNI (NSE): Incorrect `api_key` or `access_token`.
+  ERR SUVEN (NSE): Incorrect `api_key` or `access_token`.
+  ERR SUZLON (NSE): Incorrect `api_key` or `access_token`.
+  ERR SWANCORP (NSE): Incorrect `api_key` or `access_token`.
+  ERR SWARAJENG (NSE): Incorrect `api_key` or `access_token`.
+  ERR SWIGGY (NSE): Incorrect `api_key` or `access_token`.
+  ERR SWSOLAR (NSE): Incorrect `api_key` or `access_token`.
+  ERR SYMPHONY (NSE): Incorrect `api_key` or `access_token`.
+  ERR SYNGENE (NSE): Incorrect `api_key` or `access_token`.
+  ERR SYRMA (NSE): Incorrect `api_key` or `access_token`.
+  ERR TAJGVK (NSE): Incorrect `api_key` or `access_token`.
+  ERR TAKE (NSE): Incorrect `api_key` or `access_token`.
+  ERR TANLA (NSE): Incorrect `api_key` or `access_token`.
+  ERR TARIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR TASTYBITE (NSE): Incorrect `api_key` or `access_token`.
+  ERR TATACAP (NSE): Incorrect `api_key` or `access_token`.
+  ERR TATACHEM (NSE): Incorrect `api_key` or `access_token`.
+  ERR TATACOMM (NSE): Incorrect `api_key` or `access_token`.
+  ERR TATACONSUM (NSE): Incorrect `api_key` or `access_token`.
+  ERR TATAELXSI (NSE): Incorrect `api_key` or `access_token`.
+  ERR TATAINVEST (NSE): Incorrect `api_key` or `access_token`.
+  ERR TATAPOWER (NSE): Incorrect `api_key` or `access_token`.
+  ERR TATASTEEL (NSE): Incorrect `api_key` or `access_token`.
+  ERR TATATECH (NSE): Incorrect `api_key` or `access_token`.
+  ERR TBOTEK (NSE): Incorrect `api_key` or `access_token`.
+  ERR TBZ (NSE): Incorrect `api_key` or `access_token`.
+  ERR TCI (NSE): Incorrect `api_key` or `access_token`.
+  ERR TCIEXP (NSE): Incorrect `api_key` or `access_token`.
+  ERR TCIIND (BSE): Incorrect `api_key` or `access_token`.
+  ERR TCS (NSE): Incorrect `api_key` or `access_token`.
+  ERR TDPOWERSYS (NSE): Incorrect `api_key` or `access_token`.
+  ERR TEAMLEASE (NSE): Incorrect `api_key` or `access_token`.
+  ERR TECHM (NSE): Incorrect `api_key` or `access_token`.
+  ERR TECHNOE (NSE): Incorrect `api_key` or `access_token`.
+  ERR TEGA (NSE): Incorrect `api_key` or `access_token`.
+  ERR TEJASNET (NSE): Incorrect `api_key` or `access_token`.
+  ERR TENNIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR TEXRAIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR TFCILTD (NSE): Incorrect `api_key` or `access_token`.
+  ERR THANGAMAYL (NSE): Incorrect `api_key` or `access_token`.
+  ERR THELEELA (NSE): Incorrect `api_key` or `access_token`.
+  ERR THERMAX (NSE): Incorrect `api_key` or `access_token`.
+  ERR THOMASCOOK (NSE): Incorrect `api_key` or `access_token`.
+  ERR THYROCARE (NSE): Incorrect `api_key` or `access_token`.
+  ERR TI (NSE): Incorrect `api_key` or `access_token`.
+  ERR VEEDOL (NSE): Incorrect `api_key` or `access_token`.
+  ERR TIINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR TIMETECHNO (NSE): Incorrect `api_key` or `access_token`.
+  ERR TIMKEN (NSE): Incorrect `api_key` or `access_token`.
+  ERR TIPSMUSIC (NSE): Incorrect `api_key` or `access_token`.
+  ERR TIRUMALCHM (NSE): Incorrect `api_key` or `access_token`.
+  ERR TITAGARH (NSE): Incorrect `api_key` or `access_token`.
+  ERR TITAN (NSE): Incorrect `api_key` or `access_token`.
+  ERR TMB (NSE): Incorrect `api_key` or `access_token`.
+  ERR TMCV (NSE): Incorrect `api_key` or `access_token`.
+  ERR TMPV (NSE): Incorrect `api_key` or `access_token`.
+  ERR TNPETRO (NSE): Incorrect `api_key` or `access_token`.
+  ERR TNPL (NSE): Incorrect `api_key` or `access_token`.
+  ERR TNTELE (NSE): Incorrect `api_key` or `access_token`.
+  ERR TORNTPHARM (NSE): Incorrect `api_key` or `access_token`.
+  ERR TORNTPOWER (NSE): Incorrect `api_key` or `access_token`.
+  ERR TRANSPEK (BSE): Incorrect `api_key` or `access_token`.
+  ERR TRAVELFOOD (NSE): Incorrect `api_key` or `access_token`.
+  ERR TREEHOUSE (NSE): Incorrect `api_key` or `access_token`.
+  ERR TRENT (NSE): Incorrect `api_key` or `access_token`.
+  ERR TRIDENT (NSE): Incorrect `api_key` or `access_token`.
+  ERR TRIGYN (NSE): Incorrect `api_key` or `access_token`.
+  ERR TRITURBINE (NSE): Incorrect `api_key` or `access_token`.
+  ERR TRIVENI (NSE): Incorrect `api_key` or `access_token`.
+  ERR TTKPRESTIG (NSE): Incorrect `api_key` or `access_token`.
+  ERR TTML (NSE): Incorrect `api_key` or `access_token`.
+  ERR TVSMOTOR (NSE): Incorrect `api_key` or `access_token`.
+  ERR TVSSCS (NSE): Incorrect `api_key` or `access_token`.
+  ERR TVSSRICHAK (NSE): Incorrect `api_key` or `access_token`.
+  ERR TVTODAY (NSE): Incorrect `api_key` or `access_token`.
+  ERR UBL (NSE): Incorrect `api_key` or `access_token`.
+  ERR UCAL (BSE): Incorrect `api_key` or `access_token`.
+  ERR UCOBANK (NSE): Incorrect `api_key` or `access_token`.
+  ERR UFLEX (NSE): Incorrect `api_key` or `access_token`.
+  ERR UJJIVANSFB (NSE): Incorrect `api_key` or `access_token`.
+  ERR ULTRACEMCO (NSE): Incorrect `api_key` or `access_token`.
+  ERR UNICHEMLAB (NSE): Incorrect `api_key` or `access_token`.
+  ERR UNIONBANK (NSE): Incorrect `api_key` or `access_token`.
+  ERR UNITDSPR (NSE): Incorrect `api_key` or `access_token`.
+  ERR UNITECH (NSE): Incorrect `api_key` or `access_token`.
+  ERR UNOMINDA (NSE): Incorrect `api_key` or `access_token`.
+  ERR UPL (NSE): Incorrect `api_key` or `access_token`.
+  ERR URBANCO (NSE): Incorrect `api_key` or `access_token`.
+  ERR USHAMART (NSE): Incorrect `api_key` or `access_token`.
+  ERR UTIAMC (NSE): Incorrect `api_key` or `access_token`.
+  ERR UTTAMSUGAR (NSE): Incorrect `api_key` or `access_token`.
+  ERR V2RETAIL (NSE): Incorrect `api_key` or `access_token`.
+  ERR VAIBHAVGBL (NSE): Incorrect `api_key` or `access_token`.
+  ERR VAKRANGEE (NSE): Incorrect `api_key` or `access_token`.
+  ERR VALIANTORG (BSE): Incorrect `api_key` or `access_token`.
+  ERR VAML (NSE): Incorrect `api_key` or `access_token`.
+  ERR VARDMNPOLY (NSE): Incorrect `api_key` or `access_token`.
+  ERR VARROC (NSE): Incorrect `api_key` or `access_token`.
+  ERR VBL (NSE): Incorrect `api_key` or `access_token`.
+  ERR VEDL (NSE): Incorrect `api_key` or `access_token`.
+  ERR VEDPOWER (NSE): Incorrect `api_key` or `access_token`.
+  ERR VENKEYS (NSE): Incorrect `api_key` or `access_token`.
+  ERR VENTIVE (NSE): Incorrect `api_key` or `access_token`.
+  ERR VESUVIUS (NSE): Incorrect `api_key` or `access_token`.
+  ERR VGUARD (NSE): Incorrect `api_key` or `access_token`.
+  ERR VHL (NSE): Incorrect `api_key` or `access_token`.
+  ERR VIJAYA (NSE): Incorrect `api_key` or `access_token`.
+  ERR VIKASWSP (BSE): Incorrect `api_key` or `access_token`.
+  ERR VINATIORGA (NSE): Incorrect `api_key` or `access_token`.
+  ERR VINDHYATEL (NSE): Incorrect `api_key` or `access_token`.
+  ERR VINYLINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR VIPIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR VISAKAIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR VISL (NSE): Incorrect `api_key` or `access_token`.
+  ERR VIVIDHA (NSE): Incorrect `api_key` or `access_token`.
+  ERR VLSFINANCE (NSE): Incorrect `api_key` or `access_token`.
+  ERR VMART (NSE): Incorrect `api_key` or `access_token`.
+  ERR VMM (NSE): Incorrect `api_key` or `access_token`.
+  ERR VOGL (NSE): Incorrect `api_key` or `access_token`.
+  ERR VOLTAS (NSE): Incorrect `api_key` or `access_token`.
+  ERR VRLLOG (NSE): Incorrect `api_key` or `access_token`.
+  ERR VSTIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR VTL (NSE): Incorrect `api_key` or `access_token`.
+  ERR WAAREEENER (NSE): Incorrect `api_key` or `access_token`.
+  ERR WABAG (NSE): Incorrect `api_key` or `access_token`.
+  ERR WARRENTEA (BSE): Incorrect `api_key` or `access_token`.
+  ERR WELCORP (NSE): Incorrect `api_key` or `access_token`.
+  ERR WELSPUNLIV (NSE): Incorrect `api_key` or `access_token`.
+  ERR WESTLIFE (NSE): Incorrect `api_key` or `access_token`.
+  ERR WHEELS (NSE): Incorrect `api_key` or `access_token`.
+  ERR WHIRLPOOL (NSE): Incorrect `api_key` or `access_token`.
+  ERR WINDMACHIN (NSE): Incorrect `api_key` or `access_token`.
+  ERR WIPRO (NSE): Incorrect `api_key` or `access_token`.
+  ERR WOCKPHARMA (NSE): Incorrect `api_key` or `access_token`.
+  ERR WONDERLA (NSE): Incorrect `api_key` or `access_token`.
+  ERR WSTCSTPAPR (NSE): Incorrect `api_key` or `access_token`.
+  ERR YESBANK (NSE): Incorrect `api_key` or `access_token`.
+  ERR ZEEL (NSE): Incorrect `api_key` or `access_token`.
+  ERR ZEELEARN (BSE): Incorrect `api_key` or `access_token`.
+  ERR ZEEMEDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR ZENSARTECH (NSE): Incorrect `api_key` or `access_token`.
+  ERR ZENTEC (NSE): Incorrect `api_key` or `access_token`.
+  ERR ZFCVINDIA (NSE): Incorrect `api_key` or `access_token`.
+  ERR ZODIACLOTH (NSE): Incorrect `api_key` or `access_token`.
+  ERR ZUARIIND (NSE): Incorrect `api_key` or `access_token`.
+  ERR ZYDUSLIFE (NSE): Incorrect `api_key` or `access_token`.
+  ERR ZYDUSWELL (NSE): Incorrect `api_key` or `access_token`.
+done: ok 0 skip 0 err 1042 in 5.9 min
+    -> ok in 356s
+
+=== Adjusted views (price return, total return): data_pipeline.master_store.build_adjusted
+  300/2519
+  600/2519
+  900/2519
+  1200/2519
+  1500/2519
+  1800/2519
+  2100/2519
+  2400/2519
+adjusted 2519 series -> adjusted_pr/, adjusted_tr/
+type      note                            
+demerger  ignored:<5%                          20
+          measured                            116
+dividend  dividend:unparsed-or-implausible      7
+rights    rights:no-price                      44
+    -> ok in 48s
+
+=== QA: Kite vs raw adjustment: data_pipeline.master_store.verify_kite_adjustment
+symbols compared: 1041   matched steps: 1,097   unexplained steps: 13,599
+                  n  median_err_pct  p90_err_pct  within_0p2
+types                                                       
+dividend        345        0.483533     4.157943        42.3
+split           315        0.002000     0.161660        91.1
+bonus           274        0.003600     0.053400        94.5
+rights           63        0.220097     1.670276        46.0
+bonus+split      35        0.000000     0.056000        91.4
+bonus+dividend   17        0.834913     1.688637         0.0
+dividend+split    7        0.796291     5.464671         0.0
+consolidation     1        0.000000     0.000000       100.0
+
+demerger steps observed (Kite adjusts them): 32; e.g. [['ABB', datetime.date(2019, 12, 18), 0.78191], ['ABFRL', datetime.date(2025, 5, 20), 0.75685], ['ALLCARGO', datetime.date(2025, 11, 10), 0.87936], ['ARVIND', datetime.date(2018, 11, 26), 0.8], ['BAJAJELEC', datetime.date(2023, 9, 12), 0.6707]]
+    -> ok in 176s
+
+=== QA: report: data_pipeline.master_store.qa_report
+/Users/navdeep/kite-lab/data_pipeline/master_store/qa_report.py:66: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  f"Kite shows the same move on {int(pr['kite_agrees'].fillna(False).sum())} (a real move, not a print), "
+- calendar: 2519 files checked, 0 with non-midnight, duplicate or off-calendar dates
+- bad prints: 9700 one-day spike-and-revert rows with no corporate action nearby; Kite shows the same move on 2403 (a real move, not a print), disagrees on 73 (a print on one side), no Kite on 7224
+- stale tails: 0 files end >20 sessions before 2026-09-09 without a delisted_on flag
+- identity overlaps: 0
+    -> ok in 20s
+
+QA gate: flagged  {"bad_prints_30d": 8, "bad_prints_30d_kite_disagrees": 0, "stale_tails": 0, "calendar_issues": 0, "kite_steps_unexplained_30d": 27, "status": "flagged"}
+
+Bhavcopy: fetch missing sessions                       3s  ok
+Bhavcopy: symbol master + parquet                     32s  ok
+Bhavcopy: per-symbol raw series                       45s  ok
+Corporate actions: NSE filings (this year)             4s  ok
+Corporate actions: table                               2s  ok
+Corporate actions: observed events                    13s  ok
+Kite: append last sessions                           356s  ok
+Adjusted views (price return, total return)           48s  ok
+QA: Kite vs raw adjustment                           176s  ok
+QA: report                                            20s  ok

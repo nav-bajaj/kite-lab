@@ -98,6 +98,8 @@ runner (`tasks/mm_rebuild/lib/run.py`) keeps its own sizing / regime wiring — 
 - [ ] Docs: `docs/portfolios.md` sections for both books, marked "parallel run".
 
 ## P4 — monitoring, forward gate, reports 🤖
+- [ ] Fortnightly data-quality job per `DATA_QUALITY_CHECKS.md` (13 checks; every second Monday 07:00 IST;
+      report under `reports/data_quality/`, status on `/api/freshness`) — founder request 2026-09-11.
 - [ ] Quarterly monitoring script: rebuild the §22 grid (160 configs) on the trailing ten
       years for each book, report challengers beating the standing rules by > 0.10 Sharpe,
       write `reports/portfolios/<quarter>/monitoring.md`; founder sign-off before any change.
