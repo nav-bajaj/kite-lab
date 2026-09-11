@@ -29,6 +29,26 @@ def step(name, mod, args=(), dry=False, timings=None):
     return r.returncode == 0
 
 
+def ensure_panel_views():
+    """The engines read MASTER/panels/<view>/<SYMBOL>_day.csv; those are symlinks into prices/adjusted_<view>/. The view is
+    derived, so it is not shipped in the store archive (the upload endpoint rejects link members) — recreate it here, on every
+    run, for each adjusted view present on disk. Idempotent; relative links so the store can move."""
+    n = 0
+    for view in ("pr", "tr"):
+        src = MASTER / f"prices/adjusted_{view}"; dst = MASTER / f"panels/{view}"
+        if not src.is_dir():
+            continue
+        dst.mkdir(parents=True, exist_ok=True)
+        for f in src.glob("*.csv"):
+            link = dst / f"{f.stem}_day.csv"; target = os.path.relpath(f, dst)
+            if link.is_symlink() and os.readlink(link) == target:
+                continue
+            if link.exists() or link.is_symlink():
+                link.unlink()
+            link.symlink_to(target); n += 1
+    print(f"    panel views: {n} links (re)created", flush=True)
+
+
 def repull_candidates(days: int = 30) -> list:
     """Symbols whose Kite history must be re-pulled in full: an ex-date in the last `days` (Kite back-adjusts the whole series on
     the ex-date, so an appended tail would sit on a different basis from the stored history) or an unexplained Kite step in the
@@ -71,6 +91,8 @@ def main():
     ap.add_argument("--dry-run", action="store_true"); ap.add_argument("--steps", default="bhavcopy,ca,kite,adjust,qa")
     ap.add_argument("--since-days", type=int, default=20, help="Kite append window and bhavcopy look-back (sessions already on disk are skipped)")
     a = ap.parse_args(); steps = set(a.steps.split(",")); timings = []; ok = True
+    if not a.dry_run:
+        ensure_panel_views()   # a freshly seeded store has no panels/ yet
     since = (date.today() - timedelta(days=a.since_days)).isoformat()
     if "bhavcopy" in steps:
         ok &= step("Bhavcopy: fetch missing sessions", "fetch_bhavcopy", ["--start", since], a.dry_run, timings)
@@ -96,6 +118,8 @@ def main():
                     ok = False; timings[-1] = (timings[-1][0], timings[-1][1], 1)
     if "adjust" in steps:
         ok &= step("Adjusted views (price return, total return)", "build_adjusted", [], a.dry_run, timings)
+        if not a.dry_run:
+            ensure_panel_views()
     if "qa" in steps:
         ok &= step("QA: Kite vs raw adjustment", "verify_kite_adjustment", [], a.dry_run, timings)
         ok &= step("QA: report", "qa_report", [], a.dry_run, timings)
