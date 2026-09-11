@@ -51,6 +51,8 @@ mkdir -p "$VOLUME/om25_v3_portfolios"
 mkdir -p "$VOLUME/tl25_v3_portfolios"
 mkdir -p "$VOLUME/l6_v2_portfolios"
 mkdir -p "$VOLUME/combo_defensive_portfolios"
+mkdir -p "$VOLUME/mm_v1_portfolios"
+mkdir -p "$VOLUME/om25_v4_portfolios"
 
 # Helper: create symlink if target doesn't already point to the volume
 link() {
@@ -117,6 +119,8 @@ link "$VOLUME/om25_v3_portfolios"          "$APP/data/om25_v3_portfolios"
 link "$VOLUME/tl25_v3_portfolios"          "$APP/data/tl25_v3_portfolios"
 link "$VOLUME/l6_v2_portfolios"            "$APP/data/l6_v2_portfolios"
 link "$VOLUME/combo_defensive_portfolios"  "$APP/data/combo_defensive_portfolios"
+link "$VOLUME/mm_v1_portfolios"            "$APP/data/mm_v1_portfolios"
+link "$VOLUME/om25_v4_portfolios"          "$APP/data/om25_v4_portfolios"
 
 # Symlink individual files (access token, session, instruments CSV)
 # For files, symlink the parent isn't practical — symlink the file directly

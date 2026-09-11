@@ -206,9 +206,38 @@ UNIVERSES = {
         "portfolio_dir": "data/combo_defensive_portfolios",
         "rebalance_cadence": "biweekly_fri_mon",
     },
+    # The rebuilt books (production_port_2026, research lock 2026-09-11; mechanics
+    # in tasks/mm_rebuild/MECHANICS.md). Both run on the honest master store
+    # (MASTER_STORE_DIR: bhavcopy x corporate-action factors, point-in-time
+    # Nifty 250 membership), not on nse500_data. Admin-only until the parallel
+    # run (P5) is signed off; the IDs are stable — marketing names come later.
+    "mm_v1": {
+        "id": "mm_v1",
+        "name": "MM v1",
+        "description": "12m vol-adjusted momentum on Nifty 250, inverse-vol sizing, sector cap, bear hold-15, 20% stop (rebuilt 2026-09)",
+        "strategy": "MM v1 (vol-adjusted momentum, monthly, master store)",
+        "stocks": 250,
+        "risk_profile": "Aggressive momentum, regime-aware book size",
+        "data_dir": "data/master",
+        "universe_file": "data/master/membership/nifty250.csv",
+        "portfolio_dir": "data/mm_v1_portfolios",
+        "rebalance_cadence": "monthly_first",
+    },
+    "om25_v4": {
+        "id": "om25_v4",
+        "name": "OM25 v4",
+        "description": "50/50 rank blend of vol-adjusted momentum and capture ratio on Nifty 250, same stack as MM v1 (rebuilt 2026-09)",
+        "strategy": "OM25 v4 (momentum x capture-ratio blend, monthly, master store)",
+        "stocks": 250,
+        "risk_profile": "Quality momentum, regime-aware book size",
+        "data_dir": "data/master",
+        "universe_file": "data/master/membership/nifty250.csv",
+        "portfolio_dir": "data/om25_v4_portfolios",
+        "rebalance_cadence": "monthly_first",
+    },
 }
 
-UniverseId = Literal["nse500", "nifty250", "nifty100", "om25_v3", "tl25_v3", "l6_v2", "combo_defensive"]
+UniverseId = Literal["nse500", "nifty250", "nifty100", "om25_v3", "tl25_v3", "l6_v2", "combo_defensive", "mm_v1", "om25_v4"]
 
 # Canonical strategy/universe lists — single source of truth to prevent the
 # multi-file drift the rebalance audit flagged (O6/T-14). Import these instead
@@ -217,7 +246,8 @@ ALL_UNIVERSES: list = list(UNIVERSES.keys())
 
 # The 4 client v3 portfolios that have an EOD proposed-orders producer
 # (data_pipeline/eod_proposal.py). Distinct from the legacy nse500/nifty
-# universes, which have no producer.
+# universes, which have no producer. The rebuilt books (mm_v1, om25_v4) are
+# not listed yet: their monthly producer is production_port_2026 P3 work.
 EOD_STRATEGIES = ("om25_v3", "tl25_v3", "l6_v2", "combo_defensive")
 
 

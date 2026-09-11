@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 import pandas as pd
 
-LOOKUP = Path(__file__).resolve().parents[2] / "tasks/mm_rebuild/sector/sector_v2_lookup.csv"   # moves to data/master/sectors in P1
+LOOKUP = Path(__file__).resolve().parents[2] / "data/static/sectors/sector_v2_lookup.csv"   # git-tracked, shipped in the image (P2, 2026-09-12); refreshed at each reconstitution
 
 
 def load_sector_map(path: Path = LOOKUP) -> dict:

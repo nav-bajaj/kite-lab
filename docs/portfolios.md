@@ -9,11 +9,14 @@ display names, see `kite-dashboard/src/lib/universes.ts`.
 
 ---
 
-## Next generation — research-locked, not yet in production (2026-09-11)
+## Next generation — research-locked, in parallel run (2026-09-12)
 
 Two books rebuilt from scratch on the honest master store (point-in-time
-membership, price return) are locked and awaiting the production port
-(`tasks/production_port_2026/`). Full mechanics in
+membership, price return) are locked and, since 2026-09-12, built daily
+by `scripts/run_rebuilt_book.py --book mm_v1|om25_v4` inside
+`update_all_portfolios.py` as admin-only universes `mm_v1` and `om25_v4`
+(`tasks/production_port_2026/`; runner output reproduces the research
+harness exactly). Full mechanics in
 `tasks/mm_rebuild/MECHANICS.md`; the research record in
 `tasks/mm_rebuild/RESULTS.md` and `tasks/om25_rebuild/RESULTS.md`.
 

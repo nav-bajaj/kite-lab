@@ -9,6 +9,8 @@ export type UniverseId =
   | "tl25_v3"
   | "l6_v2"
   | "combo_defensive"
+  | "mm_v1"
+  | "om25_v4"
   | "nse500"
   | "nifty250"
   | "nifty100";

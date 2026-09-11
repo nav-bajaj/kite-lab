@@ -386,7 +386,7 @@ def main(argv: list[str] | None = None) -> int:
         help="Publish a Signal sourced from a portfolio rebalance changes CSV.",
     )
     p_reb.add_argument("--portfolio", required=True,
-                       help="Portfolio id, e.g. tl25_v3, om25_v3, l6_v2, combo_defensive")
+                       help="Portfolio id, e.g. tl25_v3, om25_v3, l6_v2, combo_defensive, mm_v1, om25_v4")
     p_reb.add_argument("--changes-csv", required=True,
                        help="Path to the rebalance changes CSV file.")
     p_reb.add_argument("--date", default=None,

@@ -86,6 +86,8 @@ _PORTFOLIO_UNIVERSES = [
     ("tl25_v3", "Trend Leaders (TL25 v3)"),
     ("l6_v2", "Core Momentum (L6 v2)"),
     ("combo_defensive", "Defensive Blend (COMBO)"),
+    ("mm_v1", "MM v1 (rebuilt, master store)"),
+    ("om25_v4", "OM25 v4 (rebuilt, master store)"),
     ("nse500", "NSE 500 (legacy)"),
     ("nifty250", "Nifty 250 (legacy)"),
     ("nifty100", "Nifty 100 (legacy)"),

@@ -24,6 +24,8 @@ _BENCHMARK: dict[str, tuple[str, str]] = {
     "tl25_v3": ("NIFTY_500.csv", "Nifty 500"),
     "nse500": ("NIFTY_500.csv", "Nifty 500"),
     "om25_v3": ("NIFTY_LARGEMID250.csv", "Nifty 250"),
+    "mm_v1": ("NIFTY_LARGEMID250.csv", "Nifty 250"),
+    "om25_v4": ("NIFTY_LARGEMID250.csv", "Nifty 250"),
     "nifty250": ("NIFTY_LARGEMID250.csv", "Nifty 250"),
     "nifty100": ("NIFTY_100.csv", "Nifty 100"),
 }
