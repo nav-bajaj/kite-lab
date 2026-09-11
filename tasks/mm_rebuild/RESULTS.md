@@ -1209,3 +1209,46 @@ it is the same thing as letting the winners run.
 
 **Adopted: fill from buffer. Trimming rejected.** The product wording
 stays "up to 25 names, rebuilding over the rebalances after a bear".
+
+## §20 — OM25 reviewed with MM's devices (10 trials) — post-OOS
+
+OM25's capture scores now run through this harness (`kind` cr / 5050 /
+uc; the OM25 pick reproduces the OM25 harness to the rupee). Base = the
+adaptive process's 2026 pick: 50/50, buffer 10, 20% stop checked weekly.
+
+| Cell | IS | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Wright window | Up / down | Trades/yr | Action days/mo |
+|---|---|---|---|---|---|---|---|
+| OM25 current pick (50/50, buffer 10, stop 20 weekly) | 0.38 | 22.2% / 0.82 / -36% | 0.20 / 1.31 / 1.03 | 34.9% / 1.34 | 1.29 / 1.14 | 138 | 2.2 |
+| + monthly stop check | 0.38 | 20.8% / 0.69 / -46% | 0.31 / 0.95 / 0.84 | 32.5% / 1.17 | 1.28 / 1.24 | 128 | 1.0 |
+| + buffer 20 | 0.32 | 20.5% / 0.74 / -40% | 0.09 / 1.19 / 1.01 | 34.2% / 1.32 | 1.29 / 1.16 | 121 | 2.2 |
+| + fill from buffer | 0.38 | 22.2% / 0.82 / -36% | 0.20 / 1.31 / 1.03 | 34.9% / 1.34 | 1.29 / 1.14 | 138 | 2.2 |
+| + inverse-vol 10% | 0.41 | 21.6% / 0.82 / -33% | 0.32 / 1.10 / 1.09 | 32.7% / 1.28 | 1.23 / 1.12 | 137 | 2.2 |
+| + sector cap 5 | 0.38 | 21.8% / 0.82 / -34% | 0.17 / 1.43 / 0.96 | 33.2% / 1.29 | 1.25 / 1.12 | 135 | 2.1 |
+| + bear rule hold<=15 (ROC31) | 0.31 | 18.9% / 0.71 / -39% | 0.01 / 1.07 / 1.12 | 29.9% / 1.19 | 1.12 / 0.98 | 139 | 1.9 |
+| 50/50 + full MM stack, weekly stop | 0.31 | 20.3% / 0.79 / -34% | 0.09 / 1.11 / 1.20 | 30.9% / 1.21 | 1.15 / 1.02 | 148 | 1.9 |
+| 50/50 + full MM stack, monthly stop, buffer 20 | 0.24 | 19.4% / 0.71 / -36% | 0.26 / 0.83 / 1.03 | 27.7% / 1.03 | 1.07 / 0.99 | 129 | 1.0 |
+| CR + full MM stack, monthly stop, buffer 20 | 1.48 | 20.1% / 1.05 / -27% | 0.89 / 1.24 / 1.06 | 24.3% / 1.32 | 0.83 / 0.60 | 121 | 1.0 |
+| CR, no stop, buffer 20 (the §3 book) | 1.50 | 18.3% / 0.79 / -35% | 0.92 / 1.03 / 0.49 | 19.5% / 0.86 | 0.90 / 1.03 | 90 | 1.0 |
+
+Read:
+1. **The 50/50 pick is a high-beta book** (up 1.29, down 1.14) with a
+   weak in-sample (0.38) and 2016-19 (0.20); it is the 2024-26 regime's
+   winner and none of MM's devices improves it — the bear rule and the
+   monthly stop check hurt it, sizing and the sector cap are neutral.
+2. **The capture-ratio score with the full MM stack is a different and
+   better book: IS 1.48, OOS 20.1% / 1.05 / −27%, every sub-window ≥ 0.89
+   (the only Nifty 250 cell with 2016-19 above 0.8), one action day a
+   month, down-capture 0.60 — the lowest measured — with up-capture
+   0.83.** It passes G1-G4 and G8 (20.1%, at the line) as a fixed
+   configuration, no refit. It is the §3a in-sample score decision (CR)
+   plus devices each of which is a plateau on MM; still post-OOS as a
+   combination.
+3. The two stacks are the same devices on different scores and hold 14
+   names in common today; monthly correlation 0.86. A 50/50 blend does
+   22.7% / 1.16 / −25% OOS, sub-windows 0.82 / 1.55 / 1.16, up 0.97 /
+   down 0.68 — smoother than either, not more return than MM.
+
+Proposal for the founder: fix OM25 as **CR + the MM stack** (static, one
+action day a month), retiring the yearly refit, and offer the two books
+as the aggressive (MM, vol-adjusted momentum) and defensive (OM25,
+capture ratio) versions of the same process.

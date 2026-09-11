@@ -706,3 +706,11 @@ window capture ratio moves by ≤ 0.02 except the OM25 2026 pick's
 down-capture (1.14 → 1.20, three extra index months); no conclusion in
 §4f, mm_rebuild §7-§9d or §16 changes, but the "MidSmall 400 2026 YTD
 3.0%" figure in §16 reads 7.7%.
+
+## §6 — OM25 on the MM stack (see mm_rebuild §20)
+
+Capture ratio + inverse-vol 10% + sector cap 5 + hold ≤ 15 in bear
+(ROC31/c3) + 20% stop checked monthly + fill-from-buffer, Nifty 250,
+one action day a month: IS 1.48, OOS 20.1% / 1.05 / −27%, sub-windows
+0.89 / 1.24 / 1.06, down-capture 0.60. Proposed as OM25's fixed form in
+place of the yearly refit; the founder's decision is pending.

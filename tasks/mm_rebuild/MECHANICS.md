@@ -37,7 +37,7 @@ neither is in production.
 | Rhythm | one order day a month plus an occasional Monday stop sale; ~2 action days a month |
 | Process | each January the configuration with the best trailing five-year Sharpe among score {CR, 50/50, UC} × regimes {1, 2} × buffer {0, 10, 20} × stop {off, 20%} is traded; picks 2024-26: 50/50, 1 regime, buffer 10-0-10, stop 20% |
 | Record | chained 2016-26: 21.6% / 0.90 / −35%, sub-windows 0.88 / 0.99 / 0.91; chained 2011-26: 21.4% / 0.97 |
-| Open | whether to fix the rules as MM did (the process changed six times in eleven years, mostly stop and score) and the forward gate |
+| Open | whether to fix the rules as MM did and the forward gate. **Proposed 2026-09-11 (mm_rebuild §20): capture-ratio score on the full MM stack** — inverse-vol 10%, sector cap 5, hold ≤ 15 in bear, 20% stop checked monthly, fill-from-buffer, one action day a month: IS 1.48, OOS 20.1% / 1.05 / −27%, sub-windows 0.89 / 1.24 / 1.06, down-capture 0.60 |
 
 ## Where they differ
 

@@ -61,10 +61,15 @@ def run_candidate(**overrides):
     if cfg["universe_cap"] or cfg["satellite_slots"]:
         from regime import membership_mask
         core_mask = membership_mask(om.MEMBERSHIP["nifty250"], close).reindex(columns=cols, fill_value=False)
-    score_fn = make_momentum_score(returns_uni, kind=cfg["kind"], lookback=cfg["lookback"], min_obs=cfg["min_obs"], skip=cfg["skip"],
-                                   vol_floor=cfg["vol_floor"], positive_only=cfg["positive_only"], candidate_fn=candidate_fn, cr_quantile=cfg["cr_quantile"],
-                                   volume_panel=volume_panel, vol_kick=cfg["vol_kick"], vol_k=cfg["vol_k"],
-                                   core_mask=core_mask, universe_cap=cfg["universe_cap"], turnover_floor=cfg["turnover_floor"])
+    if cfg["kind"] in ("cr", "5050", "uc"):   # OM25's capture-statistics scores (om25_rebuild/lib/score.py), one regime, return filter on
+        from score import make_capture_score
+        w_uc, w_cr = {"uc": (1.0, 0.0), "cr": (0.0, 1.0), "5050": (0.5, 0.5)}[cfg["kind"]]
+        score_fn = make_capture_score(returns_uni, None, w_uc_bull=w_uc, w_cr_bull=w_cr, return_filter=True, lookback=cfg["lookback"], min_obs=cfg["min_obs"], candidate_fn=candidate_fn)
+    else:
+      score_fn = make_momentum_score(returns_uni, kind=cfg["kind"], lookback=cfg["lookback"], min_obs=cfg["min_obs"], skip=cfg["skip"],
+                                     vol_floor=cfg["vol_floor"], positive_only=cfg["positive_only"], candidate_fn=candidate_fn, cr_quantile=cfg["cr_quantile"],
+                                     volume_panel=volume_panel, vol_kick=cfg["vol_kick"], vol_k=cfg["vol_k"],
+                                     core_mask=core_mask, universe_cap=cfg["universe_cap"], turnover_floor=cfg["turnover_floor"])
     if cfg["satellite_slots"]:
         # founder 2026-09-10: keep the majority of the book in the Nifty 250 core and reserve K slots for the
         # strongest names outside it (the 251-500 band). Implemented as a synthetic ranking so the engine's
