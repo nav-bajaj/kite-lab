@@ -42,3 +42,13 @@ around −30% (the process band, not the static 1.18, which is the top of
 a selected grid). Forward gate: rolling three-year Sharpe ≥ 0.6 and
 drawdown no worse than −40%, judged quarterly from 2026-10-01; a breach
 triggers a review, not an automatic change.
+
+## OM25 process definition — founder decision 2026-09-11
+
+OM25 becomes the blended score (vol-adjusted momentum × capture ratio,
+40-50% momentum) on the MM stack, monthly, one action day; rules fixed;
+the same quarterly monitoring (§22 grid, 0.10 margin, founder sign-off)
+and the same forward gate as MM (rolling 3-year Sharpe ≥ 0.6, drawdown
+≥ −40%, from 2026-10-01). Expectation: about 20% a year at Sharpe ~0.9,
+drawdown around −30% (the process band). The om25_rebuild §4b yearly
+refit and its 2026 pick are retired. Biweekly rebalancing rejected (§22b).

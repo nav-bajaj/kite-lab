@@ -24,23 +24,29 @@ neither is in production.
 | Monitoring | quarterly report: §17 grid on trailing ten years; a challenger must beat the standing rules by > 0.10 Sharpe to be raised; changes are the founder's call, phased over 1-2 rebalances |
 | Forward gate | rolling 3-year Sharpe ≥ 0.6, drawdown ≥ −40%, judged quarterly from 2026-10-01 |
 
-## OM25 — "Quality Momentum", Nifty 250 (adaptive process, om25_rebuild §4b; decision on fixing it pending)
+## OM25 — "Quality Momentum", Nifty 250 (fixed rules, founder decision 2026-09-11: the blended score on the MM stack)
 
 | Element | Rule |
 |---|---|
 | Universe | NIFTY LARGEMIDCAP 250, point-in-time membership |
-| Score, current pick (2026) | 50/50 blend of upside-capture rank and capture-ratio rank over the trailing 252 sessions; market = equal-weight members; positive window return required; one regime (no tilt) |
+| Score | rank blend: 40-50% vol-adjusted momentum (252 sessions ending 21 before the signal, / annualised vol, floor 5%) + 50-60% capture ratio (upside vs downside participation over the same 252 sessions, positive window return required); weight fixed at 50/50 unless the founder prefers 40/60 (§21: plateau 40-60) |
+| Eligibility | ≥ 220 priced sessions in the window |
 | Signal / execution | close of the first trading day of each month; next-session execution |
-| Book | 25 names, equal weight at entry, no cap; exit at the monthly review below rank 35 (25 + buffer 10, current pick) |
-| Stop | 20% trailing from peak, **checked weekly** (Friday close, Monday execution) — the monthly check costs 0.1 Sharpe here (§5b) |
-| Regime / overlay | none (fully invested) |
-| Rhythm | one order day a month plus an occasional Monday stop sale; ~2 action days a month |
-| Process | each January the configuration with the best trailing five-year Sharpe among score {CR, 50/50, UC} × regimes {1, 2} × buffer {0, 10, 20} × stop {off, 20%} is traded; picks 2024-26: 50/50, 1 regime, buffer 10-0-10, stop 20% |
-| Record | chained 2016-26: 21.6% / 0.90 / −35%, sub-windows 0.88 / 0.99 / 0.91; chained 2011-26: 21.4% / 0.97 |
-| Open | whether to fix the rules as MM did and the forward gate. **Proposed 2026-09-11 (mm_rebuild §20): capture-ratio score on the full MM stack** — inverse-vol 10%, sector cap 5, hold ≤ 15 in bear, 20% stop checked monthly, fill-from-buffer, one action day a month: IS 1.48, OOS 20.1% / 1.05 / −27%, sub-windows 0.89 / 1.24 / 1.06, down-capture 0.60 |
+| Book | up to 25 names; entrants by rank from the top 45; exit below rank 45; after a bear the book rebuilds as positions exit; no trimming |
+| Sizing | inverse-volatility (63-day), capped at 10%; positions drift |
+| Sector cap | at most 5 names per NSE sector at entry |
+| Regime and bear behaviour | NIFTY 100 ROC31, 3-day confirmation, prior close; in bear the book holds ≤ 15 names, exits at rank 35 |
+| Stop | 20% trailing from peak, checked at the monthly signal, executed next session |
+| Rhythm | **one order day a month** |
+| Parameters | 10 (as MM plus the blend weight) — G6 ≤ 10 |
+| Record | static 2016-26: 24.9% / 1.21 / −29% (50/50) or 23.3% / 1.16 / −26% (40/60); Wright window 34.3% / 1.65, up-capture 1.09 / down 0.70; single-book process (§22) 19.8% / 0.93 / −30% — plan on the process band |
+| Monitoring and forward gate | as MM: quarterly §22 grid on trailing ten years, 0.10 margin, founder sign-off; rolling 3-year Sharpe ≥ 0.6, drawdown ≥ −40%, judged quarterly from 2026-10-01 |
+| Retired | the yearly refit process of om25_rebuild §4b and its 2026 pick (50/50 UC+CR, buffer 10, weekly stop: 0.82, up 1.29 / down 1.14) |
 
 ## Where they differ
 
-MM is vol-adjusted price momentum with the risk devices; OM25 is the
-capture-ratio family with a refit. Monthly correlation between the two
-is high (both Nifty 250 momentum); the blend question is open.
+The two books share every device and differ only in the score: MM is pure
+vol-adjusted momentum (the aggressive version, up-capture 1.10 / down 0.77),
+OM25 blends it with the capture ratio (up 1.09 / down 0.70, better
+2016-19 and 2023-26, weaker 2020-22). Monthly correlation 0.86; 14 of
+about 22 names in common on 2026-09-11.
