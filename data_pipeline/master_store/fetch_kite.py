@@ -105,7 +105,7 @@ def main():
     t0 = time.time()
     for i, r in enumerate(todo.itertuples(), 1):
         path = f"{OUT}/{r.symbol}.csv"
-        if manifest.get(r.symbol, {}).get("pulled_at", "")[:10] == today and os.path.exists(path):
+        if not a.symbols_file and manifest.get(r.symbol, {}).get("pulled_at", "")[:10] == today and os.path.exists(path):   # a --symbols-file re-pull is always forced
             n_skip += 1; continue
         try:
             start = (date.today() - timedelta(days=a.since_days)).isoformat() if a.since_days else a.start
