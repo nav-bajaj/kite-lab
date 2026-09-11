@@ -38,7 +38,13 @@ runner (`tasks/mm_rebuild/lib/run.py`) keeps its own sizing / regime wiring — 
       minutes (Kite append 6 min, verification 3 min); gate flagged on 27 unexplained Kite steps in
       30 days (the standing review list, not new). Fixes found by the run: a 404 for a not-yet-
       published day was being recorded as a permanent holiday (10 and 11 Sep had been lost; fixed
-      and re-fetched); the QA gate reads the named date column.
+      and re-fetched); the QA gate reads the named date column; the Kite step had reported "ok" while
+      every symbol errored (no valid local token) and had overwritten the manifest's metadata with
+      the error — now an error keeps the previous entry (`last_error`) and the runner fails the step
+      when more than 5% of symbols error on the day. The Kite series on disk were verified intact
+      (1,041 files, none shorter than the previous manifest). QA note: the other session's
+      `extra_targets.csv` adds ~1,500 non-index names to the bhavcopy export, so `bad_prints.csv`
+      now carries many rows with no Kite comparison (NaN); the gate counts only Kite disagreements.
       Scheduler entry `master_store_refresh` registered at 19:30 mon-fri, **enabled: False** until
       the store exists on the production volume; command `master_store_refresh` in `job_service`.
 - [ ] Deploy (outside the freeze): push; seed `data/master` (2.3 GB: prices, raw bhavcopy, parquet,

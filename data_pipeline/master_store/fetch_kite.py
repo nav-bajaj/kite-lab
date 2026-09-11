@@ -109,12 +109,12 @@ def main():
                 old = pd.read_csv(path, parse_dates=["date"]); df = pd.concat([old[old["date"] < pd.Timestamp(start)], df]).drop_duplicates("date", keep="last").sort_values("date")
         except Exception as e:  # noqa: BLE001
             n_err += 1
-            manifest[r.symbol] = {"exchange": r.exchange, "error": str(e)[:200], "pulled_at": today}
+            prev = manifest.get(r.symbol, {}); manifest[r.symbol] = {**prev, "exchange": r.exchange, "last_error": str(e)[:200], "last_error_at": today}   # keep first/last/rows
             print(f"  ERR {r.symbol} ({r.exchange}): {str(e)[:120]}", flush=True)
             continue
         if df.empty:
             n_err += 1
-            manifest[r.symbol] = {"exchange": r.exchange, "error": "empty", "pulled_at": today}
+            prev = manifest.get(r.symbol, {}); manifest[r.symbol] = {**prev, "exchange": r.exchange, "last_error": "empty", "last_error_at": today}
             continue
         df = df[["date", "open", "high", "low", "close", "volume"]]
         df["date"] = pd.to_datetime(df["date"]).dt.normalize()

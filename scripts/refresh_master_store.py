@@ -66,6 +66,14 @@ def main():
         ok &= step("Corporate actions: observed events", "derive_observed_events", [], a.dry_run, timings)
     if "kite" in steps:
         ok &= step("Kite: append last sessions", "fetch_kite", ["--since-days", str(a.since_days)], a.dry_run, timings)
+        if not a.dry_run:
+            mf = MASTER / "prices/kite_manifest.json"
+            if mf.exists():
+                mn = json.load(open(mf)); today = date.today().isoformat()
+                n_err = sum(1 for v in mn.values() if v.get("last_error_at") == today); share = n_err / max(len(mn), 1)
+                print(f"    Kite: {n_err} of {len(mn)} symbols errored today ({100*share:.0f}%)" + ("  -> STEP FAILED (token or API problem)" if share > 0.05 else ""), flush=True)
+                if share > 0.05:
+                    ok = False; timings[-1] = (timings[-1][0], timings[-1][1], 1)
     if "adjust" in steps:
         ok &= step("Adjusted views (price return, total return)", "build_adjusted", [], a.dry_run, timings)
     if "qa" in steps:
