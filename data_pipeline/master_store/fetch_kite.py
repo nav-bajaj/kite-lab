@@ -63,6 +63,7 @@ def build_targets() -> pd.DataFrame:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--start", default=START)
+    ap.add_argument("--symbols-file", default="", help="only these symbols (one per line); with --since-days 0 this is a full re-pull for them")
     ap.add_argument("--since-days", type=int, default=0, help="append mode: pull only the last N calendar days and merge into the existing file (nightly); 0 = full history")
     ap.add_argument("--limit", type=int, default=0)
     a = ap.parse_args()
@@ -70,6 +71,9 @@ def main():
     targets = build_targets()
     targets.to_csv(f"{MASTER}/kite_targets.csv", index=False)
     todo = targets[targets["exchange"] != "NONE"]
+    if a.symbols_file:
+        _want = set(l.strip() for l in open(a.symbols_file) if l.strip()); todo = todo[todo["symbol"].isin(_want)]
+        print(f"  symbols-file: {len(todo)} symbols selected for a full re-pull")
     print(f"targets: {len(targets)} ({(targets['exchange']=='NSE').sum()} NSE, {(targets['exchange']=='BSE').sum()} BSE, "
           f"{(targets['exchange']=='NONE').sum()} not on Kite)", flush=True)
     if a.limit:

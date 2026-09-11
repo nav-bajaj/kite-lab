@@ -29,6 +29,22 @@ def step(name, mod, args=(), dry=False, timings=None):
     return r.returncode == 0
 
 
+def repull_candidates(days: int = 30) -> list:
+    """Symbols whose Kite history must be re-pulled in full: an ex-date in the last `days` (Kite back-adjusts the whole series on
+    the ex-date, so an appended tail would sit on a different basis from the stored history) or an unexplained Kite step in the
+    last `days` (the verification found a band already). The store's own basis (bhavcopy x CA factors) is unaffected either way."""
+    import pandas as pd
+    cutoff = pd.Timestamp(date.today() - timedelta(days=days)); syms = set()
+    ca = MASTER / "corporate_actions.csv"
+    if ca.exists():
+        c = pd.read_csv(ca, parse_dates=["ex_date"]); syms |= set(c.loc[c["ex_date"] >= cutoff, "symbol"].astype(str))
+    un = QA / "kite_steps_unexplained.csv"
+    if un.exists():
+        u = pd.read_csv(un); dc = [x for x in u.columns if "date" in x.lower()]
+        if dc and len(u): syms |= set(u.loc[pd.to_datetime(u[dc[0]], errors="coerce") >= cutoff, "symbol"].astype(str))
+    return sorted(syms)
+
+
 def qa_gate():
     """Summarise the QA outputs into one status. flagged = something a human should look at tomorrow."""
     import pandas as pd
@@ -66,6 +82,10 @@ def main():
         ok &= step("Corporate actions: observed events", "derive_observed_events", [], a.dry_run, timings)
     if "kite" in steps:
         ok &= step("Kite: append last sessions", "fetch_kite", ["--since-days", str(a.since_days)], a.dry_run, timings)
+        rp = repull_candidates(30)
+        if rp:
+            lst = MASTER / "qa/kite_repull_today.txt"; lst.parent.mkdir(parents=True, exist_ok=True); lst.write_text("\n".join(rp) + "\n")
+            ok &= step(f"Kite: full re-pull, {len(rp)} symbols with a recent ex-date or unexplained step", "fetch_kite", ["--symbols-file", str(lst)], a.dry_run, timings)
         if not a.dry_run:
             mf = MASTER / "prices/kite_manifest.json"
             if mf.exists():
