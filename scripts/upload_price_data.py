@@ -27,7 +27,9 @@ TARGETS = ["nse500_data", "nse500_data_hourly", "nse500_data_historical",
            # reads. nse500_data_merged sits in the repo root; the indices panel
            # is built FROM the Documents store but uploaded AS
            # indices_data_historical (the prod read path) via --source-dir.
-           "nse500_data_merged", "indices_data_historical"]
+           "nse500_data_merged", "indices_data_historical",
+           # production_port_2026: the honest master store (directory tree; extracted recursively server-side)
+           "master"]
 
 
 def compress_directory(source_dir, target_name):

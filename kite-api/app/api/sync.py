@@ -3,6 +3,7 @@ Sync API endpoints - Import data from CSVs to database
 
 All endpoints require authentication.
 """
+import os
 import tarfile
 import tempfile
 import shutil
@@ -73,6 +74,12 @@ ALLOWED_UPLOAD_DIRS = {
     # scripts/init_persistent_storage.sh so uploads survive a redeploy.
     "nse500_data_merged",     # 16y split-adjusted stock panel (breadth engine)
     "indices_data_historical",  # 16y indices + VIX panel (macro engine)
+    # production_port_2026 P1 (2026-09-11): the honest master store. Unlike the flat panels above it
+    # is a directory tree (prices/*/, raw/, membership/, benchmarks/, qa/ ...), so it is extracted
+    # recursively and merged into MASTER_STORE_DIR (/data/master on the volume). Same member
+    # validation; nothing outside the store directory is written; existing files are overwritten
+    # by the archive's copies, files absent from the archive are left alone (a merge, not a replace).
+    "master",
 }
 
 
@@ -93,7 +100,11 @@ async def upload_price_data(
     if not file.filename.endswith((".tar.gz", ".tgz")):
         raise HTTPException(status_code=400, detail="File must be a .tar.gz archive")
 
-    target_dir = settings.data_dir / target
+    if target == "master":
+        # the same resolution the nightly runner uses: MASTER_STORE_DIR (set to /data/master on Railway), else <root>/data/master
+        target_dir = Path(os.environ.get("MASTER_STORE_DIR", str(settings.data_dir / "data" / "master")))
+    else:
+        target_dir = settings.data_dir / target
 
     try:
         # Save upload to temp file
@@ -125,9 +136,20 @@ async def upload_price_data(
 
                 # Copy files into target
                 count = 0
-                for f in source.glob("*.csv"):
-                    shutil.copy2(f, target_dir / f.name)
-                    count += 1
+                if target == "master":
+                    for f in source.rglob("*"):
+                        if f.is_file():
+                            rel = f.relative_to(source)
+                            dest = (target_dir / rel).resolve()
+                            if not str(dest).startswith(str(target_dir.resolve()) + os.sep):
+                                raise HTTPException(status_code=400, detail=f"Unsafe path in archive: {rel}")
+                            dest.parent.mkdir(parents=True, exist_ok=True)
+                            shutil.copy2(f, dest)
+                            count += 1
+                else:
+                    for f in source.glob("*.csv"):
+                        shutil.copy2(f, target_dir / f.name)
+                        count += 1
 
         # Clean up temp file
         Path(tmp_path).unlink(missing_ok=True)
