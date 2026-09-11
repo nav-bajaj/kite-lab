@@ -24,6 +24,11 @@ REPO = "/Users/navdeep/kite-lab"
 MASTER = f"{REPO}/data/master"
 OUT = f"{MASTER}/prices/bhavcopy"
 MANIFEST = f"{MASTER}/prices/bhavcopy_manifest.json"
+# Optional, additive: extra canonical symbols to export beyond the index-member
+# target list. Absent -> behaviour is exactly as before. Written by
+# tasks/breakout_calls_2026, which needs every name that ever cleared its
+# liquidity floor, not only index members.
+EXTRA_TARGETS = f"{MASTER}/extra_targets.csv"
 
 
 def main():
@@ -38,6 +43,10 @@ def main():
     keys = {s for v in targets["symbol"] for s in str(v).split("|")}
     for f in glob.glob(f"{MASTER}/membership/*.csv"):
         keys |= set(pd.read_csv(f)["symbol"])
+    if os.path.exists(EXTRA_TARGETS):
+        extra = set(pd.read_csv(EXTRA_TARGETS)["symbol"])
+        print(f"  extra_targets.csv: +{len(extra - keys)} symbols beyond the index-member list")
+        keys |= extra
     keys = sorted(keys)
     by_symbol = {s: g for s, g in eq.groupby("symbol")}
     manifest, n_ok, n_empty, n_delisted = {}, 0, 0, 0
