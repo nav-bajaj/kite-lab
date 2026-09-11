@@ -56,7 +56,8 @@ runner (`tasks/mm_rebuild/lib/run.py`) keeps its own sizing / regime wiring — 
       `nse500_data*` and portfolio folders. Set `MASTER_STORE_DIR=/data/master` and
       `MASTER_STORE_SKIP_TR=1` on the service; grow the volume to 10 GB when convenient.
 - [x] Hand runs on Railway 2026-09-11 (over `railway ssh`, `nohup`): three fixes surfaced — pyarrow/requests missing from the image, store paths built from the repo root instead of `MASTER_STORE_DIR`, Kite targets read from the reconstruction files; all deployed. Final run: every step ok (bhavcopy 71 s, series 89 s, Kite append 348 s with 0 of 1,045 errors, adjusted 62 s, verification 372 s); gate flagged on the standing unexplained-Kite-steps list (40 in 30 days after the append; the forced ex-date re-pull clears those). `enabled` flipped to True; first scheduled run Monday 2026-09-14 19:30 IST.
-- [ ] Morning review after the first scheduled run; grow the volume to 10 GB.
+- [x] Full nightly verified on Railway 2026-09-11 23:46 IST after two more fixes (forced ex-date re-pull; Kite series deduped — Kite returned duplicate days for COALINDIA and ONGC on a full pull, which crashed the verification): every step ok, gate flagged on the standing list (33 unexplained Kite steps in 30 days, 1 stale tail, 0 Kite-disagreeing bad prints). `qa/nightly_latest.json` is the morning-review file.
+- [ ] Morning review after the first scheduled run (Mon 2026-09-14 19:30 IST); grow the volume to 10 GB.
 - [ ] Morning review of `qa/nightly_latest.json` when flagged: `kite_steps_unexplained.csv`
       (Kite adjustments with no CA filing), `bad_prints.csv` rows where Kite disagrees, stale tails.
       Surface the status on `/api/freshness` (P3).
