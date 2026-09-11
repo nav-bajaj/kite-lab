@@ -13,6 +13,7 @@ after this script exits:
 
   v3 daily-pipeline portfolios (own scripts on _clean_engine):
     - om25_v3
+    - mm_v1, om25_v4 (rebuilt books on the master store)
     - tl25_v3
     - l6_v2
     - combo_defensive
@@ -92,6 +93,17 @@ def v3_portfolio_steps(shared_state_file=None):
             "--prices-dir", "nse500_data",
             "--start", "2020-01-01",
         ] + cache_args),
+        # The rebuilt books (production_port_2026 P2) read the master store
+        # (MASTER_STORE_DIR, refreshed nightly at 19:30), not nse500_data, so
+        # they take no --prices-dir and cannot use the shared-state cache.
+        ("Build MM v1 portfolio (master store)", [
+            sys.executable, "scripts/run_rebuilt_book.py",
+            "--book", "mm_v1", "--start", "2020-01-01",
+        ]),
+        ("Build OM25 v4 portfolio (master store)", [
+            sys.executable, "scripts/run_rebuilt_book.py",
+            "--book", "om25_v4", "--start", "2020-01-01",
+        ]),
     ]
 
 

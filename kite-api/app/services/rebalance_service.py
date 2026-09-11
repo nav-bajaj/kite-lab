@@ -24,6 +24,7 @@ from app.models.models import (
     Trade,
 )
 from app.services.market_service import (
+    is_trading_day,
     snap_back_to_trading_day,
     next_trading_day_after,
     trading_days_between,
@@ -46,8 +47,35 @@ CADENCE_META = {
     "weekly_thu_fri":   ("Weekly · Thu signal → Fri", 1, 3, False),
     "biweekly_fri":     ("Biweekly entries · weekly exit checks", 2, 4, True),
     "biweekly_fri_mon": ("Biweekly entries · weekly exit checks (Fri → Mon)", 2, 4, True),
+    # The rebuilt books: signal at the first session of each month, execute
+    # the next session; the stop is checked at the same signal (one action
+    # day a month), so there is no weekly exit overlay. interval_weeks=0
+    # marks the key as month-stepped for the projectors below.
+    "monthly_first":    ("Monthly · first session signal → next session", 0, 0, False),
 }
 DEFAULT_CADENCE = "weekly_thu_fri"
+
+
+def _first_trading_day_of_month(year: int, month: int) -> date:
+    d = date(year, month, 1)
+    while not is_trading_day(d):
+        d += timedelta(days=1)
+    return d
+
+
+def _month_step(year: int, month: int, n: int) -> tuple:
+    m = (year * 12 + month - 1) + n
+    return m // 12, m % 12 + 1
+
+
+def _project_monthly(today: date) -> date:
+    """Next first-session-of-month signal strictly after `today`."""
+    y, m = today.year, today.month
+    while True:
+        cand = _first_trading_day_of_month(y, m)
+        if cand > today:
+            return cand
+        y, m = _month_step(y, m, 1)
 
 
 def _project(anchor: date, interval_weeks: int, signal_wd: int, today: date) -> date:
@@ -70,6 +98,8 @@ def project_next_signal(last_signal: date, cadence_key: str, today: date) -> dat
     separately (next weekly Friday) — see get_rebalance_summary.
     """
     _, interval_weeks, signal_wd, _ = CADENCE_META.get(cadence_key, CADENCE_META[DEFAULT_CADENCE])
+    if interval_weeks == 0:
+        return _project_monthly(today)
     return _project(last_signal, interval_weeks, signal_wd, today)
 
 
@@ -109,6 +139,21 @@ def expected_cadence_history(
         cadence_key, CADENCE_META[DEFAULT_CADENCE]
     )
     anchor_signal = _exec_to_signal(anchor_exec)
+    if interval_weeks == 0:
+        pairs_m: list = []
+        y, m = anchor_signal.year, anchor_signal.month
+        while True:
+            sig = _first_trading_day_of_month(y, m); exec_d = next_trading_day_after(sig)
+            if exec_d > today:
+                break
+            pairs_m.append((sig, exec_d)); y, m = _month_step(y, m, 1)
+        y, m = _month_step(anchor_signal.year, anchor_signal.month, -1)
+        while len(pairs_m) < lookback_count and y >= 2009:
+            sig = _first_trading_day_of_month(y, m); exec_d = next_trading_day_after(sig)
+            if exec_d <= today:
+                pairs_m.append((sig, exec_d))
+            y, m = _month_step(y, m, -1)
+        return sorted({e: (s, e) for s, e in pairs_m}.values(), key=lambda pr: pr[1], reverse=True)
     # Project the anchor onto its nominal ``signal_wd``-of-week: this
     # de-rotates any holiday shift so subsequent ``+weeks`` arithmetic
     # stays on the same weekday and the snap-back applies cleanly per

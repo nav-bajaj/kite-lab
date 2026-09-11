@@ -36,6 +36,8 @@ UNIVERSE_DIRS = {
     "tl25_v3":          ("data/tl25_v3_portfolios",          "tl25_v3_portfolio_202*"),
     "l6_v2":            ("data/l6_v2_portfolios",            "l6_v2_portfolio_202*"),
     "combo_defensive":  ("data/combo_defensive_portfolios",  "combo_defensive_portfolio_202*"),
+    "mm_v1":            ("data/mm_v1_portfolios",            "mm_v1_portfolio_202*"),
+    "om25_v4":          ("data/om25_v4_portfolios",          "om25_v4_portfolio_202*"),
 }
 
 

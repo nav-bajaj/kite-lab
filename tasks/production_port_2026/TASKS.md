@@ -73,15 +73,37 @@ runner (`tasks/mm_rebuild/lib/run.py`) keeps its own sizing / regime wiring — 
       synthetic MidSmall 400 builder as a script (the §4f construction, tail bug fixed).
 - [ ] Register row for the source-of-record change (risk register) 👤.
 
-## P2 — runners and the daily pipeline 🤖 [prod]
-- [ ] `scripts/run_mm_portfolio.py` and `scripts/run_om25_v4_portfolio.py` (working names)
-      with LOCKED configs from `tasks/mm_rebuild/MECHANICS.md`; outputs in the existing
-      `data/<book>_portfolios/<stamp>/` layout (equity, trades, exits, metrics, latest.json).
-- [ ] Both added to `update_all_portfolios.py`; rebalance day = first trading day; stop
-      check at the monthly signal; one action day.
-- [ ] EOD proposed-orders adapter (`run_eod_proposed_orders.py`) understands the two books.
-- [ ] Recompute-from-lock-date discipline: the books' history starts at their lock date;
-      the research equity (2010 →) is kept as `backtests/` reference only (D-4, D-5).
+## P2 — runners and the daily pipeline 🤖 [prod] — code done 2026-09-12; deploy + first Railway run below
+- [x] One runner for both books: `scripts/run_rebuilt_book.py --book mm_v1|om25_v4`, with the
+      LOCKED configs and the store-to-engine assembly in `scripts/rebuilt_books.py` (the two
+      books differ only in the score, so the stack is written once). Reads the master store
+      (`MASTER_STORE_DIR`), recreates the `panels/pr` symlink view first
+      (`data_pipeline/master_store/views.py`, shared with the nightly), sector lookup now
+      git-tracked at `data/static/sectors/` (shipped in the image). Outputs the existing
+      `data/<book>_portfolios/<book>_portfolio_<ts>/` layout: `<book>_equity/trades/exits/
+      signals.csv`, `metrics.json` (config + lock date + regime today), `latest.json`, and
+      `backtests/baseline/momentum_*.csv` for `sync_service`.
+- [x] **Acceptance: byte-identical to the research harness.** Both books run 2010-01-01 → 2026-09-09
+      through the runner and through `tasks/mm_rebuild/lib/run.py` (`e045afb854`, `c275defe0e`):
+      4,140 rows each, max relative difference 0.0; end values 32,757,801 and 32,561,916.
+- [x] Both added to `update_all_portfolios.py` after the four legacy books (`--start 2020-01-01`,
+      the production convention; no `--prices-dir`, no shared-state cache — they read the store).
+      Rebalance day = first trading day; the stop is checked at the monthly signal; one action day.
+- [x] Registered wherever the legacy IDs are enumerated: `config.py` (`UNIVERSES`, `UniverseId`,
+      cadence `monthly_first`), `sync_service.UNIVERSE_DIRS`, `sync_validation.RUN_DIR_GLOBS`,
+      `freshness_service`, `metrics_service` (benchmark Nifty 250), `init_persistent_storage.sh`
+      (volume dirs + links), `universes.ts` / `types.ts` (**admin-only**, `clientVisible: false`),
+      `sync_to_database.py` / `publish_signal.py` help. `rebalance_service` gained a month-stepped
+      cadence (`monthly_first`) for the next-rebalance and history projections. Guarded by
+      `tests/test_rebuilt_books_wiring.py` (4 tests); authz suite unchanged (310 passed).
+- [ ] EOD proposed-orders adapter (`run_eod_proposed_orders.py` / `data_pipeline/eod_proposal.py`):
+      not yet — `EOD_STRATEGIES` deliberately excludes the two books until a monthly producer
+      exists (P3; the scheduler would otherwise call a producer that is not there).
+- [x] Recompute-from-lock-date discipline: published history starts at `--start 2020-01-01` like
+      the legacy books; the lock date (2026-09-11) is recorded in `metrics.json`; the research
+      equity (2010 →) stays in `tasks/mm_rebuild/runs/` as reference only (D-4, D-5).
+- [ ] Deploy to `beta_gtm_mvp` (outside the freeze) and run both books once on Railway; confirm
+      `latest.json`, the DB sync and the admin dashboard show them.
 
 ## P3 — DB, API and dashboard 🤖👤 [prod]
 - [ ] Universe IDs (never renamed once in DB rows) — **proposal**: `mm_v1` and `om25_v4`;

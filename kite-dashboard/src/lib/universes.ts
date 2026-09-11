@@ -56,6 +56,27 @@ export const UNIVERSES: Record<UniverseId, Universe> = {
     riskProfile: "Drawdown-reduced",
     clientVisible: true,
   },
+  // Rebuilt books (production_port_2026, research lock 2026-09-11). Run on
+  // the honest master store, admin-only during the parallel run; the IDs are
+  // stable, the marketing names are decided later.
+  mm_v1: {
+    id: "mm_v1",
+    name: "MM v1 (rebuilt)",
+    shortName: "MM v1",
+    description: "12m vol-adjusted momentum on Nifty 250 — inverse-vol sizing, sector cap, bear hold-15, monthly",
+    stocks: 25,
+    riskProfile: "Aggressive momentum, regime-aware book size",
+    clientVisible: false,
+  },
+  om25_v4: {
+    id: "om25_v4",
+    name: "OM25 v4 (rebuilt)",
+    shortName: "OM25 v4",
+    description: "50/50 momentum × capture-ratio blend on Nifty 250 — same stack as MM v1, monthly",
+    stocks: 25,
+    riskProfile: "Quality momentum, regime-aware book size",
+    clientVisible: false,
+  },
   nse500: {
     id: "nse500",
     name: "Broad Momentum",
