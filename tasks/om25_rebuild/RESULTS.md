@@ -1,5 +1,49 @@
 # Results — every run counted; in-sample only until §4
 
+**Outcome:** shipped — strategy locked (see mm_rebuild MECHANICS.md; OM25 is now the blended score on the MM stack)
+**Closed:** 2026-09-11 (research locked; production port tracked in `tasks/production_port_2026/`)
+
+## Headline numbers
+Original capture-ratio rebuild: adaptive Nifty 250 process chained 2016-26 21.6% / 0.90 / −35%. Superseded 2026-09-11 by the blended book (mm_rebuild §21-§22): static 24.9% / 1.21 / −29%, process band ~20% / ~0.9 / −30%.
+
+## Decision
+OM25 = 50/50 rank blend of vol-adjusted momentum and capture ratio on the MM stack, Nifty 250, monthly, one action day, fixed rules, quarterly monitoring. The §4b yearly refit and its 2026 pick are retired. The 2006-2015 gate failure of every fully invested book stands on the record; the in-sample window moved to 2010-2015 by founder decision.
+
+## Open follow-ups
+Production port (tasks/production_port_2026). NSE 500 closed as a portfolio; the dip feed (tasks/calls_honest) is the NSE 500 calls candidate. Sector-cap data sourced under mm_rebuild/sector/.
+
+## Commit log
+- fe9c31a om25_rebuild: open the from-scratch build with the founder's constraints verbatim
+- b61e844 om25_rebuild: record the prior ROC regime test and its definition
+- 7c6fafb om25_rebuild: gates signed; hysteresis-only risk; ROC grid; market definition (b)
+- b180878 om25_rebuild: harness; §3a score = capture ratio; §3b one regime beats two
+- 9193e0d om25_rebuild: §3c mechanics (40/20, monthly) and §3d lookback (252 plateau); G1 unreachable without exposure control
+- 136ccf4 om25_rebuild: overlay back in scope; return filter as a switch; 25-name cap; lookback <= 12m
+- 6ca3eec om25_rebuild: §3e overlay grid, cadence interaction, redeploy switch, observed-variance deflation
+- b22d79d om25_rebuild: RESULTS §3e (lost to the full disk on the previous write)
+- c10c830 om25_rebuild: G6 raised to 10, G8 minimum-return gate added; resumable runner
+- cd6a3c1 om25_rebuild: §3f cadence/redeploy, §3g re-entry on the bull flip; in-sample closed, G1 and G8 fail
+- 7461029 om25_rebuild: G1 relaxed to 0.8 raw; §3h 2010-start test — the overlay's whole value is 2008
+- f199267 om25_rebuild: window moved to 2010-2015; §3i cadence grid — monthly entry and exit on both universes; §3j brief
+- ab58cd0 om25_rebuild: §3k lookback re-check on the 2010 window; 252 kept, NSE 500 sensitivity noted
+- a30989c om25_rebuild: §3j momentum-strength overlay (agent, 332 trials) — breadth protects 2008, momentum-strength readings do not
+- f0fc57e om25_rebuild: §4 OOS opened once — all five candidates fail G2, G3 and G8, pass G4 and G5
+- 0f8da93 om25_rebuild: §4b full walk-forward — Nifty 250 monthly with a five-year refit holds 0.90 through 2016-2026
+- 1a1d9d6 om25_rebuild: reference comparison against Wright Momentum's published grid
+- a435780 om25_rebuild: §4c Nifty 250 process on the NSE 500 universe against Wright's window
+- a417f5d om25_rebuild: §4d long-run cross-universe chains and the 2024-26 attribution — the score switch is the whole recent edge
+- ef6e00a om25_rebuild: §4e year by year vs Nifty 250/500, SIP, and a flat 25% FY tax
+- 02cb0b0 om25_rebuild: performance report (HTML + PDF) for the Nifty 250 adaptive process
+- f963e86 om25_rebuild: §4f against a synthetic NIFTY MIDSMALLCAP 400 (PIT small-cap basket before 2019)
+- 88b9888 om25_rebuild: §5a momentum-quantile eligibility hurts (top quartile 1.50 -> 0.77 on Nifty 250); mm_rebuild: gates signed, §2 mechanics grid run
+- e513b32 om25_rebuild: tick completed task boxes
+- dca7487 mm_rebuild/om25_rebuild: §10 followability — the stop was weekly, never daily; one action day a month is the best cell (MM 25.7% / 1.18 / -26%)
+- aec19d6 mm_rebuild/om25_rebuild: §11 rebalance day of month — day 1 best for MM in every window, noise for OM25; stop_check and rebalance_day parameters in both harnesses
+- 47866f9 om25_rebuild/mm_rebuild: MidSmall 400 synthetic corrected (flat tail after 2026-05); 120-trading-day day-by-day review of both new books, both production books and benchmarks
+- 5744201 mm_rebuild/om25_rebuild: §20 OM25 reviewed with MM's devices — the 50/50 pick does not improve; capture ratio on the MM stack is a fixed book at 1.05 OOS with every sub-window >= 0.89; 50/50 blend 1.16
+
+---
+
 Store: `data/master/panels/pr` (price return, D-12), point-in-time
 membership, NIFTY 100 from Kite for the regime. Slippage 20 bps. Fully
 invested, no weight cap, no stops (brief). Harness smoke test reproduces

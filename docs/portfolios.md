@@ -9,6 +9,23 @@ display names, see `kite-dashboard/src/lib/universes.ts`.
 
 ---
 
+## Next generation — research-locked, not yet in production (2026-09-11)
+
+Two books rebuilt from scratch on the honest master store (point-in-time
+membership, price return) are locked and awaiting the production port
+(`tasks/production_port_2026/`). Full mechanics in
+`tasks/mm_rebuild/MECHANICS.md`; the research record in
+`tasks/mm_rebuild/RESULTS.md` and `tasks/om25_rebuild/RESULTS.md`.
+
+| Book | Score | Stack (shared) | Static 2016-26 | Expectation (process band) |
+|---|---|---|---|---|
+| **MM** ("MoMo") | 12m vol-adjusted momentum, 21-session skip | Nifty 250; 25 names; monthly, one action day; inverse-vol sizing (10% cap); sector cap 5; ≤ 15 names in a bear (NIFTY 100 ROC31/c3); 20% stop checked monthly; entrants from the top 45 | 25.2% / 1.15 / −27% | ~20% / ~0.9 / −30% |
+| **OM25 (v4)** | 50/50 rank blend of the above with the capture ratio | same | 24.9% / 1.21 / −29% | ~20% / ~0.9 / −30% |
+
+On the same honest yardstick the current production books measure
+OM25 v3 19.7% / 0.73 and L6 v2 20.2% / 0.61 over 2016-26, and L6 v2
+13.7% a year over the last three years (market_data_spine; mm_rebuild §16).
+
 ## The 4 production portfolios (built daily)
 
 All four run from `scripts/update_all_portfolios.py`, which is invoked

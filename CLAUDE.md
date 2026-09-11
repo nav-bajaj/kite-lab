@@ -21,7 +21,9 @@ The 4 production portfolios are documented in `docs/portfolios.md`:
 **Quality Momentum** (OM25 v3, Nifty 250), **Trend Leaders** (TL25 v3,
 NSE 500), **Core Momentum** (L6 v2, NSE 500), **Defensive Blend**
 (COMBO, NSE 500). Clients see these 4; admins see 3 more alt-universe
-legacy variants.
+legacy variants. Two rebuilt books (MM, OM25 v4) are research-locked on the
+honest master store and awaiting the production port — locked configs in
+`tasks/mm_rebuild/MECHANICS.md`, plan in `tasks/production_port_2026/`.
 
 ## Repo map
 

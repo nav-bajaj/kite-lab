@@ -43,6 +43,9 @@ Headline contents of the archive branch (not on main):
   `tasks/l6_us_tune_2026/`, `tasks/om25_us_tune_2026/`,
   `tasks/us_equities_2017/`, `tasks/trade_matching/`,
   `tasks/breadth_atlas/`, `tasks/live_portfolio/` — closed initiatives.
+- `tasks/market_data_spine/`, `tasks/index_reconstruction/` — the honest master store and point-in-time membership (2026-09).
+- `tasks/om25_rebuild/`, `tasks/mm_rebuild/` — the two rebuilt books, research-locked 2026-09-11 (`mm_rebuild/MECHANICS.md`); `tasks/calls_honest/` — stage-2 and dip feed on the honest store.
+- `tasks/production_port_2026/` — port plan, data operations, repo streamline (planned).
 - `tasks/name_change/`, `tasks/move_domain/` — recent infra renames
   (shipped).
 - 85 closed research scripts: `_calibration_*`, `_combo_*`, `_gdf_*`,

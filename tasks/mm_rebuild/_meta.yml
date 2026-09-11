@@ -1,8 +1,43 @@
 name: mm_rebuild
-status: active
+status: shipped
 opened: 2026-09-10
-closed: null
-related_commits: []
+closed: 2026-09-11
+related_commits:
+  - 8544cc3
+  - 88b9888
+  - d8730a4
+  - 8800c3d
+  - d90d760
+  - 86d551d
+  - c4509c5
+  - 4fb37d1
+  - 8262761
+  - a1f6796
+  - d8bb6f8
+  - b7dfbb6
+  - 1f3d2b2
+  - 55648d6
+  - b6ec2da
+  - b3299b0
+  - dca7487
+  - aec19d6
+  - b7c3fdb
+  - 12f3328
+  - dee16a3
+  - 8888ec8
+  - a6d26f1
+  - 85a622a
+  - 4575259
+  - 47866f9
+  - b7325f4
+  - 73f2ad0
+  - cae8457
+  - 5744201
+  - 06737fe
+  - 4241482
+  - c926bc8
+  - 932137a
+  - f0277cb
 supersedes: []
 depends_on:
   - om25_rebuild

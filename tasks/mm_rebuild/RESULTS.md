@@ -1,5 +1,56 @@
 # Results — every run counted; in-sample only until §4
 
+**Outcome:** shipped — two books locked: MM and the new OM25 (MECHANICS.md)
+**Closed:** 2026-09-11 (research locked; production port tracked in `tasks/production_port_2026/`)
+
+## Headline numbers
+MM: vol-adjusted 12m momentum (skip 21) on the stack — static 2016-26 25.2% / 1.15 / −27%, up-capture 1.10 / down 0.77. OM25: 50/50 blend with capture ratio on the same stack — 24.9% / 1.21 / −29%, up 1.09 / down 0.70, every sub-window ≥ 0.66. Both: process band ~20% / 0.9 / −30% (§17-§17b, §22). Wright's Sharpe on their grid 1.31.
+
+## Decision
+Stack = inverse-vol sizing (10% cap), sector cap 5, hold ≤ 15 in bear (NIFTY 100 ROC31/c3), 20% stop checked monthly, entrants from the top 45, monthly rebalance on the first trading day, one action day. Rules fixed; quarterly monitoring report with a 0.10 margin and founder sign-off; forward gate rolling-3y Sharpe ≥ 0.6, DD ≥ −40% from 2026-10-01. NSE 500, mid-small, satellites, trimming, biweekly and all exposure overlays rejected with numbers.
+
+## Open follow-ups
+Production port of the engine hooks (`lib/_engine_iv.py`: size_weights, top_n_fn, sector_of/sector_cap, fill_from_buffer, trim_to_target; runner: stop_check, rebalance_day) as default-off arguments of scripts/_clean_engine.py; runners for both books; the quarterly monitoring script; the performance report regenerated for both books; sector labels kept current at each reconstitution.
+
+## Commit log
+- 8544cc3 mm_rebuild: task opened in the OM25 format; §1 score x lookback x universe — vol-adjusted momentum wins every cell
+- 88b9888 om25_rebuild: §5a momentum-quantile eligibility hurts (top quartile 1.50 -> 0.77 on Nifty 250); mm_rebuild: gates signed, §2 mechanics grid run
+- d8730a4 mm_rebuild: §3 devices — skip-month adopted, stop/tilt/overlay not; in-sample closed, awaiting OOS instruction
+- 8800c3d mm_rebuild: §3f capture-ratio pre-filter — non-monotone, not adopted
+- d90d760 mm_rebuild: §3g other momentum measures and a volume kicker — none beat vol-adjusted; §4 OOS opened once with the refit set
+- 86d551d mm_rebuild: §4 OOS opened once — both candidates fail G2 and G3, pass G4 and G5; adaptive helps Nifty 250 (0.83), hurts NSE 500
+- c4509c5 mm_rebuild: §5 production L6 v2 on the honest universe (0.56 OOS) and its structure as devices — no help
+- 4fb37d1 mm_rebuild: §6 founder's weekly 6m/hold-8/buffer-25/stop-20 configuration — below the §3 book on both universes
+- 8262761 mm_rebuild: MM variants on Wright's window
+- a1f6796 mm_rebuild: §7 capture analysis — the upside is there (1.08-1.13), the down-capture (1.07-1.37 vs Wright 0.90) is the whole gap
+- d8bb6f8 mm_rebuild: §8 bear-behaviour devices by leg; §8b concentrate-in-bear + stop is a plateau on Nifty 250 (OOS 0.82-0.95), nothing works on NSE 500
+- b7dfbb6 mm_rebuild: Wright Research review memo (pages via Playwright + both factsheets)
+- 1f3d2b2 mm_rebuild: §9 Wright hypotheses — top-300 universe and turnover floors do not fix NSE 500; inverse-vol sizing helps (N500 0.86, N250 stack 0.95 / -26%)
+- 55648d6 mm_rebuild: §9b audit — 'concentrate' as run was a tighter bear exit rank; true hold-N-in-bear added via a top_n_fn engine hook; §9c plateau at N=15 (OOS 1.03)
+- b6ec2da mm_rebuild: historical NSE industry labels from 26 archived constituent lists (87% of all-ever NSE 500 members)
+- b3299b0 mm_rebuild: §9d sector cap — Nifty 250 stack passes every gate (OOS 24.5% / 1.17 / -26%, 2016-19 at 0.61); hurts NSE 500
+- dca7487 mm_rebuild/om25_rebuild: §10 followability — the stop was weekly, never daily; one action day a month is the best cell (MM 25.7% / 1.18 / -26%)
+- aec19d6 mm_rebuild/om25_rebuild: §11 rebalance day of month — day 1 best for MM in every window, noise for OM25; stop_check and rebalance_day parameters in both harnesses
+- b7c3fdb mm_rebuild: renumber the rebalance-day section to §15 after the parallel session's §11-§14; registry tags cleaned
+- 12f3328 mm_rebuild: §16 production L6 v2 vs the honest store over the watched period — they agree; the gap is the backfilled years
+- dee16a3 mm_rebuild: §17 full chained refit — the hindsight-free process delivers 0.81-0.85 (grid median); the adopted stack is rank 1 of 128; G5 fails at the process level
+- 8888ec8 mm_rebuild: §17b refit window x review frequency — 10-year window reviewed quarterly is the best process (0.90 / 21.4%); 3-year windows chase
+- a6d26f1 mm_rebuild: §17c what the quarterly process changes, the churn per change (38% of the book), and a switching margin (10 changes -> 2 at the same Sharpe)
+- 85a622a mm_rebuild: MM process definition — fixed rules, quarterly monitoring with a 0.10 margin and founder sign-off, forward expectation and gate recorded
+- 4575259 mm_rebuild: MECHANICS.md — both books as on 2026-09-11
+- 47866f9 om25_rebuild/mm_rebuild: MidSmall 400 synthetic corrected (flat tail after 2026-05); 120-trading-day day-by-day review of both new books, both production books and benchmarks
+- b7325f4 mm_rebuild: §18 the last 120 days from inside — MM is under 25 names on half of bull days; fill-from-buffer doubles the time at 25 at the same performance; resizing limit is structural
+- 73f2ad0 mm_rebuild: 252-trading-day day-by-day review
+- cae8457 mm_rebuild: §19 refill diagnosis — the engine never trims, survivors hold the capital; trimming sells the winners (-4pp, -0.1 Sharpe); fill-from-buffer adopted (refill 55 -> 26 days)
+- 5744201 mm_rebuild/om25_rebuild: §20 OM25 reviewed with MM's devices — the 50/50 pick does not improve; capture ratio on the MM stack is a fixed book at 1.05 OOS with every sub-window >= 0.89; 50/50 blend 1.16
+- 06737fe mm_rebuild: §21 blended score (vol-adjusted momentum x capture ratio) on the stack — up-capture 1.03-1.09 with down-capture 0.70; OOS 1.16-1.21; regime-switched scores and sizing do not beat it
+- 4241482 mm_rebuild: §22b biweekly on the blended book costs 0.13 Sharpe; monthly stays; product form decided (MM aggressive, blend as OM25)
+- c926bc8 mm_rebuild: §22 single-book chained refit — process 0.86-0.93 (~20% / -30%); the blend family's median OOS Sharpe (1.02-1.04) beats pure momentum (0.86) and capture ratio (0.93); the process reaches the blend only in 2026
+- 932137a mm_rebuild: OM25 redefined as the blended score on the MM stack — mechanics, process definition and forward gate recorded
+- f0277cb mm_rebuild: blend weight fixed at 50/50; two books
+
+---
+
 Harness: `tasks/om25_rebuild/lib` (same engine, store, slippage 20 bps,
 price return). IS 2010-01-01 → 2015-12-31; runs end 2015-12-31 so nothing
 past it is simulated. Mechanics for §1: 25 positions, exit buffer 20,
