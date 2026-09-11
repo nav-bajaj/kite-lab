@@ -27,7 +27,9 @@ TARGETS = ["nse500_data", "nse500_data_hourly", "nse500_data_historical",
            # reads. nse500_data_merged sits in the repo root; the indices panel
            # is built FROM the Documents store but uploaded AS
            # indices_data_historical (the prod read path) via --source-dir.
-           "nse500_data_merged", "indices_data_historical"]
+           "nse500_data_merged", "indices_data_historical",
+           # production_port_2026: the honest master store (directory tree; extracted recursively server-side)
+           "master"]
 
 
 def compress_directory(source_dir, target_name):
@@ -78,6 +80,9 @@ def main():
     parser.add_argument("--token", required=True, help="JWT auth token")
     parser.add_argument("--target", default=None, choices=TARGETS, help="Upload specific directory only")
     parser.add_argument("--data-dir", default=None, help="Path to kite-lab root (default: auto-detect)")
+    parser.add_argument("--archive", default=None,
+                        help="Upload a prebuilt .tar.gz for --target instead of compressing a directory "
+                             "(production_port_2026: the trimmed master-store archive)")
     parser.add_argument("--source-dir", default=None,
                         help="Override the source directory for a single --target "
                              "upload. Use when the on-disk folder name differs from "
@@ -111,7 +116,7 @@ def main():
         print(f"[{target}] {file_count} CSV files")
 
         # Compress
-        archive_path = compress_directory(source_dir, target)
+        archive_path = args.archive if args.archive else compress_directory(source_dir, target)
 
         # Upload
         try:

@@ -47,10 +47,15 @@ runner (`tasks/mm_rebuild/lib/run.py`) keeps its own sizing / regime wiring — 
       now carries many rows with no Kite comparison (NaN); the gate counts only Kite disagreements.
       Scheduler entry `master_store_refresh` registered at 19:30 mon-fri, **enabled: False** until
       the store exists on the production volume; command `master_store_refresh` in `job_service`.
-- [ ] Deploy (outside the freeze): push; seed `data/master` (2.3 GB: prices, raw bhavcopy, parquet,
-      CA, membership, qa) onto the Railway volume with `sync_data_backup.py`'s copy in reverse or a
-      one-off restore; set `KITE_LAB_ROOT`; run the job once by hand from the admin jobs page; then
-      flip `enabled` to True. The Dockerfile already copies `data_pipeline/`.
+- [x] Merged to `beta_gtm_mvp` (459a17c) and deployed 2026-09-11 18:27 IST; health ok. Production
+      behaviour unchanged (engine byte-identical with defaults; scheduler entry disabled).
+- [ ] Seed the store: stream the archive (875 MB compressed; price-return view, raw bhavcopy, parquet,
+      Kite, CA, membership, benchmarks, QA; the total-return view and GDF left out) over `railway ssh`
+      into `/data/master` on `kite-lab-volume` (1.48 of 5 GB used before; ~3.9 GB after). Nothing
+      already on the volume is touched — `/data/master` is a new directory beside the legacy
+      `nse500_data*` and portfolio folders. Set `MASTER_STORE_DIR=/data/master` and
+      `MASTER_STORE_SKIP_TR=1` on the service; grow the volume to 10 GB when convenient.
+- [ ] Run the job once by hand from the admin jobs page; read `qa/nightly_latest.json`; flip `enabled`.
 - [ ] Morning review of `qa/nightly_latest.json` when flagged: `kite_steps_unexplained.csv`
       (Kite adjustments with no CA filing), `bad_prints.csv` rows where Kite disagrees, stale tails.
       Surface the status on `/api/freshness` (P3).
