@@ -129,7 +129,7 @@ def main():
         ev = ev.sort_values("factor_or_amount").drop_duplicates(["ex_date", "type"], keep="first") if len(ev) else ev
         f_pr, f_tr, f_vol = adjust_one(df, ev, log, key)
         base = df[["date", "open", "high", "low", "close", "volume", "traded_as"]].copy()
-        for out, fac in ((OUT_PR, f_pr), (OUT_TR, f_tr)):
+        for out, fac in (((OUT_PR, f_pr),) if os.environ.get("MASTER_STORE_SKIP_TR") == "1" else ((OUT_PR, f_pr), (OUT_TR, f_tr))):   # production keeps only the price-return basis (D-12); the volume is 5 GB
             a = base.copy()
             for c in ("open", "high", "low", "close"):
                 a[c] = (df[c] * fac).round(4)
