@@ -1046,3 +1046,51 @@ quarterly: 21.4% / 0.90 / −31% over 2016-26, 29.9% / 1.30 on Wright's
 window** — the same 0.90 as OM25's chained process (§4b there). That is
 the number to plan and to gate against; the static 1.18 is the grid's
 top cell.
+
+## §17c — what the quarterly process changes, and the churn it causes (no new runs)
+
+The ten changes in the 10-year quarterly chain (2016 → 2026-09), with the
+book overlap = share of the outgoing configuration's holdings that the
+incoming one also holds on the switch date:
+
+| Switch | What changed | Book overlap |
+|---|---|---|
+| 2016-10 | skip 21 → 0; stop on → off; sector cap 5 → off | 55% |
+| 2017-04 | the reverse of the above | 56% |
+| 2017-07 | skip → 0; sector cap → off | 59% |
+| 2017-10 | the reverse | 48% |
+| 2018-07 | buffer 10 → 20 | 92% |
+| 2018-10 | score blend → vol-adj; skip → 0; buffer → 10; stop → off | 68% |
+| 2019-07 | skip → 21; buffer → 20; stop → on | 62% |
+| 2020-04 | bear rule off → hold ≤ 15 | 77% |
+| 2024-07 | score vol-adj → blend; stop → off | 56% |
+| 2025-07 | the reverse | 50% |
+
+Which elements flip: skip 6, stop 6, sector cap 4, score 3, buffer 3,
+bear rule 1, **sizing 0** (inverse-vol is never displaced). Seven of the
+ten changes are in 2016-2019, mostly the same pair of configurations
+trading places because their ten-year Sharpes were within noise of each
+other; 2020-2024 saw one change (adding the bear rule in April 2020).
+
+Churn: a rule change replaces 38% of the book on average (8-13 names;
+worst 52%), against a normal monthly rebalance that sells a mean 5.3
+names. So a change is roughly two months of ordinary turnover taken at
+once; at 20 bps each way, ten changes cost about 1.5% of return over
+the decade, which the chained numbers do not include. Operationally a
+change can be phased over the following one or two monthly rebalances.
+
+**Switching margin** — change the configuration only if the challenger
+beats the incumbent by more than the margin on the trailing window:
+
+| Margin | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Wright window | Changes |
+|---|---|---|---|---|
+| 0.00 | 21.4% / 0.90 / -31% | 0.41 / 1.48 / 0.88 | 29.9% / 1.30 | 10 |
+| 0.05 | 19.8% / 0.80 / -31% | 0.34 / 1.37 / 0.75 | 28.5% / 1.22 | 4 |
+| 0.10 | 21.7% / 0.90 / -31% | 0.31 / 1.37 / 1.06 | 32.4% / 1.42 | 2 |
+| 0.15 | 20.0% / 0.81 / -31% | 0.31 / 1.06 / 1.06 | 28.2% / 1.19 | 2 |
+| 0.20 | 21.0% / 0.88 / -31% | 0.38 / 1.22 / 1.06 | 29.7% / 1.29 | 2 |
+
+A margin cuts the changes from 10 to 2 without costing performance
+(0.88-0.90 at 0.10-0.20), but the response is not monotone (0.05 gives
+0.80), so the exact value is noise; a margin around 0.10 is a defensible
+policy, not a tuned one. Every variant ends on the adopted configuration.
