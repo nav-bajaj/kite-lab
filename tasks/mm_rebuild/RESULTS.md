@@ -1309,3 +1309,23 @@ premium as every other top cell here — plan on the process band.
 **Proposal:** one book, the blended score on the stack (mix 40-50), as
 the successor to both MM and OM25; or keep MM as the aggressive
 version and make the blend the OM25 successor. Founder's call.
+
+## §22b — biweekly rebalance on the blended book (4 trials) — post-OOS
+
+| Blend | Rebalance / stop check | IS | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Wright window | Up / down | Trades/yr | Action days/mo |
+|---|---|---|---|---|---|---|---|---|
+| 40/60 | monthly / monthly | 1.54 | 23.3% / 1.16 / −26% | 0.77 / 1.31 / 1.42 | 30.9% / 1.54 | 1.03 / 0.72 | 107 | 1.0 |
+| 40/60 | biweekly / biweekly | 1.26 | 21.4% / 1.05 / −24% | 0.63 / 1.52 / 1.03 | 27.8% / 1.35 | 1.00 / 0.81 | 138 | 1.9 |
+| 40/60 | biweekly / monthly | 1.25 | 19.9% / 0.97 / −23% | 0.56 / 1.42 / 0.95 | 26.5% / 1.27 | 0.97 / 0.81 | 132 | 2.2 |
+| 50/50 | monthly / monthly | 1.32 | 24.9% / 1.21 / −29% | 0.66 / 1.40 / 1.57 | 34.3% / 1.65 | 1.09 / 0.70 | 110 | 1.0 |
+| 50/50 | biweekly / biweekly | 1.30 | 22.0% / 1.08 / −24% | 0.74 / 1.46 / 1.08 | 27.8% / 1.35 | 0.99 / 0.78 | 136 | 1.9 |
+| 50/50 | biweekly / monthly | 1.28 | 20.8% / 1.00 / −25% | 0.71 / 1.31 / 1.01 | 26.5% / 1.27 | 0.97 / 0.79 | 130 | 2.2 |
+
+Biweekly costs 0.13 of OOS Sharpe and 3pp of CAGR on both blends, takes
+up-capture back below 1 and down-capture up to 0.8, for 25-30% more
+trades and twice the action days; its one gain is 2-5pp of drawdown.
+Same non-lever as OM25 §3i, MM §2 and §10. **Monthly stays.**
+
+Decision 2026-09-11 (founder): MM runs as the aggressive book; the
+blended score on the stack becomes OM25. §22 (running) is the chained
+refit for the blend as a single-book process.
