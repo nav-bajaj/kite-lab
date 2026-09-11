@@ -30,7 +30,10 @@ def step(name, mod, args=(), dry=False, timings=None):
 
 
 def ensure_panel_views():
-    from data_pipeline.master_store.views import ensure_panel_views as _views
+    from data_pipeline.master_store.views import ensure_panel_views as _views, remove_junk_files
+    junk = remove_junk_files(MASTER)
+    if junk:
+        print(f"    removed {junk} macOS sidecar files (._*, .DS_Store) from the store", flush=True)
     print(f"    panel views: {_views(MASTER)} links (re)created", flush=True)
 
 

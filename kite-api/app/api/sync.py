@@ -170,6 +170,8 @@ async def upload_price_data(
                             raise HTTPException(status_code=400, detail=f"Symlink in archive: {f.relative_to(source)}")
                         if not f.is_file():
                             continue
+                        if f.name.startswith("._") or f.name == ".DS_Store":   # macOS metadata sidecars from a BSD-tar archive; not data
+                            continue
                         rel = f.relative_to(source)
                         dest = (target_dir / rel).resolve()
                         if not str(dest).startswith(str(root) + os.sep):
