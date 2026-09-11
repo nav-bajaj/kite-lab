@@ -113,16 +113,20 @@ def main():
     print()
 
     for target in targets:
-        source_dir = args.source_dir or os.path.join(data_dir, target)
-        if not os.path.isdir(source_dir):
-            print(f"[SKIP] {target}: directory not found at {source_dir}")
-            continue
-
-        file_count = len([f for f in os.listdir(source_dir) if f.endswith(".csv")])
-        print(f"[{target}] {file_count} CSV files")
-
-        # Compress
-        archive_path = args.archive if args.archive else compress_directory(source_dir, target)
+        if args.archive:
+            if not os.path.isfile(args.archive):
+                print(f"[SKIP] {target}: archive not found at {args.archive}")
+                continue
+            archive_path = args.archive
+            print(f"[{target}] prebuilt archive {archive_path} ({os.path.getsize(archive_path) / 1e6:.0f} MB)")
+        else:
+            source_dir = args.source_dir or os.path.join(data_dir, target)
+            if not os.path.isdir(source_dir):
+                print(f"[SKIP] {target}: directory not found at {source_dir}")
+                continue
+            file_count = len([f for f in os.listdir(source_dir) if f.endswith(".csv")])
+            print(f"[{target}] {file_count} CSV files")
+            archive_path = compress_directory(source_dir, target)
 
         # Upload
         try:
@@ -130,7 +134,8 @@ def main():
             if not success:
                 print(f"  WARNING: Upload failed for {target}")
         finally:
-            os.unlink(archive_path)
+            if not args.archive:
+                os.unlink(archive_path)
 
         print()
 
