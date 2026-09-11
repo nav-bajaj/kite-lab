@@ -12,7 +12,7 @@ neither is in production.
 | Score | vol-adjusted momentum: return over the 252 sessions ending 21 sessions before the signal date, divided by annualised daily vol over the same window, floored at 5% |
 | Eligibility | ≥ 219 priced sessions in the window; no other filter |
 | Signal / execution | close of the first trading day of each month; orders at the next session's trade price |
-| Book | 25 names; a holding exits at the monthly review if its rank falls below 45 (25 + buffer 20) |
+| Book | up to 25 names; entrants are drawn by rank from the top 45 (`fill_from_buffer`, 2026-09-11); a holding exits at the monthly review if its rank falls below 45 (25 + buffer 20); after a bear the book rebuilds over the following rebalances as positions exit — no position is ever trimmed to make room (trimming sells the winners, §19) |
 | Sizing | inverse-volatility across the intended book (63-day vol), capped at 10%; positions drift, never resized |
 | Sector cap | at most 5 names per NSE sector at entry (21 sectors; historical labels in `sector/`) |
 | Regime | NIFTY 100 31-session rate of change, sign, 3-day confirmation to flip, decided from the prior close |
@@ -20,7 +20,7 @@ neither is in production.
 | Stop | 20% trailing from the position's peak, checked at the monthly signal, executed next session |
 | Rhythm | **one order day a month**; no weekly action |
 | Parameters | 9 (universe, lookback, skip, top-N, buffer, sizing cap, sector cap, bear N, stop) — G6 ≤ 10 |
-| Record | static 2016-26: 25.7% / 1.18 / −26% (top of a 128-cell grid); process band 20-21% / 0.85-0.90 / −31% (§17-§17b) — plan on the band |
+| Record | static 2016-26: 25.2% / 1.15 / −27% with fill-from-buffer (25.7% / 1.18 without; top of a 128-cell grid); process band 20-21% / 0.85-0.90 / −31% (§17-§17b) — plan on the band |
 | Monitoring | quarterly report: §17 grid on trailing ten years; a challenger must beat the standing rules by > 0.10 Sharpe to be raised; changes are the founder's call, phased over 1-2 rebalances |
 | Forward gate | rolling 3-year Sharpe ≥ 0.6, drawdown ≥ −40%, judged quarterly from 2026-10-01 |
 

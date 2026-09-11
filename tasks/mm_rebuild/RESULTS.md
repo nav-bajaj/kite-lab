@@ -1160,3 +1160,52 @@ The honest product description is therefore **"up to 25 names; after a
 bear the book rebuilds over the following rebalances as positions
 exit"**, with the fill-from-buffer rule as a cosmetic improvement the
 founder may adopt at no performance cost.
+
+## §19 — why the refill is slow, and what fixing it costs (5 trials)
+
+Replay of every 2026 monthly rebalance of the adopted book:
+
+| Signal | Regime | Held | Cash | Pool (top-N not held) | Sector-blocked | Bought | Sold | Held after |
+|---|---|---|---|---|---|---|---|---|
+| Jan 1 | bull | 23 | 0% | 16 | **12** | 3 | 5 | 20 |
+| Feb 1 | bear | 20 | 4% | 8 | 0 | 2 | 12 | 12 |
+| Mar 2 | bear | 12 | 32% | 9 | 7 | 3 | 3 | 12 |
+| Apr 1 | bear | 12 | 26% | 9 | 4 | 7 | 6 | 10 |
+| May 4 | bear | 10 | 8% | 9 | 0 | 2 | 1 | 12 |
+| Jun 1 | bull | 12 | **0%** | 18 | 0 | 7 | 1 | 18 |
+| Jul 1 | bull | 18 | 0% | 13 | 1 | 7 | 5 | 21 |
+| Aug 3 | bull | 21 | 2% | 12 | 2 | 6 | 5 | 21 |
+| Sep 1 | bull | 21 | 0% | 13 | 1 | 4 | 2 | 23 |
+
+Two mechanisms. In the bear the cash was there (26-32%) but the rules
+allow 15 names and the tight exits churned, so the book sat at 10-12.
+By the bull flip the cash was gone — the survivors had been sized up to
+their 10% caps and the remainder went into a few entrants at 1/n — so
+from June the book was fully invested in 12 names and could only add as
+many names as it sold each month: **the engine never trims a position
+to make room.** The January row shows the second limiter: 12 of 16
+candidates blocked by the sector cap when the leadership is
+concentrated.
+
+Fixes tested (both universes' rules otherwise unchanged):
+
+| Variant | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Wright window | Up / down | Bull days < 25 | Median refill | Trades/yr |
+|---|---|---|---|---|---|---|---|
+| Adopted | 25.7% / 1.18 / −26% | 0.71 / 1.73 / 1.18 | 33.9% / 1.50 | 1.10 / 0.73 | 50% | 55 d | 118 |
+| **Fill from buffer** (entrants from the top 45) | 25.2% / 1.15 / −27% | 0.69 / 1.73 / 1.10 | 32.9% / 1.44 | 1.10 / 0.77 | **23%** | **26 d** | 125 |
+| Trim to target 20% + fill | 21.9% / 1.08 / −26% | 0.62 / 1.67 / 1.04 | 27.6% / 1.35 | 0.98 / 0.77 | 21% | 26 d | 152 (28 trims) |
+| Trim 10% + fill | 21.4% / 1.07 / −26% | 0.60 / 1.65 / 1.04 | 27.2% / 1.35 | 0.96 / 0.76 | 21% | 26 d | 165 |
+| Full rebalance to target + fill | 21.3% / 1.08 / −26% | 0.60 / 1.66 / 1.04 | 26.9% / 1.35 | 0.96 / 0.75 | 21% | 26 d | 186 |
+| Trim 20%, no fill | 22.5% / 1.13 / −26% | 0.65 / 1.69 / 1.11 | 28.8% / 1.42 | 0.99 / 0.74 | 49% | 54 d | 148 |
+
+Read: **trimming refills no faster than fill-from-buffer and costs
+4pp of CAGR and 0.1 of Sharpe**, because the over-weight positions it
+sells are the winners — the names that ran — to fund lower-ranked
+entrants; up-capture falls from 1.10 to 0.96. That is the momentum
+book's return being sold. Fill-from-buffer alone halves the refill lag
+(55 → 26 days, bull days short of 25 from 50% to 23%) at no cost within
+noise. The remaining shortfall after a bear is the survivors' size, and
+it is the same thing as letting the winners run.
+
+**Adopted: fill from buffer. Trimming rejected.** The product wording
+stays "up to 25 names, rebuilding over the rebalances after a bear".

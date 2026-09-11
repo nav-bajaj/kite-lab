@@ -216,7 +216,9 @@ def run_strategy(*,
                  top_n_fn=None,
                  sector_of=None,             # MM §9d: {symbol: sector}; with sector_cap, entrants are skipped once a sector holds sector_cap names
                  sector_cap=None,
-                 fill_from_buffer=False,     # MM 2026-09-11: draw entrants from ranks up to top_n + exit_buffer when the top-N pool is short              # MM §9b: callable(signal_date) -> int; overrides top_n on that rebalance (exit rank = value + exit_buffer)          # MM §9: callable(signal_date, symbols) -> {sym: weight}; None = equal weight (byte-identical)            # if >0, block rank-exit while held<N days
+                 fill_from_buffer=False,
+                 trim_to_target=0.0,         # MM 2026-09-11: at a rebalance with entrants, sell existing positions down to their target weight for the
+                                             # intended book when they exceed it by more than this fraction (0 = off), so entrants can be funded     # MM 2026-09-11: draw entrants from ranks up to top_n + exit_buffer when the top-N pool is short              # MM §9b: callable(signal_date) -> int; overrides top_n on that rebalance (exit rank = value + exit_buffer)          # MM §9: callable(signal_date, symbols) -> {sym: weight}; None = equal weight (byte-identical)            # if >0, block rank-exit while held<N days
                  bear_skips_entries=True,    # if True (default, preserves OM25 v3 behavior):
                                              # don't add new positions during bear regime.
                                              # if False: allow entries at bear-scaled size
@@ -682,6 +684,21 @@ def run_strategy(*,
                     _kept.append(_s); _cnt[_sec] = _cnt.get(_sec, 0) + 1
                 entrants = _kept
             entrants = entrants[:max(0, _tn - len(holdings))]
+            if entrants and trim_to_target and not is_bear:
+                # trim: bring over-weight holdings down to the target weight of the intended (holdings + entrants) book
+                _n = len(holdings) + len(entrants); _pv = cash + sum(sh * (cr.get(sym, last_prices.get(sym, 0)) or 0) for sym, sh in holdings.items())
+                _sd = entry_schedule.get(pd.Timestamp(date)); _w = (size_weights(_sd, list(holdings.keys()) + entrants) if size_weights is not None else None) or {}
+                for sym in list(holdings.keys()):
+                    px = trade_panel.loc[date, sym] if sym in trade_panel.columns else np.nan
+                    if pd.isna(px) or px <= 0:
+                        continue
+                    tgt_w = min(float(_w.get(sym, 1.0 / _n)), max_weight); cur_w = holdings[sym] * px / _pv
+                    if cur_w > tgt_w * (1 + trim_to_target):
+                        sh_sell = int(math.floor(holdings[sym] - tgt_w * _pv / px))
+                        if sh_sell >= 1:
+                            proceeds = sh_sell * px * (1 - slippage); holdings[sym] -= sh_sell; cash += proceeds
+                            cost_basis[sym] = cost_basis.get(sym, 0) * (holdings[sym] / (holdings[sym] + sh_sell))
+                            trade_records.append({'date': date, 'symbol': sym, 'side': 'SELL', 'shares': sh_sell, 'price': px, 'notional': sh_sell * px, 'slippage': sh_sell * px * slippage, 'reason': 'trim'})
             if entrants:
                 pv2 = cash
                 for sym, sh in holdings.items():
