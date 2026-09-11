@@ -69,3 +69,18 @@ async def test_master_upload_size_cap_and_bad_store_path(tmp_path, monkeypatch):
     with pytest.raises(HTTPException) as e:
         await sync.upload_price_data(file=UploadFile(filename="m.tar.gz", file=io.BytesIO(_tar_bytes({"master/a.csv": "x"}))), target="master", user={"email": "t@x"})
     assert e.value.status_code == 500
+
+
+@pytest.mark.anyio
+async def test_master_upload_drops_macos_sidecars(tmp_path, monkeypatch):
+    """A tar built with BSD tar on a Mac carries ._X.csv AppleDouble members; they broke the first mm_v1 run (2026-09-12)."""
+    import app.api.sync as sync
+    from fastapi import UploadFile
+    store = tmp_path / "master"; store.mkdir()
+    monkeypatch.setenv("MASTER_STORE_DIR", str(store))
+    payload = _tar_bytes({"master/prices/adjusted_pr/A.csv": "date,close\n2026-01-01,1\n", "master/prices/adjusted_pr/._A.csv": "\x00\x05\x16\x07junk", "master/.DS_Store": "junk"})
+    up = UploadFile(filename="master.tar.gz", file=io.BytesIO(payload))
+    r = await sync.upload_price_data(file=up, target="master", user={"email": "t@x"})
+    assert r["files_written"] == 1
+    assert sorted(p.name for p in (store / "prices/adjusted_pr").iterdir()) == ["A.csv"]
+    assert not (store / ".DS_Store").exists()

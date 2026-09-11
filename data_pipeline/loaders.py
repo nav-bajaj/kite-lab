@@ -19,6 +19,8 @@ import pandas as pd
 def load_price_panels(prices_dir: Path):
     rows = []
     for csv_path in sorted(prices_dir.glob("*_day.csv")):
+        if csv_path.name.startswith("."):   # ._X_day.csv: macOS AppleDouble sidecar, not a price file
+            continue
         symbol = csv_path.stem.replace("_day", "")
         try:
             df = pd.read_csv(csv_path, parse_dates=["date"])
