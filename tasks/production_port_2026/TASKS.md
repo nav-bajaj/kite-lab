@@ -29,9 +29,27 @@ data-file-dependent tests; `test_ta_indicators.py` has a collection error). The 
 runner (`tasks/mm_rebuild/lib/run.py`) keeps its own sizing / regime wiring — the shared builders in
 `data_pipeline/strategies/sizing.py` and `calendar.py` are what P2's runners use.
 
-## P1 — the master store as production source of record 🤖👤 [data][gate]
-- [ ] Nightly refresh of `data/master` per `DATA_OPERATIONS.md` (Kite day candles for all-ever
-      members; bhavcopy of the day; CA table; membership events) with the QA gate.
+## P1 — the master store as production source of record 🤖👤 [data][gate] — code done locally 2026-09-11; deploy steps open
+- [x] Nightly refresh of `data/master`: `scripts/refresh_master_store.py` (19:30 IST) runs, as
+      subprocesses, the spine steps now packaged as `data_pipeline/master_store/` — bhavcopy of the
+      day → symbol master + parquet → raw series → NSE CA filings → CA table → observed events → Kite
+      append (`--since-days 20`, merged) → adjusted views → Kite-vs-raw verification → QA report →
+      gate (`qa/nightly_latest.json`, ok | flagged). First local run 2026-09-11: 10 steps ok, 11.7
+      minutes (Kite append 6 min, verification 3 min); gate flagged on 27 unexplained Kite steps in
+      30 days (the standing review list, not new). Fixes found by the run: a 404 for a not-yet-
+      published day was being recorded as a permanent holiday (10 and 11 Sep had been lost; fixed
+      and re-fetched); the QA gate reads the named date column.
+      Scheduler entry `master_store_refresh` registered at 19:30 mon-fri, **enabled: False** until
+      the store exists on the production volume; command `master_store_refresh` in `job_service`.
+- [ ] Deploy (outside the freeze): push; seed `data/master` (2.3 GB: prices, raw bhavcopy, parquet,
+      CA, membership, qa) onto the Railway volume with `sync_data_backup.py`'s copy in reverse or a
+      one-off restore; set `KITE_LAB_ROOT`; run the job once by hand from the admin jobs page; then
+      flip `enabled` to True. The Dockerfile already copies `data_pipeline/`.
+- [ ] Morning review of `qa/nightly_latest.json` when flagged: `kite_steps_unexplained.csv`
+      (Kite adjustments with no CA filing), `bad_prints.csv` rows where Kite disagrees, stale tails.
+      Surface the status on `/api/freshness` (P3).
+- [ ] Membership events at reconstitution are still the `tasks/universe_membership` procedure; the
+      nightly does not touch membership.
 - [ ] Point-in-time membership: `data/master/membership/{nifty250,nse500}.csv` become the
       files the production runners read (schema already matches `scripts/universe_membership.py`).
       Decide with the founder whether the legacy books switch too (they were tuned on the

@@ -24,6 +24,7 @@ DEFAULT_TIMEOUT = 1800
 # Available commands with their script paths (relative to data_dir)
 COMMANDS = {
     "daily_pipeline": "scripts/run_daily_pipeline.py",
+    "master_store_refresh": "scripts/refresh_master_store.py",
     "login": "scripts/login_and_save_token.py",
     "generate_portfolio": "scripts/run_final_momentum_portfolio.py",
     "update_portfolios": "scripts/update_all_portfolios.py",

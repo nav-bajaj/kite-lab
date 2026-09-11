@@ -69,6 +69,19 @@ SCHEDULED_TASKS = [
     # weekends don't go without a backup; the dump is small enough
     # that 7-days-a-week cost is negligible.
     {
+        "id": "master_store_refresh",
+        "name": "Master Store Refresh",
+        "description": "19:30 IST: NSE bhavcopy of the day, corporate actions, Kite append, adjusted views, QA gate (data/master; P1 2026-09-11)",
+        "func_ref": "app.scheduler.tasks:run_master_store_refresh",
+        "trigger": "cron",
+        "trigger_args": {
+            "hour": 19,
+            "minute": 30,
+            "day_of_week": "mon-fri"
+        },
+        "enabled": False,   # enable once the store is seeded on the production volume (production_port_2026 P1)
+    },
+    {
         "id": "daily_db_backup",
         "name": "Daily DB Backup",
         "description": "Dump Postgres to /data/db_backups/ + smoke-test + rotation",
@@ -137,6 +150,13 @@ def run_morning_login():
     import asyncio
     task_config = next((t for t in SCHEDULED_TASKS if t["id"] == "morning_login"), {})
     asyncio.run(_execute_scheduled_task("login", args=task_config.get("args")))
+
+
+def run_master_store_refresh():
+    """19:30 IST nightly refresh of data/master (bhavcopy, corporate actions, Kite append, adjusted views, QA).
+    Synchronous wrapper for APScheduler; disabled until the store is seeded on the volume."""
+    import asyncio
+    asyncio.run(_execute_scheduled_task("master_store_refresh"))
 
 
 def run_weekly_backup():
