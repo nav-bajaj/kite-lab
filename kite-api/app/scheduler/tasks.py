@@ -79,7 +79,7 @@ SCHEDULED_TASKS = [
             "minute": 30,
             "day_of_week": "mon-fri"
         },
-        "enabled": False,   # enable once the store is seeded on the production volume (production_port_2026 P1)
+        "enabled": True,    # store seeded and the hand run passed on 2026-09-11 (production_port_2026 P1)
     },
     {
         "id": "daily_db_backup",

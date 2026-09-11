@@ -49,13 +49,14 @@ runner (`tasks/mm_rebuild/lib/run.py`) keeps its own sizing / regime wiring — 
       the store exists on the production volume; command `master_store_refresh` in `job_service`.
 - [x] Merged to `beta_gtm_mvp` (459a17c) and deployed 2026-09-11 18:27 IST; health ok. Production
       behaviour unchanged (engine byte-identical with defaults; scheduler entry disabled).
-- [ ] Seed the store: stream the archive (875 MB compressed; price-return view, raw bhavcopy, parquet,
+- [x] Seeded 2026-09-11 22:24 IST via the admin upload endpoint (`master` target, 23,274 files, 1.8 GB on `kite-lab-volume`; volume 3.0 of 5 GB). Original plan below for the record: stream the archive (875 MB compressed; price-return view, raw bhavcopy, parquet,
       Kite, CA, membership, benchmarks, QA; the total-return view and GDF left out) over `railway ssh`
       into `/data/master` on `kite-lab-volume` (1.48 of 5 GB used before; ~3.9 GB after). Nothing
       already on the volume is touched — `/data/master` is a new directory beside the legacy
       `nse500_data*` and portfolio folders. Set `MASTER_STORE_DIR=/data/master` and
       `MASTER_STORE_SKIP_TR=1` on the service; grow the volume to 10 GB when convenient.
-- [ ] Run the job once by hand from the admin jobs page; read `qa/nightly_latest.json`; flip `enabled`.
+- [x] Hand runs on Railway 2026-09-11 (over `railway ssh`, `nohup`): three fixes surfaced — pyarrow/requests missing from the image, store paths built from the repo root instead of `MASTER_STORE_DIR`, Kite targets read from the reconstruction files; all deployed. Final run: every step ok (bhavcopy 71 s, series 89 s, Kite append 348 s with 0 of 1,045 errors, adjusted 62 s, verification 372 s); gate flagged on the standing unexplained-Kite-steps list (40 in 30 days after the append; the forced ex-date re-pull clears those). `enabled` flipped to True; first scheduled run Monday 2026-09-14 19:30 IST.
+- [ ] Morning review after the first scheduled run; grow the volume to 10 GB.
 - [ ] Morning review of `qa/nightly_latest.json` when flagged: `kite_steps_unexplained.csv`
       (Kite adjustments with no CA filing), `bad_prints.csv` rows where Kite disagrees, stale tails.
       Surface the status on `/api/freshness` (P3).
