@@ -1,0 +1,23 @@
+name: panel_drift_audit_2026
+status: in-progress
+opened: 2026-09-08
+closed: null
+related_commits: []
+supersedes: []
+depends_on:
+  - om25_cadence_2026
+  - universe_membership
+  - corporate_actions_fix
+register_rows: []
+findings:
+  - "Universe membership is a NON-ISSUE for published figures. The membership file was seeded by backdating the then-current snapshot to 1900-01-01, so membership ON reproduces exactly the universe every published number used. NSE500 seeded@1900 == May-2026 archive snapshot, 500/500. universe_membership had a byte-identity gate proving this."
+  - "The ~2-4pp 'inclusion bias' measures what ONE reconstitution would inject if backdated the old way - the size of the bug membership prevents, not a defect in published output."
+  - "L6 v2 does NOT cleanly reproduce: like-for-like (membership ON) is 56.21% vs published 59.4%, -3.19pp. The apparent match on the legacy arm was panel drift and backdated inclusion bias cancelling."
+  - "Drift is concentrated in 2017-2019 (OM25 Sharpe 1.60 -> 0.82). Exposure scales with how much of a published window sits pre-2020: OM25 -8.64pp, L6 -3.19pp."
+  - "Membership froze the historical survivorship bias of a 2026-vintage snapshot; it did not remove it. Nothing processes universe changes before 2026-07-13."
+corrections:
+  - "2026-09-08: retracted the claim that published figures carry 2-2.5pp of inclusion bias, and the claim that L6 v2 reproduces. Both came from using membership OFF as the archive-equivalent baseline. It is ON."
+open_questions:
+  - "Is the current 2017-2019 panel state correct or wrong? Everything waits on this."
+  - "TL25 v3 and COMBO are unchecked; TL25 shares OM25's window."
+  - "Which price dir produced L6's published 59.4% - nse500_data_merged assumed."

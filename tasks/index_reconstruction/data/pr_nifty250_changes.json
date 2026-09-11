@@ -1,0 +1,1414 @@
+[
+ {
+  "file": "ind_prs20082020",
+  "pub": "2020-08-20",
+  "title": "Revision in criteria and replacements in Indices",
+  "eff": "2020-09-25",
+  "nx": 11,
+  "ni": 11,
+  "excluded": [
+   [
+    "Adani Power Ltd.",
+    "ADANIPOWER"
+   ],
+   [
+    "Blue Dart Express Ltd.",
+    "BLUEDART"
+   ],
+   [
+    "Central Bank of India",
+    "CENTRALBK"
+   ],
+   [
+    "EIH Ltd.",
+    "EIHOTEL"
+   ],
+   [
+    "Hexaware Technologies Ltd.",
+    "HEXAWARE"
+   ],
+   [
+    "IDBI Bank Ltd.",
+    "IDBI"
+   ],
+   [
+    "Indian Overseas Bank",
+    "IOB"
+   ],
+   [
+    "Jubilant Life Sciences Ltd.",
+    "JUBILANT"
+   ],
+   [
+    "PNB Housing Finance Ltd.",
+    "PNBHOUSING"
+   ],
+   [
+    "Quess Corp Ltd.",
+    "QUESS"
+   ],
+   [
+    "UCO Bank",
+    "UCOBANK"
+   ]
+  ],
+  "included": [
+   [
+    "Adani Enterprises Ltd.",
+    "ADANIENT"
+   ],
+   [
+    "AstraZenca Pharma India Ltd.",
+    "ASTRAZEN"
+   ],
+   [
+    "ITI Ltd.",
+    "ITI"
+   ],
+   [
+    "JM Financial Ltd.",
+    "JMFINANCIL"
+   ],
+   [
+    "Metropolis Healthcare Ltd.",
+    "METROPOLIS"
+   ],
+   [
+    "Navin Fluorine International Ltd.",
+    "NAVINFLUOR"
+   ],
+   [
+    "Sheela Foam Ltd.",
+    "SFL"
+   ],
+   [
+    "Tata Chemicals Ltd.",
+    "TATACHEM"
+   ],
+   [
+    "Tube Investments of India Ltd.",
+    "TIINDIA"
+   ],
+   [
+    "Yes Bank Ltd.",
+    "YESBANK"
+   ],
+   [
+    "Zydus Wellness Ltd.",
+    "ZYDUSWELL"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs23022021",
+  "pub": "2021-02-23",
+  "title": "Replacements in Indices w.e.f. March 31, 2021",
+  "eff": "2021-03-31",
+  "nx": 11,
+  "ni": 11,
+  "excluded": [
+   [
+    "Edelweiss Financial Services Ltd.",
+    "EDELWEISS"
+   ],
+   [
+    "Eris Lifesciences Ltd.",
+    "ERIS"
+   ],
+   [
+    "Future Retail Ltd.",
+    "FRETAIL"
+   ],
+   [
+    "Housing & Urban Development Corporation Ltd.",
+    "HUDCO"
+   ],
+   [
+    "Mangalore Refinery & Petrochemicals Ltd.",
+    "MRPL"
+   ],
+   [
+    "National Aluminium Co. Ltd.",
+    "NATIONALUM"
+   ],
+   [
+    "NLC India Ltd.",
+    "NLCINDIA"
+   ],
+   [
+    "Sheela Foam Ltd.",
+    "SFL"
+   ],
+   [
+    "Shriram City Union Finance Ltd.",
+    "SHRIRAMCIT"
+   ],
+   [
+    "Symphony Ltd.",
+    "SYMPHONY"
+   ],
+   [
+    "WABCO India Ltd.",
+    "WABCOINDIA"
+   ]
+  ],
+  "included": [
+   [
+    "Deepak Nitrite Ltd.",
+    "DEEPAKNTR"
+   ],
+   [
+    "Dixon Technologies (India) Ltd.",
+    "DIXON"
+   ],
+   [
+    "IDBI Bank Ltd.",
+    "IDBI"
+   ],
+   [
+    "Indiamart Intermesh Ltd.",
+    "INDIAMART"
+   ],
+   [
+    "Laurus Labs Ltd.",
+    "LAURUSLABS"
+   ],
+   [
+    "Max Healthcare Institute Ltd.",
+    "MAXHEALTH"
+   ],
+   [
+    "Persistent Systems Ltd.",
+    "PERSISTENT"
+   ],
+   [
+    "Procter & Gamble Health Ltd.",
+    "PGHL"
+   ],
+   [
+    "Suven Pharmaceuticals Ltd.",
+    "SUVENPHAR"
+   ],
+   [
+    "Tata Elxsi Ltd.",
+    "TATAELXSI"
+   ],
+   [
+    "Vedanta Ltd.",
+    "VEDL"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs15062021",
+  "pub": "2021-06-15",
+  "title": "Replacements in Indices w.e.f. June 30, 2021",
+  "eff": "2021-06-30",
+  "nx": 1,
+  "ni": 1,
+  "excluded": [
+   [
+    "Motherson Sumi Systems Ltd.",
+    "MOTHERSUMI"
+   ]
+  ],
+  "included": [
+   [
+    "Gland Pharma Ltd.",
+    "GLAND"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs15092021",
+  "pub": "2021-09-15",
+  "title": "Replacements in indices and revision in criteria",
+  "eff": "2021-09-30",
+  "nx": 13,
+  "ni": 13,
+  "excluded": [
+   [
+    "Akzo Nobel India Ltd.",
+    "AKZOINDIA"
+   ],
+   [
+    "AstraZenca Pharma India Ltd.",
+    "ASTRAZEN"
+   ],
+   [
+    "Bombay Burmah Trading Corporation Ltd.",
+    "BBTC"
+   ],
+   [
+    "CESC Ltd.",
+    "CESC"
+   ],
+   [
+    "CreditAccess Grameen Ltd.",
+    "CREDITACC"
+   ],
+   [
+    "Godrej Agrovet Ltd.",
+    "GODREJAGRO"
+   ],
+   [
+    "IDBI Bank Ltd.",
+    "IDBI"
+   ],
+   [
+    "IIFL Wealth Management Ltd.",
+    "IIFLWAM"
+   ],
+   [
+    "Indiabulls Housing Finance Ltd.",
+    "IBULHSGFIN"
+   ],
+   [
+    "JM Financial Ltd.",
+    "JMFINANCIL"
+   ],
+   [
+    "Procter & Gamble Health Ltd.",
+    "PGHL"
+   ],
+   [
+    "SJVN Ltd.",
+    "SJVN"
+   ],
+   [
+    "V-Guard Industries Ltd.",
+    "VGUARD"
+   ]
+  ],
+  "included": [
+   [
+    "Affle (India) Ltd.",
+    "AFFLE"
+   ],
+   [
+    "Alkyl Amines Chemicals Ltd.",
+    "ALKYLAMINE"
+   ],
+   [
+    "APL Apollo Tubes Ltd.",
+    "APLAPOLLO"
+   ],
+   [
+    "Blue Dart Express Ltd.",
+    "BLUEDART"
+   ],
+   [
+    "Hindustan Copper Ltd.",
+    "HINDCOPPER"
+   ],
+   [
+    "Indian Bank",
+    "INDIANB"
+   ],
+   [
+    "Indian Railway Finance Corporation Ltd.",
+    "IRFC"
+   ],
+   [
+    "Kajaria Ceramics Ltd.",
+    "KAJARIACER"
+   ],
+   [
+    "Linde India Ltd.",
+    "LINDEINDIA"
+   ],
+   [
+    "Macrotech Developers Ltd.",
+    "LODHA"
+   ],
+   [
+    "National Aluminium Co. Ltd.",
+    "NATIONALUM"
+   ],
+   [
+    "Vaibhav Global Ltd.",
+    "VAIBHAVGBL"
+   ],
+   [
+    "WABCO India Ltd.",
+    "WABCOINDIA"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs22102021",
+  "pub": "2021-10-22",
+  "title": "Revision in index maintenance guidelines and replacements in indices",
+  "eff": "2021-10-29",
+  "nx": 1,
+  "ni": 1,
+  "excluded": [
+   [
+    "GMR Infrastructure Ltd.",
+    "GMRINFRA"
+   ]
+  ],
+  "included": [
+   [
+    "Sona BLW Precision Forgings Ltd.",
+    "SONACOMS"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs24022022_1",
+  "pub": "2022-02-24",
+  "title": "Revision in criteria and replacements in indices",
+  "eff": "2022-03-31",
+  "nx": 15,
+  "ni": 15,
+  "excluded": [
+   [
+    "Amara Raja Batteries Ltd.",
+    "AMARAJABAT"
+   ],
+   [
+    "Castrol India Ltd.",
+    "CASTROLIND"
+   ],
+   [
+    "Cholamandalam Financial Holdings Ltd.",
+    "CHOLAHLDNG"
+   ],
+   [
+    "City Union Bank Ltd.",
+    "CUB"
+   ],
+   [
+    "Dhani Services Ltd.",
+    "DHANI"
+   ],
+   [
+    "Gillette India Ltd.",
+    "GILLETTE"
+   ],
+   [
+    "Hindustan Copper Ltd.",
+    "HINDCOPPER"
+   ],
+   [
+    "ITI Ltd.",
+    "ITI"
+   ],
+   [
+    "Mahanagar Gas Ltd.",
+    "MGL"
+   ],
+   [
+    "Motilal Oswal Financial Services Ltd.",
+    "MOTILALOFS"
+   ],
+   [
+    "RBL Bank Ltd.",
+    "RBLBANK"
+   ],
+   [
+    "Suven Pharmaceuticals Ltd.",
+    "SUVENPHAR"
+   ],
+   [
+    "TTK Prestige Ltd.",
+    "TTKPRESTIG"
+   ],
+   [
+    "Vaibhav Global Ltd.",
+    "VAIBHAVGBL"
+   ],
+   [
+    "Zydus Wellness Ltd.",
+    "ZYDUSWELL"
+   ]
+  ],
+  "included": [
+   [
+    "CG Power and Industrial Solutions Ltd.",
+    "CGPOWER"
+   ],
+   [
+    "Clean Science and Technology Ltd.",
+    "CLEAN"
+   ],
+   [
+    "FSN E-Commerce Ventures Ltd.",
+    "NYKAA"
+   ],
+   [
+    "Grindwell Norton Ltd.",
+    "GRINDWELL"
+   ],
+   [
+    "Gujarat Fluorochemicals Ltd.",
+    "FLUOROCHEM"
+   ],
+   [
+    "Happiest Minds Technologies Ltd.",
+    "HAPPSTMNDS"
+   ],
+   [
+    "IDBI Bank Ltd.",
+    "IDBI"
+   ],
+   [
+    "Indian Energy Exchange Ltd.",
+    "IEX"
+   ],
+   [
+    "Nuvoco Vistas Corporation Ltd.",
+    "NUVOCO"
+   ],
+   [
+    "One 97 Communications Ltd.",
+    "PAYTM"
+   ],
+   [
+    "PB Fintech Ltd.",
+    "POLICYBZR"
+   ],
+   [
+    "Star Health and Allied Insurance Company Ltd.",
+    "STARHEALTH"
+   ],
+   [
+    "Tata Teleservices (Maharashtra) Ltd.",
+    "TTML"
+   ],
+   [
+    "Trident Ltd.",
+    "TRIDENT"
+   ],
+   [
+    "Zomato Ltd.",
+    "ZOMATO"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs05042022",
+  "pub": "2022-04-05",
+  "title": "Replacements in indices w.e.f. May 04, 2022",
+  "eff": "2022-05-04",
+  "nx": 1,
+  "ni": 1,
+  "excluded": [
+   [
+    "Aarti Industries Ltd.",
+    "AARTIIND"
+   ]
+  ],
+  "included": [
+   [
+    "GMR Infrastructure Ltd.",
+    "GMRINFRA"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs11072022",
+  "pub": "2022-07-11",
+  "title": "Replacements in indices w.e.f. August 08, 2022",
+  "eff": "2022-08-08",
+  "nx": 2,
+  "ni": 2,
+  "excluded": [
+   [
+    "NMDC Ltd.",
+    "NMDC"
+   ],
+   [
+    "Piramal Enterprises Ltd.",
+    "PEL"
+   ]
+  ],
+  "included": [
+   [
+    "Delhivery Ltd.",
+    "DELHIVERY"
+   ],
+   [
+    "Life Insurance Corporation of India",
+    "LICI"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs01092022",
+  "pub": "2022-09-01",
+  "title": "Replacements in indices w.e.f. September 30, 2022",
+  "eff": "2022-09-30",
+  "nx": 8,
+  "ni": 8,
+  "excluded": [
+   [
+    "Apollo Tyres Ltd.",
+    "APOLLOTYRE"
+   ],
+   [
+    "Exide Industries Ltd.",
+    "EXIDEIND"
+   ],
+   [
+    "Glenmark Pharmaceuticals Ltd.",
+    "GLENMARK"
+   ],
+   [
+    "IDBI Bank Ltd.",
+    "IDBI"
+   ],
+   [
+    "Manappuram Finance Ltd.",
+    "MANAPPURAM"
+   ],
+   [
+    "Metropolis Healthcare Ltd.",
+    "METROPOLIS"
+   ],
+   [
+    "MindTree Ltd.",
+    "MINDTREE"
+   ],
+   [
+    "Nuvoco Vistas Corporation Ltd.",
+    "NUVOCO"
+   ]
+  ],
+  "included": [
+   [
+    "Adani Wilmar Ltd.",
+    "AWL"
+   ],
+   [
+    "Devyani International Ltd.",
+    "DEVYANI"
+   ],
+   [
+    "K.P.R. Mill Ltd.",
+    "KPRMILL"
+   ],
+   [
+    "Motherson Sumi Wiring India Ltd.",
+    "MSUMI"
+   ],
+   [
+    "Patanjali Foods Ltd.",
+    "PATANJALI"
+   ],
+   [
+    "Poonawalla Fincorp Ltd.",
+    "POONAWALLA"
+   ],
+   [
+    "Samvardhana Motherson International Ltd.",
+    "MOTHERSON"
+   ],
+   [
+    "Vedant Fashions Ltd.",
+    "MANYAVAR"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs17022023_1",
+  "pub": "2023-02-17",
+  "title": "Replacements in indices w.e.f March 31, 2023",
+  "eff": "2023-03-31",
+  "nx": 8,
+  "ni": 8,
+  "excluded": [
+   [
+    "Alembic Pharmaceuticals Ltd.",
+    "APLLTD"
+   ],
+   [
+    "Gujarat State Petronet Ltd.",
+    "GSPL"
+   ],
+   [
+    "Hatsun Agro Product Ltd.",
+    "HATSUN"
+   ],
+   [
+    "Indiamart Intermesh Ltd.",
+    "INDIAMART"
+   ],
+   [
+    "Indian Energy Exchange Ltd.",
+    "IEX"
+   ],
+   [
+    "NATCO Pharma Ltd.",
+    "NATCOPHARM"
+   ],
+   [
+    "National Aluminium Co. Ltd.",
+    "NATIONALUM"
+   ],
+   [
+    "Sanofi India Ltd.",
+    "SANOFI"
+   ]
+  ],
+  "included": [
+   [
+    "Aarti Industries Ltd.",
+    "AARTIIND"
+   ],
+   [
+    "Adani Power Ltd.",
+    "ADANIPOWER"
+   ],
+   [
+    "Apollo Tyres Ltd.",
+    "APOLLOTYRE"
+   ],
+   [
+    "Fine Organic Industries Ltd.",
+    "FINEORG"
+   ],
+   [
+    "Metro Brands Ltd.",
+    "METROBRAND"
+   ],
+   [
+    "NMDC Ltd.",
+    "NMDC"
+   ],
+   [
+    "Piramal Enterprises Ltd.",
+    "PEL"
+   ],
+   [
+    "Timken India Ltd.",
+    "TIMKEN"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs04072023",
+  "pub": "2023-07-04",
+  "title": "Replacement in indices w.e.f. July 13, 2023",
+  "eff": "2023-07-13",
+  "nx": 1,
+  "ni": 1,
+  "excluded": [
+   [
+    "Housing Development Finance Corporation Ltd.",
+    "HDFC"
+   ]
+  ],
+  "included": [
+   [
+    "Mankind Pharma Ltd.",
+    "MANKIND"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs17082023",
+  "pub": "2023-08-17",
+  "title": "Replacements in indices and revision in criteria",
+  "eff": "2023-09-29",
+  "nx": 8,
+  "ni": 9,
+  "excluded": [
+   [
+    "Aavas Financiers Ltd.",
+    "AAVAS"
+   ],
+   [
+    "Affle (India) Ltd.",
+    "AFFLE"
+   ],
+   [
+    "Alkyl Amines Chemicals Ltd.",
+    "ALKYLAMINE"
+   ],
+   [
+    "Clean Science and Technology Ltd.",
+    "CLEAN"
+   ],
+   [
+    "Fine Organic Industries Ltd.",
+    "FINEORG"
+   ],
+   [
+    "Happiest Minds Technologies Ltd.",
+    "HAPPSTMNDS"
+   ],
+   [
+    "Nippon Life India Asset Management Ltd.",
+    "NAM-INDIA"
+   ],
+   [
+    "Tata Teleservices (Maharashtra) Ltd.",
+    "TTML"
+   ]
+  ],
+  "included": [
+   [
+    "Bank of Maharashtra",
+    "MAHABANK"
+   ],
+   [
+    "Bharat Dynamics Ltd.",
+    "BDL"
+   ],
+   [
+    "Carborundum Universal Ltd.",
+    "CARBORUNIV"
+   ],
+   [
+    "Fertilisers and Chemicals Travancore Ltd.",
+    "FACT"
+   ],
+   [
+    "Jindal Stainless Ltd.",
+    "JSL"
+   ],
+   [
+    "KPIT Technologies Ltd.",
+    "KPITTECH"
+   ],
+   [
+    "Mazagoan Dock Shipbuilders Ltd.",
+    "MAZDOCK"
+   ],
+   [
+    "Rail Vikas Nigam Ltd.",
+    "RVNL"
+   ],
+   [
+    "Tata Motors Ltd. DVR",
+    "TATAMTRDVR"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs28022024",
+  "pub": "2024-02-28",
+  "title": "Replacements in indices w.e.f. March 28, 2024",
+  "eff": "2024-03-28",
+  "nx": 10,
+  "ni": 10,
+  "excluded": [
+   [
+    "Aarti Industries Ltd.",
+    "AARTIIND"
+   ],
+   [
+    "Blue Dart Express Ltd.",
+    "BLUEDART"
+   ],
+   [
+    "Crompton Greaves Consumer Electricals Ltd.",
+    "CROMPTON"
+   ],
+   [
+    "Navin Fluorine International Ltd.",
+    "NAVINFLUOR"
+   ],
+   [
+    "Pfizer Ltd.",
+    "PFIZER"
+   ],
+   [
+    "Rajesh Exports Ltd.",
+    "RAJESHEXPO"
+   ],
+   [
+    "Relaxo Footwears Ltd.",
+    "RELAXO"
+   ],
+   [
+    "Trident Ltd.",
+    "TRIDENT"
+   ],
+   [
+    "Vinati Organics Ltd.",
+    "VINATIORGA"
+   ],
+   [
+    "Whirlpool of India Ltd.",
+    "WHIRLPOOL"
+   ]
+  ],
+  "included": [
+   [
+    "IDBI Bank Ltd.",
+    "IDBI"
+   ],
+   [
+    "Indian Renewable Energy Development Agency Ltd.",
+    "IREDA"
+   ],
+   [
+    "Jio Financial Services Ltd.",
+    "JIOFIN"
+   ],
+   [
+    "JSW Infrastructure Ltd.",
+    "JSWINFRA"
+   ],
+   [
+    "Kalyan Jewellers India Ltd.",
+    "KALYANKJIL"
+   ],
+   [
+    "KEI Industries Ltd.",
+    "KEI"
+   ],
+   [
+    "Lloyds Metals And Energy Ltd.",
+    "LLOYDSME"
+   ],
+   [
+    "SJVN Ltd.",
+    "SJVN"
+   ],
+   [
+    "Suzlon Energy Ltd.",
+    "SUZLON"
+   ],
+   [
+    "Tata Technologies Ltd.",
+    "TATATECH"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs23082024",
+  "pub": "2024-08-23",
+  "title": "Replacements in indices and revision in criteria w.e.f. September 30, 2024",
+  "eff": "2024-09-30",
+  "nx": 14,
+  "ni": 14,
+  "excluded": [
+   [
+    "Atul Ltd.",
+    "ATUL"
+   ],
+   [
+    "Bata India Ltd.",
+    "BATAINDIA"
+   ],
+   [
+    "Devyani International Ltd.",
+    "DEVYANI"
+   ],
+   [
+    "Dr. Lal Path Labs Ltd.",
+    "LALPATHLAB"
+   ],
+   [
+    "ICICI Securities Ltd.",
+    "ISEC"
+   ],
+   [
+    "Kajaria Ceramics Ltd.",
+    "KAJARIACER"
+   ],
+   [
+    "Kansai Nerolac Paints Ltd.",
+    "KANSAINER"
+   ],
+   [
+    "Laurus Labs Ltd.",
+    "LAURUSLABS"
+   ],
+   [
+    "Piramal Enterprises Ltd.",
+    "PEL"
+   ],
+   [
+    "Sumitomo Chemical India Ltd.",
+    "SUMICHEM"
+   ],
+   [
+    "The Ramco Cements Ltd.",
+    "RAMCOCEM"
+   ],
+   [
+    "Vedant Fashions Ltd.",
+    "MANYAVAR"
+   ],
+   [
+    "Vodafone Idea Ltd.",
+    "IDEA"
+   ],
+   [
+    "Zee Entertainment Enterprises Ltd.",
+    "ZEEL"
+   ]
+  ],
+  "included": [
+   [
+    "Bharti Hexacom Ltd.",
+    "BHARTIHEXA"
+   ],
+   [
+    "Central Bank of India",
+    "CENTRALBK"
+   ],
+   [
+    "Cochin Shipyard Ltd.",
+    "COCHINSHIP"
+   ],
+   [
+    "Exide Industries Ltd.",
+    "EXIDEIND"
+   ],
+   [
+    "Global Health Ltd.",
+    "MEDANTA"
+   ],
+   [
+    "Hitachi Energy India Ltd.",
+    "POWERINDIA"
+   ],
+   [
+    "Housing & Urban Development Corporation Ltd.",
+    "HUDCO"
+   ],
+   [
+    "Indian Overseas Bank",
+    "IOB"
+   ],
+   [
+    "Indian Renewable Energy Development Agency Ltd.",
+    "IREDA"
+   ],
+   [
+    "IRB Infrastructure Developers Ltd.",
+    "IRB"
+   ],
+   [
+    "Mangalore Refinery & Petrochemicals Ltd.",
+    "MRPL"
+   ],
+   [
+    "Nippon Life India Asset Management Ltd.",
+    "NAM-INDIA"
+   ],
+   [
+    "NLC India Ltd.",
+    "NLCINDIA"
+   ],
+   [
+    "Tata Investment Corporation Ltd.",
+    "TATAINVEST"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs21022025",
+  "pub": "2025-02-21",
+  "title": "Replacements in indices w.e.f. March 28, 2025",
+  "eff": "2025-03-28",
+  "nx": 15,
+  "ni": 15,
+  "excluded": [
+   [
+    "Bayer Cropscience Ltd.",
+    "BAYERCROP"
+   ],
+   [
+    "Carborundum Universal Ltd.",
+    "CARBORUNIV"
+   ],
+   [
+    "Delhivery Ltd.",
+    "DELHIVERY"
+   ],
+   [
+    "Fertilisers and Chemicals Travancore Ltd.",
+    "FACT"
+   ],
+   [
+    "Grindwell Norton Ltd.",
+    "GRINDWELL"
+   ],
+   [
+    "IDBI Bank Ltd.",
+    "IDBI"
+   ],
+   [
+    "Indian Overseas Bank",
+    "IOB"
+   ],
+   [
+    "Metro Brands Ltd.",
+    "METROBRAND"
+   ],
+   [
+    "Poonawalla Fincorp Ltd.",
+    "POONAWALLA"
+   ],
+   [
+    "Procter & Gamble Hygiene & Health Care Ltd.",
+    "PGHH"
+   ],
+   [
+    "SKF India Ltd.",
+    "SKFINDIA"
+   ],
+   [
+    "Sundram Fasteners Ltd.",
+    "SUNDRMFAST"
+   ],
+   [
+    "Tata Chemicals Ltd.",
+    "TATACHEM"
+   ],
+   [
+    "Timken India Ltd.",
+    "TIMKEN"
+   ],
+   [
+    "ZF Commercial Vehicle Control Systems India Ltd.",
+    "ZFCVINDIA"
+   ]
+  ],
+  "included": [
+   [
+    "360 ONE WAM Ltd.",
+    "360ONE"
+   ],
+   [
+    "Apar Industries Ltd.",
+    "APARINDS"
+   ],
+   [
+    "Bajaj Housing Finance Ltd.",
+    "BAJAJHFL"
+   ],
+   [
+    "Blue Star Ltd.",
+    "BLUESTARCO"
+   ],
+   [
+    "GE Vernova T&D India Ltd.",
+    "GVT&D"
+   ],
+   [
+    "Glenmark Pharmaceuticals Ltd.",
+    "GLENMARK"
+   ],
+   [
+    "Hyundai Motor India Ltd.",
+    "HYUNDAI"
+   ],
+   [
+    "Motilal Oswal Financial Services Ltd.",
+    "MOTILALOFS"
+   ],
+   [
+    "National Aluminium Co. Ltd.",
+    "NATIONALUM"
+   ],
+   [
+    "NTPC Green Energy Ltd.",
+    "NTPCGREEN"
+   ],
+   [
+    "Ola Electric Mobility Ltd.",
+    "OLAELEC"
+   ],
+   [
+    "Premier Energies Ltd.",
+    "PREMIERENE"
+   ],
+   [
+    "Swiggy Ltd.",
+    "SWIGGY"
+   ],
+   [
+    "Vishal Mega Mart Ltd.",
+    "VMM"
+   ],
+   [
+    "Waaree Energies Ltd.",
+    "WAAREEENER"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs22082025",
+  "pub": "2025-08-22",
+  "title": "Replacements in indices w.e.f. September 30, 2025",
+  "eff": "2025-09-30",
+  "nx": 9,
+  "ni": 9,
+  "excluded": [
+   [
+    "Aditya Birla Fashion and Retail Ltd.",
+    "ABFRL"
+   ],
+   [
+    "Bandhan Bank Ltd.",
+    "BANDHANBNK"
+   ],
+   [
+    "Emami Ltd.",
+    "EMAMILTD"
+   ],
+   [
+    "Gland Pharma Ltd.",
+    "GLAND"
+   ],
+   [
+    "Mangalore Refinery & Petrochemicals Ltd.",
+    "MRPL"
+   ],
+   [
+    "Motherson Sumi Wiring India Ltd.",
+    "MSUMI"
+   ],
+   [
+    "Ola Electric Mobility Ltd.",
+    "OLAELEC"
+   ],
+   [
+    "Star Health and Allied Insurance Company Ltd.",
+    "STARHEALTH"
+   ],
+   [
+    "Sun TV Network Ltd.",
+    "SUNTV"
+   ]
+  ],
+  "included": [
+   [
+    "Fertilisers and Chemicals Travancore Ltd.",
+    "FACT"
+   ],
+   [
+    "Godfrey Phillips India Ltd.",
+    "GODFRYPHLP"
+   ],
+   [
+    "Hexaware Technologies Ltd.",
+    "HEXT"
+   ],
+   [
+    "IDBI Bank Ltd.",
+    "IDBI"
+   ],
+   [
+    "Indian Overseas Bank",
+    "IOB"
+   ],
+   [
+    "ITC Hotels Ltd.",
+    "ITCHOTELS"
+   ],
+   [
+    "Procter & Gamble Hygiene & Health Care Ltd.",
+    "PGHH"
+   ],
+   [
+    "Siemens Energy India Ltd.",
+    "ENRIN"
+   ],
+   [
+    "UCO Bank",
+    "UCOBANK"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs23022026",
+  "pub": "2026-02-23",
+  "title": "Replacements in indices w.e.f. March 30, 2026",
+  "eff": "2026-03-30",
+  "nx": 12,
+  "ni": 12,
+  "excluded": [
+   [
+    "Deepak Nitrite Ltd.",
+    "DEEPAKNTR"
+   ],
+   [
+    "Fertilisers and Chemicals Travancore Ltd.",
+    "FACT"
+   ],
+   [
+    "Gujarat Gas Ltd.",
+    "GUJGASLTD"
+   ],
+   [
+    "IDBI Bank Ltd.",
+    "IDBI"
+   ],
+   [
+    "Indian Overseas Bank",
+    "IOB"
+   ],
+   [
+    "Indraprastha Gas Ltd.",
+    "IGL"
+   ],
+   [
+    "IRB Infrastructure Developers Ltd.",
+    "IRB"
+   ],
+   [
+    "Procter & Gamble Hygiene & Health Care Ltd.",
+    "PGHH"
+   ],
+   [
+    "Sona BLW Precision Forgings Ltd.",
+    "SONACOMS"
+   ],
+   [
+    "Syngene International Ltd.",
+    "SYNGENE"
+   ],
+   [
+    "Tata Technologies Ltd.",
+    "TATATECH"
+   ],
+   [
+    "UCO Bank",
+    "UCOBANK"
+   ]
+  ],
+  "included": [
+   [
+    "Anthem Biosciences Ltd.",
+    "ANTHEM"
+   ],
+   [
+    "Authum Investment & Infrastructure Ltd.",
+    "AIIL"
+   ],
+   [
+    "Billionbrains Garage Ventures Ltd.",
+    "GROWW"
+   ],
+   [
+    "HDB Financial Services Ltd.",
+    "HDBFS"
+   ],
+   [
+    "ICICI Prudential Asset Management Company Ltd.",
+    "ICICIAMC"
+   ],
+   [
+    "Laurus Labs Ltd.",
+    "LAURUSLABS"
+   ],
+   [
+    "Lenskart Solutions Ltd.",
+    "LENSKART"
+   ],
+   [
+    "LG Electronics India Ltd.",
+    "LGEINDIA"
+   ],
+   [
+    "Multi Commodity Exchange of India Ltd.",
+    "MCX"
+   ],
+   [
+    "Radico Khaitan Ltd",
+    "RADICO"
+   ],
+   [
+    "Tata Capital Ltd.",
+    "TATACAP"
+   ],
+   [
+    "Tata Motors Ltd.",
+    "TMCV"
+   ]
+  ]
+ },
+ {
+  "file": "ind_prs10082026",
+  "pub": "2026-08-10",
+  "title": "Replacements in indices w.e.f. September 30, 2026",
+  "eff": "2026-09-30",
+  "nx": 9,
+  "ni": 9,
+  "excluded": [
+   [
+    "3M India Ltd.",
+    "3MINDIA"
+   ],
+   [
+    "ACC Ltd.",
+    "ACC"
+   ],
+   [
+    "Apollo Tyres Ltd.",
+    "APOLLOTYRE"
+   ],
+   [
+    "AWL Agri Business Ltd.",
+    "AWL"
+   ],
+   [
+    "Honeywell Automation India Ltd.",
+    "HONAUT"
+   ],
+   [
+    "KPIT Technologies Ltd.",
+    "KPITTECH"
+   ],
+   [
+    "SJVN Ltd.",
+    "SJVN"
+   ],
+   [
+    "Tata Elxsi Ltd.",
+    "TATAELXSI"
+   ],
+   [
+    "The New India Assurance Company Ltd.",
+    "NIACL"
+   ]
+  ],
+  "included": [
+   [
+    "Aster DM Quality Care Ltd.",
+    "ASTERDM"
+   ],
+   [
+    "Embassy Office Parks REIT",
+    "EMBASSY"
+   ],
+   [
+    "Fertilisers and Chemicals Travancore Ltd.",
+    "FACT"
+   ],
+   [
+    "Hindustan Copper Ltd.",
+    "HINDCOPPER"
+   ],
+   [
+    "Indian Overseas Bank",
+    "IOB"
+   ],
+   [
+    "Meesho Ltd.",
+    "MEESHO"
+   ],
+   [
+    "Narayana Hrudayalaya Ltd.",
+    "NH"
+   ],
+   [
+    "Piramal Finance Ltd.",
+    "PIRAMALFIN"
+   ],
+   [
+    "Vedanta Aluminium Metal Ltd.",
+    "VAML"
+   ]
+  ]
+ }
+]

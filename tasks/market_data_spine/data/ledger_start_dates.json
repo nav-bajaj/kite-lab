@@ -1,0 +1,39 @@
+{
+  "established": "2026-09-08",
+  "method": "bisected every stored portfolio run against the latest, comparing recomputed trade history by per-date hash; the lock date is the run from which history stops changing",
+  "note": "the 2026-07-14 universe_membership commit touched all four engines but changed NO output - verified byte-identical pre-2026-07-13 trades",
+  "portfolios": {
+    "om25_v3": {
+      "ledger_starts": "2026-06-06",
+      "runs_stored": 14,
+      "runs_since_lock": 9,
+      "first_run_since_lock": "om25_v3_portfolio_20260710_134258",
+      "backtest_history_starts": "2021-01-04",
+      "last_behaviour_change": "aa963eb 2026-06-06 trailing stop silently disabled when 200-DMA is NaN (+40 historical trades)"
+    },
+    "tl25_v3": {
+      "ledger_starts": "2026-06-06",
+      "runs_stored": 12,
+      "runs_since_lock": 9,
+      "first_run_since_lock": "tl25_v3_portfolio_20260710_134325",
+      "backtest_history_starts": "2020-11-23",
+      "last_behaviour_change": "aa963eb 2026-06-06 same fix via shared _clean_engine (+41 historical trades)"
+    },
+    "l6_v2": {
+      "ledger_starts": "2026-05-14",
+      "runs_stored": 11,
+      "runs_since_lock": 11,
+      "first_run_since_lock": "l6_v2_portfolio_20260514_140512",
+      "backtest_history_starts": "2020-07-10",
+      "last_behaviour_change": "none since first stored run"
+    },
+    "combo_defensive": {
+      "ledger_starts": "2026-05-14",
+      "runs_stored": 11,
+      "runs_since_lock": 11,
+      "first_run_since_lock": "combo_defensive_portfolio_20260514_141405",
+      "backtest_history_starts": "2020-07-20",
+      "last_behaviour_change": "none since first stored run"
+    }
+  }
+}

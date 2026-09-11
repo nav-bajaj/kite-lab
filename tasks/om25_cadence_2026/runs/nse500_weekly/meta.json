@@ -1,0 +1,13 @@
+{
+  "universe": "nse500",
+  "cadence": "weekly",
+  "prices_dir": "/Users/navdeep/kite-lab/nse500_data_merged",
+  "n_symbols": 534,
+  "n_entry_dates": 868,
+  "n_weekly_checks": 868,
+  "start": "2010-01-11",
+  "end": "2026-08-21",
+  "n_buys": 2049,
+  "n_sells": 2011,
+  "runtime_sec": 128.2
+}

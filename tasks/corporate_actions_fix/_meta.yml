@@ -1,0 +1,8 @@
+name: corporate_actions_fix
+status: absorbed  # into market_data_spine Phase 4, 2026-09-10 (D-10); inventory.csv is the input
+opened: null
+closed: 2026-09-10
+related_commits: []
+supersedes: []
+depends_on: []
+register_rows: []

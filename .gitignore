@@ -74,6 +74,10 @@ nse500_data/
 nse500_data_hourly/
 # nse500_data_historical/ — committed: one-time GDF backfill 2009-2019
 nse500_data_merged/
+# index_reconstruction ex-member backfill: Kite-sourced and GDF-sourced
+# are kept apart because the two feeds disagree on dividend adjustment
+nse500_data_backfill/
+nse500_data_backfill_gdf/
 indices_data/
 indices_data_historical/
 indices_data_merged/
@@ -174,3 +178,11 @@ cache/insights/
 
 # Donchian channel experiment runs (regenerable)
 tasks/donchian_channel/runs/
+
+# Market data spine — fresh store (regenerable from the fetchers in tasks/market_data_spine/lib)
+data/master/raw/
+data/master/prices/
+data/master/panels/
+
+# Playwright output
+kite-dashboard/test-results/

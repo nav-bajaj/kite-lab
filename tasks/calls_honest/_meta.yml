@@ -1,0 +1,13 @@
+name: calls_honest
+status: shipped
+opened: 2026-09-10
+closed: 2026-09-10
+related_commits: []
+supersedes: []
+depends_on:
+  - market_data_spine
+  - om25_rebuild
+  - mm_rebuild
+  - stage2_portfolio
+  - dip_vs_breakout_calls
+register_rows: []

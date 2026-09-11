@@ -1,0 +1,442 @@
+[
+  {
+    "variant": "{}",
+    "mult": 19.82,
+    "cagr": 64.5,
+    "maxdd": 12.3,
+    "taken": 173,
+    "skipFull": 587,
+    "yearGrowth": [
+      {
+        "grow": 89.6,
+        "yr": "2020"
+      },
+      {
+        "grow": 133.8,
+        "yr": "2021"
+      },
+      {
+        "grow": 5.8,
+        "yr": "2022"
+      },
+      {
+        "grow": 38.3,
+        "yr": "2023"
+      },
+      {
+        "grow": 92.8,
+        "yr": "2024"
+      },
+      {
+        "grow": 58.4,
+        "yr": "2025"
+      }
+    ],
+    "total": {
+      "avgLoss": -5.5,
+      "avgWin": 31.6,
+      "days": 36,
+      "mean": 12.3,
+      "med": -0.5,
+      "n": 760,
+      "open": 14,
+      "win": 48
+    }
+  },
+  {
+    "variant": "{\"sell\":\"ma150\"}",
+    "mult": 12.06,
+    "cagr": 51.4,
+    "maxdd": 14.7,
+    "taken": 74,
+    "skipFull": 686,
+    "yearGrowth": [
+      {
+        "grow": 56.4,
+        "yr": "2020"
+      },
+      {
+        "grow": 111.4,
+        "yr": "2021"
+      },
+      {
+        "grow": 29.7,
+        "yr": "2022"
+      },
+      {
+        "grow": 57.3,
+        "yr": "2023"
+      },
+      {
+        "grow": 24.6,
+        "yr": "2024"
+      },
+      {
+        "grow": 43.4,
+        "yr": "2025"
+      }
+    ],
+    "total": {
+      "avgLoss": -8.8,
+      "avgWin": 61.1,
+      "days": 91,
+      "mean": 23.1,
+      "med": -3.2,
+      "n": 760,
+      "open": 45,
+      "win": 46
+    }
+  },
+  {
+    "variant": "{\"sell\":\"t25\"}",
+    "mult": 11.06,
+    "cagr": 49.3,
+    "maxdd": 18.4,
+    "taken": 189,
+    "skipFull": 571,
+    "yearGrowth": [
+      {
+        "grow": 49.5,
+        "yr": "2020"
+      },
+      {
+        "grow": 128.3,
+        "yr": "2021"
+      },
+      {
+        "grow": 32.7,
+        "yr": "2022"
+      },
+      {
+        "grow": 62.5,
+        "yr": "2023"
+      },
+      {
+        "grow": 20.3,
+        "yr": "2024"
+      },
+      {
+        "grow": 24.9,
+        "yr": "2025"
+      }
+    ],
+    "total": {
+      "avgLoss": -9.8,
+      "avgWin": 27.2,
+      "days": 36,
+      "mean": 9.3,
+      "med": 7.4,
+      "n": 760,
+      "open": 23,
+      "win": 52
+    }
+  },
+  {
+    "variant": "{\"sell\":\"ma150\",\"entry\":\"close\"}",
+    "mult": 8.32,
+    "cagr": 42.3,
+    "maxdd": 25.5,
+    "taken": 84,
+    "skipFull": 676,
+    "yearGrowth": [
+      {
+        "grow": 43.6,
+        "yr": "2020"
+      },
+      {
+        "grow": 111.4,
+        "yr": "2021"
+      },
+      {
+        "grow": 31.5,
+        "yr": "2022"
+      },
+      {
+        "grow": 35.9,
+        "yr": "2023"
+      },
+      {
+        "grow": 12.9,
+        "yr": "2024"
+      },
+      {
+        "grow": 35.9,
+        "yr": "2025"
+      }
+    ],
+    "total": {
+      "avgLoss": -9.1,
+      "avgWin": 61.2,
+      "days": 81,
+      "mean": 18.3,
+      "med": -8.1,
+      "n": 760,
+      "open": 43,
+      "win": 39
+    }
+  },
+  {
+    "variant": "{\"sell\":\"t25\",\"entry\":\"close\"}",
+    "mult": 4.07,
+    "cagr": 26.3,
+    "maxdd": 18.5,
+    "taken": 168,
+    "skipFull": 592,
+    "yearGrowth": [
+      {
+        "grow": 48.7,
+        "yr": "2020"
+      },
+      {
+        "grow": 44.4,
+        "yr": "2021"
+      },
+      {
+        "grow": -0.9,
+        "yr": "2022"
+      },
+      {
+        "grow": 32.6,
+        "yr": "2023"
+      },
+      {
+        "grow": 33.6,
+        "yr": "2024"
+      },
+      {
+        "grow": 7.9,
+        "yr": "2025"
+      }
+    ],
+    "total": {
+      "avgLoss": -9.8,
+      "avgWin": 27,
+      "days": 35,
+      "mean": 6.2,
+      "med": -8.2,
+      "n": 760,
+      "open": 24,
+      "win": 44
+    }
+  },
+  {
+    "variant": "{\"screen\":\"ath\"}",
+    "mult": 29.76,
+    "cagr": 76,
+    "maxdd": 11.5,
+    "taken": 191,
+    "skipFull": 5480,
+    "yearGrowth": [
+      {
+        "grow": 70.9,
+        "yr": "2020"
+      },
+      {
+        "grow": 131.8,
+        "yr": "2021"
+      },
+      {
+        "grow": 24.5,
+        "yr": "2022"
+      },
+      {
+        "grow": 97.2,
+        "yr": "2023"
+      },
+      {
+        "grow": 88,
+        "yr": "2024"
+      },
+      {
+        "grow": 62.8,
+        "yr": "2025"
+      }
+    ],
+    "total": {
+      "avgLoss": -5.6,
+      "avgWin": 24.5,
+      "days": 39,
+      "mean": 10,
+      "med": 0.6,
+      "n": 5671,
+      "open": 90,
+      "win": 52
+    }
+  },
+  {
+    "variant": "{\"screen\":\"bigbase\"}",
+    "mult": 13.19,
+    "cagr": 53.7,
+    "maxdd": 16.7,
+    "taken": 161,
+    "skipFull": 1222,
+    "yearGrowth": [
+      {
+        "grow": 44,
+        "yr": "2020"
+      },
+      {
+        "grow": 84.2,
+        "yr": "2021"
+      },
+      {
+        "grow": 36.2,
+        "yr": "2022"
+      },
+      {
+        "grow": 114,
+        "yr": "2023"
+      },
+      {
+        "grow": 60.4,
+        "yr": "2024"
+      },
+      {
+        "grow": 6.4,
+        "yr": "2025"
+      }
+    ],
+    "total": {
+      "avgLoss": -6.4,
+      "avgWin": 25.3,
+      "days": 43,
+      "mean": 12.1,
+      "med": 2.9,
+      "n": 1383,
+      "open": 25,
+      "win": 58
+    }
+  },
+  {
+    "variant": "{\"screen\":\"ipo\"}",
+    "mult": 10.42,
+    "cagr": 47.8,
+    "maxdd": 20.5,
+    "taken": 188,
+    "skipFull": 929,
+    "yearGrowth": [
+      {
+        "grow": 44.4,
+        "yr": "2020"
+      },
+      {
+        "grow": 69.3,
+        "yr": "2021"
+      },
+      {
+        "grow": 23.9,
+        "yr": "2022"
+      },
+      {
+        "grow": 142.3,
+        "yr": "2023"
+      },
+      {
+        "grow": 45.1,
+        "yr": "2024"
+      },
+      {
+        "grow": -2.2,
+        "yr": "2025"
+      }
+    ],
+    "total": {
+      "avgLoss": -5.3,
+      "avgWin": 26.7,
+      "days": 35,
+      "mean": 11.3,
+      "med": 0.6,
+      "n": 1117,
+      "open": 19,
+      "win": 52
+    }
+  },
+  {
+    "variant": "{\"screen\":\"ath\",\"entry\":\"close\"}",
+    "mult": 10.82,
+    "cagr": 48.7,
+    "maxdd": 21,
+    "taken": 208,
+    "skipFull": 5463,
+    "yearGrowth": [
+      {
+        "grow": 38.5,
+        "yr": "2020"
+      },
+      {
+        "grow": 116.5,
+        "yr": "2021"
+      },
+      {
+        "grow": -3.3,
+        "yr": "2022"
+      },
+      {
+        "grow": 94.6,
+        "yr": "2023"
+      },
+      {
+        "grow": 58.8,
+        "yr": "2024"
+      },
+      {
+        "grow": 20.8,
+        "yr": "2025"
+      }
+    ],
+    "total": {
+      "avgLoss": -6.8,
+      "avgWin": 24.4,
+      "days": 37,
+      "mean": 6.6,
+      "med": -2.3,
+      "n": 5671,
+      "open": 89,
+      "win": 43
+    }
+  },
+  {
+    "variant": "{\"screen\":\"bigbase\",\"entry\":\"close\"}",
+    "mult": 6.96,
+    "cagr": 38.2,
+    "maxdd": 21.7,
+    "taken": 174,
+    "skipFull": 1209,
+    "yearGrowth": [
+      {
+        "grow": 31.5,
+        "yr": "2020"
+      },
+      {
+        "grow": 56.9,
+        "yr": "2021"
+      },
+      {
+        "grow": 16.8,
+        "yr": "2022"
+      },
+      {
+        "grow": 94.8,
+        "yr": "2023"
+      },
+      {
+        "grow": 57.7,
+        "yr": "2024"
+      },
+      {
+        "grow": -5.9,
+        "yr": "2025"
+      }
+    ],
+    "total": {
+      "avgLoss": -7.4,
+      "avgWin": 25.1,
+      "days": 39,
+      "mean": 8,
+      "med": -1,
+      "n": 1383,
+      "open": 25,
+      "win": 47
+    }
+  }
+]

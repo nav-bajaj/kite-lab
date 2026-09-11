@@ -1,0 +1,123 @@
+scheme,label,sector_v2
+ABRASIVES,nse_fine_2006_2011,Capital Goods
+AIRCONDITIONERS,nse_fine_2006_2011,Consumer Durables
+ALUMINIUM,nse_fine_2006_2011,Metals & Mining
+AUTO ANCILLARIES,nse_fine_2006_2011,Automobile and Auto Components
+AUTOMOBILES - 2 AND 3 WHEELERS,nse_fine_2006_2011,Automobile and Auto Components
+AUTOMOBILES - 4 WHEELERS,nse_fine_2006_2011,Automobile and Auto Components
+BANKS,nse_fine_2006_2011,Financial Services
+BEARINGS,nse_fine_2006_2011,Capital Goods
+BREW/DISTILLERIES,nse_fine_2006_2011,Fast Moving Consumer Goods
+CABLES - TELECOM,nse_fine_2006_2011,Capital Goods
+CASTINGS/FORGINGS,nse_fine_2006_2011,Capital Goods
+CEMENT AND CEMENT PRODUCTS,nse_fine_2006_2011,Construction Materials
+CHEMICALS - INORGANIC,nse_fine_2006_2011,Chemicals
+CHEMICALS - ORGANIC,nse_fine_2006_2011,Chemicals
+CHEMICALS - SPECIALITY,nse_fine_2006_2011,Chemicals
+CIGARETTES,nse_fine_2006_2011,Fast Moving Consumer Goods
+COMPRESSORS / PUMPS,nse_fine_2006_2011,Capital Goods
+COMPUTERS - HARDWARE,nse_fine_2006_2011,Information Technology
+COMPUTERS - SOFTWARE,nse_fine_2006_2011,Information Technology
+CONSTRUCTION,nse_fine_2006_2011,Construction
+CONSUMER DURABLES,nse_fine_2006_2011,Consumer Durables
+CYCLES,nse_fine_2006_2011,Automobile and Auto Components
+DETERGENTS,nse_fine_2006_2011,Fast Moving Consumer Goods
+DIESEL ENGINES,nse_fine_2006_2011,Capital Goods
+DIVERSIFIED,nse_fine_2006_2011,Diversified
+DYES AND PIGMENTS,nse_fine_2006_2011,Chemicals
+ELECTRICAL EQUIPMENT,nse_fine_2006_2011,Capital Goods
+ELECTRODES,nse_fine_2006_2011,Capital Goods
+ELECTRONICS - INDUSTRIAL,nse_fine_2006_2011,Capital Goods
+ENGINEERING,nse_fine_2006_2011,Capital Goods
+FASTNERS,nse_fine_2006_2011,Capital Goods
+FERTILISERS,nse_fine_2006_2011,Chemicals
+FINANCE,nse_fine_2006_2011,Financial Services
+FINANCE - HOUSING,nse_fine_2006_2011,Financial Services
+FINANCIAL INSTITUTION,nse_fine_2006_2011,Financial Services
+FOOD AND FOOD PROCESSING,nse_fine_2006_2011,Fast Moving Consumer Goods
+GAS,nse_fine_2006_2011,Oil Gas & Consumable Fuels
+GEMS,nse_fine_2006_2011,Consumer Durables
+GEMS JEWELLERY AND WATCHES,nse_fine_2006_2011,Consumer Durables
+HOTELS,nse_fine_2006_2011,Consumer Services
+LEATHER AND LEATHER PRODUCTS,nse_fine_2006_2011,Consumer Durables
+MEDIA & ENTERTAINMENT,nse_fine_2006_2011,Media Entertainment & Publication
+METALS,nse_fine_2006_2011,Metals & Mining
+MINING,nse_fine_2006_2011,Metals & Mining
+MISCELLANEOUS,nse_fine_2006_2011,Diversified
+OIL EXPLORATION/PRODUCTION,nse_fine_2006_2011,Oil Gas & Consumable Fuels
+PACKAGING,nse_fine_2006_2011,Capital Goods
+PAINTS,nse_fine_2006_2011,Consumer Durables
+PAPER AND PAPER PRODUCTS,nse_fine_2006_2011,Forest Materials
+PERSONAL CARE,nse_fine_2006_2011,Fast Moving Consumer Goods
+PESTICIDES AND AGROCHEMICALS,nse_fine_2006_2011,Chemicals
+PETROCHEMICALS,nse_fine_2006_2011,Oil Gas & Consumable Fuels
+PHARMACEUTICALS,nse_fine_2006_2011,Healthcare
+PLASTIC AND PLASTIC PRODUCTS,nse_fine_2006_2011,Capital Goods
+POWER,nse_fine_2006_2011,Power
+PRINTING AND PUBLISHING,nse_fine_2006_2011,Media Entertainment & Publication
+REFINERIES,nse_fine_2006_2011,Oil Gas & Consumable Fuels
+REFRACTORIES,nse_fine_2006_2011,Capital Goods
+SHIPPING,nse_fine_2006_2011,Services
+SOLVENT EXTRACTION,nse_fine_2006_2011,Fast Moving Consumer Goods
+STEEL AND STEEL PRODUCTS,nse_fine_2006_2011,Metals & Mining
+SUGAR,nse_fine_2006_2011,Fast Moving Consumer Goods
+TEA AND COFFEE,nse_fine_2006_2011,Fast Moving Consumer Goods
+TELECOMMUNICATION - EQUIPMENT,nse_fine_2006_2011,Telecommunication
+TELECOMMUNICATION - SERVICES,nse_fine_2006_2011,Telecommunication
+TEXTILE MACHINERY,nse_fine_2006_2011,Capital Goods
+TEXTILE PRODUCTS,nse_fine_2006_2011,Textiles
+TEXTILES - COTTON,nse_fine_2006_2011,Textiles
+TEXTILES - SYNTHETIC,nse_fine_2006_2011,Textiles
+TRADING,nse_fine_2006_2011,Services
+TRANSMISSION TOWERS,nse_fine_2006_2011,Capital Goods
+TRAVEL AND TRANSPORT,nse_fine_2006_2011,Services
+TYRES,nse_fine_2006_2011,Automobile and Auto Components
+AUTOMOBILE,nse_macro_2014_2020,Automobile and Auto Components
+CEMENT & CEMENT PRODUCTS,nse_macro_2014_2020,Construction Materials
+CHEMICALS,nse_macro_2014_2020,Chemicals
+CONSTRUCTION,nse_macro_2014_2020,Construction
+CONSUMER GOODS,nse_macro_2014_2020,Fast Moving Consumer Goods
+ENERGY,nse_macro_2014_2020,Oil Gas & Consumable Fuels
+FERTILISERS & PESTICIDES,nse_macro_2014_2020,Chemicals
+FINANCIAL SERVICES,nse_macro_2014_2020,Financial Services
+HEALTHCARE SERVICES,nse_macro_2014_2020,Healthcare
+INDUSTRIAL MANUFACTURING,nse_macro_2014_2020,Capital Goods
+IT,nse_macro_2014_2020,Information Technology
+MEDIA & ENTERTAINMENT,nse_macro_2014_2020,Media Entertainment & Publication
+METALS,nse_macro_2014_2020,Metals & Mining
+OIL & GAS,nse_macro_2014_2020,Oil Gas & Consumable Fuels
+PAPER,nse_macro_2014_2020,Forest Materials
+PHARMA,nse_macro_2014_2020,Healthcare
+POWER,nse_macro_2014_2020,Power
+SERVICES,nse_macro_2014_2020,Services
+TELECOM,nse_macro_2014_2020,Telecommunication
+TEXTILES,nse_macro_2014_2020,Textiles
+Agriculture,zerodha,Fast Moving Consumer Goods
+Auto Ancillary,zerodha,Automobile and Auto Components
+Automobile,zerodha,Automobile and Auto Components
+Aviation,zerodha,Services
+Building Materials,zerodha,Construction Materials
+Chemicals,zerodha,Chemicals
+Consumer Durables,zerodha,Consumer Durables
+Defence,zerodha,Capital Goods
+Diversified,zerodha,Diversified
+Education Training,zerodha,Consumer Services
+Energy,zerodha,Oil Gas & Consumable Fuels
+Engineering Capital Goods,zerodha,Capital Goods
+FMCG,zerodha,Fast Moving Consumer Goods
+Fertilizers,zerodha,Chemicals
+Financial Services,zerodha,Financial Services
+Healthcare,zerodha,Healthcare
+IT,zerodha,Information Technology
+Logistics,zerodha,Services
+Media Entertainment,zerodha,Media Entertainment & Publication
+Metals,zerodha,Metals & Mining
+NBFC,zerodha,Financial Services
+Real Estate,zerodha,Realty
+Retail,zerodha,Consumer Services
+Services,zerodha,Services
+Software Services,zerodha,Information Technology
+Telecom,zerodha,Telecommunication
+Textiles,zerodha,Textiles
+Tourism Hospitality,zerodha,Consumer Services
+Trading,zerodha,Services
