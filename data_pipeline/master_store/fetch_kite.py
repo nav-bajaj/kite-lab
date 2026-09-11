@@ -113,8 +113,8 @@ def main():
             df = fetch_history(kite, r.symbol, start, today, interval="day", exchange=r.exchange)
 
             if a.since_days and os.path.exists(path):
-
-                old = pd.read_csv(path, parse_dates=["date"]); df = pd.concat([old[old["date"] < pd.Timestamp(start)], df]).drop_duplicates("date", keep="last").sort_values("date")
+                old = pd.read_csv(path, parse_dates=["date"]); df = pd.concat([old[old["date"] < pd.Timestamp(start)], df])
+            df = df.drop_duplicates("date", keep="last").sort_values("date")   # Kite can return a day twice (chunk overlap / preliminary candle); one row per date on disk
         except Exception as e:  # noqa: BLE001
             n_err += 1
             prev = manifest.get(r.symbol, {}); manifest[r.symbol] = {**prev, "exchange": r.exchange, "last_error": str(e)[:200], "last_error_at": today}   # keep first/last/rows
