@@ -1110,3 +1110,53 @@ See om25_rebuild §4f correction: the synthetic index was flat after
 1.10 / 0.73 (was 1.08 / 0.76), the §3 bases and L6 unchanged to ±0.01,
 the OM25 2026 pick 1.31 / 1.20. §16's MidSmall 400 2026 YTD is 7.7%, not
 3.0%; its last-12-month figure is 8.8%, not 4.6%. Conclusions unchanged.
+
+## §18 — the last 120 trading days, and what the book looks like from inside (1 trial)
+
+Day-by-day review in `report/review120.pdf` (2026-03-17 → 2026-09-09;
+production files to 2026-08-21).
+
+| Series | 120-day return | Max DD in window | Worst day | Longest losing streak | Order days | Orders |
+|---|---|---|---|---|---|---|
+| MM (new) | +15.1% | −6.3% | −3.5% | 4 | 6 | 53 |
+| OM25 (new, 2026 pick) | +21.6% | −6.9% | −4.2% | 4 | 13 | 43 |
+| L6 v2 production (to 08-21) | +14.7% | −8.6% | −4.4% | 3 | 23 | 184 |
+| OM25 v3 production (to 08-21) | +11.5% | −7.5% | −4.2% | 4 | 11 | 61 |
+| Nifty 500 | +6.0% | −6.3% | −3.2% | 7 | | |
+| MidSmall 400 | +16.3% | −6.2% | −3.8% | 3 | | |
+
+The window opened in a bear (2026-03-17 → 05-04), had two short bear
+spells in June and entered a new one on 2026-09-03. Every book drew
+down 6-9% inside the window and sat below its running high on 75-90%
+of days; the index did the same. What differs is activity: MM had six
+order days in six months; production L6 had 23 order days and 184
+orders.
+
+**What the holdings chart showed.** MM held 12 names with 25% cash
+through the March-April bear (by design), then took four monthly
+rebalances to get back to 25 (14 → 20 → 22 → 23 → 25). Over 2016-26 the
+book holds fewer than 25 names on **50% of bull days** (mean 22.2, 21%
+of days under 20) and refills after a bear→bull flip in a median of
+about 55 days, sometimes several months. Two causes: entrants are drawn
+only from the top 25 ranks after removing names already held and names
+blocked by the sector cap (a thin pool), and the engine never resizes
+an existing position, so after a bear the 15 survivors hold most of the
+capital and there is little cash to fund new names until something
+exits. Cash in bull averages 5.7%; the book is fully invested, in fewer,
+larger positions (the 10% cap binds).
+
+Test — `fill_from_buffer`: draw entrants from the top 45 (25 + buffer)
+when the top-25 pool is short:
+
+| | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Wright window | Up / down | Bull days < 25 names | Trades/yr |
+|---|---|---|---|---|---|---|
+| As adopted (top-25 pool) | 25.7% / 1.18 / −26% | 0.71 / 1.73 / 1.18 | 33.9% / 1.50 | 1.10 / 0.73 | 50% | 118 |
+| Fill from buffer (top-45 pool) | 25.2% / 1.15 / −27% | 0.69 / 1.73 / 1.10 | 32.9% / 1.44 | 1.10 / 0.77 | 23% | 125 |
+
+Performance is the same within noise; the book is at 25 names twice as
+often. The remaining shortfall is the resizing limit, which is
+structural to the engine (no position is ever topped up or trimmed).
+The honest product description is therefore **"up to 25 names; after a
+bear the book rebuilds over the following rebalances as positions
+exit"**, with the fill-from-buffer rule as a cosmetic improvement the
+founder may adopt at no performance cost.

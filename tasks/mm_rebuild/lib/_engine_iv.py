@@ -215,7 +215,8 @@ def run_strategy(*,
                  size_weights=None,
                  top_n_fn=None,
                  sector_of=None,             # MM §9d: {symbol: sector}; with sector_cap, entrants are skipped once a sector holds sector_cap names
-                 sector_cap=None,              # MM §9b: callable(signal_date) -> int; overrides top_n on that rebalance (exit rank = value + exit_buffer)          # MM §9: callable(signal_date, symbols) -> {sym: weight}; None = equal weight (byte-identical)            # if >0, block rank-exit while held<N days
+                 sector_cap=None,
+                 fill_from_buffer=False,     # MM 2026-09-11: draw entrants from ranks up to top_n + exit_buffer when the top-N pool is short              # MM §9b: callable(signal_date) -> int; overrides top_n on that rebalance (exit rank = value + exit_buffer)          # MM §9: callable(signal_date, symbols) -> {sym: weight}; None = equal weight (byte-identical)            # if >0, block rank-exit while held<N days
                  bear_skips_entries=True,    # if True (default, preserves OM25 v3 behavior):
                                              # don't add new positions during bear regime.
                                              # if False: allow entries at bear-scaled size
@@ -668,7 +669,7 @@ def run_strategy(*,
             if top_n_fn is not None:
                 _v = top_n_fn(entry_schedule.get(pd.Timestamp(date)))
                 if _v: _tn = int(_v)
-            entrants = [s for s in ranked[:_tn] if s not in holdings]
+            entrants = [s for s in ranked[:(_tn + exit_buffer if fill_from_buffer else _tn)] if s not in holdings]
             if sector_of is not None and sector_cap:
                 _cnt = {}
                 for _h in holdings:
