@@ -26,7 +26,7 @@ Base URL: `https://kite-lab-production.up.railway.app`
 | GET | `/api/trades` | trade_service | Trade history with pagination (≤500) |
 | POST | `/api/rebalance/*` | rebalance_service | Preview + orders |
 | GET, POST, DELETE | `/api/jobs` | job_service | Subprocess execution |
-| POST | `/api/sync/upload-data` | sync_service | **tarball upload, validated members (R-TBD-no-size-limit)** |
+| POST | `/api/sync/upload-data` | sync_service | tarball upload: validated members, link/special members rejected, size and free-space bound (R-014, R-023); `master` target extracts recursively into `MASTER_STORE_DIR` |
 | GET, POST, PATCH, DELETE | `/api/schedule/*` | schedule_service | Cron-like jobs |
 
 ### Unauthenticated by design (AD-1, R-003)

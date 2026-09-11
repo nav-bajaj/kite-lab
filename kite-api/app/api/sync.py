@@ -59,6 +59,10 @@ async def sync_all_universes(user: dict = Depends(require_admin)):
 # Allowed directories for upload (whitelist).
 # nse500_data_historical holds the 2009-2019 GDF backfill that can't
 # be re-fetched from Zerodha — see tasks/pipeline_improvements/CRITICAL_DATA.md.
+MAX_ARCHIVE_BYTES = 4 * 1024 ** 3        # R-023: the master store is ~2.4 GB extracted; nothing legitimate is larger
+MAX_ARCHIVE_MEMBERS = 200_000
+MIN_FREE_BYTES_AFTER = 1 * 1024 ** 3     # R-023: keep 1 GB on the volume for tokens, backups and the nightly
+
 ALLOWED_UPLOAD_DIRS = {
     "nse500_data",
     "nse500_data_hourly",
@@ -76,9 +80,13 @@ ALLOWED_UPLOAD_DIRS = {
     "indices_data_historical",  # 16y indices + VIX panel (macro engine)
     # production_port_2026 P1 (2026-09-11): the honest master store. Unlike the flat panels above it
     # is a directory tree (prices/*/, raw/, membership/, benchmarks/, qa/ ...), so it is extracted
-    # recursively and merged into MASTER_STORE_DIR (/data/master on the volume). Same member
-    # validation; nothing outside the store directory is written; existing files are overwritten
-    # by the archive's copies, files absent from the archive are left alone (a merge, not a replace).
+    # recursively and merged into MASTER_STORE_DIR (/data/master on the volume). Guarantees (security
+    # review 2026-09-11, R-014/R-023): only regular files and directories are accepted (link and special
+    # members are rejected before extraction, and extraction uses tarfile's "data" filter where the
+    # interpreter has it); the archive's declared size and the volume's free space are checked first;
+    # the resolved store path must be an absolute directory named "master" that is not a parent of the
+    # token directory; every destination is validated before any file is copied (all-or-nothing);
+    # existing files are overwritten by the archive's copies, files absent from the archive are kept.
     "master",
 }
 
@@ -103,9 +111,16 @@ async def upload_price_data(
     if target == "master":
         # the same resolution the nightly runner uses: MASTER_STORE_DIR (set to /data/master on Railway), else <root>/data/master
         target_dir = Path(os.environ.get("MASTER_STORE_DIR", str(settings.data_dir / "data" / "master")))
+        resolved = target_dir.resolve()
+        forbidden = {Path("/"), Path("/data"), Path("/app"), Path.home()}
+        tokens_dir = Path("/data/tokens").resolve()
+        if (not target_dir.is_absolute() or resolved.name != "master" or resolved in forbidden
+                or str(tokens_dir).startswith(str(resolved) + os.sep)):
+            raise HTTPException(status_code=500, detail="MASTER_STORE_DIR is not a valid store path (must be an absolute directory named 'master')")
     else:
         target_dir = settings.data_dir / target
 
+    tmp_path = None
     try:
         # Save upload to temp file
         with tempfile.NamedTemporaryFile(suffix=".tar.gz", delete=False) as tmp:
@@ -114,16 +129,27 @@ async def upload_price_data(
 
         # Extract tar.gz
         with tarfile.open(tmp_path, "r:gz") as tar:
-            # Security: check for path traversal
-            for member in tar.getmembers():
+            members = tar.getmembers()
+            # Security: path traversal, link and special members, size and count (R-014, R-023)
+            for member in members:
                 if member.name.startswith("/") or ".." in member.name:
                     raise HTTPException(status_code=400, detail=f"Unsafe path in archive: {member.name}")
+                if member.issym() or member.islnk() or not (member.isfile() or member.isdir()):
+                    raise HTTPException(status_code=400, detail=f"Link or special member in archive: {member.name}")
+            declared = sum(m.size for m in members if m.isfile())
+            if declared > MAX_ARCHIVE_BYTES or len(members) > MAX_ARCHIVE_MEMBERS:
+                raise HTTPException(status_code=413, detail=f"Archive too large: {declared} bytes, {len(members)} members")
+            probe = target_dir if target_dir.exists() else next(p for p in target_dir.parents if p.exists())
+            if shutil.disk_usage(probe).free - declared < MIN_FREE_BYTES_AFTER:
+                raise HTTPException(status_code=507, detail="Insufficient free space on the data volume for this archive")
 
             # Extract to a temp dir first, then move files into target.
-            # Member names were validated against path-traversal above (lines
-            # 100-102); the temp dir bounds the blast radius further. R-014.
+            # Member names were validated above; the temp dir bounds the blast radius further. R-014.
             with tempfile.TemporaryDirectory() as extract_dir:
-                tar.extractall(extract_dir)  # noqa: S202  # nosec B202  # validated members, sandboxed temp dir; R-014
+                try:
+                    tar.extractall(extract_dir, filter="data")  # noqa: S202  # nosec B202  # PEP 706 filter: rejects links, absolute paths and traversal
+                except TypeError:   # interpreter without the filter argument (< 3.11.4): members were validated above
+                    tar.extractall(extract_dir)  # noqa: S202  # nosec B202  # validated members, sandboxed temp dir; R-014
 
                 # Find the extracted content (might be in a subdirectory matching target name)
                 extracted = Path(extract_dir)
@@ -137,22 +163,26 @@ async def upload_price_data(
                 # Copy files into target
                 count = 0
                 if target == "master":
-                    for f in source.rglob("*"):
-                        if f.is_file():
-                            rel = f.relative_to(source)
-                            dest = (target_dir / rel).resolve()
-                            if not str(dest).startswith(str(target_dir.resolve()) + os.sep):
-                                raise HTTPException(status_code=400, detail=f"Unsafe path in archive: {rel}")
-                            dest.parent.mkdir(parents=True, exist_ok=True)
-                            shutil.copy2(f, dest)
-                            count += 1
+                    root = target_dir.resolve()
+                    plan = []
+                    for f in source.rglob("*"):          # validate every destination first: all-or-nothing
+                        if f.is_symlink():
+                            raise HTTPException(status_code=400, detail=f"Symlink in archive: {f.relative_to(source)}")
+                        if not f.is_file():
+                            continue
+                        rel = f.relative_to(source)
+                        dest = (target_dir / rel).resolve()
+                        if not str(dest).startswith(str(root) + os.sep):
+                            raise HTTPException(status_code=400, detail=f"Unsafe path in archive: {rel}")
+                        plan.append((f, dest))
+                    for f, dest in plan:
+                        dest.parent.mkdir(parents=True, exist_ok=True)
+                        shutil.copy2(f, dest, follow_symlinks=False)
+                        count += 1
                 else:
                     for f in source.glob("*.csv"):
                         shutil.copy2(f, target_dir / f.name)
                         count += 1
-
-        # Clean up temp file
-        Path(tmp_path).unlink(missing_ok=True)
 
         logger.info(f"Uploaded {count} files to {target_dir} by {user.get('email')}")
         return {
@@ -167,3 +197,6 @@ async def upload_price_data(
     except Exception as e:
         logger.error(f"Upload failed: {e}")
         raise HTTPException(status_code=500, detail=f"Upload failed: {e}")
+    finally:
+        if tmp_path:
+            Path(tmp_path).unlink(missing_ok=True)   # on success and on every rejection (R-014 review 2026-09-11)
