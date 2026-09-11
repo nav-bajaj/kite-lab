@@ -25,9 +25,9 @@ import glob, json, os, re
 import numpy as np
 import pandas as pd
 
-from data_pipeline.master_store import ROOT as REPO  # noqa: E402
-RAW = f"{REPO}/data/master/raw/nse_ca"
-OUT = f"{REPO}/data/master/corporate_actions.csv"
+from data_pipeline.master_store import ROOT as REPO, MASTER  # noqa: E402
+RAW = f"{MASTER}/raw/nse_ca"
+OUT = f"{MASTER}/corporate_actions.csv"
 
 NUM = r"(\d+(?:\.\d+)?)"
 # NSE's older filings are abbreviated and run together: "Fv Splt Frm Rs 10 To Re 1",
@@ -108,7 +108,7 @@ def main():
     df = pd.DataFrame(rows, columns=["isin", "symbol", "ex_date", "type", "factor_or_amount", "detail", "face_val",
                                      "series", "subject"])
     df["source"] = "nse-filing"
-    obs_path = f"{REPO}/data/master/qa/observed_events.csv"
+    obs_path = f"{MASTER}/qa/observed_events.csv"
     if os.path.exists(obs_path):
         o = pd.read_csv(obs_path, parse_dates=["ex_date"])
         o = o[o["clean_ratio"].notna() | (o["factor"] < 0.6)]

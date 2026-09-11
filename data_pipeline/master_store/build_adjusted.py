@@ -28,8 +28,8 @@ import pandas as pd
 
 from data_pipeline.master_store.identity import Identity
 
-from data_pipeline.master_store import ROOT as REPO  # noqa: E402
-MASTER = f"{REPO}/data/master"
+from data_pipeline.master_store import ROOT as REPO, MASTER  # noqa: E402
+MASTER = MASTER
 RAW = f"{MASTER}/prices/bhavcopy"
 OUT_PR = f"{MASTER}/prices/adjusted_pr"
 OUT_TR = f"{MASTER}/prices/adjusted_tr"

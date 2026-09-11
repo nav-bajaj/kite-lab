@@ -26,8 +26,8 @@ import glob, os
 import numpy as np
 import pandas as pd
 
-from data_pipeline.master_store import ROOT as REPO  # noqa: E402
-MASTER = f"{REPO}/data/master"
+from data_pipeline.master_store import ROOT as REPO, MASTER  # noqa: E402
+MASTER = MASTER
 
 CLEAN = sorted({b / (a + b) for a in range(1, 11) for b in range(1, 11)} | {0.5, 0.2, 0.1, 0.4, 0.25})
 CLEAN = sorted(set(CLEAN) | {1 / x for x in CLEAN if x > 0})

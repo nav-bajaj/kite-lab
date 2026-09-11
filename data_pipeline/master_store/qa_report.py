@@ -19,8 +19,8 @@ import glob, json, os
 import numpy as np
 import pandas as pd
 
-from data_pipeline.master_store import ROOT as REPO  # noqa: E402
-MASTER = f"{REPO}/data/master"
+from data_pipeline.master_store import ROOT as REPO, MASTER  # noqa: E402
+MASTER = MASTER
 QA = f"{MASTER}/qa"
 
 

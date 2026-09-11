@@ -19,8 +19,8 @@ import pandas as pd
 
 from data_pipeline.master_store.identity import Identity
 
-from data_pipeline.master_store import ROOT as REPO  # noqa: E402
-MASTER = f"{REPO}/data/master"
+from data_pipeline.master_store import ROOT as REPO, MASTER  # noqa: E402
+MASTER = MASTER
 OUT = f"{MASTER}/prices/bhavcopy"
 MANIFEST = f"{MASTER}/prices/bhavcopy_manifest.json"
 # Optional, additive: extra canonical symbols to export beyond the index-member
