@@ -561,6 +561,13 @@ def register_default_tasks(sched):
 
     for task in SCHEDULED_TASKS:
         job_id = task["id"]
+        if not task.get("enabled", True):
+            # registered in the definition but not scheduled (production_port_2026: the master-store refresh
+            # until the store is seeded); an existing job of that id is removed so a flip takes effect on redeploy
+            if sched.get_job(job_id):
+                sched.remove_job(job_id)
+            logger.info(f"Task {job_id} is disabled; not scheduled")
+            continue
 
         # Check if job already exists
         existing_job = sched.get_job(job_id)

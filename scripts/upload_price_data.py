@@ -77,7 +77,8 @@ def upload_archive(api_url, token, archive_path, target):
 def main():
     parser = argparse.ArgumentParser(description="Upload local price data to production")
     parser.add_argument("--api-url", required=True, help="Production API URL (e.g. https://app.up.railway.app)")
-    parser.add_argument("--token", required=True, help="JWT auth token")
+    parser.add_argument("--token", default=None, help="JWT auth token (or use --token-file to keep it off the command line)")
+    parser.add_argument("--token-file", default=None, help="Read the JWT from this file (first line); keeps the token out of shell history")
     parser.add_argument("--target", default=None, choices=TARGETS, help="Upload specific directory only")
     parser.add_argument("--data-dir", default=None, help="Path to kite-lab root (default: auto-detect)")
     parser.add_argument("--archive", default=None,
@@ -89,6 +90,11 @@ def main():
                              "the upload target, e.g. --target indices_data_historical "
                              "--source-dir /path/to/indices_data_full.")
     args = parser.parse_args()
+    if args.token_file:
+        with open(os.path.expanduser(args.token_file)) as fh:
+            args.token = fh.readline().strip()
+    if not args.token:
+        parser.error("--token or --token-file is required")
 
     if args.source_dir and not args.target:
         parser.error("--source-dir requires --target (it overrides that one target's source)")
@@ -107,16 +113,20 @@ def main():
     print()
 
     for target in targets:
-        source_dir = args.source_dir or os.path.join(data_dir, target)
-        if not os.path.isdir(source_dir):
-            print(f"[SKIP] {target}: directory not found at {source_dir}")
-            continue
-
-        file_count = len([f for f in os.listdir(source_dir) if f.endswith(".csv")])
-        print(f"[{target}] {file_count} CSV files")
-
-        # Compress
-        archive_path = args.archive if args.archive else compress_directory(source_dir, target)
+        if args.archive:
+            if not os.path.isfile(args.archive):
+                print(f"[SKIP] {target}: archive not found at {args.archive}")
+                continue
+            archive_path = args.archive
+            print(f"[{target}] prebuilt archive {archive_path} ({os.path.getsize(archive_path) / 1e6:.0f} MB)")
+        else:
+            source_dir = args.source_dir or os.path.join(data_dir, target)
+            if not os.path.isdir(source_dir):
+                print(f"[SKIP] {target}: directory not found at {source_dir}")
+                continue
+            file_count = len([f for f in os.listdir(source_dir) if f.endswith(".csv")])
+            print(f"[{target}] {file_count} CSV files")
+            archive_path = compress_directory(source_dir, target)
 
         # Upload
         try:
@@ -124,7 +134,8 @@ def main():
             if not success:
                 print(f"  WARNING: Upload failed for {target}")
         finally:
-            os.unlink(archive_path)
+            if not args.archive:
+                os.unlink(archive_path)
 
         print()
 
