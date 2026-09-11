@@ -46,3 +46,281 @@
 /Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
   return r.reindex(calendar).ffill() if calendar is not None else r
 24 ('voladj', 20, 0.0, 'invvol', 15, 5) ok
+25 ('voladj', 20, 0.2, 'equal', 0, 0) ok
+26 ('voladj', 20, 0.2, 'equal', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+27 ('voladj', 20, 0.2, 'equal', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+28 ('voladj', 20, 0.2, 'equal', 15, 5) ok
+29 ('voladj', 20, 0.2, 'invvol', 0, 0) ok
+30 ('voladj', 20, 0.2, 'invvol', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+31 ('voladj', 20, 0.2, 'invvol', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+32 ('voladj', 20, 0.2, 'invvol', 15, 5) ok
+33 ('cr', 10, 0.0, 'equal', 0, 0) ok
+34 ('cr', 10, 0.0, 'equal', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+35 ('cr', 10, 0.0, 'equal', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+36 ('cr', 10, 0.0, 'equal', 15, 5) ok
+37 ('cr', 10, 0.0, 'invvol', 0, 0) ok
+38 ('cr', 10, 0.0, 'invvol', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+39 ('cr', 10, 0.0, 'invvol', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+40 ('cr', 10, 0.0, 'invvol', 15, 5) ok
+41 ('cr', 10, 0.2, 'equal', 0, 0) ok
+42 ('cr', 10, 0.2, 'equal', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+43 ('cr', 10, 0.2, 'equal', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+44 ('cr', 10, 0.2, 'equal', 15, 5) ok
+45 ('cr', 10, 0.2, 'invvol', 0, 0) ok
+46 ('cr', 10, 0.2, 'invvol', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+47 ('cr', 10, 0.2, 'invvol', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+48 ('cr', 10, 0.2, 'invvol', 15, 5) ok
+49 ('cr', 20, 0.0, 'equal', 0, 0) ok
+50 ('cr', 20, 0.0, 'equal', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+51 ('cr', 20, 0.0, 'equal', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+52 ('cr', 20, 0.0, 'equal', 15, 5) ok
+53 ('cr', 20, 0.0, 'invvol', 0, 0) ok
+54 ('cr', 20, 0.0, 'invvol', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+55 ('cr', 20, 0.0, 'invvol', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+56 ('cr', 20, 0.0, 'invvol', 15, 5) ok
+57 ('cr', 20, 0.2, 'equal', 0, 0) ok
+58 ('cr', 20, 0.2, 'equal', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+59 ('cr', 20, 0.2, 'equal', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+60 ('cr', 20, 0.2, 'equal', 15, 5) ok
+61 ('cr', 20, 0.2, 'invvol', 0, 0) ok
+62 ('cr', 20, 0.2, 'invvol', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+63 ('cr', 20, 0.2, 'invvol', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+64 ('cr', 20, 0.2, 'invvol', 15, 5) ok
+65 ('mix40', 10, 0.0, 'equal', 0, 0) ok
+66 ('mix40', 10, 0.0, 'equal', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+67 ('mix40', 10, 0.0, 'equal', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+68 ('mix40', 10, 0.0, 'equal', 15, 5) ok
+69 ('mix40', 10, 0.0, 'invvol', 0, 0) ok
+70 ('mix40', 10, 0.0, 'invvol', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+71 ('mix40', 10, 0.0, 'invvol', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+72 ('mix40', 10, 0.0, 'invvol', 15, 5) ok
+73 ('mix40', 10, 0.2, 'equal', 0, 0) ok
+74 ('mix40', 10, 0.2, 'equal', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+75 ('mix40', 10, 0.2, 'equal', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+76 ('mix40', 10, 0.2, 'equal', 15, 5) ok
+77 ('mix40', 10, 0.2, 'invvol', 0, 0) ok
+78 ('mix40', 10, 0.2, 'invvol', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+79 ('mix40', 10, 0.2, 'invvol', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+80 ('mix40', 10, 0.2, 'invvol', 15, 5) ok
+81 ('mix40', 20, 0.0, 'equal', 0, 0) ok
+82 ('mix40', 20, 0.0, 'equal', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+83 ('mix40', 20, 0.0, 'equal', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+84 ('mix40', 20, 0.0, 'equal', 15, 5) ok
+85 ('mix40', 20, 0.0, 'invvol', 0, 0) ok
+86 ('mix40', 20, 0.0, 'invvol', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+87 ('mix40', 20, 0.0, 'invvol', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+88 ('mix40', 20, 0.0, 'invvol', 15, 5) ok
+89 ('mix40', 20, 0.2, 'equal', 0, 0) ok
+90 ('mix40', 20, 0.2, 'equal', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+91 ('mix40', 20, 0.2, 'equal', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+92 ('mix40', 20, 0.2, 'equal', 15, 5) ok
+93 ('mix40', 20, 0.2, 'invvol', 0, 0) ok
+94 ('mix40', 20, 0.2, 'invvol', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+95 ('mix40', 20, 0.2, 'invvol', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+96 ('mix40', 20, 0.2, 'invvol', 15, 5) ok
+97 ('mix50', 10, 0.0, 'equal', 0, 0) ok
+98 ('mix50', 10, 0.0, 'equal', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+99 ('mix50', 10, 0.0, 'equal', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+100 ('mix50', 10, 0.0, 'equal', 15, 5) ok
+101 ('mix50', 10, 0.0, 'invvol', 0, 0) ok
+102 ('mix50', 10, 0.0, 'invvol', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+103 ('mix50', 10, 0.0, 'invvol', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+104 ('mix50', 10, 0.0, 'invvol', 15, 5) ok
+105 ('mix50', 10, 0.2, 'equal', 0, 0) ok
+106 ('mix50', 10, 0.2, 'equal', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+107 ('mix50', 10, 0.2, 'equal', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+108 ('mix50', 10, 0.2, 'equal', 15, 5) ok
+109 ('mix50', 10, 0.2, 'invvol', 0, 0) ok
+110 ('mix50', 10, 0.2, 'invvol', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+111 ('mix50', 10, 0.2, 'invvol', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+112 ('mix50', 10, 0.2, 'invvol', 15, 5) ok
+113 ('mix50', 20, 0.0, 'equal', 0, 0) ok
+114 ('mix50', 20, 0.0, 'equal', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+115 ('mix50', 20, 0.0, 'equal', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+116 ('mix50', 20, 0.0, 'equal', 15, 5) ok
+117 ('mix50', 20, 0.0, 'invvol', 0, 0) ok
+118 ('mix50', 20, 0.0, 'invvol', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+119 ('mix50', 20, 0.0, 'invvol', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+120 ('mix50', 20, 0.0, 'invvol', 15, 5) ok
+121 ('mix50', 20, 0.2, 'equal', 0, 0) ok
+122 ('mix50', 20, 0.2, 'equal', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+123 ('mix50', 20, 0.2, 'equal', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+124 ('mix50', 20, 0.2, 'equal', 15, 5) ok
+125 ('mix50', 20, 0.2, 'invvol', 0, 0) ok
+126 ('mix50', 20, 0.2, 'invvol', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+127 ('mix50', 20, 0.2, 'invvol', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+128 ('mix50', 20, 0.2, 'invvol', 15, 5) ok
+129 ('mix60', 10, 0.0, 'equal', 0, 0) ok
+130 ('mix60', 10, 0.0, 'equal', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+131 ('mix60', 10, 0.0, 'equal', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+132 ('mix60', 10, 0.0, 'equal', 15, 5) ok
+133 ('mix60', 10, 0.0, 'invvol', 0, 0) ok
+134 ('mix60', 10, 0.0, 'invvol', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+135 ('mix60', 10, 0.0, 'invvol', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+136 ('mix60', 10, 0.0, 'invvol', 15, 5) ok
+137 ('mix60', 10, 0.2, 'equal', 0, 0) ok
+138 ('mix60', 10, 0.2, 'equal', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+139 ('mix60', 10, 0.2, 'equal', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+140 ('mix60', 10, 0.2, 'equal', 15, 5) ok
+141 ('mix60', 10, 0.2, 'invvol', 0, 0) ok
+142 ('mix60', 10, 0.2, 'invvol', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+143 ('mix60', 10, 0.2, 'invvol', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+144 ('mix60', 10, 0.2, 'invvol', 15, 5) ok
+145 ('mix60', 20, 0.0, 'equal', 0, 0) ok
+146 ('mix60', 20, 0.0, 'equal', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+147 ('mix60', 20, 0.0, 'equal', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+148 ('mix60', 20, 0.0, 'equal', 15, 5) ok
+149 ('mix60', 20, 0.0, 'invvol', 0, 0) ok
+150 ('mix60', 20, 0.0, 'invvol', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+151 ('mix60', 20, 0.0, 'invvol', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+152 ('mix60', 20, 0.0, 'invvol', 15, 5) ok
+153 ('mix60', 20, 0.2, 'equal', 0, 0) ok
+154 ('mix60', 20, 0.2, 'equal', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+155 ('mix60', 20, 0.2, 'equal', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+156 ('mix60', 20, 0.2, 'equal', 15, 5) ok
+157 ('mix60', 20, 0.2, 'invvol', 0, 0) ok
+158 ('mix60', 20, 0.2, 'invvol', 0, 5) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+159 ('mix60', 20, 0.2, 'invvol', 15, 0) ok
+/Users/navdeep/kite-lab/tasks/om25_rebuild/lib/regime.py:42: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  return r.reindex(calendar).ffill() if calendar is not None else r
+160 ('mix60', 20, 0.2, 'invvol', 15, 5) ok
+5y annual 19.7% / 0.86 / -32% [np.float64(1.01), np.float64(0.97), np.float64(0.71)] W 22.5% / 0.91 changes 11 of 16 | scores by period: ['cr', 'cr', 'cr', 'mix40', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'voladj', 'mix40', 'voladj', 'mix50', 'mix50']
+10y annual 20.0% / 0.91 / -30% [np.float64(1.06), np.float64(1.13), np.float64(0.66)] W 21.8% / 0.97 changes 7 of 11 | scores by period: ['cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'mix40', 'cr', 'cr', 'mix50']
+10y quarterly 19.3% / 0.86 / -30% [np.float64(0.87), np.float64(1.22), np.float64(0.57)] W 22.9% / 1.01 changes 15 of 43 | scores by period: ['cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'mix40', 'mix40', 'mix40', 'mix40', 'cr', 'cr', 'cr', 'cr', 'cr', 'voladj', 'cr', 'cr', 'mix50', 'mix50', 'mix50', 'mix50', 'mix50', 'mix50']
+10y quarterly, margin 0.10 (adopted policy) 19.8% / 0.93 / -30% [np.float64(0.91), np.float64(1.13), np.float64(0.81)] W 22.2% / 1.07 changes 2 of 43 | scores by period: ['cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'cr', 'mix50', 'mix50', 'mix50']
+hindsight best on OOS: ('mix50', np.int64(20), np.float64(0.2), 'invvol', np.int64(15), np.int64(0)) 1.22 | grid median 0.98 | mix50/20/0.2/invvol/15/5 rank 2 of 160 | by score, median OOS Sharpe: {'voladj': np.float64(0.86), 'cr': np.float64(0.93), 'mix40': np.float64(1.04), 'mix50': np.float64(1.02), 'mix60': np.float64(0.96)}
+done

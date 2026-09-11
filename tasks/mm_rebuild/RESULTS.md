@@ -1329,3 +1329,40 @@ Same non-lever as OM25 §3i, MM §2 and §10. **Monthly stays.**
 Decision 2026-09-11 (founder): MM runs as the aggressive book; the
 blended score on the stack becomes OM25. §22 (running) is the chained
 refit for the blend as a single-book process.
+
+## §22 — chained refit for the single-book candidate (160 configs)
+
+Score {vol-adjusted momentum, capture ratio, blend 40 / 50 / 60} × buffer
+{10, 20} × stop {off, 20%} × sizing {equal, inverse-vol 10%} × bear
+rule {off, hold ≤ 15} × sector cap {off, 5} = 160 configurations, each
+run 2006 → today on Nifty 250 (monthly, one action day, fill from
+buffer). The skip is fixed at 21 for the momentum scores. The process
+chooses the score as well as the devices.
+
+| Process | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Wright window | Config changes |
+|---|---|---|---|---|
+| 5y annual | 19.7% / 0.86 / -32% | 1.01 / 0.97 / 0.71 | 22.5% / 0.91 | 11 of 16 |
+| 10y annual | 20.0% / 0.91 / -30% | 1.06 / 1.13 / 0.66 | 21.8% / 0.97 | 7 of 11 |
+| 10y quarterly | 19.3% / 0.86 / -30% | 0.87 / 1.22 / 0.57 | 22.9% / 1.01 | 15 of 43 |
+| 10y quarterly, margin 0.10 (adopted policy) | 19.8% / 0.93 / -30% | 0.91 / 1.13 / 0.81 | 22.2% / 1.07 | 2 of 43 |
+| Static blend 50/50 on the stack (reference) | 24.9% / 1.21 / −29% | 0.66 / 1.40 / 1.57 | 34.3% / 1.65 | |
+
+Hindsight-best single configuration: blend 50/50, buffer 20, stop, inverse-vol,
+bear rule, **no** sector cap, 1.22; the adopted cell (with the cap) is
+rank 2 of 160; grid median 0.98. Median OOS Sharpe by score family:
+vol-adjusted 0.86, capture ratio 0.93, **blend 40 1.04, blend 50 1.02**,
+blend 60 0.96 — the blend is better across its whole family, not only
+at the top.
+
+What the process actually chose (10-year window, quarterly, 0.10 margin):
+capture ratio from 2016 through 2025, the 50/50 blend from 2026 — two
+changes in 43 quarters. The blend's advantage only becomes visible on
+trailing ten-year data this year, so a hindsight-free process spent the
+decade on the capture-ratio book (0.93) and arrives at the blend now.
+
+**Single-book process number: about 20% a year at Sharpe 0.9, drawdown
+−30%** — the same band as MM (§17b, 0.90) and OM25 (0.90). The three
+books are indistinguishable at the process level; the blend's static
+1.21 is the top of its grid like every other static cell here. Its
+claim to be the OM25 successor rests on the family median (1.02-1.04
+against 0.86-0.93) and on the capture profile, not on 1.21.
