@@ -20,9 +20,9 @@ import pandas as pd
 
 from data_pipeline.master_store.identity import Identity, LINE_OVERRIDES
 
-from data_pipeline.master_store import ROOT as REPO  # noqa: E402
+from data_pipeline.master_store import ROOT as REPO, MASTER  # noqa: E402
 RECON = f"{REPO}/tasks/index_reconstruction/data"
-MASTER = f"{REPO}/data/master"
+MASTER = MASTER
 OUT = f"{MASTER}/membership"
 SIZE = {"nse500": 500, "nifty50": 50, "nifty100": 100, "nifty250": 250}
 ACCEPT = {"norm-exact", "token-exact", "manual-isin", "manual-symbol", "namechange-master"}

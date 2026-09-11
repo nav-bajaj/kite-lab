@@ -32,11 +32,11 @@ import pandas as pd
 
 from data_pipeline.master_store.manual_resolutions import BY_NAME, SYMBOL_HINTS
 
-from data_pipeline.master_store import ROOT as REPO  # noqa: E402
-RAW_BHAV = f"{REPO}/data/master/raw/bhavcopy"
-RAW_CA = f"{REPO}/data/master/raw/nse_ca"
-RAW_MASTERS = f"{REPO}/data/master/raw/nse_masters"
-OUT = f"{REPO}/data/master"
+from data_pipeline.master_store import ROOT as REPO, MASTER  # noqa: E402
+RAW_BHAV = f"{MASTER}/raw/bhavcopy"
+RAW_CA = f"{MASTER}/raw/nse_ca"
+RAW_MASTERS = f"{MASTER}/raw/nse_masters"
+OUT = MASTER
 RECON = f"{REPO}/tasks/index_reconstruction/data"
 EQ_SERIES = {"EQ", "BE", "BZ", "BL", "B1", "B2", "SM", "ST"}   # cash equity + SME
 

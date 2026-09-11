@@ -13,9 +13,9 @@ import os, sys
 import pandas as pd
 from data_pipeline.master_store.identity import Identity
 
-from data_pipeline.master_store import ROOT as REPO  # noqa: E402
+from data_pipeline.master_store import ROOT as REPO, MASTER  # noqa: E402
 RECON = f"{REPO}/tasks/index_reconstruction/data"
-OUT = f"{REPO}/data/master"
+OUT = MASTER
 SIZE = {"nse500": 500, "nifty50": 50, "nifty100": 100, "nifty250": 250}
 FILES = {"nse500": "nse500_membership_reconstructed.csv", "nifty50": "nifty50_membership_reconstructed.csv",
          "nifty100": "nifty100_membership_reconstructed.csv", "nifty250": "nifty250_membership_reconstructed.csv"}

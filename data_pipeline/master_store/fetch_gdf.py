@@ -9,11 +9,11 @@ from __future__ import annotations
 import asyncio, hashlib, json, os, sys
 import pandas as pd
 
-from data_pipeline.master_store import ROOT as REPO  # noqa: E402
+from data_pipeline.master_store import ROOT as REPO, MASTER  # noqa: E402
 sys.path.insert(0, REPO)
 from data_pipeline.gdf_client import GDFClient  # noqa: E402
 
-MASTER = f"{REPO}/data/master"
+MASTER = MASTER
 OUT = f"{MASTER}/prices/gdf"
 MANIFEST = f"{MASTER}/prices/gdf_manifest.json"
 

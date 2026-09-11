@@ -19,15 +19,15 @@ from datetime import date, timedelta
 
 import pandas as pd
 
-from data_pipeline.master_store import ROOT as REPO  # noqa: E402
+from data_pipeline.master_store import ROOT as REPO, MASTER  # noqa: E402
 sys.path.insert(0, REPO); sys.path.insert(0, f"{REPO}/scripts")  # scripts.history_utils
 os.chdir(REPO)
 from scripts.history_utils import init_kite_client, fetch_history, RateLimiter  # noqa: E402
 
-OUT = f"{REPO}/data/master/prices/kite"
-MANIFEST = f"{REPO}/data/master/prices/kite_manifest.json"
+OUT = f"{MASTER}/prices/kite"
+MANIFEST = f"{MASTER}/prices/kite_manifest.json"
 RECON = f"{REPO}/tasks/index_reconstruction/data"
-MASTER = f"{REPO}/data/master"
+MASTER = MASTER
 START = "2000-01-01"
 
 
