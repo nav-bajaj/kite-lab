@@ -175,7 +175,7 @@ def run_candidate(**overrides):
         sector_of = {}
         for sym, g in lk.groupby("symbol"):
             g = g.sort_values(["pri", "as_of"], ascending=[True, False]); sector_of[sym] = g.sector_v2.iloc[0]
-    from _engine_iv import run_strategy as _run
+    from scripts._clean_engine import run_strategy as _run   # P0: hooks now live in the production engine
     res = _run(close_panel=close.loc[cal_run], trade_panel=trade.loc[cal_run], calendar=cal_run, benchmark_aligned=p["bench"].loc[cal_run],
                           entry_signal_dates=entries, weekly_signal_dates=weekly, signal_function=score_fn, signal_function_args={},
                           sma_200_panel=p["sma200"].loc[cal_run], atr_20_panel=p["atr20"].loc[cal_run],

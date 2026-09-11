@@ -3,21 +3,31 @@
 Owners: 👤 founder, 🤖 agent. Risk tags: [prod] touches live services, [data] touches the store,
 [gate] needs a register row or founder sign-off.
 
-## P0 — engine hooks into the production engine 🤖 [prod]
-- [ ] Port the five additive hooks from `tasks/mm_rebuild/lib/_engine_iv.py` into
+## P0 — engine hooks into the production engine 🤖 [prod] — DONE locally 2026-09-11 (not pushed; freeze)
+- [x] Port the five additive hooks from `tasks/mm_rebuild/lib/_engine_iv.py` into
       `scripts/_clean_engine.py` as default-off keyword arguments: `size_weights`, `top_n_fn`,
       `sector_of`/`sector_cap`, `fill_from_buffer`, `trim_to_target`. Byte-identity test: every
       existing production runner and `kite-api/tests` unchanged with the defaults (the mm copy
       already passed this at equal weight).
-- [ ] Port the runner-level pieces into a shared research/production module (`data_pipeline/`):
+- [x] Port the runner-level pieces into a shared research/production module (`data_pipeline/`):
       inverse-vol `size_weights` (63-day, 10% cap), `top_n_fn` from a regime series, sector map
       loader, `stop_check` and `rebalance_day` date builders (`monthly_on_or_after`).
-- [ ] Move the two scores into `data_pipeline/`: vol-adjusted momentum with skip
+- [x] Move the two scores into `data_pipeline/`: vol-adjusted momentum with skip
       (`tasks/mm_rebuild/lib/momentum.py`) and the capture statistics
       (`tasks/om25_rebuild/lib/score.py`), plus the rank blend.
-- [ ] Regime: `roc_regime` (NIFTY 100, ROC31, confirm 3, lagged) into `data_pipeline/`.
-- [ ] Unit tests: the §8 look-ahead self-checks (regime and any exposure series rebuilt from
+- [x] Regime: `roc_regime` (NIFTY 100, ROC31, confirm 3, lagged) into `data_pipeline/`.
+- [x] Unit tests: the §8 look-ahead self-checks (regime and any exposure series rebuilt from
       data truncated the day before) as pytest.
+
+P0 verification: OM25 harness (no hooks) and both new books (all hooks) reproduce their stored
+runs byte-identically on the patched engine; `tests/test_engine_hooks.py` (5) and
+`tests/test_strategy_lookahead.py` (4) pass; the rest of the suite is unchanged (2 failures and 3
+errors pre-date the patch: `test_benchmark_data_accuracy`, `test_price_client` chunking, and three
+data-file-dependent tests; `test_ta_indicators.py` has a collection error). The engine copy
+`tasks/mm_rebuild/lib/_engine_iv.py` is deleted; the research `momentum.py`, `score.py` and
+`regime.py` are re-exports of `data_pipeline/strategies/`. Still open from P0: the MM research
+runner (`tasks/mm_rebuild/lib/run.py`) keeps its own sizing / regime wiring — the shared builders in
+`data_pipeline/strategies/sizing.py` and `calendar.py` are what P2's runners use.
 
 ## P1 — the master store as production source of record 🤖👤 [data][gate]
 - [ ] Nightly refresh of `data/master` per `DATA_OPERATIONS.md` (Kite day candles for all-ever
