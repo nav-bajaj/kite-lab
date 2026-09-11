@@ -251,6 +251,24 @@ ALL_UNIVERSES: list = list(UNIVERSES.keys())
 EOD_STRATEGIES = ("om25_v3", "tl25_v3", "l6_v2", "combo_defensive")
 
 
+# Universes whose prices come from the master store rather than nse500_data. Their
+# rows in the DB are already adjusted at source (price-return view), so the sync's
+# legacy corporate-action pass must not touch them; their last prices live in the
+# store's panel view, not under settings.data_dir / data_dir.
+STORE_BACKED_UNIVERSES: tuple = tuple(k for k, v in UNIVERSES.items() if v["data_dir"] == "data/master")
+
+
+def price_dir(universe_id: str) -> Path:
+    """Directory holding <SYMBOL>_day.csv for a universe: the legacy price folder, or the
+    master store's price-return panel view (MASTER_STORE_DIR, /data/master on Railway)."""
+    import os
+    cfg = UNIVERSES.get(universe_id, UNIVERSES["nse500"])
+    if universe_id in STORE_BACKED_UNIVERSES:
+        master = Path(os.environ.get("MASTER_STORE_DIR", str(settings.data_dir / "data" / "master")))
+        return master / "panels" / "pr"
+    return settings.data_dir / cfg["data_dir"]
+
+
 def get_universe(universe_id: UniverseId) -> dict:
     """Get universe configuration by ID."""
     if universe_id not in UNIVERSES:

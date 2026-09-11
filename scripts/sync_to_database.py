@@ -138,6 +138,8 @@ def adjust_open_positions_for_corporate_actions():
 
     from app.models.database import get_session_local
     from app.models.models import OpenPosition, Trade, TradeMatch
+    from app.config import STORE_BACKED_UNIVERSES   # store prices are adjusted at source; never re-adjust their rows
+    legacy_rows = lambda col: ~col.in_(STORE_BACKED_UNIVERSES)  # noqa: E731
 
     SessionLocal = get_session_local()
     db = SessionLocal()
@@ -155,7 +157,8 @@ def adjust_open_positions_for_corporate_actions():
 
             # 1. Adjust open_positions.avg_price
             positions = db.query(OpenPosition).filter(
-                OpenPosition.symbol == symbol
+                OpenPosition.symbol == symbol,
+                legacy_rows(OpenPosition.universe),
             ).all()
             pos_count = 0
             for pos in positions:
@@ -168,6 +171,7 @@ def adjust_open_positions_for_corporate_actions():
                 Trade.symbol == symbol,
                 Trade.side == "BUY",
                 Trade.price > threshold,
+                legacy_rows(Trade.universe),
             ).all()
             trade_count = 0
             for trade in buy_trades:
@@ -181,6 +185,7 @@ def adjust_open_positions_for_corporate_actions():
             matches = db.query(TradeMatch).filter(
                 TradeMatch.symbol == symbol,
                 TradeMatch.entry_price > threshold,
+                legacy_rows(TradeMatch.universe),
             ).all()
             match_count = 0
             for match in matches:

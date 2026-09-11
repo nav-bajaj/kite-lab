@@ -102,8 +102,25 @@ runner (`tasks/mm_rebuild/lib/run.py`) keeps its own sizing / regime wiring — 
 - [x] Recompute-from-lock-date discipline: published history starts at `--start 2020-01-01` like
       the legacy books; the lock date (2026-09-11) is recorded in `metrics.json`; the research
       equity (2010 →) stays in `tasks/mm_rebuild/runs/` as reference only (D-4, D-5).
-- [ ] Deploy to `beta_gtm_mvp` (outside the freeze) and run both books once on Railway; confirm
-      `latest.json`, the DB sync and the admin dashboard show them.
+- [x] Deployed to `beta_gtm_mvp` 2026-09-12 01:12 IST (334d6cd, then 39a68c6 / 4a7f16c fixes) and both books
+      run on Railway through the jobs API (`run_rebuilt_book`, universe = book id; ~25 s each from the store on
+      the volume): mm_v1 2020-01-02 → 2026-09-11 30.5% / 1.28 / −27.8% (876 trades); om25_v4 32.2% / 1.46 /
+      −28.0% (767 trades); regime today bear. `sync_database` per universe passed pre-sync validation and loaded
+      holdings (25), equity (1,664 rows), metrics, trades and open positions for both; `/api/metrics`,
+      `/api/positions` and the freshness panel show them (admin-only).
+- [x] Incident on the first run: the seed archive (built with BSD tar on the Mac) carried an AppleDouble
+      sidecar `._X.csv` beside every file (11,656 on the volume); the panel view linked them and the loader died
+      on one. Fixed 4a7f16c: view builder and panel loader skip dot-files, stale sidecar links are dropped,
+      the nightly removes sidecars before rebuilding the view (first run removed all 11,656), the upload
+      endpoint drops them at extraction. Operational note: `railway ssh` turns any multi-line command into an
+      interactive Python prompt and hangs — keep ssh commands on one line, or use the jobs API.
+- [x] Follow-ups found by the first run, fixed in the next merge: the positions service looked for the
+      books' last prices under `settings.data_dir / data_dir` (so LTP = entry price) — `config.price_dir()`
+      now routes store-backed universes (`STORE_BACKED_UNIVERSES`) to `MASTER_STORE_DIR/panels/pr`; the sync's
+      legacy corporate-action pass (`adjust_open_positions_for_corporate_actions`) was not scoped by universe
+      and could have re-adjusted store rows that are already adjusted at source — it now excludes
+      `STORE_BACKED_UNIVERSES`. Pre-existing unrelated failures in `kite-api/tests`: three insights tests on
+      live local data.
 
 ## P3 — DB, API and dashboard 🤖👤 [prod]
 - [ ] Universe IDs (never renamed once in DB rows) — **proposal**: `mm_v1` and `om25_v4`;
