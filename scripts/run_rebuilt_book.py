@@ -19,7 +19,10 @@ from scripts.metrics_common import compute_dashboard_metrics  # noqa: E402
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--book", choices=BOOKS, required=True); ap.add_argument("--start", default="2020-01-01"); ap.add_argument("--end", default=None)
+    g = ap.add_mutually_exclusive_group(required=True)
+    g.add_argument("--book", choices=BOOKS)
+    g.add_argument("--universe", choices=BOOKS, dest="book", help="Alias for --book; the job service passes the universe id this way.")
+    ap.add_argument("--start", default="2020-01-01"); ap.add_argument("--end", default=None)
     ap.add_argument("--output-dir", type=Path, default=None); ap.add_argument("--master-dir", type=Path, default=None)
     a = ap.parse_args(); ts = pd.Timestamp.now().strftime("%Y%m%d_%H%M%S")
     out = a.output_dir or ROOT / f"data/{a.book}_portfolios/{a.book}_portfolio_{ts}"; out.mkdir(parents=True, exist_ok=True)

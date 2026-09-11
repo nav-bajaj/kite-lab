@@ -20,7 +20,10 @@ def load_price_panels(prices_dir: Path):
     rows = []
     for csv_path in sorted(prices_dir.glob("*_day.csv")):
         symbol = csv_path.stem.replace("_day", "")
-        df = pd.read_csv(csv_path, parse_dates=["date"])
+        try:
+            df = pd.read_csv(csv_path, parse_dates=["date"])
+        except (UnicodeDecodeError, pd.errors.ParserError) as exc:
+            raise RuntimeError(f"unreadable price file {csv_path} -> {csv_path.resolve()}: {exc}") from exc
         if df.empty or "close" not in df.columns:
             continue
         df["symbol"] = symbol

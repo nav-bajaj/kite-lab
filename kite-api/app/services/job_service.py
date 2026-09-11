@@ -28,6 +28,8 @@ COMMANDS = {
     "login": "scripts/login_and_save_token.py",
     "generate_portfolio": "scripts/run_final_momentum_portfolio.py",
     "update_portfolios": "scripts/update_all_portfolios.py",
+    # production_port_2026 P2: one rebuilt book on its own (universe = mm_v1 | om25_v4).
+    "run_rebuilt_book": "scripts/run_rebuilt_book.py",
     "backup_data": "scripts/sync_data_backup.py",
     "fetch_prices": "scripts/fetch_nse500_history.py",
     "build_signals": "scripts/build_momentum_signals_flexible.py",
