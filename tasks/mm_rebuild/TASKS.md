@@ -25,3 +25,20 @@ Proposed as OM25's gate set after its 2026-09-10 rulings.
 Candidates fixed before any 2016+ number: A Nifty 250 monthly 12m, B NSE 500 monthly 6m, both the §3 book (voladj, skip 21, 25/20, no stop). Walk-forward refit set per year: kind {abs, voladj, blend} × skip {0, 21} × buffer {10, 20} × stop {off, 20%} × capture-ratio top-quartile pre-filter {off, on}, trailing 5 and 10 years.
 
 - [x] §4 OOS run 2026-09-10: both candidates fail G2/G3, pass G4/G5; Nifty 250 adaptive 10y 0.83. Founder decision pending.
+
+## MM process definition — founder decision 2026-09-11
+
+**Rules are fixed** (the §9d/§10 configuration, stated in MECHANICS.md).
+No automatic rule switching. A **quarterly monitoring report** recomputes
+the §17 grid (128 configurations) on the trailing ten years and reports
+whether any challenger beats the standing rules by more than 0.10 Sharpe;
+most quarters that is "no change". If it fires, a change is the founder's
+decision, phased over the next one or two monthly rebalances, with the
+reason recorded here. Subscribers see one order day a month.
+
+**Forward expectation and gate** (written before the next quarter's data):
+the book is expected to run at 20-21% a year, Sharpe 0.85-0.90, drawdown
+around −30% (the process band, not the static 1.18, which is the top of
+a selected grid). Forward gate: rolling three-year Sharpe ≥ 0.6 and
+drawdown no worse than −40%, judged quarterly from 2026-10-01; a breach
+triggers a review, not an automatic change.

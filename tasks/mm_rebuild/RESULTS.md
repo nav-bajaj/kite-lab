@@ -1094,3 +1094,11 @@ A margin cuts the changes from 10 to 2 without costing performance
 (0.88-0.90 at 0.10-0.20), but the response is not monotone (0.05 gives
 0.80), so the exact value is noise; a margin around 0.10 is a defensible
 policy, not a tuned one. Every variant ends on the adopted configuration.
+
+## Decision 2026-09-11 — fixed rules, monitored quarterly
+
+The founder chose not to switch rules. Rationale from §17-§17c: with a
+0.10 margin the process would have changed twice in ten years and
+reverted both times; its one durable move (the bear rule, April 2020)
+is already in the stack; a change replaces ~38% of the book. Definition
+and forward gate recorded in TASKS.md.
