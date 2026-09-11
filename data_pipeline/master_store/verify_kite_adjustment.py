@@ -42,7 +42,7 @@ def main(tol_step=0.004, max_symbols=None):
     rows, unexplained = [], []
     for f in files:
         sym = os.path.basename(f)[:-4]
-        k = pd.read_csv(f, parse_dates=["date"]).set_index("date")["close"]
+        k = pd.read_csv(f, parse_dates=["date"]).drop_duplicates("date", keep="last").set_index("date")["close"]   # defensive: one row per date
         r = eq[eq["symbol"] == sym].drop_duplicates("date").set_index("date")["close"].sort_index()
         j = pd.concat([k.rename("k"), r.rename("r")], axis=1, join="inner")
         j = j[(j["k"] > 0) & (j["r"] > 0)]
