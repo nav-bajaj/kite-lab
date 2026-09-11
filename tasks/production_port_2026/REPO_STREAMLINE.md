@@ -14,4 +14,9 @@ Goal: one engine, one data path, research folders that are records rather than c
 | Task folders | om25_rebuild, mm_rebuild, calls_honest, index_reconstruction, market_data_spine on main; ~10 closed folders | keep the five as reference for one quarter, then archive to the snapshot branch per CONVENTIONS; `MAP.md` updated |
 | Runs | `tasks/*/runs/` (gitignored, ~1.3 GB) | registries and summary CSVs kept; per-run trade logs deleted after the port (regenerable) |
 | Docs | `docs/portfolios.md` describes the legacy four; CLAUDE.md invariants list old IDs | portfolios.md gains the two books; CLAUDE.md points at MECHANICS.md; runbooks for reconstitution and the nightly store under `docs/ops/` |
-| Untracked | `supabase/`, `tools/git/`, dashboard AGENTS/CLAUDE files, `tasks/dip_vs_breakout_calls`, `tasks/om25_cadence_2026` | founder to say which are wanted; commit or delete |
+| Untracked (inspected 2026-09-11) | `supabase/` and `tools/git/` — already committed on `auth_stack_v2` / main (`da37605`, `ab6a2b8`); this branch predates them | nothing to do here; they reconcile when `index_reconstruction` merges to main |
+| | `tasks/dip_vs_breakout_calls/` — committed on `insights_dashboard_v2` (`0c7b052`) | same: leave; merges with that branch |
+| | `tasks/om25_cadence_2026/` — closed cadence research (PLAN/TASKS/RESULTS/_meta), never committed | committed 2026-09-11 as a closed folder (markdown + scripts; run CSVs stay ignored) |
+| | `kite-dashboard/AGENTS.md`, `kite-dashboard/CLAUDE.md` — Next.js-generated agent rules | committed 2026-09-11 (small, useful to agents) |
+| | `kite-dashboard/test-results/` — Playwright output | added to `.gitignore` 2026-09-11 |
+| | `data/master/prices/bhavcopy_manifest.json`, `data/master/qa/adjustment_log.csv`, `tasks/market_data_spine/lib/export_bhavcopy_series.py` — an additive `extra_targets.csv` hook for `tasks/breakout_calls_2026` (the founder's other session) | that session commits them with its task; not touched here |

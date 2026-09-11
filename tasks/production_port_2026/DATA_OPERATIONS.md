@@ -47,14 +47,32 @@ portfolio step and pages.
 - **Backfill**: the reconstruction (`tasks/index_reconstruction`) is the history; it is not
   re-run — new events append.
 
-## Open decisions 👤
+## Decisions (founder, 2026-09-11)
 
-1. Whether the legacy four books switch to the point-in-time membership at cut-over (their
-   track restates from that date only) or stay pinned until retired.
-2. Where the nightly store refresh runs: the Railway pipeline slot (16:30 IST) is before the
-   bhavcopy is published; either a second slot (~19:30 IST) for bhavcopy + QA, or the
-   portfolio step waits for it.
-3. Retention: bhavcopy raw is ~600 MB for 2005 → today; keep in the store (git-ignored, backed
-   up nightly) — confirm.
-4. GDF: keep the subscription for delisted cross-checks only, or drop after the store is
-   complete.
+1. **Website line-up during the parallel run:** keep legacy **L6 v2** and **OM25 v3** visible
+   alongside MM and OM25 v4; remove TL25 v3, COMBO Defensive and the three admin-only legacy
+   variants from the site (their pipeline runs and DB rows are untouched; universe IDs are
+   never deleted). The legacy two stay on their current data path until the founder retires
+   them — they are the day-to-day comparison.
+2. **Bhavcopy refresh runs at 19:30 IST**, after NSE publishes and before the nightly backup:
+   bhavcopy → CA table → QA reconcile → store manifest → backup. The 16:30 pipeline keeps
+   building the books from Kite; the 19:30 job is the audit and the record. A QA failure at
+   19:30 flags the next morning's run rather than blocking the evening's.
+3. **GDF is paid for three months** (to ~2026-12): use it while it lasts — see the GDF sprint
+   below — then let it lapse unless the sprint finds it fills a gap nothing else does.
+4. Retention: bhavcopy raw kept in the store (git-ignored, backed up nightly).
+
+## GDF sprint (time-boxed to the subscription) 🤖
+
+- [ ] Pull `GetHistory` for **every** all-ever member of the four tracked indices (not only the
+      37 delisted) for GDF's floor (2009) → today, into `prices/gdf/`; keep the raw as served.
+- [ ] Cross-check against Kite (adjusted) and bhavcopy × CA (raw) day by day; log every
+      symbol-day where the three disagree beyond tolerance to `qa/gdf_discrepancies.csv`, with
+      the likely cause (missed CA, wrong factor, delisting date, rename).
+- [ ] Fill what only GDF has: names that delisted before Kite's coverage and after 2009, and
+      any symbol-days the bhavcopy archive is missing (the spine noted gaps).
+- [ ] Ask GDF for what else they serve that we lack — historical index constituents with
+      weights, sector classifications by date, delisting reasons — and pull any that would
+      replace a Wayback-derived file (the sector history, the membership events).
+- [ ] Write `tasks/market_data_spine/GDF_AUDIT.md` with coverage and discrepancy counts;
+      decide keep/drop on that evidence before the subscription ends.

@@ -183,3 +183,6 @@ tasks/donchian_channel/runs/
 data/master/raw/
 data/master/prices/
 data/master/panels/
+
+# Playwright output
+kite-dashboard/test-results/

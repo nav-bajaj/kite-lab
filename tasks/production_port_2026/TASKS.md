@@ -43,9 +43,23 @@ Owners: 👤 founder, 🤖 agent. Risk tags: [prod] touches live services, [data
       the research equity (2010 →) is kept as `backtests/` reference only (D-4, D-5).
 
 ## P3 — DB, API and dashboard 🤖👤 [prod]
-- [ ] Universe IDs (never renamed once in DB rows): propose `mm_v1`, `om25_v4` 👤.
-- [ ] `check_universe_access` / admin gating: both admin-only until the founder opens them.
-- [ ] `kite-dashboard/src/lib/universes.ts` display names 👤 ("MoMo", "Quality Momentum v4"?).
+- [ ] Universe IDs (never renamed once in DB rows) — **proposal**: `mm_v1` and `om25_v4`;
+      the version suffix follows the existing `om25_v3` / `l6_v2` pattern and leaves room for
+      the quarterly-monitoring process to produce a v5 without renaming. 👤 to confirm.
+- [ ] Display names — **proposal**: `mm_v1` → **"Momentum 25"** (the founder's working name
+      "MoMo" as the internal nickname; clients see a plain name that says what it is);
+      `om25_v4` → **"Quality Momentum"** once v3 retires; during the parallel run
+      "Quality Momentum (v4)" and "Quality Momentum (v3)", and L6 v2 → "Core Momentum (v2)".
+      One-line descriptions: "Vol-adjusted momentum, Nifty 250, monthly, risk-managed" and
+      "Momentum blended with quality participation, Nifty 250, monthly, risk-managed". 👤
+- [ ] Website line-up (founder 2026-09-11): in `kite-dashboard/src/lib/universes.ts` add a
+      `retired: true` flag (hidden from every role) to `tl25_v3`, `combo_defensive`, `nse500`,
+      `nifty250`, `nifty100`; keep `l6_v2` and `om25_v3` client-visible; `DEFAULT_UNIVERSE`
+      stays `l6_v2` until MM is client-visible. API: `check_universe_access` unchanged (IDs
+      stay valid for existing rows); the job runner still builds all seven. Ship via
+      `.claude/workflows/ship-feature.md`, outside the market-hours push freeze. [prod]
+- [ ] `check_universe_access` / admin gating: `mm_v1` and `om25_v4` admin-only until the
+      founder opens them.
 - [ ] Metrics service: the dashboard metric set plus up/down capture vs the MidSmall 400.
 - [ ] Docs: `docs/portfolios.md` sections for both books, marked "parallel run".
 
