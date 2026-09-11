@@ -1013,3 +1013,36 @@ the process level than their static cells suggest: MM's static 1.18 is
 mostly selection on 2016-26. What survives selection is the direction of
 each element (every plateau in §8-§9d) and the one-action-day rhythm; the
 combined level does not.
+
+## §17b — refit window and review frequency (no new runs; the §17 grid)
+
+Trailing window {3, 5, 10} years × refit {every January, every quarter}.
+A quarterly refit re-picks the configuration at each quarter start on the
+trailing window ending the prior quarter and trades it for the quarter.
+
+| Window | Refit | Chained from | OOS 2016-26 | 16-19 / 20-22 / 23-26 | Full chain | Wright window | Config changes |
+|---|---|---|---|---|---|---|---|
+| 3y | annual | 2011 | 18.2% / 0.75 / -38% | 0.28 / 1.47 / 0.55 | 17.8% / 0.77 | 26.0% / 1.17 | 13 of 16 |
+| 5y | annual | 2011 | 19.4% / 0.81 / -31% | 0.54 / 1.23 / 0.70 | 18.3% / 0.79 | 24.7% / 1.08 | 10 of 16 |
+| 10y | annual | 2016 | 20.6% / 0.85 / -31% | 0.43 / 1.38 / 0.79 | 20.6% / 0.85 | 28.5% / 1.21 | 7 of 11 |
+| 3y | quarterly | 2011 | 18.9% / 0.77 / -36% | 0.22 / 1.55 / 0.60 | 16.8% / 0.69 | 27.8% / 1.25 | 40 of 63 |
+| 5y | quarterly | 2011 | 19.7% / 0.81 / -31% | 0.39 / 1.41 / 0.69 | 17.7% / 0.75 | 26.3% / 1.14 | 32 of 63 |
+| 10y | quarterly | 2016 | 21.4% / 0.90 / -31% | 0.41 / 1.48 / 0.88 | 21.4% / 0.90 | 29.9% / 1.30 | 10 of 43 |
+
+Read:
+1. **Three years is too short.** It is the worst window at either
+   frequency (0.75-0.77, drawdown −36 to −38%), changes configuration at
+   13 of 16 annual refits, and its 2016-19 is 0.22-0.28. It chases.
+2. **Ten years is the best window**, 0.85 annual and **0.90 quarterly**,
+   with the fewest changes (7 of 11 annual, 10 of 43 quarterly — the
+   quarterly review mostly confirms the standing configuration and moves
+   when the evidence moves).
+3. **Quarterly review helps only with the long window.** On 3 and 5 years
+   it churns (32-40 changes in 63 quarters) for no gain; on 10 years it
+   adds 0.05 of Sharpe and 0.8pp of CAGR over the annual refit.
+
+The best MM process is therefore **a ten-year trailing window reviewed
+quarterly: 21.4% / 0.90 / −31% over 2016-26, 29.9% / 1.30 on Wright's
+window** — the same 0.90 as OM25's chained process (§4b there). That is
+the number to plan and to gate against; the static 1.18 is the grid's
+top cell.
