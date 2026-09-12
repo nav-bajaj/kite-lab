@@ -408,7 +408,7 @@ def run_strategy(*,
                             meta = entry_meta.pop(sym, {'date': date})
                             avg_cost = (cost_basis.pop(sym, 0) / sh
                                         if sh else 0)
-                            pnl_pct = ((exec_price / avg_cost - 1)
+                            pnl_pct = ((exec_price * (1 - slippage) / avg_cost - 1)
                                        if avg_cost > 0 else None)
                             exit_records.append({
                                 'symbol': sym, 'pnl_pct': pnl_pct,
@@ -546,7 +546,7 @@ def run_strategy(*,
                     cash += sh * exec_price * (1 - slippage)
                     avg_cost = cost_basis.get(sym, 0) / sh if sh else 0
                     meta = entry_meta.pop(sym, {'date': date})
-                    pnl_pct = ((exec_price / avg_cost - 1)
+                    pnl_pct = ((exec_price * (1 - slippage) / avg_cost - 1)
                                if avg_cost > 0 else None)
                     exit_records.append({
                         'symbol': sym, 'pnl_pct': pnl_pct,
@@ -595,7 +595,7 @@ def run_strategy(*,
                         cash += sh * exec_price * (1 - slippage)
                         avg_cost = cost_basis.get(sym, 0) / sh if sh else 0
                         meta = entry_meta.pop(sym, {'date': date})
-                        pnl_pct = ((exec_price / avg_cost - 1)
+                        pnl_pct = ((exec_price * (1 - slippage) / avg_cost - 1)
                                    if avg_cost > 0 else None)
                         exit_records.append({
                             'symbol': sym, 'pnl_pct': pnl_pct,
@@ -642,7 +642,7 @@ def run_strategy(*,
                     cash += sh * exec_price * (1 - slippage)
                     avg_cost = cost_basis.get(sym, 0) / sh if sh else 0
                     meta = entry_meta.pop(sym, {'date': date})
-                    pnl_pct = ((exec_price / avg_cost - 1)
+                    pnl_pct = ((exec_price * (1 - slippage) / avg_cost - 1)
                                if avg_cost > 0 else None)
                     exit_records.append({
                         'symbol': sym, 'pnl_pct': pnl_pct,
