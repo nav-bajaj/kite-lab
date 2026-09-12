@@ -1,8 +1,12 @@
 name: book_verification_2026
-status: in-progress
+status: shipped
 opened: 2026-09-12
-closed: null
-related_commits: []
+closed: 2026-09-12
+related_commits:
+  - f136d2c
+  - aaf0a8d
+  - acb172e
+  - b80e65f
 supersedes: []
 depends_on:
   - production_port_2026

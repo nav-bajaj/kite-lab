@@ -98,6 +98,12 @@ runner (`tasks/mm_rebuild/lib/run.py`) keeps its own sizing / regime wiring — 
       `tests/test_rebuilt_books_wiring.py` (4 tests); authz suite unchanged (310 passed).
 - [x] 2026-09-12 (founder): no same-day sell-and-rebuy of a stopped name — `stop_reentry_block=1` locked into both books
       (mm_rebuild §23), lock date 2026-09-12; `sync_database` job accepts `full` so the DB trade log is rebuilt.
+- [x] 2026-09-12 evening: verification-gated deploy (b80e65f, b349228). `tasks/book_verification_2026/` suites
+      (books 51 tests, data 42) pass; store repaired (four parser defects, no hand-entered numbers) and re-baselined;
+      founder decisions recorded (stop peak wording; measured demerger factor). On Railway: repaired metadata uploaded,
+      nightly rebuilt the views (Kite re-pull step failed on token — cross-check only), both books rerun and fully
+      re-synced (equity curve now rebuilt on `--full`). Production figures 2020-01-02 -> 2026-09-11: mm_v1 31.5% /
+      1.33 / -27.8%, 881 trades; om25_v4 30.3% / 1.40 / -29.1%, 750 trades; no name added and removed on one day.
 - [ ] EOD proposed-orders adapter (`run_eod_proposed_orders.py` / `data_pipeline/eod_proposal.py`):
       not yet — `EOD_STRATEGIES` deliberately excludes the two books until a monthly producer
       exists (P3; the scheduler would otherwise call a producer that is not there).
