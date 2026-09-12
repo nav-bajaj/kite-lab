@@ -182,6 +182,7 @@ class JobService:
                 "skip-days", "skip_days",
                 "headless",
                 "mode",   # eod_proposed_orders: "entry" | "exit_only"
+                "full",   # sync_database: delete-and-reinsert the trade log
             }
 
             # Add additional arguments (validated)

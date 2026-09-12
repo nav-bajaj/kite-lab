@@ -1451,3 +1451,10 @@ drawdown, OM25 v4 −0.6 pp — and a month-long block (k = 2) costs both. The r
 it is a cosmetic and mechanical oddity (a sell and a buy at one price, two slippage legs, a reset stop peak).
 Decision open to the founder: keep the locked behaviour, or adopt k = 1 for both books as a cleanliness change with
 no performance claim. The switch ships default-off; production is unchanged until that decision.
+
+**Decision (founder, 2026-09-12):** "It makes no sense to buy and sell something on the same day. Either we hold it or
+sell and replace." Sell and replace it is: `stop_reentry_block=1` is now part of both LOCKED configs (lock date moved to
+2026-09-12); a stopped name leaves on the action day and the next-ranked name takes the slot. Holding through the stop
+was not chosen because a name held by rank is by definition still in the buy list, so that variant would switch the
+stop off. New reference figures (runner = harness): MM 2010-26 23.5% / −26.3%, 2016-26 25.8% / −26.3%; OM25 v4 2010-26
+22.6% / −28.3%, 2016-26 23.5% / −28.3%.

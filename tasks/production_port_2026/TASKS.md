@@ -96,6 +96,8 @@ runner (`tasks/mm_rebuild/lib/run.py`) keeps its own sizing / regime wiring — 
       `sync_to_database.py` / `publish_signal.py` help. `rebalance_service` gained a month-stepped
       cadence (`monthly_first`) for the next-rebalance and history projections. Guarded by
       `tests/test_rebuilt_books_wiring.py` (4 tests); authz suite unchanged (310 passed).
+- [x] 2026-09-12 (founder): no same-day sell-and-rebuy of a stopped name — `stop_reentry_block=1` locked into both books
+      (mm_rebuild §23), lock date 2026-09-12; `sync_database` job accepts `full` so the DB trade log is rebuilt.
 - [ ] EOD proposed-orders adapter (`run_eod_proposed_orders.py` / `data_pipeline/eod_proposal.py`):
       not yet — `EOD_STRATEGIES` deliberately excludes the two books until a monthly producer
       exists (P3; the scheduler would otherwise call a producer that is not there).
