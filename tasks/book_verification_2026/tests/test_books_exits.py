@@ -46,19 +46,14 @@ def test_c03_stop_exits_are_the_twenty_percent_breaches_at_the_signal_close(repl
 
 @pytest.mark.parametrize("book", BOOKS)
 def test_c04_peak_is_the_running_peak_of_closes_since_entry(replays, book):
-    """C-04: the peak read literally — entry trade price and every close from the entry session on.
-
-    The engine's peak update (scripts/_clean_engine.py:344-349) runs before the entry block, so the
-    entry session's own close is folded in only on the following session. Where that one-day gap
-    changes a stop decision this test fails: it is a rule question for the founder, not a silent fix,
-    because the locked figures were produced with the engine's convention.
-    """
-    bad = [(str(r.exec_date.date()), sorted(r.actual_stops - r.expected_stops_literal),
-            sorted(r.expected_stops_literal - r.actual_stops))
-           for r in replays[book].rebalances if r.actual_stops != r.expected_stops_literal]
-    assert bad == [], (
-        f"{book}: the peak excludes the entry-session close on {len(bad)} action days "
-        f"(engine convention vs the literal rule): {bad[:3]}")
+    """C-04: the peak is the highest close from the session after entry onward (MECHANICS.md as amended
+    by the founder on 2026-09-12: the engine's peak update runs before the entry block, so the entry
+    session's own close joins the peak on the following session). Checked against an independent
+    replay using that convention."""
+    bad = [(str(r.exec_date.date()), sorted(r.actual_stops - r.expected_stops_engine),
+            sorted(r.expected_stops_engine - r.actual_stops))
+           for r in replays[book].rebalances if r.actual_stops != r.expected_stops_engine]
+    assert bad == [], f"{book}: stop decisions differ from the peak convention on {len(bad)} action days: {bad[:3]}"
 
 
 @pytest.mark.parametrize("book", BOOKS)

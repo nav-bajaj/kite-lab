@@ -508,3 +508,15 @@ and `mm_v1` a month earlier than before.
    deliberately disagrees with Kite on those dates.
 5. **D-38 stays skipped** — the two runs were written to a scratch directory, so there is still no
    `data/<book>_portfolios/latest.json` locally to scope the held-name Kite check to.
+
+## Founder decisions 2026-09-12
+
+- C-04 (stop peak): the mechanics wording is amended to the engine's convention — the peak is the highest
+  close from the session after entry onward (the entry session's close joins the peak the next session);
+  no engine change, the locked record stands. The test now checks that convention.
+- D-37 (demerger factor convention): keep the store's measured factor (raw ex/cum ratio). Kite's ratio is
+  not adopted; the two audit additions in REPAIRS.md §7 (log both factors; cross-check against the
+  spin-off's first traded value) go on the fortnightly list.
+- Deploy: fixes, store repair and re-baseline go live in one merge; on Railway the repaired membership
+  and corporate-action metadata are uploaded, the nightly rebuilds the views, both books rerun with a
+  full trade-log rebuild.
