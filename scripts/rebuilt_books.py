@@ -28,8 +28,8 @@ from scripts.universe_membership import resolve_universe  # noqa: E402
 STACK = dict(universe="nifty250", lookback=252, top_n=25, exit_buffer=20, cadence="monthly", rebalance_day=1,
              sizing="invvol", iv_window=63, max_weight=0.10, sector_cap=5,
              regime_index="NIFTY_100", roc_n=31, confirm=3, bear_n=15, bear_buffer=20,
-             trailing_stop=0.20, stop_check="monthly", fill_from_buffer=True, slippage=0.002, initial_capital=1_000_000,
-             lock_date="2026-09-11")
+             trailing_stop=0.20, stop_check="monthly", stop_reentry_block=1, fill_from_buffer=True, slippage=0.002, initial_capital=1_000_000,
+             lock_date="2026-09-12")   # 2026-09-12: stop_reentry_block=1 — a stopped name is sold and replaced, never rebought the same day (§23)
 LOCKED = {
     "mm_v1":   dict(STACK, name="Momentum 25", score="voladj", skip=21, min_obs=219),
     "om25_v4": dict(STACK, name="Quality Momentum", score="mix", mix_w=0.5, skip=21, min_obs=220),
@@ -37,9 +37,9 @@ LOCKED = {
 BOOKS = tuple(LOCKED)
 
 
-def build_and_run(book: str, start: str, end: str | None = None, master: Path | None = None, verbose=print):
+def build_and_run(book: str, start: str, end: str | None = None, master: Path | None = None, verbose=print, overrides: dict | None = None):
     """Assemble the book from the store and run it. Returns (cfg, result dict, signals DataFrame, regime Series, close panel)."""
-    cfg = dict(LOCKED[book]); master = Path(master or MASTER)
+    cfg = dict(LOCKED[book], **(overrides or {})); master = Path(master or MASTER)   # overrides: research probes only; production runs the LOCKED config
     ensure_panel_views(master)
     close, trade = load_price_panels(master / "panels/pr"); cal = close.index
     bench = load_benchmark(master / f"benchmarks/{cfg['regime_index']}_bench.csv").reindex(cal).ffill()
@@ -67,7 +67,8 @@ def build_and_run(book: str, start: str, end: str | None = None, master: Path | 
                        atr_mult=0.0, atr_min_floor=cfg["trailing_stop"], use_trailing_stop=True, use_dma_exit=False,
                        weekly_rank_check=False, regime_panel=None, bear_exposure=0.0, membership_fn=membership_fn,
                        size_weights=size_weights, top_n_fn=top_n_fn, sector_of=sector_of, sector_cap=cfg["sector_cap"],
-                       fill_from_buffer=cfg["fill_from_buffer"], initial_capital=cfg["initial_capital"])
+                       fill_from_buffer=cfg["fill_from_buffer"], initial_capital=cfg["initial_capital"],
+                       stop_reentry_block=cfg["stop_reentry_block"])
     rows = []
     for ed in entries:
         sc = score(ed)

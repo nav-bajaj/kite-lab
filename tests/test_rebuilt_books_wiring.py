@@ -48,7 +48,7 @@ def test_locked_configs_match_mechanics():
         assert (c["sizing"], c["iv_window"], c["max_weight"], c["sector_cap"]) == ("invvol", 63, 0.10, 5)
         assert (c["regime_index"], c["roc_n"], c["confirm"], c["bear_n"], c["bear_buffer"]) == ("NIFTY_100", 31, 3, 15, 20)
         assert (c["trailing_stop"], c["stop_check"], c["cadence"], c["rebalance_day"], c["fill_from_buffer"]) == (0.20, "monthly", "monthly", 1, True)
-        assert c["lock_date"] == "2026-09-11"
+        assert c["lock_date"] == "2026-09-12" and c["stop_reentry_block"] == 1   # founder 2026-09-12: sold and replaced, never rebought same day
     assert LOCKED["mm_v1"]["score"] == "voladj" and LOCKED["mm_v1"]["min_obs"] == 219
     assert LOCKED["om25_v4"]["score"] == "mix" and LOCKED["om25_v4"]["mix_w"] == 0.5 and LOCKED["om25_v4"]["min_obs"] == 220
 
