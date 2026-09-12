@@ -37,9 +37,9 @@ LOCKED = {
 BOOKS = tuple(LOCKED)
 
 
-def build_and_run(book: str, start: str, end: str | None = None, master: Path | None = None, verbose=print):
+def build_and_run(book: str, start: str, end: str | None = None, master: Path | None = None, verbose=print, overrides: dict | None = None):
     """Assemble the book from the store and run it. Returns (cfg, result dict, signals DataFrame, regime Series, close panel)."""
-    cfg = dict(LOCKED[book]); master = Path(master or MASTER)
+    cfg = dict(LOCKED[book], **(overrides or {})); master = Path(master or MASTER)   # overrides: research probes only; production runs the LOCKED config
     ensure_panel_views(master)
     close, trade = load_price_panels(master / "panels/pr"); cal = close.index
     bench = load_benchmark(master / f"benchmarks/{cfg['regime_index']}_bench.csv").reindex(cal).ffill()
@@ -67,7 +67,8 @@ def build_and_run(book: str, start: str, end: str | None = None, master: Path | 
                        atr_mult=0.0, atr_min_floor=cfg["trailing_stop"], use_trailing_stop=True, use_dma_exit=False,
                        weekly_rank_check=False, regime_panel=None, bear_exposure=0.0, membership_fn=membership_fn,
                        size_weights=size_weights, top_n_fn=top_n_fn, sector_of=sector_of, sector_cap=cfg["sector_cap"],
-                       fill_from_buffer=cfg["fill_from_buffer"], initial_capital=cfg["initial_capital"])
+                       fill_from_buffer=cfg["fill_from_buffer"], initial_capital=cfg["initial_capital"],
+                       stop_reentry_block=cfg.get("stop_reentry_block", 0))
     rows = []
     for ed in entries:
         sc = score(ed)

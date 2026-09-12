@@ -1417,3 +1417,37 @@ books are indistinguishable at the process level; the blend's static
 1.21 is the top of its grid like every other static cell here. Its
 claim to be the OM25 successor rests on the family median (1.02-1.04
 against 0.86-0.93) and on the capture profile, not on 1.21.
+
+## §23 — stop-then-rebuy on the same action day (founder finding, 2026-09-12)
+
+The rebalance view of `mm_v1` on the site showed ADANIENSOL bought and sold on 2 Sep 2026, and GVT&D and VEDL on
+4 Aug. The display is right: the 20% trailing stop is checked at the monthly signal and executed on the action day,
+and on the same action day the entry pass sees the stopped name still inside the buy list (top 25, or top 45 with
+`fill_from_buffer`) and buys it back at the same price, resized to its inverse-vol weight. The peak for the stop
+resets to the re-entry price. Nothing in the research record excluded this; the locked figures include it.
+
+How often (runner = research harness, 2010 → 2026-09-09):
+
+| Book | Stop exits | Rebought the same day | Round-trip slippage on those pairs |
+|---|---|---|---|
+| MM (`mm_v1`) | 208 | 92 (44%) | Rs 1.9 lakh over 16 years on a book that grew 10 L → 3.3 Cr |
+| OM25 v4 (`om25_v4`) | 189 | 60 (32%) | Rs 1.3 lakh |
+
+Engine switch `stop_reentry_block=k` (default 0, byte-identical): a stopped name is ineligible for the next k entry
+dates (k = 1 blocks the same action day; k = 2 also the following month). Same runner, same store; Sharpe here is
+the daily-return Sharpe of the runner (not the §-tables' convention), so compare rows, not against earlier sections.
+
+| Book | k | 2010-26 CAGR / Sharpe / DD | 2016-26 | 2021-26 | Trades |
+|---|---|---|---|---|---|
+| MM | 0 (as locked) | 23.3 / 1.39 / −27.4 | 25.2 / 1.39 / −27.4 | 30.3 / 1.48 / −27.4 | 1,899 |
+| MM | 1 | 23.5 / 1.41 / −26.3 | 25.8 / 1.42 / −26.3 | 31.8 / 1.54 / −26.3 | 1,873 |
+| MM | 2 | 22.7 / 1.38 / −26.3 | 24.6 / 1.37 / −26.3 | 30.4 / 1.49 / −26.3 | 1,868 |
+| OM25 v4 | 0 (as locked) | 23.2 / 1.50 / −28.9 | 24.9 / 1.46 / −28.9 | 32.5 / 1.69 / −22.8 | 1,698 |
+| OM25 v4 | 1 | 22.6 / 1.48 / −28.3 | 23.5 / 1.41 / −28.3 | 30.5 / 1.65 / −22.2 | 1,681 |
+| OM25 v4 | 2 | 21.9 / 1.45 / −28.4 | 22.2 / 1.35 / −28.4 | 29.9 / 1.62 / −21.7 | 1,670 |
+
+Reading: blocking the same-day rebuy (k = 1) is inside noise for both books — MM +0.3 pp and a point less
+drawdown, OM25 v4 −0.6 pp — and a month-long block (k = 2) costs both. The rebuy is not an error in the numbers;
+it is a cosmetic and mechanical oddity (a sell and a buy at one price, two slippage legs, a reset stop peak).
+Decision open to the founder: keep the locked behaviour, or adopt k = 1 for both books as a cleanliness change with
+no performance claim. The switch ships default-off; production is unchanged until that decision.

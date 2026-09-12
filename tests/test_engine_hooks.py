@@ -62,3 +62,20 @@ def test_trim_only_when_enabled(panel):
     assert (off["trades"].reason == "trim").sum() == 0
     assert (on["trades"].reason == "trim").sum() >= 0     # may be zero on a synthetic panel; must not raise and must tag trims
     assert set(on["trades"].reason.unique()) <= {"entry", "rank", "trim", "atr_stop"}
+
+
+def test_stop_reentry_block_stops_same_day_rebuy(panel):
+    """A tight trailing stop checked at the monthly signal stops names that still rank in the buy list; with the
+    switch off the engine sells and rebuys them on the same day, with block=1 it does not (mm_rebuild §23)."""
+    close, cal = panel
+    kw = dict(use_trailing_stop=True, atr_min_floor=0.03, fill_from_buffer=True)
+    off = run_strategy(**base_kwargs(close, cal, **kw))
+    on = run_strategy(**base_kwargs(close, cal, stop_reentry_block=1, **kw))
+    def pairs(r):
+        t = r["trades"]; g = t.groupby(["date", "symbol"]).side.nunique(); return int((g > 1).sum())
+    assert (off["exits"].reason == "atr_stop").sum() > 0 and pairs(off) > 0
+    assert pairs(on) == 0
+    stopped = on["exits"][on["exits"].reason == "atr_stop"]
+    buys = on["trades"][on["trades"].side == "BUY"]
+    for _, e in stopped.iterrows():
+        assert not ((buys.symbol == e.symbol) & (buys.date == e.exit_date)).any()

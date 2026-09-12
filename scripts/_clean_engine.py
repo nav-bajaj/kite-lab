@@ -215,6 +215,7 @@ def run_strategy(*,
                  sector_of=None,             # {symbol: sector}; with sector_cap, entrants are skipped once a sector holds sector_cap names
                  sector_cap=None,
                  fill_from_buffer=False,
+                 stop_reentry_block=0,      # >0: a name stopped out stays ineligible for this many entry dates (1 = not re-bought on the day it was stopped)
                  trim_to_target=0.0,         # at a rebalance with entrants, sell existing positions down to their target weight for the
                                              # intended book when they exceed it by more than this fraction (0 = off), so entrants can be funded     # MM 2026-09-11: draw entrants from ranks up to top_n + exit_buffer when the top-N pool is short              # MM §9b: callable(signal_date) -> int; overrides top_n on that rebalance (exit rank = value + exit_buffer)          # MM §9: callable(signal_date, symbols) -> {sym: weight}; None = equal weight (byte-identical)            # if >0, block rank-exit while held<N days
                  bear_skips_entries=True,    # if True (default, preserves OM25 v3 behavior):
@@ -283,6 +284,8 @@ def run_strategy(*,
     # rebalance day and the weekly-rank-exit block (guarded by
     # `date not in rebal_set`) would never fire.
     entry_set = set(pd.Timestamp(d) for d in entry_signal_dates)
+    _stopped_on = {}   # stop_reentry_block: symbol -> exec date of its last stop exit
+    _entry_dates_sorted = []   # exec dates of entries, filled once the schedule is known (below)
     entry_schedule = {}
     for sd in sorted(signals.keys()):
         if sd not in entry_set:
@@ -291,6 +294,7 @@ def run_strategy(*,
         if td is not None:
             entry_schedule[pd.Timestamp(td)] = pd.Timestamp(sd)
     rebal_set = set(entry_schedule.keys())
+    _entry_dates_sorted = sorted(rebal_set)
 
     weekly_exec_to_signal = {}
     for sd in weekly_signal_dates:
@@ -537,6 +541,8 @@ def run_strategy(*,
                     if pd.isna(exec_price) or exec_price <= 0:
                         holdings[sym] = sh
                         continue
+                    if stop_reentry_block and reason == 'atr_stop':
+                        _stopped_on[sym] = date
                     cash += sh * exec_price * (1 - slippage)
                     avg_cost = cost_basis.get(sym, 0) / sh if sh else 0
                     meta = entry_meta.pop(sym, {'date': date})
@@ -670,6 +676,12 @@ def run_strategy(*,
                 _v = top_n_fn(entry_schedule.get(pd.Timestamp(date)))
                 if _v: _tn = int(_v)
             entrants = [s for s in ranked[:(_tn + exit_buffer if fill_from_buffer else _tn)] if s not in holdings]
+            if stop_reentry_block and _stopped_on:
+                # a stop exit and the rebalance share the action day; without this the engine sells a stopped name
+                # and buys it back at the same price (44% of MM stop exits, 2026-09-12). Block for k entry dates.
+                _blk = [s for s in entrants if s in _stopped_on
+                        and sum(1 for _d in _entry_dates_sorted if _stopped_on[s] < _d <= date) < stop_reentry_block]
+                entrants = [s for s in entrants if s not in _blk]
             if sector_of is not None and sector_cap:
                 _cnt = {}
                 for _h in holdings:
