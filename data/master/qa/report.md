@@ -1,7 +1,7 @@
 # QA report, master store
 
-- calendar: 2519 files checked, 0 with non-midnight, duplicate or off-calendar dates
-- bad prints: 9697 one-day spike-and-revert rows with no corporate action nearby; Kite shows the same move on 2403 (a real move, not a print), disagrees on 73 (a print on one side), no Kite on 7221
+- calendar: 2520 files checked, 0 with non-midnight, duplicate or off-calendar dates
+- bad prints: 9697 one-day spike-and-revert rows with no corporate action nearby; Kite shows the same move on 2401 (a real move, not a print), disagrees on 73 (a print on one side), no Kite on 7223
 - stale tails: 0 files end >20 sessions before 2026-09-09 without a delisted_on flag
 - identity overlaps: 0
 - coverage (membership vs price files, min % per year):

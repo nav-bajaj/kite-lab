@@ -400,3 +400,111 @@ legacy production books, so it wants one deliberate commit and a DB re-sync rath
 4. Nothing in selection, timing, sizing, cash, the sector cap, the regime or the look-ahead guards
    needs to change: A-01..A-08, B, C-01..C-03, C-05..C-08, D, E, F and G all pass on both books, and
    H-07 shows the run still reproduces the §23 figures to the basis point.
+
+---
+
+## Store repair and re-baseline 2026-09-12
+
+The four data-suite failures are repaired and both books re-run. Full detail, sources and the
+unresolved residue are in `REPAIRS.md`; this section is the scoreboard. Local only; nothing
+deployed, no LOCKED config or rule touched.
+
+### Suite counts, before and after
+
+| Suite | Before | After |
+|---|---|---|
+| Data (D-01..D-42) | 23 pass clean, 14 pass with a warning, **4 fail**, 1 skip | **41 pass (14 with a warning), 0 fail, 1 skip** |
+| Books (102 instances) | 98 pass, 4 fail (A-09, C-04, H-08 x2) | **101 pass, 1 fail (C-04)** |
+
+A-09 and H-08 were fixed in commit `f136d2c` before this work; the only book test still red is
+**C-04**, the open founder question about the trailing-stop peak convention. No data test was
+recalibrated — every failure was repaired in the store or its pipeline, not in the assertion.
+
+| ID | Before | After | What moved |
+|---|---|---|---|
+| D-14 | **FAIL** (4 events) | PASS | collection bug fixed; two of the four were Kite artefacts, two were mis-typed demergers |
+| D-15 | WARN 576 | WARN **29** | 25 observed + 4 filings remain, all outside a series or in a rename gap |
+| D-16 | **FAIL** (2 in scope) | PASS; global 116 → **99** | NSE files demergers as "Scheme Of Arrangement"; the parser now reads them |
+| D-18 | PASS (136 logged) | PASS (**303** logged: 238 measured, 62 ignored, 3 gap-skipped) | |
+| D-19 | **FAIL** (2 in scope) | PASS; global skips 51 → **29** | the issue price was in the filing subject all along |
+| D-24 | **FAIL** (4 windows) | PASS | spells repointed to HEXAWARE / ORCHIDPHAR / KBL; GUJENERGY's series extended to 2015 |
+| D-36 | WARN 18,102 | WARN 18,049 | |
+| D-37 | WARN 279 (10 in scope) | WARN **234** (14 in scope) | see below — nothing changed by design |
+| D-39/40/41 | PASS / WARN 55 / WARN 17 | unchanged | one stale file (`SEINVEST`) restored to `extra_targets.csv` |
+
+Corporate-action table: 26,044 → 26,131 rows; demerger 110 → **237**, rights 350 → 367,
+`kite-observed` 118 → **63** (35 rejected for want of a raw-series break, 20 superseded by the
+filings now parsed). `qa/observed_events_rejected.csv` is new.
+
+### New reference figures
+
+Both books re-run with `scripts/run_rebuilt_book.py --book <b> --start 2010-01-01`. The **old**
+column is not the figure quoted in §23 — it is a fresh run against a shadow copy of the pre-repair
+store (`corporate_actions.csv` and `membership/nifty250.csv` from the 2026-09-12 backup, the
+adjusted views rebuilt by the pre-repair `build_adjusted.py` from git `HEAD`). That control
+reproduced the §23 decision line **exactly** (mm_v1 23.5% / −26.3%, om25_v4 22.6% / −28.3%, 1,873
+and 1,681 trades), so every difference below is the data, not the engine.
+
+| Book | Window | CAGR old → new | Sharpe old → new | Max DD old → new |
+|---|---|---|---|---|
+| `mm_v1` | 2010-26 | 23.52% → **23.52%** | 1.149 → **1.149** | −26.26% → **−26.36%** |
+| `mm_v1` | 2016-26 | 25.85% → **26.02%** | 1.186 → **1.197** | −26.26% → **−26.36%** |
+| `om25_v4` | 2010-26 | 22.59% → **22.74%** | 1.198 → **1.222** | −28.32% → **−26.24%** |
+| `om25_v4` | 2016-26 | 23.45% → **23.61%** | 1.146 → **1.168** | −28.32% → **−26.24%** |
+
+(2016-26 computed from the run's own equity file with `compute_dashboard_metrics`, so it is the same
+convention as the headline. Trades: mm_v1 1,873 → 1,880; om25_v4 1,681 → 1,685.)
+
+`REFERENCE` in `tests/_harness.py` is updated to `mm_v1 (0.235, -0.264)` and
+`om25_v4 (0.227, -0.262)`; H-07 fails by construction on the old values, as the brief expected. The
+pre-repair pair is kept in the comment beside it.
+
+**The OM25 drawdown improvement is a peak change, not a trough change.** Both bases bottom on
+2020-03-23. The old book's drawdown ran from a 2018-08-28 peak; the repaired book made a new high on
+2020-02-20 first, so the same COVID trough measures −26.2% instead of −28.3%. `mm_v1`'s worst
+drawdown is unmoved in date (2025-03-04) and 10 bp deeper.
+
+**Why the books moved at all.** 122 more demergers and 17 more rights issues are now adjusted, and
+about 550 previously dropped `observed:` events are applied, so the 252-session score changed for
+many names and the marginal picks at rank 45 reshuffled. `mm_v1` diverges on 60 trade legs over 27
+symbols from 2013-10-03; `om25_v4` on 272 legs over 106 symbols from 2010-06-02 — its rank-blend
+score is the more sensitive of the two. Neither book's rules, sizing or timing changed.
+
+### Held-name impact of the bad prints
+
+Of the seven names named in the brief — ADANIENT, CGPOWER, CONCOR, MFSL, JSL, CANBK, TATASTEEL —
+**exactly one position was open across an affected ex-date in sixteen years**:
+
+| Book | Symbol | Entry | Exit | Event crossed | P&L old | P&L new |
+|---|---|---|---|---|---|---|
+| `mm_v1` | TATASTEEL | 2017-10-04 | 2018-03-05 (rank) | rights 2018-01-31 | **−0.03%** | **+4.93%** |
+
+The +4.96 pp is precisely the ex-rights factor (1 / 0.95274 − 1 = +4.96%): the trade's entry, exit,
+share count and dates are identical, only the price basis moved. `om25_v4` held none of the seven
+across an affected date. The 2015-2016 events (ADANIENT, CGPOWER, CONCOR, MFSL, JSL) fall in years
+when neither book held those names, so the phantom −61% to −83% days never hit a position directly —
+they did their damage indirectly, by wrecking the 252-day momentum of those names for a year
+afterwards and so distorting the ranking the books picked from. CANBK's only holding (2026-04-02 →
+2026-07-02, +1.48%) is nine years after its rights issue and unchanged.
+
+One repaired name did change what the books bought: with GUJENERGY's price series restored to
+2015-09-15, `om25_v4` first buys it on **2017-05-03** instead of 2020-02-03 (10 legs instead of 6)
+and `mm_v1` a month earlier than before.
+
+### What still needs a decision
+
+1. **C-04** — the trailing-stop peak convention. Unchanged by this work; still the founder's call
+   (amend MECHANICS to the engine's convention, recommended, or change the engine and re-baseline
+   again).
+2. **D-37 — the demerger factor convention.** Explained with a worked Vedanta example in
+   `REPAIRS.md` §7. Recommendation: **keep the measured convention**; the alternative prints a
+   −25% to −33% day on 238 events and stops the books out of every demerging holding on a loss the
+   holder did not take. Two audit additions are proposed there, neither of which changes a number.
+3. **TATASTEEL's 2007-10-29 rights** (1:5 @ Rs 290 premium, Rs 10 face) is filed without a price and
+   is still unadjusted — unchanged by this repair, seven years before the book era, and it would
+   need a hand-entered row rather than a parser fix. Founder's call.
+4. **Kite's 2015-01-01 step cluster** (CGPOWER, CONCOR, MASTEK, TCI, KTKBANK, ASHIMASYN) is a defect
+   in Zerodha's own history, not the store's. Worth raising with them; until then the store
+   deliberately disagrees with Kite on those dates.
+5. **D-38 stays skipped** — the two runs were written to a scratch directory, so there is still no
+   `data/<book>_portfolios/latest.json` locally to scope the held-name Kite check to.

@@ -10,7 +10,12 @@ tagged so nothing observed is ever mistaken for a filing:
                     with no filing of a share-count type within +-5 days.
                     Kite's factor is exact; accepted when it is within 1% of
                     a clean ratio, or below 0.6 (a large split/bonus/demerger
-                    Kite chose to adjust).
+                    Kite chose to adjust) — and only when the RAW series
+                    breaks too (see raw_corroborates): Kite's own history
+                    carries misdated steps, notably a cluster on 2015-01-01
+                    where the factor of a later event is applied to
+                    pre-2015 candles only, and a step with no break in the
+                    unadjusted series cannot be a share-count event.
   bhavcopy-observed for companies Kite does not serve: an overnight move in
                     the raw close within 0.5% of a clean ratio and larger
                     than 30%, with no filing within +-5 days. A crash can
@@ -33,9 +38,32 @@ CLEAN = sorted({b / (a + b) for a in range(1, 11) for b in range(1, 11)} | {0.5,
 CLEAN = sorted(set(CLEAN) | {1 / x for x in CLEAN if x > 0})
 
 
+RAW_BREAK_SESSIONS = 3     # a suspension can put the raw break a session or two off Kite's step
+RAW_BREAK_SHARE = 0.5      # the raw break must be at least half the size the factor implies
+
+
 def nearest_clean(f: float):
     c = min(CLEAN, key=lambda x: abs(x - f))
     return c, abs(f / c - 1)
+
+
+def raw_corroborates(raw: pd.Series, d, fct: float) -> bool:
+    """Does the unadjusted series break across `d` the way factor `fct` implies?
+
+    A share-count event changes the number of shares, so the raw close must gap by
+    roughly the same ratio. Requiring at least half the implied move tolerates the
+    market's own move on the ex-date and a demerger whose measured ratio differs
+    from the factor Kite used, while rejecting a step that exists only in Kite's
+    history.
+    """
+    i = raw.index.searchsorted(pd.Timestamp(d))
+    lo, hi = max(1, i - RAW_BREAK_SESSIONS), min(len(raw), i + RAW_BREAK_SESSIONS + 1)
+    if lo >= hi:
+        return False
+    mv = raw.iloc[lo:hi].to_numpy(float) / raw.iloc[lo - 1:hi - 1].to_numpy(float)
+    if fct < 1:
+        return bool((mv <= 1 - RAW_BREAK_SHARE * (1 - fct)).any())
+    return bool((mv >= 1 + RAW_BREAK_SHARE * (fct - 1)).any())
 
 
 def main():
@@ -60,7 +88,7 @@ def main():
         v = filed.get(sym)
         return v is not None and (np.abs((v - np.datetime64(d)).astype("timedelta64[D]").astype(int)) <= 5).any()
 
-    rows = []
+    rows, rejected = [], []
     kite_syms = {os.path.basename(f)[:-4] for f in glob.glob(f"{MASTER}/prices/kite/*.csv")}
     for f in sorted(glob.glob(f"{MASTER}/prices/bhavcopy/*.csv")):
         sym = os.path.basename(f)[:-4]
@@ -106,6 +134,9 @@ def main():
                     continue
                 if 0.85 < fct < 1 and err > 0.003:
                     continue
+                if not raw_corroborates(raw, d, fct):
+                    rejected.append((sym, d.date(), round(fct, 6), "no-raw-break"))
+                    continue
                 if err <= 0.01 or fct < 0.6:
                     rows.append((sym, d.date(), "kite-observed", round(fct, 6), c if err <= 0.01 else None, round(err, 4)))
         else:
@@ -126,6 +157,8 @@ def main():
     df = df[~dup]
     df["ex_date"] = df["ex_date"].dt.date
     df.to_csv(f"{MASTER}/qa/observed_events.csv", index=False)
+    pd.DataFrame(rejected, columns=["symbol", "ex_date", "factor", "reason"]).to_csv(f"{MASTER}/qa/observed_events_rejected.csv", index=False)
+    print(f"kite steps rejected for want of a matching break in the raw series: {len(rejected)} (qa/observed_events_rejected.csv)")
     print(df.groupby("source").agg(n=("symbol", "size"), symbols=("symbol", "nunique")).to_string())
     print("factor distribution (kite-observed):", df[df.source == "kite-observed"]["clean_ratio"].value_counts().head(8).to_dict())
 

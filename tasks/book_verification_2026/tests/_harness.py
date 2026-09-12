@@ -45,8 +45,10 @@ BOOKS = ("mm_v1", "om25_v4")
 START = "2010-01-01"
 MASTER = Path(_MASTER)
 
-# §23 decision line, runner convention, stop_reentry_block=1.
-REFERENCE = {"mm_v1": (0.235, -0.263), "om25_v4": (0.226, -0.283)}
+# §23 decision line, runner convention, stop_reentry_block=1, re-baselined 2026-09-12 after the
+# store repair (book_verification_2026 REPAIRS.md). Pre-repair: mm_v1 (0.235, -0.263),
+# om25_v4 (0.226, -0.283) — reproduced exactly on the pre-repair store, so the move is the data.
+REFERENCE = {"mm_v1": (0.235, -0.264), "om25_v4": (0.227, -0.262)}
 
 
 # ---------------------------------------------------------------------------

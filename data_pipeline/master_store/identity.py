@@ -38,6 +38,23 @@ HAND_RENAMES = [
     ("CHEMPLAST", "CHEMPLASTS", "2021-08-24"),  # delisted 2012, re-IPO 2021 as Chemplast Sanmar; same business, see note
     # NOT ("MAX","MAXIND"): MAX became MFSL in 2016 (NSE master has it); MAXIND is a new line.
     # Encoding that edge merged two live companies and interleaved their rows.
+    # NOT ("KBL","KIRLOSBROS"): one company, but the two windows are six weeks and
+    # +29% apart (KBL 2010-03-08 at 260.55, KIRLOSBROS 2010-04-20 at 337.35), so
+    # joining them would write a phantom return into the series. The pre-2010
+    # membership spells are repointed at KBL through LINE_OVERRIDES instead.
+    # NOT ("HEXAWARE","HEXT"): same company, but taken private in 2020 and re-listed
+    # in 2025 — a four-year hole that the panel loader would forward-fill across for
+    # a name both books can hold today. Repointed through LINE_OVERRIDES.
+]
+
+# (symbol, date) where one ticker's ISIN changed mid-life with no rename to
+# follow, so ISIN cannot join the two windows and neither can a rename edge.
+# Each verified against isin_names.csv: the same filing name on both ISINs and
+# contiguous trading sessions across the date.
+ISIN_CHANGES = [
+    ("GUJGASLTD", "2019-01-16"),   # INE844O01022 -> INE844O01030, no gap; without this the
+                                   # 2015-2019 half is a separate company and the canonical
+                                   # GUJENERGY series starts in 2019
 ]
 
 # membership symbol -> [(before_date, historical symbol)]; the member before
@@ -53,6 +70,9 @@ LINE_OVERRIDES = {
     "GUJGASLTD":  [("2015-09-15", "GUJRATGAS")],    # old Gujarat Gas (INE374A01029) merged into GSPC Distribution; new line listed 2015-09-15
     "GUJENERGY":  [("2015-09-15", "GUJRATGAS")],    # same company, renamed Gujarat Energy 2026-07
     "DALBHARAT":  [("2019-01-22", "DALMIABHA")],    # old Dalmia Bharat merged into Odisha Cement, relisted 2019 as DALBHARAT (INE00R701025)
+    "HEXT":       [("2025-02-19", "HEXAWARE")],     # Hexaware delisted 2020-10-30 (INE093A01033), re-listed 2025-02-19 (INE093A01041); nse500 already carries the old spell as HEXAWARE
+    "ORCHPHARMA": [("2020-11-03", "ORCHIDCHEM")],   # Orchid Chemicals -> Orchid Pharma (INE191A01019), relisted after IBC 2020-11-03 (INE191A01027); nse500 carries the old spell as ORCHIDPHAR
+    "KIRLOSBROS": [("2010-04-20", "KBL")],          # Kirloskar Brothers traded as KBL until 2010-03-08 (INE732A01028); the KIRLOSBROS line (INE732A01036) starts 2010-04-20
 }
 
 
@@ -87,6 +107,7 @@ class Identity:
         det = detected if detected is not None else pd.read_csv(f"{MASTER}/symbol_renames_detected.csv", parse_dates=["t1"])
         edges += [(r.old, r.new, r.t1) for r in det.itertuples()]
         edges += [(o, nw, pd.Timestamp(d)) for o, nw, d in HAND_RENAMES]
+        edges += [(s, s, pd.Timestamp(d)) for s, d in ISIN_CHANGES]   # old and new window of one ticker
         self.n_edges = 0
         for old, new, d in edges:
             if old not in by_sym or new not in by_sym:
