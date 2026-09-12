@@ -251,7 +251,6 @@ INE332A01027,THOMASCOOK,2005-02-22,dividend,0.375,final,1,EQ,Agm/Dividend-37.5%,
 INE341A01010,VDOCONINTL,2005-03-15,dividend,1.0,final,10,EQ,Agm/Dividend-10%,nse-filing
 ,BALRAMCHIN,2005-03-23,split,0.1,observed:kite-observed,,,,kite-observed
 ,BATAINDIA,2005-04-13,split,0.9090909090909092,observed:kite-observed,,,,kite-observed
-,BAJFINANCE,2005-04-26,split,0.8181818181818182,observed:kite-observed,,,,kite-observed
 INE019A01020,JSWSTEEL,2005-04-29,dividend,0.5,final,1,EQ,Agm/ Dividend-50%,nse-filing
 ,SAKSOFT,2005-05-09,consolidation,3.3333333333333335,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE434A01013,ANDHRABANK,2005-05-11,dividend,1.5,final,10,EQ,Dividend-15%             Purpose Revsied,nse-filing
@@ -694,7 +693,6 @@ INE526A01016,GARDENSILK,2005-11-18,dividend,1.5,final,10,EQ,Dividend-15%,nse-fil
 INE294A01011,BILT,2005-11-22,dividend,1.25,final,10,EQ,Agm/Dividend-12.5%,nse-filing
 ,RAMCOSYS,2005-11-25,split,0.9090909090909092,observed:kite-observed,,,,kite-observed
 INE101D01012,GRANULES,2005-12-01,dividend,0.125,final,1,EQ,Agm/Final Dividend-12.5%,nse-filing
-,CEATLTD,2005-12-02,split,0.9090909090909092,observed:kite-observed,,,,kite-observed
 INE080A01014,WEIZMANIND,2005-12-16,dividend,0.5,final,10,EQ,Agm/Dividend - 5%        Book Closure Revised,nse-filing
 INE087H01022,RENUKA,2005-12-21,dividend,0.2,final,1,EQ,Agm/Dividend-20%,nse-filing
 INE130C01021,AMTEKAUTO,2005-12-22,dividend,1.4,final,2,EQ,Agm/Dividend-70%,nse-filing
@@ -790,6 +788,7 @@ INE539A01019,GHCL,2006-06-08,dividend,2.4,final,10,EQ,Agm/Dividend-24%,nse-filin
 INE389H01014,KEC,2006-06-08,dividend,0.24,final,2,EQ,Agm/Dividend-12%,nse-filing
 INE231F01020,SASKEN,2006-06-08,dividend,3.0,final,10,EQ,Agm/Dividend-30%,nse-filing
 INE692A01016,UNIONBANK,2006-06-08,dividend,3.5,final,10,EQ,Agm/Final Dividend-35%,nse-filing
+INE923A01015,SILINV,2006-06-12,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE398B01018,UMIYA-MRO,2006-06-12,dividend,1.0,final,5,EQ,Agm/Dividend-20%         Purpose Revised,nse-filing
 INE087A01019,KESORAMIND,2006-06-13,dividend,3.0,final,10,EQ,Dividend-Rs.3/- Per Sh,nse-filing
 INE660F01012,PATNI,2006-06-13,dividend,2.5,final,2,EQ,Agm/Final Dividend-125%,nse-filing
@@ -1092,7 +1091,7 @@ INE633A01028,SHRENUJ,2006-09-07,dividend,0.7,final,2,EQ,Agm/Dividend-35%,nse-fil
 INE287B01021,SUBROS,2006-09-07,dividend,0.7,final,2,EQ,Agm/Dividend-35%,nse-filing
 INE628A01036,UPL,2006-09-07,dividend,1.0,final,2,EQ,Agm/Dividend-50%,nse-filing
 INE406A01029,AUROPHARMA,2006-09-08,dividend,0.3,final,1,EQ,Agm/Dividend-30%,nse-filing
-INE686A01026,CEMPRO,2006-09-08,rights,,1:4@prem=None,1,EQ,Rights 1:4 @Prem Rs.480/-,nse-filing
+INE686A01026,CEMPRO,2006-09-08,rights,,1:4@prem=480.0,1,EQ,Rights 1:4 @Prem Rs.480/-,nse-filing
 INE962C01027,EASTSILK,2006-09-08,dividend,0.7,final,2,EQ,Agm/Dividend-35%         Purpose Revised,nse-filing
 INE268C01029,EASUNREYRL,2006-09-08,dividend,1.2,final,2,EQ,Agm/Dividend-60%,nse-filing
 INE302A01020,EXIDEIND,2006-09-08,split,0.1,10->1,1,EQ,Fv Split Rs.10/- To Re.1/,nse-filing
@@ -1229,7 +1228,7 @@ INE205B01023,ELECON,2006-10-17,split,0.2,10->2,1,EQ,Fv Split Rs.10/- To Rs.2/,ns
 INE688A01022,TCI,2006-10-17,dividend,0.5,final,2,EQ,Agm/Dividend-25%,nse-filing
 INE854D01024,UNITDSPR,2006-10-17,demerger,,,2,EQ,Sch Of Arngment-Demerger,nse-filing
 INE074A01025,PRAJIND,2006-10-19,dividend,0.9,interim,2,EQ,Interim Dividend-45%     Purpose Revised,nse-filing
-INE517B01013,TTML,2006-10-19,rights,,19:100@prem=None,10,EQ,Rights-19:100 @ Prem Rs.7,nse-filing
+INE517B01013,TTML,2006-10-19,rights,,19:100@prem=7.0,10,EQ,Rights-19:100 @ Prem Rs.7,nse-filing
 INE067A01029,CGPOWER,2006-10-26,dividend,0.4,interim,2,EQ,Interim Dividend-20%     Purpose Revised,nse-filing
 INE524A01029,GABRIEL,2006-10-26,dividend,0.3,interim,1,EQ,Interim Dividend-30%     Purpose Revised,nse-filing
 INE107A01015,TNPL,2006-10-26,dividend,1.5,interim,10,EQ,Interim Dividend-15%,nse-filing
@@ -1268,6 +1267,7 @@ INE372A01015,APARINDS,2006-11-10,dividend,1.5,interim,10,EQ,Interim Dividend-15%
 INE224A01018,GREAVESCOT,2006-11-10,dividend,0.4,interim,2,EQ,1st Interim Dividend-20%,nse-filing
 INE789E01012,JKPAPER,2006-11-10,dividend,0.6,final,10,EQ,Agm/Dividend-6%,nse-filing
 INE987B01018,NATCOPHARM,2006-11-10,dividend,0.25,interim,2,EQ,Interim Dividend-12.5%,nse-filing
+INE296A01016,BAJFINANCE,2006-11-13,rights,,6:10@prem=None,1,EQ,Right-Eq6:10 & 1ncd:4eq,nse-filing
 INE195A01010,SUPREMEIND,2006-11-13,bonus,0.5,1:1,2,EQ,Bonus 1:1,nse-filing
 INE852F01015,GDL,2006-11-14,dividend,1.5,interim,10,EQ,Interim Dividend-15%,nse-filing
 INE883A01011,MRF,2006-11-14,dividend,3.0,interim,10,EQ,2nd Interim Dividend-30% Purpose Revised,nse-filing
@@ -1279,16 +1279,15 @@ INE111B01023,63MOONS,2006-11-16,dividend,0.8,interim,2,EQ,Interim Dividend-40%,n
 INE875G01022,NANDAN,2006-11-16,dividend,0.075,interim,1,EQ,Interim Dividend-7.5%,nse-filing
 INE694C01018,LAKSHVILAS,2006-11-17,bonus,0.66666667,1:2,10,EQ,Bonus 1:2/Rights 1:1,nse-filing
 INE694C01018,LAKSHVILAS,2006-11-17,rights,,1:1@prem=None,10,EQ,Bonus 1:2/Rights 1:1,nse-filing
-INE471A01023,DIGJAM,2006-11-21,rights,,4:7@prem=None,10,EQ,Rights 4:7 At Par,nse-filing
+INE471A01023,DIGJAM,2006-11-21,rights,,4:7@prem=0.0,10,EQ,Rights 4:7 At Par,nse-filing
 INE787B01012,PEARLGLOBL,2006-11-22,dividend,3.0,final,10,EQ,Agm/Dividend-30%,nse-filing
 INE551A01022,HINDDORROL,2006-11-23,bonus,0.83333333,1:5,2,EQ,Bonus 1:5,nse-filing
 INE294A01011,BILT,2006-11-29,dividend,1.5,final,10,EQ,Agm/Dividend-15%,nse-filing
-INE069A01017,ABIRLANUVO,2006-12-01,rights,,2:17@prem=None,10,EQ,Rights 2:17@Prem Rs.783/-,nse-filing
+INE069A01017,ABIRLANUVO,2006-12-01,rights,,2:17@prem=783.0,10,EQ,Rights 2:17@Prem Rs.783/-,nse-filing
 INE526A01016,GARDENSILK,2006-12-01,dividend,1.5,final,10,EQ,Agm/Dividend-15%,nse-filing
 INE306B01029,ICSA,2006-12-01,dividend,0.24,interim,2,EQ,Interim Dividend-12%,nse-filing
 INE062D01024,ALICON,2006-12-04,split,0.5,10->5,5,EQ,Fv Split Rs.10/- To Rs.5/,nse-filing
 INE688A01022,TCI,2006-12-05,split,0.2,10->2,2,EQ,Fv Split Rs.10/- To Rs.2/,nse-filing
-,MANALIPETC,2006-12-06,split,0.6666666666666666,observed:kite-observed,,,,kite-observed
 INE623A01011,SAKHTISUG,2006-12-06,dividend,1.5,final,10,EQ,Agm/Dividend-15%,nse-filing
 INE667A01018,SYNDIBANK,2006-12-06,dividend,1.5,interim,10,EQ,Interim Dividend-15%,nse-filing
 INE625G01013,WELENT,2006-12-06,dividend,1.0,final,10,EQ,Agm/Final Dividend-10%,nse-filing
@@ -1299,12 +1298,12 @@ INE813H01021,TORNTPOWER,2006-12-11,dividend,1.2,final,10,EQ,Agm/Dividend-12%,nse
 INE441A01026,ASIANELEC,2006-12-12,dividend,1.25,final,5,EQ,Agm/Dividend-25%,nse-filing
 INE623B01027,FEL,2006-12-12,split,0.2,10->2,2,EQ,Fv Split Rs.10/- To Rs.2/,nse-filing
 INE131A01031,GMDCLTD,2006-12-13,dividend,1.2,final,2,EQ,Agm/Dividend-60%,nse-filing
-INE036D01010,KARURVYSYA,2006-12-13,rights,,1:2@prem=None,2,EQ,Rights 1:2@Prem Rs.60/-,nse-filing
+INE036D01010,KARURVYSYA,2006-12-13,rights,,1:2@prem=60.0,2,EQ,Rights 1:2@Prem Rs.60/-,nse-filing
 ,LMW,2006-12-13,split,0.1,observed:kite-observed,,,,kite-observed
 INE067A01029,CGPOWER,2006-12-14,bonus,0.71428571,2:5,2,EQ,Bonus 2:5,nse-filing
 INE087H01022,RENUKA,2006-12-14,dividend,0.2,final,1,EQ,Agm/Final Dividend-20%,nse-filing
 INE722A01011,SHRIRAMCIT,2006-12-14,dividend,1.0,interim,10,EQ,Interim Dividend-10%,nse-filing
-,ZEEL,2006-12-18,split,0.8181818181818182,observed:kite-observed,,,,kite-observed
+INE256A01028,ZEEL,2006-12-18,demerger,,,1,EQ,Sch Of Arngmnt/Div-100%  Purpose Revised,nse-filing
 INE084A01016,BANKINDIA,2006-12-19,dividend,2.0,final,10,EQ,Dividend -20%,nse-filing
 INE130C01021,AMTEKAUTO,2006-12-20,dividend,2.0,final,2,EQ,Agm/Dividend - 100%,nse-filing
 INE138A01028,PENINLAND,2006-12-20,dividend,0.5,final,2,EQ,Agm/Dividend-25%,nse-filing
@@ -1322,7 +1321,7 @@ INE129A01019,GAIL,2006-12-27,dividend,5.5,interim,10,EQ,Interim Dividend-55%    
 INE094A01015,HINDPETRO,2006-12-27,dividend,6.0,interim,10,EQ,Interim Dividend-60%     Purpose Revised,nse-filing
 INE213A01011,ONGC,2006-12-27,dividend,9.0,interim,5,EQ,Interim Dividend-180%    Purpose Revised,nse-filing
 INE501G01024,HTMEDIA,2006-12-28,split,0.2,10->2,2,EQ,Fv Split Rs.10/- To Rs.2/,nse-filing
-,INDIABULLS,2007-01-02,split,0.4615384615384615,observed:bhavcopy-observed,,,,bhavcopy-observed
+INE894F01025,INDIABULLS,2007-01-02,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE003A01024,SIEMENS,2007-01-02,dividend,3.8,final,2,EQ,Agm/Dividend - 190%,nse-filing
 INE092B01017,INDNIPPON,2007-01-03,dividend,2.25,interim,5,EQ,Interim Dividend-45%     Purpose Revised,nse-filing
 INE836A01035,BSOFT,2007-01-04,bonus,0.5,1:1,2,EQ,Bonus-1:1 Spl-Rs 5/ To 2/,nse-filing
@@ -1363,7 +1362,7 @@ INE586G01017,GULFPETRO,2007-02-08,dividend,0.25,interim,5,EQ,Interim Dividend-5%
 INE267A01017,HINDZINC,2007-02-08,dividend,0.5,interim,2,EQ,Interim Dividend-25%,nse-filing
 INE229C01013,SAGCEM,2007-02-08,dividend,0.2,interim,2,EQ,Interim Dividend-10%,nse-filing
 INE688A01022,TCI,2007-02-08,dividend,0.3,interim,2,EQ,Interim Dividend-15%,nse-filing
-,ZEEL,2007-02-12,split,0.7142857142857143,observed:kite-observed,,,,kite-observed
+INE256A01028,ZEEL,2007-02-12,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE258A01016,BEML,2007-02-13,dividend,2.0,interim,5,EQ,Interim Dividend-40%,nse-filing
 INE257A01018,BHEL,2007-02-13,dividend,2.5,interim,2,EQ,Interim Dividend-125%,nse-filing
 INE294A01011,BILT,2007-02-13,dividend,1.5,interim,10,EQ,Interim Dividend-15%,nse-filing
@@ -1497,10 +1496,12 @@ INE386A01015,VESUVIUS,2007-04-05,dividend,0.35,final,1,EQ,Agm/Dividend-35%,nse-f
 INE112A01015,CORPBANK,2007-04-09,dividend,0.8,interim,2,EQ,Interim Dividend-40%,nse-filing
 INE993A01026,MANINDS,2007-04-13,demerger,,,5,EQ,Scheme Of Demerger,nse-filing
 INE093A01033,HEXAWARE,2007-04-18,dividend,0.8,final,2,EQ,Agm/Final Dividend-40%,nse-filing
+INE494A01017,COREPARENT,2007-04-19,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE275B01026,HUHTAMAKI,2007-04-19,dividend,9.0,final,2,EQ,Agm/Dividend-Rs9/- Per Sh,nse-filing
 INE484C01030,VEEDOL,2007-04-19,dividend,2.0,interim,2,EQ,Interim Dividend-100%,nse-filing
 INE436A01026,ANSALAPI,2007-04-23,bonus,0.5,1:1,5,EQ,Bonus 1:1,nse-filing
 ,ANSALINFRA,2007-04-23,split,0.5263157894736842,observed:bhavcopy-observed,,,,bhavcopy-observed
+INE044A01028,SUNPHARMA,2007-04-23,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE999A01015,KSB,2007-04-24,dividend,0.7,final,2,EQ,Agm/Final Dividend-35%,nse-filing
 INE771A01026,MIRZAINT,2007-04-24,split,0.2,10->2,2,EQ,Fv Split Rs.10/- To Rs.2/,nse-filing
 INE669B01012,OENCONNECT,2007-04-24,dividend,2.25,final,10,EQ,Agm/Dividend-22.5%       Purpose Revised,nse-filing
@@ -1537,6 +1538,7 @@ INE053B01019,BOSCHCHASY,2007-06-06,bonus,0.5,1:1,10,EQ,Bonus - 1:1,nse-filing
 INE247G01024,COREEDUTEC,2007-06-06,split,0.2,10->2,2,EQ,Agm/Div-5%/Spl-Rs10tors2 Purpose Revised,nse-filing
 INE141A01014,ORIENTBANK,2007-06-06,dividend,2.7,final,10,EQ,Agm/Dividend-27%,nse-filing
 INE428A01015,ALBK,2007-06-07,dividend,3.0,final,10,EQ,Agm/Dividend - 30%,nse-filing
+INE592A01026,ORIENTPPR,2007-06-08,rights,,3:10@prem=None,1,EQ,Div-60% / Rights-Eq 3:10 Purpose Revised,nse-filing
 INE342A01018,PREMIER,2007-06-08,dividend,2.0,final,10,EQ,Agm/Dividend-20%,nse-filing
 INE739A01015,MOSERBAER,2007-06-11,dividend,1.5,final,10,EQ,Final Dividend - 15%,nse-filing
 INE308H01014,PRATIBHA,2007-06-11,dividend,0.4,final,2,EQ,Agm/Dividend - 20%,nse-filing
@@ -1700,7 +1702,7 @@ INE538H01024,SHREEASHTA,2007-07-19,dividend,0.12,final,1,EQ,Agm/Dividend-12%,nse
 INE754A01014,SUBEX,2007-07-19,dividend,2.0,final,10,EQ,Agm/Dividend - 20%,nse-filing
 INE586B01026,TAJGVK,2007-07-19,dividend,3.0,final,2,EQ,Agm/Dividend-150%,nse-filing
 INE426D01013,GOACARBON,2007-07-20,dividend,1.5,final,10,EQ,Dividend-Rs.1.50/- Per Sh,nse-filing
-INE221H01019,GTLINFRA,2007-07-20,rights,,1:1@prem=None,10,EQ,Rights 1:1 At Par,nse-filing
+INE221H01019,GTLINFRA,2007-07-20,rights,,1:1@prem=0.0,10,EQ,Rights 1:1 At Par,nse-filing
 INE835D01023,HIRECT,2007-07-20,dividend,2.0,final,2,EQ,Agm/Dividend-100%,nse-filing
 INE688A01022,TCI,2007-07-20,dividend,0.3,final,2,EQ,Final Dividend-15%,nse-filing
 INE694A01020,UNITECH,2007-07-20,dividend,0.5,final,2,EQ,Agm/Dividend-25%,nse-filing
@@ -2058,10 +2060,12 @@ INE242C01024,ANANTRAJ,2007-10-08,split,0.2,10->2,2,EQ,Fv Split Rs.10/- To Re.2/,
 INE152B01027,ACLGATI,2007-10-09,dividend,0.8,final,2,EQ,Agm/Dividend-40%,nse-filing
 INE993A01026,MANINDS,2007-10-09,split,0.5,10->5,5,EQ,Fv Split Rs.10/- To Rs.5/,nse-filing
 INE205B01023,ELECON,2007-10-10,bonus,0.33333333,2:1,1,EQ,Bonus 2:1,nse-filing
+INE727B01018,GENESYS,2007-10-12,demerger,,,5,EQ,Scheme Of Arrangement,nse-filing
 INE202H01019,KERNEX,2007-10-16,bonus,0.90909091,1:10,10,EQ,Bonus 1:10,nse-filing
 INE138A01028,PENINLAND,2007-10-16,split,0.2,10->2,2,EQ,Fv Split Rs.10/- To Rs.2/,nse-filing
 INE889A01026,TV-18,2007-10-17,bonus,0.5,1:1,5,EQ,Bonus 1:1,nse-filing
 INE348A01023,ASHAPURMIN,2007-10-18,bonus,0.5,1:1,2,EQ,Bonus 1:1,nse-filing
+INE303A01010,DICIND,2007-10-19,rights,,1:3@prem=215.0,10,EQ,Rights-Eq 1:3@ Prem Rs215,nse-filing
 INE540B01015,RELMEDIA,2007-10-19,dividend,2.5,final,5,EQ,Agm/Dividend-50%,nse-filing
 INE199C01026,ADVANIHOTR,2007-10-22,split,0.2,10->2,2,EQ,Fv Split Rs.10/- To Rs.2/,nse-filing
 INE441A01026,ASIANELEC,2007-10-22,split,0.5,10->5,5,EQ,Fv Split Rs.10/- To Rs.5/,nse-filing
@@ -2079,9 +2083,9 @@ INE196A01026,MARICO,2007-10-29,dividend,0.15,interim,1,EQ,2nd Interim Dividend-1
 INE060A01024,NAVNETEDUL,2007-10-29,dividend,1.6,interim,2,EQ,Interim Dividend - 80%   Purpose Revised,nse-filing
 INE244B01030,PATELENG,2007-10-29,dividend,1.3,interim,1,EQ,Interim Dividend-130%,nse-filing
 INE619A01027,RUCHISOYA,2007-10-29,split,0.2,10->2,2,EQ,Fv Split Rs.10/- To Rs.2/,nse-filing
-,TATASTEEL,2007-10-29,split,0.875,observed:kite-observed,,,,kite-observed
+INE081A01012,TATASTEEL,2007-10-29,rights,,1:5@prem=None,1,EQ,Right-Eq1:5 & 9ccps:10eq,nse-filing
 INE714F01025,ASHCO,2007-10-30,dividend,0.1,interim,1,EQ,Interim Dividend-10%,nse-filing
-,CEMPRO,2007-10-30,split,0.75,observed:kite-observed,,,,kite-observed
+INE686A01026,CEMPRO,2007-10-30,rights,,1:1@prem=415.0,1,EQ,Rights-Eq 1:1@Prem Rs.415,nse-filing
 INE343H01011,SOLARINDS,2007-11-01,dividend,0.3,interim,2,EQ,Interim Dividend-15%,nse-filing
 INE067A01029,CGPOWER,2007-11-02,dividend,0.4,interim,2,EQ,Interim Dividend-20%     Purpose Revised,nse-filing
 INE526A01016,GARDENSILK,2007-11-02,dividend,1.5,final,10,EQ,Agm/Dividend-15%,nse-filing
@@ -2101,8 +2105,9 @@ INE111B01023,63MOONS,2007-11-15,dividend,7.0,interim,2,EQ,2nd Interim Dividend-3
 ,BPCL,2007-11-15,split,0.9090909090909092,observed:kite-observed,,,,kite-observed
 INE285A01027,ELGIEQUIP,2007-11-15,dividend,0.6,interim,1,EQ,Interim Dividend-60%     Purpose Revised,nse-filing
 INE276A01018,GARFIBRES,2007-11-15,dividend,2.5,final,10,EQ,Dividend-Rs.2.50 Per Sh,nse-filing
+INE345A01011,HINDOILEXP,2007-11-15,rights,,2:3@prem=107.0,10,EQ,Rights-Eq 2:3@ Prem Rs107,nse-filing
 INE229C01013,SAGCEM,2007-11-15,dividend,0.3,interim,2,EQ,Interim Dividend-15%     Rd Revised,nse-filing
-,FEDERALBNK,2007-11-19,split,0.7692307692307693,observed:kite-observed,,,,kite-observed
+INE171A01011,FEDERALBNK,2007-11-19,rights,,1:1@prem=240.0,2,EQ,Rights-Eq 1:1@Prem Rs.240,nse-filing
 INE287B01021,SUBROS,2007-11-20,split,0.2,10->2,2,EQ,Fv Split Rs.10/- To Rs.2/,nse-filing
 INE854D01024,UNITDSPR,2007-11-20,dividend,0.2,final,2,EQ,Agm/Final Dividend-10%,nse-filing
 INE294A01011,BILT,2007-11-21,dividend,1.5,final,10,EQ,Agm/Final Dividend-15%,nse-filing
@@ -2115,6 +2120,8 @@ INE858F01012,NITCO,2007-12-03,dividend,2.0,final,10,EQ,Agm/Dividend-Rs.2 Per Sh,
 INE623A01011,SAKHTISUG,2007-12-06,dividend,1.5,final,10,EQ,Agm/Dividend-15%,nse-filing
 INE722A01011,SHRIRAMCIT,2007-12-06,dividend,1.0,interim,10,EQ,Interim Dividend-10%,nse-filing
 INE737H01014,FIEMIND,2007-12-07,dividend,2.5,final,10,EQ,Agm/Dividend-25%,nse-filing
+INE302A01020,EXIDEIND,2007-12-10,rights,,1:15@prem=29.0,1,EQ,Rights-Eq 1:15@Prem Rs.29,nse-filing
+INE875G01022,NANDAN,2007-12-12,rights,,1:2@prem=2.0,1,EQ,Rights-Eq 1:2@Prem Rs.2,nse-filing
 INE873D01016,INDOCO,2007-12-13,dividend,1.3,final,2,EQ,Agm/Dividend-65%,nse-filing
 INE287C01029,MIC,2007-12-14,dividend,0.4,final,2,EQ,Agm/Dividend - 20%,nse-filing
 INE256C01024,TRIVENI,2007-12-14,dividend,0.1,final,1,EQ,Final Dividend-10%,nse-filing
@@ -2142,6 +2149,7 @@ INE213A01011,ONGC,2007-12-26,dividend,18.0,final,5,EQ,Int Dividend-Rs.18 Per Shp
 INE092B01017,INDNIPPON,2007-12-28,dividend,2.25,interim,5,EQ,Interim Dividend - 45%   Purpose Revised,nse-filing
 INE138C01024,KANORICHEM,2007-12-31,bonus,0.66666667,1:2,5,EQ,Fv Spl-Rs10tors5/Bon-1:2,nse-filing
 INE138C01024,KANORICHEM,2007-12-31,split,0.5,10->5,5,EQ,Fv Spl-Rs10tors5/Bon-1:2,nse-filing
+INE894F01025,INDIABULLS,2008-01-01,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE538A01037,GFLLIMITED,2008-01-03,dividend,3.0,final,1,EQ,Int Dividend- Rs.3 Per Sh,nse-filing
 INE208C01025,AEGISLOG,2008-01-08,dividend,0.25,interim,1,EQ,Interim Dividend-25%,nse-filing
 INE199G01027,JAGRAN,2008-01-09,split,0.2,10->2,2,EQ,Fv Split Rs.10/- To Rs.2/,nse-filing
@@ -2157,12 +2165,13 @@ INE523B01011,AKSHOPTFBR,2008-01-22,dividend,0.5,final,5,EQ,Agm/Dividend - 10%,ns
 INE039B01026,CINEVISTA,2008-01-22,split,0.2,10->2,2,EQ,Fv Split Rs.10/- To Rs.2/,nse-filing
 ,NEYVELILIG,2008-01-22,split,0.6923076923076923,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE491A01021,CUB,2008-01-23,split,0.1,10->1,1,EQ,Fv Split Rs.10/- To Re.1/,nse-filing
-,DHANBANK,2008-01-23,split,0.7142857142857143,observed:kite-observed,,,,kite-observed
+INE680A01011,DHANBANK,2008-01-23,rights,,1:1@prem=52.0,10,EQ,Rights-Eq 1:1@Prem Rs 52,nse-filing
 ,STROPTICAL,2008-01-23,consolidation,1.4285714285714286,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE293A01013,ROLTA,2008-01-24,bonus,0.5,1:1,10,EQ,Bonus 1 : 1,nse-filing
 INE195A01010,SUPREMEIND,2008-01-24,dividend,0.7,interim,2,EQ,Interim Dividend - 35%,nse-filing
 INE221B01012,DYNAMATECH,2008-01-28,dividend,2.5,interim,10,EQ,Interim Dividend - 25%   Rd Date Revised,nse-filing
 INE036B01022,GAEL,2008-01-28,dividend,0.2,interim,1,EQ,Interim Dividend - 20%   Rd Date Revised,nse-filing
+INE062A01012,SBIN,2008-01-28,rights,,1:5@prem=1580.0,1,EQ,Rights-Eq 1:5@Prem Rs1580,nse-filing
 INE731H01025,ACE,2008-01-29,dividend,0.4,interim,2,EQ,Interim Dividend - 20%   Purpose Revised,nse-filing
 INE786A01032,JKLAKSHMI,2008-01-29,dividend,0.5,interim,5,EQ,Interim Dividend - 10%,nse-filing
 INE343B01030,RAJESHEXPO,2008-01-29,bonus,0.33333333,2:1,1,EQ,Fv Spl-Rs2 To Re1/Bon-2:1,nse-filing
@@ -2184,6 +2193,7 @@ INE589A01014,NLCINDIA,2008-02-05,dividend,1.0,interim,10,EQ,Interim Dividend - 1
 INE628H01015,ORBITCORP,2008-02-05,dividend,1.5,interim,10,EQ,2nd Interim Dividend-15%,nse-filing
 INE791A01024,BLBLIMITED,2008-02-06,dividend,0.15,interim,1,EQ,2nd Interim Dividend- 15%,nse-filing
 INE251H01024,GVKPIL,2008-02-08,split,0.1,10->1,1,EQ,Fv Split Rs.10/- To Re.1/,nse-filing
+INE389H01014,KEC,2008-02-11,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE134E01011,PFC,2008-02-11,dividend,2.5,interim,10,EQ,Interim Dividend - 25%   Purpose Revised,nse-filing
 INE371D01029,GEODESIC,2008-02-12,dividend,0.2,interim,2,EQ,Interim Dividend - 10%,nse-filing
 INE139A01026,NATIONALUM,2008-02-13,dividend,2.25,interim,5,EQ,Interim Dividend - 45%   Dividend Revised,nse-filing
@@ -2193,14 +2203,18 @@ INE306A01021,BAJAJHIND,2008-02-14,dividend,0.6,final,1,EQ,Agm/Dividend - 60%,nse
 INE943D01017,MPSLTD,2008-02-14,dividend,2.5,interim,10,EQ,Interim Dividend - 25%,nse-filing
 INE715A01015,WHEELS,2008-02-14,dividend,3.0,interim,10,EQ,Interim Dividend - 30%,nse-filing
 INE100D01014,WSI,2008-02-14,dividend,0.5,interim,10,EQ,Interim Dividend-5%,nse-filing
+INE629A01018,BRABOURNE,2008-02-15,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
+INE140A01024,PEL,2008-02-15,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE655A01013,STCINDIA,2008-02-15,dividend,3.5,interim,10,EQ,Interim Dividend - 35%,nse-filing
 INE399C01030,SUPRAJIT,2008-02-19,dividend,0.2,interim,1,EQ,Interim Dividend - 20%,nse-filing
 INE153A01019,MTNL,2008-02-21,dividend,3.0,interim,10,EQ,Interim Dividend - 30%,nse-filing
 INE733A01018,STARPAPER,2008-02-21,dividend,1.75,final,10,EQ,Agm/Dividend - 17.5%,nse-filing
 INE886H01027,TV18BRDCST,2008-02-21,split,0.2,10->2,2,EQ,Fv Split Rs.10/- To Rs.2/,nse-filing
 INE034D01031,PTL,2008-02-25,split,0.2,10->2,1,EQ,Fv Split Rs.10/- To Rs.2/,nse-filing
+INE075B01012,SICAL,2008-02-25,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE711A01022,WALCHANNAG,2008-02-25,bonus,0.5,1:1,2,EQ,Fv Spl-Rs10tors2/Bon-1:1,nse-filing
 INE711A01022,WALCHANNAG,2008-02-25,split,0.2,10->2,2,EQ,Fv Spl-Rs10tors2/Bon-1:1,nse-filing
+INE290B01025,OCL,2008-02-27,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE109A01011,SCI,2008-02-27,dividend,4.5,interim,10,EQ,Interim Dividend - 45%   Purpose Revised,nse-filing
 INE003A01024,SIEMENS,2008-02-29,bonus,0.5,1:1,2,EQ,Bonus 1:1,nse-filing
 INE258A01016,BEML,2008-03-04,dividend,2.75,interim,5,EQ,Interim Dividend - 55%,nse-filing
@@ -2211,10 +2225,11 @@ INE177H01013,GPIL,2008-03-10,dividend,0.15,interim,1,EQ,Interim Dividend - 15%  
 INE752E01010,POWERGRID,2008-03-10,dividend,0.5,interim,10,EQ,Interim Dividend - 5%    Purpose Revised,nse-filing
 INE105C01023,3PLAND,2008-03-11,split,0.2,10->2,2,EQ,Fv Split Rs.10/- To Rs.2/,nse-filing
 INE750C01026,MARKSANS,2008-03-11,split,0.1,10->1,1,EQ,Fv Split Rs.10/- To Re.1/,nse-filing
+INE102D01028,GODREJCP,2008-03-12,rights,,1:7@prem=122.0,1,EQ,Rights-Eq 1:7@Prem Rs122,nse-filing
 INE731H01025,ACE,2008-03-13,split,0.2,10->2,2,EQ,Fv Split Rs.10/- To Rs.2/,nse-filing
 INE491A01021,CUB,2008-03-13,dividend,0.3,interim,1,EQ,Interim Dividend - 30%,nse-filing
 INE434A01013,ANDHRABANK,2008-03-14,dividend,2.0,interim,10,EQ,Interim Dividend - 20%   Purpose Revised,nse-filing
-,BAJAJHLDNG,2008-03-14,split,0.368863,observed:kite-observed,,,,kite-observed
+INE118A01012,BAJAJHLDNG,2008-03-14,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE078A01026,EMCO,2008-03-14,split,0.2,10->2,2,EQ,Fv Split Rs.10/- To Rs.2/,nse-filing
 INE374A01029,GUJRATGAS,2008-03-14,dividend,3.0,final,2,EQ,Dividend - Rs.3 Per Share,nse-filing
 INE060A01024,NAVNETEDUL,2008-03-14,dividend,0.8,interim,2,EQ,2nd Interim Dividend-40% Purpose Revised,nse-filing
@@ -2256,9 +2271,11 @@ INE648A01026,SBBJ,2008-04-21,dividend,10.0,final,10,EQ,Dividend - 100%          
 INE053A01029,INDHOTEL,2008-04-22,dividend,1.9,interim,1,EQ,Interim Dividend - 190%  Purpose Revised,nse-filing
 INE654A01024,SBT,2008-04-22,dividend,10.0,final,10,EQ,Dividend - 100%          Purpose Revised,nse-filing
 INE686A01026,CEMPRO,2008-04-23,dividend,0.2,final,1,EQ,Dividend - 20%,nse-filing
+INE257B01024,ELGIRUBBER,2008-04-23,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE999A01015,KSB,2008-04-23,dividend,0.7,final,2,EQ,Agm/Dividend - 35%,nse-filing
 INE411H01024,RSYSTEMS,2008-04-23,dividend,0.18,final,1,EQ,Agm/Dividend - 18%,nse-filing
 INE348B01021,CENTURYPLY,2008-04-24,split,0.1,10->1,1,EQ,Fv Split Rs.10/- To Re.1/,nse-filing
+INE772A01016,SKUMARSYNF,2008-04-24,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE961H01028,EVINIX,2008-04-29,split,0.1,10->1,1,EQ,Fv Split Rs.10/- To Re.1/,nse-filing
 INE196A01026,MARICO,2008-04-29,dividend,0.37,interim,1,EQ,3rd Interim Dividend-37% Purpose Revised,nse-filing
 INE075D01018,GMBREW,2008-04-30,dividend,2.5,final,10,EQ,Dividend - 25%,nse-filing
@@ -2283,6 +2300,7 @@ INE180G01019,EDL,2008-05-20,dividend,3.0,interim,10,EQ,Interim Dividend - 30%,ns
 INE217A01012,ZUARIIND,2008-05-20,dividend,3.0,final,10,EQ,Dividend - 30%           Purpose Revised,nse-filing
 INE848A01014,IZMO,2008-05-21,dividend,4.0,interim,10,EQ,Interim Dividend - 40%,nse-filing
 INE019A01020,JSWSTEEL,2008-05-21,dividend,1.4,final,1,EQ,Agm/Dividend - 140%,nse-filing
+INE337A01026,LGBROS,2008-05-21,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE584A01023,NMDC,2008-05-21,bonus,0.33333333,2:1,1,EQ,Bonus 2:1,nse-filing
 INE238A01026,AXISBANK,2008-05-22,dividend,1.2,final,2,EQ,Agm/Dividend - 60%,nse-filing
 INE189I01016,NELCAST,2008-05-22,dividend,0.6,final,2,EQ,Agm/Dividend - 30%,nse-filing
@@ -2361,6 +2379,7 @@ INE073D01013,SUNDRMBRAK,2008-06-23,dividend,6.0,interim,10,EQ,Interim Dividend -
 INE077A01010,DENABANK,2008-06-26,dividend,1.0,final,10,EQ,Agm/Dividend - 10%,nse-filing
 INE361B01024,DIVISLAB,2008-06-26,dividend,4.0,final,2,EQ,Agm/Dividend - 200%,nse-filing
 INE216H01027,EDUCOMP,2008-06-26,dividend,0.5,final,2,EQ,Agm/Dividend - 25%,nse-filing
+INE826A01028,ENTEGRA,2008-06-26,rights,,1:1@prem=15.0,10,EQ,Rights Eq 1:1@Prem Rs 15,nse-filing
 INE176B01018,HAVELLS,2008-06-26,dividend,0.5,final,1,EQ,Agm/Dividend-50%,nse-filing
 INE774D01016,M&MFIN,2008-06-26,dividend,0.9,final,2,EQ,Agm/Dividend - 45%,nse-filing
 INE924A01013,SALORAINTL,2008-06-26,dividend,4.5,final,10,EQ,Agm/Dividend - 45%,nse-filing
@@ -2399,6 +2418,7 @@ INE036A01016,RELINFRA,2008-07-04,dividend,6.3,final,10,EQ,Agm/Dividend - 63%,nse
 INE338A01016,TIRUMALCHM,2008-07-04,dividend,1.0,final,1,EQ,Agm/Dividend - 100%,nse-filing
 INE951I01019,VGUARD,2008-07-04,dividend,0.25,final,1,EQ,Agm/Dividend - 25%,nse-filing
 INE055A01016,ABREL,2008-07-07,dividend,4.5,final,10,EQ,Agm/Dividend - 45%,nse-filing
+INE573A01034,JKTYRE,2008-07-07,rights,,1:3@prem=75.0,2,EQ,Rights-Eq 1:3@Prem Rs 75,nse-filing
 INE569C01020,ORIENTCER,2008-07-07,dividend,0.9,final,1,EQ,Agm/Dividend - 90%,nse-filing
 INE120A01026,CARBORUNIV,2008-07-08,dividend,1.0,final,1,EQ,Dividend - 100%,nse-filing
 INE788H01017,HILTON,2008-07-08,dividend,1.0,final,10,EQ,Agm/Dividend - 10%,nse-filing
@@ -2760,6 +2780,7 @@ INE242A01010,IOC,2008-09-09,dividend,5.5,final,10,EQ,Agm/Dividend - 55%,nse-fili
 INE875A01025,IVRCLINFRA,2008-09-09,dividend,1.4,final,2,EQ,Agm/Dividend - 70%,nse-filing
 INE823A01017,KOTHARIPRO,2008-09-09,dividend,10.0,final,10,EQ,Agm/Dividend - 100%,nse-filing
 INE027A01015,RCF,2008-09-09,dividend,1.0,final,10,EQ,Agm/Dividend - 10%,nse-filing
+INE155A01022,TMPV,2008-09-09,rights,,1:6@prem=None,2,EQ,Rights Eq 1:6/Dif Vot 1:6,nse-filing
 INE400H01019,ADHUNIK,2008-09-10,dividend,1.2,final,10,EQ,Agm/Dividend - 12%,nse-filing
 INE458B01028,BHAGYNAGAR,2008-09-10,dividend,0.6,final,2,EQ,Agm/Dividend - 30%,nse-filing
 INE350H01024,BLKASHYAP,2008-09-10,dividend,0.8,final,1,EQ,Agm/Dividend - 80%,nse-filing
@@ -3011,7 +3032,7 @@ INE968G01025,PROVOGUE,2008-10-03,split,0.2,10->2,2,EQ,Fv Split Rs.10/- To Rs.2/,
 INE195A01010,SUPREMEIND,2008-10-03,dividend,0.9,final,2,EQ,Dividend - 45%,nse-filing
 INE129A01019,GAIL,2008-10-06,bonus,0.66666667,1:2,10,EQ,Bonus 1:2,nse-filing
 INE835D01023,HIRECT,2008-10-06,bonus,0.5,1:1,2,EQ,Bonus - 1:1,nse-filing
-INE836F01026,DISHTV,2008-10-08,rights,,121:100@prem=None,1,EQ,Rights-121:100 Prem@Rs.21,nse-filing
+INE836F01026,DISHTV,2008-10-08,rights,,121:100@prem=21.0,1,EQ,Rights-121:100 Prem@Rs.21,nse-filing
 INE126A01023,EIDPARRY,2008-10-08,dividend,2.0,special,1,EQ,Special Dividend - 200%,nse-filing
 INE010A01011,PRSMJOHNSN,2008-10-10,dividend,1.0,interim,10,EQ,Interim Dividend - 10%   Purpose Revised,nse-filing
 INE212H01026,AIAENG,2008-10-13,split,0.2,10->2,2,EQ,Fv Split Rs.10/- To Rs.2/Rd Date Revised,nse-filing
@@ -3035,6 +3056,7 @@ INE196A01026,MARICO,2008-10-24,dividend,0.3,interim,1,EQ,1st Interim Dividend-30
 INE067A01029,CGPOWER,2008-10-27,dividend,0.7,interim,2,EQ,Interim Dividend - 35%   Purpose Revised,nse-filing
 INE669C01028,TECHM,2008-10-27,dividend,2.0,interim,5,EQ,Interim Dividend - 40%   Purpose Revised,nse-filing
 INE021A01018,ASIANPAINT,2008-10-29,dividend,0.65,interim,1,EQ,Interim Dividend - 65%   Purpose Revised,nse-filing
+INE124G01033,DELTACORP,2008-10-29,demerger,,,1,EQ,Scheme Of Arrangement    Rd Date Revised,nse-filing
 INE852F01015,GDL,2008-10-29,dividend,1.5,interim,10,EQ,Interim Dividend - 15%   Purpose Revised,nse-filing
 INE455F01025,JPASSOCIAT,2008-10-29,dividend,0.3,interim,2,EQ,1st Interim Dividend-15% Purpose Revised,nse-filing
 INE351F01018,JPPOWER,2008-10-29,dividend,0.75,interim,10,EQ,Interim Dividend - 7.5%  Purpose Revised,nse-filing
@@ -3049,10 +3071,11 @@ INE702A01013,VARUNSHIP,2008-10-29,dividend,1.5,interim,10,EQ,2nd Interim Dividen
 INE769A01020,AARTIIND,2008-10-31,dividend,1.8,interim,5,EQ,Interim Dividend - 36%   Purpose Revised,nse-filing
 INE102D01028,GODREJCP,2008-10-31,dividend,0.75,interim,1,EQ,2nd Interim Dividend -75%Purpose Revised,nse-filing
 INE647A01010,SRF,2008-10-31,dividend,5.0,interim,10,EQ,Interim Dividend - 50%   Purpose Revised,nse-filing
-INE529A01010,FMGOETZE,2008-11-03,rights,,71:100@prem=None,10,EQ,Rights 71:100 Prem@Rs.46,nse-filing
+INE529A01010,FMGOETZE,2008-11-03,rights,,71:100@prem=46.0,10,EQ,Rights 71:100 Prem@Rs.46,nse-filing
 INE808B01016,OPTOCIRCUI,2008-11-03,bonus,0.58823529,7:10,10,EQ,Bonus 7:10,nse-filing
 INE761H01022,PAGEIND,2008-11-03,dividend,4.0,interim,10,EQ,2nd Interim Dividend-40% Purpose Revised,nse-filing
 INE877I01016,ARCHIDPLY,2008-11-04,dividend,2.0,interim,10,EQ,Interim Dividend - 20%,nse-filing
+INE943D01017,MPSLTD,2008-11-05,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE742C01031,JINDRILL,2008-11-06,split,0.5,10->5,5,EQ,Fv Split-Rs10/- To Rs5/-,nse-filing
 INE018I01017,MINDTREE,2008-11-06,dividend,1.0,interim,10,EQ,Interim Dividend - 10%,nse-filing
 INE883A01011,MRF,2008-11-06,dividend,3.0,interim,10,EQ,2nd Interim Dividend-30%,nse-filing
@@ -3076,7 +3099,7 @@ INE294A01037,BALLARPUR,2008-11-20,dividend,0.7,final,2,EQ,Agm/Dividend - 35%,nse
 INE477B01010,DVL,2008-11-21,dividend,2.0,final,10,EQ,Agm/Dividend - 20%,nse-filing
 INE224B01024,BIRLAPOWER,2008-11-24,dividend,0.03,final,1,EQ,Agm/Dividend - 3%,nse-filing
 INE212H01026,AIAENG,2008-11-28,dividend,0.6,interim,2,EQ,Interim Dividend - 30%,nse-filing
-,KOTHARIPRO,2008-12-03,split,0.7272727272727273,observed:kite-observed,,,,kite-observed
+INE823A01017,KOTHARIPRO,2008-12-03,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE742B01025,GUFICBIO,2008-12-11,dividend,0.05,final,1,EQ,Agm/Dividend - 5%,nse-filing
 INE873D01016,INDOCO,2008-12-11,dividend,0.65,interim,2,EQ,Interim Dividend - 32.5%,nse-filing
 INE526A01016,GARDENSILK,2008-12-12,dividend,1.5,final,10,EQ,Agm/Dividend - 15%,nse-filing
@@ -3103,6 +3126,7 @@ INE068D01021,CASTEXTECH,2008-12-24,dividend,0.2,final,2,EQ,Agm/Dividend - 10%,ns
 INE425A01011,METALFORGE,2008-12-24,dividend,1.0,final,10,EQ,Agm/Dividend - 10%,nse-filing
 INE851B01016,SHLAKSHMI,2008-12-24,dividend,0.5,final,10,EQ,Agm/Dividend - 5%,nse-filing
 INE510A01010,ENGINERSIN,2008-12-29,dividend,2.25,interim,5,EQ,Interim Dividend - 45%   Purpose Revised,nse-filing
+INE010B01027,ZYDUSLIFE,2008-12-29,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE092B01017,INDNIPPON,2008-12-30,dividend,1.5,interim,5,EQ,Interim Dividend - 30%   Purpose Revised,nse-filing
 INE435C01024,TEXINFRA,2009-01-01,split,0.1,10->1,1,EQ,Fv Split Rs.10/- To Re.1/,nse-filing
 INE676A01019,BBOX,2009-01-02,dividend,0.7,final,2,EQ,Agm/Dividend - 35%,nse-filing
@@ -3180,6 +3204,7 @@ INE284A01012,ESABINDIA,2009-04-09,dividend,2.5,final,10,EQ,Agm/Dividend - 25%,ns
 INE761H01022,PAGEIND,2009-04-15,dividend,7.0,interim,10,EQ,1st Interim Dividend-70% Purpose Revised,nse-filing
 INE411H01024,RSYSTEMS,2009-04-16,dividend,0.24,final,1,EQ,Agm/Dividend - 24%,nse-filing
 INE275B01026,HUHTAMAKI,2009-04-17,dividend,1.8,final,2,EQ,Agm/Dividend-90%,nse-filing
+INE611A01016,RSWM,2009-04-17,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE386A01015,VESUVIUS,2009-04-17,dividend,0.2,final,1,EQ,Agm/Dividend - 20%,nse-filing
 INE667A01018,SYNDIBANK,2009-04-20,dividend,1.5,interim,10,EQ,Interim Dividend - 15%,nse-filing
 INE654A01024,SBT,2009-04-22,dividend,13.0,final,10,EQ,Dividend - 130%          Purpose Revised,nse-filing
@@ -3216,7 +3241,9 @@ INE042H01019,BINANICEM,2009-06-17,dividend,2.1,final,10,EQ,Agm/Dividend - 21%,ns
 INE667A01018,SYNDIBANK,2009-06-17,dividend,1.5,final,10,EQ,Agm/Dividend - 15%,nse-filing
 INE605B01016,ABCIL,2009-06-18,dividend,1.5,final,10,EQ,Agm/Dividend - 15%,nse-filing
 INE491H01018,PLETHICO,2009-06-18,dividend,2.5,final,10,EQ,Agm/Dividend-25%,nse-filing
+INE178C01020,SMARTLINK,2009-06-18,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE813H01021,TORNTPOWER,2009-06-18,dividend,2.0,final,10,EQ,Dividend-Rs.2/- Per Share,nse-filing
+INE192B01031,WELSPUNLIV,2009-06-19,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE920A01011,DOLPHINOFF,2009-06-29,bonus,0.71428571,2:5,10,EQ,Agm/ Div-Rs.3 / Bonus 2:5,nse-filing
 INE133A01011,JSWDULUX,2009-06-29,dividend,16.0,final,10,EQ,Dividend-Rs.16/ Per Share,nse-filing
 INE700A01033,JUBLPHARMA,2009-06-29,dividend,1.5,final,1,EQ,Dividend-Rs.1.50 Pr Share,nse-filing
@@ -3251,6 +3278,7 @@ INE047A01013,GRASIM,2009-07-24,dividend,30.0,final,2,EQ,Dividend-Rs.30/- Pr Shar
 INE267A01017,HINDZINC,2009-07-29,dividend,0.8,final,2,EQ,Agm/Dividend-40%,nse-filing
 INE361B01024,DIVISLAB,2009-07-30,bonus,0.5,1:1,2,EQ,Bonus-1:1,nse-filing
 INE085A01013,CHAMBLFERT,2009-07-31,dividend,1.8,final,10,EQ,Dividend-Rs.1.80 Pr Share,nse-filing
+INE540B01015,RELMEDIA,2009-07-31,demerger,,,5,EQ,Scheme Of Arrangement,nse-filing
 INE349A01021,NRBBEARING,2009-08-03,dividend,1.6,final,2,EQ,Dividend-Rs.1.60 Pr Share,nse-filing
 IN9155A01012,TATAMTRDVR,2009-08-03,dividend,6.5,final,2,EQ,Dividend-Rs.6.50 Pr Share,nse-filing
 INE155A01022,TMPV,2009-08-03,dividend,6.0,final,2,EQ,Dividend-Rs.6/- Per Share,nse-filing
@@ -3338,7 +3366,7 @@ INE975A01015,ELDERPHARM,2009-09-17,dividend,2.5,final,10,EQ,Dividend-Rs.2.50 Pr 
 INE878C01033,GEMINI,2009-09-17,dividend,0.05,final,1,EQ,Dividend-Re.0.05 Pr Share,nse-filing
 INE797A01021,GEOMETRIC,2009-09-17,dividend,0.8,final,2,EQ,Dividend-Re.0.80 Pr Share,nse-filing
 INE374A01029,GUJRATGAS,2009-09-17,bonus,0.5,1:1,2,EQ,Bonus 1:1,nse-filing
-INE691G01015,IMPEXFERRO,2009-09-17,rights,,1:1@prem=None,10,EQ,Agm/Rights 1:1 Prem@Rs.6 Purpose Revised,nse-filing
+INE691G01015,IMPEXFERRO,2009-09-17,rights,,1:1@prem=6.0,10,EQ,Agm/Rights 1:1 Prem@Rs.6 Purpose Revised,nse-filing
 INE168A01017,J&KBANK,2009-09-17,dividend,16.9,final,1,EQ,Dividend-Rs.16.90 Per Sh,nse-filing
 INE651C01018,LAKPRE,2009-09-17,dividend,0.6,final,10,EQ,Dividend-Re.0.60 Pr Share,nse-filing
 INE153A01019,MTNL,2009-09-17,dividend,1.0,final,10,EQ,Dividend-Rs.1/- Per Share,nse-filing
@@ -3357,7 +3385,7 @@ INE308A01027,NAHARPOLY,2009-09-18,dividend,0.35,final,5,EQ,Dividend-Re.0.35 Pr S
 INE290A01027,NAHARSPING,2009-09-18,dividend,0.5,final,5,EQ,Dividend-Re.0.50 Pr Share,nse-filing
 INE808B01016,OPTOCIRCUI,2009-09-18,dividend,4.0,final,10,EQ,Dividend-Rs.4/- Per Share,nse-filing
 INE620C01013,PARAL,2009-09-18,dividend,2.5,final,10,EQ,Dividend-Rs.2.50 Pr Share,nse-filing
-INE889A01026,TV-18,2009-09-18,rights,,1:2@prem=None,5,EQ,Rights 1:2 Prem@Rs.79/-,nse-filing
+INE889A01026,TV-18,2009-09-18,rights,,1:2@prem=79.0,5,EQ,Rights 1:2 Prem@Rs.79/-,nse-filing
 INE458B01028,BHAGYNAGAR,2009-09-22,dividend,0.4,final,2,EQ,Dividend-Re.0.40 Pr Share,nse-filing
 INE271C01023,DLF,2009-09-22,dividend,2.0,final,2,EQ,Dividend-Rs.2/- Per Share,nse-filing
 INE796G01012,JINDALPHOT,2009-09-22,dividend,1.0,final,10,EQ,Dividend-Re.1/- Per Share,nse-filing
@@ -3368,7 +3396,7 @@ INE194B01029,PANORAMUNI,2009-09-23,dividend,2.5,final,5,EQ,Dividend-Rs.2.50 Pr S
 INE343B01030,RAJESHEXPO,2009-09-23,dividend,0.6,final,1,EQ,Dividend-Re.0.60 Pr Share,nse-filing
 INE122H01019,TULIP,2009-09-23,dividend,4.0,final,2,EQ,Dividend-Rs.4/- Per Share,nse-filing
 INE848A01014,IZMO,2009-09-24,dividend,1.25,final,10,EQ,Dividend-Rs.1.25 Pr Sharepurpose Revised,nse-filing
-INE694C01018,LAKSHVILAS,2009-09-24,rights,,1:1@prem=None,10,EQ,Rights 1:1 Prem@Rs.44/-,nse-filing
+INE694C01018,LAKSHVILAS,2009-09-24,rights,,1:1@prem=44.0,10,EQ,Rights 1:1 Prem@Rs.44/-,nse-filing
 INE633B01018,POLYPLEX,2009-09-24,dividend,7.0,final,10,EQ,Dividend-Rs.7/- Per Share,nse-filing
 INE776C01039,GMRAIRPORT,2009-10-01,split,0.5,2->1,1,EQ,Fv Split Rs.2/- To Re.1/-,nse-filing
 INE259B01020,GAMMONIND,2009-10-07,dividend,0.6,final,2,EQ,Dividend-Re.0.60 Pr Share,nse-filing
@@ -3385,7 +3413,7 @@ INE242A01010,IOC,2009-10-29,bonus,0.5,1:1,10,EQ,Bonus 1:1,nse-filing
 INE410B01029,VINATIORGA,2009-10-30,split,0.2,10->2,1,EQ,Fv Spl-Rs10tors2/Div-1.50record Date Revised,nse-filing
 INE378D01032,MADHUCON,2009-11-05,split,0.5,2->1,1,EQ,Fv Split Rs.2/- To Re.1/,nse-filing
 INE102I01027,ADSL,2009-11-11,split,0.5,10->5,5,EQ,Fv Split Rs.10/- To Rs.5/,nse-filing
-INE491A01021,CUB,2009-11-12,rights,,1:4@prem=None,1,EQ,Rights 1:4 Prem@Rs.5/-,nse-filing
+INE491A01021,CUB,2009-11-12,rights,,1:4@prem=5.0,1,EQ,Rights 1:4 Prem@Rs.5/-,nse-filing
 INE952A01022,HINDNATGLS,2009-11-12,split,0.2,10->2,2,EQ,Fv Split Rs.10/- To Rs.2/,nse-filing
 INE213C01025,BANCOINDIA,2009-11-18,dividend,1.5,final,2,EQ,Dividend-Rs.1.50 Pr Share,nse-filing
 ,ALLCARGO,2009-11-19,split,0.2,observed:kite-observed,,,,kite-observed
@@ -3400,35 +3428,39 @@ INE423A01024,ADANIENT,2009-12-10,bonus,0.5,1:1,1,EQ,Bonus 1:1,nse-filing
 INE324A01024,JINDALSAW,2009-12-10,split,0.2,10->2,1,EQ,Fv Split Rs.10/- To Rs.2/,nse-filing
 INE786A01032,JKLAKSHMI,2009-12-17,split,0.5,10->5,5,EQ,Fv Split Rs.10 To Rs.5,nse-filing
 INE455F01025,JPASSOCIAT,2009-12-17,bonus,0.66666667,1:2,2,EQ,Bonus 1:2,nse-filing
-INE669A01022,INFOMEDIA,2009-12-18,rights,,3:2@prem=None,10,EQ,Rights 3:2@Prem Rs.23.50,nse-filing
+INE669A01022,INFOMEDIA,2009-12-18,rights,,3:2@prem=23.5,10,EQ,Rights 3:2@Prem Rs.23.50,nse-filing
 INE539A01019,GHCL,2009-12-22,dividend,2.0,final,10,EQ,Dividend-Rs.2/- Per Share,nse-filing
 INE256C01024,TRIVENI,2009-12-22,dividend,0.7,final,1,EQ,Dividend-Re.0.70 Pr Share,nse-filing
+INE719A01017,ZANDUREALT,2009-12-22,demerger,,,100,EQ,Agm/Scheme Of Arrangement,nse-filing
 INE318J01027,NUTEK,2009-12-23,split,0.5,10->5,5,EQ,Fv Split Rs.10 To Rs.5,nse-filing
 INE855C01015,WEBELSOLAR,2009-12-29,bonus,0.5,1:1,1,EQ,Bonus 1:1,nse-filing
 INE785C01048,LITL,2010-01-04,split,0.1,10->1,1,EQ,Fv Split Rs.10 To Re.1,nse-filing
 INE711A01022,WALCHANNAG,2010-01-12,dividend,1.0,final,2,EQ,Dividend-Re.1/- Per Share,nse-filing
-INE621H01010,RELIGARE,2010-01-15,rights,,2:3@prem=None,10,EQ,Rights 2:3@Prem Rs.345/-,nse-filing
+INE621H01010,RELIGARE,2010-01-15,rights,,2:3@prem=345.0,10,EQ,Rights 2:3@Prem Rs.345/-,nse-filing
 INE003A01024,SIEMENS,2010-01-19,dividend,5.0,final,2,EQ,Dividend-Rs.5/- Per Share,nse-filing
 INE784B01027,WINSOMYARN,2010-01-21,split,0.1,10->1,1,EQ,Fv Split Rs.10 To Re.1,nse-filing
 INE193E01025,BAJAJELEC,2010-01-28,split,0.2,10->2,2,EQ,Fv Split Rs.10 To Rs.2,nse-filing
 INE538H01024,SHREEASHTA,2010-02-01,bonus,0.2,4:1,1,EQ,Bonus 4:1,nse-filing
-INE291F01016,HINDUJAFO,2010-02-03,rights,,7:13@prem=None,10,EQ,Rights 7:13 @Prem Rs.40/-,nse-filing
-INE294B01019,SMLMAH,2010-02-09,rights,,19:50@prem=None,10,EQ,Rights 19:50@Prem Rs.190,nse-filing
+INE291F01016,HINDUJAFO,2010-02-03,rights,,7:13@prem=40.0,10,EQ,Rights 7:13 @Prem Rs.40/-,nse-filing
+INE294B01019,SMLMAH,2010-02-09,rights,,19:50@prem=190.0,10,EQ,Rights 19:50@Prem Rs.190,nse-filing
 INE429I01024,CCCL,2010-02-10,split,0.2,10->2,2,EQ,Fv Split Rs.10 To Rs.2,nse-filing
 INE001B01026,KRBL,2010-02-10,split,0.1,10->1,1,EQ,Fv Spl-Rs10tore1/Div-1.50,nse-filing
 INE356A01018,MPHASIS,2010-02-10,dividend,3.5,final,10,EQ,Dividend-Rs.3.50 Pr Share,nse-filing
 INE409A01015,THIRUSUGAR,2010-02-16,dividend,4.0,final,10,EQ,Dividend-Rs.4/- Per Share,nse-filing
 INE079A01024,AMBUJACEM,2010-02-18,dividend,1.2,final,2,EQ,Dividend-Rs.1.20 Pr Share,nse-filing
+INE435A01028,ANDHRAPAP,2010-02-23,rights,,3:11@prem=None,2,EQ,Rights-Eq3:11 & 1wrnt:1eq,nse-filing
 INE042A01014,ESCORTS,2010-02-25,dividend,1.0,final,10,EQ,Dividend-Rs.1/- Per Share,nse-filing
 INE512B01022,FCSSOFT,2010-02-26,bonus,0.5,1:1,1,EQ,Bonus 1:1,nse-filing
 ,GKB,2010-03-02,consolidation,1.8333333333333337,observed:bhavcopy-observed,,,,bhavcopy-observed
-INE886H01027,TV18BRDCST,2010-03-03,rights,,3:10@prem=None,2,EQ,Rights 3:10 @Prem Rs.91.5,nse-filing
+INE886H01027,TV18BRDCST,2010-03-03,rights,,3:10@prem=91.5,2,EQ,Rights 3:10 @Prem Rs.91.5,nse-filing
+INE318D01020,ZENITHSTL,2010-03-04,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE066A01013,EICHERMOT,2010-03-05,dividend,7.0,final,1,EQ,Dividend-Rs.7/- Per Share,nse-filing
 INE067A01029,CGPOWER,2010-03-08,bonus,0.57142857,3:4,2,EQ,Bonus 3:4,nse-filing
 ,CROMPGREAV,2010-03-08,split,0.5625,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE089C01029,STLTECH,2010-03-09,bonus,0.5,1:1,2,EQ,Bon 1:1/Fv Spl Rs.5tors.2,nse-filing
 INE089C01029,STLTECH,2010-03-09,split,0.4,5->2,2,EQ,Bon 1:1/Fv Spl Rs.5tors.2,nse-filing
 INE159A01016,GLAXO,2010-03-10,dividend,30.0,final,10,EQ,Dividend-Rs.30/- Pr Share,nse-filing
+INE243D01012,BFUTILITIE,2010-03-11,demerger,,,5,EQ,Scheme Of Arrangement,nse-filing
 INE007A01017,CRISIL,2010-03-12,dividend,25.0,final,1,EQ,Dividend-Rs.25/- Pr Share,nse-filing
 INE551A01022,HINDDORROL,2010-03-15,bonus,0.5,1:1,2,EQ,Bonus 1:1,nse-filing
 INE318A01026,PIDILITIND,2010-03-15,bonus,0.5,1:1,1,EQ,Bonus 1:1,nse-filing
@@ -3440,7 +3472,7 @@ INE399C01030,SUPRAJIT,2010-03-18,bonus,0.5,1:1,1,EQ,Bon 1:1/Fv Spl Rs.5tore.1,ns
 INE399C01030,SUPRAJIT,2010-03-18,split,0.2,5->1,1,EQ,Bon 1:1/Fv Spl Rs.5tore.1,nse-filing
 INE571A01020,IPCALAB,2010-03-22,split,0.2,10->2,1,EQ,Fv Split Rs.10 To Rs.2,nse-filing
 INE012A01025,ACC,2010-03-23,dividend,13.0,final,10,EQ,Dividend-Rs.13/- Pr Share,nse-filing
-INE423A01024,ADANIENT,2010-03-23,rights,,1:16@prem=None,1,EQ,Rights 1:16 @Prem Rs.474,nse-filing
+INE423A01024,ADANIENT,2010-03-23,rights,,1:16@prem=474.0,1,EQ,Rights 1:16 @Prem Rs.474,nse-filing
 INE157H01023,KMSUGAR,2010-03-26,split,0.2,10->2,2,EQ,Fv Split Rs.10 To Rs.2,nse-filing
 INE101A01026,M&M,2010-03-29,split,0.5,10->5,5,EQ,Fv Split Rs.10 To Rs.5,nse-filing
 ,LGBBROSLTD,2010-03-30,consolidation,10.0,observed:kite-observed,,,,kite-observed
@@ -3456,9 +3488,10 @@ INE492A01029,SUDARCOLOR,2010-04-09,dividend,15.0,final,10,EQ,Dividend-Rs.15 Per 
 INE427A01017,ALFALAVAL,2010-04-12,dividend,25.0,final,10,EQ,Dividend-Rs.25/- Pr Share,nse-filing
 INE200A01026,GVT&D,2010-04-13,dividend,1.8,final,2,EQ,Dividend-Rs.1.80 Pr Share,nse-filing
 INE189B01011,STYRENIX,2010-04-15,dividend,3.5,final,10,EQ,Dividend-Rs.3.50 Pr Share,nse-filing
-,ZEEMEDIA,2010-04-15,split,0.190558,observed:kite-observed,,,,kite-observed
+INE966H01019,ZEEMEDIA,2010-04-15,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE386A01015,VESUVIUS,2010-04-16,dividend,3.75,final,1,EQ,Dividend-Rs.3.75 Pr Share,nse-filing
 INE093A01033,HEXAWARE,2010-04-20,dividend,0.8,final,2,EQ,Dividend-Re.0.80 Pr Share,nse-filing
+INE062D01024,ALICON,2010-04-21,demerger,,,5,EQ,Scheme Of Arrangement,nse-filing
 INE651A01020,MYSOREBANK,2010-04-26,dividend,10.0,final,10,EQ,Dividend-Rs.10/- Pr Sharepurpose Revised,nse-filing
 INE075D01018,GMBREW,2010-04-28,dividend,2.0,final,10,EQ,Dividend-Rs.2/- Per Share,nse-filing
 INE648A01026,SBBJ,2010-04-28,dividend,14.4,final,10,EQ,Dividend-Rs.14.40 Pr Shr Purpose Revised,nse-filing
@@ -3475,6 +3508,7 @@ INE217A01012,ZUARIIND,2010-05-11,dividend,4.5,final,10,EQ,Dividend-Rs.4.50 Per S
 INE531A01016,KANSAINER,2010-05-12,dividend,15.0,final,1,EQ,Annual General Meeting And Dividend Rs.15/- Per Share,nse-filing
 INE428A01015,ALBK,2010-05-13,dividend,5.5,final,10,EQ,Agm/Dividend Rs 5.50 Per Share/ Election Of  Director,nse-filing
 INE566K01011,ISFT,2010-05-13,dividend,0.75,interim,10,EQ,Interim Dividend-Re.0.75 Per Share,nse-filing
+INE133B01019,KESARENT,2010-05-13,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE351A01019,UNICHEMLAB,2010-05-14,dividend,7.0,interim,2,EQ,2nd Interim Dividend-Rs.7/- Per Share (Purpose Revised),nse-filing
 INE900B01011,KABRAEXTRU,2010-05-17,split,0.5,10->5,5,EQ,Face Value Split From Rs.10/- To Rs.5/-,nse-filing
 INE576I01014,JKIL,2010-05-18,dividend,2.25,interim,5,EQ,Interim Dividend Rs.2.25 Per Share,nse-filing
@@ -3491,6 +3525,7 @@ INE939A01011,STAR,2010-05-21,dividend,1.5,final,10,EQ,Annual General Meeting And
 INE628H01015,ORBITCORP,2010-05-25,dividend,1.5,final,10,EQ,Annual General Meeting And Final Dividend Re.1.50 Per Share,nse-filing
 INE588B01014,ECEIND,2010-05-26,rights,,1:1@prem=90.0,10,EQ,Rights 1:1 @ Premium Rs.90/-,nse-filing
 INE284A01012,ESABINDIA,2010-05-26,dividend,10.0,interim,10,EQ,Interim Dividend-Rs.10/- Per Share,nse-filing
+INE047A01013,GRASIM,2010-05-26,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE565A01014,IOB,2010-05-26,dividend,3.5,final,10,EQ,Dividend-Rs.3.50 Pr Share,nse-filing
 INE549A01026,HCC,2010-05-28,dividend,0.8,final,1,EQ,Agm/Dividend Re.0.80 Per Share,nse-filing
 INE859A01011,PNBGILTS,2010-05-28,dividend,1.0,final,10,EQ,Annual General Meeting And Final Dividend Re.1/- Per Share,nse-filing
@@ -3537,6 +3572,7 @@ INE075A01022,WIPRO,2010-06-15,bonus,0.6,2:3,2,EQ,Bonus 2:3 And Final Dividend Rs
 INE075A01022,WIPRO,2010-06-15,dividend,6.0,final,2,EQ,Bonus 2:3 And Final Dividend Rs.6/- Per Share,nse-filing
 INE429I01024,CCCL,2010-06-16,dividend,0.5,final,2,EQ,Annual General Meeting And Dividend Re.0.50 Per Share,nse-filing
 INE485A01015,CENTENKA,2010-06-16,dividend,6.0,final,10,EQ,Annual General Meeting And Dividend Rs.6/- Per Share,nse-filing
+INE226H01018,SADBHAV,2010-06-16,rights,,1:20@prem=715.0,1,EQ,Rights Eq 1:20 @ Premium Rs.715 Per Share And 3 Warrants : 1 Eq,nse-filing
 INE667A01018,SYNDIBANK,2010-06-16,dividend,3.0,final,10,EQ,Annual General Meeting And Dividend Rs.3/- Per Share,nse-filing
 INE085J01014,THANGAMAYL,2010-06-16,dividend,1.0,final,10,EQ,Final Dividend-Re.1/- Per Share,nse-filing
 INE083B01016,THEMISMED,2010-06-16,dividend,3.0,final,1,EQ,Annual General Meeting And Dividend Rs.3/- Per Share,nse-filing
@@ -3703,6 +3739,7 @@ INE437A01016,APOLLOHOSP,2010-07-15,dividend,7.0,final,5,EQ,Annual General Meetin
 INE465A01025,BHARATFORG,2010-07-15,dividend,1.0,final,2,EQ,Dividend-Re.1/- Per Share,nse-filing
 INE353G01020,DISHMAN,2010-07-15,dividend,1.2,final,2,EQ,Annual General Meeting And Dividend Rs.1.20 Per Share,nse-filing
 INE920A01011,DOLPHINOFF,2010-07-15,dividend,1.5,final,10,EQ,Annual General Meeting And Final Dividend Rs.1.50 Per Share,nse-filing
+INE477B01010,DVL,2010-07-15,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE184H01027,EKC,2010-07-15,dividend,1.2,final,2,EQ,Annual General Meeting And Final Dividend Rs.1.20 Per Share,nse-filing
 INE223G01017,EXCELCROP,2010-07-15,dividend,6.25,final,5,EQ,Annual General Meeting / Dividend Rs 6.25 Per Share,nse-filing
 INE235A01022,FINCABLES,2010-07-15,dividend,0.6,final,2,EQ,Agm/Dividend Rs. 0.60 Per Share,nse-filing
@@ -3963,6 +4000,7 @@ INE930H01015,KPRMILL,2010-08-17,dividend,1.5,final,1,EQ,Annual General Meeting A
 INE059D01012,LAOPALA,2010-08-17,dividend,0.75,final,2,EQ,Dividend-Re.0.75 Per Share,nse-filing
 INE018A01030,LT,2010-08-17,dividend,12.5,final,2,EQ,Annual General Meeting And Dividend Rs.12.50 Per Share,nse-filing
 INE105A01027,SUNCLAYTON,2010-08-17,dividend,1.25,interim,5,EQ,Annual General Meeting And 2nd Interim Dividend Rs.1.25 Per Share (Purpose Revised),nse-filing
+INE130B01023,SURANAT&P,2010-08-17,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 ,SURANATELE,2010-08-17,split,0.3333333333333333,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE686F01025,UBL,2010-08-17,dividend,0.36,final,1,EQ,Annual General Meeting And Dividend Re.0.36 Per Share,nse-filing
 INE105C01023,3PLAND,2010-08-18,dividend,0.2,final,2,EQ,Annual General Meeting And Dividend Re.0.20 Per Share,nse-filing
@@ -4034,7 +4072,7 @@ INE934B01028,MERCATOR,2010-08-30,dividend,0.2,final,1,EQ,Dividend-Re.0.20 Per Sh
 INE870D01012,NFL,2010-08-30,dividend,1.05,final,10,EQ,Annual General Meeting And Dividend Rs.1.05 Per Share,nse-filing
 INE660F01012,PATNI,2010-08-30,dividend,63.0,special,2,EQ,Special Interim Dividend-Rs.63/- Per Share,nse-filing
 INE539A01019,GHCL,2010-08-31,dividend,2.0,final,10,EQ,Annual General Meeting And Dividend Rs.2/- Per Share,nse-filing
-,HARRMALAYA,2010-08-31,split,0.75,observed:kite-observed,,,,kite-observed
+INE544A01019,HARRMALAYA,2010-08-31,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE317F01027,NESCO,2010-08-31,dividend,1.5,final,2,EQ,Annual General Meeting And Dividend Rs.1.50 Per Share,nse-filing
 INE944F01028,RADICO,2010-08-31,dividend,0.6,final,2,EQ,Annual General Meeting And Dividend Re.0.60 Per Share,nse-filing
 INE488D01013,AVTNPL,2010-09-01,dividend,3.0,final,1,EQ,Annual General Meeting And Dividend Rs.3/- Per Share,nse-filing
@@ -4233,6 +4271,8 @@ INE137C01018,ALPHAGEO,2010-09-17,dividend,1.5,final,10,EQ,Annual General Meeting
 INE880B01015,ANSALHSG,2010-09-17,dividend,0.8,final,10,EQ,Dividend-Re.0.80 Per Share,nse-filing
 INE458B01028,BHAGYNAGAR,2010-09-17,dividend,0.4,final,2,EQ,Annual General Meeting And Dividend Re.0.40 Per Share,nse-filing
 INE271C01023,DLF,2010-09-17,dividend,2.0,final,2,EQ,Annual General Meeting And Dividend Rs.2/- Per Share,nse-filing
+INE623B01027,FEL,2010-09-17,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
+IN9623B01058,FELDVR,2010-09-17,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE131A01031,GMDCLTD,2010-09-17,dividend,2.5,final,2,EQ,Dividend-Rs.2.50 Per Share,nse-filing
 INE101D01012,GRANULES,2010-09-17,dividend,1.25,final,1,EQ,Annual General Meeting And Dividend Rs.1.25 Per Share,nse-filing
 INE566K01011,ISFT,2010-09-17,dividend,0.75,final,10,EQ,Annual General Meeting And Dividend Re.0.75 Per Share,nse-filing
@@ -4358,7 +4398,7 @@ INE579C01029,VIMTALABS,2010-09-23,dividend,0.8,final,2,EQ,Annual General Meeting
 INE871B01014,ZICOM,2010-09-23,dividend,5.0,final,10,EQ,Annual General Meeting And Dividend Rs.5/- Per Share,nse-filing
 INE087B01017,ANIKINDS,2010-09-24,dividend,0.6,final,10,EQ,Annual General Meeting And Dividend Re.0.60 Per Share,nse-filing
 INE117B01012,CURATECH,2010-09-24,dividend,0.5,final,10,EQ,Annual General Meeting And Dividend Re.0.50 Per Share,nse-filing
-,DALMIASUG,2010-09-24,split,0.338341,observed:kite-observed,,,,kite-observed
+INE495A01022,DALMIASUG,2010-09-24,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE311H01018,ELAND,2010-09-24,dividend,0.6,final,10,EQ,Annual General Meeting And Dividend Re.0.60 Per Share,nse-filing
 INE878C01033,GEMINI,2010-09-24,dividend,0.05,final,1,EQ,Dividend-Re.0.05 Per Share,nse-filing
 INE788B01028,INDSWFTLTD,2010-09-24,dividend,0.4,final,2,EQ,Annual General Meeting And Dividend Re.0.40 Per Share,nse-filing
@@ -4378,6 +4418,7 @@ INE544K01018,AQUA,2010-10-01,split,0.1,10->1,1,EQ,Face Value Split From Rs.10/- 
 INE648A01026,SBBJ,2010-10-04,dividend,7.2,interim,10,EQ,Interim Dividend Rs.7.20 Per Share (Purpose Revised),nse-filing
 INE087H01022,RENUKA,2010-10-05,dividend,1.0,interim,1,EQ,Interim Dividend-Re.1/- Per Share (Purpose Revised),nse-filing
 INE654A01024,SBT,2010-10-07,dividend,8.0,interim,10,EQ,Interim Dividend-Rs.8/- Per Share,nse-filing
+INE256A01028,ZEEL,2010-10-07,demerger,,,1,EQ,Annual General Meeting / Dividend Rs.2/- Per Share / Scheme Of Arrangement,nse-filing
 INE256A01028,ZEEL,2010-10-07,dividend,2.0,final,1,EQ,Annual General Meeting / Dividend Rs.2/- Per Share / Scheme Of Arrangement,nse-filing
 INE224A01018,GREAVESCOT,2010-10-08,dividend,10.5,special,2,EQ,Final Dividend Rs.3/- Per Share And Special Dividend Rs.7.50 Per Share,nse-filing
 INE176B01018,HAVELLS,2010-10-08,bonus,0.5,1:1,1,EQ,Bonus 1:1,nse-filing
@@ -4391,6 +4432,7 @@ INE224B01024,BIRLAPOWER,2010-10-20,bonus,0.83333333,1:5,1,EQ,Bonus 1:5,nse-filin
 INE076H01017,EONELECT,2010-10-20,dividend,10.0,special,10,EQ,Special Interim Dividend Rs.10/- Per Share,nse-filing
 INE623B01027,FEL,2010-10-20,dividend,0.8,final,2,EQ,Dividend-Re.0.80 Per Share,nse-filing
 IN9623B01058,FELDVR,2010-10-20,dividend,0.9,final,2,EQ,Dividend-Re.0.90 Per Share,nse-filing
+INE688A01022,TCI,2010-10-20,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE152B01027,ACLGATI,2010-10-21,dividend,0.4,final,2,EQ,Annual General Meeting And Dividend Re.0.40 Per Share,nse-filing
 INE874H01015,CANDC,2010-10-21,dividend,2.75,final,10,EQ,Annual General Meeting And Dividend Rs.2.75 Per Share,nse-filing
 INE302A01020,EXIDEIND,2010-10-21,dividend,0.9,interim,1,EQ,Interim Dividend-Re.0.90 Per Share,nse-filing
@@ -4405,6 +4447,7 @@ INE197D01010,JINDALPOLY,2010-10-22,bonus,0.5,1:1,10,EQ,Bonus 1:1,nse-filing
 INE199A01012,PGHL,2010-10-22,dividend,95.0,interim,10,EQ,Interim Dividend-Rs.95/- Per Share (Purpose Revised),nse-filing
 INE385B01031,REIAGROLTD,2010-10-22,dividend,0.1,interim,1,EQ,Interim Dividend-Re.0.10 Per Share,nse-filing
 INE104E01014,SAVERA,2010-10-25,bonus,0.5,1:1,10,EQ,Bonus 1:1,nse-filing
+INE185H01016,CELEBRITY,2010-10-26,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE274G01010,DHANI,2010-10-27,dividend,1.0,interim,2,EQ,Interim Dividend-Re.1/- Per Share,nse-filing
 INE429C01027,SINTEX,2010-10-27,split,0.5,2->1,1,EQ,Face Value Split From Rs.2/- To Re.1/-,nse-filing
 INE519A01011,FOSECOIND,2010-10-28,dividend,5.0,interim,10,EQ,3rd Interim Dividend-Rs.5/- Per Share (Purpose Revised),nse-filing
@@ -4422,6 +4465,7 @@ INE196A01026,MARICO,2010-11-01,dividend,0.3,interim,1,EQ,Interim Dividend-Re.0.3
 INE018I01017,MINDTREE,2010-11-01,dividend,1.25,interim,10,EQ,Interim Dividend-Rs.1.25 Per Share,nse-filing
 INE614A01028,RAMCOIND,2010-11-01,dividend,0.5,interim,1,EQ,Interim Dividend-Re.0.50 Per Share (Purpose Revised),nse-filing
 INE467B01029,TCS,2010-11-01,dividend,2.0,interim,1,EQ,2nd Interim Dividend-Rs.2/- Per Share,nse-filing
+INE435C01024,TEXINFRA,2010-11-01,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE731A01012,ARCHIES,2010-11-02,split,0.2,10->2,2,EQ,Face Value Split From Rs.10/- To Rs.2/-,nse-filing
 INE016A01026,DABUR,2010-11-02,dividend,0.5,interim,1,EQ,Interim Dividend-Re.0.50 Per Share (Purpose Revised),nse-filing
 INE017A01032,GESHIP,2010-11-02,dividend,3.5,interim,10,EQ,Interim Dividend-Rs.3.50 Per Share (Purpose Revised),nse-filing
@@ -4433,6 +4477,7 @@ INE231F01020,SASKEN,2010-11-02,dividend,2.5,interim,10,EQ,Interim Dividend-Rs.2.
 INE647A01010,SRF,2010-11-02,dividend,7.0,interim,10,EQ,Interim Dividend-Rs.7/- Per Share (Purpose Revised),nse-filing
 INE372A01015,APARINDS,2010-11-03,dividend,2.5,interim,10,EQ,Interim Dividend-Rs.2.50 Per Share,nse-filing
 INE006I01012,ASTRAL,2010-11-03,dividend,0.5,interim,1,EQ,Interim Dividend-Re.0.50 Per Share,nse-filing
+INE952D01018,BILPOWER,2010-11-03,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE421D01014,CCL,2010-11-03,dividend,1.5,final,2,EQ,Annual General Meeting And Dividend Rs.1.50 Per Share,nse-filing
 INE236A01020,HCL-INSYS,2010-11-03,dividend,4.0,interim,2,EQ,Annual General Meeting/Final Dividend Rs.2/- Per Share/Interim Dividend Rs.2/- Per Share (Purpose Revised),nse-filing
 INE732F01019,ISMTLTD,2010-11-03,dividend,1.0,final,5,EQ,Annual General Meeting And Dividend Re.1/- Per Share,nse-filing
@@ -4494,6 +4539,7 @@ INE127B01011,HITECHGEAR,2010-12-01,bonus,0.5,1:1,10,EQ,Bonus 1:1,nse-filing
 INE306C01019,ENERGYDEV,2010-12-07,dividend,1.0,final,10,EQ,Annual General Meeting And Dividend Re.1/- Per Share,nse-filing
 INE825H01017,ESSDEE,2010-12-07,dividend,2.0,final,10,EQ,Annual General Meeting /Dividend - Rs.2/- Per Share,nse-filing
 INE226H01018,SADBHAV,2010-12-07,split,0.1,10->1,1,EQ,Face Value Split From Rs.10/- To Re.1/-,nse-filing
+INE080A01014,WEIZMANIND,2010-12-08,demerger,,,10,EQ,Dividend Re.0.50 Per Share And Scheme Of Arrangement,nse-filing
 INE080A01014,WEIZMANIND,2010-12-08,dividend,0.5,final,10,EQ,Dividend Re.0.50 Per Share And Scheme Of Arrangement,nse-filing
 INE199C01026,ADVANIHOTR,2010-12-09,dividend,0.1,final,2,EQ,Annual General Meeting And Dividend Re.0.10 Per Share,nse-filing
 INE259A01022,COLPAL,2010-12-14,dividend,5.0,interim,1,EQ,2nd Interim Dividend Rs.5/- Per Share (Purpose Revised),nse-filing
@@ -4535,6 +4581,7 @@ INE449A01011,AUTOAXLES,2011-01-17,dividend,8.5,final,10,EQ,Dividend-Rs.8.50 Per 
 INE114A01011,SAIL,2011-01-18,dividend,1.2,interim,10,EQ,Interim Dividend-Rs.1.20 Per Share (Purpose Revised),nse-filing
 INE003A01024,SIEMENS,2011-01-18,dividend,5.0,final,2,EQ,Dividend-Rs.5/- Per Share,nse-filing
 INE093A01033,HEXAWARE,2011-01-20,dividend,1.0,special,2,EQ,Special Interim Dividend-Re.1/- Per Share,nse-filing
+INE747B01016,NEXTMEDIA,2011-01-20,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE182A01018,PFIZER,2011-01-20,dividend,12.5,interim,10,EQ,Interim Dividend-Rs.12.50 Per Share,nse-filing
 INE378A01012,WYETH,2011-01-20,dividend,15.0,interim,10,EQ,Interim Dividend-Rs.15/- Per Share,nse-filing
 INE169A01023,COROMANDEL,2011-01-21,dividend,4.0,interim,1,EQ,Interim Dividend-Rs.4/- Per Share,nse-filing
@@ -4542,6 +4589,7 @@ INE134E01011,PFC,2011-01-21,dividend,3.5,interim,10,EQ,Interim Dividend-Rs.3.50 
 INE860A01027,HCLTECH,2011-01-24,dividend,2.0,interim,2,EQ,2nd Interim Dividend-Rs.2/- Per Share (Purpose Revised),nse-filing
 INE189I01016,NELCAST,2011-01-25,dividend,12.0,special,2,EQ,Special Dividend-Rs.12/- Per Share (Purpose Revised),nse-filing
 INE494B01015,TVSMOTOR,2011-01-25,dividend,0.5,interim,1,EQ,Interim Dividend-Re.0.50 Per Share (Purpose Revised),nse-filing
+INE253A01017,HINDMOTOR,2011-01-27,demerger,,,10,EQ,Capital Reduction,nse-filing
 INE467B01029,TCS,2011-01-27,dividend,2.0,interim,1,EQ,3rd Interim Dividend-Rs.2/- Per Share,nse-filing
 INE075A01022,WIPRO,2011-01-27,dividend,2.0,interim,2,EQ,Interim Dividend-Rs.2/- Per Share (Purpose Revised),nse-filing
 INE885A01032,ARE&M,2011-01-28,dividend,2.0,special,1,EQ,Special Dividend-Rs.2/- Per Share (Purpose Revised),nse-filing
@@ -4650,6 +4698,7 @@ INE569C01020,ORIENTCER,2011-03-14,dividend,1.0,interim,1,EQ,Interim Dividend - R
 INE139A01026,NATIONALUM,2011-03-15,bonus,0.5,1:1,5,EQ,Bonus 1:1 And Face Value Split From Rs.10/- To Rs.5/-,nse-filing
 INE139A01026,NATIONALUM,2011-03-15,split,0.5,10->5,5,EQ,Bonus 1:1 And Face Value Split From Rs.10/- To Rs.5/-,nse-filing
 INE648A01026,SBBJ,2011-03-16,rights,,2:5@prem=380.0,10,EQ,Rights 2:5 @ Premium Of Rs 380 Per Share,nse-filing
+INE089A01023,DRREDDY,2011-03-17,demerger,,,1,EQ,Scheme Of Arrangement - Bonus Debentures 6:1,nse-filing
 INE674B01012,HELIOSMATH,2011-03-17,dividend,1.5,final,10,EQ,Annual General Meeting And Dividend Rs.1.50 Per Share,nse-filing
 INE127B01011,HITECHGEAR,2011-03-17,dividend,1.5,interim,10,EQ,Interim Dividend - Rs 1.50 Per Share (Purpose Revised),nse-filing
 INE257A01018,BHEL,2011-03-18,dividend,13.25,interim,2,EQ,Interim Dividend Rs.13.25 Per Share (Purpose Revised),nse-filing
@@ -4664,6 +4713,7 @@ INE126A01023,EIDPARRY,2011-03-24,dividend,2.0,interim,1,EQ,Interim Dividend-Rs.2
 INE067A01029,CGPOWER,2011-03-28,dividend,0.6,interim,2,EQ,3rd Interim Dividend-Re.0.60 Per Share (Purpose Revised),nse-filing
 INE917H01012,SRHHYPOLTD,2011-03-28,dividend,1.5,interim,10,EQ,Interim Dividend-Rs.1.50 Per Share,nse-filing
 INE012A01025,ACC,2011-03-29,dividend,20.5,special,10,EQ,Final Dividend Rs.13/- Per Share And One Time Special Dividend Rs.7.50/- Per Share,nse-filing
+INE825A01012,VTL,2011-03-29,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE259A01022,COLPAL,2011-03-30,dividend,7.0,interim,1,EQ,3rd Interim Dividend-Rs.7/- Per Share (Purpose Revised),nse-filing
 INE671A01010,HONAUT,2011-03-30,dividend,10.0,final,10,EQ,Dividend-Rs.10/- Per Share,nse-filing
 INE092B01017,INDNIPPON,2011-03-30,dividend,3.5,interim,5,EQ,2nd Interim Dividend-Rs.3.50 Per Share (Purpose Revised),nse-filing
@@ -4671,7 +4721,7 @@ INE513A01014,SCHAEFFLER,2011-03-30,dividend,5.0,final,2,EQ,Dividend - Rs.5/- Per
 INE058A01010,SANOFI,2011-03-31,dividend,28.0,special,10,EQ,Annual General Meeting And Dividend - Final - Rs.23/- And Special - Rs.28/- Per Share,nse-filing
 INE890C01046,SANWARIA,2011-04-07,bonus,0.5,1:1,1,EQ,Bonus 1:1,nse-filing
 INE386A01015,VESUVIUS,2011-04-08,dividend,4.0,final,1,EQ,Dividend - Rs. 4.00 Per Share,nse-filing
-,ALEMBICLTD,2011-04-11,split,0.4615384615384615,observed:kite-observed,,,,kite-observed
+INE426A01027,ALEMBICLTD,2011-04-11,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE427A01017,ALFALAVAL,2011-04-11,dividend,30.0,final,10,EQ,Dividend - Rs.30/- Per Share,nse-filing
 INE492A01029,SUDARCOLOR,2011-04-11,dividend,20.0,final,10,EQ,Dividend - Rs. 20 Per Share,nse-filing
 INE401H01017,KKCL,2011-04-13,dividend,6.0,special,10,EQ,Special Interim Dividend Rs 6 Per Share,nse-filing
@@ -4684,6 +4734,7 @@ INE686A01026,CEMPRO,2011-04-19,dividend,1.5,final,1,EQ,Annual General Meeting An
 INE007A01017,CRISIL,2011-04-20,dividend,27.5,interim,1,EQ,Interim Dividend Rs.27.50 Per Share (Purpose Revised),nse-filing
 INE158A01026,HEROMOTOCO,2011-04-20,dividend,70.0,interim,2,EQ,Interim Dividend-Rs.70/- Per Share (Purpose Revised),nse-filing
 INE189B01011,STYRENIX,2011-04-20,dividend,4.0,final,10,EQ,Dividend - Rs. 4 Per Share,nse-filing
+INE069I01010,EMBDL,2011-04-21,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE239A01016,NESTLEIND,2011-04-21,dividend,21.5,interim,1,EQ,Final Dividend Rs.12.50/- Per Share And Interim Dividend Rs.9/- Per Share(Purpose Revised),nse-filing
 INE860A01027,HCLTECH,2011-04-25,dividend,2.0,interim,2,EQ,3rd Interim Dividend-Rs.2/- Per Share (Purpose Revised),nse-filing
 INE640A01023,SKFINDIA,2011-04-25,dividend,7.0,final,10,EQ,Annual General Meeting And Dividend Of Rs. 7 Per Share,nse-filing
@@ -4698,7 +4749,7 @@ INE227C01017,MMFL,2011-05-03,dividend,3.0,interim,10,EQ,Interim Dividend-Rs.3/- 
 INE809I01019,ONMOBILE,2011-05-03,bonus,0.5,1:1,10,EQ,Bonus 1:1,nse-filing
 INE855B01025,RAIN,2011-05-03,dividend,4.6,final,2,EQ,Annual General Meeting And Dividend - Rs. 4.60 Per Share,nse-filing
 INE654A01024,SBT,2011-05-03,dividend,10.0,final,10,EQ,Dividend-Rs.10/- Per Share (Purpose Revised),nse-filing
-,TRIVENI,2011-05-03,split,0.4,observed:kite-observed,,,,kite-observed
+INE256C01024,TRIVENI,2011-05-03,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE651A01020,MYSOREBANK,2011-05-04,dividend,10.0,final,10,EQ,Dividend Rs 10 Per Share (Purpose Revised) (Book Closure Revised),nse-filing
 INE742F01042,ADANIPORTS,2011-05-05,dividend,0.4,interim,2,EQ,Interim Dividend-Re.0.40 Per Share (Purpose Revised),nse-filing
 INE418H01029,ALLCARGO,2011-05-05,dividend,2.5,special,2,EQ,Annual General Meeting/Special Dividend Rs.2/- Per Share And Final Dividend Re.0.50 Per Share,nse-filing
@@ -5263,6 +5314,7 @@ INE085A01013,CHAMBLFERT,2011-08-22,dividend,1.9,final,10,EQ,Dividend-Rs.1.90 Per
 INE258A01016,BEML,2011-08-23,dividend,10.0,final,5,EQ,Dividend-Rs.10/- Per Share,nse-filing
 INE171A01011,FEDERALBNK,2011-08-23,dividend,8.5,final,2,EQ,Annual General Meeting And Dividend Rs.8.50 Per Share,nse-filing
 INE122H01019,TULIP,2011-08-23,dividend,1.6,final,2,EQ,Dividend-Rs.1.60 Per Share,nse-filing
+INE863I01016,BANG,2011-08-24,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE539A01019,GHCL,2011-08-24,dividend,2.0,final,10,EQ,Dividend-Rs.2/- Per Share,nse-filing
 INE585B01010,MARUTI,2011-08-24,dividend,7.5,final,5,EQ,Dividend-Rs.7.50 Per Share,nse-filing
 INE607D01018,ORIENTBELL,2011-08-24,dividend,2.0,final,10,EQ,Annual General Meeting And Dividend Rs.2/- Per Share,nse-filing
@@ -5700,6 +5752,7 @@ INE269A01021,SONATSOFTW,2011-11-09,dividend,0.5,interim,1,EQ,Interim Dividend Re
 INE340A01012,BIRLACORPN,2011-11-11,dividend,2.5,interim,10,EQ,Interim Dividend Rs.2.50 Per Share,nse-filing
 INE500A01029,DCW,2011-11-11,dividend,0.36,final,2,EQ,Annual General Meeting And Dividend Re.0.36 Per Share,nse-filing
 INE805C01010,KCP,2011-11-11,dividend,0.25,interim,1,EQ,2nd Interim Dividend Re.0.25 Per Share (Purpose Revised),nse-filing
+INE569C01020,ORIENTCER,2011-11-11,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE293A01013,ROLTA,2011-11-11,dividend,3.5,final,10,EQ,Annual General Meeting And Dividend Rs.3.50 Per Share,nse-filing
 INE722A01011,SHRIRAMCIT,2011-11-11,dividend,2.5,interim,10,EQ,Interim Dividend Rs.2.50 Per Share,nse-filing
 INE228I01012,ASAHISONG,2011-11-16,dividend,1.25,interim,10,EQ,Interim Dividend Rs.1.25 Per Share,nse-filing
@@ -5719,6 +5772,7 @@ INE068D01021,CASTEXTECH,2011-11-21,bonus,0.5,1:1,2,EQ,Bonus 1:1,nse-filing
 INE721A01013,SHRIRAMFIN,2011-11-21,dividend,2.5,interim,2,EQ,Interim Dividend Rs.2.50 Per Share,nse-filing
 INE325A01013,TIMKEN,2011-11-21,dividend,20.0,interim,10,EQ,Interim Dividend Rs.20/- Per Share,nse-filing
 INE540G01014,AMBIKCO,2011-11-22,dividend,2.0,interim,10,EQ,Interim Dividend Rs.2/- Per Share,nse-filing
+INE324A01024,JINDALSAW,2011-11-22,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE343H01011,SOLARINDS,2011-11-22,dividend,5.0,interim,2,EQ,Interim Dividend Rs.5/- Per Share,nse-filing
 INE647A01010,SRF,2011-11-22,dividend,7.0,interim,10,EQ,Interim Dividend Rs.7/- Per Share,nse-filing
 INE274B01011,MONSANTO,2011-11-23,dividend,10.0,interim,10,EQ,Interim Dividend Rs.10/- Per Share,nse-filing
@@ -5728,14 +5782,14 @@ INE486J01014,INFINITE,2011-11-24,dividend,4.0,interim,10,EQ,Interim Dividend Rs.
 INE305C01011,PANAMAPET,2011-11-24,dividend,3.0,interim,2,EQ,Interim Dividend Rs.3/- Per Share,nse-filing
 INE070C01029,COMPUAGE,2011-11-25,dividend,1.0,interim,10,EQ,Interim Dividend Of Re.1/- Per Share,nse-filing
 INE294A01037,BALLARPUR,2011-12-01,dividend,0.6,final,2,EQ,Dividend Re.0.60 Per Share,nse-filing
-,EMBDL,2011-12-07,split,0.875,observed:kite-observed,,,,kite-observed
+INE069I01010,EMBDL,2011-12-07,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE446C01013,GLOBOFFS,2011-12-07,dividend,0.6,interim,10,EQ,Interim Dividend Re.0.60 Per Share,nse-filing
 INE874H01015,CANDC,2011-12-08,dividend,2.75,final,10,EQ,Annual General Meeting And Dividend Rs.2.75 Per Share,nse-filing
 INE028B01011,SHARONBIO,2011-12-08,dividend,1.8,final,2,EQ,Annual General Meeting And Dividend Rs.1.80 Per Share,nse-filing
 INE065B01013,INDLMETER,2011-12-12,dividend,1.0,final,10,EQ,Annual General Meeting / Dividend Re 1 Per Share,nse-filing
 INE990B01012,KEMROCK,2011-12-12,dividend,2.0,final,10,EQ,Annual General Meeting And Dividend Rs.2/- Per Share,nse-filing
 INE239A01016,NESTLEIND,2011-12-12,dividend,27.0,interim,1,EQ,2nd Interim Dividend Rs.27/- Per Share (Purpose Revised),nse-filing
-,GVT&D,2011-12-14,split,0.9090909090909092,observed:kite-observed,,,,kite-observed
+INE200A01026,GVT&D,2011-12-14,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE360C01016,DPSCLTD,2011-12-15,bonus,0.04347826,22:1,1,EQ,Bonus 22:1 And Face Value Split From Rs.10/- To Re.1/-,nse-filing
 INE360C01016,DPSCLTD,2011-12-15,split,0.1,10->1,1,EQ,Bonus 22:1 And Face Value Split From Rs.10/- To Re.1/-,nse-filing
 INE993A01026,MANINDS,2011-12-15,dividend,2.0,final,5,EQ,Annual General Meeting / Dividend - Rs.2 Per Share,nse-filing
@@ -5747,6 +5801,7 @@ INE686F01025,UBL,2011-12-16,dividend,0.6,final,1,EQ,Annual General Meeting / Div
 INE259A01022,COLPAL,2011-12-20,dividend,9.0,interim,1,EQ,2nd Interim Dividend - Rs.9/- Per Share (Purpose Revised),nse-filing
 INE718H01014,AUTOIND,2011-12-22,dividend,3.0,final,10,EQ,Dividend-Rs.3/- Per Share,nse-filing
 INE249C01011,FEDDERELEC,2011-12-22,dividend,1.5,final,10,EQ,Annual General Meeting / Dividend - Rs.1.50 Per Share,nse-filing
+INE122J01015,PIRPHYTO,2011-12-23,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE130C01021,AMTEKAUTO,2011-12-26,dividend,1.0,final,2,EQ,Annual General Meeting And Dividend Re.1/- Per Share,nse-filing
 INE068D01021,CASTEXTECH,2011-12-26,dividend,0.4,final,2,EQ,Annual General Meeting And Dividend Re.0.40 Per Share,nse-filing
 INE544H01014,JHS,2011-12-26,dividend,0.75,final,10,EQ,Dividend-Re.0.75 Per Share,nse-filing
@@ -5755,6 +5810,7 @@ INE851B01016,SHLAKSHMI,2011-12-26,dividend,3.0,final,10,EQ,Annual General Meetin
 INE771B01032,TRICOM,2011-12-27,dividend,0.2,final,2,EQ,Annual General Meeting And Dividend Re.0.20 Per Share,nse-filing
 INE672B01024,MUNJALAU,2011-12-29,split,0.2,10->2,2,EQ,Face Value Split From Rs.10/- To Rs.2/-,nse-filing
 INE274J01014,OIL,2012-01-03,dividend,25.0,interim,10,EQ,Interim Dividend Rs.25/- Per Share,nse-filing
+INE420C01042,PAISALO,2012-01-05,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE213A01011,ONGC,2012-01-06,dividend,6.25,interim,5,EQ,Interim Dividend Rs.6.25 Per Share (Purpose Revised),nse-filing
 INE449A01011,AUTOAXLES,2012-01-12,dividend,10.0,final,10,EQ,Dividend-Rs.10/- Per Share,nse-filing
 INE003A01024,SIEMENS,2012-01-16,dividend,6.0,final,2,EQ,Dividend - Rs.6/- Per Share,nse-filing
@@ -5806,7 +5862,6 @@ INE061A01014,INDIANCARD,2012-02-08,dividend,10.0,special,10,EQ,Special Interim D
 INE134E01011,PFC,2012-02-08,dividend,5.0,interim,10,EQ,Interim Dividend Rs.5/- Per Share (Purpose Revised),nse-filing
 INE111B01023,63MOONS,2012-02-09,dividend,2.0,interim,2,EQ,3rd Interim Dividend Rs.2/- Per Share (Purpose Revised),nse-filing
 INE008A01015,IDBI,2012-02-09,dividend,2.0,interim,10,EQ,Interim Dividend Rs.2/- Per Share,nse-filing
-,MPSLTD,2012-02-09,split,0.15047,observed:kite-observed,,,,kite-observed
 INE584A01023,NMDC,2012-02-09,dividend,1.0,interim,1,EQ,2nd Interim Dividend Re.1/- Per Share,nse-filing
 INE592A01026,ORIENTPPR,2012-02-09,dividend,1.0,interim,1,EQ,Interim Dividend Re.1/- Per Share,nse-filing
 INE688A01022,TCI,2012-02-09,dividend,0.4,interim,2,EQ,Interim Dividend Re.0.40 Per Share (Purpose Revised),nse-filing
@@ -5958,7 +6013,6 @@ INE002A01018,RELIANCE,2012-05-31,dividend,8.5,final,10,EQ,Annual General Meeting
 INE923A01015,SILINV,2012-05-31,dividend,1.25,final,10,EQ,Dividend Rs 1.25 Per Share,nse-filing
 INE645H01019,SUTLEJTEX,2012-05-31,dividend,5.0,final,1,EQ,Dividend Rs 5 Per Share,nse-filing
 INE411H01024,RSYSTEMS,2012-06-01,dividend,16.0,special,1,EQ,Special Dividend Rs 16 Per Share (Purpose Revised),nse-filing
-,MPSLTD,2012-06-04,split,0.4666666666666667,observed:kite-observed,,,,kite-observed
 INE141A01014,ORIENTBANK,2012-06-04,dividend,7.9,final,10,EQ,Annual General Meeting And Dividend - Rs.7.90 Per Share,nse-filing
 INE494B01015,TVSMOTOR,2012-06-04,dividend,0.7,interim,1,EQ,2nd Interim Dividend - Re.0.70 Per Share,nse-filing
 INE761H01022,PAGEIND,2012-06-05,dividend,10.0,interim,10,EQ,Interim Dividend Rs 10 Per Share (Purpose Revised),nse-filing
@@ -5980,6 +6034,7 @@ INE154A01025,ITC,2012-06-11,dividend,4.5,final,1,EQ,Annual General Meeting/Divid
 INE613A01012,RALLIS,2012-06-11,dividend,1.2,final,1,EQ,Annual General Meeting And Dividend - Rs.1.20 Per Share,nse-filing
 INE685A01028,TORNTPHARM,2012-06-11,dividend,2.5,final,5,EQ,Annual General Meeting/Dividend Rs 2.50 Per Share,nse-filing
 INE156A01020,INDORAMA,2012-06-12,dividend,1.0,final,10,EQ,Annual General Meeting And Dividend Re.1/- Per Share,nse-filing
+INE669A01022,INFOMEDIA,2012-06-12,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE340A01012,BIRLACORPN,2012-06-13,dividend,3.5,final,10,EQ,Annual General Meeting And Dividend - Rs.3.50 Per Share,nse-filing
 ,CINEMAX,2012-06-13,split,0.4545454545454545,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE238A01026,AXISBANK,2012-06-14,dividend,16.0,final,2,EQ,Annual General Meeting And Dividend Rs.16/- Per Share,nse-filing
@@ -6138,6 +6193,7 @@ INE951I01019,VGUARD,2012-07-12,dividend,3.5,final,1,EQ,Annual General Meeting/ D
 INE956G01020,WABAG,2012-07-12,dividend,6.0,final,2,EQ,Annual General Meeting/Dividend Rs 6 Per Share,nse-filing
 INE029A01011,BPCL,2012-07-13,bonus,0.5,1:1,10,EQ,Annual General Meeting/ Dividend Rs 11/- Per Share/ Bonus 1:1,nse-filing
 INE029A01011,BPCL,2012-07-13,dividend,11.0,final,10,EQ,Annual General Meeting/ Dividend Rs 11/- Per Share/ Bonus 1:1,nse-filing
+INE169A01023,COROMANDEL,2012-07-13,demerger,,,1,EQ,Annual General Meeting/Dividend Rs.3/- Per Share/Scheme Of Arrangement - Bonus Debentures 1:1 (Purpose Revised),nse-filing
 INE169A01023,COROMANDEL,2012-07-13,dividend,3.0,final,1,EQ,Annual General Meeting/Dividend Rs.3/- Per Share/Scheme Of Arrangement - Bonus Debentures 1:1 (Purpose Revised),nse-filing
 INE797A01021,GEOMETRIC,2012-07-13,dividend,1.6,final,2,EQ,Annual General Meeting And Dividend - Rs.1.60 Per Share,nse-filing
 INE326A01029,LUPIN,2012-07-13,dividend,3.2,final,2,EQ,Annual General Meeting And Dividend Rs.3.20 Per Share,nse-filing
@@ -6791,6 +6847,7 @@ INE793A01012,ACCELYA,2012-10-23,dividend,10.0,final,10,EQ,Annual General Meeting
 INE007A01017,CRISIL,2012-10-23,dividend,3.0,interim,1,EQ,3rd Interim Dividend Rs.3/- Per Share (Purpose Revised),nse-filing
 INE267A01017,HINDZINC,2012-10-23,dividend,1.6,interim,2,EQ,Interim Dividend Rs.1.60 Per Share (Purpose Revised),nse-filing
 INE338I01027,MOTILALOFS,2012-10-23,dividend,1.0,interim,1,EQ,Interim Dividend Re 1 Per Share (Purpose Revised),nse-filing
+INE349A01021,NRBBEARING,2012-10-23,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE098F01015,AMRUTANJAN,2012-10-25,split,0.2,10->2,1,EQ,Face Value  Split From Rs. 10 To Rs. 2/-,nse-filing
 INE519A01011,FOSECOIND,2012-10-25,dividend,2.0,interim,10,EQ,3rd Interim Dividend Rs 2 Per Share (Purpose Revised),nse-filing
 INE516K01016,GOENKA,2012-10-25,split,0.1,10->1,1,EQ,Face Value Split From Rs.10/- To Re.1/-,nse-filing
@@ -7010,7 +7067,7 @@ INE465A01025,BHARATFORG,2013-03-07,dividend,1.0,interim,2,EQ,Interim Dividend Re
 INE752H01013,CARERATING,2013-03-07,dividend,12.0,interim,10,EQ,Interim Dividend Rs 12 Per Share,nse-filing
 INE042A01014,ESCORTS,2013-03-07,dividend,1.2,final,10,EQ,Annual General Meeting/Dividend Rs 1.20 Per Share,nse-filing
 INE999A01015,KSB,2013-03-07,dividend,4.5,interim,2,EQ,Second Interim Dividend Rs.4.50 Per Share,nse-filing
-,ORIENTPPR,2013-03-07,split,0.207095,observed:kite-observed,,,,kite-observed
+INE592A01026,ORIENTPPR,2013-03-07,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE199A01012,PGHL,2013-03-07,dividend,2.5,final,10,EQ,Annual General Meeting/Dividend Rs 2.50 Per Share,nse-filing
 INE861A01017,VISESHINFO,2013-03-07,bonus,0.90909091,1:10,1,EQ,Bonus 1 : 10,nse-filing
 INE589A01014,NLCINDIA,2013-03-11,dividend,1.0,interim,10,EQ,Interim Dividend Re 1 Per Share,nse-filing
@@ -7028,6 +7085,7 @@ INE012A01025,ACC,2013-03-21,dividend,19.0,final,10,EQ,Annual General Meeting/Div
 INE519A01011,FOSECOIND,2013-03-21,dividend,7.0,final,10,EQ,Annual General Meeting And Dividend Rs.7/- Per Share,nse-filing
 INE992B01026,LAKSHMIEFL,2013-03-21,dividend,0.2,final,2,EQ,Annual General Meeting/Dividend Re 0.20 Per Share,nse-filing
 INE274J01014,OIL,2013-03-21,dividend,12.0,interim,10,EQ,Second Interim Dividend Rs.12/- Share (Purpose Revised),nse-filing
+INE353B01021,PARRYSUGAR,2013-03-21,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE904G01020,RASOYPR,2013-03-21,bonus,0.33333333,2:1,1,EQ,Bonus 2:1 / Face Value Split From Rs. 5/- To Re. 1/-,nse-filing
 INE904G01020,RASOYPR,2013-03-21,split,0.2,5->1,1,EQ,Bonus 2:1 / Face Value Split From Rs. 5/- To Re. 1/-,nse-filing
 INE522D01027,MANAPPURAM,2013-03-22,dividend,1.5,interim,2,EQ,Interim Dividend Rs. 1.50 Per Share,nse-filing
@@ -7045,6 +7103,7 @@ INE303A01010,DICIND,2013-04-02,dividend,4.0,final,10,EQ,Annual General Meeting/D
 INE259A01022,COLPAL,2013-04-04,dividend,9.0,interim,1,EQ,Interim Dividend Rs.9 Per Share (Purpose Revised),nse-filing
 INE159A01016,GLAXO,2013-04-04,dividend,50.0,final,10,EQ,Dividend Rs. 50 Per Share,nse-filing
 INE058A01010,SANOFI,2013-04-05,dividend,29.0,final,10,EQ,Annual General Meeting/Dividend Rs 29 Per Share,nse-filing
+INE075A01022,WIPRO,2013-04-09,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE880B01015,ANSALHSG,2013-04-10,bonus,0.33333333,2:1,10,EQ,Bonus 2:1,nse-filing
 INE268L01020,SHEKHAWATI,2013-04-10,split,0.1,10->1,10,EQ,Face Value Split From Rs.10 To Re.1,nse-filing
 INE189B01011,STYRENIX,2013-04-10,dividend,4.0,final,10,EQ,Annual General Meeting/ Dividend Rs.4.00 Per Share,nse-filing
@@ -7055,6 +7114,8 @@ INE492A01029,SUDARCOLOR,2013-04-12,dividend,17.5,final,10,EQ,Annual General Meet
 INE358A01014,ABBOTINDIA,2013-04-16,dividend,17.0,final,10,EQ,Annual General Meeting And Dividend Rs.17 Per Share,nse-filing
 INE855B01025,RAIN,2013-04-16,dividend,1.1,final,2,EQ,Annual General Meeting/ Dividend Of Rs.1.10 Per Share,nse-filing
 INE386A01015,VESUVIUS,2013-04-16,dividend,4.5,final,1,EQ,Annual General Meeting/ Dividend Rs. 4.50 Per Share,nse-filing
+INE623B01027,FEL,2013-04-17,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
+IN9623B01058,FELDVR,2013-04-17,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE284A01012,ESABINDIA,2013-04-18,dividend,7.5,final,10,EQ,Annual General Meeting / Dividend Rs 7.50 Per Share,nse-filing
 INE640A01023,SKFINDIA,2013-04-18,dividend,7.5,final,10,EQ,Annual General Meeting/Dividend Rs 7.50 Per Share,nse-filing
 INE446C01013,GLOBOFFS,2013-04-22,dividend,0.8,interim,10,EQ,Interim Dividend Re.0.80 Per Share,nse-filing
@@ -7194,6 +7255,8 @@ INE683A01015,SOUTHBANK,2013-06-20,dividend,0.7,final,1,EQ,Annual General Meeting
 INE692A01016,UNIONBANK,2013-06-20,dividend,8.0,final,10,EQ,Annual General  Meeting And Dividend Rs.8/- Per Share,nse-filing
 INE100A01010,ATUL,2013-06-21,dividend,6.0,final,10,EQ,Annual General Meeting/Dividend Rs 6 Per Share,nse-filing
 INE016A01026,DABUR,2013-06-21,dividend,0.85,final,1,EQ,Annual General Meeting / Final Dividend Re.0.85/- Per Equity Share,nse-filing
+INE623B01027,FEL,2013-06-21,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
+IN9623B01058,FELDVR,2013-06-21,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE721A01013,SHRIRAMFIN,2013-06-21,dividend,4.0,final,2,EQ,Annual General Meeting And Dividend - Rs.4/- Per Share,nse-filing
 INE705A01016,VIJAYABANK,2013-06-21,dividend,2.5,final,10,EQ,Annual General Meeting And Dividend Rs.2.50 Per Share,nse-filing
 INE392A01013,VISAKAIND,2013-06-21,dividend,3.5,final,2,EQ,Annual General Meeting And Dividend Rs.3.50 Per Share,nse-filing
@@ -7352,7 +7415,7 @@ INE031B01015,AJANTPHARM,2013-07-18,dividend,6.25,final,2,EQ,Annual General Meeti
 INE438A01022,APOLLOTYRE,2013-07-18,dividend,0.5,final,1,EQ,Annual General Meeting And Dividend Re.0.50 Per Share,nse-filing
 INE034A01011,ARVIND,2013-07-18,dividend,1.65,final,10,EQ,Annual General Meeting/Dividend Rs 1.65/- Per Share,nse-filing
 INE782A01015,BOSCH-HCIL,2013-07-18,dividend,1.5,final,10,EQ,Annual General Meeting / Dividend - Rs 1.50/- Per Share,nse-filing
-,CENTURYPLY,2013-07-18,split,0.9090909090909092,observed:kite-observed,,,,kite-observed
+INE348B01021,CENTURYPLY,2013-07-18,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE559D01011,CREST,2013-07-18,dividend,0.5,final,10,EQ,Annual General Meeting / Dividend - Re 0.50/- Per Share,nse-filing
 INE353G01020,DISHMAN,2013-07-18,dividend,1.2,final,2,EQ,Annual General Meeting And Dividend Rs.1.20 Per Share,nse-filing
 INE920A01011,DOLPHINOFF,2013-07-18,dividend,1.5,final,10,EQ,Annual General Meeting And Dividend Rs.1.50 Per Share,nse-filing
@@ -8040,6 +8103,7 @@ INE930H01015,KPRMILL,2013-10-31,dividend,4.0,interim,1,EQ,Interim Dividend Rs.4/
 INE338I01027,MOTILALOFS,2013-10-31,dividend,1.0,interim,1,EQ,Interim Dividend Re 1 Per Share (Purpose Revised),nse-filing
 INE148I01020,SAMMAANCAP,2013-10-31,dividend,7.0,interim,2,EQ,2nd Interim Dividend Rs.7/- Per Share,nse-filing
 INE105A01035,TVSHLTD,2013-10-31,dividend,9.0,interim,5,EQ,Interim Dividend Rs.9/- Per Share (Purpose Revised),nse-filing
+INE196A01026,MARICO,2013-11-01,demerger,,,1,EQ,Scheme Of Arrangement And First Interim Dividend,nse-filing
 INE239A01016,NESTLEIND,2013-11-01,dividend,18.0,interim,1,EQ,2nd Interim Dividend Rs.18/- Per Share (Purpose Revised),nse-filing
 INE411H01024,RSYSTEMS,2013-11-01,dividend,8.5,interim,1,EQ,2nd Interim Dividend Rs.8.50 Per Share (Purpose Revised),nse-filing
 INE016A01026,DABUR,2013-11-05,dividend,0.75,interim,1,EQ,Interim Dividend Re.0.75 Per Share (Purpose Revised),nse-filing
@@ -8118,6 +8182,7 @@ INE775A01035,MOTHERSON,2013-12-20,bonus,0.66666667,1:2,1,EQ,Bonus 1:2,nse-filing
 INE050B01023,IVC,2013-12-26,bonus,0.66666667,1:2,2,EQ,Bonus 1:2,nse-filing
 INE313D01013,MOHOTAIND,2014-01-02,dividend,0.1,interim,10,EQ,Interim Dividend Re.0.10 Per Share,nse-filing
 INE715A01015,WHEELS,2014-01-06,dividend,4.0,interim,10,EQ,Interim Dividend Rs.4/- Per Share,nse-filing
+INE955D01011,GENUSPOWER,2014-01-09,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE312J01012,COROENGG,2014-01-13,rights,,91:10@prem=10.0,10,EQ,Rights 91:10 @ Premium Rs.10/- Per Share,nse-filing
 INE003A01024,SIEMENS,2014-01-15,dividend,5.0,final,2,EQ,Annual General Meeting / Dividend - Rs 5/- Per Share,nse-filing
 INE711A01022,WALCHANNAG,2014-01-16,dividend,0.4,final,2,EQ,Annual General Meeting / Dividend - Re 0.40/- Per Share,nse-filing
@@ -8239,6 +8304,7 @@ INE442H01011,ASHOKA,2014-02-18,dividend,0.7,interim,5,EQ,Interim Dividend Re 0.7
 INE475B01014,HIKAL,2014-02-18,dividend,2.0,interim,2,EQ,Interim Dividend Rs 2/- Per Share,nse-filing
 INE522D01027,MANAPPURAM,2014-02-18,dividend,0.45,interim,2,EQ,Interim Dividend Re 0.45/- Per Share,nse-filing
 INE114A01011,SAIL,2014-02-18,dividend,2.02,interim,10,EQ,Interim Dividend - Rs 2.02/- Per Share (Purpose Revised),nse-filing
+INE191B01025,WELCORP,2014-02-18,demerger,,,5,EQ,Scheme Of Arrangement,nse-filing
 INE111B01023,63MOONS,2014-02-20,dividend,2.0,interim,2,EQ,Third Interim Dividend Rs.2/- Per Share (Purpose Revised),nse-filing
 INE933K01021,BAJAJCON,2014-02-20,dividend,6.5,interim,1,EQ,Interim Dividend - Rs 6.50/- Per Share,nse-filing
 INE213C01025,BANCOINDIA,2014-02-20,dividend,1.7,interim,2,EQ,Interim Dividend Re 1.70/- Per Share,nse-filing
@@ -8350,6 +8416,7 @@ INE009A01021,INFY,2014-05-29,dividend,43.0,final,5,EQ,Annual General Meeting / F
 INE591A01010,OILCOUNTUB,2014-05-29,dividend,2.0,final,10,EQ,Annual General Meeting / Dividend - Rs 2/- Per Share,nse-filing
 INE062A01012,SBIN,2014-05-29,dividend,15.0,final,1,EQ,Annual General Meeting And Dividend Rs 15 Per Share (Purpose Revised),nse-filing
 INE528G01019,YESBANK,2014-05-29,dividend,8.0,final,2,EQ,Annual General Meeting And Dividend Rs.8 Per Share,nse-filing
+INE940H01014,PGIL,2014-05-30,demerger,,,5,EQ,Scheme Of Arrangement,nse-filing
 INE301A01014,RAYMOND,2014-05-30,dividend,2.0,final,10,EQ,Annual General Meeting / Final Dividend - Rs 2/- Per Share,nse-filing
 INE545H01011,TIIL,2014-05-30,dividend,5.0,interim,10,EQ,Interim Dividend - Rs 5/- Per Share,nse-filing
 INE092B01017,INDNIPPON,2014-06-03,dividend,5.0,interim,5,EQ,Second Interim Dividend - Rs 5/- Per Share,nse-filing
@@ -9080,6 +9147,7 @@ INE298A01020,CUMMINSIND,2014-09-18,dividend,5.0,interim,2,EQ,Interim Dividend Rs
 INE214A01019,CYBERTECH,2014-09-18,dividend,1.0,final,10,EQ,Annual General Meeting / Dividend - Re 1/- Per Share,nse-filing
 INE583C01013,DECCANCE,2014-09-18,dividend,1.2,final,5,EQ,Annual General Meeting / Final Dividend - Rs 1.20/- Per Share,nse-filing
 INE274G01010,DHANI,2014-09-18,dividend,1.0,interim,2,EQ,Annual General Meeting And 2nd Interim Dividend Re.1/- Per Share (Purpose Revised),nse-filing
+INE477B01010,DVL,2014-09-18,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE819L01012,ELGIRUBCO,2014-09-18,dividend,0.37,final,1,EQ,Annual General Meeting / Dividend - Re 0.37/- Per Share,nse-filing
 INE282A01024,ESSARPORTS,2014-09-18,dividend,0.5,final,10,EQ,Annual General Meeting / Dividend - Re 0.50/- Per Share,nse-filing
 INE737H01014,FIEMIND,2014-09-18,dividend,6.0,final,10,EQ,Annual General Meeting / Dividend - Rs 6/- Per Share,nse-filing
@@ -9263,6 +9331,7 @@ INE424H01027,SUNTV,2014-11-13,dividend,2.25,interim,5,EQ,Second Interim Dividend
 INE806A01020,VIKASECO,2014-11-13,bonus,0.4,3:2,1,EQ,Bonus 3 : 2,nse-filing
 INE049B01025,WOCKPHARMA,2014-11-13,dividend,20.0,interim,5,EQ,Interim Dividend - Rs 20/- Per Share,nse-filing
 ,BIRLAPOWER,2014-11-17,split,0.5,observed:bhavcopy-observed,,,,bhavcopy-observed
+INE233B01017,BLUEDART,2014-11-17,demerger,,,10,EQ,Scheme Of Arrangement - Issue Of Bonus Debentures,nse-filing
 INE337A01034,LGBBROSLTD,2014-11-17,dividend,3.2,interim,10,EQ,Interim Dividend - Rs 3.20/- Per Share,nse-filing
 INE781B01015,NOIDATOLL,2014-11-17,dividend,1.0,interim,10,EQ,Interim Dividend - Re 1/- Per Share,nse-filing
 INE231G01010,ORBTEXP,2014-11-17,dividend,2.25,interim,10,EQ,Interim Dividend - Rs 2.25/- Per Share,nse-filing
@@ -9299,6 +9368,7 @@ INE260B01010,GODFRYPHLP,2014-11-28,split,0.2,10->2,2,EQ,Face Value Split From Rs
 INE009A01021,INFY,2014-12-02,bonus,0.5,1:1,5,EQ,Bonus 1:1,nse-filing
 INE294A01037,BALLARPUR,2014-12-03,dividend,0.2,final,2,EQ,Annual General Meeting / Dividend - Re 0.20/- Per Share,nse-filing
 INE090A01013,ICICIBANK,2014-12-04,split,0.2,10->2,2,EQ,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 2/- Per Share,nse-filing
+INE015D01022,MANAKSIA,2014-12-04,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE239A01016,NESTLEIND,2014-12-08,dividend,8.0,interim,1,EQ,Third Interim Dividend - Rs 8/- Per Share (Purpose Revised),nse-filing
 INE475E01018,CAPLIPOINT,2014-12-11,dividend,4.0,final,2,EQ,Annual General Meeting / Final Dividend - Rs 4/- Per Share,nse-filing
 INE028B01011,SHARONBIO,2014-12-11,dividend,0.36,final,2,EQ,Annual General Meeting / Final Dividend - Re 0.36/- Per Share,nse-filing
@@ -9316,12 +9386,6 @@ INE804D01011,INFODRIVE,2014-12-24,split,0.1,10->1,1,EQ,Face Value Split (Sub Div
 INE425A01011,METALFORGE,2014-12-24,dividend,1.0,final,10,EQ,Annual General Meeting / Final Dividend - Re 1/- Per Share,nse-filing
 INE411H01024,RSYSTEMS,2014-12-26,dividend,2.55,special,1,EQ,Fourth Interim (Special) Dividend - Rs 2.55 Per Share (Purpose Revised),nse-filing
 ,SURYAPHARM,2014-12-31,split,0.6666666666666666,observed:bhavcopy-observed,,,,bhavcopy-observed
-,ASHIMASYN,2015-01-01,split,0.7777777777777778,observed:kite-observed,,,,kite-observed
-,CGPOWER,2015-01-01,split,0.341263,observed:kite-observed,,,,kite-observed
-,CONCOR,2015-01-01,split,0.8,observed:kite-observed,,,,kite-observed
-,KTKBANK,2015-01-01,split,0.8181818181818182,observed:kite-observed,,,,kite-observed
-,MASTEK,2015-01-01,split,0.342422,observed:kite-observed,,,,kite-observed
-,TCI,2015-01-01,split,0.5454545454545454,observed:kite-observed,,,,kite-observed
 ,SURYAPHARM,2015-01-02,consolidation,1.5,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE233A01035,GODREJIND,2015-01-05,bonus,0.99920064,1:1250,1,EQ,Bonus 1 : 1250,nse-filing
 INE842C01013,MINDACORP,2015-01-05,bonus,0.5,1:1,2,EQ,Bonus 1:1 / Face Value Split From Rs 10/- Per Share To Rs 2/- Per Share,nse-filing
@@ -9329,6 +9393,7 @@ INE842C01013,MINDACORP,2015-01-05,split,0.2,10->2,2,EQ,Bonus 1:1 / Face Value Sp
 INE982F01028,HATHWAY,2015-01-06,split,0.2,10->2,2,EQ,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 2/- Per Share,nse-filing
 INE463A01020,BERGEPAINT,2015-01-08,split,0.5,2->1,1,EQ,Face Value Split (Sub-Division) - From Rs 2/- Per Share To Re 1/- Per Share,nse-filing
 INE003A01024,SIEMENS,2015-01-14,dividend,6.0,final,2,EQ,Annual General Meeting/Final Dividend - Rs 6/- Per Share,nse-filing
+INE306R01017,INTELLECT,2015-01-16,demerger,,,5,EQ,Scheme Of Arrangement-To Ascertain Eligible Members To Provide Option To Opt For Ncd In Place Of Equity Shares,nse-filing
 INE492A01029,SUDARCOLOR,2015-01-19,dividend,140.0,interim,10,EQ,Second Interim Dividend - Rs 140/- Per Share (Purpose Revised),nse-filing
 INE165B01011,RSSOFTWARE,2015-01-21,split,0.5,10->5,5,EQ,Interim Dividend - Rs 1.50/- Per Share / Face Value Split - From Rs 10/- Per Share To Rs 5/- Per Share (Purpose Revised),nse-filing
 INE165B01011,RSSOFTWARE,2015-01-21,dividend,16.5,interim,5,EQ,Interim Dividend - Rs 1.50/- Per Share / Face Value Split - From Rs 10/- Per Share To Rs 5/- Per Share (Purpose Revised),nse-filing
@@ -9458,11 +9523,13 @@ INE781B01015,NOIDATOLL,2015-03-19,dividend,1.0,interim,10,EQ,Interim Dividend - 
 INE669C01028,TECHM,2015-03-19,bonus,0.5,1:1,5,EQ,Bonus 1:1 / Face Value Split - From Rs 10/- Per Share To Rs 5/- Per Share,nse-filing
 INE669C01028,TECHM,2015-03-19,split,0.5,10->5,5,EQ,Bonus 1:1 / Face Value Split - From Rs 10/- Per Share To Rs 5/- Per Share,nse-filing
 INE031B01015,AJANTPHARM,2015-03-20,split,0.4,5->2,2,EQ,Face Value Split (Sub-Division) - From Rs 5/- Per Share To Rs 2/- Per Share,nse-filing
+INE733E01010,NTPC,2015-03-20,demerger,,,10,EQ,Scheme Of Arrangement - Bonus Debentures 1:1,nse-filing
 INE206B01013,ZODIACLOTH,2015-03-20,dividend,0.6,interim,10,EQ,Interim Dividend - Re 0.60/- Per Share,nse-filing
 INE510A01010,ENGINERSIN,2015-03-23,dividend,3.0,interim,5,EQ,Interim Dividend - Rs 3/- Per Share (Purpose Revised),nse-filing
 INE101D01012,GRANULES,2015-03-23,split,0.1,10->1,1,EQ,Face Value Split Rs 10 To Rs 1,nse-filing
 INE305A01015,TFCILTD,2015-03-23,dividend,1.0,interim,2,EQ,Interim Dividend - Re 1/- Per Share (Purpose Revised),nse-filing
 INE767A01016,AARTIDRUGS,2015-03-24,bonus,0.5,1:1,10,EQ,Bonus 1:1,nse-filing
+INE787D01018,BALKRISIND,2015-03-24,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE126A01023,EIDPARRY,2015-03-24,dividend,2.0,interim,1,EQ,Interim Dividend - Rs 2/- Per Share (Purpose Revised),nse-filing
 INE274J01014,OIL,2015-03-24,dividend,10.0,interim,10,EQ,Interim Dividend - Rs 10/- Per Share (Purpose Revised),nse-filing
 INE213A01011,ONGC,2015-03-24,dividend,4.0,interim,5,EQ,Second Interim Dividend - Rs 4/- Per Share (Purpose Revised),nse-filing
@@ -9526,12 +9593,13 @@ INE522D01027,MANAPPURAM,2015-05-25,dividend,0.45,interim,2,EQ,Interim Dividend -
 ,SURYAPHARM,2015-05-25,consolidation,1.5,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE046A01015,RIIL,2015-05-26,dividend,3.5,final,10,EQ,Annual General Meeting And Dividend Rs - 3.50 Per Share,nse-filing
 INE301A01014,RAYMOND,2015-05-27,dividend,3.0,final,10,EQ,Dividend - Rs 3/- Per Share,nse-filing
+INE034A01011,ARVIND,2015-05-28,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE171A01011,FEDERALBNK,2015-05-28,dividend,2.2,final,2,EQ,Annual General Meeting / Dividend - Rs 2.20/- Per Share,nse-filing
 INE227C01017,MMFL,2015-05-28,dividend,3.0,interim,10,EQ,Interim Dividend - Rs 3/- Per Share,nse-filing
 INE062A01012,SBIN,2015-05-28,dividend,3.5,final,1,EQ,Dividend - Rs 3.50/- Per Share (Purpose Revised),nse-filing
 INE370E01029,VIVIDHA,2015-05-28,bonus,0.09090909,10:1,1,EQ,Bonus 10:1,nse-filing
 INE158A01026,HEROMOTOCO,2015-06-01,dividend,30.0,final,2,EQ,Dividend - Rs 30/- Per Share,nse-filing
-,ADANIENT,2015-06-03,split,0.296819,observed:kite-observed,,,,kite-observed
+INE423A01024,ADANIENT,2015-06-03,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE154A01025,ITC,2015-06-03,dividend,6.25,final,1,EQ,Dividend - Rs 6.25/- Per Share,nse-filing
 INE411H01024,RSYSTEMS,2015-06-03,dividend,0.95,final,1,EQ,Annual General Meeting/Dividend - Re 0.95/- Per Share (Purpose Revised),nse-filing
 INE473B01035,HATSUN,2015-06-04,dividend,1.2,interim,1,EQ,Second Interim Dividend - Rs 1.20 Per Share (Purpose Revised),nse-filing
@@ -9551,6 +9619,7 @@ INE045J01018,FCL,2015-06-11,split,0.2,10->2,1,EQ,Face Valus Split (Sub-Division)
 INE018I01017,MINDTREE,2015-06-11,dividend,10.0,final,10,EQ,Annual General Meeting/ Final Dividend - Rs 10/- Per Share,nse-filing
 INE813H01021,TORNTPOWER,2015-06-11,dividend,1.5,final,10,EQ,Dividend Rs 1.50 Per Share,nse-filing
 INE703A01011,VIDEOIND,2015-06-11,dividend,2.0,final,10,EQ,Annual General Meeting/ Dividend - Rs 2/- Per Share,nse-filing
+INE759A01021,MASTEK,2015-06-12,demerger,,,5,EQ,Scheme Of Arrangement,nse-filing
 INE613A01012,RALLIS,2015-06-12,dividend,1.5,final,1,EQ,Annual General Meeting/Dividend - Rs 1.50/- Per Share,nse-filing
 INE705A01016,VIJAYABANK,2015-06-12,dividend,1.5,final,10,EQ,Annual General Meeting/ Dividend - Rs 1.50 Per Share,nse-filing
 ,INFOSYSTCH,2015-06-15,split,0.5,observed:bhavcopy-observed,,,,bhavcopy-observed
@@ -10185,6 +10254,7 @@ INE249C01011,FEDDERELEC,2015-09-16,dividend,1.0,final,10,EQ,Annual General Meeti
 INE737H01014,FIEMIND,2015-09-16,dividend,7.0,final,10,EQ,Annual General Meeting/ Dividend - Rs 7/- Per Share,nse-filing
 INE460C01014,GANESHHOU,2015-09-16,dividend,2.6,final,10,EQ,Dividend - Rs 2.60/- Per Share,nse-filing
 INE955D01011,GENUSPOWER,2015-09-16,dividend,0.2,final,1,EQ,Annual General Meeting/ Dividend -  Re 0.20/- Per Share,nse-filing
+INE020J01029,GOKUL,2015-09-16,demerger,,,2,EQ,Annual General Meeting/Scheme Of Arrangement,nse-filing
 INE826C01016,GUJAPOLLO,2015-09-16,dividend,2.5,final,10,EQ,Annual General Meeting/ Dividend  - Rs 2.50/- Per Share,nse-filing
 INE681B01017,INDRAMEDCO,2015-09-16,dividend,1.8,final,10,EQ,Annual General Meeting / Dividend Rs 1.80/- Per Share,nse-filing
 INE199G01027,JAGRAN,2015-09-16,dividend,3.5,final,2,EQ,Annual General Meeting/ Dividend -  Rs 3.50/- Per Share,nse-filing
@@ -10364,7 +10434,7 @@ INE475E01018,CAPLIPOINT,2015-10-29,dividend,5.0,final,2,EQ,Annual General Meetin
 INE519A01011,FOSECOIND,2015-10-29,dividend,8.0,interim,10,EQ,Interim Dividend -  Rs 8/- Per Share,nse-filing
 INE602G01020,KITEX,2015-10-29,dividend,0.75,interim,1,EQ,Interim Dividend -  Re 0.75/- Per Share,nse-filing
 INE453D01017,SARLAPOLY,2015-10-29,split,0.1,10->1,1,EQ,Face Value Split From Rs 10 To Re 1 (Record Date Revised),nse-filing
-INE440A01010,ASHIMASYN,2015-10-30,rights,,24:10@prem=None,10,EQ,Rights : 24:10 At Par,nse-filing
+INE440A01010,ASHIMASYN,2015-10-30,rights,,24:10@prem=0.0,10,EQ,Rights : 24:10 At Par,nse-filing
 INE102D01028,GODREJCP,2015-10-30,dividend,1.0,interim,1,EQ,Interim Dividend -  Re 1/- Per Share (Purpose Revised),nse-filing
 INE802C01017,SSWL,2015-10-30,dividend,1.5,interim,1,EQ,Interim Dividend -  Rs 1.50/- Per Share (Purposed Revised),nse-filing
 INE205A01025,VEDL,2015-10-30,dividend,3.5,interim,1,EQ,Interim Dividend -  Rs 3.50/- Per Share,nse-filing
@@ -10420,6 +10490,7 @@ INE418H01029,ALLCARGO,2015-11-19,dividend,1.0,interim,2,EQ,Interim Dividend -  R
 INE406A01029,AUROPHARMA,2015-11-19,dividend,0.6,interim,1,EQ,Interim Dividend - Re 0.60/- Per Share,nse-filing
 INE201K01015,EXPLEOSOL,2015-11-19,dividend,4.0,interim,10,EQ,Interim Dividend -  Rs 4/- Per Share,nse-filing
 INE170I01016,HGS,2015-11-19,dividend,5.0,interim,10,EQ,Interim Dividend - Rs 5/- Per Share,nse-filing
+INE220G01021,JSL,2015-11-19,demerger,,,2,EQ,Composite Scheme Of Arrangement,nse-filing
 INE401H01017,KKCL,2015-11-19,dividend,8.5,interim,10,EQ,Interim Dividend -  Rs 8.50/- Per Share,nse-filing
 INE776I01010,MEP,2015-11-19,dividend,0.1,interim,10,EQ,Interim Dividend - Re 0.10/- Per Share,nse-filing
 INE180A01020,MFSL,2015-11-19,dividend,1.8,interim,2,EQ,Interim Dividend -  Rs 1.80/- Per Share,nse-filing
@@ -10457,14 +10528,15 @@ INE461C01020,GREENPLY,2016-01-06,split,0.2,5->1,1,EQ,Face Value Split (Sub-Divis
 INE890A01016,JMCPROJECT,2016-01-11,rights,,2:7@prem=None,2,EQ,Rights 2:7,nse-filing
 INE933K01021,BAJAJCON,2016-01-19,dividend,11.5,interim,1,EQ,Interim Dividend Rs 11.50 Per Share (Purposed Revised),nse-filing
 INE274J01014,OIL,2016-01-19,dividend,8.0,interim,10,EQ,Interim Dividend-Rs 8/- Per Share (Purposed Revised),nse-filing
-,ABIRLANUVO,2016-01-20,split,0.4285714285714285,observed:bhavcopy-observed,,,,bhavcopy-observed
+INE069A01017,ABIRLANUVO,2016-01-20,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE914E01024,ALANKIT,2016-01-20,dividend,0.2,interim,1,EQ,Interim Dividend  - Re 0.20/- Per Share,nse-filing
+,INDRAYON,2016-01-20,split,0.4285714285714285,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE003A01024,SIEMENS,2016-01-21,dividend,4.0,special,2,EQ,Final Dividend Rs 6/- Plus Special Dividend Rs 4/- Per Share,nse-filing
 INE467B01029,TCS,2016-01-21,dividend,5.5,interim,1,EQ,Interim Dividend - Rs 5.50/- Per Share,nse-filing
 INE018I01017,MINDTREE,2016-01-25,dividend,4.0,interim,10,EQ,Interim Dividend - Rs 4/- Per Share (Purpose Revised),nse-filing
 INE075A01022,WIPRO,2016-01-25,dividend,5.0,interim,2,EQ,Interim Dividend - Rs 5/- Per Share (Purpose Revised),nse-filing
 INE860A01027,HCLTECH,2016-01-27,dividend,6.0,interim,2,EQ,Interim Dividend Rs 6/- Per Share (Purpose Revised),nse-filing
-,MFSL,2016-01-27,split,0.4736842105263157,observed:kite-observed,,,,kite-observed
+INE180A01020,MFSL,2016-01-27,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE524B01027,GANDHITUBE,2016-01-28,dividend,7.5,interim,5,EQ,Interim Dividend Rs 7.50 Per Share (Purpose Revised),nse-filing
 INE759A01021,MASTEK,2016-01-28,dividend,1.5,interim,5,EQ,Interim Dividend-Rs 1.50/- Per Share,nse-filing
 INE918N01018,VETO,2016-01-28,dividend,0.5,interim,10,EQ,Interim Dividend - Re 0.50/- Per Share,nse-filing
@@ -10507,6 +10579,8 @@ INE852F01015,GDL,2016-02-10,dividend,4.0,interim,10,EQ,Interim Dividend - Rs 4/-
 INE176B01018,HAVELLS,2016-02-10,dividend,3.0,special,1,EQ,Special Dividend - Rs 3/- Per Share (Purpose Revised),nse-filing
 INE092B01017,INDNIPPON,2016-02-10,dividend,4.0,interim,5,EQ,Interim Dividend -  Rs 4/- Share,nse-filing
 INE070A01015,SHREECEM,2016-02-10,dividend,12.0,interim,10,EQ,Interim Dividend - Rs 12/- Per Share (Purpose Revised),nse-filing
+INE105C01023,3PLAND,2016-02-11,demerger,,,2,EQ,Scheme Of Arrangement & Reconstruction,nse-filing
+INE606A01024,AMJLAND,2016-02-11,demerger,,,2,EQ,Scheme Of Arrangement & Reconstruction,nse-filing
 INE213C01025,BANCOINDIA,2016-02-11,dividend,0.6,interim,2,EQ,Interim Dividend Re 0.60 Per Share (Purpose Revised),nse-filing
 INE298A01020,CUMMINSIND,2016-02-11,dividend,5.0,interim,2,EQ,Interim Dividend - Rs 5/- Pe R Share,nse-filing
 INE224A01018,GREAVESCOT,2016-02-11,dividend,4.5,interim,2,EQ,Interim Dividend - Rs 4.50/- Per Share (Purpose Revised),nse-filing
@@ -10583,6 +10657,7 @@ INE230R01019,RAMASTEEL,2016-03-14,bonus,0.2,4:1,1,EQ,Bonus 4:1/Face Value Split 
 INE230R01019,RAMASTEEL,2016-03-14,split,0.5,10->5,1,EQ,Bonus 4:1/Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 5/- Per Share,nse-filing
 INE495B01038,SUVEN,2016-03-14,dividend,2.0,special,1,EQ,Interim Dividend - Re 1/- Per Share / Special Dividend - Re 1/- Per Share (Purpose Revised),nse-filing
 INE348B01021,CENTURYPLY,2016-03-15,dividend,1.0,interim,1,EQ,Interim Dividend - Re 1/- Per Share (Purpose Revised),nse-filing
+INE067A01029,CGPOWER,2016-03-15,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE233A01035,GODREJIND,2016-03-15,dividend,1.75,interim,1,EQ,Interim Dividend - Re 1.75 Per Share (Purpose Revised),nse-filing
 INE298G01027,AJMERA,2016-03-16,dividend,1.7,interim,2,EQ,Interim Dividend - Rs 1.70/- Per Share (Purpose Revised),nse-filing
 INE150B01013,ALKYLAMINE,2016-03-16,dividend,10.0,interim,2,EQ,Interim Dividend  - Rs 10/- Per Share (Purpose Revised),nse-filing
@@ -10604,7 +10679,7 @@ INE980A01023,PRESSMN,2016-03-16,dividend,1.2,interim,2,EQ,Interim Dividend - Rs 
 INE076B01010,SIYSIL,2016-03-16,dividend,11.0,interim,2,EQ,Interim Dividend - Rs 11/- Per Share (Purpose Revised),nse-filing
 INE343H01011,SOLARINDS,2016-03-16,dividend,13.5,interim,2,EQ,Interim Dividend - Rs 13.50/- Per Share,nse-filing
 INE269A01021,SONATSOFTW,2016-03-16,dividend,5.5,interim,1,EQ,Interim Dividend - Rs 5.50/- Per Share (Purpose Revised),nse-filing
-INE232I01014,SPARC,2016-03-16,rights,,5:116@prem=None,1,EQ,Rights 5: 116 At Premium Rs 244/- Per Share,nse-filing
+INE232I01014,SPARC,2016-03-16,rights,,5:116@prem=244.0,1,EQ,Rights 5: 116 At Premium Rs 244/- Per Share,nse-filing
 INE685A01028,TORNTPHARM,2016-03-16,dividend,15.0,interim,5,EQ,Interim Dividend - Rs 15/- Per Share (Purpose Revised),nse-filing
 INE484C01030,VEEDOL,2016-03-16,bonus,0.5,1:1,2,EQ,Bonus 1:1/Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 5/- Per Share,nse-filing
 INE484C01030,VEEDOL,2016-03-16,split,0.5,10->5,2,EQ,Bonus 1:1/Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 5/- Per Share,nse-filing
@@ -10786,6 +10861,7 @@ INE847C01020,ROSSELLIND,2016-03-22,dividend,0.5,interim,2,EQ,Interim Dividend - 
 INE105J01010,RPGLIFE,2016-03-22,dividend,1.6,interim,8,EQ,Interim Dividend - Rs 1.60/- Per Share,nse-filing
 INE301D01018,RUBYMILLS,2016-03-22,dividend,1.25,interim,5,EQ,Interim Dividend -Rs 1.25/- Per Share (Purpose Revised),nse-filing
 INE895B01021,RUPA,2016-03-22,dividend,2.75,interim,1,EQ,Interim Dividend - Rs 2.75/- Per Share (Purpose Revised),nse-filing
+INE416A01036,SABTN,2016-03-22,demerger,,,10,EQ,Composite Scheme Of Amalgamation And Arrangement,nse-filing
 INE229C01013,SAGCEM,2016-03-22,dividend,5.0,interim,2,EQ,Interim Dividend - Rs 5/- Per Share,nse-filing
 INE989A01024,SANGHVIMOV,2016-03-22,dividend,3.0,interim,1,EQ,Interim Dividend - Rs 3/- Per Share,nse-filing
 INE453D01017,SARLAPOLY,2016-03-22,dividend,0.8,interim,1,EQ,Interim Dividend - Re 0.80/- Per Share,nse-filing
@@ -10858,7 +10934,10 @@ INE473A01011,LINDEINDIA,2016-05-06,dividend,0.75,final,10,EQ,Annual General Meet
 INE075D01018,GMBREW,2016-05-10,dividend,2.5,final,10,EQ,Annual General Meeting And Dividend Rs.2.50 Per Share,nse-filing
 INE102D01028,GODREJCP,2016-05-10,dividend,2.75,interim,1,EQ,Interim Dividend - Rs 2.75/- Per Share (Purpose Revised),nse-filing
 ,FARMAXIND,2016-05-11,consolidation,1.5,observed:bhavcopy-observed,,,,bhavcopy-observed
+INE623B01027,FEL,2016-05-11,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
+IN9623B01058,FELDVR,2016-05-11,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 ,FARMAXIND,2016-05-12,split,0.6666666666666666,observed:bhavcopy-observed,,,,bhavcopy-observed
+INE796G01012,JINDALPHOT,2016-05-12,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 ,FARMAXIND,2016-05-13,consolidation,1.5,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE093A01033,HEXAWARE,2016-05-13,dividend,2.5,interim,2,EQ,Interim Dividend - Rs 2.50/- Per Share,nse-filing
 ,FARMAXIND,2016-05-17,split,0.6666666666666666,observed:bhavcopy-observed,,,,bhavcopy-observed
@@ -10896,11 +10975,11 @@ INE531A01016,KANSAINER,2016-06-14,dividend,1.25,special,1,EQ,Annual General Meet
 INE422C01014,TINPLATE,2016-06-14,dividend,2.0,final,10,EQ,Annual General Meeting/Dividend Rs 2/- Per Share,nse-filing
 ,FARMAXIND,2016-06-15,consolidation,1.5,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE141A01014,ORIENTBANK,2016-06-15,dividend,0.7,final,10,EQ,Annual General Meeting/Dividend Re 0.70 Per Share,nse-filing
+INE089C01029,STLTECH,2016-06-15,demerger,,,2,EQ,Sheme Of Arrangement,nse-filing
 INE021A01018,ASIANPAINT,2016-06-16,dividend,5.3,final,1,EQ,Annul General Meeting/ Dividend - Rs 5.30/- Per Share,nse-filing
 INE255D01016,GULPOLY,2016-06-16,dividend,1.75,final,1,EQ,Dividend - Rs 1.75/- Per Share,nse-filing
 INE090A01013,ICICIBANK,2016-06-16,dividend,5.0,final,2,EQ,Annual General Meeting/ Dividend - Rs 5/- Per Share,nse-filing
 INE526E01018,SHRIPISTON,2016-06-16,dividend,2.0,final,10,EQ,Dividend - Rs 2/- Per Share,nse-filing
-,STLTECH,2016-06-16,split,0.5454545454545454,observed:kite-observed,,,,kite-observed
 INE628A01036,UPL,2016-06-16,dividend,5.0,final,2,EQ,Annual General Meeting/ Dividend - Rs 5/- Per Share,nse-filing
 ,FARMAXIND,2016-06-17,split,0.6666666666666666,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE692A01016,UNIONBANK,2016-06-17,dividend,1.95,final,10,EQ,Annual General Meeting/ Dividend - Rs 1.95/- Per Share,nse-filing
@@ -11263,6 +11342,7 @@ INE390G01014,GPTINFRA,2016-08-25,dividend,1.0,final,10,EQ,Dividend Re 1/- Per Sh
 INE061A01014,INDIANCARD,2016-08-25,dividend,10.0,interim,10,EQ,Interim Dividend - Rs 10/- Per Share,nse-filing
 INE571B01028,JAYBARMARU,2016-08-25,dividend,2.0,final,2,EQ,Annual General Meeting / Dividend - Rs 2/- Per Share,nse-filing
 INE927D01010,JBMA,2016-08-25,dividend,1.75,final,1,EQ,Annual General Meeting/ Dividend -Rs 1.75 Per Share,nse-filing
+INE324A01024,JINDALSAW,2016-08-25,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE573A01034,JKTYRE,2016-08-25,dividend,2.5,final,2,EQ,Annual General Meeting And Dividend Rs.2.50 Per Share,nse-filing
 INE040D01012,MAYURUNIQ,2016-08-25,dividend,0.25,interim,5,EQ,Buy Back/Interim Dividend - Re 0.25 Per Share,nse-filing
 INE855B01025,RAIN,2016-08-25,dividend,1.0,interim,2,EQ,Interim Dividend - Rs 1/- Per Share,nse-filing
@@ -11270,6 +11350,7 @@ INE089C01029,STLTECH,2016-08-25,dividend,1.0,final,2,EQ,Annual General Meeting/ 
 INE579C01029,VIMTALABS,2016-08-25,dividend,1.0,final,2,EQ,Annual General Meeting/Dividend Re 1/- Per Share,nse-filing
 INE235A01022,FINCABLES,2016-08-26,dividend,2.5,special,2,EQ,Annual General Meeting/Final Dividend Rs.2/- Per Share And One Time Special Dividend Rs.0.50/- Per Share,nse-filing
 INE134E01011,PFC,2016-08-26,bonus,0.5,1:1,10,EQ,Bonus 1:1,nse-filing
+INE688A01022,TCI,2016-08-26,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE462A01022,BAYERCROP,2016-08-29,dividend,17.0,final,10,EQ,Annual General Meeting/Dividend Rs 17/- Per Share,nse-filing
 INE786A01032,JKLAKSHMI,2016-08-29,dividend,0.25,final,5,EQ,Annual General Meeting/Dividend - Re 0.25/- Per Share,nse-filing
 INE878B01027,KEI,2016-08-29,dividend,0.5,final,2,EQ,Annual Genaral Meeting/ Dividend - Re 0.50/- Per Share (Book Closure Start Date Revised),nse-filing
@@ -11423,7 +11504,7 @@ INE594B01012,BSL,2016-09-15,dividend,1.2,final,10,EQ,Annual General Meeting/ Div
 INE070C01029,COMPINFO,2016-09-15,dividend,2.0,final,2,EQ,Annual General Meeting/Dividend-Rs 2/- Per Share,nse-filing
 INE558D01013,CORALFINAC,2016-09-15,dividend,1.0,final,2,EQ,Annual General Meeting/Dividend-Re 1/- Per Share,nse-filing
 INE008I01018,COX&KINGS,2016-09-15,dividend,1.0,final,5,EQ,Annual General Meeting/ Dividend - Re 1/- Per Share,nse-filing
-INE559D01011,CREST,2016-09-15,rights,,1:2@prem=None,10,EQ,Rights 1:2@Prem Rs 40,nse-filing
+INE559D01011,CREST,2016-09-15,rights,,1:2@prem=40.0,10,EQ,Rights 1:2@Prem Rs 40,nse-filing
 INE460C01014,GANESHHOU,2016-09-15,dividend,2.0,final,10,EQ,Dividend - Rs 2/- Per Share,nse-filing
 INE346H01014,GITANJALI,2016-09-15,dividend,0.5,final,10,EQ,Dividend - Re 0.50 Per Share,nse-filing
 INE025B01017,GOLDIAM,2016-09-15,dividend,0.5,final,2,EQ,Annual General Meeting/Dividend Re 0.50 Per Share,nse-filing
@@ -11656,7 +11737,7 @@ INE221J01015,SHARDACROP,2016-11-17,dividend,2.0,interim,10,EQ,Interim Dividend R
 INE526E01018,SHRIPISTON,2016-11-17,dividend,3.0,interim,10,EQ,Interim Dividend Rs 3/- Per Share,nse-filing
 INE142I01023,TAKE,2016-11-17,dividend,0.3,interim,1,EQ,Interim Dividend - Re 0.30 Per Share,nse-filing
 INE049B01025,WOCKPHARMA,2016-11-17,dividend,10.0,interim,5,EQ,Interim Dividend Rs 10/- Per Share (Purose Revised),nse-filing
-INE592A01026,ORIENTPPR,2016-11-18,rights,,1:28@prem=None,1,EQ,Rights 1:28 @ Prem Rs 67/- Per Share,nse-filing
+INE592A01026,ORIENTPPR,2016-11-18,rights,,1:28@prem=67.0,1,EQ,Rights 1:28 @ Prem Rs 67/- Per Share,nse-filing
 ,FARMAXIND,2016-11-21,split,0.6666666666666666,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE524A01029,GABRIEL,2016-11-21,dividend,0.45,interim,1,EQ,Interim Dividend Re 0.45 Per Share (Purpose Revised),nse-filing
 INE010V01017,LTTS,2016-11-21,dividend,3.0,interim,2,EQ,Interim Dividend Rs 3/- Per Share (Purpose Revised),nse-filing
@@ -11805,7 +11886,7 @@ INE334A01015,STERTOOLS,2017-02-16,dividend,1.0,interim,2,EQ,Interim Dividend Re 
 INE142I01023,TAKE,2017-02-16,dividend,0.3,interim,1,EQ,Interim Dividend Re 0.30 Per Share,nse-filing
 INE405E01023,UNOMINDA,2017-02-16,dividend,1.2,interim,2,EQ,Interim Dividend Rs 1.20 Per Share,nse-filing
 INE787D01018,BALKRISIND,2017-02-17,dividend,2.0,interim,2,EQ,Interim Dividend Rs 2/- Per Share (Purpose Revised),nse-filing
-INE476A01014,CANBK,2017-02-17,rights,,1:10@prem=None,2,EQ,Rights 1:10 @ Prem Rs 197/- Per Share,nse-filing
+INE476A01014,CANBK,2017-02-17,rights,,1:10@prem=197.0,2,EQ,Rights 1:10 @ Prem Rs 197/- Per Share,nse-filing
 INE353G01020,DISHMAN,2017-02-17,dividend,1.2,interim,2,EQ,Interim Dividend Rs 1.20 Per Share (Purpose Revised),nse-filing
 INE532F01047,EDELWEISS,2017-02-17,dividend,1.0,interim,1,EQ,Interim Dividend Re 1/- Share,nse-filing
 INE025B01017,GOLDIAM,2017-02-17,dividend,2.0,interim,2,EQ,Interim Dividend Rs 2/- Per Share (Purpose Revised),nse-filing
@@ -11865,7 +11946,7 @@ INE172A01027,CASTROLIND,2017-03-07,dividend,2.0,special,5,EQ,Special Dividend Rs
 INE129A01019,GAIL,2017-03-09,bonus,0.75,1:3,10,EQ,Bonus 1:3,nse-filing
 INE939D01015,HARITASEAT,2017-03-09,dividend,3.0,interim,10,EQ,Interim Dividend Rs 3/- Per Share (Purpose Revised),nse-filing
 INE001A01028,HDFC,2017-03-09,dividend,3.0,interim,2,EQ,Interim Dividend Rs 3/- Per Share (Purpose Revised),nse-filing
-INE473D01015,KINGFA,2017-03-09,rights,,18:91@prem=None,10,EQ,Rights 18:91 @ Prem Rs 740,nse-filing
+INE473D01015,KINGFA,2017-03-09,rights,,18:91@prem=740.0,10,EQ,Rights 18:91 @ Prem Rs 740,nse-filing
 INE139A01026,NATIONALUM,2017-03-09,dividend,2.8,interim,5,EQ,Interim Dividend Rs 2.80 Per Share (Purpose Revised),nse-filing
 INE602A01023,PCBL,2017-03-09,dividend,6.0,interim,1,EQ,Interim Dividend Rs 6/- Per Share,nse-filing
 INE035D01012,SOTL,2017-03-09,dividend,13.5,interim,2,EQ,Interim Dividend Rs 13.50 Per Share,nse-filing
@@ -11911,6 +11992,7 @@ INE583B01015,SANDESH,2017-03-24,dividend,5.0,interim,10,EQ,Interim Dividend Rs 5
 INE522F01014,COALINDIA,2017-03-27,dividend,1.15,interim,10,EQ,Interim Dividend Rs 1.15 Per Share (Purpose Revised),nse-filing
 INE274G01010,DHANI,2017-03-27,dividend,1.0,interim,2,EQ,Interim Dividend Re 1/- Per Share,nse-filing
 ,FARMAXIND,2017-03-27,consolidation,2.0,observed:bhavcopy-observed,,,,bhavcopy-observed
+INE034D01031,PTL,2017-03-27,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 ,FARMAXIND,2017-03-28,split,0.5,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE263A01016,BEL,2017-03-29,dividend,0.9,interim,1,EQ,Interim Dividend Re 0.90 Per Share,nse-filing
 INE267A01017,HINDZINC,2017-03-29,dividend,27.5,special,2,EQ,Special Interim Dividend Rs 27.50 Per Share (Purpose Revised),nse-filing
@@ -11972,6 +12054,7 @@ INE310C01011,HINDCOMPOS,2017-05-25,bonus,0.66666667,1:2,5,EQ,Bonus 1:2/Face Valu
 INE310C01011,HINDCOMPOS,2017-05-25,split,0.5,10->5,5,EQ,Bonus 1:2/Face Value Split (Sub-Division) From Rs 10 Per Share To Rs 5 Per Share,nse-filing
 INE199A01012,PGHL,2017-05-25,dividend,11.0,final,10,EQ,Annual General Meeting/Dividend-Rs 11/- Per Share (Revised),nse-filing
 INE301A01014,RAYMOND,2017-05-25,dividend,1.25,final,10,EQ,Dividend - Rs 1.25/- Per Share,nse-filing
+INE429C01027,SINTEX,2017-05-25,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE064C01014,TRIDENT,2017-05-25,dividend,0.3,final,1,EQ,Annual General Meeting/Dividend-Re 0.30 Per Share,nse-filing
 INE789E01012,JKPAPER,2017-05-26,dividend,1.5,final,10,EQ,Dividend - Rs 1.50/- Per Share,nse-filing
 ,KSERASERA,2017-05-26,split,0.6666666666666666,observed:bhavcopy-observed,,,,bhavcopy-observed
@@ -12003,7 +12086,7 @@ INE602G01020,KITEX,2017-06-09,dividend,0.75,final,1,EQ,Annual General Meeting/Di
 INE613A01012,RALLIS,2017-06-09,dividend,3.75,special,1,EQ,Annual General Meeting/ Dividend -Rs 2.50 Per Share /Special Dividend-Rs 1.25 Per Share,nse-filing
 INE019A01020,JSWSTEEL,2017-06-12,dividend,2.25,final,1,EQ,Annual General Meeting/Dividend - Rs 2.25/- Per Share,nse-filing
 INE296G01013,MUTHOOTCAP,2017-06-12,bonus,0.90909091,1:10,10,EQ,Bonus 1:10,nse-filing
-,OMKARCHEM,2017-06-12,split,0.4615384615384615,observed:bhavcopy-observed,,,,bhavcopy-observed
+INE474L01016,OMKARCHEM,2017-06-12,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE531A01016,KANSAINER,2017-06-13,dividend,0.5,special,1,EQ,Annual General Meeting/Final Dividend Rs 2.50 + Special Dividend Re 0.50 Per Share,nse-filing
 INE467B01029,TCS,2017-06-13,dividend,27.5,final,1,EQ,Annual General Meeting/Dividend - Rs 27.50/- Per Share,nse-filing
 INE075A01022,WIPRO,2017-06-13,bonus,0.5,1:1,2,EQ,Bonus 1:1,nse-filing
@@ -12036,6 +12119,7 @@ INE602G01020,KITEX,2017-06-22,bonus,0.71428571,2:5,1,EQ,Bonus 2:5,nse-filing
 INE672B01024,MUNJALAU,2017-06-22,dividend,2.0,final,2,EQ,Annual General Meeting/Dividend - Rs 2/- Per Share,nse-filing
 INE034D01031,PTL,2017-06-22,dividend,1.25,final,1,EQ,Dividend - Rs 1.25 Per Share,nse-filing
 INE722A01011,SHRIRAMCIT,2017-06-22,dividend,10.0,final,10,EQ,Annual General Meeting/Dividend - Rs 10/- Per Share,nse-filing
+INE812G01017,SMSPHARMA,2017-06-22,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE236G01019,TVSELECT,2017-06-22,dividend,0.5,final,10,EQ,Dividend - Re 0.50 Per Share,nse-filing
 INE628A01036,UPL,2017-06-22,dividend,7.0,final,2,EQ,Annual General Meeting/Dividend-Rs 7 Per Share,nse-filing
 INE191B01025,WELCORP,2017-06-22,dividend,0.5,final,5,EQ,Annual General Meeting/Dividend - Re 0.50 Per Share,nse-filing
@@ -12187,6 +12271,7 @@ INE426A01027,ALEMBICLTD,2017-07-19,dividend,0.2,final,2,EQ,Annual General Meetin
 INE386C01029,ASTRAMICRO,2017-07-19,dividend,1.0,final,2,EQ,Annual General Meeting/Dividend - Re 1 Per Share,nse-filing
 INE121A01016,CHOLAFIN,2017-07-19,dividend,2.0,final,2,EQ,Annual General Meeting/Dividend - Rs 2/- Per Share,nse-filing
 INE302A01020,EXIDEIND,2017-07-19,dividend,0.8,final,1,EQ,Annual General Meeting/Dividend - Re 0.80/- Per Share,nse-filing
+INE047A01013,GRASIM,2017-07-19,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 ,KSERASERA,2017-07-19,split,0.6666666666666666,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE337A01034,LGBBROSLTD,2017-07-19,dividend,7.0,final,10,EQ,Annual General Meeting/Dividend - Rs 7 Per Share,nse-filing
 INE867A01022,MANUGRAPH,2017-07-19,dividend,0.5,final,2,EQ,Dividend- Re. 0.50 Per Share,nse-filing
@@ -12581,6 +12666,7 @@ INE752H01013,CARERATING,2017-09-05,dividend,6.0,interim,10,EQ,Interim Dividend -
 INE172A01027,CASTROLIND,2017-09-05,dividend,4.5,interim,5,EQ,Interim Dividend - Rs 4.50 Per Share,nse-filing
 INE365B01017,DATAMATICS,2017-09-05,dividend,0.75,final,5,EQ,Dividend - Re 0.75 Per Share,nse-filing
 INE038A01020,HINDALCO,2017-09-05,dividend,1.1,final,1,EQ,Annual General Meeting/Dividend - Rs 1.10 Per Share,nse-filing
+INE013A01015,RELCAPITAL,2017-09-05,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE733A01018,STARPAPER,2017-09-05,dividend,2.0,final,10,EQ,Annual General Meeting/Dividend - Rs 2/- Per Share,nse-filing
 INE716B01029,TIPSMUSIC,2017-09-05,dividend,1.0,final,1,EQ,Annual General Meeting/Dividend - Re 1/- Per Share,nse-filing
 INE022I01019,ASIANTILES,2017-09-06,dividend,0.8,final,10,EQ,Annual General Meeting/Dividend - Re 0.80 Per Share,nse-filing
@@ -12876,6 +12962,7 @@ INE305C01011,PANAMAPET,2017-10-03,bonus,0.66666667,1:2,2,EQ,Bonus 1:2,nse-filing
 INE053A01029,INDHOTEL,2017-10-04,rights,,1:5@prem=74.0,1,EQ,Rights 1:5 @ Premium Rs 74/-,nse-filing
 ,KSERASERA,2017-10-04,consolidation,1.5,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE039C01016,JAMNAAUTO,2017-10-05,split,0.2,5->1,1,EQ,Face Value Split (Sub-Division) - From Rs 5/- Per Share To Re 1/- Per Share,nse-filing
+INE966H01019,ZEEMEDIA,2017-10-05,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 ,KSERASERA,2017-10-09,split,0.6666666666666666,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE978A01019,HERITGFOOD,2017-10-10,split,0.5,10->5,5,EQ,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 5/- Per Share,nse-filing
 ,KSERASERA,2017-10-10,consolidation,1.5,observed:bhavcopy-observed,,,,bhavcopy-observed
@@ -12885,6 +12972,7 @@ INE036D01010,KARURVYSYA,2017-10-12,rights,,1:6@prem=74.0,2,EQ,Rights 1:6 @ Premi
 ,KSERASERA,2017-10-12,consolidation,1.5,observed:bhavcopy-observed,,,,bhavcopy-observed
 ,KSERASERA,2017-10-16,split,0.6666666666666666,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE835D01023,HIRECT,2017-10-17,rights,,1:10@prem=78.0,2,EQ,Rights 1:10 @ Premium Rs 78/-,nse-filing
+INE530B01024,IIFL,2017-10-17,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE632C01026,VIDHIING,2017-10-17,dividend,0.2,interim,1,EQ,Interim Dividend - Re 0.20 Per Share,nse-filing
 INE637C01017,POKARNA,2017-10-18,split,0.2,10->2,2,EQ,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 2/- Per Share,nse-filing
 ,KSERASERA,2017-10-23,consolidation,1.5,observed:bhavcopy-observed,,,,bhavcopy-observed
@@ -12916,6 +13004,7 @@ INE663A01017,SUPPETRO,2017-11-02,dividend,1.0,interim,10,EQ,Interim Dividend - R
 INE302A01020,EXIDEIND,2017-11-03,dividend,1.6,interim,1,EQ,Interim Dividend - Rs 1.60 Per Share,nse-filing
 INE916G01016,GEECEE,2017-11-03,dividend,1.5,interim,10,EQ,Interim Dividend - Rs 1.50 Per Share (Purpose Revised),nse-filing
 INE213A01011,ONGC,2017-11-03,dividend,3.0,interim,5,EQ,Interim Dividend - Rs 3/- Per Share (Purpose Revised),nse-filing
+INE705C01012,SHIVTEX,2017-11-03,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 ,FCSSOFT,2017-11-06,split,0.6666666666666666,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE322A01010,GILLETTE,2017-11-06,dividend,10.0,final,10,EQ,Dividend - Rs 10/- Per Share,nse-filing
 INE785A01026,JAYAGROGN,2017-11-06,dividend,0.65,interim,5,EQ,Interim Dividend - Re 0.65 Per Share (Purpose Revised),nse-filing
@@ -12987,6 +13076,7 @@ INE170V01019,SALASAR,2017-11-23,dividend,1.0,interim,1,EQ,Interim Dividend - Re 
 INE354C01019,BHAGERIA,2017-11-24,dividend,5.0,final,5,EQ,Annual General Meeting/Dividend - Rs 5/- Per Share,nse-filing
 INE752H01013,CARERATING,2017-11-28,dividend,6.0,interim,10,EQ,Interim Dividend - Rs 6/- Per Share,nse-filing
 INE764L01010,SADBHIN,2017-11-28,dividend,0.2,interim,10,EQ,Interim Dividend - Re 0.20 Per Share,nse-filing
+INE752P01024,FRETAIL,2017-11-29,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE040D01012,MAYURUNIQ,2017-11-29,dividend,0.25,interim,5,EQ,Interim Dividend - Re 0.25 Per Share,nse-filing
 INE470Y01017,NIACL,2017-11-29,dividend,3.75,interim,5,EQ,Interim Dividend - Rs 3.75 Per Share,nse-filing
 ,FCSSOFT,2017-12-04,split,0.5,observed:bhavcopy-observed,,,,bhavcopy-observed
@@ -13017,6 +13107,7 @@ INE051B01021,VAKRANGEE,2017-12-21,bonus,0.5,1:1,1,EQ,Bonus 1:1,nse-filing
 INE247D01013,JINDWORLD,2017-12-26,split,0.5,10->5,1,EQ,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 5/- Per Share,nse-filing
 INE849C01018,SHALPAINTS,2017-12-28,rights,,6:32@prem=138.0,2,EQ,Rights 6:32 @ Premium Rs 138/-,nse-filing
 INE607L01011,BILENERGY,2018-01-11,bonus,0.5,1:1,1,EQ,Bonus 1:1,nse-filing
+INE592A01026,ORIENTPPR,2018-01-11,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE426D01013,GOACARBON,2018-01-16,dividend,5.0,interim,10,EQ,Interim Dividend - Rs 5/- Per Share,nse-filing
 INE129A01019,GAIL,2018-01-18,dividend,7.65,interim,10,EQ,Interim Dividend - Rs 7.65 Per Share (Purpose Revised),nse-filing
 INE070A01015,SHREECEM,2018-01-18,dividend,20.0,interim,10,EQ,Interim Dividend - Rs 20 Per Share (Purpose Revised),nse-filing
@@ -13028,18 +13119,20 @@ INE003A01024,SIEMENS,2018-01-25,dividend,7.0,final,2,EQ,Dividend- Rs 7/- Per Sha
 INE860A01027,HCLTECH,2018-01-29,dividend,2.0,interim,2,EQ,Interim Dividend - Rs 2 Per Share (Purpose Revised),nse-filing
 INE397D01024,BHARTIARTL,2018-01-30,dividend,2.84,interim,5,EQ,Interim Dividend - Rs 2.84 Per Share,nse-filing
 INE136B01020,CYIENT,2018-01-30,dividend,4.0,interim,5,EQ,Interim Dividend - Rs 4 Per Share,nse-filing
+INE336H01015,GAYAPROJ,2018-01-30,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE401H01017,KKCL,2018-01-30,dividend,9.5,interim,10,EQ,Interim Dividend - Rs 9.50 Per Share,nse-filing
 INE231F01020,SASKEN,2018-01-30,dividend,3.0,interim,10,EQ,Interim Dividend - Rs 3 Per Share (Purpose Revised),nse-filing
 INE520A01019,ZENSARTECH,2018-01-30,dividend,5.0,interim,2,EQ,Interim Dividend - Rs 5 Per Share,nse-filing
 INE780C01023,JMFINANCIL,2018-01-31,dividend,0.7,interim,1,EQ,Interim Dividend - Re 0.70 Per Share,nse-filing
 INE298J01013,NAM-INDIA,2018-01-31,dividend,5.0,interim,10,EQ,Interim Dividend - Rs 5 Per Share,nse-filing
 INE140A01024,PEL,2018-01-31,rights,,1:23@prem=2378.0,2,EQ,Rights 1:23 @ Premium Rs 2378/-,nse-filing
-INE081A01012,TATASTEEL,2018-01-31,rights,,4:25@prem=None,1,EQ,Rights - 4:25 Fully Paid Up Shares @ Premium Rs 500/- Per Share / 2:25 Partly Paid Up Shares @ Premium Rs 605/- Per Share,nse-filing
+INE081A01012,TATASTEEL,2018-01-31,rights,,4:25@prem=500.0,1,EQ,Rights - 4:25 Fully Paid Up Shares @ Premium Rs 500/- Per Share / 2:25 Partly Paid Up Shares @ Premium Rs 605/- Per Share,nse-filing
 INE075A01022,WIPRO,2018-01-31,dividend,1.0,interim,2,EQ,Interim Dividend - Re 1 Per Share (Purpose Revised),nse-filing
 ,FCSSOFT,2018-02-01,consolidation,2.0,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE146L01010,KIRLOSENG,2018-02-01,dividend,2.5,interim,2,EQ,Interim Dividend - Rs 2.50 Per Share,nse-filing
 INE050H01012,RML,2018-02-01,dividend,4.5,interim,10,EQ,Interim Dividend - Rs 4.50 Per Share,nse-filing
 INE148I01020,SAMMAANCAP,2018-02-01,dividend,14.0,interim,2,EQ,Interim Dividend - Rs 14 Per Share,nse-filing
+INE660A01013,SUNDARMFIN,2018-02-01,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE225D01019,SYMPHONY,2018-02-01,dividend,1.0,interim,2,EQ,Interim Dividend - Re 1 Per Share (Purpose Revised),nse-filing
 INE532F01047,EDELWEISS,2018-02-02,dividend,1.05,interim,1,EQ,Interim Dividend - Rs 1.05 Per Share,nse-filing
 ,FCSSOFT,2018-02-02,consolidation,1.5,observed:bhavcopy-observed,,,,bhavcopy-observed
@@ -13176,17 +13269,20 @@ INE129A01019,GAIL,2018-03-27,bonus,0.75,1:3,10,EQ,Bonus 1:3,nse-filing
 INE164B01022,KELLTONTEC,2018-03-27,bonus,0.5,1:1,1,EQ,Bonus 1:1,nse-filing
 INE584A01023,NMDC,2018-03-27,dividend,4.3,interim,1,EQ,Interim Dividend Rs 4.30 Per Share,nse-filing
 INE274J01014,OIL,2018-03-27,bonus,0.66666667,1:2,10,EQ,Bonus 1:2,nse-filing
+INE502K01016,TALWALKARS,2018-03-27,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
 INE919H01018,IMFA,2018-03-28,dividend,5.0,interim,10,EQ,Interim Dividend - Rs 5 Per Share (Record Date Updated),nse-filing
 INE349A01021,NRBBEARING,2018-03-28,dividend,1.4,interim,2,EQ,Interim Dividend - Rs 1.40 Per Share,nse-filing
 INE386A01015,VESUVIUS,2018-03-28,dividend,6.75,final,1,EQ,Dividend - Rs 6.75 Per Share,nse-filing
 INE123W01016,SBILIFE,2018-04-03,dividend,2.0,interim,10,EQ,Interim Dividend - Rs 2 Per Share (Purpose Revised),nse-filing
 INE212H01026,AIAENG,2018-04-04,dividend,8.0,interim,2,EQ,Interim Dividend Rs 8/- Per Share (Purpose Revised),nse-filing
+INE423A01024,ADANIENT,2018-04-05,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE079A01024,AMBUJACEM,2018-04-05,dividend,2.0,final,2,EQ,Dividend - Rs 2 Per Share,nse-filing
 INE077F01035,GOCLCORP,2018-04-05,dividend,1.6,interim,2,EQ,Interim Dividend - Rs 1.60 Per Share,nse-filing
 INE215I01019,MAANALU,2018-04-05,dividend,1.0,interim,5,EQ,Interim Dividend - Re 1  Per Share (Purpose Revised),nse-filing
 INE182D01012,MARATHON,2018-04-05,split,0.5,10->5,5,EQ,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 5/- Per Share,nse-filing
 INE473A01011,LINDEINDIA,2018-04-06,dividend,1.0,final,10,EQ,Annual General Meeting/ Dividend - Re 1 Per Share,nse-filing
-,VIYASH,2018-04-06,split,0.8,observed:kite-observed,,,,kite-observed
+INE939A01011,STAR,2018-04-06,demerger,,,10,EQ,Scheme Of Arrangement,nse-filing
+INE807F01027,VIYASH,2018-04-06,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 INE513A01014,SCHAEFFLER,2018-04-09,dividend,17.0,final,2,EQ,Annual General Meeting/ Dividend - Rs 17 Per Share,nse-filing
 INE519A01011,FOSECOIND,2018-04-12,dividend,12.0,final,10,EQ,Dividend - Rs 12/- Per Share,nse-filing
 INE999A01015,KSB,2018-04-12,dividend,6.0,final,2,EQ,Annual General Meeting/ Dividend - Rs 6 Per Share,nse-filing
@@ -13266,6 +13362,7 @@ INE021A01018,ASIANPAINT,2018-06-14,dividend,6.05,final,1,EQ,Dividend- Rs 6.05 Pe
 ,GANGOTRI,2018-06-14,split,0.5,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE009A01021,INFY,2018-06-14,dividend,30.5,special,5,EQ,Annual General Meeting/ Final Dividend Rs 20.50 Per Shar/ Special Dividend - Rs 10 Per Share,nse-filing
 INE337A01034,LGBBROSLTD,2018-06-14,bonus,0.5,1:1,10,EQ,Bonus 1:1,nse-filing
+INE937C01029,NILAINFRA,2018-06-14,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE422C01014,TINPLATE,2018-06-15,dividend,2.0,final,10,EQ,Annual General Meeting / Dividend- Rs 2 Per Share,nse-filing
 INE854D01024,UNITDSPR,2018-06-15,split,0.2,10->2,2,EQ,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 2/- Per Share,nse-filing
 INE726G01019,ICICIPRULI,2018-06-18,dividend,3.3,special,10,EQ,Annual General Meeting / Final Dividend- Rs 2.20 Per Share / Special Dividend- Rs 1.10 Per Share,nse-filing
@@ -13488,7 +13585,6 @@ INE092T01019,IDFCFIRSTB,2018-07-23,dividend,0.75,final,10,EQ,Dividend Re 0.75 Pe
 INE364A01012,JAYSREETEA,2018-07-23,dividend,0.5,final,5,EQ,Annual General Meeting/Dividend- Re 0.50 Per Share,nse-filing
 INE943D01017,MPSLTD,2018-07-23,dividend,12.0,final,10,EQ,Annual General Meeting/Dividend- Rs 12 Per Share (Purpose Revised),nse-filing
 ,PRAKASHSTL,2018-07-23,split,0.6666666666666666,observed:bhavcopy-observed,,,,bhavcopy-observed
-,PRIVISCL,2018-07-23,split,0.5263157894736842,observed:kite-observed,,,,kite-observed
 INE460H01021,STARCEMENT,2018-07-23,dividend,1.0,final,1,EQ,Annual General Meeting/Dividend- Re 1 Per Share,nse-filing
 INE488B01017,TASTYBITE,2018-07-23,dividend,2.0,final,10,EQ,Annual General Meeting/Dividend- Rs 2 Per Share,nse-filing
 INE760L01018,TBZ,2018-07-23,dividend,0.75,final,10,EQ,Annual General Meeting/Dividend- Re 0.75 Per Share,nse-filing
@@ -13825,6 +13921,7 @@ INE162A01010,GIPCL,2018-09-05,dividend,2.7,final,10,EQ,Dividend Rs 2.70 Per Shar
 INE138C01024,KANORICHEM,2018-09-05,dividend,1.5,final,5,EQ,Dividend- Rs 1.50 Per Share,nse-filing
 INE611A01016,RSWM,2018-09-05,dividend,2.0,final,10,EQ,Annual General Meeting/Dividend Rs -2 Per Share,nse-filing
 INE152M01016,TRITURBINE,2018-09-05,dividend,0.55,final,1,EQ,Dividend Re 0.55 Per Share,nse-filing
+INE423A01024,ADANIENT,2018-09-06,demerger,,,1,EQ,Scheme Of Arrangement,nse-filing
 INE837H01012,ADVENZYMES,2018-09-06,dividend,0.5,final,2,EQ,Annual General Meeting/Dividend Re 0.50 Per Share,nse-filing
 INE213C01025,BANCOINDIA,2018-09-06,dividend,5.8,final,2,EQ,Dividend- Rs 5.80 Per Share,nse-filing
 INE338D01028,BODALCHEM,2018-09-06,dividend,0.8,final,2,EQ,Annual General Meeting/Dividend Re 0.80 Per Share,nse-filing
@@ -13906,7 +14003,6 @@ INE235A01022,FINCABLES,2018-09-12,dividend,4.0,final,2,EQ,Annual General Meeting
 INE460C01014,GANESHHOU,2018-09-12,dividend,1.8,final,10,EQ,Annual General Meeting/Dividend- Rs 1.80 Per Share,nse-filing
 INE955D01011,GENUSPOWER,2018-09-12,dividend,0.41,final,1,EQ,Annual General Meeting/Dividend Re 0.41 Per Share,nse-filing
 INE102D01028,GODREJCP,2018-09-12,bonus,0.66666667,1:2,1,EQ,Bonus 1:2,nse-filing
-,GOLDENTOBC,2018-09-12,split,0.9,observed:kite-observed,,,,kite-observed
 INE025B01017,GOLDIAM,2018-09-12,dividend,1.5,final,2,EQ,Dividend- Rs 1.50 Per Share,nse-filing
 INE586G01017,GULFPETRO,2018-09-12,dividend,0.75,final,5,EQ,Annual General Meeting/Dividend Re 0.75 Per Share,nse-filing
 INE578A01017,HEIDELBERG,2018-09-12,dividend,2.5,final,10,EQ,Annual General Meeting/Dividend Rs 2.5 Per Share,nse-filing
@@ -14147,8 +14243,7 @@ INE763G01038,ISEC,2018-10-26,dividend,3.7,interim,5,EQ,Interim Dividend - Rs 3.7
 INE021A01018,ASIANPAINT,2018-10-29,dividend,2.85,interim,1,EQ,Interim Dividend - Rs 2.85 Per Sh,nse-filing
 INE007A01017,CRISIL,2018-10-29,dividend,7.0,interim,1,EQ,Interim Dividend - Rs 7 Per Share,nse-filing
 INE765G01017,ICICIGI,2018-10-29,dividend,2.5,interim,10,EQ,Interim Dividend - Rs 2.50 Per Share,nse-filing
-,PRIVISCL,2018-10-29,split,0.5294117647058824,observed:kite-observed,,,,kite-observed
-,CESC,2018-10-30,split,0.875,observed:kite-observed,,,,kite-observed
+INE486A01013,CESC,2018-10-30,demerger,,,1,EQ,Composite Scheme Of Arrangement,nse-filing
 INE860A01027,HCLTECH,2018-10-30,dividend,2.0,interim,2,EQ,Interim Dividend - Rs 2 Per Sh,nse-filing
 INE775A01035,MOTHERSON,2018-10-30,bonus,0.66666667,1:2,1,EQ,Bonus 1:2,nse-filing
 INE231F01020,SASKEN,2018-10-30,dividend,5.0,interim,10,EQ,Interim Dividend - Rs 5 Per Share,nse-filing
@@ -14251,7 +14346,6 @@ INE034A01011,ARVIND,2018-11-28,demerger,,,10,EQ,Demerger,nse-filing
 INE216A01014,BRITANNIA,2018-11-29,split,0.5,2->1,1,EQ,Face Value Split (Sub-Division) - From Rs 2/- Per Share To Re 1/- Per Share,nse-filing
 INE039C01016,JAMNAAUTO,2018-11-29,dividend,0.5,interim,1,EQ,Interim Dividend - Re 0.50 Per Sh,nse-filing
 INE284A01012,ESABINDIA,2018-12-03,dividend,90.0,interim,10,EQ,Interim Dividend - Rs 90 Per Share,nse-filing
-,JYOTISTRUC,2018-12-03,split,0.8571428571428571,observed:kite-observed,,,,kite-observed
 INE118H01025,BSE,2018-12-11,dividend,5.0,interim,2,EQ,Interim Dividend - Rs 5 Per Share,nse-filing
 INE239A01016,NESTLEIND,2018-12-12,dividend,50.0,interim,1,EQ,Interim Dividend - Rs 50 Per Share,nse-filing
 INE242A01010,IOC,2018-12-21,dividend,6.75,interim,10,EQ,Interim Dividend - Rs 6.75 Per Share,nse-filing
@@ -14271,7 +14365,7 @@ INE124G01033,DELTACORP,2019-01-18,dividend,0.6,interim,1,EQ,Interim Dividend - R
 ,KSERASERA,2019-01-21,split,0.6666666666666666,observed:bhavcopy-observed,,,,bhavcopy-observed
 ,KSERASERA,2019-01-22,consolidation,1.5,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE018I01017,MINDTREE,2019-01-23,dividend,3.0,interim,10,EQ,Interim Dividend - Rs 3 Per Share,nse-filing
-,BSOFT,2019-01-24,split,0.5625,observed:kite-observed,,,,kite-observed
+INE836A01035,BSOFT,2019-01-24,demerger,,,2,EQ,Composite Scheme Of Arrangement,nse-filing
 INE009A01021,INFY,2019-01-24,dividend,4.0,special,5,EQ,Special Dividend - Rs 4 Per Share,nse-filing
 ,KSERASERA,2019-01-24,split,0.6666666666666666,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE064C01014,TRIDENT,2019-01-24,dividend,1.2,interim,1,EQ,Interim Dividend - Rs 1.20 Per Share,nse-filing
@@ -14524,7 +14618,7 @@ INE835G01018,ALLDIGI,2019-05-30,dividend,10.0,interim,10,EQ,Interim Dividend - R
 INE266F01018,APTECHT,2019-05-30,dividend,3.5,interim,10,EQ,Interim Dividend Rs - 3.50 Per Share,nse-filing
 INE136B01020,CYIENT,2019-05-30,dividend,9.0,final,5,EQ,Annual General Meeting/ Dividend - Rs 9 Per Share,nse-filing
 INE498A01018,DCM,2019-05-30,demerger,,,10,EQ,Demerger,nse-filing
-,IIFL,2019-05-30,split,0.7142857142857143,observed:kite-observed,,,,kite-observed
+INE530B01024,IIFL,2019-05-30,demerger,,,2,EQ,Scheme Of Arrangement,nse-filing
 ,KSERASERA,2019-05-30,consolidation,1.5,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE103A01014,MRPL,2019-05-30,dividend,1.0,final,10,EQ,Dividend Rs - 1 Per Share,nse-filing
 INE761H01022,PAGEIND,2019-05-30,dividend,41.0,interim,10,EQ,Interim Dividend - Rs 41 Per Share,nse-filing
@@ -15080,6 +15174,7 @@ INE756C01015,NDGL,2019-08-21,dividend,2.5,final,10,EQ,Annual General Meeting/Div
 INE807F01027,VIYASH,2019-08-21,dividend,0.2,final,2,EQ,Annual General Meeting/Dividend - Rs 0.20 Per Share,nse-filing
 INE365D01013,ASHIANA,2019-08-22,dividend,0.25,final,2,EQ,Annual General Meeting/Dividend - Re 0.25 Per Share,nse-filing
 INE794B01026,BALAJITELE,2019-08-22,dividend,0.4,final,2,EQ,Annual General Meeting/Dividend - Rs 0.40 Per Share,nse-filing
+INE216A01014,BRITANNIA,2019-08-22,demerger,,,1,EQ,Scheme Of Arangement- Bonus - 1 Debenture For 1 Equity Share Held,nse-filing
 INE558D01013,CORALFINAC,2019-08-22,dividend,0.2,final,2,EQ,Annual General Meeting/Dividend - Rs 0.20 Per Share,nse-filing
 INE00R701025,DALBHARAT,2019-08-22,dividend,2.0,final,2,EQ,Annual General Meeting/Dividend - Rs 2 Per Share,nse-filing
 INE325C01027,DOLLAR,2019-08-22,dividend,1.7,final,2,EQ,Dividend - Rs 1.70 Per Share,nse-filing
@@ -16031,7 +16126,6 @@ INE663B01015,CONTROLPR,2020-03-20,dividend,4.5,interim,10,EQ,Interim Dividend - 
 INE276A01018,GARFIBRES,2020-03-20,dividend,17.0,special,10,EQ,Interim Dividend -Rs 7 Per Share Special Dividend - Rs 10 Per Share,nse-filing
 INE007B01023,GEOJITFSL,2020-03-20,dividend,1.5,interim,1,EQ,Interim Dividend - Rs 1.50 Per Share,nse-filing
 INE071D01025,MENONBE,2020-03-20,dividend,1.25,interim,1,EQ,Interim Dividend - Rs 1.25 Per Share,nse-filing
-,ONELIFECAP,2020-03-20,split,0.5714285714285714,observed:kite-observed,,,,kite-observed
 INE152A01029,THERMAX,2020-03-20,dividend,7.0,interim,2,EQ,Interim Dividend - Rs 7 Per Share,nse-filing
 INE392A01013,VISAKAIND,2020-03-20,dividend,5.0,interim,2,EQ,Interim Dividend - Rs 5 Per Share,nse-filing
 INE423A01024,ADANIENT,2020-03-23,dividend,1.0,interim,1,EQ,Interim Dividend - Re 1 Per Share,nse-filing
@@ -16060,7 +16154,6 @@ INE274V01019,SHANKARA,2020-03-23,dividend,2.0,interim,10,EQ,Interim Dividend - R
 INE085J01014,THANGAMAYL,2020-03-23,dividend,5.0,interim,10,EQ,Interim Dividend - Rs 5 Per Share,nse-filing
 INE764D01017,VSTTILLERS,2020-03-23,dividend,15.0,interim,10,EQ,Interim Dividend - Rs 15 Per Share,nse-filing
 INE010B01027,ZYDUSLIFE,2020-03-23,dividend,3.5,interim,1,EQ,Interim Dividend - Rs 3.50 Per Share,nse-filing
-,COHANCE,2020-03-24,consolidation,2.0,observed:kite-observed,,,,kite-observed
 INE935N01012,DIXON,2020-03-24,dividend,4.0,interim,2,EQ,Interim Dividend - Rs 4 Per Share,nse-filing
 INE539A01019,GHCL,2020-03-24,dividend,3.0,interim,10,EQ,Interim Dividend - Rs 3 Per Share,nse-filing
 INE092B01017,INDNIPPON,2020-03-24,dividend,3.75,interim,5,EQ,Interim Dividend - Rs 3.75 Per Share,nse-filing
@@ -16122,7 +16215,6 @@ INE012A01025,ACC,2020-05-19,dividend,14.0,interim,10,EQ,Interim Dividend - Rs 14
 INE079A01024,AMBUJACEM,2020-05-19,dividend,1.5,interim,2,EQ,Interim Dividend - Rs 1.50 Per Share,nse-filing
 INE267A01017,HINDZINC,2020-05-19,dividend,16.5,interim,2,EQ,Interim Dividend - Rs 16.5 Per Share,nse-filing
 INE881D01027,OFSS,2020-05-19,dividend,180.0,interim,5,EQ,Interim Dividend -Rs 180 Per Share,nse-filing
-,IL&FSTRANS,2020-05-29,split,0.8888888888888888,observed:kite-observed,,,,kite-observed
 INE009A01021,INFY,2020-05-29,dividend,9.5,final,5,EQ,Dividend - Rs 9.50 Per Share,nse-filing
 INE259A01022,COLPAL,2020-06-01,dividend,16.0,interim,1,EQ,Interim Dividend - Rs 16 Per Share,nse-filing
 INE467B01029,TCS,2020-06-03,dividend,6.0,final,1,EQ,Dividend - Rs 6 Per Share,nse-filing
@@ -16149,7 +16241,7 @@ INE172A01027,CASTROLIND,2020-06-26,dividend,3.0,interim,5,EQ,Interim Dividend - 
 INE987B01018,NATCOPHARM,2020-06-26,dividend,1.0,interim,2,EQ,Interim Dividend - Re 1 Per Share,nse-filing
 INE298J01013,NAM-INDIA,2020-06-29,dividend,2.0,final,10,EQ,Dividend - Rs 2 Per Share,nse-filing
 INE058A01010,SANOFI,2020-06-29,dividend,106.0,special,10,EQ,Dividend - Rs 106 Per Share Special Dividend 243 Per Share,nse-filing
-INE647O01011,ABFRL,2020-06-30,rights,,9:77@prem=None,10,EQ,Rights 9:77 Partly Paid @ Premium Rs 100/-,nse-filing
+INE647O01011,ABFRL,2020-06-30,rights,,9:77@prem=100.0,10,EQ,Rights 9:77 Partly Paid @ Premium Rs 100/-,nse-filing
 INE093A01033,HEXAWARE,2020-06-30,dividend,3.0,interim,2,EQ,Interim Dividend - Rs 3 Per Share,nse-filing
 INE202Z01029,TSFINV,2020-06-30,dividend,0.5,final,5,EQ,Annual General Meeting/Dividend - Rs 0.50 Per Share,nse-filing
 INE947Q01010,LAURUSLABS,2020-07-01,dividend,1.0,final,2,EQ,Annual General Meeting/Dividend - Re 1 Per Share,nse-filing
@@ -16600,7 +16692,6 @@ INE03QK01018,COHANCE,2020-09-25,bonus,0.5,1:1,1,EQ,Bonus 1:1,nse-filing
 INE947Q01010,LAURUSLABS,2020-09-29,split,0.2,10->2,2,EQ,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 2/- Per Share,nse-filing
 INE767A01016,AARTIDRUGS,2020-09-30,bonus,0.25,3:1,10,EQ,Bonus 3:1,nse-filing
 INE036B01022,GAEL,2020-10-01,split,0.5,2->1,1,EQ,Face Value Split (Sub-Division) - From Rs 2/- Per Share To Re 1/- Per Share,nse-filing
-,PATSPINLTD,2020-10-01,split,0.8333333333333334,observed:kite-observed,,,,kite-observed
 INE976T01013,SAGARDEEP,2020-10-05,bonus,0.66666667,1:2,10,EQ,Bonus 1:2,nse-filing
 INE242C01024,ANANTRAJ,2020-10-06,demerger,,,2,EQ,Demerger,nse-filing
 INE852F01015,GDL,2020-10-07,dividend,2.0,interim,10,EQ,Interim Dividend - Rs 2 Per Share,nse-filing
@@ -17026,6 +17117,7 @@ INE161L01027,VIKASLIFE,2021-05-20,rights,,2:5@prem=0.85,1,EQ,Rights 2:5 @ Premiu
 INE717A01029,KENNAMET,2021-05-24,dividend,20.0,interim,10,EQ,Interim Dividend - Rs  20 Per Share,nse-filing
 ,KSERASERA,2021-05-24,consolidation,1.5,observed:bhavcopy-observed,,,,bhavcopy-observed
 INE192B01031,WELSPUNLIV,2021-05-24,dividend,0.15,final,1,EQ,Dividend - Rs 0.15 Per Share,nse-filing
+INE216A01014,BRITANNIA,2021-05-25,demerger,,,1,EQ,Scheme Of Arangement- Bonus - 1 Debenture For 1 Equity Share Held,nse-filing
 INE216A01014,BRITANNIA,2021-05-25,dividend,12.5,final,1,EQ,Dividend - Rs 12.50 Per Share Pursuant To Scheme,nse-filing
 INE467B01029,TCS,2021-05-25,dividend,15.0,final,1,EQ,Dividend - Rs 15 Per Share,nse-filing
 INE064C01014,TRIDENT,2021-05-25,dividend,0.36,final,1,EQ,Annual General Meeting/Dividend - Re 0.36  Per Share,nse-filing
@@ -18433,7 +18525,6 @@ INE227C01017,MMFL,2022-06-06,dividend,6.0,interim,10,EQ,Interim Dividend - Rs 6 
 INE613A01012,RALLIS,2022-06-06,dividend,3.0,final,1,EQ,Annual General Meeting/Dividend - Rs  3 Per Share,nse-filing
 INE200M01013,VBL,2022-06-06,bonus,0.66666667,1:2,2,EQ,Bonus 1:2,nse-filing
 INE940H01014,PGIL,2022-06-07,dividend,5.0,interim,5,EQ,Interim Dividend - Rs 5 Per Share,nse-filing
-,SPLPETRO,2022-06-07,consolidation,2.0,observed:kite-observed,,,,kite-observed
 INE531A01016,KANSAINER,2022-06-08,dividend,1.0,final,1,EQ,Annual General Meeting/Dividend - Re 1 Per Share,nse-filing
 INE021A01018,ASIANPAINT,2022-06-09,dividend,15.5,final,1,EQ,Dividend - Rs 15.50 Per Share,nse-filing
 INE022I01019,ASIANTILES,2022-06-09,dividend,0.7,final,10,EQ,Dividend - Rs 0.70 Per Share,nse-filing
@@ -18714,6 +18805,7 @@ INE393P01035,DIAMONDYD,2022-07-26,dividend,0.5,final,5,EQ,Annual General Meeting
 INE517F01014,GPPL,2022-07-26,dividend,2.4,final,10,EQ,Annual General Meeting/Dividend - Rs 2.40 Per Share,nse-filing
 INE473B01035,HATSUN,2022-07-26,dividend,6.0,interim,1,EQ,Interim Dividend - Rs 6 Per Share,nse-filing
 INE890A01016,JMCPROJECT,2022-07-26,dividend,1.0,final,2,EQ,Dividend - Rs 1 Per Share,nse-filing
+INE0CG601016,MAXIND,2022-07-26,demerger,,,10,EQ,Capital Reduction Pursuant To Nclt Order,nse-filing
 INE189I01016,NELCAST,2022-07-26,dividend,0.3,final,2,EQ,Annual General Meeting/Dividend - Rs 0.30 Per Share,nse-filing
 INE318A01026,PIDILITIND,2022-07-26,dividend,10.0,final,1,EQ,Dividend - Rs 10  Per Share,nse-filing
 INE932X01018,SHAREINDIA,2022-07-26,dividend,2.0,interim,2,EQ,Interim Dividend- Rs 2 Per Share,nse-filing
@@ -19612,6 +19704,7 @@ INE663A01025,SPLPETRO,2023-01-06,split,0.5,4->2,2,EQ,Face Value Split (Sub-Divis
 INE982V01017,JETFREIGHT,2023-01-11,rights,,1:1@prem=11.25,5,EQ,Rights 1:1 @ Premium Rs 11.25/-,nse-filing
 INE625G01013,WELENT,2023-01-11,dividend,7.5,special,10,EQ,Special Dividend - Rs 7.50 Per Share,nse-filing
 INE227G01018,INDOWIND,2023-01-13,rights,,2:5@prem=2.0,10,EQ,Rights 2:5@ Premium Rs 2/-,nse-filing
+INE919I01016,RADIOCITY,2023-01-13,demerger,,,2,EQ,Scheme Of Arrangement - Bonus Ncrps 1:10,nse-filing
 INE270I01014,VISHNU,2023-01-13,split,0.2,10->2,2,EQ,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 2/- Per Share,nse-filing
 INE467B01029,TCS,2023-01-16,dividend,75.0,special,1,EQ,Interim Dividend - Rs 8 Per Share Special Dividend - Rs 67 Per Share,nse-filing
 INE09EO01013,AARTISURF,2023-01-17,rights,,2:17@prem=545.0,10,EQ,Rights 2:17 @ Premium Rs 545/-,nse-filing
@@ -20066,7 +20159,6 @@ INE884A01019,VAIBHAVGBL,2023-06-30,dividend,1.5,final,2,EQ,Annual General Meetin
 INE625G01013,WELENT,2023-06-30,dividend,1.0,final,10,EQ,Annual General Meeting/Dividend - Re 1 Per Share,nse-filing
 INE050E01019,BALAMINES,2023-07-03,dividend,10.0,final,2,EQ,Annual General Meeting/Dividend - Rs 10 Per Share,nse-filing
 INE007B01023,GEOJITFSL,2023-07-03,dividend,1.5,final,1,EQ,Dividend - Rs 1.50 Per Share,nse-filing
-,HSIL,2023-07-03,split,0.8888888888888888,observed:kite-observed,,,,kite-observed
 INE668F01031,JYOTHYLAB,2023-07-03,dividend,3.0,final,1,EQ,Annual General Meeting/Dividend - Rs 3 Per Share,nse-filing
 INE202Z01029,TSFINV,2023-07-03,dividend,2.5,special,5,EQ,Annual General Meeting/Dividend - Rs 1.50 Per Share/ Special Dividend - Re 1 Per Share,nse-filing
 INE150B01013,ALKYLAMINE,2023-07-04,dividend,10.0,final,2,EQ,Annual General Meeting/Dividend - Rs 10 Per Share,nse-filing
@@ -20252,7 +20344,6 @@ INE298A01020,CUMMINSIND,2023-07-26,dividend,13.0,final,2,EQ,Annual General Meeti
 INE533A01012,GOODYEAR,2023-07-26,dividend,26.5,final,10,EQ,Annual General Meeting/Dividend - Rs 26.50 Per Share,nse-filing
 INE517F01014,GPPL,2023-07-26,dividend,3.4,final,10,EQ,Annual General Meeting/Dividend - Rs 3.40 Per Share,nse-filing
 INE142Z01019,ORIENTELEC,2023-07-26,dividend,0.75,final,1,EQ,Annual General Meeting/Dividend - Re 0.75 Per Share,nse-filing
-,SITINET,2023-07-26,split,0.8181818181818182,observed:kite-observed,,,,kite-observed
 INE124E01020,STEELCAS,2023-07-26,dividend,2.7,final,1,EQ,Annual General Meeting/Dividend - Rs 2.70 Per Share,nse-filing
 INE974X01010,TIINDIA,2023-07-26,dividend,1.5,final,1,EQ,Annual General Meeting/Dividend - Rs 1.50 Per Share,nse-filing
 INE250B01029,VINYLINDIA,2023-07-26,dividend,10.0,special,1,EQ,Annual General Meeting/Dividend - Rs 5 Per Share/Special Dividend - Rs 5 Per Share,nse-filing
@@ -20379,7 +20470,6 @@ INE331A01037,RAMCOCEM,2023-08-03,dividend,2.0,final,1,EQ,Annual General Meeting/
 INE614A01028,RAMCOIND,2023-08-03,dividend,1.0,final,1,EQ,Annual General Meeting/Dividend - Re 1 Per Share,nse-filing
 INE500L01026,SHK,2023-08-03,dividend,2.0,final,10,EQ,Annual General Meeting/Dividend - Rs 2 Per Share,nse-filing
 INE231C01019,SHREYANIND,2023-08-03,dividend,2.5,special,10,EQ,Annual General Meeting/Dividend - Rs 2.50 Per Share/Special Dividend 2.50 Per Share,nse-filing
-,SITINET,2023-08-03,split,0.7777777777777778,observed:kite-observed,,,,kite-observed
 INE686F01025,UBL,2023-08-03,dividend,7.5,final,1,EQ,Annual General Meeting/Dividend - Rs  7.50 Per Sh,nse-filing
 INE628A01036,UPL,2023-08-03,dividend,10.0,final,2,EQ,Annual General Meeting/Dividend - Rs 10 Per Share,nse-filing
 INE228A01035,USHAMART,2023-08-03,dividend,2.5,final,1,EQ,Dividend - Rs 2.50 Per Sh,nse-filing
@@ -21043,7 +21133,6 @@ INE0GTI23014,SHREMINVIT,2023-10-31,dividend,0.55,final,100,IV,Dividend - Rs 0.55
 INE189B01011,STYRENIX,2023-10-31,dividend,22.0,interim,10,EQ,Interim Dividend - Rs 22 Per Share,nse-filing
 INE716B01029,TIPSMUSIC,2023-10-31,dividend,2.0,interim,1,EQ,Interim Dividend - Rs 2 Per Share,nse-filing
 INE136B01020,CYIENT,2023-11-01,dividend,12.0,interim,5,EQ,Interim Dividend - Rs 12 Per Share,nse-filing
-,FEL,2023-11-01,split,0.8571428571428571,observed:kite-observed,,,,kite-observed
 INE997Y01019,MITTAL,2023-11-01,split,0.1,10->1,1,EQ,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Re 1/- Per Share,nse-filing
 INE239A01016,NESTLEIND,2023-11-01,dividend,140.0,interim,1,EQ,Interim Dividend - Rs 140 Per Share,nse-filing
 INE922A01025,BEPL,2023-11-02,dividend,1.0,interim,1,EQ,Interim Dividend - Re 1 Per Share,nse-filing
@@ -21418,14 +21507,13 @@ INE980Y01015,SOUTHWEST,2024-02-28,dividend,0.25,interim,10,EQ,Interim Dividend -
 INE458F01011,UNITEDTEA,2024-02-28,dividend,1.0,interim,10,EQ,Interim Dividend - Re 1  Per Share,nse-filing
 INE0EEJ01015,BTML,2024-02-29,dividend,0.5,interim,1,EQ,Interim Dividend - Rs 0.50 Per Sh,nse-filing
 INE209L01016,JWL,2024-02-29,dividend,0.3,interim,10,EQ,Interim Dividend - Re 0.30 Per Share,nse-filing
-,SITINET,2024-03-04,split,0.8,observed:kite-observed,,,,kite-observed
 INE180C01018,CGCL,2024-03-05,bonus,0.5,1:1,1,EQ,Bonus 1:1,nse-filing
 INE180C01018,CGCL,2024-03-05,split,0.5,2->1,1,EQ,Face Value Split (Sub-Division) - From Rs 2/- Per Share To Re 1/- Per Share,nse-filing
 INE499A01024,DCMSHRIRAM,2024-03-06,dividend,4.0,interim,2,EQ,Interim Dividend - Rs 4 Per Share,nse-filing
 INE196A01026,MARICO,2024-03-06,dividend,6.5,interim,1,EQ,Interim Dividend - Rs. 6.50 Per Share,nse-filing
 INE00VM01010,MANORAMA,2024-03-07,split,0.2,10->2,2,EQ,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 2/- Per Share,nse-filing
 INE058A01010,SANOFI,2024-03-07,dividend,50.0,interim,10,EQ,Interim Dividend - Rs 50 Per Share,nse-filing
-INE0C8K23012,IRBIT,2024-03-12,rights,,1:11@prem=None,100,IV,Rights 1:11.10 @ Premium Rs 0/-,nse-filing
+INE0C8K23012,IRBIT,2024-03-12,rights,,1:11.1@prem=0.0,100,IV,Rights 1:11.10 @ Premium Rs 0/-,nse-filing
 INE02WG01016,WEL,2024-03-14,dividend,1.0,interim,1,EQ,Interim Dividend - Re 1 Per Share,nse-filing
 INE875R01011,BALKRISHNA,2024-03-15,rights,,2:1@prem=11.0,10,EQ,Rights 2:1 @ Premium Rs 11/-,nse-filing
 INE036B01022,GAEL,2024-03-15,bonus,0.5,1:1,1,EQ,Bonus 1:1,nse-filing
@@ -21452,7 +21540,6 @@ INE134E01011,PFC,2024-03-22,dividend,3.0,interim,10,EQ,Interim Dividend - Rs 3 P
 INE056I01017,REFEX,2024-03-22,split,0.2,10->2,2,EQ,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 2/- Per Share,nse-filing
 INE806C01018,TIL,2024-03-22,rights,,28:10@prem=0.0,10,EQ,Rights 28:10 @ Premium Rs 0/-,nse-filing
 INE007A01017,CRISIL,2024-03-28,dividend,28.0,final,1,EQ,Annual General Meeting/Dividend - Rs 28 Per Share,nse-filing
-,HSIL,2024-03-28,split,0.9,observed:kite-observed,,,,kite-observed
 INE031A07873,HUDCO,2024-03-28,dividend,1.5,interim,10,EQ,Interim Dividend - Rs 1.50 Per Share,nse-filing
 INE740X01015,LAL,2024-03-28,bonus,0.64705882,6:11,1,EQ,Bonus 6:11,nse-filing
 INE740X01015,LAL,2024-03-28,split,0.1,10->1,1,EQ,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Re 1/- Per Share,nse-filing
@@ -22153,6 +22240,7 @@ INE068V01023,GLAND,2024-08-16,dividend,20.0,final,1,EQ,Annual General Meeting/Di
 INE102D01028,GODREJCP,2024-08-16,dividend,5.0,interim,1,EQ,Interim Dividend - Rs 5 Per Share,nse-filing
 INE177H01013,GPIL,2024-08-16,dividend,6.25,special,1,EQ,Dividend - Rs 5 Per Share/Special Dividend - Rs 1.25 Per Share,nse-filing
 INE670K01029,LODHA,2024-08-16,dividend,2.25,final,10,EQ,Dividend - Rs 2.25 Per Share,nse-filing
+INE817A01019,MELSTAR,2024-08-16,demerger,,,10,EQ,Capital Reduction,nse-filing
 INE756C01015,NDGL,2024-08-16,dividend,2.5,final,10,EQ,Annual General Meeting/Dividend - Rs 2.50 Per Share,nse-filing
 INE887E01022,NGLFINE,2024-08-16,dividend,1.75,final,5,EQ,Annual General Meeting/Dividend - Rs 1.75 Per Share,nse-filing
 INE740D01017,NRAIL,2024-08-16,dividend,2.0,final,10,EQ,Annual General Meeting/Dividend - Rs 2 Per Share,nse-filing
@@ -22822,6 +22910,7 @@ INE632C01026,VIDHIING,2024-11-19,dividend,1.0,interim,1,EQ,Interim Dividend - Re
 INE541A01023,GMMPFAUDLR,2024-11-21,dividend,1.0,interim,2,EQ,Interim Dividend - Re 1 Per Share,nse-filing
 INE098F01015,AMRUTANJAN,2024-11-22,dividend,1.0,interim,1,EQ,Interim Dividend - Re 1 Per Share,nse-filing
 INE506Z01015,DHRUV,2024-11-22,dividend,0.1,interim,10,EQ,Interim Dividend - Re 0.10 Per Share,nse-filing
+INE962C01027,EASTSILK,2024-11-22,demerger,,,2,EQ,Capital Reduction,nse-filing
 INE258B01022,FDC,2024-11-22,dividend,5.0,interim,1,EQ,Interim Dividend - Rs 5 Per Share,nse-filing
 INE636A01039,MAWANASUG,2024-11-22,dividend,3.0,interim,10,EQ,Interim Dividend - Rs 3 Per Share,nse-filing
 INE255X01014,MSTCLTD,2024-11-22,dividend,4.0,interim,10,EQ,Interim Dividend - Rs 4 Per Share,nse-filing
@@ -22874,7 +22963,7 @@ INE291W01011,GLOBAL,2024-12-10,split,0.4,5->2,2,EQ,Face Value Split (Sub-Divisio
 INE715Y01015,SHRADHA,2024-12-10,split,0.4,5->2,2,EQ,Face Value Split (Sub-Division) - From Rs 5/- Per Share To Rs 2/- Per Share,nse-filing
 INE323B01016,AVONMORE,2024-12-12,rights,,5:24@prem=9.0,1,EQ,Rights 5:24 @ Premium Rs 9/-,nse-filing
 INE0GFE01018,EXXARO,2024-12-13,split,0.1,10->1,1,EQ,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Re 1/- Per Share,nse-filing
-INE0C8K23012,IRBIT,2024-12-13,rights,,1:19@prem=None,100,IV,Rights 1:19.07 @ Premium Rs 0,nse-filing
+INE0C8K23012,IRBIT,2024-12-13,rights,,1:19.07@prem=0.0,100,IV,Rights 1:19.07 @ Premium Rs 0,nse-filing
 INE785M01013,PCJEWELLER,2024-12-16,split,0.1,10->1,1,EQ,Face Value Split (Sub-Division) - From Rs 10/- Per Share To Re 1/- Per Share,nse-filing
 INE01IU01018,SKYGOLD,2024-12-16,bonus,0.1,9:1,10,EQ,Bonus 9:1,nse-filing
 INE189B01011,STYRENIX,2024-12-17,dividend,31.0,interim,10,EQ,Interim Dividend - Rs 31 Per Share,nse-filing
@@ -23152,7 +23241,6 @@ INE003A01024,SIEMENS,2025-04-07,demerger,,,2,EQ,Demerger,nse-filing
 INE0PQ101010,SSDL,2025-04-09,dividend,1.515,interim,10,EQ,Interim Dividend - Rs 1.515 Per Share,nse-filing
 INE365D01013,ASHIANA,2025-04-11,dividend,1.0,interim,2,EQ,Interim Dividend - Re 1 Per Share,nse-filing
 INE007A01017,CRISIL,2025-04-11,dividend,26.0,final,1,EQ,Dividend - Rs 26 Per Share,nse-filing
-,FELDVR,2025-04-15,split,0.8888888888888888,observed:kite-observed,,,,kite-observed
 INE093A01041,HEXT,2025-04-15,dividend,5.75,interim,1,EQ,Interim Dividend - Rs 5.75 Per Share,nse-filing
 INE615P01015,QUESS,2025-04-15,demerger,,,10,EQ,Demerger,nse-filing
 INE249Z01012,MAZDOCK,2025-04-16,dividend,3.0,interim,5,EQ,Interim Dividend - Rs 3 Per Share,nse-filing
@@ -23962,6 +24050,7 @@ INE080I01025,LLOYDSENT,2025-08-25,dividend,0.1,final,1,EQ,Dividend - Re 0.10 Per
 INE612J01015,REPCOHOME,2025-08-25,dividend,2.5,interim,10,EQ,Interim Dividend - Rs 2.50 Per Share,nse-filing
 INE895B01021,RUPA,2025-08-25,dividend,3.0,final,1,EQ,Dividend - Rs 3 Per Sh,nse-filing
 INE212I01016,SPAL,2025-08-25,dividend,2.0,final,10,EQ,Dividend - Rs 2 Per Share,nse-filing
+INE494B01015,TVSMOTOR,2025-08-25,demerger,,,1,EQ,Scheme Of Arrangement - Bonus Ncrps 4:1,nse-filing
 INE830C01026,EMAMIPAP,2025-08-26,dividend,1.6,final,2,EQ,Dividend - Rs 1.60 Per Share,nse-filing
 INE276A01018,GARFIBRES,2025-08-26,dividend,1.5,final,10,EQ,Dividend - Rs 1.50 Per Share,nse-filing
 INE322A01010,GILLETTE,2025-08-26,dividend,47.0,final,10,EQ,Dividend - Rs 47 Per Share,nse-filing
@@ -24963,11 +25052,9 @@ INE615P01015,QUESS,2026-05-08,dividend,3.0,special,10,EQ,Special Dividend - Rs 3
 INE399G01015,RKFORGE,2026-05-08,dividend,1.0,interim,2,EQ,Interim Dividend - Re 1 Per Share,nse-filing
 INE355A01010,SOMANYCERA,2026-05-08,dividend,4.0,interim,2,EQ,Interim Dividend - Rs 4 Per Share,nse-filing
 INE387A01021,SUNDRMFAST,2026-05-08,dividend,4.25,interim,1,EQ,Interim Dividend - Rs 4.25 Per Share,nse-filing
-,HSIL,2026-05-11,split,0.8181818181818182,observed:kite-observed,,,,kite-observed
 INE720A01015,KOTHARIPET,2026-05-11,dividend,1.0,interim,10,EQ,Interim Dividend - Re 1 Per Share,nse-filing
 INE522D01027,MANAPPURAM,2026-05-11,dividend,0.5,interim,2,EQ,Interim Dividend - Re 0.50 Per Share,nse-filing
 INE102D01028,GODREJCP,2026-05-12,dividend,5.0,interim,1,EQ,Interim Dividend - Rs 5 Per Share,nse-filing
-,MTEDUCARE,2026-05-12,split,0.9090909090909092,observed:kite-observed,,,,kite-observed
 INE349A01021,NRBBEARING,2026-05-13,dividend,2.25,interim,2,EQ,Interim Dividend - Rs 2.25 Per Share,nse-filing
 INE401H01017,KKCL,2026-05-14,dividend,2.0,interim,10,EQ,Interim Dividend - Rs 2 Per Share,nse-filing
 INE093I01010,OBEROIRLTY,2026-05-14,dividend,2.0,interim,10,EQ,Interim Dividend - Rs 2 Per Share,nse-filing
@@ -25052,7 +25139,7 @@ INE838E01017,PONNIERODE,2026-06-05,dividend,5.0,final,10,EQ,Dividend - Rs 5 Per 
 INE002A01018,RELIANCE,2026-06-05,dividend,6.0,final,10,EQ,Dividend - Rs 6 Per Share,nse-filing
 INE970N01027,SPCENET,2026-06-05,dividend,0.01,interim,1,EQ,Interim Dividend - Rs. 0.01 Per Sh,nse-filing
 INE188Y01015,VERTOZ,2026-06-05,dividend,0.1,interim,10,EQ,Interim Dividend - Rs 0.10 Per Share,nse-filing
-INE206N01018,RELTD,2026-06-08,rights,,1:9@prem=None,10,EQ,Rights 1:9 @ Premium 91,nse-filing
+INE206N01018,RELTD,2026-06-08,rights,,1:9@prem=91.0,10,EQ,Rights 1:9 @ Premium 91,nse-filing
 INE616N01034,INOXINDIA,2026-06-09,dividend,2.0,final,2,EQ,Dividend - Rs 2 Per Share,nse-filing
 INE045B01015,NELCO,2026-06-09,dividend,1.0,final,10,EQ,Dividend - Rs 1 Per Share,nse-filing
 INE562A01011,INDIANB,2026-06-10,dividend,18.25,final,10,EQ,Dividend - Rs 18.25 Per Share,nse-filing
@@ -25090,7 +25177,6 @@ INE668A01016,TMB,2026-06-12,dividend,12.5,final,10,EQ,Dividend - Rs 12.50 Per Sh
 INE1TAE01010,TMCV,2026-06-12,dividend,4.0,final,2,EQ,Dividend - Rs 4 Per Share,nse-filing
 INE849A01012,TRENT,2026-06-12,dividend,4.0,final,1,EQ,Dividend - Rs 4 Per Share,nse-filing
 INE226A01021,VOLTAS,2026-06-12,dividend,4.0,final,1,EQ,Dividend - Rs 4 Per Share,nse-filing
-,ANSALAPI,2026-06-15,split,0.8181818181818182,observed:kite-observed,,,,kite-observed
 INE103C01036,SMCGLOBAL,2026-06-15,dividend,0.6,final,2,EQ,Dividend - Re 0.60 Per Share,nse-filing
 INE777K01022,RRKABEL,2026-06-16,dividend,5.5,final,5,EQ,Dividend - Rs 5.50 Per Share,nse-filing
 INE395H01011,STEELCITY,2026-06-16,dividend,1.0,final,10,EQ,Dividend - Re 1 Per Share,nse-filing
@@ -25162,7 +25248,6 @@ INE995D01025,CHEMBOND,2026-07-02,dividend,2.0,final,5,EQ,Dividend - Rs 2 Per Sha
 INE691Z01015,GANGAFORGE,2026-07-02,rights,,3:2@prem=0.63,1,EQ,Rights 3:2 @ Premium Re. 0.63/-,nse-filing
 INE844O01030,GUJENERGY,2026-07-02,demerger,,,2,EQ,Demerger,nse-filing
 INE080I01025,LLOYDSENT,2026-07-02,dividend,0.05,final,1,EQ,Dividend - Re 0.05 Per Share,nse-filing
-,MTEDUCARE,2026-07-02,split,0.9,observed:kite-observed,,,,kite-observed
 INE09XN01023,AKUMS,2026-07-03,dividend,3.0,special,2,EQ,Dividend - Re 1 Per Share/Special Dividend - Rs 2 Per Share,nse-filing
 INE050E01019,BALAMINES,2026-07-03,dividend,11.0,final,2,EQ,Dividend - Rs 11 Per Share,nse-filing
 INE878K01010,BFINVEST,2026-07-03,dividend,10.0,final,5,EQ,Dividend - Rs 10 Per Share,nse-filing
@@ -25774,6 +25859,7 @@ INE296E01026,RAJPALAYAM,2026-08-21,dividend,0.5,final,10,EQ,Dividend - Re  0.50 
 INE280H01015,SAHYADRI,2026-08-21,dividend,2.5,interim,10,EQ,Interim Dividend - Rs 2.50 Per Share,nse-filing
 INE497B01018,SEAMECLTD,2026-08-21,dividend,2.0,final,10,EQ,Dividend - Rs 2 Per Share,nse-filing
 INE715Y01015,SHRADHA,2026-08-21,dividend,0.6,final,2,EQ,Dividend - Re 0.60 Per Share,nse-filing
+INE076B01010,SIYSIL,2026-08-21,demerger,,,2,EQ,Scheme Of Arrangement - Bonus Ncrps 4:1,nse-filing
 INE035D01012,SOTL,2026-08-21,dividend,5.0,final,2,EQ,Dividend - Rs 5 Per Share,nse-filing
 INE335A01012,SURYAROSNI,2026-08-21,dividend,2.5,final,5,EQ,Dividend - Rs 2.50 Per Share,nse-filing
 INE961D01019,UNIDT,2026-08-21,dividend,0.6,interim,10,EQ,Interim Dividend - Re 0.60 Per Share,nse-filing
@@ -25929,6 +26015,7 @@ INE573K01017,RUSHIL,2026-09-08,dividend,0.05,final,1,EQ,Dividend - Re 0.05 Per S
 INE985A01022,SINCLAIR,2026-09-08,dividend,0.8,final,2,EQ,Dividend - Rs 0.80 Per Share,nse-filing
 INE439E01022,SKIPPER,2026-09-08,dividend,0.1,final,1,EQ,Dividend - Re 0.10 Per Share,nse-filing
 INE015C01016,TINNARUBR,2026-09-08,dividend,3.25,final,10,EQ,Dividend - Rs 3.25 Per Share,nse-filing
+INE105A01035,TVSHLTD,2026-09-08,demerger,,,5,EQ,Scheme Of Arrangement - Bonus Ncrps 46:1,nse-filing
 INE2FMX01012,AASTHA,2026-09-09,dividend,0.1,final,10,EQ,Dividend - Re 0.10 Per Share,nse-filing
 INE073G01016,ASALCBR,2026-09-09,dividend,2.0,final,10,EQ,Dividend - Rs 2 Per Share,nse-filing
 INE348B01021,CENTURYPLY,2026-09-09,dividend,1.0,final,1,EQ,Dividend - Re 1 Per Share,nse-filing

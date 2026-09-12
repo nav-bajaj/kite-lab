@@ -74,6 +74,6 @@ def build_and_run(book: str, start: str, end: str | None = None, master: Path | 
         sc = score(ed)
         if sc is None or sc.empty:
             continue
-        for rank, (sym, v) in enumerate(sc.sort_values(ascending=False).head(cfg["top_n"] + cfg["exit_buffer"]).items(), 1):
+        for rank, (sym, v) in enumerate(sc.nlargest(cfg["top_n"] + cfg["exit_buffer"]).items(), 1):
             rows.append({"date": ed, "rank": rank, "symbol": sym, "score": round(float(v), 4), "regime": "bull" if bool(regime.get(ed, True)) else "bear"})
     return cfg, res, pd.DataFrame(rows), regime, close

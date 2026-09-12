@@ -13,8 +13,18 @@ Bonus 1:1"); each becomes its own row.
             Y/X. Consolidation is the same pattern with Y > X.
   rights    "Rights A:B @ Premium Rs P" -> A per B at face + P. The factor
             needs the cum price, so it is computed when applied, not here.
+            "At Par" is a price (premium zero), not a missing one. Where the
+            filing carries two tranches on one ex-date (Tata Steel 2018: fully
+            paid and partly paid) only the first is taken; see RIGHTS_TRANCHE.
   demerger  no ratio in the filing; factor must be measured from the raw
             series (or entered by hand) when applied. Flagged, not silent.
+            NSE files most demergers as "Scheme Of Arrangement" rather than
+            with the word "demerger" (Jindal Stainless 2015-11-19, Crompton
+            Greaves 2016-03-15, Adani Enterprises 2015-06-03 are all filed
+            that way), so the whole scheme/arrangement/capital-reduction
+            vocabulary is a demerger candidate. A filing that also carries a
+            share-count event is not: that event already carries the factor
+            ("Bonus 4:5 (Pursuant To Scheme Of Amalgamation)").
 
 Kite's own adjustment is measured against these events in verify_kite_adjustment.py
 before the table is trusted to adjust anything.
@@ -41,15 +51,19 @@ RE_BONUS = re.compile(r"bon(?:us)?\s*[-:]?\s*(\d+)\s*:\s*(\d+)", re.I)
 RE_SPLIT = re.compile(r"(?:fr(?:o)?m|spl(?:i)?t|sub[- ]?div(?:ision)?)[\s\-:]*(?:rs|re)?\.?\s*" + NUM
                       + r"\s*/?-?\s*(?:per\s*share)?\s*(?:to|-)\s*(?:rs|re)?\.?\s*" + NUM, re.I)
 RE_SPLIT2 = re.compile(r"(?:rs|re)\.?\s*" + NUM + r"\s*to\s*(?:rs|re)\.?\s*" + NUM, re.I)
-RE_RIGHTS = re.compile(r"rights?\s*[-:]?\s*(\d+)\s*:\s*(\d+)(?:\s*@?\s*premium\s*(?:of\s*)?(?:rs|re)\.?\s*" + NUM + r")?", re.I)
+RATIO = r"(\d+(?:\.\d+)?)\s*:\s*(\d+(?:\.\d+)?)"
+RE_RIGHTS = re.compile(r"rights?\b[\s\-:]*(?:eq[a-z]*[\s\-]*)?" + RATIO, re.I)
+# the price clause sits after the ratio in every form NSE uses: "@ Premium Rs 197/-",
+# "Prem@Rs.21", "@Prem Rs.480/-", "At Par", "@ Premium Rs 0"
+RE_RIGHTS_PREM = re.compile(r"prem(?:ium|\.)?\s*(?:of\s*)?@?\s*(?:rs|re|₹)?\.?\s*" + NUM, re.I)
+RE_RIGHTS_PAR = re.compile(r"\bat\s*par\b", re.I)
+RE_DEMERGER = re.compile(r"demerger|arrangement|arangement|arngment|arngmnt|capital\s*red", re.I)
 
 
 def parse(subject: str, face_val: str):
     s = subject.strip()
     low = s.lower()
     events = []
-    if "demerger" in low:
-        events.append(("demerger", None, ""))
     m = RE_BONUS.search(s)
     if m:
         a, b = int(m.group(1)), int(m.group(2))
@@ -61,9 +75,13 @@ def parse(subject: str, face_val: str):
             events.append(("split" if y < x else "consolidation", round(y / x, 8), f"{x:g}->{y:g}"))
     m = RE_RIGHTS.search(s)
     if m:
-        a, b = int(m.group(1)), int(m.group(2))
-        prem = float(m.group(3)) if m.group(3) else None
-        events.append(("rights", None, f"{a}:{b}@prem={prem}"))
+        a, b = float(m.group(1)), float(m.group(2))
+        tail = s[m.end():].split("/")[0]      # "/" starts the next tranche or the "/-" of the amount
+        pm = RE_RIGHTS_PREM.search(tail)
+        prem = float(pm.group(1)) if pm else (0.0 if RE_RIGHTS_PAR.search(tail) else None)
+        events.append(("rights", None, f"{a:g}:{b:g}@prem={prem}"))
+    if RE_DEMERGER.search(low) and not any(t in ("bonus", "split", "consolidation", "rights") for t, *_ in events):
+        events.append(("demerger", None, ""))
     if "dividend" in low and "distribution" not in low:
         amt = 0.0; found = False
         for x in RE_AMT.findall(s):

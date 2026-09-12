@@ -9229,15 +9229,15 @@
   "sha256": "d69077276e5e7ab81fec3274a9f01a8dfc9bebebf05cc1335db57e51ebbc452e"
  },
  "GUJENERGY": {
-  "first": "2019-01-16",
+  "first": "2015-09-15",
   "last": "2026-09-09",
-  "rows": 1897,
+  "rows": 2720,
   "traded_as": [
    "GUJENERGY",
    "GUJGASLTD"
   ],
   "basis": "bhavcopy-raw",
-  "sha256": "4d749641f802a971aca48d9c24f30d462616dec93f527acefee759b43deb1ab0"
+  "sha256": "8391d817558b34f71044e8c6c12f3cdeb1481b6bf5c933db2b45ad1a50486dcf"
  },
  "GUJFLUORO": {
   "first": "2005-01-03",
@@ -12919,6 +12919,17 @@
   ],
   "basis": "bhavcopy-raw",
   "sha256": "148d9716a09e3ff21638150c13c634dbf908d32882ed87429e933794646354dd"
+ },
+ "KBL": {
+  "first": "2006-04-07",
+  "last": "2010-03-08",
+  "rows": 966,
+  "traded_as": [
+   "KBL"
+  ],
+  "basis": "bhavcopy-raw",
+  "sha256": "912f43688306f06e79154512cc64c733eaa156e876daba210d8356aee4089774",
+  "delisted_on": "2010-03-08"
  },
  "KCP": {
   "first": "2005-01-03",
