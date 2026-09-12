@@ -408,6 +408,12 @@ def sync_proposed_rebalance(db: Session, universe: str) -> dict:
     }
 
 
+def _rebuild_equity_curve(db: Session, universe: str) -> dict:
+    deleted = db.query(EquityCurve).filter(EquityCurve.universe == universe).delete()
+    db.commit()
+    out = sync_equity_curve(db, universe); out["deleted"] = int(deleted); return out
+
+
 def sync_all(universe: str = "nse500", full_trades: bool = False) -> dict:
     """
     Sync all data for a universe.
@@ -430,7 +436,9 @@ def sync_all(universe: str = "nse500", full_trades: bool = False) -> dict:
         results = {
             "universe": universe,
             "holdings": sync_holdings(db, universe),
-            "equity_curve": sync_equity_curve(db, universe),
+            # a full sync rebuilds the curve too: sync_equity_curve skips dates already present, so a
+            # book recomputed from its start (rebuilt books, store repairs) would keep stale values
+            "equity_curve": (_rebuild_equity_curve(db, universe) if full_trades else sync_equity_curve(db, universe)),
             "metrics": sync_metrics(db, universe),
             "trades": sync_trades(db, universe, full=full_trades),
             "proposed_rebalance": sync_proposed_rebalance(db, universe),
