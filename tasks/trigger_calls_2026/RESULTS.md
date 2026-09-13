@@ -314,11 +314,72 @@ exposure cost on this tape has to liquidate, not just stop buying —
 Both books beat NIFTY 500 on CAGR over the full span; only always-on beats it
 OOS, and neither beats it on drawdown over the full span.
 
+## Asymmetric gate
+
+Pre-registered test of the §4 diagnosis: the symmetric gate blocks entries,
+never closes anything, and is still off through the recovery. Two candidate
+fixes, separated so the table says which one moves the book — make the gate
+asymmetric (slow OFF, fast ON: G1-G3), or make it liquidate (G4, G5). All six
+cells are on `pct_above_200` from `breadth.parquet` and nothing else changes:
+T3 month-end, top 20, ma150, OHLC/4 fills, 25 equal-weight slots, daily MTM.
+`book.py` was not modified — its `force_exit` hook already exists; the
+liquidation fires the session **after** the gate turns off and is filled at
+that session's OHLC/4, which is the same convention as every other exit here.
+G4/G5 per-call columns equal G1/G0 because forced exit is a book overlay, not
+a change to the call.
+
+| Cell | flips/yr | med run | time on | n | win | exp | alpha | empty mo | Full CAGR | Full DD | Full SR | OOS CAGR | OOS DD | OOS SR |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| no gate | — | — | 100.0% | 1,828 | 41.2% | +15.5% | +10.3% | 1.6% | 19.6% | −54.1% | 0.70 | 18.6% | −48.7% | 0.64 |
+| G0 sym 40/60 | 1.53 | 99 | 65.0% | 1,275 | 42.0% | **+17.1%** | +11.7% | 36.5% | 15.2% | −44.6% | 0.52 | 9.1% | −42.2% | 0.21 |
+| **G1 off<40×21 / on>50** | 1.05 | 162 | 80.5% | 1,565 | 41.7% | +16.2% | +11.2% | 19.3% | 20.3% | −41.7% | 0.74 | **18.9%** | **−37.1%** | **0.67** |
+| G2 off<40×10 / on>50 | 1.24 | 101 | 77.2% | 1,488 | 42.1% | +16.7% | +11.8% | 23.3% | **20.6%** | **−37.9%** | **0.75** | 16.0% | −36.2% | 0.54 |
+| G3 off<40×21 / on>45 | 1.15 | 114 | 82.2% | 1,592 | 41.3% | +15.8% | +11.0% | 17.7% | 19.3% | −44.9% | 0.70 | 14.6% | −45.5% | 0.47 |
+| G4 = G1 + forced exit | 1.05 | 162 | 80.5% | 1,565 | 41.7% | +16.2% | +11.2% | 19.3% | 17.2% | −46.3% | 0.62 | 17.4% | −39.2% | 0.62 |
+| G5 = G0 + forced exit | 1.53 | 99 | 65.0% | 1,275 | 42.0% | **+17.1%** | +11.7% | 36.5% | 15.3% | −38.9% | 0.59 | 13.1% | −35.2% | 0.47 |
+
+| Selection check | Value |
+|---|---|
+| OOS Sharpe, six cells: mean / sd | 0.50 / 0.16 |
+| Gumbel E[max of 6 draws] | **0.70** |
+| Best cell (G1) | **0.67** |
+| Clears? | **No** — 0.03 short |
+
+**Asymmetry is what moves the book; forced exits are not.** Every asymmetric
+cell beats G0 on both spans — G1 takes OOS Sharpe from 0.21 to 0.67 and OOS
+CAGR from 9.1% to 18.9% — while the two forced-exit cells move their own
+baselines in opposite directions: G5 improves on G0 (0.21 → 0.47 OOS) but G4
+*damages* G1 (0.67 → 0.62 OOS, 20.3% → 17.2% full-span CAGR). Liquidating
+only helps a gate that was already switching too often; bolt it onto a gate
+with a 162-session median run and it sells the drawdowns the gate was right to
+sit through.
+
+Two things keep this from being a result to ship. First, **the best cell does
+not clear its own multiplicity bar**: 0.67 against a Gumbel E[max of 6] of
+0.70. Second, and more telling, **G1 barely beats no gate at all** — 0.67 vs
+0.64 OOS, 0.74 vs 0.70 full-span, on 80.5% time-on against 100%. The
+mechanism by which asymmetry "fixes" the symmetric gate is mostly that it
+gates less. What G1 does buy over no-gate is drawdown: −37.1% vs −48.7% OOS
+and −41.7% vs −54.1% full-span, at equal CAGR. That is a real and sizeable
+improvement in the shape of the ride, and it is the only claim in this section
+the evidence supports — it is not an alpha result, and it should not be
+reported as one.
+
+Note G5 has the best drawdown control of any cell on both spans (−38.9% /
+−35.2%) at the worst exposure (54.8%). If drawdown is the product constraint
+rather than return, the symmetric gate with forced exits is the honest
+candidate, and it costs roughly 5pp of CAGR against no gate.
+
 ## Blocked
 
 - Nothing outstanding. Gate A1 failed on the BRIEF's stated gate (hysteresis
   40/60) and passed on the corrected one (composite direction, w=63) at
   760 / 45.9% / +20.64%, so §3 and §4 ran.
+- `book.py` was **not** modified for the asymmetric-gate test — the
+  `force_exit` hook it needs was already present. The OHLC/4 liquidation fill
+  is obtained by substituting OHLC/4 for close in the panel series on the
+  liquidation date only; positions are closed before the mark-to-market block
+  on that date, so no other day's MTM is touched.
 - `exits.py` gained two additive trail branches for §3 — `trail="ma100"` and
   `trail="swing"` — plus `s100` and a confirmed ±5-bar `piv_lo` array in
   `load_panel`. Absent those `trail` values nothing changes; the ma150 and
