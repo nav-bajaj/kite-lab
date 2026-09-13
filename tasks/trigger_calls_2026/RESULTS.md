@@ -370,6 +370,97 @@ Note G5 has the best drawdown control of any cell on both spans (−38.9% /
 rather than return, the symmetric gate with forced exits is the honest
 candidate, and it costs roughly 5pp of CAGR against no gate.
 
+## Direction gates
+
+`trend_screen_2026` found the three-month change in breadth separates
+per-call expectancy 5.9x across quartiles against 1.6x for the level, but raw
+direction flips 26 times a year, so every persistent gate tested so far has
+been a level rule. This gives direction the same persistence treatment.
+Signal `d = pct_above_200(T) − pct_above_200(T−63)`, from `breadth.parquet`,
+nothing else. T3 month-end, top 20, ma150, OHLC/4 fills. Per-call and cadence
+only — no book. `no gate` and `G1` are carried from the sections above for
+comparison and are not part of the six-cell deflation.
+
+**Full span, 2006-2026**
+
+| Cell | flips/yr | med run | time on | n | win | avg win | avg loss | expectancy | alpha | empty mo |
+|---|---|---|---|---|---|---|---|---|---|---|
+| no gate | — | — | 100.0% | 1,828 | 41.2% | +59.1% | −15.1% | +15.5% | +10.3% | 1.6% |
+| G1 level off<40×21 / on>50 | 1.05 | 162 | 80.5% | 1,565 | 41.7% | +61.1% | −15.8% | +16.2% | +11.2% | 19.3% |
+| D0 raw d>0 | 9.50 | 5 | 47.8% | 1,076 | 45.0% | +63.8% | −16.9% | +19.4% | +12.7% | 52.2% |
+| D1 10 up / 10 down | 2.37 | 86 | 48.8% | 1,067 | 44.3% | +65.8% | −16.4% | +20.0% | +13.4% | 52.6% |
+| D2 21 up / 21 down | 2.08 | 94 | 47.6% | 1,083 | 43.6% | +62.7% | −16.4% | +18.1% | +11.7% | 52.6% |
+| D3 asym: off d<0 ×21 / on d>0 | 3.00 | 53 | 65.2% | 1,361 | 42.6% | +62.1% | −16.6% | +16.9% | +11.3% | 36.1% |
+| **D4 21-session mean d > 0** | 2.66 | 78 | 48.4% | 1,048 | **45.2%** | +65.8% | −16.5% | **+20.7%** | **+13.9%** | 53.0% |
+| D5 G1 BROAD and D3 on | 2.52 | 79 | 55.1% | 1,197 | 43.1% | +65.0% | −17.1% | +18.3% | +12.5% | 45.4% |
+
+**2014-2026**
+
+| Cell | n | win | avg win | avg loss | expectancy | alpha | empty mo |
+|---|---|---|---|---|---|---|---|
+| no gate | 1,143 | 43.0% | +59.2% | −15.2% | +16.8% | +10.6% | 0.7% |
+| G1 level off<40×21 / on>50 | 1,017 | 41.6% | +62.1% | −15.7% | +16.7% | +11.2% | 13.1% |
+| D0 raw d>0 | 706 | 43.1% | +63.3% | −16.9% | +17.7% | +11.3% | 51.6% |
+| **D1 10 up / 10 down** | 667 | 44.8% | +68.2% | −16.5% | **+21.5%** | **+13.9%** | 51.6% |
+| D2 21 up / 21 down | 688 | 43.8% | +66.3% | −16.5% | +19.7% | +12.9% | 51.6% |
+| D3 asym: off d<0 ×21 / on d>0 | 845 | 43.4% | +61.1% | −16.6% | +17.2% | +11.1% | 36.6% |
+| D4 21-session mean d > 0 | 674 | 44.5% | +68.0% | −16.6% | +21.1% | +13.7% | 51.6% |
+| D5 G1 BROAD and D3 on | 762 | 42.9% | +65.5% | −16.8% | +18.5% | +12.3% | 42.5% |
+
+**Per era (n / expectancy)**
+
+| Cell | 2006-12 | 2013-19 | 2020-26 |
+|---|---|---|---|
+| no gate | 598 / +9.0% | 625 / +13.9% | 605 / +23.6% |
+| G1 level | 475 / +11.2% | 536 / +15.1% | 554 / +21.6% |
+| D0 raw | 327 / +15.6% | 367 / +15.3% | 382 / +26.6% |
+| D1 | 353 / +12.2% | 341 / +19.4% | 373 / +28.0% |
+| D2 | 349 / +9.4% | 364 / +17.9% | 370 / +26.4% |
+| D3 | 452 / +10.7% | 470 / +16.0% | 439 / +24.4% |
+| **D4** | **337 / +14.4%** | **330 / +19.9%** | **381 / +27.1%** |
+| D5 | 378 / +12.6% | 398 / +17.8% | 421 / +23.8% |
+
+**Deflation, six cells D0-D5**
+
+| Span | mean | sd | Gumbel E[max of 6] | best | clears? |
+|---|---|---|---|---|---|
+| Full 2006-2026 | +18.90% | 1.39pp | **+20.67%** | D4 +20.70% | by 0.04pp — a tie |
+| 2014-2026 | +19.28% | 1.78pp | **+21.54%** | D1 +21.50% | **no**, by 0.04pp |
+
+The best cell lands on the bar to within four hundredths of a point on both
+spans, in opposite directions. **No individual direction rule is
+distinguishable from the best of six draws** — which is the expected result
+when the six cells are this tightly clustered (sd 1.4pp on a 3.8pp range).
+The finding is not D4 or D1; it is that **the whole direction family sits
+above the whole level family**: the worst direction cell (+16.9%) beats the
+best level cell (+16.2%), and the family mean (+18.9%) beats it by 2.7pp.
+That comparison is across families, not a pick within one, so the
+multiplicity bar above does not apply to it.
+
+**Persistence is free on this signal.** D0 raw flips 9.5 times a year with a
+5-session median run and returns +19.4%. D1 flips 2.4 times with an 86-session
+run and returns **more**, +20.0%; D4 smooths instead of counting and returns
++20.7% at 2.7 flips and a 78-session run. Filtering the dither did not cost
+edge, it added ~1pp — the opposite of what happened to the level gate, where
+every persistence variant traded expectancy for followability. `trend_screen`
+rejected direction for flip count; that objection is now answered.
+
+**What it costs is delivery.** Every strong direction cell is on under half
+the time — 47.6% to 48.8% — against 80.5% for G1 and 100% for no gate, and
+that shows up as **~52% empty months against 19.3%**. Direction buys +4.5pp
+of per-call expectancy over the best level gate by calling nothing in one
+month out of two. D3 and D5 are the attempts to keep delivery up, and they
+price the trade honestly: D3 gets time-on to 65.2% and gives back almost the
+entire edge (+16.9%, only +0.7pp over G1); D5 at 55.1% keeps about half of it
+(+18.3%). There is no cell here that is both on most of the time and better
+than the level gate by a margin worth having.
+
+None of this is a book result. The §4 and asymmetric-gate sections showed that
+per-call expectancy and book Sharpe move in opposite directions for exactly
+this reason — a gate that is off half the time forfeits exposure — so a
+direction gate must be run through the 25-slot book before any of it is
+believed. That is the next test, not a conclusion of this one.
+
 ## Blocked
 
 - Nothing outstanding. Gate A1 failed on the BRIEF's stated gate (hysteresis
