@@ -1,0 +1,10 @@
+name: exit_asymmetry_2026
+status: in-progress
+opened: 2026-09-13
+closed: null
+related_commits: []
+supersedes: []
+depends_on:
+  - trigger_calls_2026
+  - trend_screen_2026
+register_rows: []
