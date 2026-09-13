@@ -302,3 +302,27 @@ tape **give-back is what the right tail costs**.
    state *after* the peak. Nothing tested acts on the distinction PLAN.md
    actually found, which is **when** the peak arrives. A rule conditioned on
    peak age — not on peak depth — is the untested idea this task leaves open.
+
+## Re-ranked by the ride, not the mean — 2026-09-13
+
+Founder's objection: expectancy optimises for the mean subscriber; a real
+one takes half the calls, deviates on some, and experiences the ride. Every
+bounded-hold cell re-scored on win rate, share closed inside 90 sessions,
+median call, and a 5,000-draw bootstrap of one subscriber-year (25 random
+calls). `data/subscriber_ranking.csv`.
+
+| cell | win | exp | median call | closed ≤90d | P(bad year) | P(win<40% in a year) |
+|---|---|---|---|---|---|---|
+| **ma150 (X0)** | 41% | **+15.5%** | −5.0% | 54% | **10.6%** | 37.9% |
+| X1 A=25 k=50 + ma150 | 47% | +12.3% | −2.6% | 67% | 12.6% | 18.3% |
+| X4 Y=5 N=63 + ma150 | 48% | +13.3% | −2.0% | 71% | 13.0% | 20.7% |
+| **X1 A=15 k=50 + ma150** | **55%** | +10.4% | **+4.9%** | 78% | 15.5% | **4.1%** |
+| X1 A=15 k=65 + ma150 | 56% | +6.8% | +7.5% | 86% | 18.6% | 3.3% |
+
+The trade-off is exact and two-sided. The ratchet armed at +15% keeping 50%
+of peak gives a subscriber 55% winners, a positive median call, and almost
+no chance of a sub-40% year -- for 5pp of expectancy. But ma150 has the
+LOWEST probability of a losing year (10.6% vs 15.5%), because its big
+winners rescue bad stretches; the high-win-rate cells lose the tail that
+does the rescuing. Better ride per call, riskier year. This is a product
+choice and is recorded as one, not resolved here.
