@@ -67,6 +67,19 @@ def walk(p, e, entry, fam, par, backstop, aux):
                 rk = aux["rank"].get(p["dates"][t])
                 if rk is not None and (np.isnan(rk) or rk > R):
                     hit = "lost_rank"
+            elif fam == "X9":
+                # Three phases. The young call gets a hard floor the mature
+                # call never sees; the mature call gets a ratchet the young
+                # call never reaches. ma150 runs underneath all three.
+                Z = par["Z"]
+                pg = peak / entry - 1
+                if pg >= 0.25:
+                    floor = max(floor, entry * (1 + k * pg))
+                    if c[t] < floor:
+                        hit = "ratchet"
+                elif age <= N:
+                    if c[t] < entry * (1 - Z):
+                        hit = "early_stop"
             elif fam == "X7":
                 if age >= 42 and c[t] < entry * 1.05:
                     hit = "timebox"

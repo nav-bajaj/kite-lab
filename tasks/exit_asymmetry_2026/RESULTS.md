@@ -179,9 +179,97 @@ X4 is the only family worth a second look, and only because of *where* it
 fails: it improves the win rate by 5-9pp and shortens hold by 20-40% while
 losing 2.2pp of expectancy. Everything else in the grid loses more.
 
+## Three-phase exit
+
+Pre-registered follow-up closing the hole the prior grid left: the
+un-backstopped ratchet had no exit for a call that never armed, and the
+backstopped one's only pre-arm exit was the ma150 at roughly 24% below entry.
+X9 adds a hard floor that exists **only while the call is young**.
+
+- **Phase 1**, sessions 1..N: exit if close < entry × (1 − Z)
+- **Phase 2**, after session N until the call is up +25% on close: ma150 only
+- **Phase 3**, once peak gain ≥ 25%: exit below entry × (1 + k × peak_gain),
+  or ma150, whichever fires first
+
+Eight cells, N ∈ {21, 42} × Z ∈ {10, 15}% × k ∈ {50, 65}%, ma150 as a
+backstop throughout so every hold is bounded. Same tape, same OHLC/4
+next-session fills, −0.2%.
+
+| Cell | n | win | avg win | avg loss | expectancy | alpha | mean hold | med hold | never closed | keep | 2021+ closed exp (n) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| **X0 ma150** | 1,828 | 41.2% | +59.1% | −15.1% | **+15.51%** | +10.29% | 103 | 83 | 3.0% | 24.1% | **+13.60%** (476) |
+| X1 A=25 k=50 + ma150 | 1,828 | 47.1% | +43.6% | −15.5% | +12.33% | +8.27% | 82 | 64 | 2.4% | 41.7% | +10.89% (488) |
+| **X9 N=21 Z=15 k=50** | 1,828 | 44.4% | +41.3% | −14.1% | **+10.54%** | +7.07% | 73 | 54 | 2.2% | 41.7% | +8.38% (490) |
+| X9 N=42 Z=15 k=50 | 1,828 | 43.4% | +41.5% | −13.5% | +10.39% | +7.01% | 71 | 48 | 2.1% | 41.6% | +7.75% (493) |
+| X9 N=21 Z=10 k=50 | 1,828 | 39.3% | +40.8% | −11.9% | +8.82% | +5.85% | 63 | 39 | 2.0% | 41.2% | +6.06% (494) |
+| X9 N=42 Z=10 k=50 | 1,828 | 38.2% | +40.0% | −11.2% | +8.42% | +5.62% | 59 | 32 | 1.9% | 40.7% | +5.42% (497) |
+| X9 N=21 Z=15 k=65 | 1,828 | 44.5% | +35.3% | −14.1% | +7.88% | +5.15% | 60 | 48 | 2.0% | 54.3% | +7.61% (494) |
+| X9 N=42 Z=15 k=65 | 1,828 | 43.5% | +35.4% | −13.5% | +7.75% | +5.10% | 58 | 41 | 1.8% | 54.4% | +7.20% (497) |
+| X9 N=21 Z=10 k=65 | 1,828 | 39.4% | +35.1% | −11.9% | +6.60% | +4.35% | 51 | 33 | 1.8% | 54.1% | +5.76% (497) |
+| X9 N=42 Z=10 k=65 | 1,828 | 38.3% | +34.5% | −11.2% | +6.33% | +4.23% | 48 | 30 | 1.6% | 53.6% | +5.40% (500) |
+
+The hold-time hole is closed — every cell runs 1.6-2.2% never-closed against
+X0's 3.0%, and mean holds of 48-73 against 103. These are honest, comparable
+numbers, and **every one of the eight is below X0**, by 4.97pp at best and
+9.18pp at worst. The ordering is entirely mechanical: k=50 beats k=65 in
+every pairing (letting the mature winner run is worth more than locking it),
+Z=15 beats Z=10 in every pairing (a tighter young stop is worse), and N
+barely matters (21 vs 42 is 0.15pp on the best pair).
+
+### Gates — best cell, X9 N=21 Z=15 k=50
+
+| Gate | Criterion | Value | |
+|---|---|---|---|
+| E1 | expectancy vs X0 ≥ +2.0pp | +10.54% vs +15.51% = **−4.97pp** | **FAIL** |
+| E2 | share of peak kept ≥ 35% | **41.7%** | PASS |
+| E3 | avg winner ≥ 85% of X0's | +41.3% vs +50.2% required | **FAIL** |
+| E4 | per-era positive and ≥60% of full-span | +6.07 / +10.57 / +14.84 — 2006-12 is 58% of +10.54 | **FAIL** |
+| E5 | 2021+ closed exp vs X0 ≥ +2.0pp | +8.38% vs +13.60% = **−5.22pp** | **FAIL** |
+| **E7** | mean hold within 1.3× X0's (≤ 134) | **73** | **PASS** |
+
+Two of six. E7 — the gate added to catch what broke the prior grid — is the
+one it passes comfortably, which confirms the diagnosis: the earlier winners
+were buying their expectancy with hold time, and once that is forbidden the
+family has nothing left.
+
+**Gumbel, 8 draws:** mean +8.34%, sd 1.55pp. Asymptotic bound **+10.27%**;
+exact E[max of 8 standard normals] gives **+10.55%**. Best cell +10.54% —
+clears the first by 0.27pp, misses the second by 0.01pp. Academic either way:
+the bar it actually has to clear is X0 at +15.51%, and it is 5pp short.
+
+### Where the difference comes from
+
+All 1,828 calls, split by whether the phase-1 stop fired, this cell against
+X0 on the same calls.
+
+| Group | n | X9 avg ret | X0 avg ret | difference | X0 win rate on the group | X9 med hold | X0 med hold |
+|---|---|---|---|---|---|---|---|
+| **Early stop fired** | 268 (14.7%) | **−17.56%** | **−4.24%** | **−13.32pp** | 15.7% (42 closed positive) | 12 | 62 |
+| Early stop did not fire | 1,560 (85.3%) | +15.36% | +18.90% | −3.53pp | 45.6% (712 positive) | 65 | 88 |
+
+**The early stop is shaking out recoveries, not removing −12% closes.** The
+268 calls it stops are cut at −17.56% average; left alone under ma150 those
+same 268 names averaged **−4.24%** — they mostly came back to near flat, and
+42 of them closed positive. That is a 13.3pp per-call loss on one call in
+seven, and it accounts for −1.95pp of the −4.97pp full-span gap on its own.
+The founder's intuition that a young call needs a floor is testable and the
+test says no: on this tape a name 15% underwater in its first month is not a
+dead thesis, it is a normal drawdown inside a 103-session hold.
+
+The other −3.53pp, on the 85% of calls the stop never touched, is phase 3 —
+the same right-tail clipping the X1 ratchet showed. Both phases of the
+three-phase rule lose money, separately and for different reasons. Nothing
+about combining them is the problem; each half is negative on its own.
+
+This does not overturn the measured asymmetry — X9 does what it was built to
+do, lifting share of peak kept from 24.1% to 41.7% and win rate from 41.2% to
+44.4%. It confirms, on a family with no hold-time escape hatch, that on this
+tape **give-back is what the right tail costs**.
+
 ## Blocked
 
-- Nothing failed to run. All 39 cells completed on all 1,828 calls.
+- Nothing failed to run. All 39 grid cells and the 8 three-phase cells
+  completed on all 1,828 calls.
 - **E6 is void, not passed** — see the Gumbel section. The pre-registered gate
   battery has no hold-time control, so a rule that refuses to close losers
   passes E1-E5 mechanically. That is a gate design flaw, recorded here rather
