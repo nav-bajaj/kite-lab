@@ -95,6 +95,18 @@ def simulate(p, e: int, entry: float, stop0: float, cfg: dict):
                 a = p["atr"][t]
                 hit = not np.isnan(a) and c[t] < run_hi - cfg["atr_mult"] * a
             if hit:
+                # A close-based signal cannot be filled at that same close. When
+                # exit_next_open is set the sale is at the following session's
+                # open, which is what a person acting on the close can get.
+                # Production convention (scripts/_clean_engine.py): fills at
+                # OHLC/4 of the session after the signal. exec_ohlc4 applies it
+                # to the trail exit; the caller applies it to the entry.
+                if (cfg.get("exit_next_open") or cfg.get("exec_ohlc4")) and t + 1 < n:
+                    px = ((o[t+1] + h[t+1] + l[t+1] + c[t+1]) / 4
+                          if cfg.get("exec_ohlc4") else o[t + 1])
+                    return (realized + w * (px * (1 - SLIPPAGE) / entry - 1),
+                            (realized + w * (px * (1 - SLIPPAGE) / entry - 1)) * entry / risk,
+                            t + 1 - e, "trail")
                 realized += w * (c[t] * (1 - SLIPPAGE) / entry - 1)
                 return realized, realized * entry / risk, t - e, "trail"
 

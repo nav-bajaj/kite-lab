@@ -1,11 +1,11 @@
-name: breakout_calls_2026
+name: regime_allocation_2026
 status: shipped
-opened: 2026-09-11
+opened: 2026-09-12
 closed: 2026-09-12
 related_commits: []
 supersedes: []
 depends_on:
+  - trend_screen_2026
+  - breakout_calls_2026
   - market_data_spine
-  - vcp_l6_study
-  - vcp_relook
 register_rows: []

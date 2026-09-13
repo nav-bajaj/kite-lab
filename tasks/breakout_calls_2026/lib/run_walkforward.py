@@ -85,7 +85,7 @@ def main():
     print(f"\n  walk-forward mean R (trade-weighted, {tot_n:,} trades) : {wf_mean:.3f}R")
     print(f"  same window, best cell chosen WITH hindsight         : {best_oos:.3f}R  [{best}]")
     print(f"  grid median across all {long.cfg.nunique()} cells                     : {grid_med:.3f}R")
-    print(f"  §3 reference exit                                    : 0.467R")
+    print("  §3 reference exit                                    : 0.467R")
     print(f"\n  configs ever chosen: {wf.chosen.nunique()} -> {wf.chosen.value_counts().to_dict()}")
 
 

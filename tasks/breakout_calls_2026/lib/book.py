@@ -23,7 +23,8 @@ def build_book(trades: pd.DataFrame, panels: dict, calendar: pd.DatetimeIndex,
                slots: int, risk_pct: float = 0.015, max_weight: float | None = None,
                adv_cap: float = 0.10, capital: float = 1_000_000.0,
                seed: int = 0, order: str = "random",
-               regime: pd.Series | None = None) -> dict:
+               regime: pd.Series | None = None,
+               force_exit: pd.Series | None = None) -> dict:
     """One book path. `trades` needs entry_date, exit_date, entry, exit_px,
     stop, symbol, adv (Rs cr). `order` breaks ties when more signals fire than
     slots: 'random' claims no skill, 'tight' takes the tightest final
@@ -54,6 +55,17 @@ def build_book(trades: pd.DataFrame, panels: dict, calendar: pd.DatetimeIndex,
             else:
                 still.append(p)
         open_pos = still
+
+        # --- optional regime-forced liquidation at today's close ---
+        # Additive: absent (None) leaves the book exactly as before.
+        if force_exit is not None and bool(force_exit.get(day, False)) and open_pos:
+            for p in open_pos:
+                s = panels[p["symbol"]]["close"]
+                v = s.get(day)
+                if v is None or np.isnan(v):
+                    v = p["last"]
+                cash += p["shares"] * v
+            open_pos = []
 
         # --- mark to market on today's close ---
         mtm = cash
@@ -86,8 +98,14 @@ def build_book(trades: pd.DataFrame, panels: dict, calendar: pd.DatetimeIndex,
                 risk_per_share = t.entry - t.stop
                 if risk_per_share <= 0:
                     continue
+                # Optional per-trade allocation multiplier. Used by the
+                # phase-conditioned test: 1.0 is a normal position, 0.5 half,
+                # 0 means the trade is not taken at all. Absent -> always 1.
+                wt = getattr(t, "wt", 1.0)
+                if wt <= 0:
+                    continue
                 want = min(risk_pct * equity / risk_per_share * t.entry,
-                           max_weight * equity)
+                           max_weight * equity) * wt
                 want = min(want, adv_cap * t.adv * 1e7)   # ADV is in Rs crore
                 if want < 1000:
                     passed_adv += 1

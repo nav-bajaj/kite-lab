@@ -1,0 +1,7 @@
+2397 symbols
+  500/2397
+  1000/2397
+  1500/2397
+  2000/2397
+overlap 5349 of 5349 / ref 5349; max |diff| pct_above_200 = 6.454e-02; mean 4.242e-03
+wrote /Users/navdeep/kite-lab/tasks/regime_allocation_2026/data/pct_above_50.parquet rows=5349 span 2005-02-17..2026-09-09

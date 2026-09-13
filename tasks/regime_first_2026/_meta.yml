@@ -1,0 +1,11 @@
+name: regime_first_2026
+status: planned
+opened: 2026-09-13
+closed: null
+related_commits: []
+supersedes: []
+depends_on:
+  - trend_screen_2026
+  - regime_allocation_2026
+  - market_data_spine
+register_rows: []

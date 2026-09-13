@@ -63,7 +63,7 @@ def main():
     print(f"\nGRID MEDIAN meanR : {g.meanR.median():.3f}R   (this is the headline)")
     print(f"grid best   meanR : {g.meanR.max():.3f}R   (a selection artifact)")
     print(f"grid worst  meanR : {g.meanR.min():.3f}R")
-    print(f"§3 reference exit : 0.467R\n")
+    print("§3 reference exit : 0.467R\n")
     print("top 12 cells:")
     print(g.head(12).round(3).to_string(index=False))
     print("\nmedian meanR by axis:")

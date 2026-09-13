@@ -1,0 +1,32 @@
+best §3 survivor by WF Sharpe: composite/D2_two_bucket
+  pct_above_200/D2_two_bucket       primary    rule  1.09  always  0.66  ctl  0.69
+  pct_above_200/D2_two_bucket       alt_2013   rule  1.15  always  0.67  ctl  0.74
+  pct_above_200/D2_two_bucket       alt_2019   rule  1.41  always  0.95  ctl  1.02
+  composite/D2_two_bucket           primary    rule  0.96  always  0.66  ctl  0.70
+  composite/D2_two_bucket           alt_2013   rule  0.98  always  0.67  ctl  0.76
+  composite/D2_two_bucket           alt_2019   rule  1.17  always  0.95  ctl  1.03
+  pct_above_200/D1_four_bucket      primary    rule  0.91  always  0.66  ctl  0.71
+  pct_above_200/D1_four_bucket      alt_2013   rule  0.98  always  0.67  ctl  0.77
+  pct_above_200/D1_four_bucket      alt_2019   rule  1.22  always  0.95  ctl  1.04
+  pct_above_50/D2_two_bucket        primary    rule  0.81  always  0.66  ctl  0.66
+  pct_above_50/D2_two_bucket        alt_2013   rule  1.01  always  0.67  ctl  0.73
+  pct_above_50/D2_two_bucket        alt_2019   rule  1.11  always  0.95  ctl  0.99
+  pct_above_200/D3_continuous       primary    rule  0.82  always  0.66  ctl  0.69
+  pct_above_200/D3_continuous       alt_2013   rule  0.96  always  0.67  ctl  0.75
+  pct_above_200/D3_continuous       alt_2019   rule  1.10  always  0.95  ctl  1.02
+  book_x 'entry' reproduces build_book exactly: True
+  entry         22.8%   35.1%  0.96
+  force_exit     9.7%   26.1%  0.41
+  rebal_down     9.7%   26.1%  0.41
+  slots 15   rule  0.83  always  0.44  ctl  0.53
+  slots 25   rule  0.96  always  0.66  ctl  0.70
+  slots 35   rule  1.03  always  0.71  ctl  0.71
+  breakout tape: rule 0.54  always 0.50  ctl 0.41
+
+G6 (beats always-on in both alternates):
+candidate
+composite/D2_two_bucket         True
+pct_above_200/D1_four_bucket    True
+pct_above_200/D2_two_bucket     True
+pct_above_200/D3_continuous     True
+pct_above_50/D2_two_bucket      True

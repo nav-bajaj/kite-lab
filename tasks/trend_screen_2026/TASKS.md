@@ -309,3 +309,129 @@ Drawdown, and nothing else. Every other gate passes. The founder's breadth
 idea aims straight at it — with the caveat that the naive version (200-day
 index regime overlay) already *hurt* on the breakout book, Sharpe 0.65 → 0.56.
 Breadth is a different signal and deserves its own test, not an assumption.
+
+## §8 — IS/OOS test of phase-conditioned allocation 🤖 — DONE 2026-09-12
+
+Founder's proposal: full allocation in EXPANSION and RECOVERY, none in
+CONTRACTION, something smaller in TOPPING. IS 2006-2015, OOS 2016-2026,
+25 slots, equal-weight, daily mark-to-market.
+
+**The contamination, stated first.** The phase effect was found on the whole
+2006-2026 sample, so splitting it afterwards does not make the later half
+truly out of sample — the taxonomy, the breadth measure, the 63-session
+change window and the median level cut were all chosen knowing how the full
+period behaved. Only the *weights* are genuinely refit here. Every OOS number
+below is an upper bound on what a real forward test would have given.
+
+### It works out of sample, and not by reducing exposure
+
+| scheme | IS CAGR | IS DD | IS Sharpe | OOS CAGR | OOS DD | **OOS Sharpe** |
+|---|---|---|---|---|---|---|
+| always on (control) | 24.7% | 47.4% | 0.95 | 19.1% | 41.0% | **0.66** |
+| founder's rule | 26.3% | 30.9% | 1.22 | 21.6% | 36.7% | **0.92** |
+| IS-fitted weights | 26.6% | 28.0% | 1.30 | 21.1% | 34.7% | **0.91** |
+| skip contraction only | 28.8% | 30.9% | 1.28 | 20.2% | 39.0% | 0.80 |
+| half everywhere (control) | 15.2% | 34.0% | 0.75 | 13.5% | 26.4% | 0.64 |
+
+**The half-everywhere control is the one that matters.** Cutting every
+position to half — same trades, less exposure — gives OOS Sharpe 0.64, *worse*
+than always-on. So the gain is not mechanical de-risking; it comes from being
+selective about which tape to be in. That was the result most likely to
+debunk the whole idea, and it does not.
+
+**The least-fitted rule won.** The in-sample decade ranked TOPPING (+6.03%
+alpha) above EXPANSION (+5.12%), so weights fitted on it are RECOVERY 1 /
+TOPPING 1 / EXPANSION 0.5 / CONTRACTION 0 — not the founder's. The founder's
+a priori rule still edged it out of sample (0.92 vs 0.91). Fitting the decade
+would have bought nothing.
+
+### What is robust, and what is not
+
+**Robust — zero in CONTRACTION.** Agrees across both halves and the effect is
+large. Any positive weight hurts:
+
+| contraction weight | IS Sharpe | OOS CAGR | OOS Sharpe |
+|---|---|---|---|
+| 0.00 | 1.22 | 21.6% | **0.92** |
+| 0.25 | 0.97 | 16.0% | 0.63 |
+| 0.50 | 0.95 | 18.5% | 0.72 |
+
+**Not robust — the TOPPING weight. IS and OOS disagree on its direction:**
+
+| topping weight | IS Sharpe | OOS Sharpe |
+|---|---|---|
+| 0.00 | **1.03** (worst IS) | **1.09** (best OOS) |
+| 0.25 | 1.14 | 0.95 |
+| 0.50 | 1.22 | 0.92 |
+| 0.75 | 1.24 | 0.87 |
+| 1.00 | **1.28** (best IS) | **0.80** (worst OOS) |
+
+The in-sample decade says weight it fully; the out-of-sample decade says drop
+it entirely, and the two rank the five cells in exactly opposite order. This
+parameter is not determinable from the data we have. **Do not tune it** — pick
+0 or 0.5 on reasoning and state that the choice is not evidence-backed.
+
+Note what this forbids: "trade only when breadth is rising" (topping 0,
+contraction 0) is the best OOS cell at 24.3% / 1.09, and it is tempting. It is
+also the worst IS cell. Choosing it now would be selecting on the out-of-
+sample half, which is the one thing the split exists to prevent.
+
+### Where it leaves P2
+
+OOS drawdown improves from 41.0% to 34.7-37.1% depending on the weights. The
+IS-fitted scheme lands at **34.7%, inside the −35% gate** — the first
+configuration in either task to clear it. The founder's rule at 36.7% does
+not. Given the topping weight is undeterminable, treat the gate as "close, not
+cleared", and re-test once a cleaner regime definition exists.
+
+## §9 — fill convention corrected to production 🤖 — 2026-09-12
+
+👤 caught that every tape in this task and in `breakout_calls_2026` filled at
+the **next open** (entry) and at the **signal close** (trail exit), inherited
+from `vcp_l6_study`. Production (`scripts/_clean_engine.py`, `docs/portfolios.md`)
+decides on the close and fills **every** execution at **OHLC/4 of T+1** with
+0.2% slippage. The signal side already matched; the fills did not. The miss
+was not opening the production engine because the tasks scoped themselves
+away from production code — CLAUDE.md states the pipeline order but not the
+fill basis. It should.
+
+`exits.simulate` now takes `exec_ohlc4=True`; the caller sets the entry to
+OHLC/4 of T+1. Both are opt-in so nothing already recorded changes.
+
+**Cost, per trade** (150-day trail, no stop):
+
+| cut | fills | n | win | avg win | avg loss | expectancy |
+|---|---|---|---|---|---|---|
+| whole list 2006-26 | open / close | 7,828 | 39% | +46.7% | −11.0% | +11.54% |
+| whole list 2006-26 | **OHLC/4 T+1** | 7,827 | 39% | +46.1% | −11.2% | **+11.35%** |
+| top 20, 2006-26 | open / close | 1,784 | 40% | +61.0% | −14.9% | +15.80% |
+| top 20, 2006-26 | **OHLC/4 T+1** | 1,783 | 41% | +59.2% | −15.1% | **+15.41%** |
+| top 20, rule on, 2014-26 | open / close | 757 | 44% | +67.7% | −15.8% | +20.98% |
+| top 20, rule on, 2014-26 | **OHLC/4 T+1** | 757 | 45% | +65.1% | −16.1% | **+20.71%** |
+
+0.2-0.4pp per call. No finding changes sign or ordering. Every figure shown
+to a subscriber uses the OHLC/4 basis from here; the tape is
+`data/calls_full_range_ohlc4.csv`. Portfolio re-run on the same basis is in
+progress and will be appended.
+
+**Portfolio on OHLC/4 T+1 fills** (25 slots, equal weight, daily MTM; open/close figures in brackets):
+
+| config | CAGR | maxDD | Sharpe |
+|---|---|---|---|
+| top 50, always on, 2006-26 | 19.5% [22.4] | 47.6% [48.6] | 0.69 [0.83] |
+| whole list, always on, OOS 2016-26 | 17.2% [19.1] | 40.5% [41.0] | 0.56 [0.66] |
+| whole list, composite/D2 **fixed w=63**, OOS 2016-26 | 23.9% | 37.2% | 1.02 |
+| whole list, composite/D2 **fixed w=63**, 2014-26 | 25.2% | 37.2% | 1.09 |
+
+Two things to read off this. The book loses more than the per-trade cost
+suggests (~3pp CAGR, ~0.12 Sharpe) because a 0.3pp fill cost is paid on every
+one of several hundred trades and compounds; that is the true cost of the
+convention, and the always-on figures in §7 are superseded by these.
+
+Second, and more important: the frozen-window rule's drawdown is **37.2%**,
+not the 22.0% the walk-forward reported in `regime_allocation_2026`. The
+walk-forward's shallow drawdown came from switching windows year to year —
+the very behaviour G7 flagged as noise. Freeze the window and the drawdown
+comes back, and G4 (≤ 35%) fails again. The rule still beats always-on on
+identical fills (Sharpe 1.02 vs 0.56, CAGR 23.9% vs 17.2%); what does not
+survive is the low-drawdown claim.

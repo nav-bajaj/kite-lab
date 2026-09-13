@@ -1,0 +1,15 @@
+families walked: [('pct_above_200', 'D2_two_bucket'), ('composite', 'D2_two_bucket'), ('pct_above_200', 'D1_four_bucket'), ('pct_above_50', 'D2_two_bucket'), ('pct_above_200', 'D3_continuous')]
+always-on WF  CAGR 20.6%  DD 43.1%  Sharpe 0.71
+pct_above_200/D2_two_bucket      WF  19.3%  37.9%  0.80  ctl  0.71  static  1.09  cells 3
+composite/D2_two_bucket          WF  21.8%  22.0%  1.02  ctl  0.71  static  0.96  cells 4
+pct_above_200/D1_four_bucket     WF  16.0%  39.1%  0.61  ctl  0.73  static  0.91  cells 3
+pct_above_50/D2_two_bucket       WF  14.4%  39.8%  0.51  ctl  0.67  static  0.81  cells 2
+pct_above_200/D3_continuous      WF  10.8%  34.8%  0.42  ctl  0.70  static  0.82  cells 8
+
+                    candidate        signal          shape  params  wf_cagr  wf_maxdd  wf_sharpe  ctl_sharpe  static_oos_sharpe  distinct_cells    chg_yr     cash  ctl_cagr  ctl_maxdd  static_oos_edge        g1        g2       g3
+         always on (control)             -              -       0 0.206460  0.430568   0.714959         NaN                NaN               0  0.000000 0.000000       NaN        NaN              NaN       NaN       NaN      NaN
+ pct_above_200/D2_two_bucket pct_above_200  D2_two_bucket       2 0.192998  0.379195   0.797234    0.709655           1.085967               3 10.119697 0.521491  0.158592   0.285149         0.398687  0.082275  0.087579 0.288733
+     composite/D2_two_bucket     composite  D2_two_bucket       2 0.218219  0.220440   1.016239    0.710081           0.964921               4 31.395661 0.494395  0.170358   0.329758         0.266459  0.301281  0.306159 0.051318
+pct_above_200/D1_four_bucket pct_above_200 D1_four_bucket       4 0.160183  0.391428   0.614589    0.731838           0.905474               3 13.631043 0.291219  0.183285   0.333440         0.191535 -0.100369 -0.117249 0.290885
+  pct_above_50/D2_two_bucket  pct_above_50  D2_two_bucket       2 0.143759  0.397569   0.509334    0.670852           0.812301               2 16.260343 0.529368  0.150896   0.287556         0.148393 -0.205625 -0.161518 0.302967
+ pct_above_200/D3_continuous pct_above_200  D3_continuous       4 0.107692  0.347539   0.416811    0.699103           0.823711               8 97.460430 0.334231  0.156804   0.290983         0.134670 -0.298147 -0.282292 0.406899
