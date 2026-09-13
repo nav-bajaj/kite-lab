@@ -44,9 +44,29 @@ def load_panel(sym: str):
         o=df.open.to_numpy(float), h=df.high.to_numpy(float),
         l=df.low.to_numpy(float), c=c.to_numpy(float),
         s50=c.rolling(50).mean().to_numpy(),
+        s100=c.rolling(100).mean().to_numpy(),
         s150=c.rolling(150).mean().to_numpy(),
         atr=tr.rolling(20).mean().to_numpy(),
+        piv_lo=_pivot_low(df.low.to_numpy(float)),
     )
+
+
+def _pivot_low(lo: np.ndarray, k: int = 5) -> np.ndarray:
+    """Last CONFIRMED +-k-bar pivot low, as known on each bar.
+
+    A pivot at i is the lowest low of [i-k, i+k], so it is not knowable until
+    bar i+k. The array therefore carries the pivot's price from i+k onward,
+    never from i — reading it at bar t uses only bars <= t.
+    """
+    n = len(lo)
+    out = np.full(n, np.nan)
+    last = np.nan
+    for t in range(n):
+        i = t - k
+        if i >= k and lo[i] == lo[i - k:i + k + 1].min():
+            last = lo[i]
+        out[t] = last
+    return out
 
 
 def simulate(p, e: int, entry: float, stop0: float, cfg: dict):
@@ -89,8 +109,13 @@ def simulate(p, e: int, entry: float, stop0: float, cfg: dict):
             hit = False
             if tr == "ma50":
                 hit = not np.isnan(p["s50"][t]) and c[t] < p["s50"][t]
+            elif tr == "ma100":
+                hit = not np.isnan(p["s100"][t]) and c[t] < p["s100"][t]
             elif tr == "ma150":
                 hit = not np.isnan(p["s150"][t]) and c[t] < p["s150"][t]
+            elif tr == "swing":
+                v = p["piv_lo"][t]
+                hit = not np.isnan(v) and c[t] < v
             elif tr == "chandelier":
                 a = p["atr"][t]
                 hit = not np.isnan(a) and c[t] < run_hi - cfg["atr_mult"] * a
