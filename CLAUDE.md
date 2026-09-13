@@ -49,6 +49,7 @@ script, or removed `.md`. Don't push to that branch.
 - **CSP, security headers, rate limiting** on the backend are R-006/R-007 risk-register closures. Loosening any requires a register row first — see `docs/security/risk-register.md`.
 - **Token files** (`access_token.txt`, `session.json`) written with mode 0o600. Pattern in `kite-api/app/services/system_service.py`.
 - **Daily pipeline order** (see `scripts/run_daily_pipeline.py`): login → instruments → NSE 500 + indices → corporate-actions adjust → benchmark → shared-state cache → all 7 portfolios via `update_all_portfolios.py` → DB sync → cloud upload. Each step has a downstream consumer — don't reorder casually.
+- **Fill convention (all backtests):** decisions on the signal-day close; every execution at **OHLC/4 of T+1** with 0.2% slippage — `scripts/_clean_engine.py`, `docs/portfolios.md`. Research tapes built on next-open or signal-close fills are not comparable to production and must say so.
 - **`/api/system/*`** is intentionally unauthenticated (AD-1, R-003). Only OAuth-bootstrap routes go there; any new route here must pass through the `security-reviewer` subagent first.
 
 ## Conventions

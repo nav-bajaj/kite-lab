@@ -1,14 +1,17 @@
 # Results — trend_screen_2026
 
-**Verdict:** The trend classification works and is unusually robust — its
-ordering survives all 135 threshold configurations and all three eras. As a
-**calls product it is shippable**: top 20 names, regime-gated, 45% win,
-+20.7% expectancy per call, 4.05:1 payoff, on production fills over 2014-2026.
-As a **portfolio it is not**: 21.1% CAGR at −37.3% drawdown with a 0.44 era
-Sharpe in 2006-2012, failing P2, P4 and the deflation gate.
+**Verdict (final, 2026-09-13):** Shippable as one product with three parts, and the spec is frozen in `STATE.md` here. The trend classification is robust (ordering holds under all 135 threshold sets and in every era). The exit is the **profit-lock ratchet (+15% arm, keep 50%, ma150 backstop)**, chosen for the subscriber's ride and found to be the best portfolio rule as well: **24.8% / −35.5% / 0.99 OOS at 25 slots, no regime gate.** Breadth direction is a **label** on every call — improving calls returned +24% and deteriorating +5% on closed 2021+ trades, both positive — never a gate, because gating emptied a third to half of months and hurt the book three separate times. Headline statistics are **closed calls only**; the 45 open calls were flattering every number and are shown separately. Six task folders, 44 commits, and the failures are recorded beside the passes.
 
-Opened 2026-09-11. Status: calls product ready for a frozen forward test;
-portfolio recorded as research. Successor: `regime_allocation_2026`.
+Opened 2026-09-11, closed 2026-09-13. Successors: `regime_allocation_2026`,
+`regime_first_2026`, `trigger_calls_2026`, `exit_asymmetry_2026`.
+
+> **The sections below are the record of this folder's own work and are
+> superseded where they conflict with the verdict above.** In particular:
+> the "spec, frozen" and "headline numbers" sections describe the
+> composite-direction *gate* and the ma150 exit as they stood at §7; the
+> shipped spec (ratchet exit, direction as a label, closed-only statistics)
+> and current numbers live in **`STATE.md`** in this folder, which is the
+> entry point for the whole programme.
 
 ## What was shipped vs planned
 

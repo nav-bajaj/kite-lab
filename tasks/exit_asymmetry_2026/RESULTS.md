@@ -1,6 +1,8 @@
 # Results — exit_asymmetry_2026
 
-**Verdict: no exit family wins. The asymmetry is real and it is not a leak —
+**Verdict (revised 2026-09-13):** On per-call expectancy no exit beats the 150-day trail — the give-back is the price of the right tail, and sixty cells across three studies confirmed it. But expectancy was the wrong objective for both products. Re-ranked by the subscriber's ride, the **profit-lock ratchet armed at +15% keeping 50% of peak gain, with ma150 as backstop** gives 55% winners, a positive median call (+4.9%), 78% of calls closed inside 90 sessions, and a 4% chance of a sub-40%-win year, for 5pp of expectancy (+10.4% vs +15.5%). And as a book it wins on every metric — **24.8% / −35.5% / 0.99 OOS at 25 slots with no regime gate** — because a slot-constrained book pays for capital recycling, not per-call mean. That rule is now the exit for both the calls product and the portfolio. The original per-call verdict follows, unchanged, as the record of how it was found.
+
+*Original verdict:* no exit family wins. The asymmetry is real and it is not a leak —
 it is the price of the right tail.** X0 reproduces exactly (476 calls / 41.6%
 / +13.60% on 2021+ closed-only), so the tape is the one PLAN.md measured. Nine
 cells beat X0 on full-span expectancy and every one of them is a **hold-time
