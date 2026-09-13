@@ -1,0 +1,200 @@
+universe names: 2161
+  panel 250/2161
+  panel 500/2161
+  panel 750/2161
+  panel 1000/2161
+  panel 1250/2161
+  panel 1500/2161
+  panel 1750/2161
+  panel 2000/2161
+panel: (5349, 2161)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:75: FutureWarning: The default fill_method='pad' in DataFrame.pct_change is deprecated and will be removed in a future version. Either fill in any non-leading NA values prior to calling pct_change or specify 'fill_method=None' to not fill NA values.
+  ret1 = px.pct_change()
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:76: FutureWarning: The default fill_method='pad' in DataFrame.pct_change is deprecated and will be removed in a future version. Either fill in any non-leading NA values prior to calling pct_change or specify 'fill_method=None' to not fill NA values.
+  ret21 = px.pct_change(21)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:77: FutureWarning: The default fill_method='pad' in DataFrame.pct_change is deprecated and will be removed in a future version. Either fill in any non-leading NA values prior to calling pct_change or specify 'fill_method=None' to not fill NA values.
+  ret63 = px.pct_change(63)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2005 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2006 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2007 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2008 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2009 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2010 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2011 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2012 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2013 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2014 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2015 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2016 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2017 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2018 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2019 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2020 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2021 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2022 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2023 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2024 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2025 done (100 names)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: divide by zero encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: overflow encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+/Users/navdeep/kite-lab/tasks/regime_first_2026/lib/build_state_vars.py:167: RuntimeWarning: invalid value encountered in matmul
+  C = (Ws.T @ Ws) / (Ws.shape[0] - 1) / np.outer(sd, sd)
+  corr 2026 done (100 names)
+pct_above_200        5181
+net_highs            5181
+pct_leading          5110
+pct_above_200_chg    5118
+net_highs_chg        5118
+breadth_dd           4930
+idx_dd               5098
+divergence           4930
+dispersion           5328
+n_universe           5349
+vol21                5328
+vol_ratio            5077
+trend_quality        5129
+part_skew            5286
+correlation          5286
+z_pct_above_200      4932
+z_net_highs          4932
+z_pct_leading        4861
+z_breadth_dd         4681
+z_divergence         4681
+z_dispersion         5079
+z_correlation        5037
+z_vol21              5079
+z_vol_ratio          4828
+z_trend_quality      4880
+z_part_skew          5037
+z_idx_dd             4849
+index_close          5349
+dtype: int64
+written /Users/navdeep/kite-lab/tasks/regime_first_2026/data/state_vars.parquet (5349, 28)

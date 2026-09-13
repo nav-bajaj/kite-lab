@@ -1,0 +1,3 @@
+candidate,agree,catchup,n,note,pass
+C4 kmeans k=2,0.934430444844433,0.0,3889,,True
+C6 GMM k=2 breadth,0.7721779377732065,0.0,3889,,False

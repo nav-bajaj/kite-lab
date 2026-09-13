@@ -1,7 +1,7 @@
 name: regime_first_2026
-status: planned
+status: shipped
 opened: 2026-09-13
-closed: null
+closed: 2026-09-13
 related_commits: []
 supersedes: []
 depends_on:
