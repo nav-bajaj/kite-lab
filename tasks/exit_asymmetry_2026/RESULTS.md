@@ -326,3 +326,31 @@ LOWEST probability of a losing year (10.6% vs 15.5%), because its big
 winners rescue bad stretches; the high-win-rate cells lose the tail that
 does the rescuing. Better ride per call, riskier year. This is a product
 choice and is recorded as one, not resolved here.
+
+## The ratchet as a portfolio — 2026-09-13
+
+Same book as every prior run: T3 top-20 tape, equal-weight, 10% ADV cap,
+daily mark-to-market, OHLC/4 fills, no regime gate.
+
+| exit | slots | span | CAGR | max DD | Sharpe | expo | days >10% under | longest no-new-high | eras |
+|---|---|---|---|---|---|---|---|---|---|
+| ma150 | 20 | 2006-26 | 19.5% | −56.2% | 0.66 | 87% | 64% | 6.0y | 0.47 / 0.46 / 1.04 |
+| ma150 | 25 | 2006-26 | 19.4% | −54.6% | 0.67 | 87% | 63% | 6.0y | 0.51 / 0.40 / 1.11 |
+| ma150 | 25 | OOS 16-26 | 20.1% | −48.0% | 0.70 | 90% | 54% | 2.9y | |
+| **ratchet +15/50** | 20 | 2006-26 | **23.3%** | −49.0% | **0.89** | 81% | 54% | 3.0y | 0.72 / 0.45 / 1.52 |
+| **ratchet +15/50** | 25 | 2006-26 | 22.2% | −46.6% | 0.87 | 80% | 55% | 3.1y | 0.61 / 0.56 / 1.47 |
+| **ratchet +15/50** | 25 | OOS 16-26 | **24.8%** | **−35.5%** | **0.99** | 83% | 47% | 2.1y | |
+
+The exit that loses 5pp per call **wins as a book on every metric** — CAGR,
+drawdown, Sharpe, time underwater, and the longest stretch without a new
+high (three years against six). The mechanism is capital recycling: a book
+is slot-constrained, so what matters is return per slot-year, not per call.
+The ratchet's median hold is 50 sessions against 83, it closes 78% of calls
+inside 90 sessions against 54%, and it redeploys into the next call while
+ma150 is still waiting for a winner to fall back to a slow average. The
+per-call comparison was the wrong lens for the portfolio question too.
+
+At 25 slots OOS the ratchet book is 24.8% / −35.5% / 0.99 with no regime
+gate at all — inside the P2 drawdown limit by a hair, and better on every
+line than the gated ma150 books that regime_allocation_2026 and
+trigger_calls_2026 spent sixty cells failing to improve.
