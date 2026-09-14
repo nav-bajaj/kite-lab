@@ -1,0 +1,11 @@
+name: universe_foresight
+status: shipped
+opened: 2026-09-11
+closed: 2026-09-11
+related_commits: []
+supersedes: []
+depends_on:
+  - market_data_spine
+  - mm_rebuild
+  - universe_membership
+register_rows: []
