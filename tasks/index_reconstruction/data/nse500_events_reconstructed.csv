@@ -1,0 +1,3200 @@
+date,action,company_name,symbol,source
+1998-08-01,include,20th Century Finance Corporation Ltd.,,nse_incl_excl
+1998-08-01,include,3M India Ltd.,,nse_incl_excl
+1998-08-01,include,ABB India Ltd.,,nse_incl_excl
+1998-08-01,include,ACC Ltd.,,nse_incl_excl
+1998-08-01,include,AGC Networks Ltd.,,nse_incl_excl
+1998-08-01,include,AP Paper Mills Ltd.,,nse_incl_excl
+1998-08-01,include,APR Ltd.,,nse_incl_excl
+1998-08-01,include,ATV Projects India Ltd.,,nse_incl_excl
+1998-08-01,include,Aban Offshore Ltd.,,nse_incl_excl
+1998-08-01,include,Abbott India Ltd.,,nse_incl_excl
+1998-08-01,include,Adani Enterprises Ltd.,,nse_incl_excl
+1998-08-01,include,Aditya Birla Nuvo Ltd.,,nse_incl_excl
+1998-08-01,include,Ador Welding Ltd.,,nse_incl_excl
+1998-08-01,include,Agro Tech Foods Ltd.,,nse_incl_excl
+1998-08-01,include,Ahmednagar Forgings Ltd.,,nse_incl_excl
+1998-08-01,include,Akzo Nobel India Ltd.,,nse_incl_excl
+1998-08-01,include,Alembic Ltd.,,nse_incl_excl
+1998-08-01,include,Alfa Laval (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Alpic Finance Ltd.,,nse_incl_excl
+1998-08-01,include,Alpine Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Altos India Ltd.,,nse_incl_excl
+1998-08-01,include,Ambalal Sarabhai Enterprises Ltd.,,nse_incl_excl
+1998-08-01,include,Ambuja Cements Ltd.,,nse_incl_excl
+1998-08-01,include,Amrut Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Andhra Valley Power Supply Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Apollo Hospitals Enterprises Ltd.,,nse_incl_excl
+1998-08-01,include,Apollo Tyres Ltd.,,nse_incl_excl
+1998-08-01,include,Apple Credit Corporation Ltd.,,nse_incl_excl
+1998-08-01,include,Apple Finance Ltd.,,nse_incl_excl
+1998-08-01,include,Aptech Ltd. (Erstwhile),,nse_incl_excl
+1998-08-01,include,Arvind Ltd.,,nse_incl_excl
+1998-08-01,include,Arvind Polycot Ltd.,,nse_incl_excl
+1998-08-01,include,Ashok Leyland Finance Ltd.,,nse_incl_excl
+1998-08-01,include,Ashok Leyland Ltd.,,nse_incl_excl
+1998-08-01,include,Asian Coffee Ltd.,,nse_incl_excl
+1998-08-01,include,Asian Electronics Ltd.,,nse_incl_excl
+1998-08-01,include,Asian Hotels (North) Ltd.,,nse_incl_excl
+1998-08-01,include,Asian Paints Ltd.,,nse_incl_excl
+1998-08-01,include,Assam Company India Ltd.,,nse_incl_excl
+1998-08-01,include,AstraZenca Pharma India Ltd.,,nse_incl_excl
+1998-08-01,include,Atcom Technologies Ltd.,,nse_incl_excl
+1998-08-01,include,Atlas Copco (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Atlas Cycle (Haryana) Ltd.,,nse_incl_excl
+1998-08-01,include,Atul Ltd.,,nse_incl_excl
+1998-08-01,include,Automotive Axles Ltd.,,nse_incl_excl
+1998-08-01,include,Autoriders Finance Ltd.,,nse_incl_excl
+1998-08-01,include,BASF India Ltd.,,nse_incl_excl
+1998-08-01,include,BEML Ltd.,,nse_incl_excl
+1998-08-01,include,BIL Industries Ltd.,,nse_incl_excl
+1998-08-01,include,BPL Engineering Ltd.,,nse_incl_excl
+1998-08-01,include,BPL Ltd.,,nse_incl_excl
+1998-08-01,include,Bajaj Auto Ltd.,,nse_incl_excl
+1998-08-01,include,Bajaj Finance Ltd.,,nse_incl_excl
+1998-08-01,include,Bajaj Hindusthan Ltd.,,nse_incl_excl
+1998-08-01,include,Bajaj Tempo Ltd.,,nse_incl_excl
+1998-08-01,include,Balaji Distilleries Ltd.,,nse_incl_excl
+1998-08-01,include,Ballarpur Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Balrampur Chini Mills Ltd.,,nse_incl_excl
+1998-08-01,include,Bank of Baroda,,nse_incl_excl
+1998-08-01,include,Bank of India,,nse_incl_excl
+1998-08-01,include,Bannari Amman Sugars Ltd.,,nse_incl_excl
+1998-08-01,include,Baroda Rayon Corporation Ltd.,,nse_incl_excl
+1998-08-01,include,Bata India Ltd.,,nse_incl_excl
+1998-08-01,include,Bayer Cropscience Ltd.,,nse_incl_excl
+1998-08-01,include,Bell Ceramics Ltd.,,nse_incl_excl
+1998-08-01,include,Berger Paints India Ltd.,,nse_incl_excl
+1998-08-01,include,Bharat Bijlee Ltd.,,nse_incl_excl
+1998-08-01,include,Bharat Electronics Ltd.,,nse_incl_excl
+1998-08-01,include,Bharat Forge Ltd.,,nse_incl_excl
+1998-08-01,include,Bharat Heavy Electricals Ltd.,,nse_incl_excl
+1998-08-01,include,Bharat Petroleum Corporation Ltd.,,nse_incl_excl
+1998-08-01,include,Bharti Telecom Ltd.-Suspended,,nse_incl_excl
+1998-08-01,include,Binani Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Birla Corporation Ltd.,,nse_incl_excl
+1998-08-01,include,Birla Global Finance Ltd.,,nse_incl_excl
+1998-08-01,include,Birla Power Solutions Ltd.,,nse_incl_excl
+1998-08-01,include,Blow Plast Ltd.,,nse_incl_excl
+1998-08-01,include,Blue Star Ltd.,,nse_incl_excl
+1998-08-01,include,Bombay Burmah Trading Corporation Ltd.,,nse_incl_excl
+1998-08-01,include,Bombay Dyeing & Manufacturing Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Bongaigaon Refinery & Petrochemicals Ltd.,,nse_incl_excl
+1998-08-01,include,Bosch Ltd.,,nse_incl_excl
+1998-08-01,include,Brabourne Enterprises Ltd.,,nse_incl_excl
+1998-08-01,include,Britannia Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Burroughs Wellcome (India) Ltd.,,nse_incl_excl
+1998-08-01,include,CESC Ltd.,,nse_incl_excl
+1998-08-01,include,CFL Capital Financial Services Ltd.,,nse_incl_excl
+1998-08-01,include,CRISIL Ltd.,,nse_incl_excl
+1998-08-01,include,Cable Corporation of India Ltd.,,nse_incl_excl
+1998-08-01,include,Cabot India Ltd.,,nse_incl_excl
+1998-08-01,include,Cadbury India Ltd.,,nse_incl_excl
+1998-08-01,include,Caprihans India Ltd.,,nse_incl_excl
+1998-08-01,include,Carborundum Universal Ltd.,,nse_incl_excl
+1998-08-01,include,Carrier Aircon Ltd.,,nse_incl_excl
+1998-08-01,include,Castrol (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Ceat Ltd.,,nse_incl_excl
+1998-08-01,include,Centak Chemicals Ltd.,,nse_incl_excl
+1998-08-01,include,Century Enka Ltd.,,nse_incl_excl
+1998-08-01,include,Century Textile & Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Chambal Fertilizers & Chemicals Ltd.,,nse_incl_excl
+1998-08-01,include,Cheminor Drugs Ltd.,,nse_incl_excl
+1998-08-01,include,Chemplast Sanmar Ltd.,,nse_incl_excl
+1998-08-01,include,Chennai Petroleum Corporation Ltd.,,nse_incl_excl
+1998-08-01,include,Chicago Pneumatic India Ltd.,,nse_incl_excl
+1998-08-01,include,Chowgule Steamships Ltd.,,nse_incl_excl
+1998-08-01,include,Cipla Ltd.,,nse_incl_excl
+1998-08-01,include,Clariant (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Clariant Chemicals (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Colgate Palmolive (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Core Healthcare Ltd.,,nse_incl_excl
+1998-08-01,include,Cosmo Films Ltd.,,nse_incl_excl
+1998-08-01,include,Crompton Greaves Ltd.,,nse_incl_excl
+1998-08-01,include,Cummins India Ltd.,,nse_incl_excl
+1998-08-01,include,DCL Polyesters Ltd.,,nse_incl_excl
+1998-08-01,include,DCW Ltd.,,nse_incl_excl
+1998-08-01,include,DIC India Ltd.,,nse_incl_excl
+1998-08-01,include,Dabur India Ltd.,,nse_incl_excl
+1998-08-01,include,Daewoo Motors India Ltd.,,nse_incl_excl
+1998-08-01,include,Dalmia Bharat Sugar and Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Deepak Fertilisers & Petrochemicals Corp. Ltd.,,nse_incl_excl
+1998-08-01,include,Denso India Ltd.,,nse_incl_excl
+1998-08-01,include,Dewan Rubber Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Dhampur Sugar Mills Ltd.,,nse_incl_excl
+1998-08-01,include,Dharamsi Morarji Chemical Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Digital Globalsoft Ltd.,,nse_incl_excl
+1998-08-01,include,Digjam Ltd.,,nse_incl_excl
+1998-08-01,include,Dr. Reddy's Laboratories Ltd.,,nse_incl_excl
+1998-08-01,include,E.I.D. Parry (India) Ltd.,,nse_incl_excl
+1998-08-01,include,EIH Ltd.,,nse_incl_excl
+1998-08-01,include,ESAB India Ltd.,,nse_incl_excl
+1998-08-01,include,Elecon Engineering Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Electrex (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Electrosteel Castings Ltd.,,nse_incl_excl
+1998-08-01,include,Elgi Equipments Ltd.,,nse_incl_excl
+1998-08-01,include,Escorts Ltd.,,nse_incl_excl
+1998-08-01,include,Eskay K'n'IT (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Essar Oil Ltd.,,nse_incl_excl
+1998-08-01,include,Essar Ports Ltd.,,nse_incl_excl
+1998-08-01,include,Essar Steel Ltd.,,nse_incl_excl
+1998-08-01,include,Essel Propack Ltd.,,nse_incl_excl
+1998-08-01,include,Everest Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Excel Industries Ltd.- Arrangement,,nse_incl_excl
+1998-08-01,include,Exide Industries Ltd.,,nse_incl_excl
+1998-08-01,include,FDC Ltd.,,nse_incl_excl
+1998-08-01,include,FGP Ltd.,,nse_incl_excl
+1998-08-01,include,Fag Bearings India Ltd.,,nse_incl_excl
+1998-08-01,include,Federal Bank Ltd.,,nse_incl_excl
+1998-08-01,include,Federal-Mogul Goetze (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Finolex Cables Ltd.,,nse_incl_excl
+1998-08-01,include,Finolex Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Flat Products Equipments (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Forbes Gokak Ltd.,,nse_incl_excl
+1998-08-01,include,Foseco India Ltd.,,nse_incl_excl
+1998-08-01,include,Fulford (India) Ltd.,,nse_incl_excl
+1998-08-01,include,GAIL (India) Ltd.,,nse_incl_excl
+1998-08-01,include,GHCL Ltd.,,nse_incl_excl
+1998-08-01,include,GKN Driveshafts Ltd. -Delisted,,nse_incl_excl
+1998-08-01,include,GTL Ltd.,,nse_incl_excl
+1998-08-01,include,GTN Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Ganesh Benzoplast Ltd.,,nse_incl_excl
+1998-08-01,include,Garden Silk Mills Ltd.,,nse_incl_excl
+1998-08-01,include,Garware Polyester Ltd.,,nse_incl_excl
+1998-08-01,include,Garware-Wall Ropes Ltd.,,nse_incl_excl
+1998-08-01,include,German Remedies Ltd.,,nse_incl_excl
+1998-08-01,include,Gillette India Ltd.,,nse_incl_excl
+1998-08-01,include,GlaxoSmithkline Consumer Healthcare Ltd.,,nse_incl_excl
+1998-08-01,include,Glaxosmithkline Pharmaceuticals Ltd.,,nse_incl_excl
+1998-08-01,include,Godavari Fertilisers & Chemicals Ltd.,,nse_incl_excl
+1998-08-01,include,Godfrey Phillips India Ltd.,,nse_incl_excl
+1998-08-01,include,Godrej Industries Ltd.-Old,,nse_incl_excl
+1998-08-01,include,Golden Tobacco Ltd.,,nse_incl_excl
+1998-08-01,include,Good Value Marketing Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Goodricke Group Ltd.,,nse_incl_excl
+1998-08-01,include,Goodyear India Ltd.,,nse_incl_excl
+1998-08-01,include,Grasim Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Great Eastern Shipping Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Greaves Cotton Ltd.,,nse_incl_excl
+1998-08-01,include,Grindwell Norton Ltd.,,nse_incl_excl
+1998-08-01,include,Gujarat Alkalies & Chemicals Ltd.,,nse_incl_excl
+1998-08-01,include,Gujarat Fluorochemicals Ltd.,,nse_incl_excl
+1998-08-01,include,Gujarat Gas Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Gujarat Industries Power Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Gujarat Lease Financing Ltd.,,nse_incl_excl
+1998-08-01,include,Gujarat Narmada Valley Fertilizers and Chemicals Ltd.,,nse_incl_excl
+1998-08-01,include,Gujarat State Fertilizers & Chemicals Ltd.,,nse_incl_excl
+1998-08-01,include,H.E.G. Ltd.,,nse_incl_excl
+1998-08-01,include,HAMCO Mining & Smelting Ltd.,,nse_incl_excl
+1998-08-01,include,HCL Infosystems Ltd.,,nse_incl_excl
+1998-08-01,include,HDFC Bank Ltd.,,nse_incl_excl
+1998-08-01,include,HIL Ltd.,,nse_incl_excl
+1998-08-01,include,Harrisons Malayalam Ltd.,,nse_incl_excl
+1998-08-01,include,HeidelbergCement India Ltd.,,nse_incl_excl
+1998-08-01,include,Herbertsons Ltd.,,nse_incl_excl
+1998-08-01,include,Hero MotoCorp Ltd.,,nse_incl_excl
+1998-08-01,include,Himachal Fut Com Ltd.- Old,,nse_incl_excl
+1998-08-01,include,Himatsingka Seide Ltd.,,nse_incl_excl
+1998-08-01,include,Hind Lever Chemicals Ltd.,,nse_incl_excl
+1998-08-01,include,Hind Syntex Ltd.,,nse_incl_excl
+1998-08-01,include,Hindalco Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Hindustan Construction Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Hindustan Development Corporation Ltd.,,nse_incl_excl
+1998-08-01,include,Hindustan Motors Ltd.,,nse_incl_excl
+1998-08-01,include,Hindustan Oil Exploration Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Hindustan Organic Chemicals Ltd.,,nse_incl_excl
+1998-08-01,include,Hindustan Petroleum Corporation Ltd.,,nse_incl_excl
+1998-08-01,include,Hindustan Powerplus Ltd.,,nse_incl_excl
+1998-08-01,include,Hindustan Unilever Ltd.,,nse_incl_excl
+1998-08-01,include,Hindustan Zinc Ltd.,,nse_incl_excl
+1998-08-01,include,Hitech Drilling Services India Ltd.,,nse_incl_excl
+1998-08-01,include,Hoganas India Ltd.- Sus,,nse_incl_excl
+1998-08-01,include,Honda SIEL Power Products Ltd.,,nse_incl_excl
+1998-08-01,include,Honeywell Automation India Ltd.,,nse_incl_excl
+1998-08-01,include,Hotel Leela Venture Ltd.,,nse_incl_excl
+1998-08-01,include,Housing Development Finance Corporation Ltd.,,nse_incl_excl
+1998-08-01,include,I G Petrochemicals Ltd.,,nse_incl_excl
+1998-08-01,include,I T C Bhadrachalam Paper Boards Ltd.,,nse_incl_excl
+1998-08-01,include,I T C Ltd.,,nse_incl_excl
+1998-08-01,include,IBP Co. Ltd.,,nse_incl_excl
+1998-08-01,include,ICICI Ltd.,,nse_incl_excl
+1998-08-01,include,IDBI Bank Ltd.,,nse_incl_excl
+1998-08-01,include,IDI Ltd.,,nse_incl_excl
+1998-08-01,include,IFB Industries Ltd.,,nse_incl_excl
+1998-08-01,include,IFCI Ltd.,,nse_incl_excl
+1998-08-01,include,IP Rings Ltd.,,nse_incl_excl
+1998-08-01,include,ISMT Ltd.,,nse_incl_excl
+1998-08-01,include,ITC Hotels Ltd.,,nse_incl_excl
+1998-08-01,include,ITD Cementation India Ltd.,,nse_incl_excl
+1998-08-01,include,ITI Ltd.,,nse_incl_excl
+1998-08-01,include,ITW Signode India Ltd.- Sus,,nse_incl_excl
+1998-08-01,include,India Cements Ltd.,,nse_incl_excl
+1998-08-01,include,India Glycols Ltd.,,nse_incl_excl
+1998-08-01,include,India Gypsum Ltd.,,nse_incl_excl
+1998-08-01,include,India Securities Ltd.,,nse_incl_excl
+1998-08-01,include,Indian Aluminium Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Indian Card Clothing Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Indian Hotels Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Indian Organic Chemicals Ltd.,,nse_incl_excl
+1998-08-01,include,Indian Petrochemicals Corporation Ltd.,,nse_incl_excl
+1998-08-01,include,Indo Gulf Corporation Ltd.,,nse_incl_excl
+1998-08-01,include,Indo Rama Synthetics (India) Ltd. - Old,,nse_incl_excl
+1998-08-01,include,Industrial Oxygen Co. Ltd. -Sus,,nse_incl_excl
+1998-08-01,include,Infomedia Press Ltd.,,nse_incl_excl
+1998-08-01,include,Infosys Ltd.,,nse_incl_excl
+1998-08-01,include,Ingersoll Rand (India) Ltd.,,nse_incl_excl
+1998-08-01,include,International Travel House Ltd.,,nse_incl_excl
+1998-08-01,include,Ion Exchange (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Ipca Laboratories Ltd.,,nse_incl_excl
+1998-08-01,include,Ispat Alloys Ltd.,,nse_incl_excl
+1998-08-01,include,J.B. Chemicals & Pharmaceuticals Ltd.,,nse_incl_excl
+1998-08-01,include,JBF Industries Ltd.,,nse_incl_excl
+1998-08-01,include,JCT Electronics Ltd.,,nse_incl_excl
+1998-08-01,include,JCT Ltd.,,nse_incl_excl
+1998-08-01,include,JD Orgochem Ltd.,,nse_incl_excl
+1998-08-01,include,JK Lakshmi Cement Ltd.,,nse_incl_excl
+1998-08-01,include,JK Tyre & Industries Ltd..,,nse_incl_excl
+1998-08-01,include,JSW ISPAT Steel Ltd.,,nse_incl_excl
+1998-08-01,include,Jagatjit Industries Ltd. -Sus,,nse_incl_excl
+1998-08-01,include,Jain Irrigation Systems Ltd. (Old),,nse_incl_excl
+1998-08-01,include,Jaiprakash Industries Ltd.- Suspended,,nse_incl_excl
+1998-08-01,include,Jay Shree Tea & Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Jindal Iron & Steel Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Jindal Photo Ltd.,,nse_incl_excl
+1998-08-01,include,Jindal Saw Ltd.,,nse_incl_excl
+1998-08-01,include,Jindal Strips Ltd.- Merged,,nse_incl_excl
+1998-08-01,include,Jyoti Structures Ltd.,,nse_incl_excl
+1998-08-01,include,KSB Pumps Ltd.,,nse_incl_excl
+1998-08-01,include,Kajaria Ceramics Ltd.,,nse_incl_excl
+1998-08-01,include,Kalyani Steels Ltd.,,nse_incl_excl
+1998-08-01,include,Kansai Nerolac Paints Ltd.,,nse_incl_excl
+1998-08-01,include,Kerala Chemicals & Proteins Ltd.,,nse_incl_excl
+1998-08-01,include,Kesoram Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Kinetic Engineering Ltd.,,nse_incl_excl
+1998-08-01,include,Kinetic Motor Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Kirloskar Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Kitply Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Kochi Refineries Ltd.,,nse_incl_excl
+1998-08-01,include,Kodak India Ltd. - Delisted,,nse_incl_excl
+1998-08-01,include,Kopran Ltd.,,nse_incl_excl
+1998-08-01,include,Kotak Mahindra Bank Ltd.,,nse_incl_excl
+1998-08-01,include,Krishna Filaments Ltd.,,nse_incl_excl
+1998-08-01,include,Krishna Lifestyle Technologies Ltd.,,nse_incl_excl
+1998-08-01,include,LIC Housing Finance Ltd.,,nse_incl_excl
+1998-08-01,include,LML Ltd.,,nse_incl_excl
+1998-08-01,include,Lakshmi Machine Works Ltd.,,nse_incl_excl
+1998-08-01,include,Larsen & Toubro Ltd.-Sus,,nse_incl_excl
+1998-08-01,include,Linde India Ltd.,,nse_incl_excl
+1998-08-01,include,Lloyds Finance Ltd.,,nse_incl_excl
+1998-08-01,include,Lloyds Metals & Engineers Ltd.,,nse_incl_excl
+1998-08-01,include,Lok Housing & Constructions Ltd.,,nse_incl_excl
+1998-08-01,include,Lumax Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Lupin Chemicals Ltd.  (Erstwhile),,nse_incl_excl
+1998-08-01,include,Lupin Laboratories Ltd.  (Erstwhile),,nse_incl_excl
+1998-08-01,include,MRF Ltd.,,nse_incl_excl
+1998-08-01,include,Madura Coats Ltd.,,nse_incl_excl
+1998-08-01,include,Mafatlal Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Mahanagar Telephone Nigam Ltd.,,nse_incl_excl
+1998-08-01,include,Maharashtra Scooters Ltd.,,nse_incl_excl
+1998-08-01,include,Maharashtra Seamless Ltd.,,nse_incl_excl
+1998-08-01,include,Mahindra & Mahindra Ltd.,,nse_incl_excl
+1998-08-01,include,Mahindra Ugine Steel Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Mangalam Cement Ltd.,,nse_incl_excl
+1998-08-01,include,Maral Overseas Ltd.,,nse_incl_excl
+1998-08-01,include,Mardia Chemicals Ltd.,,nse_incl_excl
+1998-08-01,include,Marico Ltd.,,nse_incl_excl
+1998-08-01,include,Mastek Ltd.,,nse_incl_excl
+1998-08-01,include,Max India Ltd.,,nse_incl_excl
+1998-08-01,include,McDowell & Co. Ltd. (Old),,nse_incl_excl
+1998-08-01,include,Merck Ltd.,,nse_incl_excl
+1998-08-01,include,Merind Ltd.-Merged,,nse_incl_excl
+1998-08-01,include,Micro Inks Ltd.,,nse_incl_excl
+1998-08-01,include,Mirc Electronics Ltd.,,nse_incl_excl
+1998-08-01,include,Modern Denim Ltd.,,nse_incl_excl
+1998-08-01,include,Modern Syntex (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Modern Terry Towels Ltd.,,nse_incl_excl
+1998-08-01,include,Modern Threads (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Modi Rubber Ltd.,,nse_incl_excl
+1998-08-01,include,Modi Xerox Ltd.- Sus,,nse_incl_excl
+1998-08-01,include,Modiluft Ltd.,,nse_incl_excl
+1998-08-01,include,Morepen Laboratories Ltd.,,nse_incl_excl
+1998-08-01,include,Mukand Ltd.- Old,,nse_incl_excl
+1998-08-01,include,Munjal Showa Ltd.,,nse_incl_excl
+1998-08-01,include,NEPC Agro Foods Ltd.,,nse_incl_excl
+1998-08-01,include,NEPC India Ltd,,nse_incl_excl
+1998-08-01,include,NIIT Ltd.-Sus,,nse_incl_excl
+1998-08-01,include,NOCIL Ltd.,,nse_incl_excl
+1998-08-01,include,Nagarjuna Fertilizers & Chemicals Ltd.,,nse_incl_excl
+1998-08-01,include,Nahar Industrial Enterprises Ltd.,,nse_incl_excl
+1998-08-01,include,Nahar Poly Films Ltd.,,nse_incl_excl
+1998-08-01,include,Nahar Spinning Mills Ltd.,,nse_incl_excl
+1998-08-01,include,National Aluminium Co. Ltd. (Old),,nse_incl_excl
+1998-08-01,include,National Peroxide Ltd.,,nse_incl_excl
+1998-08-01,include,Navneet Education Ltd.,,nse_incl_excl
+1998-08-01,include,Nestle India Ltd.,,nse_incl_excl
+1998-08-01,include,Nirma Ltd.,,nse_incl_excl
+1998-08-01,include,Novartis India Ltd.,,nse_incl_excl
+1998-08-01,include,OTIS Elevator Company (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Oil Country Tubular Ltd.,,nse_incl_excl
+1998-08-01,include,Orchid Chemicals & Pharmaceuticals Ltd.,,nse_incl_excl
+1998-08-01,include,Orient Paper & Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Oriental Bank of Commerce,,nse_incl_excl
+1998-08-01,include,Oriental Hotels Ltd.,,nse_incl_excl
+1998-08-01,include,Orkay Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Oswal Agro Mills Ltd.,,nse_incl_excl
+1998-08-01,include,Oswal Chemicals & Fertilizers Ltd.,,nse_incl_excl
+1998-08-01,include,Oudh Sugar Mills Ltd.,,nse_incl_excl
+1998-08-01,include,PHIL Corporation Ltd.,,nse_incl_excl
+1998-08-01,include,Parekh Platinum Ltd.,,nse_incl_excl
+1998-08-01,include,Parke-Davis (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Patheja Forgings & Auto Parts Manufacturers Ltd.,,nse_incl_excl
+1998-08-01,include,Peacock Industries Ltd.-old,,nse_incl_excl
+1998-08-01,include,Peninsula Land Ltd.,,nse_incl_excl
+1998-08-01,include,Pentamedia Graphics Ltd.,,nse_incl_excl
+1998-08-01,include,Pfizer Ltd.,,nse_incl_excl
+1998-08-01,include,Philips India Ltd.,,nse_incl_excl
+1998-08-01,include,Phillips Carbon Black Ltd.,,nse_incl_excl
+1998-08-01,include,Phoenix International Ltd.,,nse_incl_excl
+1998-08-01,include,Pidilite Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Piramal Enterprises Ltd.,,nse_incl_excl
+1998-08-01,include,Piramal Holdings Ltd.-Delisted,,nse_incl_excl
+1998-08-01,include,Prakash Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Precision Fasteners Ltd.,,nse_incl_excl
+1998-08-01,include,Premier Ltd.,,nse_incl_excl
+1998-08-01,include,Prime Securities Ltd.,,nse_incl_excl
+1998-08-01,include,Procter & Gamble Hygiene & Health Care Ltd.,,nse_incl_excl
+1998-08-01,include,Pudumjee Pulp & Paper Mills Ltd.,,nse_incl_excl
+1998-08-01,include,Punjab Alkalies & Chemicals Ltd.,,nse_incl_excl
+1998-08-01,include,Punjab Chemicals & Crop Protection Ltd.,,nse_incl_excl
+1998-08-01,include,Punjab Tractors Ltd.,,nse_incl_excl
+1998-08-01,include,Punjab Wireless Systems Ltd.,,nse_incl_excl
+1998-08-01,include,RPG Cables Ltd.,,nse_incl_excl
+1998-08-01,include,RPG Transmission Ltd.,,nse_incl_excl
+1998-08-01,include,RSWM Ltd.,,nse_incl_excl
+1998-08-01,include,Raasi Cement Ltd.- Sus,,nse_incl_excl
+1998-08-01,include,Rajinder Steels Ltd.,,nse_incl_excl
+1998-08-01,include,Ranbaxy Laboratories Ltd.,,nse_incl_excl
+1998-08-01,include,Rashtriya Chemicals & Fertilizers Ltd.,,nse_incl_excl
+1998-08-01,include,Ravalgaon Sugar Farm Ltd.,,nse_incl_excl
+1998-08-01,include,Raymond Ltd.,,nse_incl_excl
+1998-08-01,include,Reckitt Benckiser (India) Ltd,,nse_incl_excl
+1998-08-01,include,Recron Synthetics Ltd.,,nse_incl_excl
+1998-08-01,include,Reliance Capital Ltd.,,nse_incl_excl
+1998-08-01,include,Reliance Industrial Infrastructure Ltd.,,nse_incl_excl
+1998-08-01,include,Reliance Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Reliance Infrastructure Ltd.,,nse_incl_excl
+1998-08-01,include,Rhone-Poulenc (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Rico Auto Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Rolta India Ltd.,,nse_incl_excl
+1998-08-01,include,Royal Cushion Vinyl Products Ltd.,,nse_incl_excl
+1998-08-01,include,Ruchi Soya Industries Ltd.,,nse_incl_excl
+1998-08-01,include,SIV Industries Ltd.,,nse_incl_excl
+1998-08-01,include,SKF India Ltd.,,nse_incl_excl
+1998-08-01,include,SOL Pharmaceuticals Ltd.,,nse_incl_excl
+1998-08-01,include,SRF Ltd.,,nse_incl_excl
+1998-08-01,include,Sakthi Sugars Ltd.,,nse_incl_excl
+1998-08-01,include,Samtel Color Ltd.,,nse_incl_excl
+1998-08-01,include,Sandvik Asia Ltd. - Delisted,,nse_incl_excl
+1998-08-01,include,Sanghi Polysters Ltd.,,nse_incl_excl
+1998-08-01,include,Sanofi India Ltd.,,nse_incl_excl
+1998-08-01,include,Satyam Computer Services Ltd.,,nse_incl_excl
+1998-08-01,include,Saurashtra Cement Ltd.,,nse_incl_excl
+1998-08-01,include,Schenectady Beck India Ltd.,,nse_incl_excl
+1998-08-01,include,Sesa Sterlite Ltd.,,nse_incl_excl
+1998-08-01,include,Seshasayee Paper & Boards Ltd.,,nse_incl_excl
+1998-08-01,include,Shaw Wallace & Co. Ltd.-Sus,,nse_incl_excl
+1998-08-01,include,Shipping Corporation of India Ltd.,,nse_incl_excl
+1998-08-01,include,Shree Cement Ltd.,,nse_incl_excl
+1998-08-01,include,Shrenuj & Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Siemens Ltd.,,nse_incl_excl
+1998-08-01,include,Smithkline Beecham Pharmaceuticals (I) Ltd.-Merged,,nse_incl_excl
+1998-08-01,include,Snowcem India Ltd.,,nse_incl_excl
+1998-08-01,include,Sona Koyo Steering Systems Ltd.,,nse_incl_excl
+1998-08-01,include,Southern Petrochemicals Industries Corporation Ltd.,,nse_incl_excl
+1998-08-01,include,Sree Rayalaseema Alkalies & Allied Chemicals Ltd.,,nse_incl_excl
+1998-08-01,include,Standard Industries Ltd.- Delisted,,nse_incl_excl
+1998-08-01,include,State Bank of India,,nse_incl_excl
+1998-08-01,include,Steel Authority of India Ltd.,,nse_incl_excl
+1998-08-01,include,Sterling Holiday Resorts (India) Ltd.-Delisted,,nse_incl_excl
+1998-08-01,include,Sterlite Industries (India) Ltd (Erstwhile),,nse_incl_excl
+1998-08-01,include,Styrolution ABS (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Sudarshan Chemical Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Summit Securities Ltd.- Old,,nse_incl_excl
+1998-08-01,include,Sun Pharmaceutical Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Sundaram Clayton Ltd.- OLD,,nse_incl_excl
+1998-08-01,include,Sundram Fasteners Ltd.,,nse_incl_excl
+1998-08-01,include,Supreme Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Supreme Petrochem Ltd.,,nse_incl_excl
+1998-08-01,include,Swaraj Engines Ltd.,,nse_incl_excl
+1998-08-01,include,Synthetics & Chemicals Ltd.,,nse_incl_excl
+1998-08-01,include,TCI Industries Ltd.,,nse_incl_excl
+1998-08-01,include,TVS Suzuki Ltd. (old),,nse_incl_excl
+1998-08-01,include,Tamil Nadu Newsprint & Papers Ltd.,,nse_incl_excl
+1998-08-01,include,Tamilnadu Petroproducts Ltd.,,nse_incl_excl
+1998-08-01,include,Tata Chemicals Ltd.,,nse_incl_excl
+1998-08-01,include,Tata Communications Ltd.,,nse_incl_excl
+1998-08-01,include,Tata Elxsi Ltd.,,nse_incl_excl
+1998-08-01,include,Tata Finance Ltd.,,nse_incl_excl
+1998-08-01,include,Tata Global Beverages Ltd.,,nse_incl_excl
+1998-08-01,include,Tata Hydro-Electric Power Supply Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Tata Infotech Ltd.-Merged,,nse_incl_excl
+1998-08-01,include,Tata Investment Corporation Ltd.,,nse_incl_excl
+1998-08-01,include,Tata Motors Ltd.,,nse_incl_excl
+1998-08-01,include,Tata Power Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Tata SSL Ltd.,,nse_incl_excl
+1998-08-01,include,Tata Sponge Iron Ltd.,,nse_incl_excl
+1998-08-01,include,Tata Steel Ltd.,,nse_incl_excl
+1998-08-01,include,Textool Co. Ltd.- Merger,,nse_incl_excl
+1998-08-01,include,The Ramco Cements Ltd.,,nse_incl_excl
+1998-08-01,include,Thermax Ltd.,,nse_incl_excl
+1998-08-01,include,Thiru Arooran Sugars Ltd.,,nse_incl_excl
+1998-08-01,include,Thomas Cook (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Timex Watches Ltd.,,nse_incl_excl
+1998-08-01,include,Timken India Ltd.,,nse_incl_excl
+1998-08-01,include,Titan Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Torrent Pharmaceuticals Ltd.,,nse_incl_excl
+1998-08-01,include,Torrent Power AEC Ltd.,,nse_incl_excl
+1998-08-01,include,Transpek Industry Ltd.,,nse_incl_excl
+1998-08-01,include,Trent Ltd.,,nse_incl_excl
+1998-08-01,include,Trigyn Technologies Ltd.,,nse_incl_excl
+1998-08-01,include,Triveni Engineering & Industries Ltd. (Old),,nse_incl_excl
+1998-08-01,include,Tube Investments of India Ltd.,,nse_incl_excl
+1998-08-01,include,UCAL Fuel Systems Ltd.,,nse_incl_excl
+1998-08-01,include,UFLEX Ltd.,,nse_incl_excl
+1998-08-01,include,Unitech Ltd.,,nse_incl_excl
+1998-08-01,include,United Breweries Ltd.-Old,,nse_incl_excl
+1998-08-01,include,United Phosphorous Ltd. -Sus,,nse_incl_excl
+1998-08-01,include,Usha (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Usha Martin Ltd.,,nse_incl_excl
+1998-08-01,include,Uttam Galva Steels Ltd.,,nse_incl_excl
+1998-08-01,include,Uttam Value Steels Ltd.,,nse_incl_excl
+1998-08-01,include,V.I.P. Industries Ltd.,,nse_incl_excl
+1998-08-01,include,VLS Finance Ltd.,,nse_incl_excl
+1998-08-01,include,VST Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Value Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Vardhman Holdings Ltd.,,nse_incl_excl
+1998-08-01,include,Vardhman Textiles Ltd.,,nse_incl_excl
+1998-08-01,include,Varun Shipping Co. Ltd.,,nse_incl_excl
+1998-08-01,include,Vesuvius India Ltd.,,nse_incl_excl
+1998-08-01,include,Videocon International Ltd.,,nse_incl_excl
+1998-08-01,include,Vikas WSP Ltd.,,nse_incl_excl
+1998-08-01,include,Vindhya Telelinks Ltd.,,nse_incl_excl
+1998-08-01,include,Vinyl Chemicals (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Viral Filaments Ltd.,,nse_incl_excl
+1998-08-01,include,Voltas Ltd.,,nse_incl_excl
+1998-08-01,include,Warren Tea Ltd.,,nse_incl_excl
+1998-08-01,include,Wartsila India Ltd.,,nse_incl_excl
+1998-08-01,include,Western India Industries Ltd.,,nse_incl_excl
+1998-08-01,include,Whirlpool of India Ltd.,,nse_incl_excl
+1998-08-01,include,Widia (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Wimco Ltd.-Delisted,,nse_incl_excl
+1998-08-01,include,Windsor Machines Ltd.,,nse_incl_excl
+1998-08-01,include,Winsome Diamonds and Jewellery Ltd.,,nse_incl_excl
+1998-08-01,include,Wipro Ltd.,,nse_incl_excl
+1998-08-01,include,Wockhardt Ltd. (old),,nse_incl_excl
+1998-08-01,include,Woolworth (India) Ltd.,,nse_incl_excl
+1998-08-01,include,Wyeth Ltd.,,nse_incl_excl
+1998-08-01,include,Yokogawa Ltd.,,nse_incl_excl
+1998-08-01,include,Zandu Realty Ltd.,,nse_incl_excl
+1998-08-01,include,Zee Entertainment Enterprises Ltd.,,nse_incl_excl
+1998-08-01,include,Zensar Technolgies Ltd.,,nse_incl_excl
+1998-08-01,include,Zuari Global Ltd.,,nse_incl_excl
+1998-10-07,include,CMC Ltd.,,nse_incl_excl
+1998-10-07,exclude,TCI Industries Ltd.,,nse_incl_excl
+1999-02-03,include,Alstom T&D India Ltd.,,nse_incl_excl
+1999-02-03,include,Avery India Ltd.,,nse_incl_excl
+1999-02-03,include,Chettinad Cement Corporation Ltd.,,nse_incl_excl
+1999-02-03,include,Cholamandalam Investment and Finance Company Ltd.,,nse_incl_excl
+1999-02-03,include,Corporation Bank,,nse_incl_excl
+1999-02-03,include,Eicher Ltd.,,nse_incl_excl
+1999-02-03,include,Eveready Industries India Ltd.,,nse_incl_excl
+1999-02-03,include,ICICI Bank Ltd.,,nse_incl_excl
+1999-02-03,include,ING Vysya Bank Ltd.,,nse_incl_excl
+1999-02-03,include,Insilco Ltd. - Sus,,nse_incl_excl
+1999-02-03,include,Kohinoor Foods Ltd.,,nse_incl_excl
+1999-02-03,include,Malwa Cotton Spinning Mills Ltd.,,nse_incl_excl
+1999-02-03,include,Punjab Communications Ltd.,,nse_incl_excl
+1999-02-03,include,Sundaram Finance Ltd.,,nse_incl_excl
+1999-02-03,include,Tourism Finance Corporation of India Ltd.,,nse_incl_excl
+1999-02-03,include,Vardhman Polytex Ltd.,,nse_incl_excl
+1999-02-03,exclude,20th Century Finance Corporation Ltd.,,nse_incl_excl
+1999-02-03,exclude,ATV Projects India Ltd.,,nse_incl_excl
+1999-02-03,exclude,Amrut Industries Ltd.,,nse_incl_excl
+1999-02-03,exclude,Eskay K'n'IT (India) Ltd.,,nse_incl_excl
+1999-02-03,exclude,Good Value Marketing Co. Ltd.,,nse_incl_excl
+1999-02-03,exclude,Krishna Lifestyle Technologies Ltd.,,nse_incl_excl
+1999-02-03,exclude,Lok Housing & Constructions Ltd.,,nse_incl_excl
+1999-02-03,exclude,Modern Denim Ltd.,,nse_incl_excl
+1999-02-03,exclude,Modern Syntex (India) Ltd.,,nse_incl_excl
+1999-02-03,exclude,Modern Terry Towels Ltd.,,nse_incl_excl
+1999-02-03,exclude,Modern Threads (India) Ltd.,,nse_incl_excl
+1999-02-03,exclude,Orkay Industries Ltd.,,nse_incl_excl
+1999-02-03,exclude,Piramal Holdings Ltd.-Delisted,,nse_incl_excl
+1999-02-03,exclude,Ravalgaon Sugar Farm Ltd.,,nse_incl_excl
+1999-02-03,exclude,Triveni Engineering & Industries Ltd. (Old),,nse_incl_excl
+1999-02-03,exclude,Western India Industries Ltd.,,nse_incl_excl
+1999-03-17,include,Aurobindo Pharma Ltd.,,nse_incl_excl
+1999-03-17,include,Moser Baer India Ltd.,,nse_incl_excl
+1999-03-17,exclude,Precision Fasteners Ltd.,,nse_incl_excl
+1999-03-17,exclude,Viral Filaments Ltd.,,nse_incl_excl
+1999-04-29,include,National Aluminium Co. Ltd.,,nse_incl_excl
+1999-04-29,exclude,National Aluminium Co. Ltd. (Old),,nse_incl_excl
+1999-05-26,include,Amara Raja Batteries Ltd.,,nse_incl_excl
+1999-05-26,include,Ashima Ltd.,,nse_incl_excl
+1999-05-26,include,Global Trust Bank Ltd.,,nse_incl_excl
+1999-05-26,include,Gujarat Mineral Development Corporation Ltd.,,nse_incl_excl
+1999-05-26,include,Mangalore Refinery & Petrochemicals Ltd.,,nse_incl_excl
+1999-05-26,include,PVP Ventures Ltd.,,nse_incl_excl
+1999-05-26,include,Rayban Sun Optics India Ltd.,,nse_incl_excl
+1999-05-26,include,Sri Vishnu Cement Ltd.- Merged,,nse_incl_excl
+1999-05-26,include,Subros Ltd.,,nse_incl_excl
+1999-05-26,include,Vashisti Detergents Ltd.,,nse_incl_excl
+1999-05-26,include,e-Serve International Ltd.,,nse_incl_excl
+1999-05-26,exclude,Alpine Industries Ltd.,,nse_incl_excl
+1999-05-26,exclude,Altos India Ltd.,,nse_incl_excl
+1999-05-26,exclude,Arvind Polycot Ltd.,,nse_incl_excl
+1999-05-26,exclude,BIL Industries Ltd.,,nse_incl_excl
+1999-05-26,exclude,Golden Tobacco Ltd.,,nse_incl_excl
+1999-05-26,exclude,India Securities Ltd.,,nse_incl_excl
+1999-05-26,exclude,Merind Ltd.-Merged,,nse_incl_excl
+1999-05-26,exclude,National Peroxide Ltd.,,nse_incl_excl
+1999-05-26,exclude,Oil Country Tubular Ltd.,,nse_incl_excl
+1999-05-26,exclude,Peacock Industries Ltd.-old,,nse_incl_excl
+1999-05-26,exclude,Prakash Industries Ltd.,,nse_incl_excl
+1999-09-08,include,ADC India Communications Ltd.,,nse_incl_excl
+1999-09-08,include,Archies Ltd.,,nse_incl_excl
+1999-09-08,include,Birla Ericsson Optical Ltd.,,nse_incl_excl
+1999-09-08,include,Blue Dart Express Ltd.,,nse_incl_excl
+1999-09-08,include,Elgi Rubber Company Ltd.,,nse_incl_excl
+1999-09-08,include,Mirza International Ltd.,,nse_incl_excl
+1999-09-08,include,Nilkamal Ltd.,,nse_incl_excl
+1999-09-08,include,Paper Products Ltd.,,nse_incl_excl
+1999-09-08,include,Pentafour Products Ltd.,,nse_incl_excl
+1999-09-08,include,Punjab Anand Lamp Industries Ltd.,,nse_incl_excl
+1999-09-08,include,Rallis India Ltd.,,nse_incl_excl
+1999-09-08,include,Silverline Technologies Ltd. -Sus,,nse_incl_excl
+1999-09-08,include,TVS Electronics Ltd. - Merge,,nse_incl_excl
+1999-09-08,exclude,Ahmednagar Forgings Ltd.,,nse_incl_excl
+1999-09-08,exclude,Autoriders Finance Ltd.,,nse_incl_excl
+1999-09-08,exclude,Bell Ceramics Ltd.,,nse_incl_excl
+1999-09-08,exclude,Chowgule Steamships Ltd.,,nse_incl_excl
+1999-09-08,exclude,Dewan Rubber Industries Ltd.,,nse_incl_excl
+1999-09-08,exclude,Dharamsi Morarji Chemical Co. Ltd.,,nse_incl_excl
+1999-09-08,exclude,Lloyds Metals & Engineers Ltd.,,nse_incl_excl
+1999-09-08,exclude,Modiluft Ltd.,,nse_incl_excl
+1999-09-08,exclude,NEPC Agro Foods Ltd.,,nse_incl_excl
+1999-09-08,exclude,Patheja Forgings & Auto Parts Manufacturers Ltd.,,nse_incl_excl
+1999-09-08,exclude,Rajinder Steels Ltd.,,nse_incl_excl
+1999-09-08,exclude,Rico Auto Industries Ltd.,,nse_incl_excl
+1999-09-08,exclude,Sterling Holiday Resorts (India) Ltd.-Delisted,,nse_incl_excl
+1999-12-08,include,Ciba Speciality Chemicals (India) Ltd.,,nse_incl_excl
+1999-12-08,include,DSQ Software Ltd.,,nse_incl_excl
+1999-12-08,include,Gulf Oil India Ltd.-Old,,nse_incl_excl
+1999-12-08,include,IndusInd Bank Ltd.,,nse_incl_excl
+1999-12-08,include,PSI Data Systems Ltd.,,nse_incl_excl
+1999-12-08,include,Pharmacia Healthcare Ltd.,,nse_incl_excl
+1999-12-08,include,Rain Calcining Ltd.,,nse_incl_excl
+1999-12-08,include,Unichem Laboratories Ltd.,,nse_incl_excl
+1999-12-08,exclude,Asian Coffee Ltd.,,nse_incl_excl
+1999-12-08,exclude,Bharti Telecom Ltd.-Suspended,,nse_incl_excl
+1999-12-08,exclude,FGP Ltd.,,nse_incl_excl
+1999-12-08,exclude,Industrial Oxygen Co. Ltd. -Sus,,nse_incl_excl
+1999-12-08,exclude,Mardia Chemicals Ltd.,,nse_incl_excl
+1999-12-08,exclude,Prime Securities Ltd.,,nse_incl_excl
+1999-12-08,exclude,SOL Pharmaceuticals Ltd.,,nse_incl_excl
+1999-12-08,exclude,Synthetics & Chemicals Ltd.,,nse_incl_excl
+2000-01-12,include,Bayer Cropscience India Ltd. -Erstwhile,,nse_incl_excl
+2000-01-12,include,Container Corporation of India Ltd.,,nse_incl_excl
+2000-01-12,exclude,Punjab Wireless Systems Ltd.,,nse_incl_excl
+2000-01-12,exclude,Wockhardt Ltd. (old),,nse_incl_excl
+2000-02-16,include,Krebs Biochemicals Ltd.,,nse_incl_excl
+2000-02-16,include,Shasun Pharmaceuticals Ltd.,,nse_incl_excl
+2000-02-16,exclude,Raasi Cement Ltd.- Sus,,nse_incl_excl
+2000-02-16,exclude,Royal Cushion Vinyl Products Ltd.,,nse_incl_excl
+2000-05-10,include,Saregama India Ltd,,nse_incl_excl
+2000-05-10,exclude,TVS Suzuki Ltd. (old),,nse_incl_excl
+2000-05-24,include,Crest Animation Studios Ltd.,,nse_incl_excl
+2000-05-24,include,Flextronics Software Systems Ltd.,,nse_incl_excl
+2000-05-24,include,Polaris Financial Technology Ltd.,,nse_incl_excl
+2000-05-24,include,Reliance Petroleum Ltd.- Merge,,nse_incl_excl
+2000-05-24,include,Sri Adhikari Brothers Television Network Ltd.,,nse_incl_excl
+2000-05-24,include,Visualsoft Technologies Ltd.,,nse_incl_excl
+2000-05-24,include,Wockhardt Ltd.,,nse_incl_excl
+2000-05-24,exclude,Core Healthcare Ltd.,,nse_incl_excl
+2000-05-24,exclude,Electrex (India) Ltd.,,nse_incl_excl
+2000-05-24,exclude,ISMT Ltd.,,nse_incl_excl
+2000-05-24,exclude,Ispat Alloys Ltd.,,nse_incl_excl
+2000-05-24,exclude,Modi Xerox Ltd.- Sus,,nse_incl_excl
+2000-05-24,exclude,Premier Ltd.,,nse_incl_excl
+2000-05-24,exclude,Shaw Wallace & Co. Ltd.-Sus,,nse_incl_excl
+2000-09-03,include,Axis Bank Ltd.,,nse_incl_excl
+2000-09-03,include,Cybertech Systems & Software Ltd.,,nse_incl_excl
+2000-09-03,include,IDBI Bank Ltd.-OLD,,nse_incl_excl
+2000-09-03,include,Maars Software International Ltd.,,nse_incl_excl
+2000-09-03,include,Ramco Industries Ltd.,,nse_incl_excl
+2000-09-03,include,Salora International Ltd.,,nse_incl_excl
+2000-09-03,include,Shyam Telecom Ltd.,,nse_incl_excl
+2000-09-03,include,Sonata Software Ltd.,,nse_incl_excl
+2000-09-03,exclude,APR Ltd.,,nse_incl_excl
+2000-09-03,exclude,Baroda Rayon Corporation Ltd.,,nse_incl_excl
+2000-09-03,exclude,Bharat Bijlee Ltd.,,nse_incl_excl
+2000-09-03,exclude,Bombay Burmah Trading Corporation Ltd.,,nse_incl_excl
+2000-09-03,exclude,IFB Industries Ltd.,,nse_incl_excl
+2000-09-03,exclude,JD Orgochem Ltd.,,nse_incl_excl
+2000-09-03,exclude,Punjab Alkalies & Chemicals Ltd.,,nse_incl_excl
+2000-09-03,exclude,Textool Co. Ltd.- Merger,,nse_incl_excl
+2000-09-20,include,Jain Studios Ltd.,,nse_incl_excl
+2000-09-20,exclude,Sterlite Industries (India) Ltd (Erstwhile),,nse_incl_excl
+2000-11-29,include,Origin Agrostar Ltd.,,nse_incl_excl
+2000-11-29,include,Roofit Industries Ltd.,,nse_incl_excl
+2000-11-29,exclude,Andhra Valley Power Supply Co. Ltd.,,nse_incl_excl
+2000-11-29,exclude,Tata Hydro-Electric Power Supply Co. Ltd.,,nse_incl_excl
+2000-12-13,include,Engineers India Ltd.,,nse_incl_excl
+2000-12-13,include,MphasiS Ltd.,,nse_incl_excl
+2000-12-13,include,Orient Information Technologies Ltd.,,nse_incl_excl
+2000-12-13,include,Pentasoft Technologies Ltd.,,nse_incl_excl
+2000-12-13,include,SEAMEC Ltd.,,nse_incl_excl
+2000-12-13,include,Sandesh Ltd.,,nse_incl_excl
+2000-12-13,exclude,Cheminor Drugs Ltd.,,nse_incl_excl
+2000-12-13,exclude,HAMCO Mining & Smelting Ltd.,,nse_incl_excl
+2000-12-13,exclude,Herbertsons Ltd.,,nse_incl_excl
+2000-12-13,exclude,Hindustan Development Corporation Ltd.,,nse_incl_excl
+2000-12-13,exclude,Mafatlal Industries Ltd.,,nse_incl_excl
+2000-12-13,exclude,Woolworth (India) Ltd.,,nse_incl_excl
+2000-12-20,include,Panacea Biotec Ltd.,,nse_incl_excl
+2000-12-20,exclude,Jain Irrigation Systems Ltd. (Old),,nse_incl_excl
+2001-01-10,include,R. S. Software (India) Ltd.,,nse_incl_excl
+2001-01-10,exclude,Chicago Pneumatic India Ltd.,,nse_incl_excl
+2001-04-25,include,Accelya Kale Solutions Ltd.,,nse_incl_excl
+2001-04-25,include,Cadila Healthcare Ltd.,,nse_incl_excl
+2001-04-25,include,Carol Info Services Ltd.,,nse_incl_excl
+2001-04-25,include,Glenmark Pharmaceuticals Ltd.,,nse_incl_excl
+2001-04-25,include,HCL Technologies Ltd.,,nse_incl_excl
+2001-04-25,include,Jindal Steel & Power Ltd.,,nse_incl_excl
+2001-04-25,include,Monsanto India Ltd.,,nse_incl_excl
+2001-04-25,include,Ramco Systems Ltd.,,nse_incl_excl
+2001-04-25,include,Sterlite Industries (India) Ltd. -Sus,,nse_incl_excl
+2001-04-25,include,Television Eighteen India Ltd.,,nse_incl_excl
+2001-04-25,exclude,Bajaj Tempo Ltd.,,nse_incl_excl
+2001-04-25,exclude,Gujarat Lease Financing Ltd.,,nse_incl_excl
+2001-04-25,exclude,IDI Ltd.,,nse_incl_excl
+2001-04-25,exclude,Lupin Chemicals Ltd.  (Erstwhile),,nse_incl_excl
+2001-04-25,exclude,Nahar Industrial Enterprises Ltd.,,nse_incl_excl
+2001-04-25,exclude,Pentafour Products Ltd.,,nse_incl_excl
+2001-04-25,exclude,Recron Synthetics Ltd.,,nse_incl_excl
+2001-04-25,exclude,Sanghi Polysters Ltd.,,nse_incl_excl
+2001-04-25,exclude,Sree Rayalaseema Alkalies & Allied Chemicals Ltd.,,nse_incl_excl
+2001-04-25,exclude,Sudarshan Chemical Industries Ltd.,,nse_incl_excl
+2001-06-20,include,Padmini Technologies Ltd.,,nse_incl_excl
+2001-06-20,exclude,McDowell & Co. Ltd. (Old),,nse_incl_excl
+2001-08-31,include,Aksh Optifibre Ltd.,,nse_incl_excl
+2001-08-31,include,Bank of Punjab Ltd.,,nse_incl_excl
+2001-08-31,include,Centurion Bank Ltd.,,nse_incl_excl
+2001-08-31,include,Cinevista Ltd.,,nse_incl_excl
+2001-08-31,include,FCL Technologies & Products Ltd.,,nse_incl_excl
+2001-08-31,include,Karur Vysya Bank Ltd.,,nse_incl_excl
+2001-08-31,include,Shree Rama Multi Tech Ltd.,,nse_incl_excl
+2001-08-31,include,TVS Motor Company Ltd.,,nse_incl_excl
+2001-08-31,exclude,Apple Credit Corporation Ltd.,,nse_incl_excl
+2001-08-31,exclude,Avery India Ltd.,,nse_incl_excl
+2001-08-31,exclude,Cable Corporation of India Ltd.,,nse_incl_excl
+2001-08-31,exclude,JBF Industries Ltd.,,nse_incl_excl
+2001-08-31,exclude,Jagatjit Industries Ltd. -Sus,,nse_incl_excl
+2001-08-31,exclude,Krishna Filaments Ltd.,,nse_incl_excl
+2001-08-31,exclude,Lupin Laboratories Ltd.  (Erstwhile),,nse_incl_excl
+2001-08-31,exclude,Sri Vishnu Cement Ltd.- Merged,,nse_incl_excl
+2001-10-11,include,Hinduja Ventures Ltd.,,nse_incl_excl
+2001-10-11,include,iGate Global Solutions Ltd.,,nse_incl_excl
+2001-10-11,exclude,JCT Electronics Ltd.,,nse_incl_excl
+2001-10-11,exclude,Mangalam Cement Ltd.,,nse_incl_excl
+2001-12-07,include,Aztecsoft Ltd.,,nse_incl_excl
+2001-12-07,include,Balaji Telefilms Ltd.,,nse_incl_excl
+2001-12-07,include,Henkel SPIC India Ltd.,,nse_incl_excl
+2001-12-07,include,Mahindra Lifespace Developers Ltd.,,nse_incl_excl
+2001-12-07,include,Motherson Sumi Systems Ltd.,,nse_incl_excl
+2001-12-07,include,Mukta Arts Ltd,,nse_incl_excl
+2001-12-07,include,Neyveli Lignite Corporation Ltd.,,nse_incl_excl
+2001-12-07,include,Soundcraft Industries Ltd.,,nse_incl_excl
+2001-12-07,include,Sterling Biotech Ltd,,nse_incl_excl
+2001-12-07,include,Sterlite Technologies Ltd.,,nse_incl_excl
+2001-12-07,include,Syndicate Bank,,nse_incl_excl
+2001-12-07,include,Tips Industries Ltd.,,nse_incl_excl
+2001-12-07,exclude,Apple Finance Ltd.,,nse_incl_excl
+2001-12-07,exclude,Essar Ports Ltd.,,nse_incl_excl
+2001-12-07,exclude,Flat Products Equipments (India) Ltd.,,nse_incl_excl
+2001-12-07,exclude,Garware Polyester Ltd.,,nse_incl_excl
+2001-12-07,exclude,Indian Organic Chemicals Ltd.,,nse_incl_excl
+2001-12-07,exclude,JCT Ltd.,,nse_incl_excl
+2001-12-07,exclude,Jindal Iron & Steel Co. Ltd.,,nse_incl_excl
+2001-12-07,exclude,Kalyani Steels Ltd.,,nse_incl_excl
+2001-12-07,exclude,Origin Agrostar Ltd.,,nse_incl_excl
+2001-12-07,exclude,Saurashtra Cement Ltd.,,nse_incl_excl
+2001-12-07,exclude,Smithkline Beecham Pharmaceuticals (I) Ltd.-Merged,,nse_incl_excl
+2001-12-07,exclude,Vikas WSP Ltd.,,nse_incl_excl
+2002-01-17,include,DCM Shriram Consolidated Ltd.,,nse_incl_excl
+2002-01-17,include,Jammu & Kashmir Bank Ltd.,,nse_incl_excl
+2002-01-17,include,Sun Earth Ceramics Ltd.,,nse_incl_excl
+2002-01-17,include,Tata Teleservices (Maharashtra) Ltd.,,nse_incl_excl
+2002-01-17,exclude,Alpic Finance Ltd.,,nse_incl_excl
+2002-01-17,exclude,Hind Syntex Ltd.,,nse_incl_excl
+2002-01-17,exclude,Phillips Carbon Black Ltd.,,nse_incl_excl
+2002-01-17,exclude,Rhone-Poulenc (India) Ltd.,,nse_incl_excl
+2002-01-29,include,Infotech Enterprises Ltd.,,nse_incl_excl
+2002-01-29,exclude,Aptech Ltd. (Erstwhile),,nse_incl_excl
+2002-03-29,include,Aftek Ltd.,,nse_incl_excl
+2002-03-29,include,Alstom India Ltd.,,nse_incl_excl
+2002-03-29,include,Bank of Rajasthan Ltd.,,nse_incl_excl
+2002-03-29,include,Creative Eye Ltd.,,nse_incl_excl
+2002-03-29,include,Geometric Ltd.,,nse_incl_excl
+2002-03-29,include,Infar (India) Ltd.,,nse_incl_excl
+2002-03-29,include,Information Technologies India Ltd.,,nse_incl_excl
+2002-03-29,include,Karnataka Bank Ltd.,,nse_incl_excl
+2002-03-29,include,Kothari Products Ltd.,,nse_incl_excl
+2002-03-29,include,PNB Gilts Ltd.,,nse_incl_excl
+2002-03-29,include,Prism Cement Ltd.,,nse_incl_excl
+2002-03-29,include,Reliance MediaWorks Ltd.,,nse_incl_excl
+2002-03-29,include,South Indian Bank Ltd.,,nse_incl_excl
+2002-03-29,include,Vision Organics Ltd,,nse_incl_excl
+2002-03-29,include,Williamson Tea Assam Ltd.,,nse_incl_excl
+2002-03-29,exclude,Ambalal Sarabhai Enterprises Ltd.,,nse_incl_excl
+2002-03-29,exclude,Birla Power Solutions Ltd.,,nse_incl_excl
+2002-03-29,exclude,Caprihans India Ltd.,,nse_incl_excl
+2002-03-29,exclude,Centak Chemicals Ltd.,,nse_incl_excl
+2002-03-29,exclude,DCL Polyesters Ltd.,,nse_incl_excl
+2002-03-29,exclude,Elecon Engineering Co. Ltd.,,nse_incl_excl
+2002-03-29,exclude,I G Petrochemicals Ltd.,,nse_incl_excl
+2002-03-29,exclude,Kerala Chemicals & Proteins Ltd.,,nse_incl_excl
+2002-03-29,exclude,Lloyds Finance Ltd.,,nse_incl_excl
+2002-03-29,exclude,Oswal Agro Mills Ltd.,,nse_incl_excl
+2002-03-29,exclude,Phoenix International Ltd.,,nse_incl_excl
+2002-03-29,exclude,Punjab Chemicals & Crop Protection Ltd.,,nse_incl_excl
+2002-03-29,exclude,Sona Koyo Steering Systems Ltd.,,nse_incl_excl
+2002-03-29,exclude,Transpek Industry Ltd.,,nse_incl_excl
+2002-03-29,exclude,Uttam Value Steels Ltd.,,nse_incl_excl
+2002-04-23,include,Ajanta Pharmaceuticals Ltd.,,nse_incl_excl
+2002-04-23,include,Andhra Bank,,nse_incl_excl
+2002-04-23,include,Blue Star Infotech Ltd.,,nse_incl_excl
+2002-04-23,include,Can Fin Homes Ltd.,,nse_incl_excl
+2002-04-23,include,City Union Bank Ltd.,,nse_incl_excl
+2002-04-23,include,Eicher Motors Ltd.,,nse_incl_excl
+2002-04-23,include,FCI OEN Connectors Ltd.,,nse_incl_excl
+2002-04-23,include,GSL Nova Petrochemicals Ltd.,,nse_incl_excl
+2002-04-23,include,Havell's India Ltd.,,nse_incl_excl
+2002-04-23,include,Indian Overseas Bank,,nse_incl_excl
+2002-04-23,include,Indraprastha Medical Corporation Ltd.,,nse_incl_excl
+2002-04-23,include,Jagsonpal Pharmaceuticals Ltd.,,nse_incl_excl
+2002-04-23,include,Jubilant Life Sciences Ltd.,,nse_incl_excl
+2002-04-23,include,Lakshmi Auto Components Ltd.- Delisted,,nse_incl_excl
+2002-04-23,include,Lakshmi Vilas Bank Ltd.,,nse_incl_excl
+2002-04-23,include,Next Mediaworks Ltd.,,nse_incl_excl
+2002-04-23,include,Smartlink Network Systems Ltd.,,nse_incl_excl
+2002-04-23,include,Taj GVK Hotels & Resorts Ltd.,,nse_incl_excl
+2002-04-23,include,United Western Bank Ltd.,,nse_incl_excl
+2002-04-23,include,Vijaya Bank,,nse_incl_excl
+2002-04-23,exclude,AP Paper Mills Ltd.,,nse_incl_excl
+2002-04-23,exclude,Bajaj Hindusthan Ltd.,,nse_incl_excl
+2002-04-23,exclude,Blow Plast Ltd.,,nse_incl_excl
+2002-04-23,exclude,Ganesh Benzoplast Ltd.,,nse_incl_excl
+2002-04-23,exclude,Grindwell Norton Ltd.,,nse_incl_excl
+2002-04-23,exclude,HIL Ltd.,,nse_incl_excl
+2002-04-23,exclude,Hitech Drilling Services India Ltd.,,nse_incl_excl
+2002-04-23,exclude,I T C Bhadrachalam Paper Boards Ltd.,,nse_incl_excl
+2002-04-23,exclude,ICICI Ltd.,,nse_incl_excl
+2002-04-23,exclude,IP Rings Ltd.,,nse_incl_excl
+2002-04-23,exclude,ITW Signode India Ltd.- Sus,,nse_incl_excl
+2002-04-23,exclude,Malwa Cotton Spinning Mills Ltd.,,nse_incl_excl
+2002-04-23,exclude,Oudh Sugar Mills Ltd.,,nse_incl_excl
+2002-04-23,exclude,PHIL Corporation Ltd.,,nse_incl_excl
+2002-04-23,exclude,RPG Transmission Ltd.,,nse_incl_excl
+2002-04-23,exclude,SIV Industries Ltd.,,nse_incl_excl
+2002-04-23,exclude,Schenectady Beck India Ltd.,,nse_incl_excl
+2002-04-23,exclude,Subros Ltd.,,nse_incl_excl
+2002-04-23,exclude,Timex Watches Ltd.,,nse_incl_excl
+2002-04-23,exclude,Windsor Machines Ltd.,,nse_incl_excl
+2002-05-14,include,Pritish Nandy Communications Ltd.,,nse_incl_excl
+2002-05-14,exclude,Sterlite Industries (India) Ltd. -Sus,,nse_incl_excl
+2002-05-21,include,Onward Technologies Ltd.,,nse_incl_excl
+2002-05-21,exclude,Hoganas India Ltd.- Sus,,nse_incl_excl
+2002-06-06,include,Oil & Natural Gas Corporation Ltd.,,nse_incl_excl
+2002-06-06,exclude,Tata SSL Ltd.,,nse_incl_excl
+2002-07-09,include,Alok Industries Ltd.,,nse_incl_excl
+2002-07-09,include,Balmer Lawrie & Co. Ltd.,,nse_incl_excl
+2002-07-09,include,Bhushan Steel Ltd.,,nse_incl_excl
+2002-07-09,include,Indian Oil Corporation Ltd.,,nse_incl_excl
+2002-07-09,include,Rain Industries Ltd,,nse_incl_excl
+2002-07-09,include,Shanthi Gears Ltd.,,nse_incl_excl
+2002-07-09,include,West Coast Paper Mills Ltd.,,nse_incl_excl
+2002-07-09,exclude,Assam Company India Ltd.,,nse_incl_excl
+2002-07-09,exclude,Cabot India Ltd.,,nse_incl_excl
+2002-07-09,exclude,Information Technologies India Ltd.,,nse_incl_excl
+2002-07-09,exclude,Krebs Biochemicals Ltd.,,nse_incl_excl
+2002-07-09,exclude,Punjab Anand Lamp Industries Ltd.,,nse_incl_excl
+2002-07-09,exclude,VLS Finance Ltd.,,nse_incl_excl
+2002-07-09,exclude,Warren Tea Ltd.,,nse_incl_excl
+2002-07-18,include,Tata Coffee Ltd.,,nse_incl_excl
+2002-07-18,exclude,Godrej Industries Ltd.-Old,,nse_incl_excl
+2002-08-13,include,NELCO Ltd.,,nse_incl_excl
+2002-08-13,exclude,United Breweries Ltd.-Old,,nse_incl_excl
+2002-08-20,include,Venky's (India) Ltd.,,nse_incl_excl
+2002-08-20,exclude,Sandvik Asia Ltd. - Delisted,,nse_incl_excl
+2002-09-19,include,AXIS IT&T Ltd.,,nse_incl_excl
+2002-09-19,include,Agro Dutch Industries Ltd.,,nse_incl_excl
+2002-09-19,include,Andhra Sugars Ltd.,,nse_incl_excl
+2002-09-19,include,Asahi India Glass Ltd.,,nse_incl_excl
+2002-09-19,include,BSL Ltd.,,nse_incl_excl
+2002-09-19,include,Bharat Hotels Ltd. - Delisted,,nse_incl_excl
+2002-09-19,include,Compudyne Winfosystems Ltd.,,nse_incl_excl
+2002-09-19,include,Coromandel International Ltd.,,nse_incl_excl
+2002-09-19,include,Dena Bank,,nse_incl_excl
+2002-09-19,include,Elder Pharmaceuticals Ltd.,,nse_incl_excl
+2002-09-19,include,First Leasing Co. of India Ltd.,,nse_incl_excl
+2002-09-19,include,Gammon India Ltd.,,nse_incl_excl
+2002-09-19,include,Graphite India Ltd.,,nse_incl_excl
+2002-09-19,include,Heritage Foods Ltd.,,nse_incl_excl
+2002-09-19,include,IVRCL Ltd.,,nse_incl_excl
+2002-09-19,include,India Nippon Electricals Ltd.,,nse_incl_excl
+2002-09-19,include,KDL Biotech Ltd.,,nse_incl_excl
+2002-09-19,include,KPIT Technologies Ltd.,,nse_incl_excl
+2002-09-19,include,Lupin Ltd.,,nse_incl_excl
+2002-09-19,include,MRO-TEK Ltd.,,nse_incl_excl
+2002-09-19,include,Madras Fertilizers Ltd.,,nse_incl_excl
+2002-09-19,include,Manali Petrochemicals Ltd.,,nse_incl_excl
+2002-09-19,include,Melstar Information Technologies Ltd.,,nse_incl_excl
+2002-09-19,include,NRB Bearings Ltd.,,nse_incl_excl
+2002-09-19,include,PSL Ltd.,,nse_incl_excl
+2002-09-19,include,Panasonic AVC Networks India Co. Ltd.,,nse_incl_excl
+2002-09-19,include,Pricol Ltd.,,nse_incl_excl
+2002-09-19,include,S. Kumars Nationwide Ltd.,,nse_incl_excl
+2002-09-19,include,S.B.& T. International Ltd.,,nse_incl_excl
+2002-09-19,include,SREI Infrastructure Finance Ltd.,,nse_incl_excl
+2002-09-19,include,Shirpur Gold Refinery Ltd.,,nse_incl_excl
+2002-09-19,include,Siltap Chemicals Ltd.- Merged,,nse_incl_excl
+2002-09-19,include,Sintex Industries Ltd.,,nse_incl_excl
+2002-09-19,include,Sirpur Paper Mills Ltd.,,nse_incl_excl
+2002-09-19,include,Sundaram Brake Linings Ltd.,,nse_incl_excl
+2002-09-19,include,Surya Roshni Ltd.,,nse_incl_excl
+2002-09-19,include,Tamilnadu Telecommunications Ltd.,,nse_incl_excl
+2002-09-19,include,Thirumalai Chemicals Ltd.,,nse_incl_excl
+2002-09-19,include,United Spirits Ltd.,,nse_incl_excl
+2002-09-19,include,Wellwin Industry Ltd.,,nse_incl_excl
+2002-09-19,include,Wheels India Ltd.,,nse_incl_excl
+2002-09-19,include,Zenith Computer Ltd.,,nse_incl_excl
+2002-09-19,include,Zodiac Clothing Co. Ltd.,,nse_incl_excl
+2002-09-19,exclude,Alstom T&D India Ltd.,,nse_incl_excl
+2002-09-19,exclude,Automotive Axles Ltd.,,nse_incl_excl
+2002-09-19,exclude,Bannari Amman Sugars Ltd.,,nse_incl_excl
+2002-09-19,exclude,Bhushan Steel Ltd.,,nse_incl_excl
+2002-09-19,exclude,Binani Industries Ltd.,,nse_incl_excl
+2002-09-19,exclude,Cadbury India Ltd.,,nse_incl_excl
+2002-09-19,exclude,Chettinad Cement Corporation Ltd.,,nse_incl_excl
+2002-09-19,exclude,Daewoo Motors India Ltd.,,nse_incl_excl
+2002-09-19,exclude,Deepak Fertilisers & Petrochemicals Corp. Ltd.,,nse_incl_excl
+2002-09-19,exclude,Forbes Gokak Ltd.,,nse_incl_excl
+2002-09-19,exclude,Fulford (India) Ltd.,,nse_incl_excl
+2002-09-19,exclude,GKN Driveshafts Ltd. -Delisted,,nse_incl_excl
+2002-09-19,exclude,Garware-Wall Ropes Ltd.,,nse_incl_excl
+2002-09-19,exclude,Godavari Fertilisers & Chemicals Ltd.,,nse_incl_excl
+2002-09-19,exclude,Goodricke Group Ltd.,,nse_incl_excl
+2002-09-19,exclude,Goodyear India Ltd.,,nse_incl_excl
+2002-09-19,exclude,Greaves Cotton Ltd.,,nse_incl_excl
+2002-09-19,exclude,Gulf Oil India Ltd.-Old,,nse_incl_excl
+2002-09-19,exclude,Hindustan Powerplus Ltd.,,nse_incl_excl
+2002-09-19,exclude,India Glycols Ltd.,,nse_incl_excl
+2002-09-19,exclude,Insilco Ltd. - Sus,,nse_incl_excl
+2002-09-19,exclude,International Travel House Ltd.,,nse_incl_excl
+2002-09-19,exclude,Ion Exchange (India) Ltd.,,nse_incl_excl
+2002-09-19,exclude,JK Tyre & Industries Ltd..,,nse_incl_excl
+2002-09-19,exclude,Jindal Photo Ltd.,,nse_incl_excl
+2002-09-19,exclude,Jubilant Life Sciences Ltd.,,nse_incl_excl
+2002-09-19,exclude,Kinetic Engineering Ltd.,,nse_incl_excl
+2002-09-19,exclude,Munjal Showa Ltd.,,nse_incl_excl
+2002-09-19,exclude,Paper Products Ltd.,,nse_incl_excl
+2002-09-19,exclude,Philips India Ltd.,,nse_incl_excl
+2002-09-19,exclude,Prism Cement Ltd.,,nse_incl_excl
+2002-09-19,exclude,Reliance Petroleum Ltd.- Merge,,nse_incl_excl
+2002-09-19,exclude,Soundcraft Industries Ltd.,,nse_incl_excl
+2002-09-19,exclude,Tata Sponge Iron Ltd.,,nse_incl_excl
+2002-09-19,exclude,Timken India Ltd.,,nse_incl_excl
+2002-09-19,exclude,Usha (India) Ltd.,,nse_incl_excl
+2002-09-19,exclude,Vardhman Holdings Ltd.,,nse_incl_excl
+2002-09-19,exclude,Vardhman Polytex Ltd.,,nse_incl_excl
+2002-09-19,exclude,Vardhman Textiles Ltd.,,nse_incl_excl
+2002-09-19,exclude,Varun Shipping Co. Ltd.,,nse_incl_excl
+2002-09-19,exclude,Vision Organics Ltd,,nse_incl_excl
+2002-09-19,exclude,Widia (India) Ltd.,,nse_incl_excl
+2002-09-19,exclude,Winsome Diamonds and Jewellery Ltd.,,nse_incl_excl
+2002-10-11,include,HMT Ltd.,,nse_incl_excl
+2002-10-11,include,Kakatiya Cement Sugar & Industries Ltd.,,nse_incl_excl
+2002-10-11,exclude,Denso India Ltd.,,nse_incl_excl
+2002-10-11,exclude,Infar (India) Ltd.,,nse_incl_excl
+2002-11-11,include,Godrej Consumer Products Ltd.,,nse_incl_excl
+2002-11-11,include,KCP Ltd.,,nse_incl_excl
+2002-11-11,include,Patspin India Ltd.,,nse_incl_excl
+2002-11-11,exclude,CFL Capital Financial Services Ltd.,,nse_incl_excl
+2002-11-11,exclude,Modi Rubber Ltd.,,nse_incl_excl
+2002-11-11,exclude,Panasonic AVC Networks India Co. Ltd.,,nse_incl_excl
+2003-01-21,include,Munjal Showa Ltd.,,nse_incl_excl
+2003-01-21,include,Prism Cement Ltd.,,nse_incl_excl
+2003-01-21,include,Vardhman Textiles Ltd.,,nse_incl_excl
+2003-01-21,exclude,JK Lakshmi Cement Ltd.,,nse_incl_excl
+2003-01-21,exclude,Padmini Technologies Ltd.,,nse_incl_excl
+2003-01-21,exclude,Thirumalai Chemicals Ltd.,,nse_incl_excl
+2003-02-25,include,MPS Ltd.,,nse_incl_excl
+2003-02-25,exclude,Kinetic Motor Co. Ltd.,,nse_incl_excl
+2003-03-05,include,Rico Auto Industries Ltd.,,nse_incl_excl
+2003-03-05,exclude,Indo Gulf Corporation Ltd.,,nse_incl_excl
+2003-03-06,include,Vardhman Holdings Ltd.,,nse_incl_excl
+2003-03-06,exclude,Parke-Davis (India) Ltd.,,nse_incl_excl
+2003-03-17,include,Bharti Airtel Ltd.,,nse_incl_excl
+2003-03-17,include,Oracle Financial Services Software Ltd.,,nse_incl_excl
+2003-03-17,exclude,Roofit Industries Ltd.,,nse_incl_excl
+2003-03-17,exclude,Sun Earth Ceramics Ltd.,,nse_incl_excl
+2003-03-27,include,Punjab National Bank,,nse_incl_excl
+2003-03-27,exclude,Reckitt Benckiser (India) Ltd,,nse_incl_excl
+2003-04-01,include,Bannari Amman Sugars Ltd.,,nse_incl_excl
+2003-04-01,include,Deepak Fertilisers & Petrochemicals Corp. Ltd.,,nse_incl_excl
+2003-04-01,include,Fertilisers and Chemicals Travancore Ltd.,,nse_incl_excl
+2003-04-01,include,Future Retail Ltd.,,nse_incl_excl
+2003-04-01,include,Godavari Fertilisers & Chemicals Ltd.,,nse_incl_excl
+2003-04-01,include,Hexaware Technologies Ltd.,,nse_incl_excl
+2003-04-01,include,Hikal Ltd.,,nse_incl_excl
+2003-04-01,include,Jindal Photo Ltd.,,nse_incl_excl
+2003-04-01,include,Paper Products Ltd.,,nse_incl_excl
+2003-04-01,include,Trident Ltd.,,nse_incl_excl
+2003-04-01,include,Union Bank of India,,nse_incl_excl
+2003-04-01,exclude,ADC India Communications Ltd.,,nse_incl_excl
+2003-04-01,exclude,Abbott India Ltd.,,nse_incl_excl
+2003-04-01,exclude,Atlas Copco (India) Ltd.,,nse_incl_excl
+2003-04-01,exclude,Burroughs Wellcome (India) Ltd.,,nse_incl_excl
+2003-04-01,exclude,Carrier Aircon Ltd.,,nse_incl_excl
+2003-04-01,exclude,Henkel SPIC India Ltd.,,nse_incl_excl
+2003-04-01,exclude,Hindustan Zinc Ltd.,,nse_incl_excl
+2003-04-01,exclude,Procter & Gamble Hygiene & Health Care Ltd.,,nse_incl_excl
+2003-04-01,exclude,Punjab Communications Ltd.,,nse_incl_excl
+2003-04-01,exclude,Rayban Sun Optics India Ltd.,,nse_incl_excl
+2003-04-01,exclude,Tata Infotech Ltd.-Merged,,nse_incl_excl
+2003-04-07,include,Central India Polyesters Ltd.,,nse_incl_excl
+2003-04-07,include,Jain Irrigation Systems Ltd.,,nse_incl_excl
+2003-04-07,include,Search Chem. Industries Ltd. - Sus,,nse_incl_excl
+2003-04-07,include,Tata Sponge Iron Ltd.,,nse_incl_excl
+2003-04-07,exclude,Bayer Cropscience Ltd.,,nse_incl_excl
+2003-04-07,exclude,Ciba Speciality Chemicals (India) Ltd.,,nse_incl_excl
+2003-04-07,exclude,Kodak India Ltd. - Delisted,,nse_incl_excl
+2003-04-07,exclude,Silverline Technologies Ltd. -Sus,,nse_incl_excl
+2003-04-25,include,Jindal Iron & Steel Co. Ltd.,,nse_incl_excl
+2003-04-25,exclude,Madura Coats Ltd.,,nse_incl_excl
+2003-05-02,include,Aptech Ltd.,,nse_incl_excl
+2003-05-02,include,Gujarat Ambuja Exports Ltd.,,nse_incl_excl
+2003-05-02,include,Praj Industries Ltd.,,nse_incl_excl
+2003-05-02,include,Todays Writing Instruments Ltd.,,nse_incl_excl
+2003-05-02,exclude,Castrol (India) Ltd.,,nse_incl_excl
+2003-05-02,exclude,Novartis India Ltd.,,nse_incl_excl
+2003-05-02,exclude,OTIS Elevator Company (India) Ltd.,,nse_incl_excl
+2003-05-02,exclude,Wartsila India Ltd.,,nse_incl_excl
+2003-05-23,include,Vardhman Polytex Ltd.,,nse_incl_excl
+2003-05-23,exclude,Indo Rama Synthetics (India) Ltd. - Old,,nse_incl_excl
+2003-06-17,include,Canara Bank,,nse_incl_excl
+2003-06-17,exclude,Bharat Hotels Ltd. - Delisted,,nse_incl_excl
+2003-08-04,include,Jindal Poly Films Ltd.,,nse_incl_excl
+2003-08-04,exclude,Nestle India Ltd.,,nse_incl_excl
+2003-08-11,include,Allahabad Bank,,nse_incl_excl
+2003-08-11,exclude,Whirlpool of India Ltd.,,nse_incl_excl
+2003-09-05,include,Shriram Transport Finance Co. Ltd.,,nse_incl_excl
+2003-09-05,exclude,German Remedies Ltd.,,nse_incl_excl
+2003-09-09,include,Jubilant Life Sciences Ltd.,,nse_incl_excl
+2003-09-09,exclude,Jindal Strips Ltd.- Merged,,nse_incl_excl
+2003-09-11,include,Regency Ceramics Ltd.,,nse_incl_excl
+2003-09-11,exclude,TVS Electronics Ltd. - Merge,,nse_incl_excl
+2003-09-29,include,Bajaj Hindusthan Ltd.,,nse_incl_excl
+2003-09-29,exclude,Excel Industries Ltd.- Arrangement,,nse_incl_excl
+2003-10-01,include,Visaka Industries Ltd.,,nse_incl_excl
+2003-10-01,exclude,Siltap Chemicals Ltd.- Merged,,nse_incl_excl
+2003-11-19,include,Amtek Auto Ltd.,,nse_incl_excl
+2003-11-19,exclude,Standard Industries Ltd.- Delisted,,nse_incl_excl
+2003-11-21,include,Divi's Laboratories Ltd.,,nse_incl_excl
+2003-11-21,exclude,Bayer Cropscience India Ltd. -Erstwhile,,nse_incl_excl
+2003-12-05,include,Omax Autos Ltd.,,nse_incl_excl
+2003-12-05,include,State Trading Corporation of India Ltd.,,nse_incl_excl
+2003-12-05,exclude,Search Chem. Industries Ltd. - Sus,,nse_incl_excl
+2003-12-05,exclude,United Phosphorous Ltd. -Sus,,nse_incl_excl
+2003-12-11,include,Indo Gulf Fertilisers Ltd.,,nse_incl_excl
+2003-12-11,exclude,Indian Aluminium Co. Ltd.,,nse_incl_excl
+2004-01-02,include,SML Isuzu Ltd.,,nse_incl_excl
+2004-01-02,exclude,Mukand Ltd.- Old,,nse_incl_excl
+2004-01-28,include,JSW Steel Ltd.,,nse_incl_excl
+2004-01-28,exclude,Centurion Bank Ltd.,,nse_incl_excl
+2004-03-01,include,Maruti Suzuki India Ltd.,,nse_incl_excl
+2004-03-01,exclude,Bank of Rajasthan Ltd.,,nse_incl_excl
+2004-03-15,include,Automotive Axles Ltd.,,nse_incl_excl
+2004-03-15,include,Godrej Industries Ltd.,,nse_incl_excl
+2004-03-15,include,Indo Rama Synthetics Ltd.,,nse_incl_excl
+2004-03-15,include,Nava Bharat Ventures Ltd.,,nse_incl_excl
+2004-03-15,exclude,Balaji Distilleries Ltd.,,nse_incl_excl
+2004-03-15,exclude,Oswal Chemicals & Fertilizers Ltd.,,nse_incl_excl
+2004-03-15,exclude,PSI Data Systems Ltd.,,nse_incl_excl
+2004-03-15,exclude,Rain Industries Ltd,,nse_incl_excl
+2004-03-22,include,Rane Engine Valves Ltd. -old,,nse_incl_excl
+2004-03-22,exclude,Jaiprakash Industries Ltd.- Suspended,,nse_incl_excl
+2004-04-12,include,Munjal Auto Industries Ltd.,,nse_incl_excl
+2004-04-12,exclude,Digital Globalsoft Ltd.,,nse_incl_excl
+2004-04-16,include,Rane Brake Linings Ltd. -old,,nse_incl_excl
+2004-04-16,exclude,Lakshmi Auto Components Ltd.- Delisted,,nse_incl_excl
+2004-05-24,include,UCO Bank,,nse_incl_excl
+2004-05-24,exclude,Larsen & Toubro Ltd.-Sus,,nse_incl_excl
+2004-06-14,include,Welspun Corp Ltd.,,nse_incl_excl
+2004-06-14,exclude,Hind Lever Chemicals Ltd.,,nse_incl_excl
+2004-07-09,include,Bhushan Steel Ltd.,,nse_incl_excl
+2004-07-09,include,Welspun India Ltd.,,nse_incl_excl
+2004-07-09,exclude,Ashok Leyland Finance Ltd.,,nse_incl_excl
+2004-07-09,exclude,NIIT Ltd.-Sus,,nse_incl_excl
+2004-08-27,include,Dredging Corporation of India Ltd.,,nse_incl_excl
+2004-08-27,exclude,Global Trust Bank Ltd.,,nse_incl_excl
+2004-08-30,include,UPL Ltd.,,nse_incl_excl
+2004-08-30,exclude,Eicher Ltd.,,nse_incl_excl
+2004-11-18,include,Larsen & Toubro Ltd.,,nse_incl_excl
+2004-11-18,exclude,Compudyne Winfosystems Ltd.,,nse_incl_excl
+2004-12-10,include,Biocon Ltd.,,nse_incl_excl
+2004-12-10,include,Dishman Pharmaceuticals & Chemicals Ltd.,,nse_incl_excl
+2004-12-10,include,Indraprastha Gas Ltd.,,nse_incl_excl
+2004-12-10,include,Jaiprakash Associates Ltd.,,nse_incl_excl
+2004-12-10,include,LG Balakrishnan & Bros Ltd.,,nse_incl_excl
+2004-12-10,include,Matrix Laboratories Ltd.,,nse_incl_excl
+2004-12-10,include,Monnet Ispat and Energy Ltd.,,nse_incl_excl
+2004-12-10,include,NCC Ltd.,,nse_incl_excl
+2004-12-10,include,NDTV Ltd.,,nse_incl_excl
+2004-12-10,include,Patni Computer Systems Ltd.,,nse_incl_excl
+2004-12-10,include,Petronet LNG Ltd.,,nse_incl_excl
+2004-12-10,include,Procter & Gamble Hygiene & Health Care Ltd.,,nse_incl_excl
+2004-12-10,include,Shree Rama Newsprint Ltd.,,nse_incl_excl
+2004-12-10,include,Sona Koyo Steering Systems Ltd.,,nse_incl_excl
+2004-12-10,include,Sterlite Industries (India) Ltd.,,nse_incl_excl
+2004-12-10,include,Strides Arcolab Ltd.,,nse_incl_excl
+2004-12-10,include,Suryalakshmi Cotton Mills Ltd.,,nse_incl_excl
+2004-12-10,include,TV Today Network Ltd.,,nse_incl_excl
+2004-12-10,exclude,AXIS IT&T Ltd.,,nse_incl_excl
+2004-12-10,exclude,Atcom Technologies Ltd.,,nse_incl_excl
+2004-12-10,exclude,BPL Engineering Ltd.,,nse_incl_excl
+2004-12-10,exclude,HeidelbergCement India Ltd.,,nse_incl_excl
+2004-12-10,exclude,IFCI Ltd.,,nse_incl_excl
+2004-12-10,exclude,ITD Cementation India Ltd.,,nse_incl_excl
+2004-12-10,exclude,ITI Ltd.,,nse_incl_excl
+2004-12-10,exclude,LML Ltd.,,nse_incl_excl
+2004-12-10,exclude,Madras Fertilizers Ltd.,,nse_incl_excl
+2004-12-10,exclude,NOCIL Ltd.,,nse_incl_excl
+2004-12-10,exclude,Parekh Platinum Ltd.,,nse_incl_excl
+2004-12-10,exclude,Peninsula Land Ltd.,,nse_incl_excl
+2004-12-10,exclude,R. S. Software (India) Ltd.,,nse_incl_excl
+2004-12-10,exclude,RPG Cables Ltd.,,nse_incl_excl
+2004-12-10,exclude,Snowcem India Ltd.,,nse_incl_excl
+2004-12-10,exclude,Southern Petrochemicals Industries Corporation Ltd.,,nse_incl_excl
+2004-12-10,exclude,Yokogawa Ltd.,,nse_incl_excl
+2004-12-10,exclude,e-Serve International Ltd.,,nse_incl_excl
+2004-12-22,include,Tata Consultancy Services Ltd.,,nse_incl_excl
+2004-12-22,exclude,Jindal Photo Ltd.,,nse_incl_excl
+2005-01-05,include,UltraTech Cement Ltd.,,nse_incl_excl
+2005-01-05,exclude,India Gypsum Ltd.,,nse_incl_excl
+2005-02-18,include,Indiabulls Financial Services Ltd.,,nse_incl_excl
+2005-02-18,exclude,Jindal Iron & Steel Co. Ltd.,,nse_incl_excl
+2005-02-21,include,Jindal Stainless Ltd.,,nse_incl_excl
+2005-02-21,exclude,JSW Steel Ltd.,,nse_incl_excl
+2005-03-04,include,Bosch Chassis Systems India Ltd.,,nse_incl_excl
+2005-03-04,exclude,Pharmacia Healthcare Ltd.,,nse_incl_excl
+2005-03-15,include,Shriram Investments Ltd.-Merged,,nse_incl_excl
+2005-03-15,exclude,Eveready Industries India Ltd.,,nse_incl_excl
+2005-03-24,include,NTPC Ltd.,,nse_incl_excl
+2005-03-24,exclude,Wimco Ltd.-Delisted,,nse_incl_excl
+2005-04-06,include,Tata Metaliks Ltd.,,nse_incl_excl
+2005-04-06,exclude,Suryalakshmi Cotton Mills Ltd.,,nse_incl_excl
+2005-04-08,include,Gujarat NRE Coke Ltd.,,nse_incl_excl
+2005-04-08,exclude,ITC Hotels Ltd.,,nse_incl_excl
+2005-04-13,include,Fresenius Kabi Oncology Ltd.,,nse_incl_excl
+2005-04-13,exclude,Vardhman Holdings Ltd.,,nse_incl_excl
+2005-04-20,include,Aarti Industries Ltd.,,nse_incl_excl
+2005-04-20,include,Eicher Ltd.,,nse_incl_excl
+2005-04-20,include,Radico Khaitan Ltd,,nse_incl_excl
+2005-04-20,exclude,Shirpur Gold Refinery Ltd.,,nse_incl_excl
+2005-04-20,exclude,Wellwin Industry Ltd.,,nse_incl_excl
+2005-04-20,exclude,Welspun Corp Ltd.,,nse_incl_excl
+2005-04-25,include,Ind-Swift Laboratories Ltd.,,nse_incl_excl
+2005-04-25,exclude,Essar Steel Ltd.,,nse_incl_excl
+2005-05-09,include,Vishal Exports Overseas Ltd.,,nse_incl_excl
+2005-05-09,exclude,IDBI Bank Ltd.-OLD,,nse_incl_excl
+2005-06-29,include,Patel Engineering Ltd.,,nse_incl_excl
+2005-06-29,exclude,Morepen Laboratories Ltd.,,nse_incl_excl
+2005-08-05,include,Jet Airways (India) Ltd.,,nse_incl_excl
+2005-08-05,exclude,Tata Finance Ltd.,,nse_incl_excl
+2005-09-26,include,Bhansali Engineering Polymers Ltd.,,nse_incl_excl
+2005-09-26,include,Consolidated Finvest & Holdings Ltd.,,nse_incl_excl
+2005-09-26,include,Dwarikesh Sugar Industrial Ltd.,,nse_incl_excl
+2005-09-26,include,Gateway Distriparks Ltd.,,nse_incl_excl
+2005-09-26,include,HSIL Ltd.,,nse_incl_excl
+2005-09-26,include,Narmada Chematur Petrochemicals Ltd.,,nse_incl_excl
+2005-09-26,include,Rajesh Exports Ltd.,,nse_incl_excl
+2005-09-26,exclude,Ashima Ltd.,,nse_incl_excl
+2005-09-26,exclude,Creative Eye Ltd.,,nse_incl_excl
+2005-09-26,exclude,Cybertech Systems & Software Ltd.,,nse_incl_excl
+2005-09-26,exclude,DSQ Software Ltd.,,nse_incl_excl
+2005-09-26,exclude,Digjam Ltd.,,nse_incl_excl
+2005-09-26,exclude,Hindustan Organic Chemicals Ltd.,,nse_incl_excl
+2005-09-26,exclude,Tamilnadu Telecommunications Ltd.,,nse_incl_excl
+2005-10-06,include,JSW Steel Ltd.,,nse_incl_excl
+2005-10-06,exclude,Bank of Punjab Ltd.,,nse_incl_excl
+2005-12-08,include,Financial Technologies (India) Ltd.,,nse_incl_excl
+2005-12-08,exclude,JSW ISPAT Steel Ltd.,,nse_incl_excl
+2005-12-14,include,Essar Steel Ltd.,,nse_incl_excl
+2005-12-14,exclude,Shriram Investments Ltd.-Merged,,nse_incl_excl
+2006-01-06,include,Shoppers Stop Ltd.,,nse_incl_excl
+2006-01-06,exclude,Videocon International Ltd.,,nse_incl_excl
+2006-02-03,include,IDFC Ltd.,,nse_incl_excl
+2006-02-03,exclude,Flextronics Software Systems Ltd.,,nse_incl_excl
+2006-03-02,include,Gokaldas Exports Ltd.,,nse_incl_excl
+2006-03-02,include,Greaves Cotton Ltd.,,nse_incl_excl
+2006-03-02,include,HSBC InvestDirect (India) Ltd.,,nse_incl_excl
+2006-03-02,include,HT Media Ltd.,,nse_incl_excl
+2006-03-02,include,India Glycols Ltd.,,nse_incl_excl
+2006-03-02,include,Mercator Ltd.,,nse_incl_excl
+2006-03-02,include,Simplex Infrastructures Ltd.,,nse_incl_excl
+2006-03-02,exclude,BSL Ltd.,,nse_incl_excl
+2006-03-02,exclude,Fertilisers and Chemicals Travancore Ltd.,,nse_incl_excl
+2006-03-02,exclude,KDL Biotech Ltd.,,nse_incl_excl
+2006-03-02,exclude,Regency Ceramics Ltd.,,nse_incl_excl
+2006-03-02,exclude,Shree Rama Multi Tech Ltd.,,nse_incl_excl
+2006-03-02,exclude,Tata Teleservices (Maharashtra) Ltd.,,nse_incl_excl
+2006-03-02,exclude,Vinyl Chemicals (India) Ltd.,,nse_incl_excl
+2006-03-23,include,Suzlon Energy Ltd.,,nse_incl_excl
+2006-03-23,exclude,Vashisti Detergents Ltd.,,nse_incl_excl
+2006-04-10,include,Triveni Engineering & Industries Ltd.,,nse_incl_excl
+2006-04-10,exclude,Indo Gulf Fertilisers Ltd.,,nse_incl_excl
+2006-04-13,include,Shree Renuka Sugars Ltd.,,nse_incl_excl
+2006-04-13,exclude,Clariant (India) Ltd.,,nse_incl_excl
+2006-05-17,include,Deccan Chronicle Holdings Ltd.,,nse_incl_excl
+2006-05-17,exclude,Munjal Auto Industries Ltd.,,nse_incl_excl
+2006-07-10,include,Reliance Communications Ltd.,,nse_incl_excl
+2006-07-10,exclude,Birla Global Finance Ltd.,,nse_incl_excl
+2006-07-14,include,Videocon Industries Ltd.,,nse_incl_excl
+2006-07-14,exclude,Williamson Tea Assam Ltd.,,nse_incl_excl
+2006-07-25,include,Reliance Natural Resources Ltd.,,nse_incl_excl
+2006-07-25,exclude,Shyam Telecom Ltd.,,nse_incl_excl
+2006-08-02,include,B L Kashyap & Sons Ltd.,,nse_incl_excl
+2006-08-02,exclude,Shree Rama Newsprint Ltd.,,nse_incl_excl
+2006-08-10,include,Punj Lloyd Ltd.,,nse_incl_excl
+2006-08-10,exclude,Infomedia Press Ltd.,,nse_incl_excl
+2006-09-13,include,Ansal Properties & Infrastructure Ltd.,,nse_incl_excl
+2006-09-13,include,Kalpataru Power Transmission Ltd.,,nse_incl_excl
+2006-09-13,include,Kirloskar Brothers Ltd.,,nse_incl_excl
+2006-09-13,exclude,Kitply Industries Ltd.,,nse_incl_excl
+2006-09-13,exclude,Pentamedia Graphics Ltd.,,nse_incl_excl
+2006-09-13,exclude,Pentasoft Technologies Ltd.,,nse_incl_excl
+2006-09-21,include,Inox Leisure Ltd.,,nse_incl_excl
+2006-09-21,exclude,Torrent Power AEC Ltd.,,nse_incl_excl
+2006-09-22,include,Sun TV Network Ltd.,,nse_incl_excl
+2006-09-22,exclude,Kochi Refineries Ltd.,,nse_incl_excl
+2006-09-28,include,Gitanjali Gems Ltd.,,nse_incl_excl
+2006-09-28,exclude,Manali Petrochemicals Ltd.,,nse_incl_excl
+2006-10-05,include,Mahindra & Mahindra Financial Services Ltd.,,nse_incl_excl
+2006-10-05,include,Welspun Corp Ltd.,,nse_incl_excl
+2006-10-05,exclude,Central India Polyesters Ltd.,,nse_incl_excl
+2006-10-05,exclude,United Western Bank Ltd.,,nse_incl_excl
+2006-11-08,include,Era Infra Engineering Ltd.,,nse_incl_excl
+2006-11-08,exclude,Great Eastern Shipping Co. Ltd.,,nse_incl_excl
+2006-11-17,include,D.S. Kulkarni Developers Ltd.,,nse_incl_excl
+2006-11-17,exclude,Television Eighteen India Ltd.,,nse_incl_excl
+2006-12-15,include,GMR Infrastructure Ltd.,,nse_incl_excl
+2006-12-15,exclude,FCL Technologies & Products Ltd.,,nse_incl_excl
+2007-01-24,include,Shree Precoated Steels Ltd.,,nse_incl_excl
+2007-01-24,include,Tech Mahindra Ltd.,,nse_incl_excl
+2007-01-24,exclude,Nahar Poly Films Ltd.,,nse_incl_excl
+2007-01-24,exclude,Nahar Spinning Mills Ltd.,,nse_incl_excl
+2007-03-06,include,Unity Infraprojects Ltd.,,nse_incl_excl
+2007-03-06,exclude,Eicher Ltd.,,nse_incl_excl
+2007-03-15,include,Hindustan Zinc Ltd.,,nse_incl_excl
+2007-03-15,exclude,Narmada Chematur Petrochemicals Ltd.,,nse_incl_excl
+2007-03-29,include,Great Eastern Shipping Co. Ltd.,,nse_incl_excl
+2007-03-29,exclude,Hinduja Ventures Ltd.,,nse_incl_excl
+2007-04-04,include,Allcargo Logistics Ltd.,,nse_incl_excl
+2007-04-04,include,Amtek India Ltd.,,nse_incl_excl
+2007-04-04,include,Bombay Rayon Fashions Ltd.,,nse_incl_excl
+2007-04-04,include,Entertainment Network India Ltd.,,nse_incl_excl
+2007-04-04,include,Geojit BNP Paribas Financial Services Ltd.,,nse_incl_excl
+2007-04-04,include,Jagran Prakashan Ltd.,,nse_incl_excl
+2007-04-04,include,McLeod Russel India Ltd.,,nse_incl_excl
+2007-04-04,include,Noida-Toll Bridge Co. Ltd.,,nse_incl_excl
+2007-04-04,include,Uttam Sugar Mills Ltd.,,nse_incl_excl
+2007-04-04,include,Varun Shipping Co. Ltd.,,nse_incl_excl
+2007-04-04,exclude,Atlas Cycle (Haryana) Ltd.,,nse_incl_excl
+2007-04-04,exclude,Cinevista Ltd.,,nse_incl_excl
+2007-04-04,exclude,GTN Industries Ltd.,,nse_incl_excl
+2007-04-04,exclude,Jain Studios Ltd.,,nse_incl_excl
+2007-04-04,exclude,Maars Software International Ltd.,,nse_incl_excl
+2007-04-04,exclude,Melstar Information Technologies Ltd.,,nse_incl_excl
+2007-04-04,exclude,Orient Information Technologies Ltd.,,nse_incl_excl
+2007-04-04,exclude,Pritish Nandy Communications Ltd.,,nse_incl_excl
+2007-04-04,exclude,Tips Industries Ltd.,,nse_incl_excl
+2007-04-04,exclude,Trigyn Technologies Ltd.,,nse_incl_excl
+2007-04-30,include,Parsvnath Developer Ltd.,,nse_incl_excl
+2007-04-30,exclude,Visualsoft Technologies Ltd.,,nse_incl_excl
+2007-06-04,include,Lanco Infratech Ltd.,,nse_incl_excl
+2007-06-04,exclude,IBP Co. Ltd.,,nse_incl_excl
+2007-09-10,include,Indiabulls Real Estate Ltd.,,nse_incl_excl
+2007-09-10,exclude,FCI OEN Connectors Ltd.,,nse_incl_excl
+2007-09-24,include,Donear Industries Ltd.,,nse_incl_excl
+2007-09-24,include,GTL Infrastructure Ltd.,,nse_incl_excl
+2007-09-24,include,Idea Cellular Ltd.,,nse_incl_excl
+2007-09-24,include,JM Financial Ltd.,,nse_incl_excl
+2007-09-24,include,Lakshmi Energy & Foods Ltd.,,nse_incl_excl
+2007-09-24,include,Oswal Chemicals & Fertilizers Ltd.,,nse_incl_excl
+2007-09-24,include,Power Finance Corporation Ltd.,,nse_incl_excl
+2007-09-24,include,Provogue (India) Ltd.,,nse_incl_excl
+2007-09-24,include,Sobha Developers Ltd.,,nse_incl_excl
+2007-09-24,include,Television Eighteen India Ltd.,,nse_incl_excl
+2007-09-24,exclude,Birla Ericsson Optical Ltd.,,nse_incl_excl
+2007-09-24,exclude,GSL Nova Petrochemicals Ltd.,,nse_incl_excl
+2007-09-24,exclude,Jagsonpal Pharmaceuticals Ltd.,,nse_incl_excl
+2007-09-24,exclude,Kakatiya Cement Sugar & Industries Ltd.,,nse_incl_excl
+2007-09-24,exclude,Maral Overseas Ltd.,,nse_incl_excl
+2007-09-24,exclude,Onward Technologies Ltd.,,nse_incl_excl
+2007-09-24,exclude,Patspin India Ltd.,,nse_incl_excl
+2007-09-24,exclude,Pudumjee Pulp & Paper Mills Ltd.,,nse_incl_excl
+2007-09-24,exclude,S.B.& T. International Ltd.,,nse_incl_excl
+2007-09-24,exclude,Todays Writing Instruments Ltd.,,nse_incl_excl
+2007-10-05,include,MindTree Ltd.,,nse_incl_excl
+2007-10-05,exclude,Indian Petrochemicals Corporation Ltd.,,nse_incl_excl
+2007-10-25,include,Educomp Solutions Ltd.,,nse_incl_excl
+2007-10-25,exclude,Sri Adhikari Brothers Television Network Ltd.,,nse_incl_excl
+2007-11-29,include,TV18 Broadcast Ltd.,,nse_incl_excl
+2007-11-29,exclude,Colgate Palmolive (India) Ltd.,,nse_incl_excl
+2007-12-07,include,DLF Ltd.,,nse_incl_excl
+2007-12-07,exclude,Essar Steel Ltd.,,nse_incl_excl
+2007-12-26,include,Firstsource Solutions Ltd.,,nse_incl_excl
+2007-12-26,include,India Infoline Ltd.,,nse_incl_excl
+2007-12-26,exclude,Ceat Ltd.,,nse_incl_excl
+2007-12-26,exclude,Rain Calcining Ltd.,,nse_incl_excl
+2008-01-01,include,Hubtown Ltd.,,nse_incl_excl
+2008-01-01,exclude,Indiabulls Financial Services Ltd.,,nse_incl_excl
+2008-01-28,include,Info Edge (India) Ltd.,,nse_incl_excl
+2008-01-28,exclude,iGate Global Solutions Ltd.,,nse_incl_excl
+2008-02-15,include,ABG Shipyard Ltd.,,nse_incl_excl
+2008-02-15,include,Anant Raj Ltd.,,nse_incl_excl
+2008-02-15,include,NIIT Ltd.,,nse_incl_excl
+2008-02-15,include,Pearl Global Industries Ltd.,,nse_incl_excl
+2008-02-15,include,Siti Cable Network Ltd.,,nse_incl_excl
+2008-02-15,exclude,Brabourne Enterprises Ltd.,,nse_incl_excl
+2008-02-15,exclude,Godavari Fertilisers & Chemicals Ltd.,,nse_incl_excl
+2008-02-15,exclude,Piramal Enterprises Ltd.,,nse_incl_excl
+2008-02-15,exclude,Rane Brake Linings Ltd. -old,,nse_incl_excl
+2008-02-15,exclude,Rane Engine Valves Ltd. -old,,nse_incl_excl
+2008-02-29,include,Zee Media Corporation Ltd.,,nse_incl_excl
+2008-02-29,exclude,Ballarpur Industries Ltd.,,nse_incl_excl
+2008-03-14,include,Power Grid Corporation of India Ltd.,,nse_incl_excl
+2008-03-14,exclude,Bajaj Auto Ltd.,,nse_incl_excl
+2008-04-23,include,Housing Development and Infrastructure Ltd.,,nse_incl_excl
+2008-04-23,exclude,Elgi Rubber Company Ltd.,,nse_incl_excl
+2008-04-24,include,Adani Ports and Special Economic Zone Ltd.,,nse_incl_excl
+2008-04-24,include,Indiabulls Financial Services Ltd.,,nse_incl_excl
+2008-04-24,exclude,S. Kumars Nationwide Ltd.,,nse_incl_excl
+2008-04-24,exclude,Sundaram Clayton Ltd.- OLD,,nse_incl_excl
+2008-05-21,include,Edelweiss Financial Services Ltd.,,nse_incl_excl
+2008-05-21,exclude,LG Balakrishnan & Bros Ltd.,,nse_incl_excl
+2008-09-10,include,Bajaj Auto Ltd.,,nse_incl_excl
+2008-09-10,include,Bajaj Holdings & Investment Ltd.,,nse_incl_excl
+2008-09-10,include,Castrol (India) Ltd.,,nse_incl_excl
+2008-09-10,include,Essar Ports Ltd.,,nse_incl_excl
+2008-09-10,include,Fortis Healthcare Ltd.,,nse_incl_excl
+2008-09-10,include,NMDC Ltd.,,nse_incl_excl
+2008-09-10,include,Rei Agro Ltd.,,nse_incl_excl
+2008-09-10,include,Reliance Power Ltd.,,nse_incl_excl
+2008-09-10,include,Rural Electrification Corporation Ltd.,,nse_incl_excl
+2008-09-10,include,S. Kumars Nationwide Ltd.,,nse_incl_excl
+2008-09-10,exclude,Accelya Kale Solutions Ltd.,,nse_incl_excl
+2008-09-10,exclude,Archies Ltd.,,nse_incl_excl
+2008-09-10,exclude,Blue Star Infotech Ltd.,,nse_incl_excl
+2008-09-10,exclude,India Nippon Electricals Ltd.,,nse_incl_excl
+2008-09-10,exclude,Indian Card Clothing Co. Ltd.,,nse_incl_excl
+2008-09-10,exclude,Kopran Ltd.,,nse_incl_excl
+2008-09-10,exclude,Sundaram Brake Linings Ltd.,,nse_incl_excl
+2008-09-10,exclude,Vardhman Polytex Ltd.,,nse_incl_excl
+2008-09-10,exclude,Visaka Industries Ltd.,,nse_incl_excl
+2008-09-10,exclude,Zenith Computer Ltd.,,nse_incl_excl
+2008-09-22,include,Reliance Petroleum Ltd.,,nse_incl_excl
+2008-09-22,exclude,Rei Agro Ltd.,,nse_incl_excl
+2008-10-31,include,Bajaj Finserv Ltd.,,nse_incl_excl
+2008-10-31,exclude,Bosch Chassis Systems India Ltd.,,nse_incl_excl
+2008-11-05,include,Omaxe Ltd.,,nse_incl_excl
+2008-11-05,exclude,MPS Ltd.,,nse_incl_excl
+2008-12-03,include,Religare Enterprises Ltd.,,nse_incl_excl
+2008-12-03,exclude,Kothari Products Ltd.,,nse_incl_excl
+2008-12-29,include,Colgate Palmolive (India) Ltd.,,nse_incl_excl
+2008-12-29,exclude,Cadila Healthcare Ltd.,,nse_incl_excl
+2009-01-12,include,Cairn India Ltd.,,nse_incl_excl
+2009-01-12,exclude,Satyam Computer Services Ltd.,,nse_incl_excl
+2009-02-25,include,GVK Power & Infrastructures Ltd.,,nse_incl_excl
+2009-02-25,exclude,Punjab Tractors Ltd.,,nse_incl_excl
+2009-03-27,include,Advanta Ltd.,,nse_incl_excl
+2009-03-27,include,Alstom T&D India Ltd.,,nse_incl_excl
+2009-03-27,include,Ballarpur Industries Ltd.,,nse_incl_excl
+2009-03-27,include,Capital First Ltd.,,nse_incl_excl
+2009-03-27,include,Chettinad Cement Corporation Ltd.,,nse_incl_excl
+2009-03-27,include,Dynamatic Technologies Ltd.,,nse_incl_excl
+2009-03-27,include,IRB Infrastructure Developers Ltd.,,nse_incl_excl
+2009-03-27,include,Jai Corp Ltd.,,nse_incl_excl
+2009-03-27,include,K.S. Oils Ltd.,,nse_incl_excl
+2009-03-27,include,Koutons Retail India Ltd.,,nse_incl_excl
+2009-03-27,include,National Fertilizers Ltd.,,nse_incl_excl
+2009-03-27,include,Piramal Enterprises Ltd.,,nse_incl_excl
+2009-03-27,include,Puravankara Projects Ltd.,,nse_incl_excl
+2009-03-27,include,UTV Software Communication Ltd.,,nse_incl_excl
+2009-03-27,include,V2 Retail Ltd.,,nse_incl_excl
+2009-03-27,exclude,DIC India Ltd.,,nse_incl_excl
+2009-03-27,exclude,Foseco India Ltd.,,nse_incl_excl
+2009-03-27,exclude,Maharashtra Scooters Ltd.,,nse_incl_excl
+2009-03-27,exclude,NEPC India Ltd,,nse_incl_excl
+2009-03-27,exclude,SML Isuzu Ltd.,,nse_incl_excl
+2009-03-27,exclude,Salora International Ltd.,,nse_incl_excl
+2009-03-27,exclude,Samtel Color Ltd.,,nse_incl_excl
+2009-03-27,exclude,Sandesh Ltd.,,nse_incl_excl
+2009-03-27,exclude,Siti Cable Network Ltd.,,nse_incl_excl
+2009-03-27,exclude,Styrolution ABS (India) Ltd.,,nse_incl_excl
+2009-03-27,exclude,Summit Securities Ltd.- Old,,nse_incl_excl
+2009-03-27,exclude,Thiru Arooran Sugars Ltd.,,nse_incl_excl
+2009-03-27,exclude,Vindhya Telelinks Ltd.,,nse_incl_excl
+2009-03-27,exclude,Vishal Exports Overseas Ltd.,,nse_incl_excl
+2009-03-27,exclude,Wheels India Ltd.,,nse_incl_excl
+2009-04-17,include,Motilal Oswal Financial Services Ltd.,,nse_incl_excl
+2009-04-17,exclude,RSWM Ltd.,,nse_incl_excl
+2009-04-21,include,Cadila Healthcare Ltd.,,nse_incl_excl
+2009-04-21,exclude,Bongaigaon Refinery & Petrochemicals Ltd.,,nse_incl_excl
+2009-05-11,include,Rei Agro Ltd.,,nse_incl_excl
+2009-05-11,exclude,Shree Precoated Steels Ltd.,,nse_incl_excl
+2009-06-17,include,Phoenix Mills Ltd.,,nse_incl_excl
+2009-06-17,exclude,Reliance Petroleum Ltd.,,nse_incl_excl
+2009-06-19,include,Tulip Telecom Ltd.,,nse_incl_excl
+2009-06-19,exclude,Welspun India Ltd.,,nse_incl_excl
+2009-06-23,include,Century Plyboards (India) Ltd.,,nse_incl_excl
+2009-06-23,exclude,Aztecsoft Ltd.,,nse_incl_excl
+2009-07-31,include,Torrent Power Ltd.,,nse_incl_excl
+2009-07-31,exclude,Reliance MediaWorks Ltd.,,nse_incl_excl
+2009-08-14,include,Indiabulls Securities Ltd.,,nse_incl_excl
+2009-08-14,exclude,Matrix Laboratories Ltd.,,nse_incl_excl
+2009-10-22,include,Everest Kanto Cylinder Ltd.,,nse_incl_excl
+2009-10-22,include,GOL Offshore Ltd.,,nse_incl_excl
+2009-10-22,include,Gujarat State Petronet Ltd.,,nse_incl_excl
+2009-10-22,include,IFCI Ltd.,,nse_incl_excl
+2009-10-22,include,JSW ISPAT Steel Ltd.,,nse_incl_excl
+2009-10-22,include,Kec International Ltd.,,nse_incl_excl
+2009-10-22,include,PTC India Ltd.,,nse_incl_excl
+2009-10-22,include,Redington (India) Ltd.,,nse_incl_excl
+2009-10-22,include,United Breweries Ltd.,,nse_incl_excl
+2009-10-22,include,Yes Bank Ltd.,,nse_incl_excl
+2009-10-22,exclude,Agro Dutch Industries Ltd.,,nse_incl_excl
+2009-10-22,exclude,Chettinad Cement Corporation Ltd.,,nse_incl_excl
+2009-10-22,exclude,Crest Animation Studios Ltd.,,nse_incl_excl
+2009-10-22,exclude,Honda SIEL Power Products Ltd.,,nse_incl_excl
+2009-10-22,exclude,Lumax Industries Ltd.,,nse_incl_excl
+2009-10-22,exclude,MRO-TEK Ltd.,,nse_incl_excl
+2009-10-22,exclude,Seshasayee Paper & Boards Ltd.,,nse_incl_excl
+2009-10-22,exclude,UCAL Fuel Systems Ltd.,,nse_incl_excl
+2009-10-22,exclude,Uttam Sugar Mills Ltd.,,nse_incl_excl
+2009-10-22,exclude,Value Industries Ltd.,,nse_incl_excl
+2009-12-22,include,3i Infotech Ltd.,,nse_incl_excl
+2009-12-22,exclude,Zandu Realty Ltd.,,nse_incl_excl
+2010-02-24,include,Peninsula Land Ltd.,,nse_incl_excl
+2010-02-24,exclude,Asian Hotels (North) Ltd.,,nse_incl_excl
+2010-03-09,include,Brigade Enterprises Ltd.,,nse_incl_excl
+2010-03-09,exclude,Kirloskar Brothers Ltd.,,nse_incl_excl
+2010-04-06,include,NHPC Ltd.,,nse_incl_excl
+2010-04-06,exclude,Micro Inks Ltd.,,nse_incl_excl
+2010-04-08,include,Banco Products (India) Ltd.,,nse_incl_excl
+2010-04-08,include,Binani Cement Ltd.,,nse_incl_excl
+2010-04-08,include,Gammon Infrastructure Projects Ltd.,,nse_incl_excl
+2010-04-08,include,JSW Holdings Ltd.,,nse_incl_excl
+2010-04-08,include,Karuturi Global Ltd.,,nse_incl_excl
+2010-04-08,exclude,Consolidated Finvest & Holdings Ltd.,,nse_incl_excl
+2010-04-08,exclude,Donear Industries Ltd.,,nse_incl_excl
+2010-04-08,exclude,Mukta Arts Ltd,,nse_incl_excl
+2010-04-08,exclude,Sirpur Paper Mills Ltd.,,nse_incl_excl
+2010-04-08,exclude,Smartlink Network Systems Ltd.,,nse_incl_excl
+2010-04-15,include,Adani Power Ltd.,,nse_incl_excl
+2010-04-15,include,Oil India Ltd.,,nse_incl_excl
+2010-04-15,exclude,Kirloskar Industries Ltd.,,nse_incl_excl
+2010-04-15,exclude,Zee Media Corporation Ltd.,,nse_incl_excl
+2010-05-26,include,JSW Energy Ltd.,,nse_incl_excl
+2010-05-26,exclude,Grasim Industries Ltd.,,nse_incl_excl
+2010-07-08,include,Tinplate Company of India Ltd.,,nse_incl_excl
+2010-07-08,exclude,HSBC InvestDirect (India) Ltd.,,nse_incl_excl
+2010-08-31,include,Grasim Industries Ltd.,,nse_incl_excl
+2010-08-31,exclude,Harrisons Malayalam Ltd.,,nse_incl_excl
+2010-09-17,include,Jaypee Infratech Ltd.,,nse_incl_excl
+2010-09-17,exclude,Future Retail Ltd.,,nse_incl_excl
+2010-09-24,include,D B Realty Ltd.,,nse_incl_excl
+2010-09-24,exclude,Dalmia Bharat Sugar and Industries Ltd.,,nse_incl_excl
+2010-10-07,include,Jaiprakash Power Ventures Ltd.,,nse_incl_excl
+2010-10-07,include,Jubilant Foodworks Ltd.,,nse_incl_excl
+2010-10-07,exclude,Reliance Natural Resources Ltd.,,nse_incl_excl
+2010-10-07,exclude,Zee Entertainment Enterprises Ltd.,,nse_incl_excl
+2010-11-25,include,Sunteck Realty Ltd.,,nse_incl_excl
+2010-11-25,exclude,Jubilant Life Sciences Ltd.,,nse_incl_excl
+2011-01-20,include,Hathway Cable & Datacom Ltd.,,nse_incl_excl
+2011-01-20,include,Shree Ashtavinayak Cine Vision Ltd.,,nse_incl_excl
+2011-01-20,exclude,Hindustan Motors Ltd.,,nse_incl_excl
+2011-01-20,exclude,Next Mediaworks Ltd.,,nse_incl_excl
+2011-02-08,include,Reliance MediaWorks Ltd.,,nse_incl_excl
+2011-02-08,exclude,Himachal Fut Com Ltd.- Old,,nse_incl_excl
+2011-03-24,include,Orbit Corporation Ltd.,,nse_incl_excl
+2011-03-24,exclude,Nirma Ltd.,,nse_incl_excl
+2011-03-25,include,Allied Digital Services Ltd.,,nse_incl_excl
+2011-03-25,include,BGR Energy Systems Ltd,,nse_incl_excl
+2011-03-25,include,Bajaj Electricals Ltd,,nse_incl_excl
+2011-03-25,include,CORE Education & Technologies Ltd.,,nse_incl_excl
+2011-03-25,include,Cox & Kings Ltd.,,nse_incl_excl
+2011-03-25,include,Delta Corp Ltd.,,nse_incl_excl
+2011-03-25,include,Emami Ltd.,,nse_incl_excl
+2011-03-25,include,Future Retail Ltd.,,nse_incl_excl
+2011-03-25,include,Godrej Properties Ltd.,,nse_incl_excl
+2011-03-25,include,JK Tyre & Industries Ltd..,,nse_incl_excl
+2011-03-25,include,Kemrock Industries and Exports Ltd.,,nse_incl_excl
+2011-03-25,include,Opto Circuits (I) Ltd.,,nse_incl_excl
+2011-03-25,include,Orissa Min Dev Co Ltd.,,nse_incl_excl
+2011-03-25,include,Pipavav Defence and Offshore Engineering Company Ltd.,,nse_incl_excl
+2011-03-25,include,Sadbhav Engineering Ltd,,nse_incl_excl
+2011-03-25,include,Whirlpool of India Ltd.,,nse_incl_excl
+2011-03-25,include,Zee Entertainment Enterprises Ltd.,,nse_incl_excl
+2011-03-25,include,Zydus Wellness Ltd.,,nse_incl_excl
+2011-03-25,exclude,AGC Networks Ltd.,,nse_incl_excl
+2011-03-25,exclude,Ajanta Pharmaceuticals Ltd.,,nse_incl_excl
+2011-03-25,exclude,Asian Electronics Ltd.,,nse_incl_excl
+2011-03-25,exclude,BPL Ltd.,,nse_incl_excl
+2011-03-25,exclude,Dwarikesh Sugar Industrial Ltd.,,nse_incl_excl
+2011-03-25,exclude,Gokaldas Exports Ltd.,,nse_incl_excl
+2011-03-25,exclude,HMT Ltd.,,nse_incl_excl
+2011-03-25,exclude,Kohinoor Foods Ltd.,,nse_incl_excl
+2011-03-25,exclude,Mahindra Ugine Steel Co. Ltd.,,nse_incl_excl
+2011-03-25,exclude,Mirza International Ltd.,,nse_incl_excl
+2011-03-25,exclude,Munjal Showa Ltd.,,nse_incl_excl
+2011-03-25,exclude,Omax Autos Ltd.,,nse_incl_excl
+2011-03-25,exclude,PVP Ventures Ltd.,,nse_incl_excl
+2011-03-25,exclude,Pearl Global Industries Ltd.,,nse_incl_excl
+2011-03-25,exclude,Ramco Systems Ltd.,,nse_incl_excl
+2011-03-25,exclude,Saregama India Ltd,,nse_incl_excl
+2011-03-25,exclude,V2 Retail Ltd.,,nse_incl_excl
+2011-03-25,exclude,Vardhman Textiles Ltd.,,nse_incl_excl
+2011-04-11,include,Coal India Ltd.,,nse_incl_excl
+2011-04-11,exclude,Alembic Ltd.,,nse_incl_excl
+2011-04-21,include,Oberoi Realty Ltd.,,nse_incl_excl
+2011-04-21,exclude,Indiabulls Real Estate Ltd.,,nse_incl_excl
+2011-05-03,include,Prestige Estates Projects Ltd.,,nse_incl_excl
+2011-05-03,exclude,Triveni Engineering & Industries Ltd.,,nse_incl_excl
+2011-05-18,include,ARSS Infrastructure Projects Ltd.,,nse_incl_excl
+2011-05-18,include,IL&FS Engineering and Construction Company Ltd.,,nse_incl_excl
+2011-05-18,exclude,Binani Cement Ltd.,,nse_incl_excl
+2011-05-18,exclude,Essar Ports Ltd.,,nse_incl_excl
+2011-06-21,include,Indiabulls Real Estate Ltd.,,nse_incl_excl
+2011-06-21,exclude,Television Eighteen India Ltd.,,nse_incl_excl
+2011-08-29,include,Dish TV India Ltd.,,nse_incl_excl
+2011-08-29,exclude,Nagarjuna Fertilizers & Chemicals Ltd.,,nse_incl_excl
+2011-10-10,include,AIA Engineering Ltd.,,nse_incl_excl
+2011-10-10,include,BF Utilities Ltd.,,nse_incl_excl
+2011-10-10,include,Central Bank of India,,nse_incl_excl
+2011-10-10,include,Development Credit Bank Ltd,,nse_incl_excl
+2011-10-10,include,Dewan Housing Finance Corporation Ltd.,,nse_incl_excl
+2011-10-10,include,Dhanlaxmi Bank Ltd.,,nse_incl_excl
+2011-10-10,include,Gujarat Pipavav Port Ltd.,,nse_incl_excl
+2011-10-10,include,Himachal Fut Com Ltd.,,nse_incl_excl
+2011-10-10,include,Indiabulls Power Ltd.,,nse_incl_excl
+2011-10-10,include,Indian Bank,,nse_incl_excl
+2011-10-10,include,Jubilant Life Sciences Ltd.,,nse_incl_excl
+2011-10-10,include,KSK Energy Ventures Ltd,,nse_incl_excl
+2011-10-10,include,Network18 Media & Investments Ltd.,,nse_incl_excl
+2011-10-10,include,Page Industries Ltd.,,nse_incl_excl
+2011-10-10,include,Persistent Systems Ltd.,,nse_incl_excl
+2011-10-10,include,SKS Microfinance Ltd.,,nse_incl_excl
+2011-10-10,include,State Bank of Bikaner & Jaipur Ltd.,,nse_incl_excl
+2011-10-10,include,State Bank of Travancore,,nse_incl_excl
+2011-10-10,include,Sujana Towers Ltd.-old,,nse_incl_excl
+2011-10-10,include,eClerx Services Ltd.,,nse_incl_excl
+2011-10-10,exclude,Ador Welding Ltd.,,nse_incl_excl
+2011-10-10,exclude,Aftek Ltd.,,nse_incl_excl
+2011-10-10,exclude,Aksh Optifibre Ltd.,,nse_incl_excl
+2011-10-10,exclude,Andhra Sugars Ltd.,,nse_incl_excl
+2011-10-10,exclude,B L Kashyap & Sons Ltd.,,nse_incl_excl
+2011-10-10,exclude,Cosmo Films Ltd.,,nse_incl_excl
+2011-10-10,exclude,D.S. Kulkarni Developers Ltd.,,nse_incl_excl
+2011-10-10,exclude,Everest Industries Ltd.,,nse_incl_excl
+2011-10-10,exclude,Heritage Foods Ltd.,,nse_incl_excl
+2011-10-10,exclude,Hikal Ltd.,,nse_incl_excl
+2011-10-10,exclude,Koutons Retail India Ltd.,,nse_incl_excl
+2011-10-10,exclude,NRB Bearings Ltd.,,nse_incl_excl
+2011-10-10,exclude,PNB Gilts Ltd.,,nse_incl_excl
+2011-10-10,exclude,Pricol Ltd.,,nse_incl_excl
+2011-10-10,exclude,Rico Auto Industries Ltd.,,nse_incl_excl
+2011-10-10,exclude,SEAMEC Ltd.,,nse_incl_excl
+2011-10-10,exclude,Sakthi Sugars Ltd.,,nse_incl_excl
+2011-10-10,exclude,Tamilnadu Petroproducts Ltd.,,nse_incl_excl
+2011-10-10,exclude,Tourism Finance Corporation of India Ltd.,,nse_incl_excl
+2011-10-10,exclude,Trident Ltd.,,nse_incl_excl
+2011-11-22,include,Future Consumer Enterprise Ltd.,,nse_incl_excl
+2011-11-22,exclude,Jindal Saw Ltd.,,nse_incl_excl
+2011-12-07,include,Jai Balaji Industries Ltd.,,nse_incl_excl
+2011-12-07,exclude,Indiabulls Real Estate Ltd.,,nse_incl_excl
+2011-12-14,include,MVL Ltd.,,nse_incl_excl
+2011-12-14,exclude,Alstom T&D India Ltd.,,nse_incl_excl
+2012-03-07,include,Jindal Saw Ltd.,,nse_incl_excl
+2012-03-07,exclude,Provogue (India) Ltd.,,nse_incl_excl
+2012-03-09,include,Indiabulls Real Estate Ltd.,,nse_incl_excl
+2012-03-09,include,L&T Finance Holdings Ltd.,,nse_incl_excl
+2012-03-09,exclude,Carol Info Services Ltd.,,nse_incl_excl
+2012-03-09,exclude,UTV Software Communication Ltd.,,nse_incl_excl
+2012-04-09,include,United Breweries (Holdings) Ltd.,,nse_incl_excl
+2012-04-09,exclude,Zuari Global Ltd.,,nse_incl_excl
+2012-04-12,include,J.Kumar Infraprojects Ltd.,,nse_incl_excl
+2012-04-12,exclude,Alfa Laval (India) Ltd.,,nse_incl_excl
+2012-04-27,include,Alstom T&D India Ltd.,,nse_incl_excl
+2012-04-27,include,Arshiya International Ltd.,,nse_incl_excl
+2012-04-27,include,Eros Intl Media Ltd.,,nse_incl_excl
+2012-04-27,include,ICRA Ltd.,,nse_incl_excl
+2012-04-27,include,ICSA (India) Ltd.,,nse_incl_excl
+2012-04-27,include,Kwality Ltd.,,nse_incl_excl
+2012-04-27,include,Lovable Lingerie Ltd.,,nse_incl_excl
+2012-04-27,include,Muthoot Finance Ltd.,,nse_incl_excl
+2012-04-27,include,Prakash Industries Ltd.,,nse_incl_excl
+2012-04-27,include,Ramky Infra Ltd.,,nse_incl_excl
+2012-04-27,include,TD Power Systems Ltd.,,nse_incl_excl
+2012-04-27,include,Techno Elt & Eng Co. Ltd.,,nse_incl_excl
+2012-04-27,include,Tree House Education & Accessories Ltd.,,nse_incl_excl
+2012-04-27,include,WABCO India Ltd.,,nse_incl_excl
+2012-04-27,exclude,Allied Digital Services Ltd.,,nse_incl_excl
+2012-04-27,exclude,Balaji Telefilms Ltd.,,nse_incl_excl
+2012-04-27,exclude,Dhampur Sugar Mills Ltd.,,nse_incl_excl
+2012-04-27,exclude,Inox Leisure Ltd.,,nse_incl_excl
+2012-04-27,exclude,Lakshmi Energy & Foods Ltd.,,nse_incl_excl
+2012-04-27,exclude,NDTV Ltd.,,nse_incl_excl
+2012-04-27,exclude,NELCO Ltd.,,nse_incl_excl
+2012-04-27,exclude,National Fertilizers Ltd.,,nse_incl_excl
+2012-04-27,exclude,Panacea Biotec Ltd.,,nse_incl_excl
+2012-04-27,exclude,Paper Products Ltd.,,nse_incl_excl
+2012-04-27,exclude,State Trading Corporation of India Ltd.,,nse_incl_excl
+2012-04-27,exclude,Surya Roshni Ltd.,,nse_incl_excl
+2012-04-27,exclude,Tata Metaliks Ltd.,,nse_incl_excl
+2012-04-27,exclude,Wockhardt Ltd.,,nse_incl_excl
+2012-05-21,include,S.E. Investments Ltd.,,nse_incl_excl
+2012-05-21,exclude,Patni Computer Systems Ltd.,,nse_incl_excl
+2012-06-18,include,Man Infraconstruction Ltd.,,nse_incl_excl
+2012-06-18,exclude,Chemplast Sanmar Ltd.,,nse_incl_excl
+2012-09-28,include,Autoline Industries Ltd.,,nse_incl_excl
+2012-09-28,include,Balkrishna Industries Ltd.,,nse_incl_excl
+2012-09-28,include,Bombay Burmah Trading Corporation Ltd.,,nse_incl_excl
+2012-09-28,include,Flexituff International Ltd.,,nse_incl_excl
+2012-09-28,include,Gati Ltd.,,nse_incl_excl
+2012-09-28,include,Innoventive Industries Ltd.,,nse_incl_excl
+2012-09-28,include,JBF Industries Ltd.,,nse_incl_excl
+2012-09-28,include,Mandhana Industries Ltd.,,nse_incl_excl
+2012-09-28,include,Mangalore Chemicals & Fertilizers Ltd.,,nse_incl_excl
+2012-09-28,include,Prime Focus Ltd,,nse_incl_excl
+2012-09-28,include,Shri Lakshmi Cotsyn Ltd.,,nse_incl_excl
+2012-09-28,include,Shriram City Union Finance Ltd.,,nse_incl_excl
+2012-09-28,include,Supreme Infrastructure India Ltd.,,nse_incl_excl
+2012-09-28,include,TTK Prestige Ltd.,,nse_incl_excl
+2012-09-28,include,Vakrangee Software Ltd.,,nse_incl_excl
+2012-09-28,exclude,3i Infotech Ltd.,,nse_incl_excl
+2012-09-28,exclude,ARSS Infrastructure Projects Ltd.,,nse_incl_excl
+2012-09-28,exclude,Everest Kanto Cylinder Ltd.,,nse_incl_excl
+2012-09-28,exclude,First Leasing Co. of India Ltd.,,nse_incl_excl
+2012-09-28,exclude,GTL Infrastructure Ltd.,,nse_incl_excl
+2012-09-28,exclude,Garden Silk Mills Ltd.,,nse_incl_excl
+2012-09-28,exclude,Gujarat Ambuja Exports Ltd.,,nse_incl_excl
+2012-09-28,exclude,ICSA (India) Ltd.,,nse_incl_excl
+2012-09-28,exclude,Jay Shree Tea & Industries Ltd.,,nse_incl_excl
+2012-09-28,exclude,Mirc Electronics Ltd.,,nse_incl_excl
+2012-09-28,exclude,Moser Baer India Ltd.,,nse_incl_excl
+2012-09-28,exclude,Reliance MediaWorks Ltd.,,nse_incl_excl
+2012-09-28,exclude,Sterlite Industries (India) Ltd.,,nse_incl_excl
+2012-09-28,exclude,TV Today Network Ltd.,,nse_incl_excl
+2012-09-28,exclude,Taj GVK Hotels & Resorts Ltd.,,nse_incl_excl
+2013-01-23,include,MOIL Ltd.,,nse_incl_excl
+2013-01-23,exclude,Deccan Chronicle Holdings Ltd.,,nse_incl_excl
+2013-03-07,include,Sun Pharma Advanced Research Company Ltd.,,nse_incl_excl
+2013-03-07,exclude,Orient Paper & Industries Ltd.,,nse_incl_excl
+2013-03-19,include,PVR Ltd.,,nse_incl_excl
+2013-03-19,exclude,Indiabulls Financial Services Ltd.,,nse_incl_excl
+2013-04-01,include,Den Networks Ltd.,,nse_incl_excl
+2013-04-01,include,Dr. Datsons Labs Ltd.,,nse_incl_excl
+2013-04-01,include,GTL Infrastructure Ltd.,,nse_incl_excl
+2013-04-01,include,Gabriel India Ltd.,,nse_incl_excl
+2013-04-01,include,Gruh Finance Ltd.,,nse_incl_excl
+2013-04-01,include,Heritage Foods Ltd.,,nse_incl_excl
+2013-04-01,include,Hindustan Copper Ltd.,,nse_incl_excl
+2013-04-01,include,IL&FS Transportation Networks Ltd.,,nse_incl_excl
+2013-04-01,include,Indian Metals & Ferro Alloys Ltd.,,nse_incl_excl
+2013-04-01,include,NIIT Technologies Ltd.,,nse_incl_excl
+2013-04-01,include,Onelife Capital Advisors Ltd.,,nse_incl_excl
+2013-04-01,include,Swan Energy Ltd.,,nse_incl_excl
+2013-04-01,include,Tribhovandas Bhimji Zaveri Ltd.,,nse_incl_excl
+2013-04-01,include,Welspun India Ltd.,,nse_incl_excl
+2013-04-01,include,Wockhardt Ltd.,,nse_incl_excl
+2013-04-01,exclude,Banco Products (India) Ltd.,,nse_incl_excl
+2013-04-01,exclude,Bhansali Engineering Polymers Ltd.,,nse_incl_excl
+2013-04-01,exclude,GTL Ltd.,,nse_incl_excl
+2013-04-01,exclude,Ind-Swift Laboratories Ltd.,,nse_incl_excl
+2013-04-01,exclude,Indo Rama Synthetics Ltd.,,nse_incl_excl
+2013-04-01,exclude,Jai Balaji Industries Ltd.,,nse_incl_excl
+2013-04-01,exclude,Kwality Ltd.,,nse_incl_excl
+2013-04-01,exclude,MVL Ltd.,,nse_incl_excl
+2013-04-01,exclude,Nilkamal Ltd.,,nse_incl_excl
+2013-04-01,exclude,Oriental Hotels Ltd.,,nse_incl_excl
+2013-04-01,exclude,Shri Lakshmi Cotsyn Ltd.,,nse_incl_excl
+2013-04-01,exclude,Sona Koyo Steering Systems Ltd.,,nse_incl_excl
+2013-04-01,exclude,Sterling Biotech Ltd,,nse_incl_excl
+2013-04-01,exclude,Unity Infraprojects Ltd.,,nse_incl_excl
+2013-04-01,exclude,Wipro Ltd.,,nse_incl_excl
+2013-04-17,include,Geodesic Ltd.,,nse_incl_excl
+2013-04-17,exclude,Future Retail Ltd.,,nse_incl_excl
+2013-06-11,include,Bharti Infratel Ltd.,,nse_incl_excl
+2013-06-11,include,D.B.Corp Ltd.,,nse_incl_excl
+2013-06-11,exclude,Future Consumer Enterprise Ltd.,,nse_incl_excl
+2013-06-11,exclude,JSW ISPAT Steel Ltd.,,nse_incl_excl
+2013-06-21,include,3i Infotech Ltd.,,nse_incl_excl
+2013-06-21,exclude,K.S. Oils Ltd.,,nse_incl_excl
+2013-07-17,include,20 Microns Ltd,,nse_incl_excl
+2013-07-17,include,Infinite Computer Solutions (India) Ltd,,nse_incl_excl
+2013-07-17,exclude,Century Plyboards (India) Ltd.,,nse_incl_excl
+2013-07-17,exclude,Jindal Poly Films Ltd.,,nse_incl_excl
+2013-08-07,include,Wipro Ltd.,,nse_incl_excl
+2013-08-07,exclude,Sujana Towers Ltd.-old,,nse_incl_excl
+2013-09-27,include,Ess Dee Aluminium Ltd.,,nse_incl_excl
+2013-09-27,include,JK Lakshmi Cement Ltd.,,nse_incl_excl
+2013-09-27,include,Kaveri Seed Company Ltd.,,nse_incl_excl
+2013-09-27,include,Kewal Kiran Clothing Ltd.,,nse_incl_excl
+2013-09-27,include,Kolte-Patil Developers Ltd.,,nse_incl_excl
+2013-09-27,include,MMTC Ltd.,,nse_incl_excl
+2013-09-27,include,MT Educare Ltd.,,nse_incl_excl
+2013-09-27,include,Magma Fincorp Ltd.,,nse_incl_excl
+2013-09-27,include,Maharashtra Scooters Ltd.,,nse_incl_excl
+2013-09-27,include,Mahindra Holidays & Resorts India Ltd.,,nse_incl_excl
+2013-09-27,include,Man Industries (India) Ltd.,,nse_incl_excl
+2013-09-27,include,Rasoya Proteins Ltd.,,nse_incl_excl
+2013-09-27,include,Vardhman Textiles Ltd.,,nse_incl_excl
+2013-09-27,exclude,20 Microns Ltd,,nse_incl_excl
+2013-09-27,exclude,3i Infotech Ltd.,,nse_incl_excl
+2013-09-27,exclude,Arshiya International Ltd.,,nse_incl_excl
+2013-09-27,exclude,Autoline Industries Ltd.,,nse_incl_excl
+2013-09-27,exclude,Bannari Amman Sugars Ltd.,,nse_incl_excl
+2013-09-27,exclude,Dish TV India Ltd.,,nse_incl_excl
+2013-09-27,exclude,Geodesic Ltd.,,nse_incl_excl
+2013-09-27,exclude,Jet Airways (India) Ltd.,,nse_incl_excl
+2013-09-27,exclude,Kemrock Industries and Exports Ltd.,,nse_incl_excl
+2013-09-27,exclude,Onelife Capital Advisors Ltd.,,nse_incl_excl
+2013-09-27,exclude,Ramky Infra Ltd.,,nse_incl_excl
+2013-09-27,exclude,Sun Pharma Advanced Research Company Ltd.,,nse_incl_excl
+2013-09-27,exclude,Varun Shipping Co. Ltd.,,nse_incl_excl
+2013-11-01,include,NDTV Ltd.,,nse_incl_excl
+2013-11-01,exclude,Marico Ltd.,,nse_incl_excl
+2013-11-18,include,Future Retail Ltd.,,nse_incl_excl
+2013-11-18,include,Raj Television Network Ltd.,,nse_incl_excl
+2013-11-18,exclude,Fresenius Kabi Oncology Ltd.,,nse_incl_excl
+2013-11-18,exclude,Welspun Corp Ltd.,,nse_incl_excl
+2014-02-28,include,Jyothy Laboratories Ltd.,,nse_incl_excl
+2014-02-28,exclude,Castrol (India) Ltd.,,nse_incl_excl
+2014-03-28,include,Bajaj Corp Ltd.,,nse_incl_excl
+2014-03-28,include,CARE Ltd.,,nse_incl_excl
+2014-03-28,include,Indiabulls Housing Finance Ltd.,,nse_incl_excl
+2014-03-28,include,Inox Leisure Ltd.,,nse_incl_excl
+2014-03-28,include,Justdial Ltd.,,nse_incl_excl
+2014-03-28,include,Mahindra Ugine Steel Co. Ltd.,,nse_incl_excl
+2014-03-28,include,National Buildings Construction Corporation Ltd.,,nse_incl_excl
+2014-03-28,include,PI Industries Ltd.,,nse_incl_excl
+2014-03-28,include,PTC India Fin Serv Ltd.,,nse_incl_excl
+2014-03-28,include,Sona Koyo Steering Systems Ltd.,,nse_incl_excl
+2014-03-28,include,Sun Pharma Advanced Research Company Ltd.,,nse_incl_excl
+2014-03-28,include,Trident Ltd.,,nse_incl_excl
+2014-03-28,include,Vaibhav Global Ltd.,,nse_incl_excl
+2014-03-28,exclude,Bombay Rayon Fashions Ltd.,,nse_incl_excl
+2014-03-28,exclude,Dr. Datsons Labs Ltd.,,nse_incl_excl
+2014-03-28,exclude,Dynamatic Technologies Ltd.,,nse_incl_excl
+2014-03-28,exclude,Essar Oil Ltd.,,nse_incl_excl
+2014-03-28,exclude,Innoventive Industries Ltd.,,nse_incl_excl
+2014-03-28,exclude,Karuturi Global Ltd.,,nse_incl_excl
+2014-03-28,exclude,Mahanagar Telephone Nigam Ltd.,,nse_incl_excl
+2014-03-28,exclude,NDTV Ltd.,,nse_incl_excl
+2014-03-28,exclude,PSL Ltd.,,nse_incl_excl
+2014-03-28,exclude,Shree Ashtavinayak Cine Vision Ltd.,,nse_incl_excl
+2014-03-28,exclude,Tulip Telecom Ltd.,,nse_incl_excl
+2014-03-28,exclude,United Breweries (Holdings) Ltd.,,nse_incl_excl
+2014-03-28,exclude,Zodiac Clothing Co. Ltd.,,nse_incl_excl
+2014-05-12,include,Marico Ltd.,,nse_incl_excl
+2014-05-12,exclude,Wyeth Ltd.,,nse_incl_excl
+2014-06-30,include,Rain Industries Ltd,,nse_incl_excl
+2014-06-30,exclude,Mahindra Ugine Steel Co. Ltd.,,nse_incl_excl
+2014-07-28,include,Castrol India Ltd.,,nse_incl_excl
+2014-07-28,exclude,Man Industries (India) Ltd.,,nse_incl_excl
+2014-09-19,include,Ajanta Pharmaceuticals Ltd.,,nse_incl_excl
+2014-09-19,include,Alembic Pharmaceuticals Ltd.,,nse_incl_excl
+2014-09-19,include,Apar Industries Ltd.,,nse_incl_excl
+2014-09-19,include,Ashoka Buildcon Ltd.,,nse_incl_excl
+2014-09-19,include,Astral Poly Technik Ltd.,,nse_incl_excl
+2014-09-19,include,Century Plyboards (India) Ltd.,,nse_incl_excl
+2014-09-19,include,Kitex Garments Ltd.,,nse_incl_excl
+2014-09-19,include,NOCIL Ltd.,,nse_incl_excl
+2014-09-19,include,Nitin Fire Protection Industries Ltd.,,nse_incl_excl
+2014-09-19,include,Ratnamani Metals & Tubes Ltd.,,nse_incl_excl
+2014-09-19,include,Repco Home Finance Ltd.,,nse_incl_excl
+2014-09-19,include,TV Today Network Ltd.,,nse_incl_excl
+2014-09-19,include,Va Tech Wabag Ltd.,,nse_incl_excl
+2014-09-19,include,Welspun Corp Ltd.,,nse_incl_excl
+2014-09-19,include,Wheels India Ltd.,,nse_incl_excl
+2014-09-19,exclude,Adani Power Ltd.,,nse_incl_excl
+2014-09-19,exclude,Aptech Ltd.,,nse_incl_excl
+2014-09-19,exclude,CORE Education & Technologies Ltd.,,nse_incl_excl
+2014-09-19,exclude,Era Infra Engineering Ltd.,,nse_incl_excl
+2014-09-19,exclude,GOL Offshore Ltd.,,nse_incl_excl
+2014-09-19,exclude,India Glycols Ltd.,,nse_incl_excl
+2014-09-19,exclude,Indraprastha Medical Corporation Ltd.,,nse_incl_excl
+2014-09-19,exclude,Infinite Computer Solutions (India) Ltd,,nse_incl_excl
+2014-09-19,exclude,Man Infraconstruction Ltd.,,nse_incl_excl
+2014-09-19,exclude,Orbit Corporation Ltd.,,nse_incl_excl
+2014-09-19,exclude,Polaris Financial Technology Ltd.,,nse_incl_excl
+2014-09-19,exclude,S. Kumars Nationwide Ltd.,,nse_incl_excl
+2014-09-19,exclude,Tinplate Company of India Ltd.,,nse_incl_excl
+2014-09-19,exclude,United Spirits Ltd.,,nse_incl_excl
+2014-09-19,exclude,West Coast Paper Mills Ltd.,,nse_incl_excl
+2014-11-28,include,Tilaknagar Industries Ltd.,,nse_incl_excl
+2014-11-28,exclude,Ranbaxy Laboratories Ltd.,,nse_incl_excl
+2015-02-02,include,Dynamatic Technologies Ltd.,,nse_incl_excl
+2015-02-02,include,La Opala RG Ltd.,,nse_incl_excl
+2015-02-02,include,MBL Infrastructures Ltd.,,nse_incl_excl
+2015-02-02,exclude,Arvind Ltd.,,nse_incl_excl
+2015-02-02,exclude,Gujarat Gas Co. Ltd.,,nse_incl_excl
+2015-02-02,exclude,ING Vysya Bank Ltd.,,nse_incl_excl
+2015-03-24,include,ITD Cementation India Ltd.,,nse_incl_excl
+2015-03-24,exclude,Balkrishna Industries Ltd.,,nse_incl_excl
+2015-03-27,include,Future Consumer Enterprise Ltd.,,nse_incl_excl
+2015-03-27,include,Gulf Oil Lubricants India Ltd.,,nse_incl_excl
+2015-03-27,include,IFB Industries Ltd.,,nse_incl_excl
+2015-03-27,include,J.K. Cement Ltd.,,nse_incl_excl
+2015-03-27,include,K.P.R. Mill Ltd.,,nse_incl_excl
+2015-03-27,include,KNR Constructions Ltd.,,nse_incl_excl
+2015-03-27,include,LG Balakrishnan & Bros Ltd.,,nse_incl_excl
+2015-03-27,include,Marksans Pharma Ltd.,,nse_incl_excl
+2015-03-27,include,Mayur Uniquoters Ltd.,,nse_incl_excl
+2015-03-27,include,Munjal Showa Ltd.,,nse_incl_excl
+2015-03-27,include,NDTV Ltd.,,nse_incl_excl
+2015-03-27,include,Pennar Industries Ltd.,,nse_incl_excl
+2015-03-27,include,Suven Life Sciences Ltd.,,nse_incl_excl
+2015-03-27,include,United Spirits Ltd.,,nse_incl_excl
+2015-03-27,include,Vinati Organics Ltd.,,nse_incl_excl
+2015-03-27,exclude,CMC Ltd.,,nse_incl_excl
+2015-03-27,exclude,DCW Ltd.,,nse_incl_excl
+2015-03-27,exclude,Educomp Solutions Ltd.,,nse_incl_excl
+2015-03-27,exclude,Elder Pharmaceuticals Ltd.,,nse_incl_excl
+2015-03-27,exclude,Hubtown Ltd.,,nse_incl_excl
+2015-03-27,exclude,IL&FS Engineering and Construction Company Ltd.,,nse_incl_excl
+2015-03-27,exclude,Indian Metals & Ferro Alloys Ltd.,,nse_incl_excl
+2015-03-27,exclude,Lovable Lingerie Ltd.,,nse_incl_excl
+2015-03-27,exclude,Mastek Ltd.,,nse_incl_excl
+2015-03-27,exclude,Prime Focus Ltd,,nse_incl_excl
+2015-03-27,exclude,Raj Television Network Ltd.,,nse_incl_excl
+2015-03-27,exclude,Rei Agro Ltd.,,nse_incl_excl
+2015-03-27,exclude,Shasun Pharmaceuticals Ltd.,,nse_incl_excl
+2015-03-27,exclude,Tilaknagar Industries Ltd.,,nse_incl_excl
+2015-03-27,exclude,Venky's (India) Ltd.,,nse_incl_excl
+2015-05-29,include,NATCO Pharma Ltd.,,nse_incl_excl
+2015-05-29,include,Visagar Polytex Ltd.,,nse_incl_excl
+2015-05-29,exclude,Adani Enterprises Ltd.,,nse_incl_excl
+2015-05-29,exclude,IDFC Ltd.,,nse_incl_excl
+2015-06-15,include,Ceat Ltd.,,nse_incl_excl
+2015-06-15,exclude,Jindal Stainless Ltd.,,nse_incl_excl
+2015-09-28,include,Adani Power Ltd.,,nse_incl_excl
+2015-09-28,include,Adlabs Entertainment Ltd.,,nse_incl_excl
+2015-09-28,include,Balkrishna Industries Ltd.,,nse_incl_excl
+2015-09-28,include,Camlin Fine Sciences Ltd.,,nse_incl_excl
+2015-09-28,include,Eveready Industries India Ltd.,,nse_incl_excl
+2015-09-28,include,Future Lifestyle Fashions Ltd.,,nse_incl_excl
+2015-09-28,include,IL&FS Engineering and Construction Company Ltd.,,nse_incl_excl
+2015-09-28,include,Inox Wind Ltd.,,nse_incl_excl
+2015-09-28,include,KRBL Ltd.,,nse_incl_excl
+2015-09-28,include,Metalyst Forgings Ltd.,,nse_incl_excl
+2015-09-28,include,Orient Cement Ltd.,,nse_incl_excl
+2015-09-28,include,Rico Auto Industries Ltd.,,nse_incl_excl
+2015-09-28,include,Siti Cable Network Ltd.,,nse_incl_excl
+2015-09-28,include,Srikalahasthi Pipes Ltd.,,nse_incl_excl
+2015-09-28,include,Symphony Ltd.,,nse_incl_excl
+2015-09-28,include,VRL Logistics Ltd.,,nse_incl_excl
+2015-09-28,exclude,Ansal Properties & Infrastructure Ltd.,,nse_incl_excl
+2015-09-28,exclude,BGR Energy Systems Ltd,,nse_incl_excl
+2015-09-28,exclude,Crompton Greaves Ltd.,,nse_incl_excl
+2015-09-28,exclude,Gammon India Ltd.,,nse_incl_excl
+2015-09-28,exclude,Gujarat NRE Coke Ltd.,,nse_incl_excl
+2015-09-28,exclude,Hindustan Oil Exploration Co. Ltd.,,nse_incl_excl
+2015-09-28,exclude,Hotel Leela Venture Ltd.,,nse_incl_excl
+2015-09-28,exclude,IFB Industries Ltd.,,nse_incl_excl
+2015-09-28,exclude,Kesoram Industries Ltd.,,nse_incl_excl
+2015-09-28,exclude,Mangalore Chemicals & Fertilizers Ltd.,,nse_incl_excl
+2015-09-28,exclude,Max India Ltd.,,nse_incl_excl
+2015-09-28,exclude,Monnet Ispat and Energy Ltd.,,nse_incl_excl
+2015-09-28,exclude,Orchid Chemicals & Pharmaceuticals Ltd.,,nse_incl_excl
+2015-09-28,exclude,Ramco Industries Ltd.,,nse_incl_excl
+2015-09-28,exclude,Rasoya Proteins Ltd.,,nse_incl_excl
+2015-09-28,exclude,RattanIndia Power Ltd.,,nse_incl_excl
+2015-10-19,include,PNC Infratech Ltd.,,nse_incl_excl
+2015-10-19,exclude,Aditya Birla Nuvo Ltd.,,nse_incl_excl
+2015-12-14,include,Arvind Ltd,,nse_incl_excl
+2015-12-14,include,Gayatri Projects Ltd.,,nse_incl_excl
+2015-12-14,exclude,Future Retail Ltd.,,nse_incl_excl
+2015-12-14,exclude,Mandhana Industries Ltd.,,nse_incl_excl
+2016-01-18,include,Schneider Electric Infrastructure Ltd.,,nse_incl_excl
+2016-01-18,exclude,Sterlite Technologies Ltd.,,nse_incl_excl
+2016-04-01,include,8K Miles Soft Services Ltd.,,nse_incl_excl
+2016-04-01,include,Aarti Drugs Ltd.,,nse_incl_excl
+2016-04-01,include,Adani Enterprises Ltd.,,nse_incl_excl
+2016-04-01,include,Adani Transmission Ltd.,,nse_incl_excl
+2016-04-01,include,Aditya Birla Fashion and Retail Ltd.,,nse_incl_excl
+2016-04-01,include,Aegis Logistics Ltd.,,nse_incl_excl
+2016-04-01,include,Ahluwalia Contracts (India) Ltd.,,nse_incl_excl
+2016-04-01,include,Ashiana Housing Ltd.,,nse_incl_excl
+2016-04-01,include,Avanti Feeds Ltd.,,nse_incl_excl
+2016-04-01,include,BGR Energy Systems Ltd,,nse_incl_excl
+2016-04-01,include,Bliss GVS Pharma Ltd.,,nse_incl_excl
+2016-04-01,include,Bombay Rayon Fashions Ltd.,,nse_incl_excl
+2016-04-01,include,CCL Products (I) Ltd.,,nse_incl_excl
+2016-04-01,include,Caplin Point Laboratories Ltd.,,nse_incl_excl
+2016-04-01,include,Cera Sanitaryware Ltd,,nse_incl_excl
+2016-04-01,include,Dalmia Bharat Ltd.,,nse_incl_excl
+2016-04-01,include,Dhanuka Agritech Ltd.,,nse_incl_excl
+2016-04-01,include,Dish TV India Ltd.,,nse_incl_excl
+2016-04-01,include,Global Offshore Services Ltd.,,nse_incl_excl
+2016-04-01,include,Granules India Ltd.,,nse_incl_excl
+2016-04-01,include,Greenply Industries Ltd.,,nse_incl_excl
+2016-04-01,include,Grindwell Norton Ltd.,,nse_incl_excl
+2016-04-01,include,Gujarat Gas Ltd.,,nse_incl_excl
+2016-04-01,include,HMT Ltd.,,nse_incl_excl
+2016-04-01,include,HeidelbergCement India Ltd.,,nse_incl_excl
+2016-04-01,include,Hindustan Media Vent Ltd.,,nse_incl_excl
+2016-04-01,include,Hitachi Home & Life Solutions (India) Ltd.,,nse_incl_excl
+2016-04-01,include,Hotel Leela Venture Ltd.,,nse_incl_excl
+2016-04-01,include,IDFC Ltd.,,nse_incl_excl
+2016-04-01,include,IFB Industries Ltd.,,nse_incl_excl
+2016-04-01,include,Igarashi Motors India Ltd.,,nse_incl_excl
+2016-04-01,include,Indo Count Industries Ltd.,,nse_incl_excl
+2016-04-01,include,Indoco Remedies Ltd.,,nse_incl_excl
+2016-04-01,include,Intellect Design Arena Ltd.,,nse_incl_excl
+2016-04-01,include,International Paper APPM Ltd.,,nse_incl_excl
+2016-04-01,include,JMT Auto Ltd.,,nse_incl_excl
+2016-04-01,include,Jet Airways (India) Ltd.,,nse_incl_excl
+2016-04-01,include,Jindal Poly Films Ltd.,,nse_incl_excl
+2016-04-01,include,Kesoram Industries Ltd.,,nse_incl_excl
+2016-04-01,include,Kirloskar Oil Eng Ltd.,,nse_incl_excl
+2016-04-01,include,Kwality Ltd.,,nse_incl_excl
+2016-04-01,include,Mahanagar Telephone Nigam Ltd.,,nse_incl_excl
+2016-04-01,include,Mahindra CIE Automotive Ltd.,,nse_incl_excl
+2016-04-01,include,Manappuram Finance Ltd.,,nse_incl_excl
+2016-04-01,include,Manpasand Beverages Ltd.,,nse_incl_excl
+2016-04-01,include,Minda Corporation Ltd.,,nse_incl_excl
+2016-04-01,include,Navkar Corporation Ltd.,,nse_incl_excl
+2016-04-01,include,PC Jeweller Ltd.,,nse_incl_excl
+2016-04-01,include,Polaris Consulting & Services Ltd.,,nse_incl_excl
+2016-04-01,include,Ramco Systems Ltd.,,nse_incl_excl
+2016-04-01,include,Ramkrishna Forgings Ltd.,,nse_incl_excl
+2016-04-01,include,RattanIndia Power Ltd.,,nse_incl_excl
+2016-04-01,include,Relaxo Footwears Ltd.,,nse_incl_excl
+2016-04-01,include,SJVN Ltd.,,nse_incl_excl
+2016-04-01,include,SML Isuzu Ltd.,,nse_incl_excl
+2016-04-01,include,Sadbhav Infrastructure Project Ltd.,,nse_incl_excl
+2016-04-01,include,Sharda Cropchem Ltd.,,nse_incl_excl
+2016-04-01,include,Shilpa Medicare Ltd.,,nse_incl_excl
+2016-04-01,include,Snowman Logistics Ltd.,,nse_incl_excl
+2016-04-01,include,Solar Industries India Ltd.,,nse_incl_excl
+2016-04-01,include,Somany Ceramics Ltd.,,nse_incl_excl
+2016-04-01,include,State Trading Corporation of India Ltd.,,nse_incl_excl
+2016-04-01,include,Styrolution ABS (India) Ltd.,,nse_incl_excl
+2016-04-01,include,Syngene International Ltd.,,nse_incl_excl
+2016-04-01,include,TVS Srichakra Ltd.,,nse_incl_excl
+2016-04-01,include,Take Solutions Ltd.,,nse_incl_excl
+2016-04-01,include,Tata Motors Ltd DVR,,nse_incl_excl
+2016-04-01,include,Tata Teleservices (Maharashtra) Ltd.,,nse_incl_excl
+2016-04-01,include,Texmaco Rail & Eng. Ltd.,,nse_incl_excl
+2016-04-01,include,Tide Water Oil (India) Ltd.,,nse_incl_excl
+2016-04-01,include,Timken India Ltd.,,nse_incl_excl
+2016-04-01,include,Transport Corporation of India Ltd.,,nse_incl_excl
+2016-04-01,include,Triveni Turbine Ltd.,,nse_incl_excl
+2016-04-01,include,V-Guard Industries Ltd.,,nse_incl_excl
+2016-04-01,include,Wonderla Holidays Ltd.,,nse_incl_excl
+2016-04-01,include,Zee Learn Ltd.,,nse_incl_excl
+2016-04-01,exclude,Adlabs Entertainment Ltd.,,nse_incl_excl
+2016-04-01,exclude,Agro Tech Foods Ltd.,,nse_incl_excl
+2016-04-01,exclude,Asahi India Glass Ltd.,,nse_incl_excl
+2016-04-01,exclude,Automotive Axles Ltd.,,nse_incl_excl
+2016-04-01,exclude,Camlin Fine Sciences Ltd.,,nse_incl_excl
+2016-04-01,exclude,Carborundum Universal Ltd.,,nse_incl_excl
+2016-04-01,exclude,Century Enka Ltd.,,nse_incl_excl
+2016-04-01,exclude,Dhanlaxmi Bank Ltd.,,nse_incl_excl
+2016-04-01,exclude,ESAB India Ltd.,,nse_incl_excl
+2016-04-01,exclude,Entertainment Network India Ltd.,,nse_incl_excl
+2016-04-01,exclude,Federal-Mogul Goetze (India) Ltd.,,nse_incl_excl
+2016-04-01,exclude,Flexituff International Ltd.,,nse_incl_excl
+2016-04-01,exclude,GHCL Ltd.,,nse_incl_excl
+2016-04-01,exclude,GTL Infrastructure Ltd.,,nse_incl_excl
+2016-04-01,exclude,Gabriel India Ltd.,,nse_incl_excl
+2016-04-01,exclude,Gammon Infrastructure Projects Ltd.,,nse_incl_excl
+2016-04-01,exclude,Geojit BNP Paribas Financial Services Ltd.,,nse_incl_excl
+2016-04-01,exclude,Geometric Ltd.,,nse_incl_excl
+2016-04-01,exclude,Gitanjali Gems Ltd.,,nse_incl_excl
+2016-04-01,exclude,Graphite India Ltd.,,nse_incl_excl
+2016-04-01,exclude,Gujarat Alkalies & Chemicals Ltd.,,nse_incl_excl
+2016-04-01,exclude,Gujarat Industries Power Co. Ltd.,,nse_incl_excl
+2016-04-01,exclude,Gujarat Narmada Valley Fertilizers and Chemicals Ltd.,,nse_incl_excl
+2016-04-01,exclude,Gulf Oil Lubricants India Ltd.,,nse_incl_excl
+2016-04-01,exclude,H.E.G. Ltd.,,nse_incl_excl
+2016-04-01,exclude,Heritage Foods Ltd.,,nse_incl_excl
+2016-04-01,exclude,IL&FS Engineering and Construction Company Ltd.,,nse_incl_excl
+2016-04-01,exclude,ITD Cementation India Ltd.,,nse_incl_excl
+2016-04-01,exclude,IVRCL Ltd.,,nse_incl_excl
+2016-04-01,exclude,Indiabulls Ventures Ltd.,,nse_incl_excl
+2016-04-01,exclude,Jyoti Structures Ltd.,,nse_incl_excl
+2016-04-01,exclude,KCP Ltd.,,nse_incl_excl
+2016-04-01,exclude,KNR Constructions Ltd.,,nse_incl_excl
+2016-04-01,exclude,KSB Pumps Ltd.,,nse_incl_excl
+2016-04-01,exclude,Kewal Kiran Clothing Ltd.,,nse_incl_excl
+2016-04-01,exclude,LG Balakrishnan & Bros Ltd.,,nse_incl_excl
+2016-04-01,exclude,Linde India Ltd.,,nse_incl_excl
+2016-04-01,exclude,MBL Infrastructures Ltd.,,nse_incl_excl
+2016-04-01,exclude,MT Educare Ltd.,,nse_incl_excl
+2016-04-01,exclude,Maharashtra Scooters Ltd.,,nse_incl_excl
+2016-04-01,exclude,Maharashtra Seamless Ltd.,,nse_incl_excl
+2016-04-01,exclude,Mercator Ltd.,,nse_incl_excl
+2016-04-01,exclude,Metalyst Forgings Ltd.,,nse_incl_excl
+2016-04-01,exclude,Munjal Showa Ltd.,,nse_incl_excl
+2016-04-01,exclude,NDTV Ltd.,,nse_incl_excl
+2016-04-01,exclude,NIIT Ltd.,,nse_incl_excl
+2016-04-01,exclude,NOCIL Ltd.,,nse_incl_excl
+2016-04-01,exclude,Nava Bharat Ventures Ltd.,,nse_incl_excl
+2016-04-01,exclude,Navneet Education Ltd.,,nse_incl_excl
+2016-04-01,exclude,Noida-Toll Bridge Co. Ltd.,,nse_incl_excl
+2016-04-01,exclude,Opto Circuits (I) Ltd.,,nse_incl_excl
+2016-04-01,exclude,Oswal Chemicals & Fertilizers Ltd.,,nse_incl_excl
+2016-04-01,exclude,Patel Engineering Ltd.,,nse_incl_excl
+2016-04-01,exclude,Peninsula Land Ltd.,,nse_incl_excl
+2016-04-01,exclude,Pennar Industries Ltd.,,nse_incl_excl
+2016-04-01,exclude,Prakash Industries Ltd.,,nse_incl_excl
+2016-04-01,exclude,Religare Enterprises Ltd.,,nse_incl_excl
+2016-04-01,exclude,Rico Auto Industries Ltd.,,nse_incl_excl
+2016-04-01,exclude,S.E. Investments Ltd.,,nse_incl_excl
+2016-04-01,exclude,Shanthi Gears Ltd.,,nse_incl_excl
+2016-04-01,exclude,Shrenuj & Co. Ltd.,,nse_incl_excl
+2016-04-01,exclude,Sona Koyo Steering Systems Ltd.,,nse_incl_excl
+2016-04-01,exclude,Srikalahasthi Pipes Ltd.,,nse_incl_excl
+2016-04-01,exclude,State Bank of Travancore,,nse_incl_excl
+2016-04-01,exclude,Supreme Infrastructure India Ltd.,,nse_incl_excl
+2016-04-01,exclude,Supreme Petrochem Ltd.,,nse_incl_excl
+2016-04-01,exclude,Swaraj Engines Ltd.,,nse_incl_excl
+2016-04-01,exclude,TD Power Systems Ltd.,,nse_incl_excl
+2016-04-01,exclude,TV Today Network Ltd.,,nse_incl_excl
+2016-04-01,exclude,Tata Investment Corporation Ltd.,,nse_incl_excl
+2016-04-01,exclude,Usha Martin Ltd.,,nse_incl_excl
+2016-04-01,exclude,Uttam Galva Steels Ltd.,,nse_incl_excl
+2016-04-01,exclude,Vesuvius India Ltd.,,nse_incl_excl
+2016-04-01,exclude,Visagar Polytex Ltd.,,nse_incl_excl
+2016-04-01,exclude,Wheels India Ltd.,,nse_incl_excl
+2016-04-29,include,Gulf Oil Lubricants India Ltd.,,nse_incl_excl
+2016-04-29,include,S H Kelkar and Company Ltd.,,nse_incl_excl
+2016-04-29,include,TV Today Network Ltd.,,nse_incl_excl
+2016-04-29,exclude,Advanta Ltd.,,nse_incl_excl
+2016-04-29,exclude,Jindal Saw Ltd.,,nse_incl_excl
+2016-04-29,exclude,Transport Corporation of India Ltd.,,nse_incl_excl
+2016-09-30,include,APL Apollo Tubes Ltd.,,nse_incl_excl
+2016-09-30,include,Aditya Birla Nuvo Ltd.,,nse_incl_excl
+2016-09-30,include,Alkem Laboratories Ltd.,,nse_incl_excl
+2016-09-30,include,Carborundum Universal Ltd.,,nse_incl_excl
+2016-09-30,include,Coffee Day Enterprises Ltd.,,nse_incl_excl
+2016-09-30,include,Crompton Greaves Ltd.,,nse_incl_excl
+2016-09-30,include,Dr. Lal Path Labs Ltd.,,nse_incl_excl
+2016-09-30,include,Equitas Holdings Ltd.,,nse_incl_excl
+2016-09-30,include,IDFC Bank Ltd.,,nse_incl_excl
+2016-09-30,include,ITD Cementation India Ltd.,,nse_incl_excl
+2016-09-30,include,Infibeam Incorporation Ltd.,,nse_incl_excl
+2016-09-30,include,InterGlobe Aviation Ltd.,,nse_incl_excl
+2016-09-30,include,KSB Pumps Ltd.,,nse_incl_excl
+2016-09-30,include,Linde India Ltd.,,nse_incl_excl
+2016-09-30,include,Max Financial Services Ltd.,,nse_incl_excl
+2016-09-30,include,Narayana Hrudayalaya Ltd.,,nse_incl_excl
+2016-09-30,include,Navin Fluorine International Ltd.,,nse_incl_excl
+2016-09-30,include,Nilkamal Ltd.,,nse_incl_excl
+2016-09-30,include,OCL India Ltd.,,nse_incl_excl
+2016-09-30,include,Religare Enterprises Ltd.,,nse_incl_excl
+2016-09-30,include,Sequent Scientific Ltd.,,nse_incl_excl
+2016-09-30,include,Star Ferro & Cement Ltd.,,nse_incl_excl
+2016-09-30,include,State Bank of Mysore,,nse_incl_excl
+2016-09-30,include,State Bank of Travancore,,nse_incl_excl
+2016-09-30,include,Suprajit Engineering Ltd.,,nse_incl_excl
+2016-09-30,exclude,ABG Shipyard Ltd.,,nse_incl_excl
+2016-09-30,exclude,Aarti Drugs Ltd.,,nse_incl_excl
+2016-09-30,exclude,Ashiana Housing Ltd.,,nse_incl_excl
+2016-09-30,exclude,Castex Technologies Ltd.,,nse_incl_excl
+2016-09-30,exclude,Clariant Chemicals (India) Ltd.,,nse_incl_excl
+2016-09-30,exclude,Electrosteel Castings Ltd.,,nse_incl_excl
+2016-09-30,exclude,Elgi Equipments Ltd.,,nse_incl_excl
+2016-09-30,exclude,Ess Dee Aluminium Ltd.,,nse_incl_excl
+2016-09-30,exclude,Financial Technologies (India) Ltd.,,nse_incl_excl
+2016-09-30,exclude,Global Offshore Services Ltd.,,nse_incl_excl
+2016-09-30,exclude,HMT Ltd.,,nse_incl_excl
+2016-09-30,exclude,Hotel Leela Venture Ltd.,,nse_incl_excl
+2016-09-30,exclude,IFB Industries Ltd.,,nse_incl_excl
+2016-09-30,exclude,INEOS Styrolution India Ltd.,,nse_incl_excl
+2016-09-30,exclude,KSK Energy Ventures Ltd,,nse_incl_excl
+2016-09-30,exclude,Kirloskar Oil Eng Ltd.,,nse_incl_excl
+2016-09-30,exclude,Minda Corporation Ltd.,,nse_incl_excl
+2016-09-30,exclude,Parsvnath Developer Ltd.,,nse_incl_excl
+2016-09-30,exclude,Puravankara Projects Ltd.,,nse_incl_excl
+2016-09-30,exclude,Ratnamani Metals & Tubes Ltd.,,nse_incl_excl
+2016-09-30,exclude,Sadbhav Infrastructure Project Ltd.,,nse_incl_excl
+2016-09-30,exclude,Tata Teleservices (Maharashtra) Ltd.,,nse_incl_excl
+2016-09-30,exclude,Tree House Education & Accessories Ltd.,,nse_incl_excl
+2016-09-30,exclude,Tribhovandas Bhimji Zaveri Ltd.,,nse_incl_excl
+2016-09-30,exclude,Vaibhav Global Ltd.,,nse_incl_excl
+2016-11-15,include,Crompton Greaves Consumer Electricals Ltd.,,nse_incl_excl
+2016-11-15,exclude,Cairn India Ltd.,,nse_incl_excl
+2017-01-23,include,Advanced Enzyme Tech Ltd.,,nse_incl_excl
+2017-01-23,include,Asahi India Glass Ltd.,,nse_incl_excl
+2017-01-23,include,RBL Bank Ltd.,,nse_incl_excl
+2017-01-23,include,Ujjivan Financial Services Ltd.,,nse_incl_excl
+2017-01-23,exclude,Dishman Pharmaceuticals & Chemicals Ltd.,,nse_incl_excl
+2017-01-23,exclude,Max Financial Services Ltd.,,nse_incl_excl
+2017-01-23,exclude,OCL India Ltd.,,nse_incl_excl
+2017-01-23,exclude,Star Ferro & Cement Ltd.,,nse_incl_excl
+2017-03-16,include,Future Retail Ltd.,,nse_incl_excl
+2017-03-16,include,Mahanagar Gas Ltd.,,nse_incl_excl
+2017-03-16,include,Max India Ltd.,,nse_incl_excl
+2017-03-16,exclude,State Bank of Bikaner & Jaipur Ltd.,,nse_incl_excl
+2017-03-16,exclude,State Bank of Mysore,,nse_incl_excl
+2017-03-16,exclude,State Bank of Travancore,,nse_incl_excl
+2017-03-31,include,Dilip Buildcon Ltd.,,nse_incl_excl
+2017-03-31,include,Endurance Technologies Ltd.,,nse_incl_excl
+2017-03-31,include,Federal-Mogul Goetze (India) Ltd.,,nse_incl_excl
+2017-03-31,include,GHCL Ltd.,,nse_incl_excl
+2017-03-31,include,Gujarat Alkalies & Chemicals Ltd.,,nse_incl_excl
+2017-03-31,include,Gujarat Narmada Valley Fertilizers and Chemicals Ltd.,,nse_incl_excl
+2017-03-31,include,ICICI Prudential Life Insurance Company Ltd.,,nse_incl_excl
+2017-03-31,include,KNR Constructions Ltd.,,nse_incl_excl
+2017-03-31,include,L&T Technology Services Ltd.,,nse_incl_excl
+2017-03-31,include,Larsen & Toubro Infotech Ltd.,,nse_incl_excl
+2017-03-31,include,Minda Corporation Ltd.,,nse_incl_excl
+2017-03-31,include,Minda Industries Ltd.,,nse_incl_excl
+2017-03-31,include,Nava Bharat Ventures Ltd.,,nse_incl_excl
+2017-03-31,include,Navneet Education Ltd.,,nse_incl_excl
+2017-03-31,include,Parag Milk Foods Ltd.,,nse_incl_excl
+2017-03-31,include,Quess Corp Ltd.,,nse_incl_excl
+2017-03-31,include,Ratnamani Metals & Tubes Ltd.,,nse_incl_excl
+2017-03-31,include,Shilpi Cable Tech Ltd.,,nse_incl_excl
+2017-03-31,include,Sterlite Technologies Ltd.,,nse_incl_excl
+2017-03-31,include,Sudarshan Chemical Industries Ltd.,,nse_incl_excl
+2017-03-31,include,Tata Investment Corporation Ltd.,,nse_incl_excl
+2017-03-31,include,Thyrocare Technologies Ltd.,,nse_incl_excl
+2017-03-31,exclude,Alok Industries Ltd.,,nse_incl_excl
+2017-03-31,exclude,Bombay Rayon Fashions Ltd.,,nse_incl_excl
+2017-03-31,exclude,Brigade Enterprises Ltd.,,nse_incl_excl
+2017-03-31,exclude,Dynamatic Technologies Ltd.,,nse_incl_excl
+2017-03-31,exclude,Future Lifestyle Fashions Ltd.,,nse_incl_excl
+2017-03-31,exclude,Ingersoll Rand (India) Ltd.,,nse_incl_excl
+2017-03-31,exclude,International Paper APPM Ltd.,,nse_incl_excl
+2017-03-31,exclude,JSW Holdings Ltd.,,nse_incl_excl
+2017-03-31,exclude,Jaiprakash Power Ventures Ltd.,,nse_incl_excl
+2017-03-31,exclude,Jaypee Infratech Ltd.,,nse_incl_excl
+2017-03-31,exclude,KSB Pumps Ltd.,,nse_incl_excl
+2017-03-31,exclude,La Opala RG Ltd.,,nse_incl_excl
+2017-03-31,exclude,Lanco Infratech Ltd.,,nse_incl_excl
+2017-03-31,exclude,Linde India Ltd.,,nse_incl_excl
+2017-03-31,exclude,Mahindra Lifespace Developers Ltd.,,nse_incl_excl
+2017-03-31,exclude,Mayur Uniquoters Ltd.,,nse_incl_excl
+2017-03-31,exclude,Sequent Scientific Ltd.,,nse_incl_excl
+2017-03-31,exclude,Shoppers Stop Ltd.,,nse_incl_excl
+2017-03-31,exclude,Simplex Infrastructures Ltd.,,nse_incl_excl
+2017-03-31,exclude,Sintex Industries Ltd.,,nse_incl_excl
+2017-03-31,exclude,Siti Networks Ltd.,,nse_incl_excl
+2017-03-31,exclude,Suprajit Engineering Ltd.,,nse_incl_excl
+2017-05-26,include,Laurus Labs Ltd.,,nse_incl_excl
+2017-05-26,include,PNB Housing Finance Ltd.,,nse_incl_excl
+2017-05-26,include,Varun Beverages Ltd.,,nse_incl_excl
+2017-05-26,exclude,Aditya Birla Nuvo Ltd.,,nse_incl_excl
+2017-05-26,exclude,Grasim Industries Ltd.,,nse_incl_excl
+2017-05-26,exclude,Tube Investments of India Ltd.,,nse_incl_excl
+2017-06-23,include,Sheela Foam Ltd.,,nse_incl_excl
+2017-06-23,exclude,IIFL Holdings Ltd.,,nse_incl_excl
+2017-09-05,include,Max Financial Services Ltd.,,nse_incl_excl
+2017-09-05,exclude,Reliance Capital Ltd.,,nse_incl_excl
+2017-09-29,include,Avenue Supermarts Ltd.,,nse_incl_excl
+2017-09-29,include,BSE Ltd.,,nse_incl_excl
+2017-09-29,include,Bombay Rayon Fashions Ltd.,,nse_incl_excl
+2017-09-29,include,Brigade Enterprises Ltd.,,nse_incl_excl
+2017-09-29,include,Future Lifestyle Fashions Ltd.,,nse_incl_excl
+2017-09-29,include,Heritage Foods Ltd.,,nse_incl_excl
+2017-09-29,include,IFB Industries Ltd.,,nse_incl_excl
+2017-09-29,include,ITI Ltd.,,nse_incl_excl
+2017-09-29,include,India Tourism Development Corporation Ltd.,,nse_incl_excl
+2017-09-29,include,Indiabulls Ventures Ltd.,,nse_incl_excl
+2017-09-29,include,Ingersoll Rand (India) Ltd.,,nse_incl_excl
+2017-09-29,include,Jaiprakash Power Ventures Ltd.,,nse_incl_excl
+2017-09-29,include,Jindal Saw Ltd.,,nse_incl_excl
+2017-09-29,include,Jindal Stainless (Hisar) Ltd.,,nse_incl_excl
+2017-09-29,include,Jindal Stainless Ltd.,,nse_incl_excl
+2017-09-29,include,Linde India Ltd.,,nse_incl_excl
+2017-09-29,include,National Fertilizers Ltd.,,nse_incl_excl
+2017-09-29,include,Rupa & Company Ltd.,,nse_incl_excl
+2017-09-29,include,Shoppers Stop Ltd.,,nse_incl_excl
+2017-09-29,include,Suprajit Engineering Ltd.,,nse_incl_excl
+2017-09-29,include,Supreme Petrochem Ltd.,,nse_incl_excl
+2017-09-29,include,Time Technoplast Ltd.,,nse_incl_excl
+2017-09-29,include,United Bank of India,,nse_incl_excl
+2017-09-29,include,Vesuvius India Ltd.,,nse_incl_excl
+2017-09-29,exclude,Amtek Auto Ltd.,,nse_incl_excl
+2017-09-29,exclude,Anant Raj Ltd.,,nse_incl_excl
+2017-09-29,exclude,Asahi India Glass Ltd.,,nse_incl_excl
+2017-09-29,exclude,FDC Ltd.,,nse_incl_excl
+2017-09-29,exclude,Federal-Mogul Goetze (India) Ltd.,,nse_incl_excl
+2017-09-29,exclude,Grindwell Norton Ltd.,,nse_incl_excl
+2017-09-29,exclude,Hindustan Media Vent Ltd.,,nse_incl_excl
+2017-09-29,exclude,Honeywell Automation India Ltd.,,nse_incl_excl
+2017-09-29,exclude,JMT Auto Ltd.,,nse_incl_excl
+2017-09-29,exclude,KNR Constructions Ltd.,,nse_incl_excl
+2017-09-29,exclude,Nitin Fire Protection Industries Ltd.,,nse_incl_excl
+2017-09-29,exclude,Orissa Min Dev Co Ltd.,,nse_incl_excl
+2017-09-29,exclude,Punj Lloyd Ltd.,,nse_incl_excl
+2017-09-29,exclude,Ratnamani Metals & Tubes Ltd.,,nse_incl_excl
+2017-09-29,exclude,Relaxo Footwears Ltd.,,nse_incl_excl
+2017-09-29,exclude,Reliance Industrial Infrastructure Ltd.,,nse_incl_excl
+2017-09-29,exclude,Rolta India Ltd.,,nse_incl_excl
+2017-09-29,exclude,Ruchi Soya Industries Ltd.,,nse_incl_excl
+2017-09-29,exclude,State Trading Corporation of India Ltd.,,nse_incl_excl
+2017-09-29,exclude,Tide Water Oil (India) Ltd.,,nse_incl_excl
+2017-09-29,exclude,Triveni Turbine Ltd.,,nse_incl_excl
+2017-09-29,exclude,VST Industries Ltd.,,nse_incl_excl
+2017-09-29,exclude,Wonderla Holidays Ltd.,,nse_incl_excl
+2017-09-29,exclude,Zydus Wellness Ltd.,,nse_incl_excl
+2017-10-30,include,Housing & Urban Development Corporation Ltd.,,nse_incl_excl
+2017-10-30,exclude,Future Retail Ltd.,,nse_incl_excl
+2017-11-13,include,AU Small Finance Bank Ltd.,,nse_incl_excl
+2017-11-13,include,Relaxo Footwears Ltd.,,nse_incl_excl
+2017-11-13,exclude,Shilpi Cable Tech Ltd.,,nse_incl_excl
+2017-11-13,exclude,Sundaram Finance Ltd.,,nse_incl_excl
+2017-11-20,include,Star Cement Ltd.,,nse_incl_excl
+2017-11-20,exclude,Gayatri Projects Ltd.,,nse_incl_excl
+2018-02-05,include,Cochin Shipyard Ltd.,,nse_incl_excl
+2018-02-05,include,Hatsun Agro Product Ltd.,,nse_incl_excl
+2018-02-05,include,Reliance Capital Ltd.,,nse_incl_excl
+2018-02-05,include,TI Financial Holdings Ltd.,,nse_incl_excl
+2018-02-05,exclude,CESC Ltd.,,nse_incl_excl
+2018-02-05,exclude,Fortis Healthcare Ltd.,,nse_incl_excl
+2018-02-05,exclude,Polaris Consulting & Services Ltd.,,nse_incl_excl
+2018-02-05,exclude,Strides Shasun Ltd.,,nse_incl_excl
+2018-03-13,include,Eris Lifesciences Ltd.,,nse_incl_excl
+2018-03-13,exclude,Videocon Industries Ltd.,,nse_incl_excl
+2018-04-02,include,Aditya Birla Capital Ltd.,,nse_incl_excl
+2018-04-02,include,Asahi India Glass Ltd.,,nse_incl_excl
+2018-04-02,include,Central Depository Services (India) Ltd.,,nse_incl_excl
+2018-04-02,include,Dishman Carbogen Amcis Ltd.,,nse_incl_excl
+2018-04-02,include,Dixon Technologies (India) Ltd.,,nse_incl_excl
+2018-04-02,include,General Insurance Corporation of India,,nse_incl_excl
+2018-04-02,include,Godrej Agrovet Ltd.,,nse_incl_excl
+2018-04-02,include,Graphite India Ltd.,,nse_incl_excl
+2018-04-02,include,Grasim Industries Ltd.,,nse_incl_excl
+2018-04-02,include,H.E.G. Ltd.,,nse_incl_excl
+2018-04-02,include,Himadri Speciality Chemical Ltd.,,nse_incl_excl
+2018-04-02,include,Honeywell Automation India Ltd.,,nse_incl_excl
+2018-04-02,include,ICICI Lombard General Insurance Company Ltd.,,nse_incl_excl
+2018-04-02,include,IIFL Holdings Ltd.,,nse_incl_excl
+2018-04-02,include,Indian Energy Exchange Ltd.,,nse_incl_excl
+2018-04-02,include,KNR Constructions Ltd.,,nse_incl_excl
+2018-04-02,include,MAS Financial Services Ltd.,,nse_incl_excl
+2018-04-02,include,NESCO Ltd.,,nse_incl_excl
+2018-04-02,include,Reliance Home Finance Ltd.,,nse_incl_excl
+2018-04-02,include,SBI Life Insurance Company Ltd.,,nse_incl_excl
+2018-04-02,include,Sadbhav Infrastructure Project Ltd.,,nse_incl_excl
+2018-04-02,include,Security and Intelligence Services (India) Ltd.,,nse_incl_excl
+2018-04-02,include,Shankara Building Products Ltd.,,nse_incl_excl
+2018-04-02,include,Sintex Plastics Technology Ltd.,,nse_incl_excl
+2018-04-02,exclude,Adani Enterprises Ltd.,,nse_incl_excl
+2018-04-02,exclude,Ahluwalia Contracts (India) Ltd.,,nse_incl_excl
+2018-04-02,exclude,Apar Industries Ltd.,,nse_incl_excl
+2018-04-02,exclude,AstraZenca Pharma India Ltd.,,nse_incl_excl
+2018-04-02,exclude,Corporation Bank,,nse_incl_excl
+2018-04-02,exclude,Dalmia Bharat Ltd.,,nse_incl_excl
+2018-04-02,exclude,Dhanuka Agritech Ltd.,,nse_incl_excl
+2018-04-02,exclude,Essel Propack Ltd.,,nse_incl_excl
+2018-04-02,exclude,ICRA Ltd.,,nse_incl_excl
+2018-04-02,exclude,Igarashi Motors India Ltd.,,nse_incl_excl
+2018-04-02,exclude,Ingersoll Rand (India) Ltd.,,nse_incl_excl
+2018-04-02,exclude,Linde India Ltd.,,nse_incl_excl
+2018-04-02,exclude,Monsanto India Ltd.,,nse_incl_excl
+2018-04-02,exclude,Navneet Education Ltd.,,nse_incl_excl
+2018-04-02,exclude,Schneider Electric Infrastructure Ltd.,,nse_incl_excl
+2018-04-02,exclude,Sharda Cropchem Ltd.,,nse_incl_excl
+2018-04-02,exclude,Shilpa Medicare Ltd.,,nse_incl_excl
+2018-04-02,exclude,Snowman Logistics Ltd.,,nse_incl_excl
+2018-04-02,exclude,Somany Ceramics Ltd.,,nse_incl_excl
+2018-04-02,exclude,Suprajit Engineering Ltd.,,nse_incl_excl
+2018-04-02,exclude,Supreme Petrochem Ltd.,,nse_incl_excl
+2018-04-02,exclude,United Bank of India,,nse_incl_excl
+2018-04-02,exclude,Vesuvius India Ltd.,,nse_incl_excl
+2018-04-02,exclude,Zensar Technolgies Ltd.,,nse_incl_excl
+2018-06-29,include,Aster DM Healthcare Ltd.,,nse_incl_excl
+2018-06-29,include,Future Retail Ltd.,,nse_incl_excl
+2018-06-29,include,KIOCL Ltd.,,nse_incl_excl
+2018-06-29,include,Tube Investments of India Ltd.,,nse_incl_excl
+2018-06-29,exclude,Arvind Ltd.,,nse_incl_excl
+2018-06-29,exclude,Cox & Kings Ltd.,,nse_incl_excl
+2018-06-29,exclude,HT Media Ltd.,,nse_incl_excl
+2018-06-29,exclude,Tata Communications Ltd.,,nse_incl_excl
+2018-08-08,include,Bharat Dynamics Ltd.,,nse_incl_excl
+2018-08-08,exclude,Techno Elt & Eng Co. Ltd.,,nse_incl_excl
+2018-09-28,include,Bandhan Bank Ltd.,,nse_incl_excl
+2018-09-28,include,Elgi Equipments Ltd.,,nse_incl_excl
+2018-09-28,include,Excel Crop Care Ltd.,,nse_incl_excl
+2018-09-28,include,FDC Ltd.,,nse_incl_excl
+2018-09-28,include,Galaxy Surfactants Ltd.,,nse_incl_excl
+2018-09-28,include,Gayatri Projects Ltd.,,nse_incl_excl
+2018-09-28,include,Grindwell Norton Ltd.,,nse_incl_excl
+2018-09-28,include,HDFC Standard Life Insurance Company Ltd.,,nse_incl_excl
+2018-09-28,include,Hindustan Aeronautics Ltd.,,nse_incl_excl
+2018-09-28,include,ICICI Securities Ltd.,,nse_incl_excl
+2018-09-28,include,Lemon Tree Hotels Ltd.,,nse_incl_excl
+2018-09-28,include,Linde India Ltd.,,nse_incl_excl
+2018-09-28,include,Lux Industries Ltd.,,nse_incl_excl
+2018-09-28,include,Mahindra Logistics Ltd.,,nse_incl_excl
+2018-09-28,include,Monsanto India Ltd.,,nse_incl_excl
+2018-09-28,include,Phillips Carbon Black Ltd.,,nse_incl_excl
+2018-09-28,include,Reliance Nippon Life Asset Management Ltd.,,nse_incl_excl
+2018-09-28,include,Shilpa Medicare Ltd.,,nse_incl_excl
+2018-09-28,include,Strides Pharma Science Ltd.,,nse_incl_excl
+2018-09-28,include,Sundaram Finance Ltd.,,nse_incl_excl
+2018-09-28,include,Teamlease Services Ltd.,,nse_incl_excl
+2018-09-28,include,The New India Assurance Company Ltd.,,nse_incl_excl
+2018-09-28,include,V-Mart Retail Ltd.,,nse_incl_excl
+2018-09-28,include,Venky's (India) Ltd.,,nse_incl_excl
+2018-09-28,include,Zensar Technolgies Ltd.,,nse_incl_excl
+2018-09-28,include,Zydus Wellness Ltd.,,nse_incl_excl
+2018-09-28,exclude,Aban Offshore Ltd.,,nse_incl_excl
+2018-09-28,exclude,Asahi India Glass Ltd.,,nse_incl_excl
+2018-09-28,exclude,BF Utilities Ltd.,,nse_incl_excl
+2018-09-28,exclude,BGR Energy Systems Ltd,,nse_incl_excl
+2018-09-28,exclude,Bajaj Hindusthan Sugar Ltd.,,nse_incl_excl
+2018-09-28,exclude,Ballarpur Industries Ltd.,,nse_incl_excl
+2018-09-28,exclude,Bhushan Steel Ltd.,,nse_incl_excl
+2018-09-28,exclude,Bombay Rayon Fashions Ltd.,,nse_incl_excl
+2018-09-28,exclude,D B Realty Ltd.,,nse_incl_excl
+2018-09-28,exclude,Gati Ltd.,,nse_incl_excl
+2018-09-28,exclude,Housing Development and Infrastructure Ltd.,,nse_incl_excl
+2018-09-28,exclude,JBF Industries Ltd.,,nse_incl_excl
+2018-09-28,exclude,Jindal Poly Films Ltd.,,nse_incl_excl
+2018-09-28,exclude,KPIT Technologies Ltd.,,nse_incl_excl
+2018-09-28,exclude,Kesoram Industries Ltd.,,nse_incl_excl
+2018-09-28,exclude,Kitex Garments Ltd.,,nse_incl_excl
+2018-09-28,exclude,Kwality Ltd.,,nse_incl_excl
+2018-09-28,exclude,Mahanagar Telephone Nigam Ltd.,,nse_incl_excl
+2018-09-28,exclude,Marksans Pharma Ltd.,,nse_incl_excl
+2018-09-28,exclude,Ramco Systems Ltd.,,nse_incl_excl
+2018-09-28,exclude,RattanIndia Power Ltd.,,nse_incl_excl
+2018-09-28,exclude,Religare Enterprises Ltd.,,nse_incl_excl
+2018-09-28,exclude,SML Isuzu Ltd.,,nse_incl_excl
+2018-09-28,exclude,Sheela Foam Ltd.,,nse_incl_excl
+2018-09-28,exclude,Unitech Ltd.,,nse_incl_excl
+2018-09-28,exclude,Zee Learn Ltd.,,nse_incl_excl
+2018-12-28,include,Adani Green Energy Ltd.,,nse_incl_excl
+2018-12-28,include,Fortis Healthcare Ltd.,,nse_incl_excl
+2018-12-28,include,RITES Ltd.,,nse_incl_excl
+2018-12-28,include,Sheela Foam Ltd.,,nse_incl_excl
+2018-12-28,include,Varroc Engineering Ltd.,,nse_incl_excl
+2018-12-28,exclude,Bharat Financial Inclusion Ltd.,,nse_incl_excl
+2018-12-28,exclude,Capital First Ltd.,,nse_incl_excl
+2018-12-28,exclude,Century Textile & Industries Ltd.,,nse_incl_excl
+2018-12-28,exclude,HSIL Ltd.,,nse_incl_excl
+2018-12-28,exclude,IIFL Holdings Ltd.,,nse_incl_excl
+2019-01-28,include,Corporation Bank,,nse_incl_excl
+2019-01-28,include,CreditAccess Grameen Ltd.,,nse_incl_excl
+2019-01-28,exclude,Dena Bank,,nse_incl_excl
+2019-01-28,exclude,Vijaya Bank,,nse_incl_excl
+2019-03-29,include,Aavas Financiers Ltd.,,nse_incl_excl
+2019-03-29,include,AstraZenca Pharma India Ltd.,,nse_incl_excl
+2019-03-29,include,Bank of Maharashtra.,,nse_incl_excl
+2019-03-29,include,CESC Ltd.,,nse_incl_excl
+2019-03-29,include,Cox & Kings Ltd.,,nse_incl_excl
+2019-03-29,include,Deepak Nitrite Ltd.,,nse_incl_excl
+2019-03-29,include,Essel Propack Ltd.,,nse_incl_excl
+2019-03-29,include,Fine Organic Industries Ltd.,,nse_incl_excl
+2019-03-29,include,HDFC Asset Management Company Ltd.,,nse_incl_excl
+2019-03-29,include,ICRA Ltd.,,nse_incl_excl
+2019-03-29,include,IRCON International Ltd.,,nse_incl_excl
+2019-03-29,include,Indiabulls Integrated Services Ltd.,,nse_incl_excl
+2019-03-29,include,IndoStar Capital Finance Ltd.,,nse_incl_excl
+2019-03-29,include,JK Paper Ltd.,,nse_incl_excl
+2019-03-29,include,Jamna Auto Industries Ltd.,,nse_incl_excl
+2019-03-29,include,KEI Industries Ltd.,,nse_incl_excl
+2019-03-29,include,Kirloskar Oil Eng Ltd.,,nse_incl_excl
+2019-03-29,include,Maharashtra Scooters Ltd.,,nse_incl_excl
+2019-03-29,include,Maharashtra Seamless Ltd.,,nse_incl_excl
+2019-03-29,include,Orient Electric Ltd.,,nse_incl_excl
+2019-03-29,include,Sharda Cropchem Ltd.,,nse_incl_excl
+2019-03-29,include,Suprajit Engineering Ltd.,,nse_incl_excl
+2019-03-29,include,TCNS Clothing Co. Ltd.,,nse_incl_excl
+2019-03-29,include,Triveni Turbine Ltd.,,nse_incl_excl
+2019-03-29,include,VST Industries Ltd.,,nse_incl_excl
+2019-03-29,exclude,8K Miles Soft Services Ltd.,,nse_incl_excl
+2019-03-29,exclude,Aarti Industries Ltd.,,nse_incl_excl
+2019-03-29,exclude,Den Networks Ltd.,,nse_incl_excl
+2019-03-29,exclude,Dredging Corporation of India Ltd.,,nse_incl_excl
+2019-03-29,exclude,Eros Intl Media Ltd.,,nse_incl_excl
+2019-03-29,exclude,Eveready Industries India Ltd.,,nse_incl_excl
+2019-03-29,exclude,GVK Power & Infrastructures Ltd.,,nse_incl_excl
+2019-03-29,exclude,Greenply Industries Ltd.,,nse_incl_excl
+2019-03-29,exclude,HCL Infosystems Ltd.,,nse_incl_excl
+2019-03-29,exclude,Hindustan Construction Co. Ltd.,,nse_incl_excl
+2019-03-29,exclude,IL&FS Transportation Networks Ltd.,,nse_incl_excl
+2019-03-29,exclude,Indo Count Industries Ltd.,,nse_incl_excl
+2019-03-29,exclude,J.Kumar Infraprojects Ltd.,,nse_incl_excl
+2019-03-29,exclude,Jaiprakash Power Ventures Ltd.,,nse_incl_excl
+2019-03-29,exclude,Johnson Controls - Hitachi Air Conditioning India Ltd.,,nse_incl_excl
+2019-03-29,exclude,Manpasand Beverages Ltd.,,nse_incl_excl
+2019-03-29,exclude,McLeod Russel India Ltd.,,nse_incl_excl
+2019-03-29,exclude,Navkar Corporation Ltd.,,nse_incl_excl
+2019-03-29,exclude,PTC India Fin Serv Ltd.,,nse_incl_excl
+2019-03-29,exclude,Reliance Naval and Engineering Ltd.,,nse_incl_excl
+2019-03-29,exclude,Sadbhav Infrastructure Project Ltd.,,nse_incl_excl
+2019-03-29,exclude,TVS Srichakra Ltd.,,nse_incl_excl
+2019-03-29,exclude,Tata Sponge Iron Ltd.,,nse_incl_excl
+2019-03-29,exclude,Texmaco Rail & Eng. Ltd.,,nse_incl_excl
+2019-03-29,exclude,Unichem Laboratories Ltd.,,nse_incl_excl
+2019-04-15,include,Sundaram Clayton Ltd.,,nse_incl_excl
+2019-04-15,exclude,Excel Crop Care Ltd.,,nse_incl_excl
+2019-06-28,include,Chalet Hotels Ltd.,,nse_incl_excl
+2019-06-28,include,Dalmia Bharat Ltd.,,nse_incl_excl
+2019-06-28,exclude,Gujarat Fluorochemicals Ltd.,,nse_incl_excl
+2019-06-28,exclude,Monsanto India Ltd.,,nse_incl_excl
+2019-09-24,include,Vaibhav Global Ltd.,,nse_incl_excl
+2019-09-24,exclude,Jet Airways (India) Ltd.,,nse_incl_excl
+2019-09-27,include,Abbott India Ltd.,,nse_incl_excl
+2019-09-27,include,Adani Gas Ltd.,,nse_incl_excl
+2019-09-27,include,Amber Enterprises India Ltd.,,nse_incl_excl
+2019-09-27,include,Arvind Fashions Ltd.,,nse_incl_excl
+2019-09-27,include,Bayer Cropscience Ltd.,,nse_incl_excl
+2019-09-27,include,Birlasoft Ltd.,,nse_incl_excl
+2019-09-27,include,Capri Global Capital Ltd.,,nse_incl_excl
+2019-09-27,include,Den Networks Ltd.,,nse_incl_excl
+2019-09-27,include,Federal-Mogul Goetze (India) Ltd.,,nse_incl_excl
+2019-09-27,include,Garware Technical Fibres Ltd.,,nse_incl_excl
+2019-09-27,include,IIFL Finance Ltd.,,nse_incl_excl
+2019-09-27,include,Johnson Controls - Hitachi Air Conditioning India Ltd.,,nse_incl_excl
+2019-09-27,include,KPIT Technologies Ltd.,,nse_incl_excl
+2019-09-27,include,Metropolis Healthcare Ltd.,,nse_incl_excl
+2019-09-27,include,Multi Commodity Exchange of India Ltd.,,nse_incl_excl
+2019-09-27,include,Nestle India Ltd.,,nse_incl_excl
+2019-09-27,include,Orient Refractories Ltd.,,nse_incl_excl
+2019-09-27,include,Polycab India Ltd.,,nse_incl_excl
+2019-09-27,include,Rail Vikas Nigam Ltd.,,nse_incl_excl
+2019-09-27,include,Ratnamani Metals & Tubes Ltd.,,nse_incl_excl
+2019-09-27,include,TCI Express Ltd.,,nse_incl_excl
+2019-09-27,include,Techno Electric & Engineering Company Ltd.,,nse_incl_excl
+2019-09-27,exclude,ABB India Ltd.,,nse_incl_excl
+2019-09-27,exclude,Deepak Fertilisers & Petrochemicals Corp. Ltd.,,nse_incl_excl
+2019-09-27,exclude,Gateway Distriparks Ltd.,,nse_incl_excl
+2019-09-27,exclude,GlaxoSmithkline Consumer Healthcare Ltd.,,nse_incl_excl
+2019-09-27,exclude,Gruh Finance Ltd.,,nse_incl_excl
+2019-09-27,exclude,Indoco Remedies Ltd.,,nse_incl_excl
+2019-09-27,exclude,Inox Wind Ltd.,,nse_incl_excl
+2019-09-27,exclude,Jaiprakash Associates Ltd.,,nse_incl_excl
+2019-09-27,exclude,KIOCL Ltd.,,nse_incl_excl
+2019-09-27,exclude,Ramkrishna Forgings Ltd.,,nse_incl_excl
+2019-09-27,exclude,Reliance Communications Ltd.,,nse_incl_excl
+2019-09-27,exclude,Reliance Home Finance Ltd.,,nse_incl_excl
+2019-09-27,exclude,Rupa & Company Ltd.,,nse_incl_excl
+2019-09-27,exclude,SREI Infrastructure Finance Ltd.,,nse_incl_excl
+2019-09-27,exclude,Shankara Building Products Ltd.,,nse_incl_excl
+2019-09-27,exclude,Sharda Cropchem Ltd.,,nse_incl_excl
+2019-09-27,exclude,Shipping Corporation of India Ltd.,,nse_incl_excl
+2019-09-27,exclude,Sintex Plastics Technology Ltd.,,nse_incl_excl
+2019-09-27,exclude,Tamil Nadu Newsprint & Papers Ltd.,,nse_incl_excl
+2019-09-27,exclude,Tata Coffee Ltd.,,nse_incl_excl
+2019-09-27,exclude,Thomas Cook (India) Ltd.,,nse_incl_excl
+2019-09-27,exclude,Triveni Turbine Ltd.,,nse_incl_excl
+2019-12-26,include,Affle (India) Ltd.,,nse_incl_excl
+2019-12-26,include,Mishra Dhatu Nigam Ltd.,,nse_incl_excl
+2019-12-26,include,Responsive Industries Ltd.,,nse_incl_excl
+2019-12-26,exclude,CG Power and Industrial Solutions Ltd.,,nse_incl_excl
+2019-12-26,exclude,Coffee Day Enterprises Ltd.,,nse_incl_excl
+2019-12-26,exclude,Cox & Kings Ltd.,,nse_incl_excl
+2019-12-27,include,Aarti Industries Ltd.,,nse_incl_excl
+2019-12-27,include,Asahi India Glass Ltd.,,nse_incl_excl
+2019-12-27,include,Indiamart Intermesh Ltd.,,nse_incl_excl
+2019-12-27,include,Kennametal India Ltd.,,nse_incl_excl
+2019-12-27,include,Spandana Sphoorty Financial Ltd.,,nse_incl_excl
+2019-12-27,include,Spicejet Ltd.,,nse_incl_excl
+2019-12-27,include,Tasty Bite Eatables Ltd.,,nse_incl_excl
+2019-12-27,include,Triveni Turbine Ltd.,,nse_incl_excl
+2019-12-27,include,Westlife Development Ltd.,,nse_incl_excl
+2019-12-27,exclude,Allahabad Bank,,nse_incl_excl
+2019-12-27,exclude,Andhra Bank,,nse_incl_excl
+2019-12-27,exclude,Corporation Bank,,nse_incl_excl
+2019-12-27,exclude,Den Networks Ltd.,,nse_incl_excl
+2019-12-27,exclude,Hathway Cable & Datacom Ltd.,,nse_incl_excl
+2019-12-27,exclude,Max India Ltd.,,nse_incl_excl
+2019-12-27,exclude,Oriental Bank of Commerce,,nse_incl_excl
+2019-12-27,exclude,Syndicate Bank,,nse_incl_excl
+2019-12-27,exclude,Tata Chemicals Ltd.,,nse_incl_excl
+2020-01-16,include,Tata Steel BSL Ltd.,,nse_incl_excl
+2020-01-16,exclude,Suven Life Sciences Ltd.,,nse_incl_excl
+2020-03-19,include,Sterling And Wilson Solar Ltd.,,nse_incl_excl
+2020-03-19,exclude,Yes Bank Ltd.,,nse_incl_excl
+2020-06-26,include,ABB India Ltd.,,nse_incl_excl
+2020-06-26,include,Alkyl Amines Chemicals Ltd.,,nse_incl_excl
+2020-06-26,include,Bharat Rasayan Ltd.,,nse_incl_excl
+2020-06-26,include,CSB Bank Ltd.,,nse_incl_excl
+2020-06-26,include,Century Textile & Industries Ltd.,,nse_incl_excl
+2020-06-26,include,Dhanuka Agritech Ltd.,,nse_incl_excl
+2020-06-26,include,ESAB India Ltd.,,nse_incl_excl
+2020-06-26,include,GMM Pfaudler Ltd.,,nse_incl_excl
+2020-06-26,include,Garden Reach Shipbuilders & Engineers Ltd.,,nse_incl_excl
+2020-06-26,include,Gujarat Fluorochemicals Ltd.,,nse_incl_excl
+2020-06-26,include,Hathway Cable & Datacom Ltd.,,nse_incl_excl
+2020-06-26,include,IIFL Wealth Management Ltd.,,nse_incl_excl
+2020-06-26,include,Indian Railway Catering And Tourism Corporation Ltd.,,nse_incl_excl
+2020-06-26,include,Indoco Remedies Ltd.,,nse_incl_excl
+2020-06-26,include,Ingersoll Rand (India) Ltd.,,nse_incl_excl
+2020-06-26,include,KSB Ltd.,,nse_incl_excl
+2020-06-26,include,La Opala RG Ltd.,,nse_incl_excl
+2020-06-26,include,Poly Medicure Ltd.,,nse_incl_excl
+2020-06-26,include,Schneider Electric Infrastructure Ltd.,,nse_incl_excl
+2020-06-26,include,Sequent Scientific Ltd.,,nse_incl_excl
+2020-06-26,include,Shipping Corporation of India Ltd.,,nse_incl_excl
+2020-06-26,include,Sumitomo Chemical India Ltd.,,nse_incl_excl
+2020-06-26,include,Tata Communications Ltd.,,nse_incl_excl
+2020-06-26,include,Ujjivan Small Finance Bank Ltd.,,nse_incl_excl
+2020-06-26,include,Vesuvius India Ltd.,,nse_incl_excl
+2020-06-26,exclude,Chalet Hotels Ltd.,,nse_incl_excl
+2020-06-26,exclude,Dewan Housing Finance Corporation Ltd.,,nse_incl_excl
+2020-06-26,exclude,Federal-Mogul Goetze (India) Ltd.,,nse_incl_excl
+2020-06-26,exclude,Future Lifestyle Fashions Ltd.,,nse_incl_excl
+2020-06-26,exclude,Gayatri Projects Ltd.,,nse_incl_excl
+2020-06-26,exclude,ITD Cementation India Ltd.,,nse_incl_excl
+2020-06-26,exclude,Indiabulls Integrated Services Ltd.,,nse_incl_excl
+2020-06-26,exclude,Jain Irrigation Systems Ltd.,,nse_incl_excl
+2020-06-26,exclude,Kennametal India Ltd.,,nse_incl_excl
+2020-06-26,exclude,Kirloskar Oil Eng Ltd.,,nse_incl_excl
+2020-06-26,exclude,Lakshmi Vilas Bank Ltd.,,nse_incl_excl
+2020-06-26,exclude,Magma Fincorp Ltd.,,nse_incl_excl
+2020-06-26,exclude,Network18 Media & Investments Ltd.,,nse_incl_excl
+2020-06-26,exclude,PC Jeweller Ltd.,,nse_incl_excl
+2020-06-26,exclude,Parag Milk Foods Ltd.,,nse_incl_excl
+2020-06-26,exclude,Reliance Capital Ltd.,,nse_incl_excl
+2020-06-26,exclude,Reliance Infrastructure Ltd.,,nse_incl_excl
+2020-06-26,exclude,Reliance Power Ltd.,,nse_incl_excl
+2020-06-26,exclude,Responsive Industries Ltd.,,nse_incl_excl
+2020-06-26,exclude,S H Kelkar and Company Ltd.,,nse_incl_excl
+2020-06-26,exclude,Shilpa Medicare Ltd.,,nse_incl_excl
+2020-06-26,exclude,Sundaram Clayton Ltd.,,nse_incl_excl
+2020-06-26,exclude,Techno Electric & Engineering Company Ltd.,,nse_incl_excl
+2020-06-26,exclude,Triveni Turbine Ltd.,,nse_incl_excl
+2020-06-26,exclude,Va Tech Wabag Ltd.,,nse_incl_excl
+2020-07-31,include,SBI Cards and Payment Services Ltd.,,nse_incl_excl
+2020-07-31,exclude,Vedanta Ltd.,,nse_incl_excl
+2020-09-14,include,JTEKT India Ltd.,JTEKTINDIA,ind_prs07092020
+2020-09-14,include,NOCIL Ltd.,NOCIL,ind_prs07092020
+2020-09-14,include,PSP Projects Ltd.,PSPPROJECT,ind_prs07092020
+2020-09-14,include,Swaraj Engines Ltd.,SWARAJENG,ind_prs07092020
+2020-09-14,include,Tata Coffee Ltd.,TATACOFFEE,ind_prs07092020
+2020-09-14,exclude,Arvind Fashions Ltd.,ARVINDFASN,ind_prs07092020
+2020-09-14,exclude,Asahi India Glass Ltd.,ASAHIINDIA,ind_prs07092020
+2020-09-14,exclude,KPIT Technologies Ltd.,KPITTECH,ind_prs07092020
+2020-09-14,exclude,Repco Home Finance Ltd.,REPCOHOME,ind_prs07092020
+2020-09-14,exclude,Spandana Sphoorty Financial Ltd.,SPANDANA,ind_prs07092020
+2020-09-25,include,ABB Power Products and Systems India Ltd.,POWERINDIA,ind_prs20082020
+2020-09-25,include,Aarti Drugs Ltd.,AARTIDRUGS,ind_prs20082020
+2020-09-25,include,Adani Enterprises Ltd.,ADANIENT,ind_prs20082020
+2020-09-25,include,Alembic Ltd.,ALEMBICLTD,ind_prs20082020
+2020-09-25,include,Alok Industries Ltd.,ALOKINDS,ind_prs20082020
+2020-09-25,include,Chalet Hotels Ltd.,CHALET,ind_prs20082020
+2020-09-25,include,Gujarat Ambuja Exports Ltd.,GAEL,ind_prs20082020
+2020-09-25,include,Huhtamaki PPL Ltd.,PAPERPROD,ind_prs20082020
+2020-09-25,include,IOL Chem and Pharma Ltd.,IOLCP,ind_prs20082020
+2020-09-25,include,Navneet Education Ltd.,NAVNETEDUL,ind_prs20082020
+2020-09-25,include,Polyplex Corporation Ltd.,POLYPLEX,ind_prs20082020
+2020-09-25,include,Shilpa Medicare Ltd.,SHILPAMED,ind_prs20082020
+2020-09-25,include,Solara Active Pharma Sciences Ltd.,SOLARA,ind_prs20082020
+2020-09-25,include,Supreme Petrochem Ltd.,SUPPETRO,ind_prs20082020
+2020-09-25,include,Suven Pharmaceuticals Ltd.,SUVENPHAR,ind_prs20082020
+2020-09-25,include,Tata Chemicals Ltd.,TATACHEM,ind_prs20082020
+2020-09-25,include,Yes Bank Ltd.,YESBANK,ind_prs20082020
+2020-09-25,exclude,Adani Power Ltd.,ADANIPOWER,ind_prs20082020
+2020-09-25,exclude,GE T&D India Ltd.,GET&D,ind_prs20082020
+2020-09-25,exclude,Hexaware Technologies Ltd.,HEXAWARE,ind_prs20082020
+2020-09-25,exclude,Himatsingka Seide Ltd.,HIMATSEIDE,ind_prs20082020
+2020-09-25,exclude,IFCI Ltd.,IFCI,ind_prs20082020
+2020-09-25,exclude,India Tourism Development Corporation Ltd.,ITDC,ind_prs20082020
+2020-09-25,exclude,IndoStar Capital Finance Ltd.,INDOSTAR,ind_prs20082020
+2020-09-25,exclude,Intellect Design Arena Ltd.,INTELLECT,ind_prs20082020
+2020-09-25,exclude,Jubilant Life Sciences Ltd.,JUBILANT,ind_prs20082020
+2020-09-25,exclude,K.P.R. Mill Ltd.,KPRMILL,ind_prs20082020
+2020-09-25,exclude,Mahindra CIE Automotive Ltd.,MAHINDCIE,ind_prs20082020
+2020-09-25,exclude,Nava Bharat Ventures Ltd.,NBVENTURES,ind_prs20082020
+2020-09-25,exclude,Sadbhav Engineering Ltd.,SADBHAV,ind_prs20082020
+2020-09-25,exclude,Shree Renuka Sugars Ltd.,RENUKA,ind_prs20082020
+2020-09-25,exclude,Take Solutions Ltd.,TAKE,ind_prs20082020
+2020-09-25,exclude,Time Technoplast Ltd.,TIMETECHNO,ind_prs20082020
+2020-09-25,exclude,Vesuvius India Ltd.,VESUVIUS,ind_prs20082020
+2020-11-02,include,Network18 Media & Investments Ltd.,NETWORK18,ind_prs26102020
+2020-11-02,exclude,Allcargo Logistics Ltd.,ALLCARGO,ind_prs26102020
+2020-11-25,include,Mahindra CIE Automotive Ltd.,MAHINDCIE,ind_prs18112020
+2020-11-25,exclude,Infibeam Avenues Ltd.,INFIBEAM,ind_prs18112020
+2021-03-31,include,Angel Broking Ltd.,ANGELBRKG,ind_prs23022021
+2021-03-31,include,Asahi India Glass Ltd.,ASAHIINDIA,ind_prs23022021
+2021-03-31,include,Balaji Amines Ltd.,BALAMINES,ind_prs23022021
+2021-03-31,include,Computer Age Management Services Ltd.,CAMS,ind_prs23022021
+2021-03-31,include,Happiest Minds Technologies Ltd.,HAPPSTMNDS,ind_prs23022021
+2021-03-31,include,Hemisphere Properties India Ltd.,HEMIPROP,ind_prs23022021
+2021-03-31,include,Indo Count Industries Ltd.,ICIL,ind_prs23022021
+2021-03-31,include,Intellect Design Arena Ltd.,INTELLECT,ind_prs23022021
+2021-03-31,include,K.P.R. Mill Ltd.,KPRMILL,ind_prs23022021
+2021-03-31,include,KPIT Technologies Ltd.,KPITTECH,ind_prs23022021
+2021-03-31,include,Max Healthcare Institute Ltd.,MAXHEALTH,ind_prs23022021
+2021-03-31,include,Mazagoan Dock Shipbuilders Ltd.,MAZDOCK,ind_prs23022021
+2021-03-31,include,Prince Pipes and Fittings Ltd.,PRINCEPIPE,ind_prs23022021
+2021-03-31,include,Responsive Industries Ltd.,RESPONIND,ind_prs23022021
+2021-03-31,include,Rossari Biotech Ltd.,ROSSARI,ind_prs23022021
+2021-03-31,include,Route Mobile Ltd.,ROUTE,ind_prs23022021
+2021-03-31,include,Sharda Cropchem Ltd.,SHARDACROP,ind_prs23022021
+2021-03-31,include,Spandana Sphoorty Financial Ltd.,SPANDANA,ind_prs23022021
+2021-03-31,include,Sundaram Clayton Ltd.,SUNCLAYLTD,ind_prs23022021
+2021-03-31,include,Tanla Platforms Ltd.,TANLA,ind_prs23022021
+2021-03-31,include,Triveni Turbine Ltd.,TRITURBINE,ind_prs23022021
+2021-03-31,include,UTI Asset Management Company Ltd.,UTIAMC,ind_prs23022021
+2021-03-31,include,Valiant Organics Ltd.,VALIANTORG,ind_prs23022021
+2021-03-31,include,Vedanta Ltd.,VEDL,ind_prs23022021
+2021-03-31,exclude,Bombay Dyeing & Manufacturing Co. Ltd.,BOMDYEING,ind_prs23022021
+2021-03-31,exclude,CARE Ratings Ltd.,CARERATING,ind_prs23022021
+2021-03-31,exclude,Chennai Petroleum Corporation Ltd.,CHENNPETRO,ind_prs23022021
+2021-03-31,exclude,D.B.Corp Ltd.,DBCORP,ind_prs23022021
+2021-03-31,exclude,ESAB India Ltd.,ESABINDIA,ind_prs23022021
+2021-03-31,exclude,Gujarat Mineral Development Corporation Ltd.,GMDCLTD,ind_prs23022021
+2021-03-31,exclude,Hathway Cable & Datacom Ltd.,HATHWAY,ind_prs23022021
+2021-03-31,exclude,Heritage Foods Ltd.,HERITGFOOD,ind_prs23022021
+2021-03-31,exclude,ICRA Ltd.,ICRA,ind_prs23022021
+2021-03-31,exclude,Jagran Prakashan Ltd.,JAGRAN,ind_prs23022021
+2021-03-31,exclude,Jai Corp Ltd.,JAICORPLTD,ind_prs23022021
+2021-03-31,exclude,Jammu & Kashmir Bank Ltd.,J&KBANK,ind_prs23022021
+2021-03-31,exclude,Karnataka Bank Ltd.,KTKBANK,ind_prs23022021
+2021-03-31,exclude,Kolte-Patil Developers Ltd.,KOLTEPATIL,ind_prs23022021
+2021-03-31,exclude,Navneet Education Ltd.,NAVNETEDUL,ind_prs23022021
+2021-03-31,exclude,Omaxe Ltd.,OMAXE,ind_prs23022021
+2021-03-31,exclude,Orient Cement Ltd.,ORIENTCEM,ind_prs23022021
+2021-03-31,exclude,PSP Projects Ltd.,PSPPROJECT,ind_prs23022021
+2021-03-31,exclude,PTC India Ltd.,PTC,ind_prs23022021
+2021-03-31,exclude,Praj Industries Ltd.,PRAJIND,ind_prs23022021
+2021-03-31,exclude,South Indian Bank Ltd.,SOUTHBANK,ind_prs23022021
+2021-03-31,exclude,Swaraj Engines Ltd.,SWARAJENG,ind_prs23022021
+2021-03-31,exclude,TV Today Network Ltd.,TVTODAY,ind_prs23022021
+2021-03-31,exclude,VRL Logistics Ltd.,VRLLOG,ind_prs23022021
+2021-04-29,include,Burger King India Ltd.,BURGERKING,ind_prs22042021
+2021-04-29,include,Infibeam Avenues Ltd.,INFIBEAM,ind_prs22042021
+2021-04-29,exclude,GHCL Ltd.,GHCL,ind_prs22042021
+2021-04-29,exclude,Tata Steel BSL Ltd.,TATASTLBSL,ind_prs22042021
+2021-06-30,include,Gland Pharma Ltd.,GLAND,ind_prs15062021
+2021-06-30,exclude,Motherson Sumi Systems Ltd.,MOTHERSUMI,ind_prs15062021
+2021-09-30,include,Anupam Rasayan India Ltd.,ANURAS,ind_prs15092021
+2021-09-30,include,CG Power and Industrial Solutions Ltd.,CGPOWER,ind_prs15092021
+2021-09-30,include,Equitas Small Finance Bank Ltd.,EQUITASBNK,ind_prs15092021
+2021-09-30,include,Fertilisers and Chemicals Travancore Ltd.,FACT,ind_prs15092021
+2021-09-30,include,Hathway Cable & Datacom Ltd.,HATHWAY,ind_prs15092021
+2021-09-30,include,Hikal Ltd.,HIKAL,ind_prs15092021
+2021-09-30,include,Hinduja Global Solutions Ltd.,HGS,ind_prs15092021
+2021-09-30,include,Home First Finance Company India Ltd.,HOMEFIRST,ind_prs15092021
+2021-09-30,include,Indian Railway Finance Corporation Ltd.,IRFC,ind_prs15092021
+2021-09-30,include,Indigo Paints Ltd.,INDIGOPNTS,ind_prs15092021
+2021-09-30,include,Jubilant Ingrevia Ltd.,JUBLINGREA,ind_prs15092021
+2021-09-30,include,Jubilant Pharmova Ltd.,JUBLPHARMA,ind_prs15092021
+2021-09-30,include,Kalyan Jewellers India Ltd.,KALYANKJIL,ind_prs15092021
+2021-09-30,include,Laxmi Organic Industries Ltd.,LXCHEM,ind_prs15092021
+2021-09-30,include,Macrotech Developers Ltd.,LODHA,ind_prs15092021
+2021-09-30,include,Mastek Ltd.,MASTEK,ind_prs15092021
+2021-09-30,include,Nazara Technologies Ltd.,NAZARA,ind_prs15092021
+2021-09-30,include,Poonawalla Fincorp Ltd.,POONAWALLA,ind_prs15092021
+2021-09-30,include,Praj Industries Ltd.,PRAJIND,ind_prs15092021
+2021-09-30,include,Railtel Corporation Of India Ltd.,RAILTEL,ind_prs15092021
+2021-09-30,include,Tata Steel Long Products Ltd.,TATASTLLP,ind_prs15092021
+2021-09-30,include,Tata Teleservices (Maharashtra) Ltd.,TTML,ind_prs15092021
+2021-09-30,exclude,Akzo Nobel India Ltd.,AKZOINDIA,ind_prs15092021
+2021-09-30,exclude,Balmer Lawrie & Co. Ltd.,BALMLAWRIE,ind_prs15092021
+2021-09-30,exclude,Bliss GVS Pharma Ltd.,BLISSGVS,ind_prs15092021
+2021-09-30,exclude,Dish TV India Ltd.,DISHTV,ind_prs15092021
+2021-09-30,exclude,Dishman Carbogen Amcis Ltd.,DCAL,ind_prs15092021
+2021-09-30,exclude,Future Consumer Ltd.,FCONSUMER,ind_prs15092021
+2021-09-30,exclude,GE Power India Ltd.,GEPIL,ind_prs15092021
+2021-09-30,exclude,Garden Reach Shipbuilders & Engineers Ltd.,GRSE,ind_prs15092021
+2021-09-30,exclude,Gulf Oil Lubricants India Ltd.,GULFOILLUB,ind_prs15092021
+2021-09-30,exclude,Himadri Speciality Chemical Ltd.,HSCL,ind_prs15092021
+2021-09-30,exclude,Huhtamaki India Ltd.,HUHTAMAKI,ind_prs15092021
+2021-09-30,exclude,JTEKT India Ltd.,JTEKTINDIA,ind_prs15092021
+2021-09-30,exclude,MAS Financial Services Ltd.,MASFIN,ind_prs15092021
+2021-09-30,exclude,Maharashtra Scooters Ltd.,MAHSCOOTER,ind_prs15092021
+2021-09-30,exclude,Maharashtra Seamless Ltd.,MAHSEAMLES,ind_prs15092021
+2021-09-30,exclude,Raymond Ltd.,RAYMOND,ind_prs15092021
+2021-09-30,exclude,Responsive Industries Ltd.,RESPONIND,ind_prs15092021
+2021-09-30,exclude,Shoppers Stop Ltd.,SHOPERSTOP,ind_prs15092021
+2021-09-30,exclude,Sundaram Clayton Ltd.,SUNCLAYLTD,ind_prs15092021
+2021-09-30,exclude,Swan Energy Ltd.,SWANENERGY,ind_prs15092021
+2021-09-30,exclude,Tata Investment Corporation Ltd.,TATAINVEST,ind_prs15092021
+2021-09-30,exclude,VST Industries Ltd.,VSTIND,ind_prs15092021
+2021-10-29,include,Sona BLW Precision Forgings Ltd.,SONACOMS,ind_prs22102021
+2021-10-29,exclude,GMR Infrastructure Ltd.,GMRINFRA,ind_prs22102021
+2022-03-31,include,Aditya Birla Sun Life AMC Ltd.,ABSLAMC,ind_prs24022022_1
+2022-03-31,include,Allcargo Logistics Ltd.,ALLCARGO,ind_prs24022022_1
+2022-03-31,include,Aptus Value Housing Finance India Ltd.,APTUS,ind_prs24022022_1
+2022-03-31,include,Borosil Renewables Ltd.,BORORENEW,ind_prs24022022_1
+2022-03-31,include,Brightcom Group Ltd.,BCG,ind_prs24022022_1
+2022-03-31,include,C.E. Info Systems Ltd.,MAPMYINDIA,ind_prs24022022_1
+2022-03-31,include,Chemplast Sanmar Ltd.,CHEMPLASTS,ind_prs24022022_1
+2022-03-31,include,Clean Science and Technology Ltd.,CLEAN,ind_prs24022022_1
+2022-03-31,include,Devyani International Ltd.,DEVYANI,ind_prs24022022_1
+2022-03-31,include,Easy Trip Planners Ltd.,EASEMYTRIP,ind_prs24022022_1
+2022-03-31,include,FSN E-Commerce Ventures Ltd.,NYKAA,ind_prs24022022_1
+2022-03-31,include,G R Infraprojects Ltd.,GRINFRA,ind_prs24022022_1
+2022-03-31,include,Glenmark Life Sciences Ltd.,GLS,ind_prs24022022_1
+2022-03-31,include,Go Fashion (India) Ltd.,GOCOLORS,ind_prs24022022_1
+2022-03-31,include,HLE Glascoat Ltd.,HLEGLAS,ind_prs24022022_1
+2022-03-31,include,Krishna Institute of Medical Sciences Ltd.,KIMS,ind_prs24022022_1
+2022-03-31,include,Latent View Analytics Ltd.,LATENTVIEW,ind_prs24022022_1
+2022-03-31,include,Medplus Health Services Ltd.,MEDPLUS,ind_prs24022022_1
+2022-03-31,include,Metro Brands Ltd.,METROBRAND,ind_prs24022022_1
+2022-03-31,include,Nuvoco Vistas Corporation Ltd.,NUVOCO,ind_prs24022022_1
+2022-03-31,include,One 97 Communications Ltd.,PAYTM,ind_prs24022022_1
+2022-03-31,include,PB Fintech Ltd.,POLICYBZR,ind_prs24022022_1
+2022-03-31,include,Privi Speciality Chemicals Ltd.,PRIVISCL,ind_prs24022022_1
+2022-03-31,include,RattanIndia Enterprises Ltd.,RTNINDIA,ind_prs24022022_1
+2022-03-31,include,Sapphire Foods India Ltd.,SAPPHIRE,ind_prs24022022_1
+2022-03-31,include,Saregama India Ltd,SAREGAMA,ind_prs24022022_1
+2022-03-31,include,Shree Renuka Sugars Ltd.,RENUKA,ind_prs24022022_1
+2022-03-31,include,Shyam Metalics and Energy Ltd.,SHYAMMETL,ind_prs24022022_1
+2022-03-31,include,Star Health and Allied Insurance Company Ltd.,STARHEALTH,ind_prs24022022_1
+2022-03-31,include,Tata Investment Corporation Ltd.,TATAINVEST,ind_prs24022022_1
+2022-03-31,include,Vijaya Diagnostic Centre Ltd.,VIJAYA,ind_prs24022022_1
+2022-03-31,include,Zomato Ltd.,ZOMATO,ind_prs24022022_1
+2022-03-31,exclude,Alembic Ltd.,ALEMBICLTD,ind_prs24022022_1
+2022-03-31,exclude,Ashoka Buildcon Ltd.,ASHOKA,ind_prs24022022_1
+2022-03-31,exclude,Bajaj Consumer Care Ltd.,BAJAJCON,ind_prs24022022_1
+2022-03-31,exclude,Bharat Rasayan Ltd.,BHARATRAS,ind_prs24022022_1
+2022-03-31,exclude,Capri Global Capital Ltd.,CGCL,ind_prs24022022_1
+2022-03-31,exclude,DCB Bank Ltd.,DCBBANK,ind_prs24022022_1
+2022-03-31,exclude,Dhanuka Agritech Ltd.,DHANUKA,ind_prs24022022_1
+2022-03-31,exclude,Future Retail Ltd.,FRETAIL,ind_prs24022022_1
+2022-03-31,exclude,Gillette India Ltd.,GILLETTE,ind_prs24022022_1
+2022-03-31,exclude,Greaves Cotton Ltd.,GREAVESCOT,ind_prs24022022_1
+2022-03-31,exclude,HeidelbergCement India Ltd.,HEIDELBERG,ind_prs24022022_1
+2022-03-31,exclude,IOL Chem and Pharma Ltd.,IOLCP,ind_prs24022022_1
+2022-03-31,exclude,Ingersoll Rand (India) Ltd.,INGERRAND,ind_prs24022022_1
+2022-03-31,exclude,JK Tyre & Industries Ltd.,JKTYRE,ind_prs24022022_1
+2022-03-31,exclude,Jindal Saw Ltd.,JINDALSAW,ind_prs24022022_1
+2022-03-31,exclude,Johnson Controls - Hitachi Air Conditioning India Ltd.,JCHAC,ind_prs24022022_1
+2022-03-31,exclude,KSB Ltd.,KSB,ind_prs24022022_1
+2022-03-31,exclude,Kaveri Seed Company Ltd.,KSCL,ind_prs24022022_1
+2022-03-31,exclude,La Opala RG Ltd.,LAOPALA,ind_prs24022022_1
+2022-03-31,exclude,Lemon Tree Hotels Ltd.,LEMONTREE,ind_prs24022022_1
+2022-03-31,exclude,Minda Corporation Ltd.,MINDACORP,ind_prs24022022_1
+2022-03-31,exclude,Mishra Dhatu Nigam Ltd.,MIDHANI,ind_prs24022022_1
+2022-03-31,exclude,National Fertilizers Ltd.,NFL,ind_prs24022022_1
+2022-03-31,exclude,Nilkamal Ltd.,NILKAMAL,ind_prs24022022_1
+2022-03-31,exclude,Schneider Electric Infrastructure Ltd.,SCHNEIDER,ind_prs24022022_1
+2022-03-31,exclude,Sharda Cropchem Ltd.,SHARDACROP,ind_prs24022022_1
+2022-03-31,exclude,Spandana Sphoorty Financial Ltd.,SPANDANA,ind_prs24022022_1
+2022-03-31,exclude,Star Cement Ltd.,STARCEMENT,ind_prs24022022_1
+2022-03-31,exclude,Tasty Bite Eatables Ltd.,TASTYBITE,ind_prs24022022_1
+2022-03-31,exclude,Ujjivan Financial Services Ltd.,UJJIVAN,ind_prs24022022_1
+2022-03-31,exclude,Ujjivan Small Finance Bank Ltd.,UJJIVANSFB,ind_prs24022022_1
+2022-03-31,exclude,Valiant Organics Ltd.,VALIANTORG,ind_prs24022022_1
+2022-04-07,include,MTAR Technologies Ltd.,MTARTECH,ind_prs06042022
+2022-04-07,exclude,Supreme Petrochem Ltd.,SUPPETRO,ind_prs06042022
+2022-04-12,include,Capri Global Capital Ltd.,CGCL,ind_prs05042022_1
+2022-04-12,exclude,BEML Ltd.,BEML,ind_prs05042022_1
+2022-05-04,include,GMR Infrastructure Ltd.,GMRINFRA,ind_prs05042022
+2022-05-04,exclude,Aarti Industries Ltd.,AARTIIND,ind_prs05042022
+2022-05-31,include,Triveni Engineering & Industries Ltd.,TRIVENI,ind_prs24052022
+2022-05-31,exclude,Jindal Stainless (Hisar) Ltd.,JSLHISAR,ind_prs24052022
+2022-08-08,include,Campus Activewear Ltd.,CAMPUS,ind_prs11072022
+2022-08-08,include,Delhivery Ltd.,DELHIVERY,ind_prs11072022
+2022-08-08,include,Life Insurance Corporation of India,LICI,ind_prs11072022
+2022-08-08,exclude,NMDC Ltd.,NMDC,ind_prs11072022
+2022-08-08,exclude,Piramal Enterprises Ltd.,PEL,ind_prs11072022
+2022-08-08,exclude,Shriram City Union Finance Ltd.,SHRIRAMCIT,ind_prs11072022
+2022-09-30,include,Adani Wilmar Ltd.,AWL,ind_prs01092022
+2022-09-30,include,Aether Industries Ltd.,AETHER,ind_prs01092022
+2022-09-30,include,Bharat Rasayan Ltd.,BHARATRAS,ind_prs01092022
+2022-09-30,include,Deepak Fertilisers & Petrochemicals Corp. Ltd.,DEEPAKFERT,ind_prs01092022
+2022-09-30,include,Greenpanel Industries Ltd.,GREENPANEL,ind_prs01092022
+2022-09-30,include,JBM Auto Ltd.,JBMA,ind_prs01092022
+2022-09-30,include,Mahindra Lifespace Developers Ltd.,MAHLIFE,ind_prs01092022
+2022-09-30,include,Motherson Sumi Wiring India Ltd.,MSUMI,ind_prs01092022
+2022-09-30,include,NIIT Ltd.,NIITLTD,ind_prs01092022
+2022-09-30,include,Olectra Greentech Ltd.,OLECTRA,ind_prs01092022
+2022-09-30,include,Patanjali Foods Ltd.,PATANJALI,ind_prs01092022
+2022-09-30,include,Raymond Ltd.,RAYMOND,ind_prs01092022
+2022-09-30,include,Samvardhana Motherson International Ltd.,MOTHERSON,ind_prs01092022
+2022-09-30,include,Sharda Cropchem Ltd.,SHARDACROP,ind_prs01092022
+2022-09-30,include,Shoppers Stop Ltd.,SHOPERSTOP,ind_prs16092022
+2022-09-30,include,Swan Energy Ltd.,SWANENERGY,ind_prs01092022
+2022-09-30,include,Tejas Networks Ltd.,TEJASNET,ind_prs01092022
+2022-09-30,include,Transport Corporation of India Ltd.,TCI,ind_prs01092022
+2022-09-30,include,Vedant Fashions Ltd.,MANYAVAR,ind_prs01092022
+2022-09-30,exclude,Advanced Enzyme Tech Ltd.,ADVENZYMES,ind_prs01092022
+2022-09-30,exclude,Equitas Holdings Ltd.,EQUITAS,ind_prs16092022
+2022-09-30,exclude,Eris Lifesciences Ltd.,ERIS,ind_prs01092022
+2022-09-30,exclude,Glenmark Life Sciences Ltd.,GLS,ind_prs01092022
+2022-09-30,exclude,Hathway Cable & Datacom Ltd.,HATHWAY,ind_prs01092022
+2022-09-30,exclude,Hemisphere Properties India Ltd.,HEMIPROP,ind_prs01092022
+2022-09-30,exclude,IRCON International Ltd.,IRCON,ind_prs01092022
+2022-09-30,exclude,Indo Count Industries Ltd.,ICIL,ind_prs01092022
+2022-09-30,exclude,MindTree Ltd.,MINDTREE,ind_prs01092022
+2022-09-30,exclude,NESCO Ltd.,NESCO,ind_prs01092022
+2022-09-30,exclude,Railtel Corporation Of India Ltd.,RAILTEL,ind_prs01092022
+2022-09-30,exclude,Sequent Scientific Ltd.,SEQUENT,ind_prs01092022
+2022-09-30,exclude,Solara Active Pharma Sciences Ltd.,SOLARA,ind_prs01092022
+2022-09-30,exclude,Spicejet Ltd.,SPICEJET,ind_prs01092022
+2022-09-30,exclude,Strides Pharma Science Ltd.,STAR,ind_prs01092022
+2022-09-30,exclude,Tata Steel Long Products Ltd.,TATASTLLP,ind_prs01092022
+2022-09-30,exclude,UCO Bank,UCOBANK,ind_prs01092022
+2022-09-30,exclude,Vakrangee Ltd.,VAKRANGEE,ind_prs01092022
+2022-09-30,exclude,Venky's (India) Ltd.,VENKEYS,ind_prs01092022
+2022-12-30,include,BEML Ltd.,BEML,ind_prs06122022
+2022-12-30,include,Lemon Tree Hotels Ltd.,LEMONTREE,ind_prs06122022
+2022-12-30,include,Rainbow Childrens Medicare Ltd.,RAINBOW,ind_prs22122022
+2022-12-30,include,UCO Bank,UCOBANK,ind_prs06122022
+2022-12-30,exclude,Allcargo Logistics Ltd.,ALLCARGO,ind_prs06122022
+2022-12-30,exclude,NIIT Ltd.,NIITLTD,ind_prs06122022
+2022-12-30,exclude,Saregama India Ltd.,SAREGAMA,ind_prs22122022
+2022-12-30,exclude,Shipping Corporation of India Ltd.,SCI,ind_prs06122022
+2023-02-17,include,Piramal Pharma Ltd.,PPLPHARMA,ind_prs09022023_1
+2023-02-17,exclude,INOX Leisure Ltd.,INOXLEISUR,ind_prs09022023_1
+2023-03-31,include,Aarti Industries Ltd.,AARTIIND,ind_prs17022023_1
+2023-03-31,include,Adani Power Ltd.,ADANIPOWER,ind_prs17022023_1
+2023-03-31,include,Apar Industries Ltd.,APARINDS,ind_prs17022023_1
+2023-03-31,include,Archean Chemical Industries Ltd.,ACI,ind_prs17022023_1
+2023-03-31,include,BLS International Services Ltd.,BLS,ind_prs17022023_1
+2023-03-31,include,Bikaji Foods International Ltd.,BIKAJI,ind_prs17022023_1
+2023-03-31,include,Craftsman Automation Ltd.,CRAFTSMAN,ind_prs17022023_1
+2023-03-31,include,Data Patterns (India) Ltd.,DATAPATTNS,ind_prs17022023_1
+2023-03-31,include,Five-Star Business Finance Ltd.,FIVESTAR,ind_prs17022023_1
+2023-03-31,include,Global Health Ltd.,MEDANTA,ind_prs17022023_1
+2023-03-31,include,Ingersoll Rand (India) Ltd.,INGERRAND,ind_prs17022023_1
+2023-03-31,include,Jindal Worldwide Ltd.,JINDWORLD,ind_prs17022023_1
+2023-03-31,include,KFin Technologies Ltd.,KFINTECH,ind_prs17022023_1
+2023-03-31,include,KSB Ltd.,KSB,ind_prs17022023_1
+2023-03-31,include,Kennametal India Ltd.,KENNAMET,ind_prs17022023_1
+2023-03-31,include,Keystone Realtors Ltd.,RUSTOMJEE,ind_prs17022023_1
+2023-03-31,include,Meghmani Finechem Ltd.,MFL,ind_prs17022023_1
+2023-03-31,include,NMDC Ltd.,NMDC,ind_prs17022023_1
+2023-03-31,include,Piramal Enterprises Ltd.,PEL,ind_prs17022023_1
+2023-03-31,include,Tamilnad Mercantile Bank Ltd.,TMB,ind_prs17022023_1
+2023-03-31,exclude,Aditya Birla Sun Life AMC Ltd.,ABSLAMC,ind_prs17022023_1
+2023-03-31,exclude,Alok Industries Ltd.,ALOKINDS,ind_prs17022023_1
+2023-03-31,exclude,AstraZenca Pharma India Ltd.,ASTRAZEN,ind_prs17022023_1
+2023-03-31,exclude,Bharat Rasayan Ltd.,BHARATRAS,ind_prs17022023_1
+2023-03-31,exclude,Caplin Point Laboratories Ltd.,CAPLIPOINT,ind_prs17022023_1
+2023-03-31,exclude,Dhani Services Ltd.,DHANI,ind_prs17022023_1
+2023-03-31,exclude,Dilip Buildcon Ltd.,DBL,ind_prs17022023_1
+2023-03-31,exclude,Hatsun Agro Product Ltd.,HATSUN,ind_prs17022023_1
+2023-03-31,exclude,Indoco Remedies Ltd.,INDOCO,ind_prs17022023_1
+2023-03-31,exclude,MOIL Ltd.,MOIL,ind_prs17022023_1
+2023-03-31,exclude,Privi Speciality Chemicals Ltd.,PRIVISCL,ind_prs17022023_1
+2023-03-31,exclude,Procter & Gamble Health Ltd.,PGHL,ind_prs17022023_1
+2023-03-31,exclude,SIS Ltd.,SIS,ind_prs17022023_1
+2023-03-31,exclude,Sheela Foam Ltd.,SFL,ind_prs17022023_1
+2023-03-31,exclude,Shilpa Medicare Ltd.,SHILPAMED,ind_prs17022023_1
+2023-03-31,exclude,Sudarshan Chemical Industries Ltd.,SUDARSCHEM,ind_prs17022023_1
+2023-03-31,exclude,Symphony Ltd.,SYMPHONY,ind_prs17022023_1
+2023-03-31,exclude,Tata Coffee Ltd.,TATACOFFEE,ind_prs17022023_1
+2023-03-31,exclude,Thyrocare Technologies Ltd.,THYROCARE,ind_prs17022023_1
+2023-03-31,exclude,Wockhardt Ltd.,WOCKPHARMA,ind_prs17022023_1
+2023-04-28,include,Eris Lifesciences Ltd.,ERIS,ind_prs19042023_1
+2023-04-28,include,NMDC Steel Ltd.,NSLNISP,ind_prs19042023_1
+2023-04-28,exclude,Bajaj Electricals Ltd.,BAJAJELEC,ind_prs19042023_1
+2023-04-28,exclude,Edelweiss Financial Services Ltd.,EDELWEISS,ind_prs19042023_1
+2023-07-13,include,Mankind Pharma Ltd.,MANKIND,ind_prs04072023
+2023-07-13,exclude,Housing Development Finance Corporation Ltd.,HDFC,ind_prs04072023
+2023-09-29,include,Allcargo Logistics Ltd.,ALLCARGO,ind_prs17082023
+2023-09-29,include,Alok Industries Ltd.,ALOKINDS,ind_prs17082023
+2023-09-29,include,Gillette India Ltd.,GILLETTE,ind_prs17082023
+2023-09-29,include,Glenmark Life Sciences Ltd.,GLS,ind_prs17082023
+2023-09-29,include,Godawari Power & Ispat Ltd.,GPIL,ind_prs17082023
+2023-09-29,include,IRCON International Ltd.,IRCON,ind_prs17082023
+2023-09-29,include,Jindal Saw Ltd.,JINDALSAW,ind_prs17082023
+2023-09-29,include,Kaynes Technology India Ltd.,KAYNES,ind_prs17082023
+2023-09-29,include,Kirloskar Ferrous Industries Ltd.,KIRLFER,ind_prs17082023
+2023-09-29,include,Minda Corporation Ltd.,MINDACORP,ind_prs17082023
+2023-09-29,include,Procter & Gamble Health Ltd.,PGHL,ind_prs17082023
+2023-09-29,include,Safari Industries (India) Ltd.,SAFARI,ind_prs17082023
+2023-09-29,include,Saregama India Ltd,SAREGAMA,ind_prs17082023
+2023-09-29,include,Sheela Foam Ltd.,SFL,ind_prs17082023
+2023-09-29,include,Symphony Ltd.,SYMPHONY,ind_prs17082023
+2023-09-29,include,Syrma SGS Technology Ltd.,SYRMA,ind_prs17082023
+2023-09-29,include,Ujjivan Small Finance Bank Ltd.,UJJIVANSFB,ind_prs17082023
+2023-09-29,include,Usha Martin Ltd.,USHAMART,ind_prs17082023
+2023-09-29,exclude,BASF India Ltd.,BASF,ind_prs17082023
+2023-09-29,exclude,Garware Technical Fibres Ltd.,GARFIBRES,ind_prs17082023
+2023-09-29,exclude,Godrej Agrovet Ltd.,GODREJAGRO,ind_prs17082023
+2023-09-29,exclude,Greenpanel Industries Ltd.,GREENPANEL,ind_prs17082023
+2023-09-29,exclude,Hikal Ltd.,HIKAL,ind_prs17082023
+2023-09-29,exclude,Hinduja Global Solutions Ltd.,HGS,ind_prs17082023
+2023-09-29,exclude,IFB Industries Ltd.,IFBIND,ind_prs17082023
+2023-09-29,exclude,Indiabulls Real Estate Ltd.,IBREALEST,ind_prs17082023
+2023-09-29,exclude,Jindal Worldwide Ltd.,JINDWORLD,ind_prs17082023
+2023-09-29,exclude,Kennametal India Ltd.,KENNAMET,ind_prs17082023
+2023-09-29,exclude,Keystone Realtors Ltd.,RUSTOMJEE,ind_prs17082023
+2023-09-29,exclude,Mahindra Logistics Ltd.,MAHLOG,ind_prs17082023
+2023-09-29,exclude,NOCIL Ltd.,NOCIL,ind_prs17082023
+2023-09-29,exclude,TCI Express Ltd.,TCIEXP,ind_prs17082023
+2023-09-29,exclude,TCNS Clothing Co. Ltd.,TCNSBRANDS,ind_prs17082023
+2023-09-29,exclude,Tamilnad Mercantile Bank Ltd.,TMB,ind_prs17082023
+2023-09-29,exclude,Transport Corporation of India Ltd.,TCI,ind_prs17082023
+2023-09-29,exclude,UFLEX Ltd.,UFLEX,ind_prs17082023
+2023-10-26,include,Concord Biotech Ltd.,CONCORDBIO,ind_prs17102023
+2023-10-26,exclude,Kirloskar Ferrous Industries Ltd.,KIRLFER,ind_prs17102023
+2024-03-28,include,Action Construction Equipment Ltd.,ACE,ind_prs28022024
+2024-03-28,include,Anand Rathi Wealth Ltd.,ANANDRATHI,ind_prs28022024
+2024-03-28,include,AstraZenca Pharma India Ltd.,ASTRAZEN,ind_prs28022024
+2024-03-28,include,Caplin Point Laboratories Ltd.,CAPLIPOINT,ind_prs28022024
+2024-03-28,include,Cello World Ltd.,CELLO,ind_prs28022024
+2024-03-28,include,Chennai Petroleum Corporation Ltd.,CHENNPETRO,ind_prs28022024
+2024-03-28,include,DOMS Industries Ltd.,DOMS,ind_prs28022024
+2024-03-28,include,Elecon Engineering Co. Ltd.,ELECON,ind_prs28022024
+2024-03-28,include,Garden Reach Shipbuilders & Engineers Ltd.,GRSE,ind_prs28022024
+2024-03-28,include,Gujarat Mineral Development Corporation Ltd.,GMDCLTD,ind_prs28022024
+2024-03-28,include,HBL Power Systems Ltd.,HBLPOWER,ind_prs28022024
+2024-03-28,include,Happy Forgings Ltd.,HAPPYFORGE,ind_prs28022024
+2024-03-28,include,Himadri Speciality Chemical Ltd.,HSCL,ind_prs28022024
+2024-03-28,include,Honasa Consumer Ltd.,HONASA,ind_prs28022024
+2024-03-28,include,Inox Wind Ltd.,INOXWIND,ind_prs28022024
+2024-03-28,include,JSW Infrastructure Ltd.,JSWINFRA,ind_prs28022024
+2024-03-28,include,Jai Balaji Industries Ltd.,JAIBALAJI,ind_prs28022024
+2024-03-28,include,Jammu & Kashmir Bank Ltd.,J&KBANK,ind_prs28022024
+2024-03-28,include,Jio Financial Services Ltd.,JIOFIN,ind_prs28022024
+2024-03-28,include,Jupiter Wagons Ltd.,JWL,ind_prs28022024
+2024-03-28,include,Lloyds Metals And Energy Ltd.,LLOYDSME,ind_prs28022024
+2024-03-28,include,Maharashtra Seamless Ltd.,MAHSEAMLES,ind_prs28022024
+2024-03-28,include,Nuvama Wealth Management Ltd.,NUVAMA,ind_prs28022024
+2024-03-28,include,R R Kabel Ltd.,RRKABEL,ind_prs28022024
+2024-03-28,include,Railtel Corporation Of India Ltd.,RAILTEL,ind_prs28022024
+2024-03-28,include,Ramkrishna Forgings Ltd.,RKFORGE,ind_prs28022024
+2024-03-28,include,SBFC Finance Ltd.,SBFC,ind_prs28022024
+2024-03-28,include,Schneider Electric Infrastructure Ltd.,SCHNEIDER,ind_prs28022024
+2024-03-28,include,Signatureglobal (India) Ltd.,SIGNATURE,ind_prs28022024
+2024-03-28,include,TVS Supply Chain Solutions Ltd.,TVSSCS,ind_prs28022024
+2024-03-28,include,Tamilnad Mercantile Bank Ltd.,TMB,ind_prs28022024
+2024-03-28,include,Tata Technologies Ltd.,TATATECH,ind_prs28022024
+2024-03-28,include,Titagarh Rail Systems Ltd.,TITAGARH,ind_prs28022024
+2024-03-28,exclude,Aarti Drugs Ltd.,AARTIDRUGS,ind_prs28022024
+2024-03-28,exclude,Brightcom Group Ltd.,BCG,ind_prs28022024
+2024-03-28,exclude,Delta Corp Ltd.,DELTACORP,ind_prs28022024
+2024-03-28,exclude,Epigral Ltd.,EPIGRAL,ind_prs28022024
+2024-03-28,exclude,G R Infraprojects Ltd.,GRINFRA,ind_prs28022024
+2024-03-28,exclude,Galaxy Surfactants Ltd.,GALAXYSURF,ind_prs28022024
+2024-03-28,exclude,Go Fashion (India) Ltd.,GOCOLORS,ind_prs28022024
+2024-03-28,exclude,Gujarat Alkalies & Chemicals Ltd.,GUJALKALI,ind_prs28022024
+2024-03-28,exclude,HLE Glascoat Ltd.,HLEGLAS,ind_prs28022024
+2024-03-28,exclude,Infibeam Avenues Ltd.,INFIBEAM,ind_prs28022024
+2024-03-28,exclude,Ingersoll Rand (India) Ltd.,INGERRAND,ind_prs28022024
+2024-03-28,exclude,Jamna Auto Industries Ltd.,JAMNAAUTO,ind_prs28022024
+2024-03-28,exclude,Lakshmi Machine Works Ltd.,LAXMIMACH,ind_prs28022024
+2024-03-28,exclude,Lux Industries Ltd.,LUXIND,ind_prs28022024
+2024-03-28,exclude,Nazara Technologies Ltd.,NAZARA,ind_prs28022024
+2024-03-28,exclude,Orient Electric Ltd.,ORIENTELEC,ind_prs28022024
+2024-03-28,exclude,Pfizer Ltd.,PFIZER,ind_prs28022024
+2024-03-28,exclude,Polyplex Corporation Ltd.,POLYPLEX,ind_prs28022024
+2024-03-28,exclude,Procter & Gamble Health Ltd.,PGHL,ind_prs28022024
+2024-03-28,exclude,Rain Industries Ltd,RAIN,ind_prs28022024
+2024-03-28,exclude,Rallis India Ltd.,RALLIS,ind_prs28022024
+2024-03-28,exclude,Relaxo Footwears Ltd.,RELAXO,ind_prs28022024
+2024-03-28,exclude,Rossari Biotech Ltd.,ROSSARI,ind_prs28022024
+2024-03-28,exclude,Sharda Cropchem Ltd.,SHARDACROP,ind_prs28022024
+2024-03-28,exclude,Sheela Foam Ltd.,SFL,ind_prs28022024
+2024-03-28,exclude,Shoppers Stop Ltd.,SHOPERSTOP,ind_prs28022024
+2024-03-28,exclude,Suprajit Engineering Ltd.,SUPRAJIT,ind_prs28022024
+2024-03-28,exclude,Symphony Ltd.,SYMPHONY,ind_prs28022024
+2024-03-28,exclude,TTK Prestige Ltd.,TTKPRESTIG,ind_prs28022024
+2024-03-28,exclude,Teamlease Services Ltd.,TEAMLEASE,ind_prs28022024
+2024-03-28,exclude,V-Mart Retail Ltd.,VMART,ind_prs28022024
+2024-03-28,exclude,Vinati Organics Ltd.,VINATIORGA,ind_prs28022024
+2024-03-28,exclude,Zydus Wellness Ltd.,ZYDUSWELL,ind_prs28022024
+2024-08-30,exclude,Tata Motors Ltd DVR,TATAMTRDVR,ind_prs23082024_1
+2024-09-30,include,Aadhar Housing Finance Ltd.,AADHARHFC,ind_prs23082024
+2024-09-30,include,Aditya Birla Sun Life AMC Ltd.,ABSLAMC,ind_prs23082024
+2024-09-30,include,Anant Raj Ltd.,ANANTRAJ,ind_prs23082024
+2024-09-30,include,BASF India Ltd.,BASF,ind_prs23082024
+2024-09-30,include,Bharti Hexacom Ltd.,BHARTIHEXA,ind_prs23082024
+2024-09-30,include,G R Infraprojects Ltd.,GRINFRA,ind_prs23082024
+2024-09-30,include,GE T&D India Ltd.,GET&D,ind_prs23082024
+2024-09-30,include,Go Digit General Insurance Ltd.,GODIGIT,ind_prs23082024
+2024-09-30,include,Godrej Agrovet Ltd.,GODREJAGRO,ind_prs23082024
+2024-09-30,include,IFCI Ltd.,IFCI,ind_prs23082024
+2024-09-30,include,INOX India Ltd.,INOXINDIA,ind_prs23082024
+2024-09-30,include,Indegene Ltd.,INDGN,ind_prs23082024
+2024-09-30,include,Indian Renewable Energy Development Agency Ltd.,IREDA,ind_prs23082024
+2024-09-30,include,JK Tyre & Industries Ltd.,JKTYRE,ind_prs23082024
+2024-09-30,include,Jaiprakash Power Ventures Ltd.,JPPOWER,ind_prs23082024
+2024-09-30,include,Jyoti CNC Automation Ltd.,JYOTICNC,ind_prs23082024
+2024-09-30,include,Kirloskar Brothers Ltd.,KIRLOSBROS,ind_prs23082024
+2024-09-30,include,Kirloskar Oil Eng Ltd.,KIRLOSENG,ind_prs23082024
+2024-09-30,include,Netweb Technologies India Ltd.,NETWEB,ind_prs23082024
+2024-09-30,include,Newgen Software Technologies Ltd.,NEWGEN,ind_prs23082024
+2024-09-30,include,PTC Industries Ltd.,PTCIL,ind_prs23082024
+2024-09-30,include,Pfizer Ltd.,PFIZER,ind_prs23082024
+2024-09-30,include,Shipping Corporation of India Ltd.,SCI,ind_prs23082024
+2024-09-30,include,TBO Tek Ltd.,TBOTEK,ind_prs23082024
+2024-09-30,include,Techno Electric & Engineering Company Ltd.,TECHNOE,ind_prs23082024
+2024-09-30,include,Valor Estate Ltd.,DBREALTY,ind_prs23082024
+2024-09-30,include,Vinati Organics Ltd.,VINATIORGA,ind_prs23082024
+2024-09-30,exclude,Aether Industries Ltd.,AETHER,ind_prs23082024
+2024-09-30,exclude,Allcargo Logistics Ltd.,ALLCARGO,ind_prs23082024
+2024-09-30,exclude,Anupam Rasayan India Ltd.,ANURAS,ind_prs23082024
+2024-09-30,exclude,Borosil Renewables Ltd.,BORORENEW,ind_prs23082024
+2024-09-30,exclude,CSB Bank Ltd.,CSBBANK,ind_prs23082024
+2024-09-30,exclude,DCM Shriram Ltd.,DCMSHRIRAM,ind_prs23082024
+2024-09-30,exclude,EPL Ltd.,EPL,ind_prs23082024
+2024-09-30,exclude,FDC Ltd.,FDC,ind_prs23082024
+2024-09-30,exclude,GMM Pfaudler Ltd.,GMMPFAUDLR,ind_prs23082024
+2024-09-30,exclude,Glenmark Life Sciences Ltd.,GLS,ind_prs23082024
+2024-09-30,exclude,Happy Forgings Ltd.,HAPPYFORGE,ind_prs23082024
+2024-09-30,exclude,Indigo Paints Ltd.,INDIGOPNTS,ind_prs23082024
+2024-09-30,exclude,JK Paper Ltd.,JKPAPER,ind_prs23082024
+2024-09-30,exclude,Jai Balaji Industries Ltd.,JAIBALAJI,ind_prs23082024
+2024-09-30,exclude,KRBL Ltd.,KRBL,ind_prs23082024
+2024-09-30,exclude,Laxmi Organic Industries Ltd.,LXCHEM,ind_prs23082024
+2024-09-30,exclude,MTAR Technologies Ltd.,MTARTECH,ind_prs23082024
+2024-09-30,exclude,Mahindra Holidays & Resorts India Ltd.,MHRIL,ind_prs23082024
+2024-09-30,exclude,Medplus Health Services Ltd.,MEDPLUS,ind_prs23082024
+2024-09-30,exclude,Prince Pipes and Fittings Ltd.,PRINCEPIPE,ind_prs23082024
+2024-09-30,exclude,Prism Johnson Ltd.,PRSMJOHNSN,ind_prs25092024
+2024-09-30,exclude,Restaurant Brands Asia Ltd.,RBA,ind_prs23082024
+2024-09-30,exclude,Safari Industries (India) Ltd.,SAFARI,ind_prs23082024
+2024-09-30,exclude,Sterlite Technologies Ltd.,STLTECH,ind_prs23082024
+2024-09-30,exclude,Sunteck Realty Ltd.,SUNTECK,ind_prs23082024
+2024-09-30,exclude,Tamilnad Mercantile Bank Ltd.,TMB,ind_prs23082024
+2024-09-30,exclude,Vaibhav Global Ltd.,VAIBHAVGBL,ind_prs23082024
+2024-10-10,include,Emcure Pharmaceuticals Ltd.,EMCURE,ind_prs04102024
+2024-10-10,exclude,IDFC Ltd.,IDFC,ind_prs04102024
+2024-10-16,include,Akums Drugs and Pharmaceuticals Ltd.,AKUMS,ind_prs10102024
+2024-10-16,exclude,TV18 Broadcast Ltd.,TV18BRDCST,ind_prs10102024
+2025-03-21,include,Raymond Lifestyle Ltd.,RAYMONDLSL,ind_prs17032025
+2025-03-21,exclude,ICICI Securities Ltd.,ISEC,ind_prs17032025
+2025-03-28,include,ACME Solar Holdings Ltd.,ACMESOLAR,ind_prs21022025
+2025-03-28,include,Afcons Infrastructure Ltd.,AFCONS,ind_prs21022025
+2025-03-28,include,Alivus Life Sciences Ltd.,ALIVUS,ind_prs21022025
+2025-03-28,include,Authum Investment & Infrastructure Ltd.,AIIL,ind_prs21022025
+2025-03-28,include,Bajaj Housing Finance Ltd.,BAJAJHFL,ind_prs21022025
+2025-03-28,include,Brainbees Solutions Ltd.,FIRSTCRY,ind_prs21022025
+2025-03-28,include,DCM Shriram Ltd.,DCMSHRIRAM,ind_prs21022025
+2025-03-28,include,Gravita India Ltd.,GRAVITA,ind_prs21022025
+2025-03-28,include,Hyundai Motor India Ltd.,HYUNDAI,ind_prs21022025
+2025-03-28,include,International Gemmological Institute (India) Ltd.,IGIL,ind_prs21022025
+2025-03-28,include,Inventurus Knowledge Solutions Ltd.,IKS,ind_prs21022025
+2025-03-28,include,JSW Holdings Ltd.,JSWHL,ind_prs21022025
+2025-03-28,include,LT Foods Ltd.,LTFOODS,ind_prs21022025
+2025-03-28,include,NTPC Green Energy Ltd.,NTPCGREEN,ind_prs21022025
+2025-03-28,include,Nava Ltd.,NAVA,ind_prs21022025
+2025-03-28,include,Neuland Laboratories Ltd.,NEULANDLAB,ind_prs21022025
+2025-03-28,include,Niva Bupa Health Insurance Company Ltd.,NIVABUPA,ind_prs21022025
+2025-03-28,include,Ola Electric Mobility Ltd.,OLAELEC,ind_prs21022025
+2025-03-28,include,PG Electroplast Ltd.,PGEL,ind_prs21022025
+2025-03-28,include,Premier Energies Ltd.,PREMIERENE,ind_prs21022025
+2025-03-28,include,Reliance Power Ltd.,RPOWER,ind_prs21022025
+2025-03-28,include,Sagility India Ltd.,SAGILITY,ind_prs21022025
+2025-03-28,include,Sai Life Sciences Ltd.,SAILIFE,ind_prs21022025
+2025-03-28,include,Sarda Energy and Minerals Ltd.,SARDAEN,ind_prs21022025
+2025-03-28,include,Swiggy Ltd.,SWIGGY,ind_prs21022025
+2025-03-28,include,Transformers And Rectifiers (India) Ltd.,TARIL,ind_prs21022025
+2025-03-28,include,Vishal Mega Mart Ltd.,VMM,ind_prs21022025
+2025-03-28,include,Waaree Energies Ltd.,WAAREEENER,ind_prs21022025
+2025-03-28,include,Wockhardt Ltd.,WOCKPHARMA,ind_prs21022025
+2025-03-28,include,Zen Technologies Ltd.,ZENTEC,ind_prs21022025
+2025-03-28,exclude,Archean Chemical Industries Ltd.,ACI,ind_prs21022025
+2025-03-28,exclude,Avanti Feeds Ltd.,AVANTIFEED,ind_prs21022025
+2025-03-28,exclude,Balaji Amines Ltd.,BALAMINES,ind_prs21022025
+2025-03-28,exclude,Birla Corporation Ltd.,BIRLACORPN,ind_prs21022025
+2025-03-28,exclude,CIE Automotive India Ltd.,CIEINDIA,ind_prs21022025
+2025-03-28,exclude,Cello World Ltd.,CELLO,ind_prs21022025
+2025-03-28,exclude,Chemplast Sanmar Ltd.,CHEMPLASTS,ind_prs21022025
+2025-03-28,exclude,Easy Trip Planners Ltd.,EASEMYTRIP,ind_prs21022025
+2025-03-28,exclude,Equitas Small Finance Bank Ltd.,EQUITASBNK,ind_prs21022025
+2025-03-28,exclude,Fine Organic Industries Ltd.,FINEORG,ind_prs21022025
+2025-03-28,exclude,G R Infraprojects Ltd.,GRINFRA,ind_prs21022025
+2025-03-28,exclude,Grindwell Norton Ltd.,GRINDWELL,ind_prs21022025
+2025-03-28,exclude,Gujarat Ambuja Exports Ltd.,GAEL,ind_prs21022025
+2025-03-28,exclude,Gujarat State Fertilizers & Chemicals Ltd.,GSFC,ind_prs21022025
+2025-03-28,exclude,JK Lakshmi Cement Ltd.,JKLAKSHMI,ind_prs21022025
+2025-03-28,exclude,KSB Ltd.,KSB,ind_prs21022025
+2025-03-28,exclude,Mahindra Lifespace Developers Ltd.,MAHLIFE,ind_prs21022025
+2025-03-28,exclude,Metro Brands Ltd.,METROBRAND,ind_prs21022025
+2025-03-28,exclude,Nuvoco Vistas Corporation Ltd.,NUVOCO,ind_prs21022025
+2025-03-28,exclude,Procter & Gamble Hygiene & Health Care Ltd.,PGHH,ind_prs21022025
+2025-03-28,exclude,Rajesh Exports Ltd.,RAJESHEXPO,ind_prs21022025
+2025-03-28,exclude,Ratnamani Metals & Tubes Ltd.,RATNAMANI,ind_prs21022025
+2025-03-28,exclude,Sanofi India Ltd.,SANOFI,ind_prs21022025
+2025-03-28,exclude,Sun Pharma Advanced Research Company Ltd.,SPARC,ind_prs21022025
+2025-03-28,exclude,Sundram Fasteners Ltd.,SUNDRMFAST,ind_prs21022025
+2025-03-28,exclude,TVS Supply Chain Solutions Ltd.,TVSSCS,ind_prs21022025
+2025-03-28,exclude,Ujjivan Small Finance Bank Ltd.,UJJIVANSFB,ind_prs21022025
+2025-03-28,exclude,V.I.P. Industries Ltd.,VIPIND,ind_prs21022025
+2025-03-28,exclude,Varroc Engineering Ltd.,VARROC,ind_prs21022025
+2025-03-28,exclude,Vinati Organics Ltd.,VINATIORGA,ind_prs21022025
+2025-04-11,include,Sundram Fasteners Ltd.,SUNDRMFAST,ind_prs04042025_2
+2025-04-11,exclude,Quess Corp Ltd.,QUESS,ind_prs04042025_2
+2025-09-23,include,Reliance Infrastructure Ltd.,RELINFRA,ind_prs15092025_1
+2025-09-23,exclude,Piramal Enterprises Ltd.,PEL,ind_prs15092025_1
+2025-09-30,include,Aditya Birla Lifestyle Brands Ltd.,ABLBL,ind_prs22082025
+2025-09-30,include,Aegis Vopak Terminals Ltd.,AEGISVOPAK,ind_prs22082025
+2025-09-30,include,Akzo Nobel India Ltd.,AKZOINDIA,ind_prs22082025
+2025-09-30,include,Ather Energy Ltd.,ATHERENERG,ind_prs22082025
+2025-09-30,include,Blue Jet Healthcare Ltd.,BLUEJET,ind_prs22082025
+2025-09-30,include,Choice International Ltd.,CHOICEIN,ind_prs22082025
+2025-09-30,include,Dr. Agarwal's Health Care Ltd.,AGARWALEYE,ind_prs22082025
+2025-09-30,include,Force Motors Ltd.,FORCEMOT,ind_prs22082025
+2025-09-30,include,Hexaware Technologies Ltd.,HEXT,ind_prs22082025
+2025-09-30,include,ITC Hotels Ltd.,ITCHOTELS,ind_prs22082025
+2025-09-30,include,KSB Ltd.,KSB,ind_prs22082025
+2025-09-30,include,Maharashtra Scooters Ltd.,MAHSCOOTER,ind_prs22082025
+2025-09-30,include,Nuvoco Vistas Corporation Ltd.,NUVOCO,ind_prs22082025
+2025-09-30,include,Onesource Specialty Pharma Ltd.,ONESOURCE,ind_prs22082025
+2025-09-30,include,Procter & Gamble Hygiene & Health Care Ltd.,PGHH,ind_prs22082025
+2025-09-30,include,Schloss Bangalore Ltd.,THELEELA,ind_prs22082025
+2025-09-30,include,Siemens Energy India Ltd.,ENRIN,ind_prs22082025
+2025-09-30,include,Ventive Hospitality Ltd.,VENTIVE,ind_prs22082025
+2025-09-30,exclude,Alivus Life Sciences Ltd.,ALIVUS,ind_prs22082025
+2025-09-30,exclude,Gujarat Narmada Valley Fertilizers and Chemicals Ltd.,GNFC,ind_prs22082025
+2025-09-30,exclude,Gujarat Pipavav Port Ltd.,GPPL,ind_prs22082025
+2025-09-30,exclude,JSW Holdings Ltd.,JSWHL,ind_prs22082025
+2025-09-30,exclude,Justdial Ltd.,JUSTDIAL,ind_prs22082025
+2025-09-30,exclude,KNR Constructions Ltd.,KNRCON,ind_prs22082025
+2025-09-30,exclude,Kansai Nerolac Paints Ltd.,KANSAINER,ind_prs22082025
+2025-09-30,exclude,Mastek Ltd.,MASTEK,ind_prs22082025
+2025-09-30,exclude,Network18 Media & Investments Ltd.,NETWORK18,ind_prs22082025
+2025-09-30,exclude,PNC Infratech Ltd.,PNCINFRA,ind_prs22082025
+2025-09-30,exclude,RattanIndia Enterprises Ltd.,RTNINDIA,ind_prs22082025
+2025-09-30,exclude,Raymond Lifestyle Ltd.,RAYMONDLSL,ind_prs22082025
+2025-09-30,exclude,Raymond Ltd.,RAYMOND,ind_prs22082025
+2025-09-30,exclude,Route Mobile Ltd.,ROUTE,ind_prs22082025
+2025-09-30,exclude,Shree Renuka Sugars Ltd.,RENUKA,ind_prs22082025
+2025-09-30,exclude,Sterling and Wilson Renewable Energy Ltd.,SWSOLAR,ind_prs22082025
+2025-09-30,exclude,Tanla Platforms Ltd.,TANLA,ind_prs22082025
+2025-09-30,exclude,Westlife Foodworld Ltd.,WESTLIFE,ind_prs22082025
+2025-12-31,include,JSW Cement Ltd.,JSWCEMENT,ind_prs11122025
+2025-12-31,exclude,SKF India Ltd.,SKFINDIA,ind_prs11122025
+2026-03-30,include,Acutaas Chemicals Ltd.,ACUTAAS,ind_prs23022026
+2026-03-30,include,Aditya Infotech Ltd.,CPPLUS,ind_prs23022026
+2026-03-30,include,Allied Blenders and Distillers Ltd.,ABDL,ind_prs23022026
+2026-03-30,include,Anthem Biosciences Ltd.,ANTHEM,ind_prs23022026
+2026-03-30,include,Anupam Rasayan India Ltd.,ANURAS,ind_prs23022026
+2026-03-30,include,Belrise Industries Ltd.,BELRISE,ind_prs23022026
+2026-03-30,include,Billionbrains Garage Ventures Ltd.,GROWW,ind_prs23022026
+2026-03-30,include,Canara HSBC Life Insurance Company Ltd.,CANHLIFE,ind_prs23022026
+2026-03-30,include,Cartrade Tech Ltd.,CARTRADE,ind_prs23022026
+2026-03-30,include,Cemindia Projects Ltd.,CEMPRO,ind_prs23022026
+2026-03-30,include,Emmvee Photovoltaic Power Ltd.,EMMVEE,ind_prs23022026
+2026-03-30,include,Gabriel India Ltd.,GABRIEL,ind_prs23022026
+2026-03-30,include,Gallantt Ispat Ltd.,GALLANTT,ind_prs23022026
+2026-03-30,include,HDB Financial Services Ltd.,HDBFS,ind_prs23022026
+2026-03-30,include,ICICI Prudential Asset Management Company Ltd.,ICICIAMC,ind_prs23022026
+2026-03-30,include,Jain Resource Recycling Ltd.,JAINREC,ind_prs23022026
+2026-03-30,include,LG Electronics India Ltd.,LGEINDIA,ind_prs23022026
+2026-03-30,include,Lenskart Solutions Ltd.,LENSKART,ind_prs23022026
+2026-03-30,include,Meesho Ltd.,MEESHO,ind_prs23022026
+2026-03-30,include,Paradeep Phosphates Ltd.,PARADEEP,ind_prs23022026
+2026-03-30,include,Physicswallah Ltd.,PWL,ind_prs23022026
+2026-03-30,include,Pine Labs Ltd.,PINELABS,ind_prs23022026
+2026-03-30,include,Piramal Finance Ltd.,PIRAMALFIN,ind_prs23022026
+2026-03-30,include,Supreme Petrochem Ltd.,SPLPETRO,ind_prs23022026
+2026-03-30,include,Tata Capital Ltd.,TATACAP,ind_prs23022026
+2026-03-30,include,Tata Motors Ltd.,TMCV,ind_prs23022026
+2026-03-30,include,Tega Industries Ltd.,TEGA,ind_prs23022026
+2026-03-30,include,Tenneco Clean Air India Ltd.,TENNIND,ind_prs23022026
+2026-03-30,include,Travel Food Services Ltd.,TRAVELFOOD,ind_prs23022026
+2026-03-30,include,Urban Company Ltd.,URBANCO,ind_prs23022026
+2026-03-30,include,Zydus Wellness Ltd.,ZYDUSWELL,ind_prs23022026
+2026-03-30,exclude,Akums Drugs and Pharmaceuticals Ltd.,AKUMS,ind_prs23022026
+2026-03-30,exclude,Alembic Pharmaceuticals Ltd.,APLLTD,ind_prs23022026
+2026-03-30,exclude,Alkyl Amines Chemicals Ltd.,ALKYLAMINE,ind_prs23022026
+2026-03-30,exclude,Alok Industries Ltd.,ALOKINDS,ind_prs23022026
+2026-03-30,exclude,AstraZenca Pharma India Ltd.,ASTRAZEN,ind_prs23022026
+2026-03-30,exclude,BASF India Ltd.,BASF,ind_prs23022026
+2026-03-30,exclude,Campus Activewear Ltd.,CAMPUS,ind_prs23022026
+2026-03-30,exclude,Century Plyboards (India) Ltd.,CENTURYPLY,ind_prs23022026
+2026-03-30,exclude,Cera Sanitaryware Ltd,CERA,ind_prs23022026
+2026-03-30,exclude,Dr. Agarwal's Health Care Ltd.,AGARWALEYE,ind_prs23022026
+2026-03-30,exclude,Finolex Industries Ltd.,FINPIPE,ind_prs23022026
+2026-03-30,exclude,Godrej Agrovet Ltd.,GODREJAGRO,ind_prs23022026
+2026-03-30,exclude,Gujarat Gas Ltd.,GUJGASLTD,ind_prs23022026
+2026-03-30,exclude,Happiest Minds Technologies Ltd.,HAPPSTMNDS,ind_prs23022026
+2026-03-30,exclude,INOX India Ltd.,INOXINDIA,ind_prs23022026
+2026-03-30,exclude,Jyothy Labs Ltd.,JYOTHYLAB,ind_prs23022026
+2026-03-30,exclude,KSB Ltd.,KSB,ind_prs23022026
+2026-03-30,exclude,Kirloskar Brothers Ltd.,KIRLOSBROS,ind_prs23022026
+2026-03-30,exclude,Maharashtra Scooters Ltd.,MAHSCOOTER,ind_prs23022026
+2026-03-30,exclude,Maharashtra Seamless Ltd.,MAHSEAMLES,ind_prs23022026
+2026-03-30,exclude,Metropolis Healthcare Ltd.,METROPOLIS,ind_prs23022026
+2026-03-30,exclude,Praj Industries Ltd.,PRAJIND,ind_prs23022026
+2026-03-30,exclude,Procter & Gamble Hygiene & Health Care Ltd.,PGHH,ind_prs23022026
+2026-03-30,exclude,Rashtriya Chemicals & Fertilizers Ltd.,RCF,ind_prs23022026
+2026-03-30,exclude,Reliance Infrastructure Ltd.,RELINFRA,ind_prs23022026
+2026-03-30,exclude,Sundram Fasteners Ltd.,SUNDRMFAST,ind_prs23022026
+2026-03-30,exclude,Triveni Engineering & Industries Ltd.,TRIVENI,ind_prs23022026
+2026-03-30,exclude,V-Guard Industries Ltd.,VGUARD,ind_prs23022026
+2026-03-30,exclude,Valor Estate Ltd.,DBREALTY,ind_prs23022026
+2026-03-30,exclude,Vedant Fashions Ltd.,MANYAVAR,ind_prs23022026
+2026-03-30,exclude,Ventive Hospitality Ltd.,VENTIVE,ind_prs23022026
+2026-05-12,include,CIE Automotive India Ltd.,CIEINDIA,ind_prs04052026
+2026-05-12,exclude,Gujarat State Petronet Ltd.,GSPL,ind_prs04052026
+2026-07-17,include,Prime Focus Ltd.,PFOCUS,ind_prs13072026_1
+2026-07-17,exclude,J.B. Chemicals & Pharmaceuticals Ltd.,JBCHEPHARM,ind_prs13072026_1
+2026-09-07,include,HEG Graphite Ltd.,DUMMYHEG,ind_prs03092026
+2026-09-30,include,Aether Industries Ltd.,AETHER,ind_prs10082026
+2026-09-30,include,Avanti Feeds Ltd.,AVANTIFEED,ind_prs10082026
+2026-09-30,include,Azad Engineering Ltd.,AZAD,ind_prs10082026
+2026-09-30,include,Bagmane Prime Office REIT,BAGMANE,ind_prs10082026
+2026-09-30,include,Bharat Coking Coal Ltd.,BHARATCOAL,ind_prs10082026
+2026-09-30,include,Black Box Ltd.,BBOX,ind_prs10082026
+2026-09-30,include,Brookfield India Real Estate Trust,BIRET,ind_prs10082026
+2026-09-30,include,Central Mine Planning & Design Institute Ltd.,CMPDI,ind_prs10082026
+2026-09-30,include,Clean Max Enviro Energy Solutions Ltd.,CLEANMAX,ind_prs10082026
+2026-09-30,include,Cupid Ltd.,CUPID,ind_prs10082026
+2026-09-30,include,Embassy Office Parks REIT,EMBASSY,ind_prs10082026
+2026-09-30,include,Fractal Analytics Ltd.,FRACTAL,ind_prs10082026
+2026-09-30,include,INOX India Ltd.,INOXINDIA,ind_prs10082026
+2026-09-30,include,KSB Ltd.,KSB,ind_prs10082026
+2026-09-30,include,Kirloskar Brothers Ltd.,KIRLOSBROS,ind_prs10082026
+2026-09-30,include,MTAR Technologies Ltd.,MTARTECH,ind_prs10082026
+2026-09-30,include,Privi Speciality Chemicals Ltd.,PRIVISCL,ind_prs10082026
+2026-09-30,include,Rubicon Research Ltd.,RUBICON,ind_prs10082026
+2026-09-30,include,SPR Auto Technologies Ltd.,SHRIPISTON,ind_prs10082026
+2026-09-30,include,Sansera Engineering Ltd.,SANSERA,ind_prs10082026
+2026-09-30,include,Sterlite Technologies Ltd.,STLTECH,ind_prs10082026
+2026-09-30,include,TD Power Systems Ltd.,TDPOWERSYS,ind_prs10082026
+2026-09-30,include,Thangamayil Jewellery Ltd.,THANGAMAYL,ind_prs10082026
+2026-09-30,include,Vedanta Aluminium Metal Ltd.,VAML,ind_prs10082026
+2026-09-30,include,Vedanta Iron and Steel Ltd.,VISL,ind_prs10082026
+2026-09-30,include,Vedanta Oil and Gas Ltd.,VOGL,ind_prs10082026
+2026-09-30,include,Vedanta Power Ltd.,VEDPOWER,ind_prs10082026
+2026-09-30,exclude,3M India Ltd.,3MINDIA,ind_prs10082026
+2026-09-30,exclude,Aditya Birla Fashion and Retail Ltd.,ABFRL,ind_prs10082026
+2026-09-30,exclude,Aditya Birla Lifestyle Brands Ltd.,ABLBL,ind_prs10082026
+2026-09-30,exclude,Bayer Cropscience Ltd.,BAYERCROP,ind_prs10082026
+2026-09-30,exclude,Bikaji Foods International Ltd.,BIKAJI,ind_prs10082026
+2026-09-30,exclude,Blue Dart Express Ltd.,BLUEDART,ind_prs10082026
+2026-09-30,exclude,Blue Jet Healthcare Ltd.,BLUEJET,ind_prs10082026
+2026-09-30,exclude,Bombay Burmah Trading Corporation Ltd.,BBTC,ind_prs10082026
+2026-09-30,exclude,C.E. Info Systems Ltd.,MAPMYINDIA,ind_prs10082026
+2026-09-30,exclude,Chalet Hotels Ltd.,CHALET,ind_prs10082026
+2026-09-30,exclude,DCM Shriram Ltd.,DCMSHRIRAM,ind_prs10082026
+2026-09-30,exclude,Eris Lifesciences Ltd.,ERIS,ind_prs10082026
+2026-09-30,exclude,Go Digit General Insurance Ltd.,GODIGIT,ind_prs10082026
+2026-09-30,exclude,Indegene Ltd.,INDGN,ind_prs10082026
+2026-09-30,exclude,JSW Dulux Ltd.,JSWDULUX,ind_prs10082026
+2026-09-30,exclude,Jubilant Pharmova Ltd.,JUBLPHARMA,ind_prs10082026
+2026-09-30,exclude,Latent View Analytics Ltd.,LATENTVIEW,ind_prs10082026
+2026-09-30,exclude,Leela Palaces Hotels & Resorts Ltd.,THELEELA,ind_prs10082026
+2026-09-30,exclude,Newgen Software Technologies Ltd.,NEWGEN,ind_prs10082026
+2026-09-30,exclude,Niva Bupa Health Insurance Company Ltd.,NIVABUPA,ind_prs10082026
+2026-09-30,exclude,Pfizer Ltd.,PFIZER,ind_prs10082026
+2026-09-30,exclude,SBFC Finance Ltd.,SBFC,ind_prs10082026
+2026-09-30,exclude,Sapphire Foods India Ltd.,SAPPHIRE,ind_prs10082026
+2026-09-30,exclude,Saregama India Ltd,SAREGAMA,ind_prs10082026
+2026-09-30,exclude,Sonata Software Ltd.,SONATSOFTW,ind_prs10082026
+2026-09-30,exclude,Supreme Petrochem Ltd.,SPLPETRO,ind_prs10082026
+2026-09-30,exclude,Travel Food Services Ltd.,TRAVELFOOD,ind_prs10082026

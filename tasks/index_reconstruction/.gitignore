@@ -1,1 +1,8 @@
 data/press_releases/
+
+# The repo root ignores *.csv (bulk price data). These are this task's SOURCE and
+# its DELIVERABLE — the reconstructed 1998-2026 point-in-time membership that
+# stage2_portfolio, market_data_spine and the honest-store studies all read.
+# They were untracked on every ref until 2026-09-14. ~765 KB total.
+!data/*.csv
+!data/raw/*.csv

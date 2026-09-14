@@ -1,0 +1,771 @@
+event_date,scrip_name,action
+2005-09-26,Aftek Ltd.,out
+2005-09-26,Flextronics Software Systems Ltd.,out
+2005-09-26,Gateway Distriparks Ltd.,in
+2005-09-26,Gokaldas Exports Ltd.,in
+2005-09-26,Gujarat Fluorochemicals Ltd.,in
+2005-09-26,IVRCL Ltd.,in
+2005-09-26,JSW ISPAT Steel Ltd.,out
+2005-09-26,Jaiprakash Power Ventures Ltd.,in
+2005-09-26,Jet Airways (India) Ltd.,in
+2005-09-26,NCC Ltd.,in
+2005-09-26,NIIT Technologies Ltd.,out
+2005-09-26,Patel Engineering Ltd.,in
+2005-09-26,Prism Cement Ltd.,out
+2005-09-26,SRF Ltd.,in
+2005-09-26,Shoppers Stop Ltd.,in
+2005-09-26,Tata Infotech Ltd.-Merged,out
+2005-09-26,Thomas Cook (India) Ltd.,out
+2005-09-26,Trident Ltd.,out
+2005-09-26,Unichem Laboratories Ltd.,out
+2005-09-26,iGate Global Solutions Ltd.,out
+2006-03-02,63 Moons Technologies Ltd.,in
+2006-03-02,Alembic Ltd.,out
+2006-03-02,Bhushan Steel Ltd.,out
+2006-03-02,CMC Ltd.,out
+2006-03-02,Carborundum Universal Ltd.,in
+2006-03-02,Eicher Motors Ltd.,out
+2006-03-02,Essar Steel Ltd.,in
+2006-03-02,Fresenius Kabi Oncology Ltd.,out
+2006-03-02,GTL Ltd.,out
+2006-03-02,Geodesic Ltd.,in
+2006-03-02,Godrej Industries Ltd.,in
+2006-03-02,HT Media Ltd.,in
+2006-03-02,Hikal Ltd.,out
+2006-03-02,IDFC Ltd.,in
+2006-03-02,IFCI Ltd.,out
+2006-03-02,J.B. Chemicals & Pharmaceuticals Ltd.,out
+2006-03-02,JSW Steel Ltd.,in
+2006-03-02,Karur Vysya Bank Ltd.,out
+2006-03-02,MPS Ltd.,out
+2006-03-02,Merck Ltd.,out
+2006-03-02,PTC India Ltd.,out
+2006-03-02,Radico Khaitan Ltd,in
+2006-03-02,Rolta India Ltd.,in
+2006-03-02,Shree Renuka Sugars Ltd.,in
+2006-03-02,Sintex Industries Ltd.,in
+2006-03-02,Strides Shasun Ltd.,out
+2006-03-02,Suzlon Energy Ltd.,in
+2006-03-02,Videocon Industries Ltd.,in
+2006-03-02,Welspun India Ltd.,out
+2006-03-02,Yes Bank Ltd.,in
+2006-06-27,Punj Lloyd Ltd.,in
+2006-06-27,Shipping Corporation of India Ltd.,out
+2006-06-27,Tata Chemicals Ltd.,out
+2006-06-27,Unitech Ltd.,in
+2006-09-01,Ansal Properties & Infrastructure Ltd.,in
+2006-09-01,Dena Bank,out
+2006-09-01,FDC Ltd.,out
+2006-09-01,Fertilisers and Chemicals Travancore Ltd.,out
+2006-09-01,Great Eastern Shipping Co. Ltd.,out
+2006-09-01,Gujarat Industries Power Co. Ltd.,out
+2006-09-01,Gujarat NRE Coke Ltd.,out
+2006-09-01,Gujarat State Petronet Ltd.,in
+2006-09-01,Hinduja Ventures Ltd.,out
+2006-09-01,Indiabulls Financial Services Ltd.,out
+2006-09-01,Indo Rama Synthetics Ltd.,out
+2006-09-01,Ipca Laboratories Ltd.,out
+2006-09-01,Kalpataru Power Transmission Ltd.,in
+2006-09-01,Kirloskar Brothers Ltd.,in
+2006-09-01,Kochi Refineries Ltd.,out
+2006-09-01,Mahindra & Mahindra Financial Services Ltd.,in
+2006-09-01,Mahindra Lifespace Developers Ltd.,in
+2006-09-01,Micro Inks Ltd.,out
+2006-09-01,Peninsula Land Ltd.,in
+2006-09-01,Reliance Communications Ltd.,in
+2006-09-01,Reliance Natural Resources Ltd.,in
+2006-09-01,Reliance Petroleum Ltd.,in
+2006-09-01,Shipping Corporation of India Ltd.,in
+2006-09-01,Sun TV Network Ltd.,in
+2006-09-01,Tata Chemicals Ltd.,in
+2006-09-01,Torrent Power AEC Ltd.,out
+2006-09-01,Triveni Engineering & Industries Ltd.,in
+2006-09-01,United Spirits Ltd.,out
+2007-04-04,AIA Engineering Ltd.,in
+2007-04-04,Alok Industries Ltd.,out
+2007-04-04,Anant Raj Ltd.,in
+2007-04-04,Arvind Ltd.,out
+2007-04-04,Bongaigaon Refinery & Petrochemicals Ltd.,out
+2007-04-04,Finolex Industries Ltd.,out
+2007-04-04,GMR Infrastructure Ltd.,in
+2007-04-04,GOL Offshore Ltd.,in
+2007-04-04,Gokaldas Exports Ltd.,out
+2007-04-04,Gujarat Alkalies & Chemicals Ltd.,out
+2007-04-04,Gujarat Mineral Development Corporation Ltd.,out
+2007-04-04,IBP Co. Ltd.,out
+2007-04-04,Ingersoll Rand (India) Ltd.,out
+2007-04-04,JM Financial Ltd.,in
+2007-04-04,Jain Irrigation Systems Ltd.,in
+2007-04-04,Kesoram Industries Ltd.,in
+2007-04-04,Lanco Infratech Ltd.,in
+2007-04-04,Parsvnath Developer Ltd.,in
+2007-04-04,Rico Auto Industries Ltd.,out
+2007-04-04,Shree Precoated Steels Ltd.,in
+2007-04-04,Shree Renuka Sugars Ltd.,out
+2007-04-04,Sobha Ltd.,in
+2007-04-04,Sundaram Finance Ltd.,out
+2007-04-04,Tech Mahindra Ltd.,in
+2007-04-04,Torrent Power Ltd.,in
+2007-04-04,Trent Ltd.,out
+2007-04-04,United Spirits Ltd.,in
+2007-04-04,Wyeth Ltd.,out
+2007-09-24,AstraZenca Pharma India Ltd.,out
+2007-09-24,BF Utilities Ltd.,in
+2007-09-24,Ballarpur Industries Ltd.,out
+2007-09-24,Blue Dart Express Ltd.,out
+2007-09-24,Cairn India Ltd.,in
+2007-09-24,Colgate Palmolive (India) Ltd.,out
+2007-09-24,DCM Shriram Ltd.,out
+2007-09-24,Dish TV India Ltd.,in
+2007-09-24,E.I.D. Parry (India) Ltd.,out
+2007-09-24,Educomp Solutions Ltd.,in
+2007-09-24,Essar Steel Ltd.,out
+2007-09-24,Essel Propack Ltd.,out
+2007-09-24,Firstsource Solutions Ltd.,in
+2007-09-24,Great Eastern Shipping Co. Ltd.,in
+2007-09-24,Himatsingka Seide Ltd.,out
+2007-09-24,Hindustan Zinc Ltd.,in
+2007-09-24,Hubtown Ltd.,in
+2007-09-24,IFCI Ltd.,in
+2007-09-24,Idea Cellular Ltd.,in
+2007-09-24,Indiabulls Real Estate Ltd.,in
+2007-09-24,Indian Bank,in
+2007-09-24,MindTree Ltd.,in
+2007-09-24,Monsanto India Ltd.,out
+2007-09-24,Piramal Enterprises Ltd.,out
+2007-09-24,Power Finance Corporation Ltd.,in
+2007-09-24,Praj Industries Ltd.,in
+2007-09-24,SRF Ltd.,out
+2007-09-24,Sundram Fasteners Ltd.,out
+2007-09-24,Television Eighteen India Ltd.,in
+2007-09-24,Triveni Engineering & Industries Ltd.,out
+2007-09-24,Tube Investments of India Ltd.-Old,out
+2007-09-24,Vardhman Textiles Ltd.,out
+2007-10-05,Indian Petrochemicals Corporation Ltd.,out
+2007-10-05,Jai Corp Ltd.,in
+2007-12-12,DLF Ltd.,in
+2007-12-12,Hindustan Petroleum Corporation Ltd.,out
+2007-12-12,Housing Development and Infrastructure Ltd.,in
+2007-12-12,Mahanagar Telephone Nigam Ltd.,out
+2008-03-14,Adani Ports and Special Economic Zone Ltd.,in
+2008-03-14,Asian Hotels (North) Ltd.,out
+2008-03-14,Bajaj Auto Ltd.,out
+2008-03-14,Carborundum Universal Ltd.,out
+2008-03-14,Central Bank of India,in
+2008-03-14,Centurion Bank of Punjab Ltd.,out
+2008-03-14,Colgate Palmolive (India) Ltd.,in
+2008-03-14,GVK Power & Infrastructures Ltd.,in
+2008-03-14,Gateway Distriparks Ltd.,out
+2008-03-14,Godfrey Phillips India Ltd.,out
+2008-03-14,Gujarat Mineral Development Corporation Ltd.,in
+2008-03-14,Hexaware Technologies Ltd.,out
+2008-03-14,Hindustan Petroleum Corporation Ltd.,in
+2008-03-14,IIFL Holdings Ltd.,in
+2008-03-14,JSW ISPAT Steel Ltd.,in
+2008-03-14,Mahanagar Telephone Nigam Ltd.,in
+2008-03-14,Omaxe Ltd.,in
+2008-03-14,Patni Computer Systems Ltd.,out
+2008-03-14,Phoenix Mills Ltd.,in
+2008-03-14,Polaris Consulting & Services Ltd.,out
+2008-03-14,Power Grid Corporation of India Ltd.,in
+2008-03-14,Punjab Tractors Ltd.,out
+2008-03-14,Puravankara Ltd.,in
+2008-03-14,Radico Khaitan Ltd,out
+2008-03-14,Shriram Transport Finance Co. Ltd.,in
+2008-03-14,Sundaram Clayton Ltd.- OLD,out
+2008-03-14,TVS Motor Company Ltd.,out
+2008-03-14,Tata Global Beverages Ltd.,out
+2008-03-14,Torrent Pharmaceuticals Ltd.,out
+2008-03-14,Welspun Corp Ltd.,in
+2008-09-10,Alfa Laval (India) Ltd.,out
+2008-09-10,Ansal Properties & Infrastructure Ltd.,out
+2008-09-10,Asahi India Glass Ltd.,out
+2008-09-10,Bajaj Auto Ltd.,in
+2008-09-10,Bajaj Finserv Ltd.,in
+2008-09-10,Bajaj Holdings & Investment Ltd.,in
+2008-09-10,Berger Paints India Ltd.,out
+2008-09-10,Birla Corporation Ltd.,out
+2008-09-10,Blue Star Ltd.,in
+2008-09-10,Cadila Healthcare Ltd.,out
+2008-09-10,Edelweiss Financial Services Ltd.,in
+2008-09-10,Essar Ports Ltd.,in
+2008-09-10,Gujarat NRE Coke Ltd.,in
+2008-09-10,Gujarat State Fertilizers & Chemicals Ltd.,out
+2008-09-10,Hotel Leela Venture Ltd.,out
+2008-09-10,IRB Infrastructure Developers Ltd.,in
+2008-09-10,Indiabulls Financial Services Ltd.,in
+2008-09-10,Kesoram Industries Ltd.,out
+2008-09-10,MindTree Ltd.,out
+2008-09-10,NMDC Ltd.,in
+2008-09-10,Parsvnath Developer Ltd.,out
+2008-09-10,Piramal Enterprises Ltd.,in
+2008-09-10,Raymond Ltd.,out
+2008-09-10,Reliance Power Ltd.,in
+2008-09-10,Rural Electrification Corporation Ltd.,in
+2008-09-10,SKF India Ltd.,out
+2008-09-10,Shoppers Stop Ltd.,out
+2008-09-10,Tata Global Beverages Ltd.,in
+2009-01-12,KSK Energy Ventures Ltd,in
+2009-01-12,Satyam Computer Services Ltd.,out
+2009-03-27,Bhushan Steel Ltd.,in
+2009-03-27,Castrol (India) Ltd.-Old,in
+2009-03-27,Dredging Corporation of India Ltd.,out
+2009-03-27,Firstsource Solutions Ltd.,out
+2009-03-27,GE T&D India Ltd.,in
+2009-03-27,GTL Infrastructure Ltd.,in
+2009-03-27,Gammon India Ltd.,out
+2009-03-27,Geodesic Ltd.,out
+2009-03-27,IL&FS Engineering and Construction Company Ltd.,in
+2009-03-27,Lakshmi Machine Works Ltd.,out
+2009-03-27,Matrix Laboratories Ltd.,out
+2009-03-27,NDTV Ltd.,out
+2009-03-27,Orchid Pharma Ltd.,out
+2009-03-27,Patni Computer Systems Ltd.,in
+2009-03-27,Peninsula Land Ltd.,out
+2009-03-27,Religare Enterprises Ltd.,in
+2009-03-27,Shree Precoated Steels Ltd.,out
+2009-03-27,Shree Renuka Sugars Ltd.,in
+2009-03-27,Spice Communications Ltd,in
+2009-03-27,United Breweries Ltd.,in
+2009-06-17,GTL Ltd.,in
+2009-06-17,Reliance Petroleum Ltd.,out
+2009-10-22,BF Utilities Ltd.,out
+2009-10-22,Bombay Dyeing & Manufacturing Co. Ltd.,out
+2009-10-22,Britannia Industries Ltd.,out
+2009-10-22,CRISIL Ltd.,in
+2009-10-22,Cadila Healthcare Ltd.,in
+2009-10-22,Coromandel International Ltd.,in
+2009-10-22,Fortis Healthcare Ltd.,in
+2009-10-22,IL&FS Engineering and Construction Company Ltd.,out
+2009-10-22,Jagran Prakashan Ltd.,in
+2009-10-22,Jindal Stainless Ltd.,out
+2009-10-22,Kansai Nerolac Paints Ltd.,out
+2009-10-22,Kirloskar Brothers Ltd.,out
+2009-10-22,Mahindra Lifespace Developers Ltd.,out
+2009-10-22,National Fertilizers Ltd.,in
+2009-10-22,OnMobile Global Ltd.,in
+2009-10-22,Opto Circuits (I) Ltd.,in
+2009-10-22,PTC India Ltd.,in
+2009-10-22,Panacea Biotec Ltd.,out
+2009-10-22,REI Six Ten Retail Ltd.,in
+2009-10-22,Spice Communications Ltd,out
+2009-10-22,Television Eighteen India Ltd.,out
+2009-10-22,Triveni Engineering & Industries Ltd.,in
+2010-04-08,3M India Ltd.,out
+2010-04-08,Adani Power Ltd.,in
+2010-04-08,Akzo Nobel India Ltd.,out
+2010-04-08,BGR Energy Systems Ltd,in
+2010-04-08,Dishman Pharmaceuticals & Chemicals Ltd.,out
+2010-04-08,E.I.D. Parry (India) Ltd.,in
+2010-04-08,Emami Ltd.,in
+2010-04-08,Era Infra Engineering Ltd.,in
+2010-04-08,Future Enterprises Ltd.,out
+2010-04-08,GOL Offshore Ltd.,out
+2010-04-08,Grasim Industries Ltd.,out
+2010-04-08,Gujarat Fluorochemicals Ltd.,out
+2010-04-08,Gujarat Narmada Valley Fertilizers and Chemicals Ltd.,out
+2010-04-08,Hindustan Oil Exploration Co. Ltd.,in
+2010-04-08,Karnataka Bank Ltd.,out
+2010-04-08,Kirloskar Industries Ltd.,out
+2010-04-08,Mahindra Holidays & Resorts India Ltd.,in
+2010-04-08,Moser Baer India Ltd.,out
+2010-04-08,NHPC Ltd.,in
+2010-04-08,Nava Bharat Ventures Ltd.,in
+2010-04-08,Oil India Ltd.,in
+2010-04-08,Omaxe Ltd.,out
+2010-04-08,Praj Industries Ltd.,out
+2010-04-08,REI Six Ten Retail Ltd.,out
+2010-04-08,RattanIndia Power Ltd.,in
+2010-04-08,Reliance Naval and Engineering Ltd.,in
+2010-04-08,Sunteck Realty Ltd.,in
+2010-04-08,Torrent Pharmaceuticals Ltd.,in
+2010-10-01,Bajaj Hindusthan Sugar Ltd.,out
+2010-10-01,Balrampur Chini Mills Ltd.,out
+2010-10-01,Bank of Maharashtra.,out
+2010-10-01,Britannia Industries Ltd.,in
+2010-10-01,D B Realty Ltd.,in
+2010-10-01,D.B.Corp Ltd.,in
+2010-10-01,Godrej Properties Ltd.,in
+2010-10-01,Grasim Industries Ltd.,in
+2010-10-01,HCL Infosystems Ltd.,out
+2010-10-01,Havells India Ltd.,in
+2010-10-01,Hindustan Copper Ltd.,in
+2010-10-01,IL&FS Transportation Networks Ltd.,in
+2010-10-01,Ipca Laboratories Ltd.,in
+2010-10-01,JM Financial Ltd.,out
+2010-10-01,JSW Energy Ltd.,in
+2010-10-01,JSW ISPAT Steel Ltd.,out
+2010-10-01,Jaypee Infratech Ltd.,in
+2010-10-01,Jubilant Life Sciences Ltd.,out
+2010-10-01,Kansai Nerolac Paints Ltd.,in
+2010-10-01,MMTC Ltd.,in
+2010-10-01,Nirma Ltd.,out
+2010-10-01,OnMobile Global Ltd.,out
+2010-10-01,Puravankara Ltd.,out
+2010-10-01,Reliance Natural Resources Ltd.,out
+2010-10-01,SJVN Ltd.,in
+2010-10-01,Sterlite Technologies Ltd.,in
+2010-10-01,Tata Investment Corporation Ltd.,out
+2010-10-01,The Ramco Cements Ltd.,out
+2010-10-01,Wockhardt Ltd.,out
+2010-10-01,Zee Entertainment Enterprises Ltd.,out
+2011-03-25,3M India Ltd.,in
+2011-03-25,Bharat Financial Inclusion Ltd.,in
+2011-03-25,Coal India Ltd.,in
+2011-03-25,Deccan Chronicle Holdings Ltd.,out
+2011-03-25,Essar Ports Ltd.,out
+2011-03-25,Future Enterprises Ltd.,in
+2011-03-25,Hubtown Ltd.,out
+2011-03-25,IIFL Holdings Ltd.,out
+2011-03-25,Indiabulls Real Estate Ltd.,out
+2011-03-25,Jubilant Life Sciences Ltd.,in
+2011-03-25,Kalpataru Power Transmission Ltd.,out
+2011-03-25,Karur Vysya Bank Ltd.,in
+2011-03-25,Maharashtra Seamless Ltd.,out
+2011-03-25,Manappuram Finance Ltd.,in
+2011-03-25,Nava Bharat Ventures Ltd.,out
+2011-03-25,Oberoi Realty Ltd.,in
+2011-03-25,Patel Engineering Ltd.,out
+2011-03-25,Prestige Estates Projects Ltd.,in
+2011-03-25,Rolta India Ltd.,out
+2011-03-25,Sanofi India Ltd.,out
+2011-03-25,State Bank of Mysore,in
+2011-03-25,State Bank of Travancore,in
+2011-03-25,Sterlite Technologies Ltd.,out
+2011-03-25,Triveni Engineering & Industries Ltd.,out
+2011-03-25,Wockhardt Ltd.,in
+2011-03-25,Zee Entertainment Enterprises Ltd.,in
+2011-10-10,Anant Raj Ltd.,out
+2011-10-10,Bata India Ltd.,in
+2011-10-10,Bombay Rayon Fashions Ltd.,in
+2011-10-10,D B Realty Ltd.,out
+2011-10-10,Eicher Motors Ltd.,in
+2011-10-10,GE T&D India Ltd.,out
+2011-10-10,GTL Ltd.,out
+2011-10-10,Gujarat Fluorochemicals Ltd.,in
+2011-10-10,Hindustan Construction Co. Ltd.,out
+2011-10-10,IVRCL Ltd.,out
+2011-10-10,Info Edge (India) Ltd.,in
+2011-10-10,JSW ISPAT Steel Ltd.,in
+2011-10-10,Jindal Saw Ltd.,out
+2011-10-10,Jubilant Foodworks Ltd.,in
+2011-10-10,MOIL Ltd.,in
+2011-10-10,Muthoot Finance Ltd.,in
+2011-10-10,NCC Ltd.,out
+2011-10-10,Punj Lloyd Ltd.,out
+2011-10-10,Sanofi India Ltd.,in
+2011-10-10,Sunteck Realty Ltd.,out
+2012-04-27,Aban Offshore Ltd.,out
+2012-04-27,AstraZenca Pharma India Ltd.,in
+2012-04-27,BGR Energy Systems Ltd,out
+2012-04-27,Berger Paints India Ltd.,in
+2012-04-27,Bharat Financial Inclusion Ltd.,out
+2012-04-27,Blue Dart Express Ltd.,in
+2012-04-27,Blue Star Ltd.,out
+2012-04-27,GE T&D India Ltd.,in
+2012-04-27,GTL Infrastructure Ltd.,out
+2012-04-27,Gitanjali Gems Ltd.,in
+2012-04-27,Gujarat NRE Coke Ltd.,out
+2012-04-27,Gujarat State Fertilizers & Chemicals Ltd.,in
+2012-04-27,HMT Ltd.,out
+2012-04-27,Hindustan Oil Exploration Co. Ltd.,out
+2012-04-27,Jai Corp Ltd.,out
+2012-04-27,Jindal Saw Ltd.,in
+2012-04-27,L&T Finance Holdings Ltd.,in
+2012-04-27,Mahanagar Telephone Nigam Ltd.,out
+2012-04-27,PTC India Ltd.,out
+2012-04-27,Patni Computer Systems Ltd.,out
+2012-04-27,Rajesh Exports Ltd.,in
+2012-04-27,Redington (India) Ltd.,in
+2012-04-27,Ruchi Soya Industries Ltd.,in
+2012-04-27,SKF India Ltd.,in
+2012-04-27,Sterling Biotech Ltd,out
+2012-04-27,Sundaram Finance Ltd.,in
+2012-09-28,Akzo Nobel India Ltd.,in
+2012-09-28,BEML Ltd.,out
+2012-09-28,Bajaj Finance Ltd.,in
+2012-09-28,CORE Education & Technologies Ltd.,in
+2012-09-28,Chennai Petroleum Corporation Ltd.,out
+2012-09-28,Edelweiss Financial Services Ltd.,out
+2012-09-28,Educomp Solutions Ltd.,out
+2012-09-28,Essar Ports Ltd.,in
+2012-09-28,GVK Power & Infrastructures Ltd.,out
+2012-09-28,Godfrey Phillips India Ltd.,in
+2012-09-28,Hexaware Technologies Ltd.,in
+2012-09-28,Indiabulls Financial Services Ltd.,out
+2012-09-28,KSK Energy Ventures Ltd,out
+2012-09-28,Linde India Ltd.,in
+2012-09-28,Mahindra Holidays & Resorts India Ltd.,out
+2012-09-28,Shree Renuka Sugars Ltd.,out
+2012-09-28,Shriram City Union Finance Ltd.,in
+2012-09-28,Sintex Industries Ltd.,out
+2012-09-28,State Bank of Mysore,out
+2012-09-28,Strides Shasun Ltd.,in
+2012-09-28,TTK Prestige Ltd.,in
+2012-09-28,The Ramco Cements Ltd.,in
+2013-04-01,Amara Raja Batteries Ltd.,in
+2013-04-01,Amtek Auto Ltd.,out
+2013-04-01,Bharti Infratel Ltd.,in
+2013-04-01,CMC Ltd.,in
+2013-04-01,Cholamandalam Investment and Finance Company Ltd.,in
+2013-04-01,Dena Bank,in
+2013-04-01,Era Infra Engineering Ltd.,out
+2013-04-01,Future Enterprises Ltd.,out
+2013-04-01,GE Power India Ltd.,out
+2013-04-01,Gruh Finance Ltd.,in
+2013-04-01,HT Media Ltd.,out
+2013-04-01,Hathway Cable & Datacom Ltd.,in
+2013-04-01,JSW ISPAT Steel Ltd.,out
+2013-04-01,McLeod Russel India Ltd.,in
+2013-04-01,Network18 Media & Investments Ltd.,in
+2013-04-01,Opto Circuits (I) Ltd.,out
+2013-04-01,Page Industries Ltd.,in
+2013-04-01,Ruchi Soya Industries Ltd.,out
+2013-04-01,Shipping Corporation of India Ltd.,out
+2013-04-01,Sterlite Industries (India) Ltd.,out
+2013-04-01,Supreme Industries Ltd.,in
+2013-04-01,TV18 Broadcast Ltd.,in
+2013-04-01,Tata Teleservices (Maharashtra) Ltd.,out
+2013-04-01,Trent Ltd.,in
+2013-04-01,Welspun Corp Ltd.,out
+2013-04-01,Wipro Ltd.,out
+2013-09-27,AstraZenca Pharma India Ltd.,out
+2013-09-27,Bajaj Corp Ltd.,in
+2013-09-27,Bank of Maharashtra.,in
+2013-09-27,CORE Education & Technologies Ltd.,out
+2013-09-27,Castrol (India) Ltd.-Old,out
+2013-09-27,Chambal Fertilizers & Chemicals Ltd.,out
+2013-09-27,Housing Development and Infrastructure Ltd.,out
+2013-09-27,Indiabulls Real Estate Ltd.,in
+2013-09-27,Jindal Saw Ltd.,out
+2013-09-27,Jyothy Laboratories Ltd.,in
+2013-09-27,Lanco Infratech Ltd.,out
+2013-09-27,Manappuram Finance Ltd.,out
+2013-09-27,Marico Ltd.,out
+2013-09-27,MindTree Ltd.,in
+2013-09-27,National Fertilizers Ltd.,out
+2013-09-27,Rashtriya Chemicals & Fertilizers Ltd.,out
+2013-09-27,RattanIndia Power Ltd.,out
+2013-09-27,Shoppers Stop Ltd.,in
+2013-09-27,South Indian Bank Ltd.,in
+2013-09-27,State Bank of Bikaner & Jaipur Ltd.,in
+2013-09-27,Sun Pharma Advanced Research Company Ltd.,in
+2013-09-27,Vakrangee Ltd.,in
+2013-09-27,WABCO India Ltd.,in
+2013-09-27,Wipro Ltd.,in
+2014-03-28,63 Moons Technologies Ltd.,out
+2014-03-28,Alembic Pharmaceuticals Ltd.,in
+2014-03-28,Arvind Ltd.,in
+2014-03-28,Cyient Ltd.,in
+2014-03-28,Dena Bank,out
+2014-03-28,Gitanjali Gems Ltd.,out
+2014-03-28,Gujarat State Fertilizers & Chemicals Ltd.,out
+2014-03-28,India Cements Ltd.,out
+2014-03-28,Indiabulls Housing Finance Ltd.,in
+2014-03-28,Jubilant Life Sciences Ltd.,out
+2014-03-28,Justdial Ltd.,in
+2014-03-28,Marico Ltd.,in
+2014-03-28,Persistent Systems Ltd.,in
+2014-03-28,Rallis India Ltd.,in
+2014-03-28,State Bank of Travancore,out
+2014-03-28,Suzlon Energy Ltd.,out
+2014-03-28,Vijaya Bank,out
+2014-03-28,eClerx Services Ltd.,in
+2014-09-19,Ajanta Pharmaceuticals Ltd.,in
+2014-09-19,Amtek Auto Ltd.,in
+2014-09-19,Arvind Ltd.,out
+2014-09-19,Bombay Rayon Fashions Ltd.,out
+2014-09-19,Castrol India Ltd.,in
+2014-09-19,E.I.D. Parry (India) Ltd.,out
+2014-09-19,Essar Ports Ltd.,out
+2014-09-19,Gujarat Gas Co. Ltd.,out
+2014-09-19,Gujarat Pipavav Port Ltd.,in
+2014-09-19,ING Vysya Bank Ltd.,out
+2014-09-19,Jet Airways (India) Ltd.,out
+2014-09-19,Kaveri Seed Company Ltd.,in
+2014-09-19,Linde India Ltd.,out
+2014-09-19,McLeod Russel India Ltd.,out
+2014-09-19,PI Industries Ltd.,in
+2014-09-19,Ranbaxy Laboratories Ltd.,out
+2014-09-19,Schaeffler India Ltd.,in
+2014-09-19,Suzlon Energy Ltd.,in
+2014-09-19,TVS Motor Company Ltd.,in
+2014-09-19,Tube Investments of India Ltd.-Old,in
+2015-03-27,Adani Enterprises Ltd.,out
+2015-03-27,BASF India Ltd.,in
+2015-03-27,Bhushan Steel Ltd.,out
+2015-03-27,CG Power and Industrial Solutions Ltd.,out
+2015-03-27,City Union Bank Ltd.,in
+2015-03-27,Dewan Housing Finance Corporation Ltd.,in
+2015-03-27,Godfrey Phillips India Ltd.,out
+2015-03-27,Honeywell Automation India Ltd.,in
+2015-03-27,IIFL Holdings Ltd.,in
+2015-03-27,Indiabulls Real Estate Ltd.,out
+2015-03-27,Jain Irrigation Systems Ltd.,out
+2015-03-27,Jaiprakash Power Ventures Ltd.,out
+2015-03-27,Jaypee Infratech Ltd.,out
+2015-03-27,Kajaria Ceramics Ltd.,in
+2015-03-27,Monsanto India Ltd.,in
+2015-03-27,NBCC (India) Ltd.,in
+2015-03-27,Reliance Naval and Engineering Ltd.,out
+2015-03-27,Solar Industries India Ltd.,in
+2015-03-27,South Indian Bank Ltd.,out
+2015-03-27,Symphony Ltd.,in
+2015-03-27,Whirlpool of India Ltd.,in
+2015-03-27,eClerx Services Ltd.,out
+2015-05-29,IDFC Ltd.,out
+2015-05-29,NATCO Pharma Ltd.,in
+2015-09-28,Aditya Birla Nuvo Ltd.,out
+2015-09-28,Amtek Auto Ltd.,out
+2015-09-28,Arvind Ltd.,in
+2015-09-28,Balkrishna Industries Ltd.,in
+2015-09-28,Bank of Maharashtra.,out
+2015-09-28,Bharat Financial Inclusion Ltd.,in
+2015-09-28,CMC Ltd.,out
+2015-09-28,Edelweiss Financial Services Ltd.,in
+2015-09-28,Essar Oil Ltd.,out
+2015-09-28,Gujarat Mineral Development Corporation Ltd.,out
+2015-09-28,Inox Wind Ltd.,in
+2015-09-28,Mahindra CIE Automotive Ltd.,in
+2015-09-28,Max Financial Services Ltd.,out
+2015-09-28,PC Jeweller Ltd.,in
+2015-09-28,Prism Cement Ltd.,in
+2015-09-28,SRF Ltd.,in
+2015-09-28,Sadbhav Engineering Ltd.,in
+2015-09-28,Shoppers Stop Ltd.,out
+2015-09-28,Sobha Ltd.,out
+2015-09-28,State Bank of Bikaner & Jaipur Ltd.,out
+2015-09-28,Thomas Cook (India) Ltd.,in
+2015-09-28,Unitech Ltd.,out
+2016-04-01,Adani Enterprises Ltd.,in
+2016-04-01,Andhra Bank,out
+2016-04-01,BEML Ltd.,in
+2016-04-01,Corporation Bank,out
+2016-04-01,Dalmia Bharat Ltd.,in
+2016-04-01,Gujarat Gas Ltd.,in
+2016-04-01,Hathway Cable & Datacom Ltd.,out
+2016-04-01,IDFC Ltd.,in
+2016-04-01,IFCI Ltd.,out
+2016-04-01,IL&FS Transportation Networks Ltd.,out
+2016-04-01,Jaiprakash Associates Ltd.,out
+2016-04-01,Jammu & Kashmir Bank Ltd.,out
+2016-04-01,Jet Airways (India) Ltd.,in
+2016-04-01,Jubilant Life Sciences Ltd.,in
+2016-04-01,Kaveri Seed Company Ltd.,out
+2016-04-01,MOIL Ltd.,out
+2016-04-01,Monsanto India Ltd.,out
+2016-04-01,Oriental Bank of Commerce,out
+2016-04-01,Rallis India Ltd.,out
+2016-04-01,Relaxo Footwears Ltd.,in
+2016-04-01,Religare Enterprises Ltd.,out
+2016-04-01,Syngene International Ltd.,in
+2016-04-01,Tata Elxsi Ltd.,in
+2016-04-01,Tata Motors Ltd DVR,in
+2016-04-01,Vardhman Textiles Ltd.,in
+2016-04-01,Welspun India Ltd.,in
+2016-04-01,eClerx Services Ltd.,in
+2016-09-30,Aditya Birla Fashion and Retail Ltd.,in
+2016-09-30,Aditya Birla Nuvo Ltd.,in
+2016-09-30,Alkem Laboratories Ltd.,in
+2016-09-30,Allahabad Bank,out
+2016-09-30,BASF India Ltd.,out
+2016-09-30,BEML Ltd.,out
+2016-09-30,Dr. Lal Path Labs Ltd.,in
+2016-09-30,IDFC Bank Ltd.,in
+2016-09-30,InterGlobe Aviation Ltd.,in
+2016-09-30,MMTC Ltd.,out
+2016-09-30,Max Financial Services Ltd.,in
+2016-09-30,Narayana Hrudayalaya Ltd.,in
+2016-09-30,Prism Cement Ltd.,out
+2016-09-30,Redington (India) Ltd.,out
+2016-09-30,UCO Bank,out
+2016-09-30,Videocon Industries Ltd.,out
+2016-11-15,Cairn India Ltd.,out
+2016-11-15,Crompton Greaves Consumer Electricals Ltd.,in
+2017-01-23,Max Financial Services Ltd.,out
+2017-01-23,RBL Bank Ltd.,in
+2017-03-31,Endurance Technologies Ltd.,in
+2017-03-31,ICICI Prudential Life Insurance Company Ltd.,in
+2017-03-31,Inox Wind Ltd.,out
+2017-03-31,Jet Airways (India) Ltd.,out
+2017-03-31,Justdial Ltd.,out
+2017-03-31,L&T Technology Services Ltd.,in
+2017-03-31,Larsen & Toubro Infotech Ltd.,in
+2017-03-31,Manappuram Finance Ltd.,in
+2017-03-31,Motilal Oswal Financial Services Ltd.,in
+2017-03-31,Network18 Media & Investments Ltd.,out
+2017-03-31,Persistent Systems Ltd.,out
+2017-03-31,Quess Corp Ltd.,in
+2017-03-31,Sadbhav Engineering Ltd.,out
+2017-03-31,Tata Elxsi Ltd.,out
+2017-05-26,Aditya Birla Nuvo Ltd.,out
+2017-05-26,Future Retail Ltd.,in
+2017-05-26,Grasim Industries Ltd.,out
+2017-05-26,Mahanagar Gas Ltd.,in
+2017-05-26,PNB Housing Finance Ltd.,in
+2017-05-26,Tube Investments of India Ltd.-Old,out
+2017-06-23,IIFL Holdings Ltd.,out
+2017-06-23,KRBL Ltd.,in
+2017-09-05,Max Financial Services Ltd.,in
+2017-09-05,Reliance Capital Ltd.,out
+2017-09-29,Adani Transmission Ltd.,in
+2017-09-29,Avenue Supermarts Ltd.,in
+2017-09-29,Bajaj Corp Ltd.,out
+2017-09-29,Cyient Ltd.,out
+2017-09-29,Finolex Cables Ltd.,in
+2017-09-29,Great Eastern Shipping Co. Ltd.,out
+2017-09-29,Hindustan Copper Ltd.,out
+2017-09-29,Honeywell Automation India Ltd.,out
+2017-09-29,JM Financial Ltd.,in
+2017-09-29,Jagran Prakashan Ltd.,out
+2017-09-29,Relaxo Footwears Ltd.,out
+2017-09-29,Sundram Fasteners Ltd.,in
+2017-09-29,V-Guard Industries Ltd.,in
+2017-09-29,Varun Beverages Ltd.,in
+2017-09-29,Vijaya Bank,in
+2017-09-29,eClerx Services Ltd.,out
+2017-10-30,Future Retail Ltd.,out
+2017-10-30,Housing & Urban Development Corporation Ltd.,in
+2017-11-13,AU Small Finance Bank Ltd.,in
+2017-11-13,Sundaram Finance Ltd.,out
+2018-02-05,CESC Ltd.,out
+2018-02-05,Fortis Healthcare Ltd.,out
+2018-02-05,Hatsun Agro Product Ltd.,in
+2018-02-05,Reliance Capital Ltd.,in
+2018-02-05,Strides Shasun Ltd.,out
+2018-02-05,TI Financial Holdings Ltd.,in
+2018-04-02,Adani Enterprises Ltd.,out
+2018-04-02,Aditya Birla Capital Ltd.,in
+2018-04-02,Avanti Feeds Ltd.,in
+2018-04-02,D.B.Corp Ltd.,out
+2018-04-02,Dalmia Bharat Ltd.,out
+2018-04-02,Dilip Buildcon Ltd.,in
+2018-04-02,Dr. Lal Path Labs Ltd.,out
+2018-04-02,Future Consumer Ltd.,in
+2018-04-02,General Insurance Corporation of India,in
+2018-04-02,Godrej Agrovet Ltd.,in
+2018-04-02,Grasim Industries Ltd.,in
+2018-04-02,Gujarat Pipavav Port Ltd.,out
+2018-04-02,Honeywell Automation India Ltd.,in
+2018-04-02,ICICI Lombard General Insurance Company Ltd.,in
+2018-04-02,IIFL Holdings Ltd.,in
+2018-04-02,Indiabulls Real Estate Ltd.,in
+2018-04-02,Indiabulls Ventures Ltd.,in
+2018-04-02,Indian Overseas Bank,out
+2018-04-02,Ipca Laboratories Ltd.,out
+2018-04-02,Jyothy Laboratories Ltd.,out
+2018-04-02,Narayana Hrudayalaya Ltd.,out
+2018-04-02,Reliance Communications Ltd.,out
+2018-04-02,SBI Life Insurance Company Ltd.,in
+2018-04-02,Sterlite Technologies Ltd.,in
+2018-04-02,Syndicate Bank,out
+2018-04-02,Vardhman Textiles Ltd.,out
+2018-04-02,Vijaya Bank,out
+2018-04-02,Welspun India Ltd.,out
+2018-06-29,Arvind Ltd.,out
+2018-06-29,Future Retail Ltd.,in
+2018-06-29,KIOCL Ltd.,in
+2018-06-29,Tata Communications Ltd.,out
+2018-09-28,Akzo Nobel India Ltd.,out
+2018-09-28,Astral Poly Technik Ltd.,in
+2018-09-28,Bandhan Bank Ltd.,in
+2018-09-28,Escorts Ltd.,in
+2018-09-28,Graphite India Ltd.,in
+2018-09-28,Gujarat Fluorochemicals Ltd.,out
+2018-09-28,H.E.G. Ltd.,in
+2018-09-28,HDFC Standard Life Insurance Company Ltd.,in
+2018-09-28,Hindustan Aeronautics Ltd.,in
+2018-09-28,ICICI Securities Ltd.,in
+2018-09-28,IDFC Ltd.,out
+2018-09-28,IRB Infrastructure Developers Ltd.,out
+2018-09-28,Indiabulls Real Estate Ltd.,out
+2018-09-28,Kajaria Ceramics Ltd.,out
+2018-09-28,Karur Vysya Bank Ltd.,out
+2018-09-28,Reliance Nippon Life Asset Management Ltd.,in
+2018-09-28,Schaeffler India Ltd.,out
+2018-09-28,Sundaram Finance Ltd.,in
+2018-09-28,Suzlon Energy Ltd.,out
+2018-09-28,TTK Prestige Ltd.,out
+2018-09-28,The New India Assurance Company Ltd.,in
+2018-09-28,Wockhardt Ltd.,out
+2018-12-28,Aarti Industries Ltd.,in
+2018-12-28,Bharat Financial Inclusion Ltd.,out
+2018-12-28,Bombay Burmah Trading Corporation Ltd.,in
+2018-12-28,Century Textile & Industries Ltd.,out
+2018-12-28,IIFL Holdings Ltd.,out
+2018-12-28,Varroc Engineering Ltd.,in
+2019-03-29,Aarti Industries Ltd.,out
+2019-03-29,Atul Ltd.,in
+2019-03-29,Avanti Feeds Ltd.,out
+2019-03-29,Eris Lifesciences Ltd.,in
+2019-03-29,GE T&D India Ltd.,out
+2019-03-29,Gujarat Fluorochemicals Ltd.,in
+2019-03-29,HDFC Asset Management Company Ltd.,in
+2019-03-29,Ipca Laboratories Ltd.,in
+2019-03-29,PC Jeweller Ltd.,out
+2019-03-29,Relaxo Footwears Ltd.,in
+2019-03-29,TV18 Broadcast Ltd.,out
+2019-03-29,Vakrangee Ltd.,out
+2019-06-28,Dalmia Bharat Ltd.,in
+2019-06-28,Gujarat Fluorochemicals Ltd.,out
+2019-09-27,ABB India Ltd.,out
+2019-09-27,Aavas Financiers Ltd.,in
+2019-09-27,Abbott India Ltd.,in
+2019-09-27,Adani Gas Ltd.,in
+2019-09-27,Allahabad Bank,in
+2019-09-27,Bayer Cropscience Ltd.,in
+2019-09-27,CESC Ltd.,in
+2019-09-27,Corporation Bank,in
+2019-09-27,Dewan Housing Finance Corporation Ltd.,out
+2019-09-27,Dilip Buildcon Ltd.,out
+2019-09-27,Dish TV India Ltd.,out
+2019-09-27,Finolex Cables Ltd.,out
+2019-09-27,Fortis Healthcare Ltd.,in
+2019-09-27,GlaxoSmithkline Consumer Healthcare Ltd.,out
+2019-09-27,Gruh Finance Ltd.,out
+2019-09-27,Indian Overseas Bank,in
+2019-09-27,JM Financial Ltd.,out
+2019-09-27,KIOCL Ltd.,out
+2019-09-27,Nestle India Ltd.,in
+2019-09-27,Oriental Bank of Commerce,in
+2019-09-27,Reliance Capital Ltd.,out
+2019-09-27,Reliance Infrastructure Ltd.,out
+2019-09-27,Reliance Power Ltd.,out
+2019-09-27,Sun Pharma Advanced Research Company Ltd.,out
+2019-09-27,TTK Prestige Ltd.,in
+2019-09-27,Thomas Cook (India) Ltd.,out
+2019-09-27,UCO Bank,in
+2019-09-27,Vinati Organics Ltd.,in
+2019-12-27,Aarti Industries Ltd.,in
+2019-12-27,Allahabad Bank,out
+2019-12-27,Corporation Bank,out
+2019-12-27,Dr. Lal Path Labs Ltd.,in
+2019-12-27,Oriental Bank of Commerce,out
+2019-12-27,Polycab India Ltd.,in
+2019-12-27,Schaeffler India Ltd.,in
+2019-12-27,Tata Chemicals Ltd.,out
+2020-03-19,Adani Green Energy Ltd.,in
+2020-03-19,Yes Bank Ltd.,out
+2020-06-26,ABB India Ltd.,in
+2020-06-26,Akzo Nobel India Ltd.,in
+2020-06-26,CreditAccess Grameen Ltd.,in
+2020-06-26,Engineers India Ltd.,out
+2020-06-26,Future Consumer Ltd.,out
+2020-06-26,Graphite India Ltd.,out
+2020-06-26,H.E.G. Ltd.,out
+2020-06-26,IIFL Wealth Management Ltd.,in
+2020-06-26,Indian Bank,out
+2020-06-26,Indian Railway Catering And Tourism Corporation Ltd.,in
+2020-06-26,J.K. Cement Ltd.,in
+2020-06-26,KRBL Ltd.,out
+2020-06-26,Mahindra CIE Automotive Ltd.,out
+2020-06-26,Minda Industries Ltd.,in
+2020-06-26,NBCC (India) Ltd.,out
+2020-06-26,NIIT Technologies Ltd.,in
+2020-06-26,Sterlite Technologies Ltd.,out
+2020-06-26,Sumitomo Chemical India Ltd.,in
+2020-06-26,Tata Communications Ltd.,in
+2020-06-26,Tata Motors Ltd DVR,out
+2020-06-26,Varroc Engineering Ltd.,out
+2020-07-31,SBI Cards and Payment Services Ltd.,in
+2020-07-31,Vedanta Ltd.,out
