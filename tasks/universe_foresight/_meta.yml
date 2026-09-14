@@ -1,8 +1,9 @@
 name: universe_foresight
 status: shipped
 opened: 2026-09-11
-closed: 2026-09-11
-related_commits: []
+closed: 2026-09-14
+related_commits:
+  - 9d9874f
 supersedes: []
 depends_on:
   - market_data_spine
