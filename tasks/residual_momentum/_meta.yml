@@ -1,0 +1,11 @@
+name: residual_momentum
+status: shipped
+opened: 2026-09-11
+closed: 2026-09-14
+related_commits: []
+supersedes: []
+depends_on:
+  - mm_rebuild
+  - market_data_spine
+register_rows: []
+outcome: not adopted -- best residual arm -0.15 Sharpe against a +0.10 bar; no drawdown improvement
