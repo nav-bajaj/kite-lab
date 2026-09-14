@@ -1,2 +1,8 @@
 runs/
 runs_full/
+
+# The repo root ignores *.csv (price data). Re-include the small evidence files
+# behind RESULTS.md tables; report/capbands.csv stays out as a 400K regenerable
+# cache that lib/capbands.py rebuilds on demand.
+!report/coverage_top250.csv
+!report/coverage_top500.csv
