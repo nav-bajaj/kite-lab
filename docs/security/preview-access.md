@@ -156,4 +156,5 @@ at grant time, and the list is re-read at each `/security-audit` run.
 
 | Email | Granted | Expires | Revoked | Told not to share | Why |
 |---|---|---|---|---|---|
-| _(none yet)_ | | | | | |
+| amitrajput6726@gmail.com | 2026-09-13 | 2026-09-27 | | | Developer candidate, interview |
+| arjunsingh814260@gmail.com | 2026-09-13 | 2026-09-27 | | | Developer candidate, interview |
